@@ -21,6 +21,12 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.nio.file.Path;
+import java.util.Arrays;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.stream.Collectors;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -32,6 +38,7 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.JToolBar;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
@@ -41,7 +48,11 @@ import javax.swing.table.TableModel;
 
 import org.mini2Dx.gettext.GetText;
 
+import com.atlauncher.data.DisableableMod;
 import com.atlauncher.data.Instance;
+import com.atlauncher.data.Type;
+import com.atlauncher.managers.LogManager;
+import com.atlauncher.utils.Pair;
 import com.formdev.flatlaf.icons.FlatSearchIcon;
 
 public class ModsSection extends SectionPanel {
@@ -87,14 +98,28 @@ public class ModsSection extends SectionPanel {
         splitPane.setEnabled(false);
         splitPane.setResizeWeight(1.0);
 
-        Object[][] modsData = new Object[][] {
-                { "test-mod-1.jar", false, "Test", "1.0.0" },
-                { "test-mod-2.jar", true, "Test", "2.2.2.2" },
-                { "test-mod-3.jar", false, "Test", "fabric-5.5.5-1.19.2" },
-                { "test-mod-4.jar", false, "Test", "Unknown" },
-        };
+        List<Path> modPaths = instance.getModPathsFromFilesystem(Arrays.asList(instance.ROOT.resolve("mods")));
 
-        tableModel = new DefaultTableModel(modsData, new String[] {
+        List<Pair<Path, DisableableMod>> modsData = modPaths.stream().map(path -> {
+            DisableableMod mod = instance.launcher.mods.parallelStream()
+                    .filter(m -> m.type == Type.mods && m.file.equals(path.getFileName().toString())).findFirst()
+                    .orElseGet(() -> {
+                        LogManager
+                                .warn(String.format("Failed to find mod for file %s. Generating temporary mod for it.",
+                                        path.getFileName().toString()));
+                        return DisableableMod.generateMod(path.toFile(), Type.mods, !path.endsWith(".disabled"));
+                    });
+
+            return new Pair<Path, DisableableMod>(path, mod);
+        }).collect(Collectors.toList());
+
+        Object[][] initialTableData = modsData.stream().map(pair -> {
+            return new Object[] { instance.ROOT.relativize(pair.left()).toString(), !pair.right().disabled,
+                    pair.right().name,
+                    pair.right().version };
+        }).toArray(Object[][]::new);
+
+        tableModel = new DefaultTableModel(initialTableData, new String[] {
                 "", GetText.tr("Enabled?"), GetText.tr("Name"), GetText.tr("Version")
         }) {
             @Override
@@ -111,9 +136,10 @@ public class ModsSection extends SectionPanel {
                 return columnIndex == 1;
             }
         };
+
         JTable modsTable = new JTable(tableModel);
 
-        modsTable.getModel().addTableModelListener(new TableModelListener() {
+        tableModel.addTableModelListener(new TableModelListener() {
             @Override
             public void tableChanged(TableModelEvent e) {
                 int column = e.getColumn();
@@ -132,6 +158,33 @@ public class ModsSection extends SectionPanel {
         modsTable.setShowVerticalLines(false);
         modsTable.setDefaultRenderer(String.class, new TableCellRenderer());
         modsTable.getTableHeader().setReorderingAllowed(false);
+
+        // dynamically load in real mod data from the jar/zip files
+        ExecutorService executor = Executors.newFixedThreadPool(10);
+        synchronized (this) {
+            for (Pair<Path, DisableableMod> pair : modsData) {
+                executor.execute(() -> {
+                    pair.right().scanInternalModMetadata(pair.left());
+
+                    String name = pair.right().getNameFromFile(pair.left());
+                    String version = pair.right().getVersionFromFile(pair.left());
+
+                    SwingUtilities.invokeLater(() -> {
+                        int rowIndex = -1;
+                        for (int i = 0; i < tableModel.getRowCount(); i++) {
+                            if (tableModel.getValueAt(i, 0).equals(instance.ROOT.relativize(pair.left()).toString())) {
+                                rowIndex = i;
+                                break;
+                            }
+                        }
+
+                        tableModel.setValueAt(name, rowIndex, 2);
+                        tableModel.setValueAt(version, rowIndex, 3);
+                    });
+                });
+            }
+        }
+        executor.shutdown();
 
         TableColumnModel cm = modsTable.getColumnModel();
         cm.getColumn(1).setMaxWidth(65);

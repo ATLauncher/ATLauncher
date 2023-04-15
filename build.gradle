@@ -84,6 +84,7 @@ dependencies {
     implementation 'com.github.hypfvieh:dbus-java:3.3.1'
     implementation 'com.apollographql.apollo:apollo-runtime:2.5.14'
     implementation 'com.apollographql.apollo:apollo-http-cache:2.5.14'
+    implementation 'com.moandjiezana.toml:toml4j:0.7.2'
 
     testImplementation 'junit:junit:4.13.2'
     testImplementation 'org.mockito:mockito-core:4.6.1'

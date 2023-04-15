@@ -3070,6 +3070,48 @@ public class Instance extends MinecraftVersion {
         return launcher.version;
     }
 
+    private List<Path> getModPathsFromFilesystem() {
+        return getModPathsFromFilesystem(Arrays.asList(ROOT.resolve("mods"),
+                ROOT.resolve("resourcepacks"),
+                ROOT.resolve("shaderpacks"),
+                ROOT.resolve("jarmods")));
+    }
+
+    public List<Path> getModPathsFromFilesystem(List<Path> paths) {
+        List<Path> files = new ArrayList<>();
+
+        for (Path path : paths) {
+            if (!Files.exists(path)) {
+                continue;
+            }
+
+            try (Stream<Path> stream = Files.list(path)) {
+                files.addAll(stream
+                        .filter(file -> !Files.isDirectory(file) && Utils.isAcceptedModFile(file))
+                        .collect(Collectors.toList()));
+            } catch (IOException e) {
+                LogManager.logStackTrace("Error getting mod paths", e);
+            }
+        }
+
+        return files;
+    }
+
+    private List<Path> getMissingModPaths() {
+        List<Path> files = getModPathsFromFilesystem();
+
+        return files.stream().filter(path -> {
+            com.atlauncher.data.Type fileType = path.startsWith(ROOT.resolve("resourcepacks"))
+                    ? com.atlauncher.data.Type.resourcepack
+                    : (path.startsWith(ROOT.resolve("jarmods")) ? com.atlauncher.data.Type.jar
+                            : (path.startsWith(ROOT.resolve("shaderpacks")) ? com.atlauncher.data.Type.shaderpack
+                                    : com.atlauncher.data.Type.mods));
+
+            return launcher.mods.stream()
+                    .noneMatch(mod -> mod.type == fileType && mod.file.equals(path.getFileName().toString()));
+        }).collect(Collectors.toList());
+    }
+
     public void scanMissingMods() {
         scanMissingMods(App.launcher.getParent());
     }
@@ -3077,32 +3119,7 @@ public class Instance extends MinecraftVersion {
     public void scanMissingMods(Window parent) {
         PerformanceManager.start("Instance::scanMissingMods - CheckForAddedMods");
 
-        // files to scan
-        List<Path> files = new ArrayList<>();
-
-        // find the mods that have been added by the user manually
-        for (Path path : Arrays.asList(ROOT.resolve("mods"), ROOT.resolve("disabledmods"),
-                ROOT.resolve("resourcepacks"), ROOT.resolve("jarmods"))) {
-            if (!Files.exists(path)) {
-                continue;
-            }
-
-            com.atlauncher.data.Type fileType = path.equals(ROOT.resolve("resourcepacks"))
-                    ? com.atlauncher.data.Type.resourcepack
-                    : (path.equals(ROOT.resolve("jarmods")) ? com.atlauncher.data.Type.jar
-                            : com.atlauncher.data.Type.mods);
-
-            try (Stream<Path> stream = Files.list(path)) {
-                files.addAll(stream
-                        .filter(file -> !Files.isDirectory(file) && Utils.isAcceptedModFile(file)).filter(
-                                file -> launcher.mods.stream()
-                                        .noneMatch(mod -> mod.type == fileType
-                                                && mod.file.equals(file.getFileName().toString())))
-                        .collect(Collectors.toList()));
-            } catch (IOException e) {
-                LogManager.logStackTrace("Error scanning missing mods", e);
-            }
-        }
+        List<Path> files = getMissingModPaths();
 
         if (files.size() != 0) {
             final ProgressDialog progressDialog = new ProgressDialog(GetText.tr("Scanning New Mods"), 0,
@@ -3114,7 +3131,9 @@ public class Instance extends MinecraftVersion {
                             com.atlauncher.data.Type fileType = file.getParent().equals(ROOT.resolve("resourcepacks"))
                                     ? com.atlauncher.data.Type.resourcepack
                                     : (file.getParent().equals(ROOT.resolve("jarmods")) ? com.atlauncher.data.Type.jar
-                                            : com.atlauncher.data.Type.mods);
+                                            : (file.getParent().equals(ROOT.resolve("shaderpacks"))
+                                                    ? com.atlauncher.data.Type.shaderpack
+                                                    : com.atlauncher.data.Type.mods));
 
                             return DisableableMod.generateMod(file.toFile(), fileType,
                                     !file.getParent().equals(ROOT.resolve("disabledmods")));

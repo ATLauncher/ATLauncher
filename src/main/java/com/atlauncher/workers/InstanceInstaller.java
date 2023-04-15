@@ -78,14 +78,12 @@ import com.atlauncher.data.minecraft.Arguments;
 import com.atlauncher.data.minecraft.AssetIndex;
 import com.atlauncher.data.minecraft.Download;
 import com.atlauncher.data.minecraft.Downloads;
-import com.atlauncher.data.minecraft.FabricMod;
 import com.atlauncher.data.minecraft.JavaRuntime;
 import com.atlauncher.data.minecraft.JavaRuntimeManifest;
 import com.atlauncher.data.minecraft.JavaRuntimeManifestFileType;
 import com.atlauncher.data.minecraft.JavaRuntimes;
 import com.atlauncher.data.minecraft.Library;
 import com.atlauncher.data.minecraft.LoggingFile;
-import com.atlauncher.data.minecraft.MCMod;
 import com.atlauncher.data.minecraft.MinecraftVersion;
 import com.atlauncher.data.minecraft.MojangAssetIndex;
 import com.atlauncher.data.minecraft.MojangDownload;
@@ -2081,23 +2079,10 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         DisableableMod mod = new DisableableMod();
 
         mod.optional = true;
-        mod.name = p.getFileName().toString();
-        mod.version = "Unknown";
-        mod.description = null;
+        mod.name = Optional.ofNullable(mod.getNameFromFile(p)).orElse(p.getFileName().toString());
+        mod.version = Optional.ofNullable(mod.getVersionFromFile(p)).orElse("Unknown");
+        mod.description = Optional.ofNullable(mod.getDescriptionFromFile(p)).orElse(null);
 
-        MCMod mcMod = Utils.getMCModForFile(p.toFile());
-        if (mcMod != null) {
-            mod.name = Optional.ofNullable(mcMod.name).orElse(p.getFileName().toString());
-            mod.version = Optional.ofNullable(mcMod.version).orElse("Unknown");
-            mod.description = Optional.ofNullable(mcMod.description).orElse(null);
-        } else {
-            FabricMod fabricMod = Utils.getFabricModForFile(p.toFile());
-            if (fabricMod != null) {
-                mod.name = Optional.ofNullable(fabricMod.name).orElse(p.getFileName().toString());
-                mod.version = Optional.ofNullable(fabricMod.version).orElse("Unknown");
-                mod.description = Optional.ofNullable(fabricMod.description).orElse(null);
-            }
-        }
 
         mod.file = p.getFileName().toString();
         mod.type = t;

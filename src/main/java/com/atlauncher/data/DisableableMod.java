@@ -23,7 +23,9 @@ import java.io.File;
 import java.io.Serializable;
 import java.nio.file.Path;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -34,8 +36,6 @@ import org.mini2Dx.gettext.GetText;
 import com.atlauncher.App;
 import com.atlauncher.data.curseforge.CurseForgeFile;
 import com.atlauncher.data.curseforge.CurseForgeProject;
-import com.atlauncher.data.minecraft.FabricMod;
-import com.atlauncher.data.minecraft.MCMod;
 import com.atlauncher.data.modrinth.ModrinthProject;
 import com.atlauncher.data.modrinth.ModrinthVersion;
 import com.atlauncher.exceptions.InvalidMinecraftVersion;
@@ -44,12 +44,16 @@ import com.atlauncher.gui.dialogs.ModrinthVersionSelectorDialog;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.managers.MinecraftManager;
+import com.atlauncher.managers.PerformanceManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.CurseForgeApi;
+import com.atlauncher.utils.InternalModMetadataUtils;
 import com.atlauncher.utils.ModrinthApi;
 import com.atlauncher.utils.Pair;
 import com.atlauncher.utils.Utils;
+import com.google.gson.JsonObject;
 import com.google.gson.annotations.SerializedName;
+import com.moandjiezana.toml.Toml;
 
 @SuppressWarnings("serial")
 public class DisableableMod implements Serializable {
@@ -65,6 +69,8 @@ public class DisableableMod implements Serializable {
     public boolean userAdded = false; // Default to not being user added
     public boolean wasSelected = true; // Default to it being selected on install
     public boolean skipped = false; // For browser download mods if they were skipped or not
+
+    public Map<String, String> internalModMetadata = new HashMap<>();
 
     @SerializedName(value = "curseForgeProjectId", alternate = { "curseModId" })
     public Integer curseForgeProjectId;
@@ -527,23 +533,144 @@ public class DisableableMod implements Serializable {
         mod.file = file.getName();
         mod.type = type;
         mod.optional = true;
-        mod.name = file.getName();
-        mod.version = "Unknown";
-        mod.description = null;
+        mod.name = Optional.ofNullable(mod.getNameFromFile(file.toPath())).orElse(file.getName());
+        mod.version = Optional.ofNullable(mod.getVersionFromFile(file.toPath())).orElse("Unknown");
+        mod.description = Optional.ofNullable(mod.getDescriptionFromFile(file.toPath())).orElse(null);
 
-        MCMod mcMod = Utils.getMCModForFile(file);
-        if (mcMod != null) {
-            mod.name = Optional.ofNullable(mcMod.name).orElse(file.getName());
-            mod.version = Optional.ofNullable(mcMod.version).orElse("Unknown");
-            mod.description = Optional.ofNullable(mcMod.description).orElse(null);
+        return mod;
+    }
+
+    private JsonObject getMcModInfoFile(Path path) {
+        String mcModInfoString;
+
+        if (internalModMetadata.containsKey("mcMod")) {
+            mcModInfoString = internalModMetadata.get("mcMod");
         } else {
-            FabricMod fabricMod = Utils.getFabricModForFile(file);
+            mcModInfoString = InternalModMetadataUtils.getRawInternalModMetadata(path.toFile(), "mcmod.info");
+            internalModMetadata.put("mcMod", mcModInfoString);
+        }
+
+        return InternalModMetadataUtils.parseMcModInfoFile(mcModInfoString);
+    }
+
+    private JsonObject getFabricModFile(Path path) {
+        String fabricModString;
+
+        if (internalModMetadata.containsKey("fabricMod")) {
+            fabricModString = internalModMetadata.get("fabricMod");
+        } else {
+            fabricModString = InternalModMetadataUtils.getRawInternalModMetadata(path.toFile(), "fabric.mod.json");
+            internalModMetadata.put("fabricMod", fabricModString);
+        }
+
+        return InternalModMetadataUtils.parseFabricModFile(fabricModString);
+    }
+
+    private JsonObject getQuiltModFile(Path path) {
+        String quiltModString;
+
+        if (internalModMetadata.containsKey("quiltMod")) {
+            quiltModString = internalModMetadata.get("quiltMod");
+        } else {
+            quiltModString = InternalModMetadataUtils.getRawInternalModMetadata(path.toFile(), "quilt.mod.json");
+            internalModMetadata.put("quiltMod", quiltModString);
+        }
+
+        return InternalModMetadataUtils.parseQuiltModFile(quiltModString);
+    }
+
+    private Toml getModsTomlFile(Path path) {
+        String modsTomlString;
+
+        if (internalModMetadata.containsKey("modsToml")) {
+            modsTomlString = internalModMetadata.get("modsToml");
+        } else {
+            modsTomlString = InternalModMetadataUtils.getRawInternalModMetadata(path.toFile(), "META-INF/mods.toml");
+            internalModMetadata.put("modsToml", modsTomlString);
+        }
+
+        return InternalModMetadataUtils.parseModsTomlFile(modsTomlString);
+    }
+
+    public void scanInternalModMetadata(Path path) {
+        PerformanceManager.start(String.format("scanInternalModMetadata::%s", path.getFileName().toString()));
+        getMcModInfoFile(path);
+        getFabricModFile(path);
+        getQuiltModFile(path);
+        getModsTomlFile(path);
+        PerformanceManager.end(String.format("scanInternalModMetadata::%s", path.getFileName().toString()));
+    }
+
+    public String getNameFromFile(Path path) {
+        JsonObject mcMod = getMcModInfoFile(path);
+        if (mcMod != null) {
+            return mcMod.has("name") ? mcMod.get("name").getAsString() : name;
+        } else {
+            JsonObject fabricMod = getFabricModFile(path);
             if (fabricMod != null) {
-                mod.name = Optional.ofNullable(fabricMod.name).orElse(file.getName());
-                mod.version = Optional.ofNullable(fabricMod.version).orElse("Unknown");
-                mod.description = Optional.ofNullable(fabricMod.description).orElse(null);
+                return fabricMod.has("name") ? fabricMod.get("name").getAsString() : name;
+            } else {
+                JsonObject quiltMod = getQuiltModFile(path);
+                if (quiltMod != null) {
+                    return quiltMod.has("name") ? quiltMod.get("name").getAsString() : name;
+                } else {
+                    Toml modsToml = getModsTomlFile(path);
+                    if (modsToml != null) {
+                        return modsToml.contains("mods.displayName") ? modsToml.getString("mods.displayName") : name;
+                    }
+                }
             }
         }
-        return mod;
+
+        return name;
+    }
+
+    public String getVersionFromFile(Path path) {
+        JsonObject mcMod = getMcModInfoFile(path);
+        if (mcMod != null) {
+            return mcMod.has("version") ? mcMod.get("version").getAsString() : version;
+        } else {
+            JsonObject fabricMod = getFabricModFile(path);
+            if (fabricMod != null) {
+                return fabricMod.has("version") ? fabricMod.get("version").getAsString() : version;
+            } else {
+                JsonObject quiltMod = getQuiltModFile(path);
+                if (quiltMod != null) {
+                    return quiltMod.has("version") ? quiltMod.get("version").getAsString() : version;
+                } else {
+                    Toml modsToml = getModsTomlFile(path);
+                    if (modsToml != null) {
+                        return modsToml.contains("mods.version") ? modsToml.getString("mods.version") : version;
+                    }
+                }
+            }
+        }
+
+        return version;
+    }
+
+    public String getDescriptionFromFile(Path path) {
+        JsonObject mcMod = getMcModInfoFile(path);
+        if (mcMod != null) {
+            return mcMod.has("description") ? mcMod.get("description").getAsString() : description;
+        } else {
+            JsonObject fabricMod = getFabricModFile(path);
+            if (fabricMod != null) {
+                return fabricMod.has("description") ? fabricMod.get("description").getAsString() : description;
+            } else {
+                JsonObject quiltMod = getQuiltModFile(path);
+                if (quiltMod != null) {
+                    return quiltMod.has("description") ? quiltMod.get("description").getAsString() : description;
+                } else {
+                    Toml modsToml = getModsTomlFile(path);
+                    if (modsToml != null) {
+                        return modsToml.contains("mods.description") ? modsToml.getString("mods.description")
+                                : description;
+                    }
+                }
+            }
+        }
+
+        return description;
     }
 }

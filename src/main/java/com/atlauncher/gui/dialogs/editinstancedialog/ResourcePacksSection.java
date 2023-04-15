@@ -21,6 +21,9 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.nio.file.Path;
+import java.util.Arrays;
+import java.util.List;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -41,7 +44,10 @@ import javax.swing.table.TableModel;
 
 import org.mini2Dx.gettext.GetText;
 
+import com.atlauncher.data.DisableableMod;
 import com.atlauncher.data.Instance;
+import com.atlauncher.data.Type;
+import com.atlauncher.managers.LogManager;
 import com.formdev.flatlaf.icons.FlatSearchIcon;
 
 public class ResourcePacksSection extends SectionPanel {
@@ -87,12 +93,24 @@ public class ResourcePacksSection extends SectionPanel {
         splitPane.setEnabled(false);
         splitPane.setResizeWeight(1.0);
 
-        Object[][] modsData = new Object[][] {
-                { "test-mod-1.jar", false, "Test", "1.0.0" },
-                { "test-mod-2.jar", true, "Test", "2.2.2.2" },
-                { "test-mod-3.jar", false, "Test", "fabric-5.5.5-1.19.2" },
-                { "test-mod-4.jar", false, "Test", "Unknown" },
-        };
+        List<Path> modPaths = instance.getModPathsFromFilesystem(
+                Arrays.asList(instance.ROOT.resolve("resourcepacks"), instance.ROOT.resolve("texturepacks")));
+
+        Object[][] modsData = modPaths.stream().map(path -> {
+            DisableableMod mod = instance.launcher.mods.parallelStream()
+                    .filter(m -> (m.type == Type.resourcepack || m.type == Type.texturepack)
+                            && m.file.equals(path.getFileName().toString()))
+                    .findFirst()
+                    .orElseGet(() -> {
+                        LogManager
+                                .warn(String.format("Failed to find mod for file %s. Generating temporary mod for it.",
+                                        path.getFileName().toString()));
+                        return DisableableMod.generateMod(path.toFile(), Type.resourcepack,
+                                !path.endsWith(".disabled"));
+                    });
+
+            return new Object[] { instance.ROOT.relativize(path).toString(), !mod.disabled, mod.name, mod.version };
+        }).toArray(Object[][]::new);
 
         tableModel = new DefaultTableModel(modsData, new String[] {
                 "", GetText.tr("Enabled?"), GetText.tr("Name"), GetText.tr("Version")

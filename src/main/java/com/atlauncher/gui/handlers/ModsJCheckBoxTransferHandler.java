@@ -40,8 +40,6 @@ import com.atlauncher.data.ModPlatform;
 import com.atlauncher.data.Type;
 import com.atlauncher.data.curseforge.CurseForgeFingerprint;
 import com.atlauncher.data.curseforge.CurseForgeProject;
-import com.atlauncher.data.minecraft.FabricMod;
-import com.atlauncher.data.minecraft.MCMod;
 import com.atlauncher.data.modrinth.ModrinthProject;
 import com.atlauncher.data.modrinth.ModrinthVersion;
 import com.atlauncher.gui.dialogs.EditModsDialog;
@@ -153,23 +151,9 @@ public class ModsJCheckBoxTransferHandler extends TransferHandler {
                     mod.file = file.getName();
                     mod.type = type;
                     mod.optional = true;
-                    mod.name = file.getName();
-                    mod.version = "Unknown";
-                    mod.description = null;
-
-                    MCMod mcMod = Utils.getMCModForFile(file);
-                    if (mcMod != null) {
-                        mod.name = Optional.ofNullable(mcMod.name).orElse(file.getName());
-                        mod.version = Optional.ofNullable(mcMod.version).orElse("Unknown");
-                        mod.description = Optional.ofNullable(mcMod.description).orElse(null);
-                    } else {
-                        FabricMod fabricMod = Utils.getFabricModForFile(file);
-                        if (fabricMod != null) {
-                            mod.name = Optional.ofNullable(fabricMod.name).orElse(file.getName());
-                            mod.version = Optional.ofNullable(fabricMod.version).orElse("Unknown");
-                            mod.description = Optional.ofNullable(fabricMod.description).orElse(null);
-                        }
-                    }
+                    mod.name = Optional.ofNullable(mod.getNameFromFile(file.toPath())).orElse(file.getName());
+                    mod.version = Optional.ofNullable(mod.getVersionFromFile(file.toPath())).orElse("Unknown");
+                    mod.description = Optional.ofNullable(mod.getDescriptionFromFile(file.toPath())).orElse(null);
 
                     if (!copyTo.exists()) {
                         copyTo.mkdirs();

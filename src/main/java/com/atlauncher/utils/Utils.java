@@ -87,10 +87,7 @@ import com.atlauncher.Gsons;
 import com.atlauncher.Network;
 import com.atlauncher.constants.Constants;
 import com.atlauncher.data.minecraft.ExtractRule;
-import com.atlauncher.data.minecraft.FabricMod;
-import com.atlauncher.data.minecraft.MCMod;
 import com.atlauncher.managers.LogManager;
-import com.google.gson.reflect.TypeToken;
 
 import net.iharder.Base64;
 
@@ -1546,38 +1543,6 @@ public class Utils {
                         && Integer.parseInt(versionParts[1]) > Integer.parseInt(matchedParts[1]))
                 || (versionParts[0].equals(matchedParts[0]) && versionParts[1].equals(matchedParts[1])
                         && Integer.parseInt(versionParts[2]) > Integer.parseInt(matchedParts[2]));
-    }
-
-    public static MCMod getMCModForFile(File file) {
-        try {
-            java.lang.reflect.Type type = new TypeToken<List<MCMod>>() {
-            }.getType();
-
-            List<MCMod> mods = Gsons.MINECRAFT.fromJson(ArchiveUtils.getFile(file.toPath(), "mcmod.info"), type);
-
-            if (mods.size() != 0 && mods.get(0) != null) {
-                return mods.get(0);
-            }
-        } catch (Exception ignored) {
-
-        }
-
-        return null;
-    }
-
-    public static FabricMod getFabricModForFile(File file) {
-        try {
-            FabricMod mod = Gsons.MINECRAFT.fromJson(ArchiveUtils.getFile(file.toPath(), "fabric.mod.json"),
-                    FabricMod.class);
-
-            if (mod != null) {
-                return mod;
-            }
-        } catch (Exception ignored2) {
-
-        }
-
-        return null;
     }
 
     public static boolean executableInPath(String executableName) {
