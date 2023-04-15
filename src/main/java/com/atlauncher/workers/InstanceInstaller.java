@@ -1272,7 +1272,6 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
 
         technicModpackExtractedPath = unzipLocation;
 
-        addPercent(5);
         // #. {0} is the platform the modpack is from
         fireTask(GetText.tr("Generating Pack Version From {0}", "Technic Zip"));
         fireSubProgressUnknown();
@@ -2861,7 +2860,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
     }
 
     private void downloadMods() throws Exception {
-        addPercent(25);
+        addPercent(10);
 
         if (multiMCManifest != null || selectedMods.size() == 0) {
             return;
@@ -2958,7 +2957,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
     }
 
     private void installMods() {
-        addPercent(25);
+        addPercent(10);
 
         if (multiMCManifest != null || this.selectedMods.size() == 0) {
             return;
@@ -2978,7 +2977,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
     }
 
     private void downloadTechnicSolderMods() {
-        addPercent(25);
+        addPercent(10);
 
         if (technicSolderModsToDownload.size() == 0) {
             return;
@@ -3397,6 +3396,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         }
 
         fireTask(GetText.tr("Checking Mods Metadata"));
+        addPercent(5);
         fireSubProgressUnknown();
 
         ExecutorService executor = Executors.newFixedThreadPool(10);
