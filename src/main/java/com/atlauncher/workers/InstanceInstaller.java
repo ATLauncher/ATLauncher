@@ -36,6 +36,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -2083,7 +2085,6 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         mod.version = Optional.ofNullable(mod.getVersionFromFile(p)).orElse("Unknown");
         mod.description = Optional.ofNullable(mod.getDescriptionFromFile(p)).orElse(null);
 
-
         mod.file = p.getFileName().toString();
         mod.type = t;
 
@@ -2166,12 +2167,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
             return false;
         }
 
-        checkModsOnCurseForge();
-        if (isCancelled()) {
-            return false;
-        }
-
-        checkModsOnModrinth();
+        checkModsInternalMetadata();
         if (isCancelled()) {
             return false;
         }
@@ -3292,10 +3288,6 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
             return;
         }
 
-        // #. {0} is the platform we're checking mods on (e.g. CurseForge/Modrinth)
-        fireTask(GetText.tr("Checking Mods On {0}", "CurseForge"));
-        fireSubProgressUnknown();
-
         Map<Long, DisableableMod> murmurHashes = new HashMap<>();
 
         this.modsInstalled.stream().filter(dm -> dm.curseForgeProject == null && dm.curseForgeFile == null)
@@ -3350,10 +3342,6 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
             return;
         }
 
-        // #. {0} is the platform we're checking mods on (e.g. CurseForge/Modrinth)
-        fireTask(GetText.tr("Checking Mods On {0}", "Modrinth"));
-        fireSubProgressUnknown();
-
         Map<String, DisableableMod> sha1Hashes = new HashMap<>();
 
         this.modsInstalled.stream().filter(dm -> dm.modrinthProject == null && dm.modrinthVersion == null)
@@ -3400,6 +3388,42 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                     }
                 }
             }
+        }
+    }
+
+    private void checkModsInternalMetadata() {
+        if (this.modsInstalled.size() == 0) {
+            return;
+        }
+
+        fireTask(GetText.tr("Checking Mods Metadata"));
+        fireSubProgressUnknown();
+
+        ExecutorService executor = Executors.newFixedThreadPool(10);
+
+        executor.execute(() -> {
+            checkModsOnCurseForge();
+        });
+
+        executor.execute(() -> {
+            checkModsOnModrinth();
+        });
+
+        // read in all mod files internal metadata
+        for (DisableableMod mod : modsInstalled) {
+            executor.execute(() -> {
+                mod.scanInternalModMetadata(mod.getFile(root, this.packVersion.minecraft).toPath());
+            });
+        }
+        executor.shutdown();
+
+        try {
+            if (!executor.awaitTermination(60, TimeUnit.SECONDS)) {
+                executor.shutdownNow();
+            }
+        } catch (InterruptedException ex) {
+            executor.shutdownNow();
+            Thread.currentThread().interrupt();
         }
     }
 
