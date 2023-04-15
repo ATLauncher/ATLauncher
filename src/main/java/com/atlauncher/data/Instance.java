@@ -3135,8 +3135,11 @@ public class Instance extends MinecraftVersion {
                                                     ? com.atlauncher.data.Type.shaderpack
                                                     : com.atlauncher.data.Type.mods));
 
-                            return DisableableMod.generateMod(file.toFile(), fileType,
+                            DisableableMod mod = DisableableMod.generateMod(file.toFile(), fileType,
                                     !file.getParent().equals(ROOT.resolve("disabledmods")));
+
+                            mod.scanInternalModMetadata(file);
+                            return mod;
                         })
                         .collect(Collectors.toList());
 

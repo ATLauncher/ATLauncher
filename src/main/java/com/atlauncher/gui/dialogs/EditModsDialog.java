@@ -244,6 +244,8 @@ public class EditModsDialog extends JDialog {
                         if (type != null) {
                             DisableableMod mod = DisableableMod.generateMod(file, type,
                                     App.settings.enableAddedModsByDefault);
+                            mod.scanInternalModMetadata(file.toPath());
+
                             File copyTo = App.settings.enableAddedModsByDefault ? mod.getFile(instance)
                                     : mod.getDisabledFile(instance);
 

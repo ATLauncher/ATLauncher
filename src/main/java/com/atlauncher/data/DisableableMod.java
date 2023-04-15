@@ -26,7 +26,6 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Properties;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -534,9 +533,9 @@ public class DisableableMod implements Serializable {
         mod.file = file.getName();
         mod.type = type;
         mod.optional = true;
-        mod.name = Optional.ofNullable(mod.getNameFromFile(file.toPath())).orElse(file.getName());
-        mod.version = Optional.ofNullable(mod.getVersionFromFile(file.toPath())).orElse("Unknown");
-        mod.description = Optional.ofNullable(mod.getDescriptionFromFile(file.toPath())).orElse(null);
+        mod.name = file.getName();
+        mod.version = "Unknown";
+        mod.description = null;
 
         return mod;
     }
