@@ -20,8 +20,10 @@ package com.atlauncher.gui.dialogs.editinstancedialog;
 import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.Date;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -211,6 +213,8 @@ public class InformationSection extends SectionPanel {
         JLabel totalTimePlayed = new JLabel(convertDurationToHumanString(instance.launcher.totalPlayTime));
         mainPanel.add(totalTimePlayed, gbc);
 
+        SimpleDateFormat formatter = new SimpleDateFormat(App.settings.dateFormat + " HH:mm:ss a");
+
         // Last Played
         gbc.gridx = 0;
         gbc.gridy++;
@@ -225,6 +229,9 @@ public class InformationSection extends SectionPanel {
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         JLabel lastPlayed = new JLabel(instance.launcher.lastPlayed == Instant.EPOCH ? GetText.tr("Never")
                 : getTimeAgo(instance.launcher.lastPlayed));
+        if (instance.launcher.lastPlayed != Instant.EPOCH) {
+            lastPlayed.setToolTipText(formatter.format(new Date(instance.launcher.lastPlayed.toEpochMilli())));
+        }
         mainPanel.add(lastPlayed, gbc);
 
         // Created
@@ -241,6 +248,9 @@ public class InformationSection extends SectionPanel {
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         JLabel created = new JLabel(instance.launcher.createdAt == Instant.EPOCH ? GetText.tr("Unknown")
                 : getTimeAgo(instance.launcher.createdAt));
+        if (instance.launcher.createdAt != Instant.EPOCH) {
+            created.setToolTipText(formatter.format(new Date(instance.launcher.createdAt.toEpochMilli())));
+        }
         mainPanel.add(created, gbc);
 
         // Last Updated
@@ -259,6 +269,9 @@ public class InformationSection extends SectionPanel {
         gbc.weightx = 1;
         JLabel lastUpdated = new JLabel(instance.launcher.updatedAt == Instant.EPOCH ? GetText.tr("Never")
                 : getTimeAgo(instance.launcher.updatedAt));
+        if (instance.launcher.updatedAt != Instant.EPOCH) {
+            lastUpdated.setToolTipText(formatter.format(new Date(instance.launcher.updatedAt.toEpochMilli())));
+        }
         mainPanel.add(lastUpdated, gbc);
 
         splitPane.setLeftComponent(mainPanel);
