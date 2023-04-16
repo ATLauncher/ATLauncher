@@ -98,7 +98,11 @@ public class ArchiveUtils {
 
     public static String getFile(Path archivePath, String file) {
         try {
-            return new String(ZipUtil.unpackEntry(createInputStream(archivePath), file));
+            byte[] contents = ZipUtil.unpackEntry(createInputStream(archivePath), file);
+
+            if (contents != null) {
+                return new String(contents);
+            }
         } catch (Throwable t) {
             LogManager.logStackTrace(t);
             // allow this to fail as we can fallback to Apache Commons library

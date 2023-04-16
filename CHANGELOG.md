@@ -11,5 +11,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 ### Fixes
 - Embedded relationship mods showing as required by the launcher
 - Issue with some CurseForge packs not displaying after installing
+- A NPE happening when reading contents of files from within zip/jar that doesn't exist
 
 ### Misc
