@@ -24,13 +24,13 @@ import java.awt.GridLayout;
 import java.io.IOException;
 
 import javax.swing.BorderFactory;
+import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
-import javax.swing.JTextField;
 import javax.swing.JTextPane;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
@@ -83,7 +83,10 @@ public class AboutTab extends JPanel implements Tab, RelocalizationListener {
                 infoLabel.setText(Constants.LAUNCHER_NAME);
                 infoLabel.setFont(ATLauncherLaf.getInstance().getTitleFont());
                 infoLabel.setBorder(BorderFactory.createEmptyBorder(0, 4, 0, 0));
-                add(infoLabel);
+                Box box = Box.createHorizontalBox();
+                box.add(infoLabel);
+                box.add(Box.createHorizontalGlue());
+                add(box);
 
                 add(new JSeparator());
             }
@@ -124,14 +127,17 @@ public class AboutTab extends JPanel implements Tab, RelocalizationListener {
                 contributorLabel = new JLabel();
                 contributorLabel.setFont(ATLauncherLaf.getInstance().getTitleFont());
                 contributorLabel.setBorder(BorderFactory.createEmptyBorder(0, 4, 0, 0));
-                add(contributorLabel);
+                Box box = Box.createHorizontalBox();
+                box.add(contributorLabel);
+                box.add(Box.createHorizontalGlue());
+                add(box);
                 add(new JSeparator());
             }
             // Content
             {
                 // Create list
                 JPanel authorsList = new JPanel();
-                authorsList.setLayout(new GridLayout(2, 0));
+                authorsList.setLayout(new GridLayout(1, 0));
 
                 // Populate list
                 for (Author author : viewModel.getAuthors()) {
@@ -154,6 +160,7 @@ public class AboutTab extends JPanel implements Tab, RelocalizationListener {
                 // Create scroll panel
                 JScrollPane contributorsScrollPane = new JScrollPane(authorsList);
                 contributorsScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+                contributorsScrollPane.setPreferredSize(new Dimension(0, 128));
                 SwingUtilities.invokeLater(() -> contributorsScrollPane.getHorizontalScrollBar().setValue(0));
                 add(contributorsScrollPane);
             }
@@ -167,21 +174,37 @@ public class AboutTab extends JPanel implements Tab, RelocalizationListener {
                 acknowledgementsLabel.setFont(ATLauncherLaf.getInstance().getTitleFont());
                 acknowledgementsLabel.setBorder(BorderFactory.createEmptyBorder(0, 4, 0, 0));
                 acknowledgementsLabel.setHorizontalAlignment(SwingConstants.LEADING);
-                add(acknowledgementsLabel);
+                Box box = Box.createHorizontalBox();
+                box.add(acknowledgementsLabel);
+                box.add(Box.createHorizontalGlue());
+                add(box);
                 add(new JSeparator());
             }
 
             // Content
             {
-                // Libraries
+
+                // Image sources
                 {
+
+                }
+
+                // Libraries
+                JPanel librariesPanel = new JPanel();
+                {
+                    librariesPanel.setLayout(new BoxLayout(librariesPanel, BoxLayout.PAGE_AXIS));
+
                     librariesLabel = new JLabel();
                     librariesLabel.setFont(ATLauncherLaf.getInstance().getTitleFont());
-                    add(librariesLabel);
-                    add(new JSeparator());
+                    librariesLabel.setBorder(BorderFactory.createEmptyBorder(0, 4, 0, 0));
+                    Box box = Box.createHorizontalBox();
+                    box.add(librariesLabel);
+                    box.add(Box.createHorizontalGlue());
+                    librariesPanel.add(box);
+                    librariesPanel.add(new JSeparator());
 
-                    JPanel librariesPanel = new JPanel();
-                    librariesPanel.setLayout(new BoxLayout(librariesPanel, BoxLayout.PAGE_AXIS));
+                    JPanel librariesListPanel = new JPanel();
+                    librariesListPanel.setLayout(new BoxLayout(librariesListPanel, BoxLayout.PAGE_AXIS));
                     for (LauncherLibrary library : viewModel.getLibraries()) {
                         JButton button = new JButton();
                         button.setText(library.name);
@@ -192,23 +215,23 @@ public class AboutTab extends JPanel implements Tab, RelocalizationListener {
                                 LogManager.logStackTrace(e);
                             }
                         });
-                        librariesPanel.add(button);
+                        librariesListPanel.add(button);
                     }
-                    add(librariesPanel);
+                    librariesPanel.add(librariesListPanel);
                 }
-
-                // Image sources
-                {
-
-                }
-
                 // License
+                JPanel licensePanel = new JPanel();
                 {
+                    licensePanel.setLayout(new BoxLayout(licensePanel, BoxLayout.PAGE_AXIS));
                     licenseLabel = new JLabel();
                     licenseLabel.setFont(ATLauncherLaf.getInstance().getTitleFont());
-                    add(licenseLabel);
-                    add(new JSeparator());
-                    JTextField license = new JTextField();
+                    licenseLabel.setBorder(BorderFactory.createEmptyBorder(0, 4, 0, 0));
+                    Box box = Box.createHorizontalBox();
+                    box.add(licenseLabel);
+                    box.add(Box.createHorizontalGlue());
+                    licensePanel.add(box);
+                    licensePanel.add(new JSeparator());
+                    JTextPane license = new JTextPane();
                     license.setEditable(false);
                     license.setText("ATLauncher - https://github.com/ATLauncher/ATLauncher\n" +
                         "Copyright (C) 2013-2023 ATLauncher\n" +
@@ -225,9 +248,12 @@ public class AboutTab extends JPanel implements Tab, RelocalizationListener {
                         "\n" +
                         "You should have received a copy of the GNU General Public License\n" +
                         "along with this program. If not, see <http://www.gnu.org/licenses/>.\n");
-                    add(license);
+                    JScrollPane scrollPane = new JScrollPane(license);
+                    licensePanel.add(scrollPane);
                 }
 
+                add(librariesPanel);
+                add(licensePanel);
             }
         }
 
