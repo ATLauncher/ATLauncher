@@ -173,16 +173,12 @@ public class AboutTab extends JPanel implements Tab, RelocalizationListener {
 
             // Content
             {
-                JPanel acknowledgementsContent = new JPanel();
-                JScrollPane acknowledgementsScrollPane = new JScrollPane(acknowledgementsContent);
-                acknowledgementsContent.setLayout(new BoxLayout(acknowledgementsContent, BoxLayout.PAGE_AXIS));
-
                 // Libraries
                 {
                     librariesLabel = new JLabel();
                     librariesLabel.setFont(ATLauncherLaf.getInstance().getTitleFont());
-                    acknowledgementsContent.add(librariesLabel);
-                    acknowledgementsContent.add(new JSeparator());
+                    add(librariesLabel);
+                    add(new JSeparator());
 
                     JPanel librariesPanel = new JPanel();
                     librariesPanel.setLayout(new BoxLayout(librariesPanel, BoxLayout.PAGE_AXIS));
@@ -198,7 +194,7 @@ public class AboutTab extends JPanel implements Tab, RelocalizationListener {
                         });
                         librariesPanel.add(button);
                     }
-                    acknowledgementsContent.add(librariesPanel);
+                    add(librariesPanel);
                 }
 
                 // Image sources
@@ -210,8 +206,8 @@ public class AboutTab extends JPanel implements Tab, RelocalizationListener {
                 {
                     licenseLabel = new JLabel();
                     licenseLabel.setFont(ATLauncherLaf.getInstance().getTitleFont());
-                    acknowledgementsContent.add(licenseLabel);
-                    acknowledgementsContent.add(new JSeparator());
+                    add(licenseLabel);
+                    add(new JSeparator());
                     JTextField license = new JTextField();
                     license.setEditable(false);
                     license.setText("ATLauncher - https://github.com/ATLauncher/ATLauncher\n" +
@@ -229,10 +225,9 @@ public class AboutTab extends JPanel implements Tab, RelocalizationListener {
                         "\n" +
                         "You should have received a copy of the GNU General Public License\n" +
                         "along with this program. If not, see <http://www.gnu.org/licenses/>.\n");
-                    acknowledgementsContent.add(license);
+                    add(license);
                 }
 
-                add(acknowledgementsScrollPane);
             }
         }
 
