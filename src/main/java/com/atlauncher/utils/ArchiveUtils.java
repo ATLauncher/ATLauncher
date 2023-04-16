@@ -98,10 +98,10 @@ public class ArchiveUtils {
 
     public static String getFile(Path archivePath, String file) {
         try {
-            byte[] entry = ZipUtil.unpackEntry(createInputStream(archivePath), file);
+            byte[] contents = ZipUtil.unpackEntry(createInputStream(archivePath), file);
 
-            if (entry != null) {
-                return new String(entry);
+            if (contents != null) {
+                return new String(contents);
             }
         } catch (Throwable t) {
             LogManager.logStackTrace(t);

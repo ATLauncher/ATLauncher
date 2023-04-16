@@ -14,5 +14,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Embedded relationship mods showing as required by the launcher
 - Main progress bar when installing instances not being super accurate
 - Mod files not being upper/lower cased when modpack devs set it
+- Issue with some CurseForge packs not displaying after installing
+- A NPE happening when reading contents of files from within zip/jar that doesn't exist
 
 ### Misc
