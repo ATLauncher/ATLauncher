@@ -164,7 +164,9 @@ public class ModsSection extends SectionPanel {
         synchronized (this) {
             for (Pair<Path, DisableableMod> pair : modsData) {
                 executor.execute(() -> {
-                    pair.right().scanInternalModMetadata(pair.left());
+                    if (pair.right().internalModMetadata.size() == 0) {
+                        pair.right().scanInternalModMetadata(pair.left());
+                    }
 
                     String name = pair.right().getNameFromFile(pair.left());
                     String version = pair.right().getVersionFromFile(pair.left());
