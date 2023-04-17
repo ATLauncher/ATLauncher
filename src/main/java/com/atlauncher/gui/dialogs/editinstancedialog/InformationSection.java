@@ -287,14 +287,18 @@ public class InformationSection extends SectionPanel {
         changePackVersionButton.setVisible(instance.isUpdatable());
         sideBar.add(changePackVersionButton);
 
-        JButton changeLoaderVersionButton = new JButton(
-                GetText.tr("Change {0} Version", instance.launcher.loaderVersion.getLoaderType()));
+        JButton changeLoaderVersionButton = new JButton();
         changeLoaderVersionButton.setVisible(instance.launcher.loaderVersion != null);
+        if (instance.launcher.loaderVersion != null) {
+            changeLoaderVersionButton
+                    .setText(GetText.tr("Change {0} Version", instance.launcher.loaderVersion.getLoaderType()));
+        }
         sideBar.add(changeLoaderVersionButton);
         sideBar.addSeparator();
 
         JButton removeInstallFabricButton = new JButton(
-                instance.launcher.loaderVersion.isFabric() ? GetText.tr("Remove {0}", "Fabric")
+                instance.launcher.loaderVersion != null && instance.launcher.loaderVersion.isFabric()
+                        ? GetText.tr("Remove {0}", "Fabric")
                         : GetText.tr("Install {0}", "Fabric"));
         removeInstallFabricButton
                 .setEnabled(instance.launcher.loaderVersion == null || instance.launcher.loaderVersion.isFabric());
@@ -306,7 +310,8 @@ public class InformationSection extends SectionPanel {
         sideBar.add(removeInstallFabricButton);
 
         JButton removeInstallForgeButton = new JButton(
-                instance.launcher.loaderVersion.isForge() ? GetText.tr("Remove {0}", "Forge")
+                instance.launcher.loaderVersion != null && instance.launcher.loaderVersion.isForge()
+                        ? GetText.tr("Remove {0}", "Forge")
                         : GetText.tr("Install {0}", "Forge"));
         removeInstallForgeButton
                 .setEnabled(instance.launcher.loaderVersion == null || instance.launcher.loaderVersion.isForge());
@@ -318,7 +323,8 @@ public class InformationSection extends SectionPanel {
         sideBar.add(removeInstallForgeButton);
 
         JButton removeInstallLegacyFabricButton = new JButton(
-                instance.launcher.loaderVersion.isLegacyFabric() ? GetText.tr("Remove {0}", "Legacy Fabric")
+                instance.launcher.loaderVersion != null && instance.launcher.loaderVersion.isLegacyFabric()
+                        ? GetText.tr("Remove {0}", "Legacy Fabric")
                         : GetText.tr("Install {0}", "Legacy Fabric"));
         removeInstallLegacyFabricButton.setEnabled(
                 instance.launcher.loaderVersion == null || instance.launcher.loaderVersion.isLegacyFabric());
@@ -330,7 +336,8 @@ public class InformationSection extends SectionPanel {
         sideBar.add(removeInstallLegacyFabricButton);
 
         JButton removeInstallQuiltButton = new JButton(
-                instance.launcher.loaderVersion.isQuilt() ? GetText.tr("Remove {0}", "Quilt")
+                instance.launcher.loaderVersion != null && instance.launcher.loaderVersion.isQuilt()
+                        ? GetText.tr("Remove {0}", "Quilt")
                         : GetText.tr("Install {0}", "Quilt"));
         removeInstallQuiltButton
                 .setEnabled(instance.launcher.loaderVersion == null || instance.launcher.loaderVersion.isQuilt());
