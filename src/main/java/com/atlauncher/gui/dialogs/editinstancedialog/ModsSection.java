@@ -168,8 +168,8 @@ public class ModsSection extends SectionPanel {
                         pair.right().scanInternalModMetadata(pair.left());
                     }
 
-                    String name = pair.right().getNameFromFile(pair.left());
-                    String version = pair.right().getVersionFromFile(pair.left());
+                    String name = pair.right().getNameFromFile(instance, pair.left());
+                    String version = pair.right().getVersionFromFile(instance, pair.left());
 
                     SwingUtilities.invokeLater(() -> {
                         int rowIndex = -1;

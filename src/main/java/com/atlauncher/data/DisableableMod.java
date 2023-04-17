@@ -617,6 +617,40 @@ public class DisableableMod implements Serializable {
     }
 
     public String getNameFromFile(Path path) {
+        return getNameFromFile(null, path);
+    }
+
+    public String getNameFromFile(Instance instance, Path path) {
+        if (instance != null && instance.getLoaderVersion() != null) {
+            if (instance.getLoaderVersion().isFabric() || instance.getLoaderVersion().isLegacyFabric()) {
+                JsonObject fabricMod = getFabricModFile(path);
+                if (fabricMod != null) {
+                    return fabricMod.has("name") ? fabricMod.get("name").getAsString() : name;
+                }
+            } else if (instance.getLoaderVersion().isQuilt()) {
+                JsonObject quiltMod = getQuiltModFile(path);
+                if (quiltMod != null) {
+                    return quiltMod.has("name") ? quiltMod.get("name").getAsString() : name;
+                }
+
+                JsonObject fabricMod = getFabricModFile(path);
+                if (fabricMod != null) {
+                    return fabricMod.has("name") ? fabricMod.get("name").getAsString() : name;
+                }
+            } else if (instance.getLoaderVersion().isForge()) {
+                JsonObject mcMod = getMcModInfoFile(path);
+                if (mcMod != null) {
+                    return mcMod.has("name") ? mcMod.get("name").getAsString() : name;
+                }
+
+                Toml modsToml = getModsTomlFile(path);
+                if (modsToml != null) {
+                    return modsToml.contains("mods[0].displayName") ? modsToml.getString("mods[0].displayName")
+                            : name;
+                }
+            }
+        }
+
         JsonObject mcMod = getMcModInfoFile(path);
         if (mcMod != null) {
             return mcMod.has("name") ? mcMod.get("name").getAsString() : name;
@@ -642,6 +676,48 @@ public class DisableableMod implements Serializable {
     }
 
     public String getVersionFromFile(Path path) {
+        return getVersionFromFile(null, path);
+    }
+
+    public String getVersionFromFile(Instance instance, Path path) {
+        if (instance != null && instance.getLoaderVersion() != null) {
+            if (instance.getLoaderVersion().isFabric() || instance.getLoaderVersion().isLegacyFabric()) {
+                JsonObject fabricMod = getFabricModFile(path);
+                if (fabricMod != null) {
+                    return fabricMod.has("version") ? fabricMod.get("version").getAsString() : version;
+                }
+            } else if (instance.getLoaderVersion().isQuilt()) {
+                JsonObject quiltMod = getQuiltModFile(path);
+                if (quiltMod != null) {
+                    return quiltMod.has("version") ? quiltMod.get("version").getAsString() : version;
+                }
+
+                JsonObject fabricMod = getFabricModFile(path);
+                if (fabricMod != null) {
+                    return fabricMod.has("version") ? fabricMod.get("version").getAsString() : version;
+                }
+            } else if (instance.getLoaderVersion().isForge()) {
+                JsonObject mcMod = getMcModInfoFile(path);
+                if (mcMod != null) {
+                    return mcMod.has("version") ? mcMod.get("version").getAsString() : version;
+                }
+
+                Toml modsToml = getModsTomlFile(path);
+                if (modsToml != null) {
+                    String parsedVersion = modsToml.contains("mods[0].version")
+                            ? modsToml.getString("mods[0].version")
+                            : version;
+
+                    if (parsedVersion.equals("${file.jarVersion}")) {
+                        Properties manifestMf = getManifestMfFile(path);
+                        parsedVersion = manifestMf.getProperty("Implementation-Version");
+                    }
+
+                    return parsedVersion;
+                }
+            }
+        }
+
         JsonObject mcMod = getMcModInfoFile(path);
         if (mcMod != null) {
             return mcMod.has("version") ? mcMod.get("version").getAsString() : version;
@@ -675,6 +751,40 @@ public class DisableableMod implements Serializable {
     }
 
     public String getDescriptionFromFile(Path path) {
+        return getDescriptionFromFile(null, path);
+    }
+
+    public String getDescriptionFromFile(Instance instance, Path path) {
+        if (instance != null && instance.getLoaderVersion() != null) {
+            if (instance.getLoaderVersion().isFabric() || instance.getLoaderVersion().isLegacyFabric()) {
+                JsonObject fabricMod = getFabricModFile(path);
+                if (fabricMod != null) {
+                    return fabricMod.has("description") ? fabricMod.get("description").getAsString() : description;
+                }
+            } else if (instance.getLoaderVersion().isQuilt()) {
+                JsonObject quiltMod = getQuiltModFile(path);
+                if (quiltMod != null) {
+                    return quiltMod.has("description") ? quiltMod.get("description").getAsString() : description;
+                }
+
+                JsonObject fabricMod = getFabricModFile(path);
+                if (fabricMod != null) {
+                    return fabricMod.has("description") ? fabricMod.get("description").getAsString() : description;
+                }
+            } else if (instance.getLoaderVersion().isForge()) {
+                JsonObject mcMod = getMcModInfoFile(path);
+                if (mcMod != null) {
+                    return mcMod.has("description") ? mcMod.get("description").getAsString() : description;
+                }
+
+                Toml modsToml = getModsTomlFile(path);
+                if (modsToml != null) {
+                    return modsToml.contains("mods[0].description") ? modsToml.getString("mods[0].description")
+                            : description;
+                }
+            }
+        }
+
         JsonObject mcMod = getMcModInfoFile(path);
         if (mcMod != null) {
             return mcMod.has("description") ? mcMod.get("description").getAsString() : description;
