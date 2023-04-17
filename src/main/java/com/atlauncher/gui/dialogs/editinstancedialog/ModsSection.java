@@ -397,30 +397,50 @@ public class ModsSection extends SectionPanel {
         JMenuItem openDiscordMenuItem = new JMenuItem(GetText.tr("Open Discord"));
         openDiscordMenuItem.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+                Optional<DisableableMod> selectedMod = getFirstSelectedMod();
+                if (selectedMod.isPresent() && selectedMod.get().getDiscordInviteUrl() != null) {
+                    OS.openWebBrowser(selectedMod.get().getDiscordInviteUrl());
+                }
             }
         });
 
         JMenuItem openSourceMenuItem = new JMenuItem(GetText.tr("Open Source"));
         openSourceMenuItem.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+                Optional<DisableableMod> selectedMod = getFirstSelectedMod();
+                if (selectedMod.isPresent() && selectedMod.get().getSourceUrl() != null) {
+                    OS.openWebBrowser(selectedMod.get().getSourceUrl());
+                }
             }
         });
 
         JMenuItem openSupportMenuItem = new JMenuItem(GetText.tr("Open Support"));
         openSupportMenuItem.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+                Optional<DisableableMod> selectedMod = getFirstSelectedMod();
+                if (selectedMod.isPresent() && selectedMod.get().getSupportUrl() != null) {
+                    OS.openWebBrowser(selectedMod.get().getSupportUrl());
+                }
             }
         });
 
         JMenuItem openWebsiteMenuItem = new JMenuItem(GetText.tr("Open Website"));
         openWebsiteMenuItem.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+                Optional<DisableableMod> selectedMod = getFirstSelectedMod();
+                if (selectedMod.isPresent() && selectedMod.get().getWebsiteUrl() != null) {
+                    OS.openWebBrowser(selectedMod.get().getWebsiteUrl());
+                }
             }
         });
 
         JMenuItem openWikiMenuItem = new JMenuItem(GetText.tr("Open Wiki"));
         openWikiMenuItem.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+                Optional<DisableableMod> selectedMod = getFirstSelectedMod();
+                if (selectedMod.isPresent() && selectedMod.get().getWikiUrl() != null) {
+                    OS.openWebBrowser(selectedMod.get().getWikiUrl());
+                }
             }
         });
 
