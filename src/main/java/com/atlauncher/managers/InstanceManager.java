@@ -160,6 +160,19 @@ public class InstanceManager {
             }
         });
 
+        // scan internal metadata from instance mods
+        LogManager.info("Scanning instances for internal mod metadata. This is a one time operation.");
+        Data.INSTANCES.parallelStream()
+                .filter(instance -> instance.launcher.mods != null && instance.launcher.mods.size() != 0
+                        && !instance.launcher.mods.stream().anyMatch(m -> m.internalModMetadata.size() != 0))
+                .forEach(instance -> {
+                    instance.launcher.mods.parallelStream()
+                            .forEach(mod -> {
+                                mod.scanInternalModMetadata(mod.getFile(instance.ROOT, instance.id).toPath());
+                            });
+                    instance.save();
+                });
+
         LogManager.debug("Finished loading instances");
         PerformanceManager.end();
     }

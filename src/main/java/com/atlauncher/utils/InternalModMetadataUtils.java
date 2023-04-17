@@ -25,7 +25,6 @@ import java.util.Properties;
 import com.atlauncher.Gsons;
 import com.atlauncher.data.minecraft.metadata.FabricMod;
 import com.atlauncher.data.minecraft.metadata.MCMod;
-import com.atlauncher.managers.PerformanceManager;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 import com.moandjiezana.toml.Toml;
@@ -33,14 +32,10 @@ import com.moandjiezana.toml.Toml;
 public class InternalModMetadataUtils {
 
     public static String getRawInternalModMetadata(File file, String filename) {
-        PerformanceManager.start(String.format("getRawInternalModMetadata::%s::%s", file.getName(), filename));
-
         String data = null;
         if (ArchiveUtils.archiveContainsFile(file.toPath(), filename)) {
             data = ArchiveUtils.getFile(file.toPath(), filename);
         }
-
-        PerformanceManager.end(String.format("getRawInternalModMetadata::%s::%s", file.getName(), filename));
 
         return data;
     }
