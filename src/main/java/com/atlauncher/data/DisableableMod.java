@@ -525,6 +525,58 @@ public class DisableableMod implements Serializable {
         return true;
     }
 
+    public String getDiscordInviteUrl() {
+        if (modrinthProject != null && modrinthProject.discordUrl != null) {
+            return modrinthProject.discordUrl;
+        }
+
+        return null;
+    }
+
+    public String getSupportUrl() {
+        if (modrinthProject != null && modrinthProject.issuesUrl != null) {
+            return modrinthProject.issuesUrl;
+        }
+
+        if (curseForgeProject != null && curseForgeProject.hasIssuesUrl()) {
+            return curseForgeProject.getIssuesUrl();
+        }
+
+        return null;
+    }
+
+    public String getWebsiteUrl() {
+        if (modrinthProject != null && modrinthProject.projectType != null && modrinthProject.slug != null) {
+            return String.format("https://modrinth.com/%s/%s", modrinthProject.projectType, modrinthProject.slug);
+        }
+
+        if (curseForgeProject != null && curseForgeProject.hasWebsiteUrl()) {
+            return curseForgeProject.getWebsiteUrl();
+        }
+
+        return null;
+    }
+
+    public String getWikiUrl() {
+        if (modrinthProject != null && modrinthProject.wikiUrl != null) {
+            return modrinthProject.wikiUrl;
+        }
+
+        if (curseForgeProject != null && curseForgeProject.hasWikiUrl()) {
+            return curseForgeProject.getWikiUrl();
+        }
+
+        return null;
+    }
+
+    public String getSourceUrl() {
+        if (modrinthProject != null && modrinthProject.sourceUrl != null) {
+            return modrinthProject.sourceUrl;
+        }
+
+        return null;
+    }
+
     public static DisableableMod generateMod(File file, com.atlauncher.data.Type type, boolean enabled) {
         DisableableMod mod = new DisableableMod();
         mod.disabled = !enabled;
@@ -618,6 +670,10 @@ public class DisableableMod implements Serializable {
 
     public String getNameFromFile(Path path) {
         return getNameFromFile(null, path);
+    }
+
+    public String getNameFromFile(Instance instance) {
+        return getNameFromFile(instance, getFile(instance).toPath());
     }
 
     public String getNameFromFile(Instance instance, Path path) {

@@ -89,7 +89,7 @@ public class LogsSection extends SectionPanel {
         copyToClipboardButton.setEnabled(false);
         sideBar.add(copyToClipboardButton);
 
-        JButton showInExplorerButton = new JButton(GetText.tr("Show In Explorer"));
+        JButton showInExplorerButton = new JButton(GetText.tr("Show In File Explorer"));
         showInExplorerButton.setEnabled(false);
         sideBar.add(showInExplorerButton);
         sideBar.addSeparator();
