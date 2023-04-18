@@ -36,7 +36,7 @@ public class IconTitledBorder extends TitledBorder {
     public IconTitledBorder(String title, Font font, Icon icon) {
         super(title);
         setTitleFont(font);
-        this.icon = resizeIcon(icon, 20);
+        this.icon = icon == null ? null : resizeIcon(icon, 20);
     }
 
     private Icon resizeIcon(Icon icon, int newHeight) {
