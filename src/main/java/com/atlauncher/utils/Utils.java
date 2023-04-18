@@ -58,6 +58,7 @@ import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -141,12 +142,13 @@ public class Utils {
     public static File getOSStorageDir() {
         switch (OS.getOS()) {
             case WINDOWS:
-                return new File(System.getenv("APPDATA"), "/." + Constants.LAUNCHER_NAME.toLowerCase());
+                return new File(System.getenv("APPDATA"), "/." + Constants.LAUNCHER_NAME.toLowerCase(Locale.ENGLISH));
             case OSX:
                 return new File(System.getProperty("user.home"),
-                        "/Library/Application Support/." + Constants.LAUNCHER_NAME.toLowerCase());
+                        "/Library/Application Support/." + Constants.LAUNCHER_NAME.toLowerCase(Locale.ENGLISH));
             default:
-                return new File(System.getProperty("user.home"), "/." + Constants.LAUNCHER_NAME.toLowerCase());
+                return new File(System.getProperty("user.home"),
+                        "/." + Constants.LAUNCHER_NAME.toLowerCase(Locale.ENGLISH));
         }
     }
 

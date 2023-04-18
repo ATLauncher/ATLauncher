@@ -25,6 +25,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -84,7 +85,7 @@ public class PackManager {
             }
         }
 
-        packs.sort(Comparator.comparing(p -> p.getName().toLowerCase()));
+        packs.sort(Comparator.comparing(p -> p.getName().toLowerCase(Locale.ENGLISH)));
 
         if (sortDescending) {
             Collections.reverse(packs);
@@ -287,7 +288,8 @@ public class PackManager {
         PerformanceManager.start();
         File[] files = FileSystem.IMAGES.toFile().listFiles();
 
-        Set<String> packImageFilenames = Data.PACKS.stream().map(p -> p.getSafeName().toLowerCase() + ".png")
+        Set<String> packImageFilenames = Data.PACKS.stream()
+                .map(p -> p.getSafeName().toLowerCase(Locale.ENGLISH) + ".png")
                 .collect(Collectors.toSet());
         packImageFilenames.add("defaultimage.png");
 

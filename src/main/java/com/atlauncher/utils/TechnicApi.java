@@ -18,6 +18,7 @@
 package com.atlauncher.utils;
 
 import java.io.IOException;
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 import com.atlauncher.constants.Constants;
@@ -36,7 +37,7 @@ public class TechnicApi {
     public static TechnicSearchResults getTrendingModpacks() {
         return Download.build()
                 .setUrl(String.format("%s/trending?build=%s", Constants.TECHNIC_API_URL,
-                        Constants.LAUNCHER_NAME.toLowerCase()))
+                        Constants.LAUNCHER_NAME.toLowerCase(Locale.ENGLISH)))
                 .cached(new CacheControl.Builder().maxStale(10, TimeUnit.MINUTES).build())
                 .asClass(TechnicSearchResults.class);
     }
@@ -44,7 +45,7 @@ public class TechnicApi {
     public static TechnicSearchResults searchModpacks(String query) {
         return Download.build()
                 .setUrl(String.format("%s/search?q=%s&build=%s", Constants.TECHNIC_API_URL, query,
-                        Constants.LAUNCHER_NAME.toLowerCase()))
+                        Constants.LAUNCHER_NAME.toLowerCase(Locale.ENGLISH)))
                 .cached(new CacheControl.Builder().maxStale(10, TimeUnit.MINUTES).build())
                 .asClass(TechnicSearchResults.class);
     }
@@ -52,7 +53,7 @@ public class TechnicApi {
     public static TechnicModpack getModpackBySlug(String slug) {
         return Download.build()
                 .setUrl(String.format("%s/modpack/%s?build=%s", Constants.TECHNIC_API_URL, slug,
-                        Constants.LAUNCHER_NAME.toLowerCase()))
+                        Constants.LAUNCHER_NAME.toLowerCase(Locale.ENGLISH)))
                 .cached(new CacheControl.Builder().maxStale(10, TimeUnit.MINUTES).build())
                 .asClass(TechnicModpack.class);
     }
@@ -60,7 +61,7 @@ public class TechnicApi {
     public static TechnicModpack getModpackBySlugWithThrow(String slug) throws IOException {
         return Download.build()
                 .setUrl(String.format("%s/modpack/%s?build=%s", Constants.TECHNIC_API_URL, slug,
-                        Constants.LAUNCHER_NAME.toLowerCase()))
+                        Constants.LAUNCHER_NAME.toLowerCase(Locale.ENGLISH)))
                 .cached(new CacheControl.Builder().maxStale(10, TimeUnit.MINUTES).build())
                 .asClassWithThrow(TechnicModpack.class);
     }

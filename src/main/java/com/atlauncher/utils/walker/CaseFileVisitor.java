@@ -24,6 +24,7 @@ import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.List;
+import java.util.Locale;
 
 import com.atlauncher.data.json.CaseType;
 import com.atlauncher.data.json.Mod;
@@ -52,7 +53,8 @@ public final class CaseFileVisitor extends SimpleFileVisitor<Path> {
                         + filename.substring(filename.lastIndexOf("."));
                 FileUtils.moveFile(path, path.getParent().resolve(filename), true);
             } else if (caseType == CaseType.lower) {
-                FileUtils.moveFile(path, path.getParent().resolve(path.getFileName().toString().toLowerCase()), true);
+                FileUtils.moveFile(path,
+                        path.getParent().resolve(path.getFileName().toString().toLowerCase(Locale.ENGLISH)), true);
             }
         }
 

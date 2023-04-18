@@ -46,6 +46,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
@@ -367,7 +368,8 @@ public class Instance extends MinecraftVersion {
         }
 
         if (getPack() != null) {
-            File instancesImage = FileSystem.IMAGES.resolve(this.getSafePackName().toLowerCase() + ".png").toFile();
+            File instancesImage = FileSystem.IMAGES.resolve(this.getSafePackName().toLowerCase(Locale.ENGLISH) + ".png")
+                    .toFile();
 
             if (instancesImage.exists()) {
                 return Utils.getIconImage(instancesImage);
@@ -1104,7 +1106,7 @@ public class Instance extends MinecraftVersion {
                         presence.setStartTimestamps(System.currentTimeMillis());
 
                         if (this.getPack() != null && this.getPack().hasDiscordImage()) {
-                            presence.setBigImage(this.getPack().getSafeName().toLowerCase(), playing);
+                            presence.setBigImage(this.getPack().getSafeName().toLowerCase(Locale.ENGLISH), playing);
                             presence.setSmallImage("atlauncher", "ATLauncher");
                         } else {
                             presence.setBigImage("atlauncher", playing);
@@ -1883,7 +1885,7 @@ public class Instance extends MinecraftVersion {
 
         String iconKey = "default";
         if (hasCustomImage()) {
-            String customIconFileName = "atlauncher_" + getSafeName().toLowerCase();
+            String customIconFileName = "atlauncher_" + getSafeName().toLowerCase(Locale.ENGLISH);
             Path customIconPath = tempDir.resolve(customIconFileName + ".png");
 
             FileUtils.copyFile(this.getRoot().resolve("instance.png"), customIconPath, true);
@@ -2051,7 +2053,7 @@ public class Instance extends MinecraftVersion {
         List<CurseForgeModLoader> modLoaders = new ArrayList<>();
         CurseForgeModLoader modLoader = new CurseForgeModLoader();
 
-        String loaderType = launcher.loaderVersion.type.toLowerCase();
+        String loaderType = launcher.loaderVersion.type.toLowerCase(Locale.ENGLISH);
         String loaderVersion = launcher.loaderVersion.version;
 
         modLoader.id = loaderType + "-" + loaderVersion;

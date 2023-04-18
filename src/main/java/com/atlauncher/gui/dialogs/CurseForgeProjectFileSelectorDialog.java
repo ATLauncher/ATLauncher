@@ -25,6 +25,7 @@ import java.awt.Window;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -358,8 +359,8 @@ public class CurseForgeProjectFileSelectorDialog extends JDialog {
             } else {
                 files.stream().filter(version -> {
                     if (!version.gameVersions.contains("Forge") && !version.gameVersions.contains("Fabric")) {
-                        String fileName = version.fileName.toLowerCase();
-                        String displayName = version.displayName.toLowerCase();
+                        String fileName = version.fileName.toLowerCase(Locale.ENGLISH);
+                        String displayName = version.displayName.toLowerCase(Locale.ENGLISH);
 
                         if (loaderVersion != null && loaderVersion.isFabric()) {
                             return !displayName.contains("-forge-") && !displayName.contains("(forge)")
@@ -369,7 +370,7 @@ public class CurseForgeProjectFileSelectorDialog extends JDialog {
                         if (loaderVersion != null && !loaderVersion.isFabric()) {
                             // if it's Forge, and the gameVersion has "Fabric" then exclude it
                             return version.gameVersions.contains("Fabric")
-                                    || (!displayName.toLowerCase().contains("-fabric-")
+                                    || (!displayName.toLowerCase(Locale.ENGLISH).contains("-fabric-")
                                             && !displayName.contains("(fabric)")
                                             && !displayName.contains("[fabric") && !fileName.contains("fabricmod"));
                         }

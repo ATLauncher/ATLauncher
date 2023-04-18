@@ -41,6 +41,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.concurrent.ExecutorService;
@@ -641,8 +642,9 @@ public class App {
         try {
             String javaOptions = System.getenv("_JAVA_OPTIONS");
 
-            if (javaOptions != null && (javaOptions.toLowerCase().contains("-xmx")
-                    || javaOptions.toLowerCase().contains("-xms") || javaOptions.toLowerCase().contains("-xss"))) {
+            if (javaOptions != null && (javaOptions.toLowerCase(Locale.ENGLISH).contains("-xmx")
+                    || javaOptions.toLowerCase(Locale.ENGLISH).contains("-xms")
+                    || javaOptions.toLowerCase(Locale.ENGLISH).contains("-xss"))) {
                 LogManager.warn("_JAVA_OPTIONS environment variable detected: " + javaOptions);
 
                 if (!settings.ignoreJavaOptionsWarning) {
