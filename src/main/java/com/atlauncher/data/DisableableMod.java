@@ -245,8 +245,14 @@ public class DisableableMod implements Serializable {
             if (!getFile(instance).getParentFile().exists()) {
                 getFile(instance).getParentFile().mkdir();
             }
-            if (Utils.moveFile(getDisabledFile(instance), getFile(instance), true)) {
-                this.disabled = false;
+            if (getOldDisabledFile(instance).exists()) {
+                if (Utils.moveFile(getOldDisabledFile(instance), getFile(instance), true)) {
+                    this.disabled = false;
+                }
+            } else {
+                if (Utils.moveFile(getDisabledFile(instance), getFile(instance), true)) {
+                    this.disabled = false;
+                }
             }
         }
         return false;
@@ -270,7 +276,17 @@ public class DisableableMod implements Serializable {
         return getFile(instance).exists();
     }
 
+    public File getActualFile(Instance instance) {
+        return disabled ? getDisabledFile(instance) : getFile(instance);
+    }
+
     public File getDisabledFile(Instance instance) {
+        File enabledFile = getFile(instance.getRoot(), instance.id);
+
+        return enabledFile.toPath().resolveSibling(enabledFile.getName() + ".disabled").toFile();
+    }
+
+    public File getOldDisabledFile(Instance instance) {
         return instance.getRoot().resolve("disabledmods/" + this.file).toFile();
     }
 

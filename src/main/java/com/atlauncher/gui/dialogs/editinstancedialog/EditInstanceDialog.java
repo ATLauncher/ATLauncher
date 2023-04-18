@@ -62,7 +62,7 @@ public class EditInstanceDialog extends JDialog {
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent arg0) {
-                dispose();
+                close();
             }
         });
 
@@ -71,6 +71,10 @@ public class EditInstanceDialog extends JDialog {
 
         setLocationRelativeTo(parent);
         setVisible(true);
+    }
+
+    private void close() {
+        dispose();
     }
 
     private void setupTabbedPane() {
@@ -105,7 +109,7 @@ public class EditInstanceDialog extends JDialog {
 
         JButton closeButton = new JButton(GetText.tr("Close"));
         closeButton.addActionListener(e -> {
-            dispose();
+            close();
         });
         bottomActionsPanel.add(closeButton);
 

@@ -1622,7 +1622,8 @@ public class Utils {
     }
 
     public static boolean isAcceptedModFile(String filename) {
-        return filename.endsWith(".jar") || filename.endsWith(".zip") || filename.endsWith(".litemod");
+        return filename.endsWith(".jar") || filename.endsWith(".zip") || filename.endsWith(".litemod")
+                || filename.endsWith(".disabled");
     }
 
     public static boolean isDevelopment() {
