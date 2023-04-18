@@ -65,19 +65,6 @@ public final class Hashing {
         }
     }
 
-    public static HashCode sha256(Path file) {
-        if (!Files.exists(file)) {
-            return EMPTY_HASH_CODE;
-        }
-
-        try {
-            return com.google.common.io.Files.asByteSource(file.toFile()).hash(com.google.common.hash.Hashing.sha256());
-        } catch (IOException e) {
-            LogManager.logStackTrace("Error hashing (SHA256) file " + file.toAbsolutePath().toString(), e);
-            return EMPTY_HASH_CODE;
-        }
-    }
-
     public static HashCode sha512(Path file) {
         if (!Files.exists(file)) {
             return EMPTY_HASH_CODE;

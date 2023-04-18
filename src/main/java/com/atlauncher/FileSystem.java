@@ -33,7 +33,6 @@ import com.atlauncher.utils.Utils;
 public final class FileSystem {
     private static Path CACHED_USER_DOWNLOADS = null;
     public static final Path BASE_DIR = FileSystem.getCoreGracefully();
-    public static final Path JRE = BASE_DIR.resolve("jre");
     public static final Path LOGS = BASE_DIR.resolve("logs");
     public static final Path BACKUPS = BASE_DIR.resolve("backups");
     public static final Path CACHE = BASE_DIR.resolve("cache");
