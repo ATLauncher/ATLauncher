@@ -18,6 +18,7 @@
 package com.atlauncher.gui.dialogs.editinstancedialog;
 
 import java.awt.BorderLayout;
+import java.awt.Window;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -38,8 +39,8 @@ import org.mini2Dx.gettext.GetText;
 import com.atlauncher.data.Instance;
 
 public class LogsSection extends SectionPanel {
-    public LogsSection(Instance instance) {
-        super(instance);
+    public LogsSection(Window parent, Instance instance) {
+        super(parent, instance);
 
         setupComponents();
     }

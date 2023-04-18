@@ -79,12 +79,12 @@ public class EditInstanceDialog extends JDialog {
 
     private void setupTabbedPane() {
         tabbedPane.setFont(App.THEME.getNormalFont().deriveFont(14.0F));
-        tabbedPane.addTab(GetText.tr("Information"), new InformationSection(instance));
-        tabbedPane.addTab(GetText.tr("Mods"), new ModsSection(instance));
-        tabbedPane.addTab(GetText.tr("Resource Packs"), new ResourcePacksSection(instance));
-        tabbedPane.addTab(GetText.tr("Shader Packs"), new ShaderPacksSection(instance));
-        tabbedPane.addTab(GetText.tr("Logs"), new LogsSection(instance));
-        tabbedPane.addTab(GetText.tr("Settings"), new SettingsSection(instance));
+        tabbedPane.addTab(GetText.tr("Information"), new InformationSection(this, instance));
+        tabbedPane.addTab(GetText.tr("Mods"), new ModsSection(this, instance));
+        tabbedPane.addTab(GetText.tr("Resource Packs"), new ResourcePacksSection(this, instance));
+        tabbedPane.addTab(GetText.tr("Shader Packs"), new ShaderPacksSection(this, instance));
+        tabbedPane.addTab(GetText.tr("Logs"), new LogsSection(this, instance));
+        tabbedPane.addTab(GetText.tr("Settings"), new SettingsSection(this, instance));
         tabbedPane.setOpaque(true);
 
         tabbedPane.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, UIManager.getColor("Component.borderColor")));

@@ -690,7 +690,7 @@ public class DisableableMod implements Serializable {
     }
 
     public String getNameFromFile(Instance instance) {
-        return getNameFromFile(instance, getFile(instance).toPath());
+        return getNameFromFile(instance, getActualFile(instance).toPath());
     }
 
     public String getNameFromFile(Instance instance, Path path) {
@@ -750,6 +750,10 @@ public class DisableableMod implements Serializable {
 
     public String getVersionFromFile(Path path) {
         return getVersionFromFile(null, path);
+    }
+
+    public String getVersionFromFile(Instance instance) {
+        return getVersionFromFile(instance, getActualFile(instance).toPath());
     }
 
     public String getVersionFromFile(Instance instance, Path path) {

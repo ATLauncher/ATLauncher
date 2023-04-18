@@ -19,6 +19,7 @@ package com.atlauncher.gui.dialogs.editinstancedialog;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.Window;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.nio.file.Path;
@@ -54,8 +55,8 @@ public class ResourcePacksSection extends SectionPanel {
     private JTextField searchField = new JTextField(16);
     private TableModel tableModel;
 
-    public ResourcePacksSection(Instance instance) {
-        super(instance);
+    public ResourcePacksSection(Window parent, Instance instance) {
+        super(parent, instance);
 
         setupComponents();
     }

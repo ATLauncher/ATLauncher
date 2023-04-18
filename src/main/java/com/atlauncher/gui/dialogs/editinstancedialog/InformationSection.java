@@ -20,6 +20,7 @@ package com.atlauncher.gui.dialogs.editinstancedialog;
 import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Window;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.time.Instant;
@@ -44,8 +45,8 @@ import com.atlauncher.constants.UIConstants;
 import com.atlauncher.data.Instance;
 
 public class InformationSection extends SectionPanel {
-    public InformationSection(Instance instance) {
-        super(instance);
+    public InformationSection(Window parent, Instance instance) {
+        super(parent, instance);
 
         setupComponents();
     }

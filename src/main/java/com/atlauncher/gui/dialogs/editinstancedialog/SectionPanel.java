@@ -18,6 +18,7 @@
 package com.atlauncher.gui.dialogs.editinstancedialog;
 
 import java.awt.BorderLayout;
+import java.awt.Window;
 
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
@@ -25,12 +26,14 @@ import javax.swing.border.EmptyBorder;
 import com.atlauncher.data.Instance;
 
 public class SectionPanel extends JPanel {
+    protected Window parent;
     protected Instance instance;
 
-    public SectionPanel(Instance instance) {
+    public SectionPanel(Window parent, Instance instance) {
         super();
 
         this.instance = instance;
+        this.parent = parent;
 
         setBorder(new EmptyBorder(5, 5, 5, 5));
         setLayout(new BorderLayout());

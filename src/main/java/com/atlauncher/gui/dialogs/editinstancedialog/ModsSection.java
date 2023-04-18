@@ -21,6 +21,7 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Point;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
@@ -84,8 +85,8 @@ public class ModsSection extends SectionPanel {
     private JTable modsTable = new JTable();
     private boolean ignoreTableEvents = false;
 
-    public ModsSection(Instance instance) {
-        super(instance);
+    public ModsSection(Window parent, Instance instance) {
+        super(parent, instance);
 
         setupComponents();
 
@@ -464,6 +465,8 @@ public class ModsSection extends SectionPanel {
                             && m.getActualFile(instance).toPath().equals(instance.ROOT.resolve(filename)))
                     .findFirst();
         }).filter(m -> m.isPresent()).map(m -> m.get()).collect(Collectors.toList());
+
+        new CheckForUpdatesDialog(this.parent, this.instance, mods);
 
         instance.save();
         ignoreTableEvents = false;
