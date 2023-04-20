@@ -3252,7 +3252,7 @@ public class Instance extends MinecraftVersion {
             }
 
             if (mod.disabled) {
-                return (mod.getFile(this) != null && !mod.getDisabledFile(this).exists());
+                return (mod.getDisabledFile(this) != null && !mod.getDisabledFile(this).exists());
             } else {
                 return (mod.getFile(this) != null && !mod.getFile(this).exists());
             }
