@@ -28,7 +28,6 @@ import java.util.List;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
-import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
@@ -164,19 +163,23 @@ public class ShaderPacksSection extends SectionPanel {
         splitPane.setLeftComponent(tableScrollPane);
 
         JToolBar sideBar = new JToolBar();
+        sideBar.setMinimumSize(new Dimension(160, 0));
+        sideBar.setPreferredSize(new Dimension(160, 0));
         sideBar.setOrientation(SwingConstants.VERTICAL);
+        sideBar.setFloatable(false);
+
         sideBar.addSeparator();
-        sideBar.add(new JButton(GetText.tr("Download Shader Packs")));
-        sideBar.add(new JButton(GetText.tr("Add File")));
+        sideBar.add(new SideBarButton(GetText.tr("Download Shader Packs")));
+        sideBar.add(new SideBarButton(GetText.tr("Add File")));
         sideBar.addSeparator();
-        sideBar.add(new JButton(GetText.tr("Check For Updates")));
-        sideBar.add(new JButton(GetText.tr("Reinstall")));
+        sideBar.add(new SideBarButton(GetText.tr("Check For Updates")));
+        sideBar.add(new SideBarButton(GetText.tr("Reinstall")));
         sideBar.addSeparator();
-        sideBar.add(new JButton(GetText.tr("Enable")));
-        sideBar.add(new JButton(GetText.tr("Disable")));
+        sideBar.add(new SideBarButton(GetText.tr("Enable")));
+        sideBar.add(new SideBarButton(GetText.tr("Disable")));
         sideBar.addSeparator();
-        sideBar.add(new JButton(GetText.tr("Enable All")));
-        sideBar.add(new JButton(GetText.tr("Disable All")));
+        sideBar.add(new SideBarButton(GetText.tr("Enable All")));
+        sideBar.add(new SideBarButton(GetText.tr("Disable All")));
         sideBar.addSeparator();
         splitPane.setRightComponent(sideBar);
 

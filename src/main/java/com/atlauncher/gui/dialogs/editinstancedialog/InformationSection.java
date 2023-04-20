@@ -18,6 +18,7 @@
 package com.atlauncher.gui.dialogs.editinstancedialog;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Window;
@@ -29,7 +30,6 @@ import java.util.Date;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
-import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
@@ -278,17 +278,21 @@ public class InformationSection extends SectionPanel {
         splitPane.setLeftComponent(mainPanel);
 
         JToolBar sideBar = new JToolBar();
+        sideBar.setMinimumSize(new Dimension(160, 0));
+        sideBar.setPreferredSize(new Dimension(160, 0));
         sideBar.setOrientation(SwingConstants.VERTICAL);
+        sideBar.setFloatable(false);
+
         sideBar.addSeparator();
 
-        JButton changeMinecraftVersionButton = new JButton(GetText.tr("Change Minecraft Version"));
+        SideBarButton changeMinecraftVersionButton = new SideBarButton(GetText.tr("Change Minecraft Version"));
         sideBar.add(changeMinecraftVersionButton);
 
-        JButton changePackVersionButton = new JButton(GetText.tr("Change Pack Version"));
+        SideBarButton changePackVersionButton = new SideBarButton(GetText.tr("Change Pack Version"));
         changePackVersionButton.setVisible(instance.isUpdatable());
         sideBar.add(changePackVersionButton);
 
-        JButton changeLoaderVersionButton = new JButton();
+        SideBarButton changeLoaderVersionButton = new SideBarButton();
         changeLoaderVersionButton.setVisible(instance.launcher.loaderVersion != null);
         if (instance.launcher.loaderVersion != null) {
             changeLoaderVersionButton
@@ -297,7 +301,7 @@ public class InformationSection extends SectionPanel {
         sideBar.add(changeLoaderVersionButton);
         sideBar.addSeparator();
 
-        JButton removeInstallFabricButton = new JButton(
+        SideBarButton removeInstallFabricButton = new SideBarButton(
                 instance.launcher.loaderVersion != null && instance.launcher.loaderVersion.isFabric()
                         ? GetText.tr("Remove {0}", "Fabric")
                         : GetText.tr("Install {0}", "Fabric"));
@@ -310,7 +314,7 @@ public class InformationSection extends SectionPanel {
         }
         sideBar.add(removeInstallFabricButton);
 
-        JButton removeInstallForgeButton = new JButton(
+        SideBarButton removeInstallForgeButton = new SideBarButton(
                 instance.launcher.loaderVersion != null && instance.launcher.loaderVersion.isForge()
                         ? GetText.tr("Remove {0}", "Forge")
                         : GetText.tr("Install {0}", "Forge"));
@@ -323,7 +327,7 @@ public class InformationSection extends SectionPanel {
         }
         sideBar.add(removeInstallForgeButton);
 
-        JButton removeInstallLegacyFabricButton = new JButton(
+        SideBarButton removeInstallLegacyFabricButton = new SideBarButton(
                 instance.launcher.loaderVersion != null && instance.launcher.loaderVersion.isLegacyFabric()
                         ? GetText.tr("Remove {0}", "Legacy Fabric")
                         : GetText.tr("Install {0}", "Legacy Fabric"));
@@ -336,7 +340,7 @@ public class InformationSection extends SectionPanel {
         }
         sideBar.add(removeInstallLegacyFabricButton);
 
-        JButton removeInstallQuiltButton = new JButton(
+        SideBarButton removeInstallQuiltButton = new SideBarButton(
                 instance.launcher.loaderVersion != null && instance.launcher.loaderVersion.isQuilt()
                         ? GetText.tr("Remove {0}", "Quilt")
                         : GetText.tr("Install {0}", "Quilt"));
@@ -350,19 +354,19 @@ public class InformationSection extends SectionPanel {
         sideBar.add(removeInstallQuiltButton);
         sideBar.addSeparator();
 
-        JButton manageModsButton = new JButton(GetText.tr("Manage Mods"));
+        SideBarButton manageModsButton = new SideBarButton(GetText.tr("Manage Mods"));
         sideBar.add(manageModsButton);
 
-        JButton manageResourcePacksButton = new JButton(GetText.tr("Manage Resource Packs"));
+        SideBarButton manageResourcePacksButton = new SideBarButton(GetText.tr("Manage Resource Packs"));
         sideBar.add(manageResourcePacksButton);
 
-        JButton manageShaderPacksButton = new JButton(GetText.tr("Manage Shader Packs"));
+        SideBarButton manageShaderPacksButton = new SideBarButton(GetText.tr("Manage Shader Packs"));
         sideBar.add(manageShaderPacksButton);
         sideBar.addSeparator();
         sideBar.add(Box.createVerticalGlue());
         sideBar.addSeparator();
 
-        JButton openFolderButton = new JButton(GetText.tr("Open Folder"));
+        SideBarButton openFolderButton = new SideBarButton(GetText.tr("Open Folder"));
         sideBar.add(openFolderButton);
 
         splitPane.setRightComponent(sideBar);

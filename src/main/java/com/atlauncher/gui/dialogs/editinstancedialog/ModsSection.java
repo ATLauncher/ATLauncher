@@ -43,7 +43,6 @@ import java.util.stream.Collectors;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
-import javax.swing.JButton;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
@@ -254,10 +253,11 @@ public class ModsSection extends SectionPanel {
 
         splitPane.setLeftComponent(tableScrollPane);
 
-        JButton downloadModsSideBarButton = new JButton(GetText.tr("Download Mods"));
-        JButton addFileSideBarButton = new JButton(GetText.tr("Add File"));
+        SideBarButton downloadModsSideBarButton = new SideBarButton(GetText.tr("Download Mods"));
 
-        JButton checkForUpdatesSideBarButton = new JButton(GetText.tr("Check For Updates"));
+        SideBarButton addFileSideBarButton = new SideBarButton(GetText.tr("Add File"));
+
+        SideBarButton checkForUpdatesSideBarButton = new SideBarButton(GetText.tr("Check For Updates"));
         checkForUpdatesSideBarButton
                 .setToolTipText(GetText.tr("Select one or more mods in the table to the left"));
         checkForUpdatesSideBarButton.setEnabled(false);
@@ -269,7 +269,7 @@ public class ModsSection extends SectionPanel {
             }
         });
 
-        JButton reinstallSideBarButton = new JButton(GetText.tr("Reinstall"));
+        SideBarButton reinstallSideBarButton = new SideBarButton(GetText.tr("Reinstall"));
         reinstallSideBarButton
                 .setToolTipText(GetText.tr("Select one or more mods in the table to the left"));
         reinstallSideBarButton.setEnabled(false);
@@ -281,7 +281,7 @@ public class ModsSection extends SectionPanel {
             }
         });
 
-        JButton enableSideBarButton = new JButton(GetText.tr("Enable"));
+        SideBarButton enableSideBarButton = new SideBarButton(GetText.tr("Enable"));
         enableSideBarButton.setToolTipText(GetText.tr("Select one or more mods in the table to the left"));
         enableSideBarButton.setEnabled(false);
         enableSideBarButton.addActionListener(new ActionListener() {
@@ -292,7 +292,7 @@ public class ModsSection extends SectionPanel {
             }
         });
 
-        JButton disableSideBarButton = new JButton(GetText.tr("Disable"));
+        SideBarButton disableSideBarButton = new SideBarButton(GetText.tr("Disable"));
         disableSideBarButton.setToolTipText(GetText.tr("Select one or more mods in the table to the left"));
         disableSideBarButton.setEnabled(false);
         disableSideBarButton.addActionListener(new ActionListener() {
@@ -303,7 +303,7 @@ public class ModsSection extends SectionPanel {
             }
         });
 
-        JButton deleteSideBarButton = new JButton(GetText.tr("Delete"));
+        SideBarButton deleteSideBarButton = new SideBarButton(GetText.tr("Delete"));
         deleteSideBarButton.setToolTipText(GetText.tr("Select one or more mods in the table to the left"));
         deleteSideBarButton.setEnabled(false);
         deleteSideBarButton.addActionListener(new ActionListener() {
@@ -315,7 +315,11 @@ public class ModsSection extends SectionPanel {
         });
 
         JToolBar sideBar = new JToolBar();
+        sideBar.setMinimumSize(new Dimension(160, 0));
+        sideBar.setPreferredSize(new Dimension(160, 0));
         sideBar.setOrientation(SwingConstants.VERTICAL);
+        sideBar.setFloatable(false);
+
         sideBar.addSeparator();
         sideBar.add(downloadModsSideBarButton);
         sideBar.add(addFileSideBarButton);
@@ -328,6 +332,7 @@ public class ModsSection extends SectionPanel {
         sideBar.addSeparator();
         sideBar.add(deleteSideBarButton);
         sideBar.addSeparator();
+
         splitPane.setRightComponent(sideBar);
 
         // change enabled/disabled for sideBar buttons

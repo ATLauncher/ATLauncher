@@ -18,13 +18,13 @@
 package com.atlauncher.gui.dialogs.editinstancedialog;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.Window;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JEditorPane;
 import javax.swing.JPanel;
@@ -79,32 +79,36 @@ public class LogsSection extends SectionPanel {
         splitPane.setLeftComponent(logScrollPane);
 
         JToolBar sideBar = new JToolBar();
+        sideBar.setMinimumSize(new Dimension(160, 0));
+        sideBar.setPreferredSize(new Dimension(160, 0));
         sideBar.setOrientation(SwingConstants.VERTICAL);
+        sideBar.setFloatable(false);
+
         sideBar.addSeparator();
 
-        JButton uploadButton = new JButton(GetText.tr("Upload"));
+        SideBarButton uploadButton = new SideBarButton(GetText.tr("Upload"));
         uploadButton.setEnabled(false);
         sideBar.add(uploadButton);
 
-        JButton copyToClipboardButton = new JButton(GetText.tr("Copy To Clipboard"));
+        SideBarButton copyToClipboardButton = new SideBarButton(GetText.tr("Copy To Clipboard"));
         copyToClipboardButton.setEnabled(false);
         sideBar.add(copyToClipboardButton);
 
-        JButton showInExplorerButton = new JButton(GetText.tr("Show In File Explorer"));
+        SideBarButton showInExplorerButton = new SideBarButton(GetText.tr("Show In File Explorer"));
         showInExplorerButton.setEnabled(false);
         sideBar.add(showInExplorerButton);
         sideBar.addSeparator();
 
-        JButton deleteButton = new JButton(GetText.tr("Delete"));
+        SideBarButton deleteButton = new SideBarButton(GetText.tr("Delete"));
         sideBar.add(deleteButton);
 
-        JButton deleteAllButton = new JButton(GetText.tr("Delete All"));
+        SideBarButton deleteAllButton = new SideBarButton(GetText.tr("Delete All"));
         sideBar.add(deleteAllButton);
         sideBar.addSeparator();
         sideBar.add(Box.createVerticalGlue());
         sideBar.addSeparator();
 
-        JButton openFolderButton = new JButton(GetText.tr("Open Folder"));
+        SideBarButton openFolderButton = new SideBarButton(GetText.tr("Open Folder"));
         sideBar.add(openFolderButton);
         splitPane.setRightComponent(sideBar);
         add(splitPane, BorderLayout.CENTER);
