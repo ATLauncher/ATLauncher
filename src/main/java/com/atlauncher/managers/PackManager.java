@@ -56,7 +56,7 @@ public class PackManager {
         try {
             java.lang.reflect.Type type = new TypeToken<List<Pack>>() {
             }.getType();
-            Data.PACKS.addAll(Gsons.DEFAULT_ALT
+            Data.PACKS.addAll(Gsons.DEFAULT
                     .fromJson(new FileReader(FileSystem.JSON.resolve("packsnew.json").toFile()), type));
         } catch (JsonSyntaxException | FileNotFoundException | JsonIOException e) {
             LogManager.logStackTrace(e);
@@ -271,7 +271,7 @@ public class PackManager {
             java.lang.reflect.Type type = new TypeToken<List<PackUsers>>() {
             }.getType();
             packUsers.addAll(
-                    Gsons.DEFAULT_ALT.fromJson(new FileReader(FileSystem.JSON.resolve("users.json").toFile()), type));
+                    Gsons.DEFAULT.fromJson(new FileReader(FileSystem.JSON.resolve("users.json").toFile()), type));
         } catch (JsonSyntaxException | FileNotFoundException | JsonIOException e) {
             LogManager.logStackTrace(e);
         }

@@ -93,10 +93,10 @@ public class FabricLoader implements Loader {
             }
 
             if (instanceInstaller.isServer) {
-                return Gsons.MINECRAFT.fromJson(response.fabricLoaderVersion().serverJson(), FabricMetaProfile.class);
+                return Gsons.DEFAULT.fromJson(response.fabricLoaderVersion().serverJson(), FabricMetaProfile.class);
             }
 
-            return Gsons.MINECRAFT.fromJson(response.fabricLoaderVersion().clientJson(), FabricMetaProfile.class);
+            return Gsons.DEFAULT.fromJson(response.fabricLoaderVersion().clientJson(), FabricMetaProfile.class);
         }
 
         return Download.build()

@@ -355,7 +355,7 @@ public class Server {
 
     public void save() {
         try (FileWriter fileWriter = new FileWriter(this.getRoot().resolve("server.json").toFile())) {
-            Gsons.MINECRAFT.toJson(this, fileWriter);
+            Gsons.DEFAULT.toJson(this, fileWriter);
         } catch (JsonIOException | IOException e) {
             LogManager.logStackTrace(e);
         }

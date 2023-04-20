@@ -1840,7 +1840,7 @@ public class Instance extends MinecraftVersion {
 
         // create mmc-pack.json
         try (FileWriter fileWriter = new FileWriter(tempDir.resolve("mmc-pack.json").toFile())) {
-            Gsons.MINECRAFT.toJson(manifest, fileWriter);
+            Gsons.DEFAULT.toJson(manifest, fileWriter);
         } catch (JsonIOException | IOException e) {
             LogManager.logStackTrace("Failed to save mmc-pack.json", e);
 
@@ -1868,7 +1868,7 @@ public class Instance extends MinecraftVersion {
 
             // create net.fabricmc.intermediary.json
             try (FileWriter fileWriter = new FileWriter(tempDir.resolve("net.fabricmc.intermediary.json").toFile())) {
-                Gsons.MINECRAFT.toJson(patch, fileWriter);
+                Gsons.DEFAULT.toJson(patch, fileWriter);
             } catch (JsonIOException | IOException e) {
                 LogManager.logStackTrace("Failed to save net.fabricmc.intermediary.json", e);
 
@@ -2085,7 +2085,7 @@ public class Instance extends MinecraftVersion {
 
         // create manifest.json
         try (FileWriter fileWriter = new FileWriter(tempDir.resolve("manifest.json").toFile())) {
-            Gsons.MINECRAFT.toJson(manifest, fileWriter);
+            Gsons.DEFAULT.toJson(manifest, fileWriter);
         } catch (JsonIOException | IOException e) {
             LogManager.logStackTrace("Failed to save manifest.json", e);
 
@@ -2257,7 +2257,7 @@ public class Instance extends MinecraftVersion {
         try (FileOutputStream fos = new FileOutputStream(tempDir.resolve("modrinth.index.json").toFile());
                 OutputStreamWriter osw = new OutputStreamWriter(fos,
                         StandardCharsets.UTF_8)) {
-            Gsons.MINECRAFT.toJson(manifest, osw);
+            Gsons.DEFAULT.toJson(manifest, osw);
         } catch (JsonIOException | IOException e) {
             LogManager.logStackTrace("Failed to save modrinth.index.json", e);
 
@@ -2328,7 +2328,7 @@ public class Instance extends MinecraftVersion {
 
     public void save() {
         try (FileWriter fileWriter = new FileWriter(this.getRoot().resolve("instance.json").toFile())) {
-            Gsons.MINECRAFT.toJson(this, fileWriter);
+            Gsons.DEFAULT.toJson(this, fileWriter);
         } catch (JsonIOException | IOException e) {
             LogManager.logStackTrace(e);
         }

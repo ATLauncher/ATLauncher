@@ -12,3 +12,4 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Issue with mod files with invalid characters causing Edit Mods screen to not open
 
 ### Misc
+- Consolodate GSON configs

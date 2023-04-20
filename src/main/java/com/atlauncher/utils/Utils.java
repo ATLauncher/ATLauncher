@@ -1555,7 +1555,7 @@ public class Utils {
             java.lang.reflect.Type type = new TypeToken<List<MCMod>>() {
             }.getType();
 
-            List<MCMod> mods = Gsons.MINECRAFT.fromJson(ArchiveUtils.getFile(file.toPath(), "mcmod.info"), type);
+            List<MCMod> mods = Gsons.DEFAULT.fromJson(ArchiveUtils.getFile(file.toPath(), "mcmod.info"), type);
 
             if (mods.size() != 0 && mods.get(0) != null) {
                 return mods.get(0);
@@ -1569,7 +1569,7 @@ public class Utils {
 
     public static FabricMod getFabricModForFile(File file) {
         try {
-            FabricMod mod = Gsons.MINECRAFT.fromJson(ArchiveUtils.getFile(file.toPath(), "fabric.mod.json"),
+            FabricMod mod = Gsons.DEFAULT.fromJson(ArchiveUtils.getFile(file.toPath(), "fabric.mod.json"),
                     FabricMod.class);
 
             if (mod != null) {

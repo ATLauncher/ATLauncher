@@ -793,7 +793,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         fireTask(GetText.tr("Extracting Manifest"));
         fireSubProgressUnknown();
 
-        curseForgeManifest = Gsons.MINECRAFT.fromJson(new String(ArchiveUtils.getFile(manifestFile, "manifest.json")),
+        curseForgeManifest = Gsons.DEFAULT.fromJson(new String(ArchiveUtils.getFile(manifestFile, "manifest.json")),
                 CurseForgeManifest.class);
         curseForgeExtractedPath = this.temp.resolve("curseforgeimport");
 
@@ -840,7 +840,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         ArchiveUtils.extract(manifestFile, modrinthExtractedPath);
 
         try (FileReader fileReader = new FileReader(modrinthExtractedPath.resolve("modrinth.index.json").toFile())) {
-            modrinthManifest = Gsons.MINECRAFT.fromJson(fileReader, ModrinthModpackManifest.class);
+            modrinthManifest = Gsons.DEFAULT.fromJson(fileReader, ModrinthModpackManifest.class);
         } catch (Exception e) {
             LogManager.logStackTrace("Failed to read modrinth.index.json file", e);
             Files.delete(manifestFile);
@@ -1301,7 +1301,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
 
         if (Files.exists(versionJsonPath)) {
             try (FileReader fileReader = new FileReader(versionJsonPath.toFile())) {
-                versionJson = Gsons.MINECRAFT.fromJson(fileReader, MinecraftVersion.class);
+                versionJson = Gsons.DEFAULT.fromJson(fileReader, MinecraftVersion.class);
             } catch (Exception e) {
                 LogManager.error("Error reading in version.json");
                 throw e;
@@ -1312,7 +1312,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
 
         if (Files.exists(modpackJarPath) && ArchiveUtils.archiveContainsFile(modpackJarPath, "version.json")) {
             try {
-                versionJson = Gsons.MINECRAFT.fromJson(ArchiveUtils.getFile(modpackJarPath, "version.json"),
+                versionJson = Gsons.DEFAULT.fromJson(ArchiveUtils.getFile(modpackJarPath, "version.json"),
                         MinecraftVersion.class);
             } catch (Exception e) {
                 LogManager.error("Error reading in version.json from modpack.jar");

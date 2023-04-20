@@ -207,7 +207,7 @@ public class ForgeLoader implements Loader {
         ForgeInstallProfile installProfile = null;
 
         try {
-            installProfile = Gsons.MINECRAFT.fromJson(new FileReader(new File(this.tempDir, "install_profile.json")),
+            installProfile = Gsons.DEFAULT.fromJson(new FileReader(new File(this.tempDir, "install_profile.json")),
                     ForgeInstallProfile.class);
         } catch (Throwable e) {
             LogManager.logStackTrace(e);
@@ -224,7 +224,7 @@ public class ForgeLoader implements Loader {
         ForgeInstallProfile versionInfo = null;
 
         try {
-            versionInfo = Gsons.MINECRAFT.fromJson(new FileReader(new File(this.tempDir, "version.json")),
+            versionInfo = Gsons.DEFAULT.fromJson(new FileReader(new File(this.tempDir, "version.json")),
                     ForgeInstallProfile.class);
         } catch (Throwable e) {
             LogManager.logStackTrace(e);

@@ -93,11 +93,11 @@ public class LegacyFabricLoader implements Loader {
             }
 
             if (instanceInstaller.isServer) {
-                return Gsons.MINECRAFT.fromJson(response.legacyFabricLoaderVersion().serverJson(),
+                return Gsons.DEFAULT.fromJson(response.legacyFabricLoaderVersion().serverJson(),
                         LegacyFabricMetaProfile.class);
             }
 
-            return Gsons.MINECRAFT.fromJson(response.legacyFabricLoaderVersion().clientJson(),
+            return Gsons.DEFAULT.fromJson(response.legacyFabricLoaderVersion().clientJson(),
                     LegacyFabricMetaProfile.class);
         }
 

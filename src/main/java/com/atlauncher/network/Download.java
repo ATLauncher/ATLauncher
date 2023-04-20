@@ -156,11 +156,11 @@ public final class Download {
     }
 
     public <T> T asClass(Class<T> tClass) {
-        return asClass(tClass, Gsons.MINECRAFT);
+        return asClass(tClass, Gsons.DEFAULT);
     }
 
     public <T> T asClassWithThrow(Class<T> tClass) throws IOException {
-        return asClassWithThrow(tClass, Gsons.MINECRAFT);
+        return asClassWithThrow(tClass, Gsons.DEFAULT);
     }
 
     public <T> T asTypeWithThrow(Type tClass, Gson gson) throws IOException {
@@ -195,11 +195,11 @@ public final class Download {
     }
 
     public <T> T asType(Type tClass) {
-        return asType(tClass, Gsons.MINECRAFT);
+        return asType(tClass, Gsons.DEFAULT);
     }
 
     public <T> T asTypeWithThrow(Type tClass) throws IOException {
-        return asTypeWithThrow(tClass, Gsons.MINECRAFT);
+        return asTypeWithThrow(tClass, Gsons.DEFAULT);
     }
 
     public Download downloadTo(Path to) {
