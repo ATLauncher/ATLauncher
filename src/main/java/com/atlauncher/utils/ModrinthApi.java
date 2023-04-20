@@ -26,6 +26,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -73,7 +74,8 @@ public class ModrinthApi {
 
             if (projectType != null) {
                 List<String> projectTypeFacets = new ArrayList<>();
-                projectTypeFacets.add(String.format("project_type:%s", projectType.toString().toLowerCase()));
+                projectTypeFacets
+                        .add(String.format("project_type:%s", projectType.toString().toLowerCase(Locale.ENGLISH)));
                 facets.add(projectTypeFacets);
             }
 

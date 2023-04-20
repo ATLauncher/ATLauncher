@@ -45,7 +45,7 @@ public class InternalModMetadataUtils {
             java.lang.reflect.Type type = new TypeToken<List<MCMod>>() {
             }.getType();
 
-            List<MCMod> mods = Gsons.MINECRAFT.fromJson(getRawInternalModMetadata(file, "mcmod.info"), type);
+            List<MCMod> mods = Gsons.DEFAULT.fromJson(getRawInternalModMetadata(file, "mcmod.info"), type);
 
             if (mods.size() != 0 && mods.get(0) != null) {
                 return mods.get(0);
@@ -59,7 +59,7 @@ public class InternalModMetadataUtils {
 
     public static FabricMod parseFabricModForFile(File file) {
         try {
-            FabricMod mod = Gsons.MINECRAFT.fromJson(getRawInternalModMetadata(file, "fabric.mod.json"),
+            FabricMod mod = Gsons.DEFAULT.fromJson(getRawInternalModMetadata(file, "fabric.mod.json"),
                     FabricMod.class);
 
             if (mod != null) {
@@ -74,7 +74,7 @@ public class InternalModMetadataUtils {
 
     public static JsonObject parseMcModInfoFile(String data) {
         try {
-            return Gsons.MINECRAFT.fromJson(data, JsonObject.class);
+            return Gsons.DEFAULT.fromJson(data, JsonObject.class);
         } catch (Exception ignored) {
 
         }
@@ -84,7 +84,7 @@ public class InternalModMetadataUtils {
 
     public static JsonObject parseFabricModFile(String data) {
         try {
-            return Gsons.MINECRAFT.fromJson(data, JsonObject.class);
+            return Gsons.DEFAULT.fromJson(data, JsonObject.class);
         } catch (Exception ignored) {
 
         }
@@ -94,7 +94,7 @@ public class InternalModMetadataUtils {
 
     public static JsonObject parseQuiltModFile(String data) {
         try {
-            return Gsons.MINECRAFT.fromJson(data, JsonObject.class);
+            return Gsons.DEFAULT.fromJson(data, JsonObject.class);
         } catch (Exception ignored) {
 
         }

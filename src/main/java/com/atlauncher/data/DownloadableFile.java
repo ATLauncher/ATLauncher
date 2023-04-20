@@ -17,6 +17,8 @@
  */
 package com.atlauncher.data;
 
+import java.util.Locale;
+
 import com.atlauncher.FileSystem;
 import com.atlauncher.constants.Constants;
 import com.atlauncher.network.Download;
@@ -65,7 +67,8 @@ public class DownloadableFile {
 
     public Download getDownload() {
         return Download.build()
-                .setUrl(String.format("%s/launcher/%s/%s", Constants.DOWNLOAD_SERVER, this.folder.toLowerCase(),
+                .setUrl(String.format("%s/launcher/%s/%s", Constants.DOWNLOAD_SERVER,
+                        this.folder.toLowerCase(Locale.ENGLISH),
                         this.name))
                 .downloadTo(FileSystem.CONFIGS.resolve(this.folder + "/" + this.name)).size(this.size).hash(this.sha1);
     }

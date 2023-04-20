@@ -72,7 +72,7 @@ public class ServerManager {
             Server server;
 
             try (FileReader fileReader = new FileReader(new File(serverDir, "server.json"))) {
-                server = Gsons.MINECRAFT.fromJson(fileReader, Server.class);
+                server = Gsons.DEFAULT.fromJson(fileReader, Server.class);
                 LogManager.debug("Loaded server from " + serverDir);
             } catch (Exception e) {
                 LogManager.logStackTrace("Failed to load server in the folder " + serverDir, e);

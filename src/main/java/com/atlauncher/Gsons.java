@@ -70,26 +70,16 @@ public final class Gsons {
     };
 
     private static final Gson BASE = new GsonBuilder()
+            .disableHtmlEscaping()
             .registerTypeAdapter(AbstractAccount.class, new AccountTypeAdapter())
             .registerTypeAdapter(Date.class, new DateTypeAdapter())
             .registerTypeAdapter(Color.class, new ColorTypeAdapter())
             .registerTypeAdapter(Instant.class, new InstantTypeAdapter())
             .registerTypeAdapter(Duration.class, new DurationTypeAdapter())
             .registerTypeAdapter(OauthTokenResponse.class, new OauthTokenResponseTypeAdapter())
-            .addSerializationExclusionStrategy(exclusionAnnotationStrategy).create();
-
-    public static final Gson DEFAULT = BASE.newBuilder().setPrettyPrinting().create();
-
-    public static final Gson DEFAULT_SLIM = BASE.newBuilder().create();
-
-    public static final Gson DEFAULT_ALT = new GsonBuilder().registerTypeAdapter(Color.class, new ColorTypeAdapter())
             .registerTypeAdapter(PackVersion.class, new PackVersionTypeAdapter())
-            .addSerializationExclusionStrategy(exclusionAnnotationStrategy).setPrettyPrinting().create();
-
-    public static final Gson MINECRAFT = new GsonBuilder().disableHtmlEscaping().setPrettyPrinting()
             .registerTypeAdapter(Instant.class, new InstantTypeAdapter())
             .registerTypeAdapter(Duration.class, new DurationTypeAdapter())
-            .registerTypeAdapter(Color.class, new ColorTypeAdapter())
             .registerTypeAdapter(Library.class, new LibraryTypeAdapter())
             .registerTypeAdapter(Arguments.class, new ArgumentsTypeAdapter())
             .registerTypeAdapter(FabricMetaLauncherMeta.class, new FabricMetaLauncherMetaTypeAdapter())
@@ -100,4 +90,8 @@ public final class Gsons {
             .registerTypeAdapter(QuiltLibrary.class, new QuiltLibraryTypeAdapter())
             .registerTypeAdapter(QuiltMetaLauncherMeta.class, new QuiltMetaLauncherMetaTypeAdapter())
             .addSerializationExclusionStrategy(exclusionAnnotationStrategy).create();
+
+    public static final Gson DEFAULT = BASE.newBuilder().setPrettyPrinting().create();
+
+    public static final Gson DEFAULT_SLIM = BASE.newBuilder().create();
 }

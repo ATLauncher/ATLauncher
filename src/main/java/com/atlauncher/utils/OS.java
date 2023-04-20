@@ -42,6 +42,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -82,7 +83,7 @@ public enum OS {
                     || WINDOWS_ANTIVIRUS_PROCESS_PATHS.contains(process.getPath());
 
     public static OS getOS() {
-        String osName = System.getProperty("os.name").toLowerCase();
+        String osName = System.getProperty("os.name").toLowerCase(Locale.ENGLISH);
 
         if (osName.contains("win")) {
             return OS.WINDOWS;
@@ -119,12 +120,14 @@ public enum OS {
     public static Path storagePath() {
         switch (getOS()) {
             case WINDOWS:
-                return Paths.get(System.getenv("APPDATA")).resolve("." + Constants.LAUNCHER_NAME.toLowerCase());
+                return Paths.get(System.getenv("APPDATA"))
+                        .resolve("." + Constants.LAUNCHER_NAME.toLowerCase(Locale.ENGLISH));
             case OSX:
                 return Paths.get(System.getProperty("user.home")).resolve("Library").resolve("Application Support")
-                        .resolve("." + Constants.LAUNCHER_NAME.toLowerCase());
+                        .resolve("." + Constants.LAUNCHER_NAME.toLowerCase(Locale.ENGLISH));
             default:
-                return Paths.get(System.getProperty("user.home")).resolve("." + Constants.LAUNCHER_NAME.toLowerCase());
+                return Paths.get(System.getProperty("user.home"))
+                        .resolve("." + Constants.LAUNCHER_NAME.toLowerCase(Locale.ENGLISH));
         }
     }
 
@@ -477,40 +480,6 @@ public enum OS {
         Toolkit toolkit = Toolkit.getDefaultToolkit();
         Dimension dim = toolkit.getScreenSize();
         return dim.height;
-    }
-
-    /**
-     * This restarts the launcher with an option set of arguments to add.
-     *
-     * @param args a List of arguments to pass when starting the launcher
-     */
-    public static void restartToUpdateBundledJre(Path newJrePath) {
-        String path = getRunningProgramPath().toString();
-
-        List<String> arguments = new ArrayList<>();
-
-        arguments.add(Java.getPathToJavaExecutable(newJrePath));
-        arguments.add("-Djna.nosys=true");
-        arguments.add("-cp");
-        arguments.add(path);
-        arguments.add("com.atlauncher.UpdateBundledJre");
-        arguments.add(newJrePath.toAbsolutePath().toString());
-        arguments.add(FileSystem.JRE.toAbsolutePath().toString());
-        arguments.add(path);
-
-        // pass in all the original arguments
-        arguments.addAll(Arrays.asList(App.PASSED_ARGS));
-
-        ProcessBuilder processBuilder = new ProcessBuilder();
-        processBuilder.directory(FileSystem.BASE_DIR.toFile());
-        processBuilder.command(arguments);
-
-        try {
-            processBuilder.start();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        System.exit(0);
     }
 
     /**

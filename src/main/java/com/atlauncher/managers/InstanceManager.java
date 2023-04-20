@@ -86,7 +86,7 @@ public class InstanceManager {
 
             try {
                 try (FileReader fileReader = new FileReader(instanceJsonFile)) {
-                    instance = Gsons.MINECRAFT.fromJson(fileReader, Instance.class);
+                    instance = Gsons.DEFAULT.fromJson(fileReader, Instance.class);
                     instance.ROOT = instanceDir.toPath();
                     LogManager.debug("Loaded instance from " + instanceDir);
 
@@ -249,7 +249,7 @@ public class InstanceManager {
     }
 
     public static void cloneInstance(Instance instance, String clonedName) {
-        Instance clonedInstance = Gsons.MINECRAFT.fromJson(Gsons.MINECRAFT.toJson(instance), Instance.class);
+        Instance clonedInstance = Gsons.DEFAULT.fromJson(Gsons.DEFAULT.toJson(instance), Instance.class);
 
         if (clonedInstance == null) {
             LogManager.error("Error Occurred While Cloning Instance! Instance Object Couldn't Be Cloned!");

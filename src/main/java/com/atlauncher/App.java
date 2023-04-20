@@ -41,6 +41,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.concurrent.ExecutorService;
@@ -66,14 +67,11 @@ import com.atlauncher.gui.LauncherConsole;
 import com.atlauncher.gui.LauncherFrame;
 import com.atlauncher.gui.SplashScreen;
 import com.atlauncher.gui.TrayMenu;
-import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.gui.dialogs.SetupDialog;
-import com.atlauncher.managers.ConfigManager;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.managers.InstanceManager;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.managers.PackManager;
-import com.atlauncher.network.Download;
 import com.atlauncher.network.ErrorReporting;
 import com.atlauncher.themes.ATLauncherLaf;
 import com.atlauncher.utils.Java;
@@ -125,13 +123,6 @@ public class App {
      * the user may have to download the update manually.
      */
     public static boolean wasUpdated = false;
-
-    /**
-     * If the launcher just updated it's bundled JRE and this is it's first time
-     * loading after the update. This is used to check for when there are possible
-     * issues in which the user may have to fix.
-     */
-    public static boolean justUpdatedBundledJre = false;
 
     public static boolean discordInitialized = false;
 
@@ -364,8 +355,6 @@ public class App {
             }
         }
 
-        checkIfNeedToUpdateBundledJre();
-
         boolean open = true;
 
         if (autoLaunch != null) {
@@ -403,88 +392,6 @@ public class App {
             new LauncherFrame(openLauncher);
             ss.close();
         });
-    }
-
-    private static void checkIfNeedToUpdateBundledJre() {
-        if (ConfigManager.getConfigItem("bundledJre.promptToUpdate", false) == true
-                && Java.shouldPromptToUpdateBundledJre()) {
-            String dialogTitle;
-            String dialogText;
-            if (Files.exists(FileSystem.JRE) && Java.bundledJreOutOfDate()) {
-                dialogTitle = GetText.tr("Using Out Of Date Java");
-                dialogText = GetText.tr(
-                        "You're running an out of date version of Java that was installed with the launcher.<br/><br/>In the future the launcher will no longer work without updating this.<br/><br/>This process is automatic and doesn't affect any Java installs outside of the launcher.<br/><br/>Do you want to do it now?");
-            } else if (Java.getLauncherJavaVersionNumber() < ConfigManager.getConfigItem("bundledJre.majorVersion",
-                    17).intValue()) {
-                dialogTitle = GetText.tr("Using Out Of Date Java");
-                dialogText = GetText.tr(
-                        "You're running an out of date version of Java.<br/><br/>In the future the launcher will no longer work without updating this.<br/><br/>This process is automatic and doesn't affect any Java installs outside of the launcher.<br/><br/>Do you want to do it now?");
-            } else {
-                dialogTitle = GetText.tr("Let Launcher Manage Java");
-                dialogText = GetText.tr(
-                        "You're currently using a version of Java not managed by the launcher.<br/><br/>Letting the launcher manage it's own version of Java is better for support and ease of use.<br/><br/>This process is automatic and doesn't affect any Java installs outside of the launcher.<br/><br/>Do you want to let the launcher manage it's own version of Java?");
-            }
-
-            int ret = DialogManager
-                    .yesNoDialog().setTitle(dialogTitle).setContent(new HTMLBuilder()
-                            .center().text(dialogText)
-                            .build())
-                    .setType(DialogManager.WARNING).show();
-
-            // mark as seeing this version of the prompt to avoid repetition (for now)
-            App.settings.seenBundledJrePromptVersion = 1;
-            App.settings.save();
-
-            if (ret == 0) {
-                Path newJreBundlePath = FileSystem.TEMP.resolve("updatedbundledjre");
-
-                ProgressDialog<Boolean> progressDialog = new ProgressDialog<>(
-                        GetText.tr("Downloading Java Update"), 1,
-                        GetText.tr("Downloading Java Update"));
-                progressDialog.addThread(new Thread(() -> {
-                    String bundledJreConfigNamespace = OS.is64Bit() ? "bundledJre.windowsx64" : "bundledJre.windowsx86";
-
-                    Download jreDownload = new Download()
-                            .withHttpClient(Network.createProgressClient(progressDialog))
-                            .setUrl(
-                                    ConfigManager.getConfigItem(bundledJreConfigNamespace + ".url", ""))
-                            .hash(ConfigManager.getConfigItem(bundledJreConfigNamespace + ".hash", ""))
-                            .size(ConfigManager.getConfigItem(bundledJreConfigNamespace + ".size", 0))
-                            .downloadTo(FileSystem.TEMP.resolve("updatedbundledjre.zip"))
-                            .unzipTo(newJreBundlePath).deleteAfterExtract();
-
-                    progressDialog.setTotalBytes(ConfigManager.getConfigItem(bundledJreConfigNamespace + ".size", 0));
-
-                    try {
-                        jreDownload.downloadFile();
-                    } catch (IOException e) {
-                        LogManager.logStackTrace("Failed to download updated bundled JRE", e);
-                        progressDialog.setReturnValue(false);
-                        progressDialog.close();
-                        return;
-                    }
-
-                    progressDialog.setReturnValue(true);
-                    progressDialog.doneTask();
-                    progressDialog.close();
-                }));
-                progressDialog.start();
-
-                if (progressDialog.getReturnValue()) {
-                    OS.restartToUpdateBundledJre(newJreBundlePath.resolve("jdk-17.0.3+7-jre"));
-                    System.exit(0);
-                } else {
-                    DialogManager
-                            .okDialog().setTitle(GetText.tr("Failed To Update Bundled JRE"))
-                            .setContent(new HTMLBuilder()
-                                    .center().split(100).text(
-                                            GetText.tr(
-                                                    "There was an issue updating the bundled JRE. Please try again later and if the issue persists, please contact ATLauncher support via Discord."))
-                                    .build())
-                            .setType(DialogManager.ERROR).show();
-                }
-            }
-        }
     }
 
     public static void ensureDiscordIsInitialized() {
@@ -641,8 +548,9 @@ public class App {
         try {
             String javaOptions = System.getenv("_JAVA_OPTIONS");
 
-            if (javaOptions != null && (javaOptions.toLowerCase().contains("-xmx")
-                    || javaOptions.toLowerCase().contains("-xms") || javaOptions.toLowerCase().contains("-xss"))) {
+            if (javaOptions != null && (javaOptions.toLowerCase(Locale.ENGLISH).contains("-xmx")
+                    || javaOptions.toLowerCase(Locale.ENGLISH).contains("-xms")
+                    || javaOptions.toLowerCase(Locale.ENGLISH).contains("-xss"))) {
                 LogManager.warn("_JAVA_OPTIONS environment variable detected: " + javaOptions);
 
                 if (!settings.ignoreJavaOptionsWarning) {
@@ -949,8 +857,6 @@ public class App {
         // Parse all the command line arguments
         OptionParser parser = new OptionParser();
         parser.accepts("updated", "If the launcher was just updated.").withOptionalArg().ofType(Boolean.class);
-        parser.accepts("updatedBundledJre", "If the launcher just updated it's bundled JRE.").withOptionalArg()
-                .ofType(Boolean.class);
         parser.accepts("skip-setup-dialog",
                 "If the first time setup dialog should be skipped, using the defaults. Note that this will enable analytics by default.")
                 .withOptionalArg().ofType(Boolean.class);
@@ -1005,10 +911,6 @@ public class App {
 
         if (options.has("updated")) {
             wasUpdated = true;
-        }
-
-        if (options.has("updatedBundledJre")) {
-            justUpdatedBundledJre = true;
         }
 
         if (options.has("debug")) {

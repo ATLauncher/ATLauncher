@@ -157,7 +157,7 @@ public final class LoginWithMicrosoftDialog extends JDialog {
             }
 
             res.getHeaders().add("Content-Type", "text/plain");
-            // #. {0} is the name of the launcher
+            // #. {0} is the name of the launcher (ATLauncher)
             res.send(200, GetText.tr("Login complete. You can now close this window and go back to {0}",
                     Constants.LAUNCHER_NAME));
             close();

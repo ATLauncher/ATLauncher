@@ -46,6 +46,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
@@ -367,7 +368,8 @@ public class Instance extends MinecraftVersion {
         }
 
         if (getPack() != null) {
-            File instancesImage = FileSystem.IMAGES.resolve(this.getSafePackName().toLowerCase() + ".png").toFile();
+            File instancesImage = FileSystem.IMAGES.resolve(this.getSafePackName().toLowerCase(Locale.ENGLISH) + ".png")
+                    .toFile();
 
             if (instancesImage.exists()) {
                 return Utils.getIconImage(instancesImage);
@@ -1104,7 +1106,7 @@ public class Instance extends MinecraftVersion {
                         presence.setStartTimestamps(System.currentTimeMillis());
 
                         if (this.getPack() != null && this.getPack().hasDiscordImage()) {
-                            presence.setBigImage(this.getPack().getSafeName().toLowerCase(), playing);
+                            presence.setBigImage(this.getPack().getSafeName().toLowerCase(Locale.ENGLISH), playing);
                             presence.setSmallImage("atlauncher", "ATLauncher");
                         } else {
                             presence.setBigImage("atlauncher", playing);
@@ -1846,7 +1848,7 @@ public class Instance extends MinecraftVersion {
 
         // create mmc-pack.json
         try (FileWriter fileWriter = new FileWriter(tempDir.resolve("mmc-pack.json").toFile())) {
-            Gsons.MINECRAFT.toJson(manifest, fileWriter);
+            Gsons.DEFAULT.toJson(manifest, fileWriter);
         } catch (JsonIOException | IOException e) {
             LogManager.logStackTrace("Failed to save mmc-pack.json", e);
 
@@ -1874,7 +1876,7 @@ public class Instance extends MinecraftVersion {
 
             // create net.fabricmc.intermediary.json
             try (FileWriter fileWriter = new FileWriter(tempDir.resolve("net.fabricmc.intermediary.json").toFile())) {
-                Gsons.MINECRAFT.toJson(patch, fileWriter);
+                Gsons.DEFAULT.toJson(patch, fileWriter);
             } catch (JsonIOException | IOException e) {
                 LogManager.logStackTrace("Failed to save net.fabricmc.intermediary.json", e);
 
@@ -1891,7 +1893,7 @@ public class Instance extends MinecraftVersion {
 
         String iconKey = "default";
         if (hasCustomImage()) {
-            String customIconFileName = "atlauncher_" + getSafeName().toLowerCase();
+            String customIconFileName = "atlauncher_" + getSafeName().toLowerCase(Locale.ENGLISH);
             Path customIconPath = tempDir.resolve(customIconFileName + ".png");
 
             FileUtils.copyFile(this.getRoot().resolve("instance.png"), customIconPath, true);
@@ -2059,7 +2061,7 @@ public class Instance extends MinecraftVersion {
         List<CurseForgeModLoader> modLoaders = new ArrayList<>();
         CurseForgeModLoader modLoader = new CurseForgeModLoader();
 
-        String loaderType = launcher.loaderVersion.type.toLowerCase();
+        String loaderType = launcher.loaderVersion.type.toLowerCase(Locale.ENGLISH);
         String loaderVersion = launcher.loaderVersion.version;
 
         modLoader.id = loaderType + "-" + loaderVersion;
@@ -2091,7 +2093,7 @@ public class Instance extends MinecraftVersion {
 
         // create manifest.json
         try (FileWriter fileWriter = new FileWriter(tempDir.resolve("manifest.json").toFile())) {
-            Gsons.MINECRAFT.toJson(manifest, fileWriter);
+            Gsons.DEFAULT.toJson(manifest, fileWriter);
         } catch (JsonIOException | IOException e) {
             LogManager.logStackTrace("Failed to save manifest.json", e);
 
@@ -2263,7 +2265,7 @@ public class Instance extends MinecraftVersion {
         try (FileOutputStream fos = new FileOutputStream(tempDir.resolve("modrinth.index.json").toFile());
                 OutputStreamWriter osw = new OutputStreamWriter(fos,
                         StandardCharsets.UTF_8)) {
-            Gsons.MINECRAFT.toJson(manifest, osw);
+            Gsons.DEFAULT.toJson(manifest, osw);
         } catch (JsonIOException | IOException e) {
             LogManager.logStackTrace("Failed to save modrinth.index.json", e);
 
@@ -2334,7 +2336,7 @@ public class Instance extends MinecraftVersion {
 
     public void save() {
         try (FileWriter fileWriter = new FileWriter(this.getRoot().resolve("instance.json").toFile())) {
-            Gsons.MINECRAFT.toJson(this, fileWriter);
+            Gsons.DEFAULT.toJson(this, fileWriter);
         } catch (JsonIOException | IOException e) {
             LogManager.logStackTrace(e);
         }
@@ -3280,7 +3282,7 @@ public class Instance extends MinecraftVersion {
             }
 
             if (mod.disabled) {
-                return (mod.getFile(this) != null && !mod.getDisabledFile(this).exists());
+                return (mod.getDisabledFile(this) != null && !mod.getDisabledFile(this).exists());
             } else {
                 return (mod.getFile(this) != null && !mod.getFile(this).exists());
             }

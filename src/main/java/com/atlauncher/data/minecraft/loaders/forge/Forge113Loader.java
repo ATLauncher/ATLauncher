@@ -80,7 +80,7 @@ public class Forge113Loader extends ForgeLoader {
         Version version = null;
 
         try {
-            version = Gsons.MINECRAFT.fromJson(new FileReader(new File(this.tempDir, "version.json")), Version.class);
+            version = Gsons.DEFAULT.fromJson(new FileReader(new File(this.tempDir, "version.json")), Version.class);
         } catch (JsonSyntaxException | JsonIOException | FileNotFoundException e) {
             LogManager.logStackTrace(e);
         }

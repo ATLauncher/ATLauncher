@@ -25,6 +25,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -55,7 +56,7 @@ public class PackManager {
         try {
             java.lang.reflect.Type type = new TypeToken<List<Pack>>() {
             }.getType();
-            Data.PACKS.addAll(Gsons.DEFAULT_ALT
+            Data.PACKS.addAll(Gsons.DEFAULT
                     .fromJson(new FileReader(FileSystem.JSON.resolve("packsnew.json").toFile()), type));
         } catch (JsonSyntaxException | FileNotFoundException | JsonIOException e) {
             LogManager.logStackTrace(e);
@@ -84,7 +85,7 @@ public class PackManager {
             }
         }
 
-        packs.sort(Comparator.comparing(p -> p.getName().toLowerCase()));
+        packs.sort(Comparator.comparing(p -> p.getName().toLowerCase(Locale.ENGLISH)));
 
         if (sortDescending) {
             Collections.reverse(packs);
@@ -270,7 +271,7 @@ public class PackManager {
             java.lang.reflect.Type type = new TypeToken<List<PackUsers>>() {
             }.getType();
             packUsers.addAll(
-                    Gsons.DEFAULT_ALT.fromJson(new FileReader(FileSystem.JSON.resolve("users.json").toFile()), type));
+                    Gsons.DEFAULT.fromJson(new FileReader(FileSystem.JSON.resolve("users.json").toFile()), type));
         } catch (JsonSyntaxException | FileNotFoundException | JsonIOException e) {
             LogManager.logStackTrace(e);
         }
@@ -287,7 +288,8 @@ public class PackManager {
         PerformanceManager.start();
         File[] files = FileSystem.IMAGES.toFile().listFiles();
 
-        Set<String> packImageFilenames = Data.PACKS.stream().map(p -> p.getSafeName().toLowerCase() + ".png")
+        Set<String> packImageFilenames = Data.PACKS.stream()
+                .map(p -> p.getSafeName().toLowerCase(Locale.ENGLISH) + ".png")
                 .collect(Collectors.toSet());
         packImageFilenames.add("defaultimage.png");
 

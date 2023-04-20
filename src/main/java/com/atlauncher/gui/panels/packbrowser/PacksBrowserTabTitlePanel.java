@@ -19,6 +19,7 @@ package com.atlauncher.gui.panels.packbrowser;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.util.Locale;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -53,7 +54,7 @@ public class PacksBrowserTabTitlePanel extends JPanel implements ThemeListener {
     }
 
     public PacksBrowserTabTitlePanel(String platform) {
-        this(platform, platform.toLowerCase());
+        this(platform, platform.toLowerCase(Locale.ENGLISH));
     }
 
     public void setIcon() {

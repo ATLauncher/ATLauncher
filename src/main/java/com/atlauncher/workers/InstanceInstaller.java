@@ -33,6 +33,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -698,7 +699,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         fireTask(GetText.tr("Downloading Manifest From {0}", "CurseForge"));
         fireSubProgressUnknown();
 
-        Path manifestFile = this.temp.resolve(version._curseForgeFile.fileName.toLowerCase());
+        Path manifestFile = this.temp.resolve(version._curseForgeFile.fileName.toLowerCase(Locale.ENGLISH));
 
         if (version._curseForgeFile.downloadUrl == null) {
             if (!App.settings.seenCurseForgeProjectDistributionDialog) {
@@ -794,7 +795,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         fireTask(GetText.tr("Extracting Manifest"));
         fireSubProgressUnknown();
 
-        curseForgeManifest = Gsons.MINECRAFT.fromJson(new String(ArchiveUtils.getFile(manifestFile, "manifest.json")),
+        curseForgeManifest = Gsons.DEFAULT.fromJson(new String(ArchiveUtils.getFile(manifestFile, "manifest.json")),
                 CurseForgeManifest.class);
         curseForgeExtractedPath = this.temp.resolve("curseforgeimport");
 
@@ -815,7 +816,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
 
         ModrinthFile file = version._modrinthVersion.getPrimaryFile();
 
-        Path manifestFile = this.temp.resolve(file.filename.toLowerCase());
+        Path manifestFile = this.temp.resolve(file.filename.toLowerCase(Locale.ENGLISH));
 
         com.atlauncher.network.Download manifestDownload = com.atlauncher.network.Download.build().setUrl(file.url)
                 .downloadTo(manifestFile).withInstanceInstaller(this)
@@ -841,7 +842,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         ArchiveUtils.extract(manifestFile, modrinthExtractedPath);
 
         try (FileReader fileReader = new FileReader(modrinthExtractedPath.resolve("modrinth.index.json").toFile())) {
-            modrinthManifest = Gsons.MINECRAFT.fromJson(fileReader, ModrinthModpackManifest.class);
+            modrinthManifest = Gsons.DEFAULT.fromJson(fileReader, ModrinthModpackManifest.class);
         } catch (Exception e) {
             LogManager.logStackTrace("Failed to read modrinth.index.json file", e);
             Files.delete(manifestFile);
@@ -1301,7 +1302,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
 
         if (Files.exists(versionJsonPath)) {
             try (FileReader fileReader = new FileReader(versionJsonPath.toFile())) {
-                versionJson = Gsons.MINECRAFT.fromJson(fileReader, MinecraftVersion.class);
+                versionJson = Gsons.DEFAULT.fromJson(fileReader, MinecraftVersion.class);
             } catch (Exception e) {
                 LogManager.error("Error reading in version.json");
                 throw e;
@@ -1312,7 +1313,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
 
         if (Files.exists(modpackJarPath) && ArchiveUtils.archiveContainsFile(modpackJarPath, "version.json")) {
             try {
-                versionJson = Gsons.MINECRAFT.fromJson(ArchiveUtils.getFile(modpackJarPath, "version.json"),
+                versionJson = Gsons.DEFAULT.fromJson(ArchiveUtils.getFile(modpackJarPath, "version.json"),
                         MinecraftVersion.class);
             } catch (Exception e) {
                 LogManager.error("Error reading in version.json from modpack.jar");
@@ -1915,7 +1916,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                 file = file.substring(0, file.lastIndexOf(".")).toUpperCase() + file.substring(file.lastIndexOf("."));
             } else if (mod.type == ModType.mods
                     && this.packVersion.getCaseAllFiles() == com.atlauncher.data.json.CaseType.lower) {
-                file = file.substring(0, file.lastIndexOf(".")).toLowerCase() + file.substring(file.lastIndexOf("."));
+                file = file.substring(0, file.lastIndexOf(".")).toLowerCase(Locale.ENGLISH)
+                        + file.substring(file.lastIndexOf("."));
             }
 
             this.modsInstalled.add(new com.atlauncher.data.DisableableMod(mod.getName(), mod.getVersion(),
@@ -1950,8 +1952,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
             if (Files.exists(multiMCExtractedPath.resolve(minecraftFolder + "/mods"))) {
                 try (Stream<Path> list = Files.list(multiMCExtractedPath.resolve(minecraftFolder + "/mods"))) {
                     this.modsInstalled.addAll(list.filter(p -> !Files.isDirectory(p))
-                            .filter(p -> p.toString().toLowerCase().endsWith(".jar")
-                                    || p.toString().toLowerCase().endsWith(".zip"))
+                            .filter(p -> p.toString().toLowerCase(Locale.ENGLISH).endsWith(".jar")
+                                    || p.toString().toLowerCase(Locale.ENGLISH).endsWith(".zip"))
                             .map(p -> convertPathToDisableableMod(p, Type.mods)).collect(Collectors.toList()));
                 } catch (IOException e) {
                     LogManager.logStackTrace(e);
@@ -1962,8 +1964,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                 try (Stream<Path> list = Files
                         .list(multiMCExtractedPath.resolve(minecraftFolder + "/mods/" + packVersion.minecraft))) {
                     this.modsInstalled.addAll(list.filter(p -> !Files.isDirectory(p))
-                            .filter(p -> p.toString().toLowerCase().endsWith(".jar")
-                                    || p.toString().toLowerCase().endsWith(".zip"))
+                            .filter(p -> p.toString().toLowerCase(Locale.ENGLISH).endsWith(".jar")
+                                    || p.toString().toLowerCase(Locale.ENGLISH).endsWith(".zip"))
                             .map(p -> convertPathToDisableableMod(p, Type.dependency)).collect(Collectors.toList()));
                 } catch (IOException e) {
                     LogManager.logStackTrace(e);
@@ -1973,8 +1975,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
             if (Files.exists(multiMCExtractedPath.resolve(minecraftFolder + "/mods/ic2"))) {
                 try (Stream<Path> list = Files.list(multiMCExtractedPath.resolve(minecraftFolder + "/mods/ic2"))) {
                     this.modsInstalled.addAll(list.filter(p -> !Files.isDirectory(p))
-                            .filter(p -> p.toString().toLowerCase().endsWith(".jar")
-                                    || p.toString().toLowerCase().endsWith(".zip"))
+                            .filter(p -> p.toString().toLowerCase(Locale.ENGLISH).endsWith(".jar")
+                                    || p.toString().toLowerCase(Locale.ENGLISH).endsWith(".zip"))
                             .map(p -> convertPathToDisableableMod(p, Type.ic2lib)).collect(Collectors.toList()));
                 } catch (IOException e) {
                     LogManager.logStackTrace(e);
@@ -1988,8 +1990,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                 try (Stream<Path> list = Files.list(curseForgeExtractedPath
                         .resolve(Optional.ofNullable(curseForgeManifest.overrides).orElse("overrides") + "/mods"))) {
                     this.modsInstalled.addAll(list.filter(p -> !Files.isDirectory(p))
-                            .filter(p -> p.toString().toLowerCase().endsWith(".jar")
-                                    || p.toString().toLowerCase().endsWith(".zip"))
+                            .filter(p -> p.toString().toLowerCase(Locale.ENGLISH).endsWith(".jar")
+                                    || p.toString().toLowerCase(Locale.ENGLISH).endsWith(".zip"))
                             .map(p -> convertPathToDisableableMod(p, Type.mods)).collect(Collectors.toList()));
                 } catch (IOException e) {
                     LogManager.logStackTrace(e);
@@ -2005,8 +2007,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                                 .resolve(Optional.ofNullable(curseForgeManifest.overrides).orElse("overrides")
                                         + "/mods/" + packVersion.minecraft))) {
                     this.modsInstalled.addAll(list.filter(p -> !Files.isDirectory(p))
-                            .filter(p -> p.toString().toLowerCase().endsWith(".jar")
-                                    || p.toString().toLowerCase().endsWith(".zip"))
+                            .filter(p -> p.toString().toLowerCase(Locale.ENGLISH).endsWith(".jar")
+                                    || p.toString().toLowerCase(Locale.ENGLISH).endsWith(".zip"))
                             .map(p -> convertPathToDisableableMod(p, Type.dependency)).collect(Collectors.toList()));
                 } catch (IOException e) {
                     LogManager.logStackTrace(e);
@@ -2018,8 +2020,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
             if (Files.exists(modrinthExtractedPath.resolve("overrides/mods"))) {
                 try (Stream<Path> list = Files.list(modrinthExtractedPath.resolve("overrides/mods"))) {
                     this.modsInstalled.addAll(list.filter(p -> !Files.isDirectory(p))
-                            .filter(p -> p.toString().toLowerCase().endsWith(".jar")
-                                    || p.toString().toLowerCase().endsWith(".zip"))
+                            .filter(p -> p.toString().toLowerCase(Locale.ENGLISH).endsWith(".jar")
+                                    || p.toString().toLowerCase(Locale.ENGLISH).endsWith(".zip"))
                             .map(p -> convertPathToDisableableMod(p, Type.mods)).collect(Collectors.toList()));
                 } catch (IOException e) {
                     LogManager.logStackTrace(e);
@@ -2030,8 +2032,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                 try (Stream<Path> list = Files
                         .list(modrinthExtractedPath.resolve("overrides/mods/" + packVersion.minecraft))) {
                     this.modsInstalled.addAll(list.filter(p -> !Files.isDirectory(p))
-                            .filter(p -> p.toString().toLowerCase().endsWith(".jar")
-                                    || p.toString().toLowerCase().endsWith(".zip"))
+                            .filter(p -> p.toString().toLowerCase(Locale.ENGLISH).endsWith(".jar")
+                                    || p.toString().toLowerCase(Locale.ENGLISH).endsWith(".zip"))
                             .map(p -> convertPathToDisableableMod(p, Type.dependency)).collect(Collectors.toList()));
                 } catch (IOException e) {
                     LogManager.logStackTrace(e);
@@ -2043,8 +2045,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
             if (Files.exists(technicModpackExtractedPath.resolve("mods"))) {
                 try (Stream<Path> list = Files.list(technicModpackExtractedPath.resolve("mods"))) {
                     this.modsInstalled.addAll(list.filter(p -> !Files.isDirectory(p))
-                            .filter(p -> p.toString().toLowerCase().endsWith(".jar")
-                                    || p.toString().toLowerCase().endsWith(".zip"))
+                            .filter(p -> p.toString().toLowerCase(Locale.ENGLISH).endsWith(".jar")
+                                    || p.toString().toLowerCase(Locale.ENGLISH).endsWith(".zip"))
                             .map(p -> convertPathToDisableableMod(p, Type.mods)).collect(Collectors.toList()));
                 } catch (IOException e) {
                     LogManager.logStackTrace(e);
@@ -2055,8 +2057,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                 try (Stream<Path> list = Files
                         .list(technicModpackExtractedPath.resolve("mods/" + packVersion.minecraft))) {
                     this.modsInstalled.addAll(list.filter(p -> !Files.isDirectory(p))
-                            .filter(p -> p.toString().toLowerCase().endsWith(".jar")
-                                    || p.toString().toLowerCase().endsWith(".zip"))
+                            .filter(p -> p.toString().toLowerCase(Locale.ENGLISH).endsWith(".jar")
+                                    || p.toString().toLowerCase(Locale.ENGLISH).endsWith(".zip"))
                             .map(p -> convertPathToDisableableMod(p, Type.dependency)).collect(Collectors.toList()));
                 } catch (IOException e) {
                     LogManager.logStackTrace(e);
@@ -2066,8 +2068,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
             if (Files.exists(technicModpackExtractedPath.resolve("mods/ic2"))) {
                 try (Stream<Path> list = Files.list(technicModpackExtractedPath.resolve("mods/ic2"))) {
                     this.modsInstalled.addAll(list.filter(p -> !Files.isDirectory(p))
-                            .filter(p -> p.toString().toLowerCase().endsWith(".jar")
-                                    || p.toString().toLowerCase().endsWith(".zip"))
+                            .filter(p -> p.toString().toLowerCase(Locale.ENGLISH).endsWith(".jar")
+                                    || p.toString().toLowerCase(Locale.ENGLISH).endsWith(".zip"))
                             .map(p -> convertPathToDisableableMod(p, Type.ic2lib)).collect(Collectors.toList()));
                 } catch (IOException e) {
                     LogManager.logStackTrace(e);
@@ -3013,7 +3015,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         if (Files.exists(this.root.resolve("mods"))) {
             try (Stream<Path> list = Files.list(this.root.resolve("mods"))) {
                 this.modsInstalled.addAll(list.filter(p -> !Files.isDirectory(p)).filter(
-                        p -> p.toString().toLowerCase().endsWith(".jar") || p.toString().toLowerCase().endsWith(".zip"))
+                        p -> p.toString().toLowerCase(Locale.ENGLISH).endsWith(".jar")
+                                || p.toString().toLowerCase(Locale.ENGLISH).endsWith(".zip"))
                         .map(p -> convertPathToDisableableMod(p, Type.mods)).collect(Collectors.toList()));
             } catch (IOException e) {
                 LogManager.logStackTrace(e);
@@ -3023,7 +3026,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         if (Files.exists(this.root.resolve("mods/" + packVersion.minecraft))) {
             try (Stream<Path> list = Files.list(this.root.resolve("mods/" + packVersion.minecraft))) {
                 this.modsInstalled.addAll(list.filter(p -> !Files.isDirectory(p)).filter(
-                        p -> p.toString().toLowerCase().endsWith(".jar") || p.toString().toLowerCase().endsWith(".zip"))
+                        p -> p.toString().toLowerCase(Locale.ENGLISH).endsWith(".jar")
+                                || p.toString().toLowerCase(Locale.ENGLISH).endsWith(".zip"))
                         .map(p -> convertPathToDisableableMod(p, Type.dependency)).collect(Collectors.toList()));
             } catch (IOException e) {
                 LogManager.logStackTrace(e);
@@ -3033,7 +3037,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         if (Files.exists(this.root.resolve("mods/ic2"))) {
             try (Stream<Path> list = Files.list(this.root.resolve("mods/ic2"))) {
                 this.modsInstalled.addAll(list.filter(p -> !Files.isDirectory(p)).filter(
-                        p -> p.toString().toLowerCase().endsWith(".jar") || p.toString().toLowerCase().endsWith(".zip"))
+                        p -> p.toString().toLowerCase(Locale.ENGLISH).endsWith(".jar")
+                                || p.toString().toLowerCase(Locale.ENGLISH).endsWith(".zip"))
                         .map(p -> convertPathToDisableableMod(p, Type.ic2lib)).collect(Collectors.toList()));
             } catch (IOException e) {
                 LogManager.logStackTrace(e);
