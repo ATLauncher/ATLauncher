@@ -489,6 +489,10 @@ public class ModsSection extends SectionPanel {
     }
 
     private Optional<DisableableMod> getFirstSelectedMod() {
+        if (modsTable.getSelectedRow() == -1) {
+            return Optional.empty();
+        }
+
         int selectedRow = modsTable.convertRowIndexToModel(modsTable.getSelectedRow());
         String filename = (String) tableModel.getValueAt(selectedRow, 0);
 
@@ -619,20 +623,22 @@ public class ModsSection extends SectionPanel {
 
                     Optional<DisableableMod> selectedMod = getFirstSelectedMod();
 
-                    int selectedRow = modsTable.convertRowIndexToModel(modsTable.getSelectedRow());
-                    String filename = (String) tableModel.getValueAt(selectedRow, 0);
-                    fileNameMenuItem.setText(filename);
+                    if (modsTable.getSelectedRow() != -1) {
+                        int selectedRow = modsTable.convertRowIndexToModel(modsTable.getSelectedRow());
+                        String filename = (String) tableModel.getValueAt(selectedRow, 0);
+                        fileNameMenuItem.setText(filename);
 
-                    openDiscordMenuItem.setVisible(hasExactlyOneModSelected && selectedMod.isPresent()
-                            && selectedMod.get().getDiscordInviteUrl() != null);
-                    openSourceMenuItem.setVisible(hasExactlyOneModSelected && selectedMod.isPresent()
-                            && selectedMod.get().getSourceUrl() != null);
-                    openSupportMenuItem.setVisible(hasExactlyOneModSelected && selectedMod.isPresent()
-                            && selectedMod.get().getSupportUrl() != null);
-                    openWebsiteMenuItem.setVisible(hasExactlyOneModSelected && selectedMod.isPresent()
-                            && selectedMod.get().getWebsiteUrl() != null);
-                    openWikiMenuItem.setVisible(hasExactlyOneModSelected && selectedMod.isPresent()
-                            && selectedMod.get().getWikiUrl() != null);
+                        openDiscordMenuItem.setVisible(hasExactlyOneModSelected && selectedMod.isPresent()
+                                && selectedMod.get().getDiscordInviteUrl() != null);
+                        openSourceMenuItem.setVisible(hasExactlyOneModSelected && selectedMod.isPresent()
+                                && selectedMod.get().getSourceUrl() != null);
+                        openSupportMenuItem.setVisible(hasExactlyOneModSelected && selectedMod.isPresent()
+                                && selectedMod.get().getSupportUrl() != null);
+                        openWebsiteMenuItem.setVisible(hasExactlyOneModSelected && selectedMod.isPresent()
+                                && selectedMod.get().getWebsiteUrl() != null);
+                        openWikiMenuItem.setVisible(hasExactlyOneModSelected && selectedMod.isPresent()
+                                && selectedMod.get().getWikiUrl() != null);
+                    }
                 }
             }
         });
