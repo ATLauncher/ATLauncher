@@ -56,12 +56,14 @@ public class LauncherConsole extends JFrame implements RelocalizationListener {
     private JMenuItem copy;
 
     public LauncherConsole() {
-        setTitle(Constants.LAUNCHER_NAME + " Console");
+        // #. {0} is the name of the launcher (ATLauncher)
+        setTitle(GetText.tr("{0} Console", Constants.LAUNCHER_NAME));
         setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
         setIconImage(Utils.getImage("/assets/image/icon.png"));
         setLayout(new BorderLayout());
 
-        setMinimumSize(new Dimension(650, 400));
+        setMinimumSize(new Dimension(400, 200));
+        setSize(new Dimension(650, 400));
 
         try {
             if (App.settings.rememberWindowSizePosition && App.settings.consoleSize != null
@@ -89,6 +91,9 @@ public class LauncherConsole extends JFrame implements RelocalizationListener {
             public void componentResized(ComponentEvent evt) {
                 Component c = (Component) evt.getSource();
 
+                bottomBar.hideBottomBarIconsIfNeeded();
+                setMinimumSize(new Dimension(Math.max(bottomBar.leftSide.getWidth(), 400), 200));
+
                 if (App.settings.rememberWindowSizePosition) {
                     App.settings.consoleSize = c.getSize();
                     App.settings.save();
@@ -109,6 +114,7 @@ public class LauncherConsole extends JFrame implements RelocalizationListener {
     @Override
     public void setVisible(boolean flag) {
         super.setVisible(flag);
+        bottomBar.hideBottomBarIconsIfNeeded();
         if (flag) {
             ConsoleOpenManager.post();
         } else {
