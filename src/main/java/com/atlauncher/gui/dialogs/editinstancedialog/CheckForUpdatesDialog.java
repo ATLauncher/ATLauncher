@@ -29,9 +29,12 @@ import java.util.List;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JDialog;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
@@ -39,15 +42,24 @@ import javax.swing.border.MatteBorder;
 
 import org.mini2Dx.gettext.GetText;
 
+import com.atlauncher.App;
 import com.atlauncher.data.DisableableMod;
 import com.atlauncher.data.Instance;
+import com.atlauncher.data.ModPlatform;
 import com.atlauncher.gui.card.ModUpdatesChooserCard;
 import com.atlauncher.gui.layouts.WrapLayout;
+import com.atlauncher.gui.panels.LoadingPanel;
 import com.atlauncher.network.Analytics;
+import com.atlauncher.utils.ComboItem;
 
 public class CheckForUpdatesDialog extends JDialog {
     private final Instance instance;
     private final List<DisableableMod> mods;
+
+    private boolean checking = false;
+
+    private final JPanel mainPanel = new JPanel(new BorderLayout());
+    private final JComboBox<ComboItem<ModPlatform>> platformComboBox = new JComboBox<>();
 
     public CheckForUpdatesDialog(Window parent, Instance instance, List<DisableableMod> mods) {
         super(parent);
@@ -68,17 +80,11 @@ public class CheckForUpdatesDialog extends JDialog {
             }
         });
 
-        if (mods.size() <= 2) {
-            setMinimumSize(new Dimension(650, 340));
-        } else if (mods.size() <= 4) {
-            setMinimumSize(new Dimension(650, 590));
-        } else if (mods.size() <= 6) {
-            setMinimumSize(new Dimension(950, 590));
-        } else {
-            setMinimumSize(new Dimension(950, 620));
-        }
+        setMinimumSize(new Dimension(950, 650));
 
         setupComponents();
+
+        checkForUpdates();
 
         setLocationRelativeTo(parent);
         setVisible(true);
@@ -89,18 +95,29 @@ public class CheckForUpdatesDialog extends JDialog {
     }
 
     private void setupComponents() {
-        JPanel modsPanel = new JPanel(new WrapLayout());
-        for (DisableableMod mod : mods) {
-            modsPanel.add(new ModUpdatesChooserCard(instance, mod));
-        }
+        JPanel topPanel = new JPanel();
+        topPanel.setBorder(new CompoundBorder(
+                new MatteBorder(0, 0, 1, 0, UIManager.getColor("Separator.foreground")),
+                new EmptyBorder(5, 5, 5, 5)));
+        topPanel.setLayout(new BoxLayout(topPanel, BoxLayout.X_AXIS));
 
-        JScrollPane modsScrollPane = new JScrollPane(modsPanel, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-                JScrollPane.HORIZONTAL_SCROLLBAR_NEVER) {
-            {
-                this.getVerticalScrollBar().setUnitIncrement(8);
-            }
-        };
-        add(modsScrollPane, BorderLayout.CENTER);
+        platformComboBox.addItem(new ComboItem<ModPlatform>(ModPlatform.CURSEFORGE, "CurseForge"));
+        platformComboBox.addItem(new ComboItem<ModPlatform>(ModPlatform.MODRINTH, "Modrinth"));
+        platformComboBox.setMaximumSize(new Dimension(100, 23));
+        platformComboBox.setPreferredSize(new Dimension(100, 23));
+
+        platformComboBox.setSelectedIndex(App.settings.defaultModPlatform == ModPlatform.CURSEFORGE ? 0 : 1);
+
+        platformComboBox.addActionListener(e -> {
+            checkForUpdates();
+        });
+
+        topPanel.add(Box.createHorizontalGlue());
+        topPanel.add(new JLabel(GetText.tr("Platform:")));
+        topPanel.add(Box.createHorizontalStrut(10));
+        topPanel.add(platformComboBox);
+
+        add(topPanel, BorderLayout.NORTH);
 
         JPanel bottomPanel = new JPanel();
         bottomPanel.setBorder(new CompoundBorder(
@@ -126,5 +143,56 @@ public class CheckForUpdatesDialog extends JDialog {
         bottomPanel.add(Box.createHorizontalGlue());
 
         add(bottomPanel, BorderLayout.SOUTH);
+
+        add(mainPanel, BorderLayout.CENTER);
+    }
+
+    private void addLoadingPanel() {
+        mainPanel.removeAll();
+        mainPanel.revalidate();
+        mainPanel.repaint();
+        mainPanel.add(new LoadingPanel(GetText.tr("Checking For Updates")), BorderLayout.CENTER);
+    }
+
+    private void checkForUpdates() {
+        if (!checking) {
+            new Thread(() -> {
+                checking = true;
+
+                SwingUtilities.invokeLater(() -> {
+                    platformComboBox.setEnabled(false);
+                    addLoadingPanel();
+                });
+
+                // check for updates
+                try {
+                    Thread.sleep(5000);
+                } catch (InterruptedException e) {
+                }
+
+                // load in mods panel
+                SwingUtilities.invokeLater(() -> {
+                    JPanel modsPanel = new JPanel(new WrapLayout());
+                    for (DisableableMod mod : mods) {
+                        modsPanel.add(new ModUpdatesChooserCard(instance, mod));
+                    }
+
+                    JScrollPane modsScrollPane = new JScrollPane(modsPanel,
+                            JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+                            JScrollPane.HORIZONTAL_SCROLLBAR_NEVER) {
+                        {
+                            this.getVerticalScrollBar().setUnitIncrement(8);
+                        }
+                    };
+
+                    mainPanel.removeAll();
+                    mainPanel.revalidate();
+                    mainPanel.repaint();
+                    mainPanel.add(modsScrollPane, BorderLayout.CENTER);
+                    platformComboBox.setEnabled(true);
+                });
+                checking = false;
+            }).start();
+        }
     }
 }

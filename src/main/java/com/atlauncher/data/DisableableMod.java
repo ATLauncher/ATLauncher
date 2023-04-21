@@ -27,6 +27,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -35,6 +36,7 @@ import org.joda.time.format.ISODateTimeFormat;
 import org.mini2Dx.gettext.GetText;
 
 import com.atlauncher.App;
+import com.atlauncher.data.curseforge.CurseForgeAttachment;
 import com.atlauncher.data.curseforge.CurseForgeFile;
 import com.atlauncher.data.curseforge.CurseForgeProject;
 import com.atlauncher.data.modrinth.ModrinthProject;
@@ -900,5 +902,21 @@ public class DisableableMod implements Serializable {
         }
 
         return description;
+    }
+
+    public String getIconUrl() {
+        if (modrinthProject != null) {
+            return modrinthProject.iconUrl;
+        }
+
+        if (curseForgeProject != null) {
+            Optional<CurseForgeAttachment> logo = curseForgeProject.getLogo();
+
+            if (logo.isPresent()) {
+                return logo.get().thumbnailUrl;
+            }
+        }
+
+        return null;
     }
 }

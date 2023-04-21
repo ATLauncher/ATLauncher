@@ -19,6 +19,7 @@ package com.atlauncher.gui.panels;
 
 import java.awt.Component;
 
+import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
@@ -41,15 +42,15 @@ public class LoadingPanel extends JPanel {
 
         JLabel iconLabel = new JLabel();
         iconLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-        iconLabel.setAlignmentY(Component.CENTER_ALIGNMENT);
         iconLabel.setIcon(imageIcon);
         imageIcon.setImageObserver(iconLabel);
 
         JLabel label = new JLabel(text);
         label.setAlignmentX(Component.CENTER_ALIGNMENT);
-        label.setAlignmentY(Component.CENTER_ALIGNMENT);
 
+        add(Box.createVerticalGlue());
         add(iconLabel);
         add(label);
+        add(Box.createVerticalGlue());
     }
 }

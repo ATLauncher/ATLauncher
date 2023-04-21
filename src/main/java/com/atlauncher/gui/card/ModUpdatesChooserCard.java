@@ -6,9 +6,10 @@ import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.BoxLayout;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -23,20 +24,29 @@ import org.mini2Dx.gettext.GetText;
 import com.atlauncher.constants.UIConstants;
 import com.atlauncher.data.DisableableMod;
 import com.atlauncher.data.Instance;
+import com.atlauncher.data.curseforge.CurseForgeFile;
+import com.atlauncher.data.modrinth.ModrinthVersion;
+import com.atlauncher.gui.components.BackgroundImageLabel;
 import com.atlauncher.utils.ComboItem;
 
 public class ModUpdatesChooserCard extends JPanel {
     final private Instance instance;
     final private DisableableMod mod;
+    final private List<CurseForgeFile> curseForgeVersions;
+    final private List<ModrinthVersion> modrinthVersions;
 
     public ModUpdatesChooserCard(Instance instance, DisableableMod mod) {
         super();
 
         this.instance = instance;
         this.mod = mod;
+        this.curseForgeVersions = new ArrayList<>();
+        this.modrinthVersions = new ArrayList<>();
 
         setBorder(new CompoundBorder(new EmptyBorder(10, 10, 10, 10), new TitledBorder(mod.getNameFromFile(instance))));
         setPreferredSize(new Dimension(300, 250));
+        setMinimumSize(new Dimension(300, 250));
+        setMaximumSize(new Dimension(300, 250));
         setLayout(new BorderLayout());
 
         setupComponents();
@@ -49,6 +59,7 @@ public class ModUpdatesChooserCard extends JPanel {
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.fill = GridBagConstraints.BOTH;
+        gbc.weightx = 1;
 
         // Current Version
         gbc.gridx = 0;
@@ -86,7 +97,7 @@ public class ModUpdatesChooserCard extends JPanel {
         gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         JPanel updatedVersionPanel = new JPanel();
-        updatedVersionPanel.setBorder(new EmptyBorder(0, 10, 0, 10));
+        updatedVersionPanel.setBorder(new EmptyBorder(0, 10, 0, 0));
         updatedVersionPanel.setLayout(new BoxLayout(updatedVersionPanel, BoxLayout.X_AXIS));
 
         JComboBox<ComboItem<String>> updatedVersionComboBox = new JComboBox<>();
@@ -108,10 +119,18 @@ public class ModUpdatesChooserCard extends JPanel {
         bottomPanel.add(websiteButton);
         add(bottomPanel, BorderLayout.SOUTH);
 
-        JLabel iconLabel = new JLabel();
-        iconLabel.setIcon(
-                new ImageIcon("C:\\Users\\rldow\\Downloads\\dc558eece920db435f9823ce86de0c4cde89800b (1).png"));
-        iconLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        add(iconLabel, BorderLayout.NORTH);
+        String iconUrl = mod.getIconUrl();
+        if (iconUrl != null) {
+            BackgroundImageLabel iconLabel = new BackgroundImageLabel(iconUrl, 50, 50);
+            iconLabel.setHorizontalAlignment(SwingConstants.CENTER);
+            add(iconLabel, BorderLayout.NORTH);
+        } else {
+            JLabel emptyLabel = new JLabel();
+            emptyLabel.setMinimumSize(new Dimension(50, 50));
+            emptyLabel.setMaximumSize(new Dimension(50, 50));
+            emptyLabel.setPreferredSize(new Dimension(50, 50));
+            emptyLabel.setHorizontalAlignment(SwingConstants.CENTER);
+            add(emptyLabel, BorderLayout.NORTH);
+        }
     }
 }
