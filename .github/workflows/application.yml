@@ -1,5 +1,4 @@
 name: Application
-
 on: [push, pull_request]
 
 concurrency:
