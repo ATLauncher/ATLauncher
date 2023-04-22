@@ -69,6 +69,8 @@ public class CheckForUpdatesDialog extends JDialog {
 
     private final JPanel mainPanel = new JPanel(new BorderLayout());
     private final JComboBox<ComboItem<ModPlatform>> platformComboBox = new JComboBox<>();
+    private final ExecutorService modCheckExecutor = Executors.newFixedThreadPool(10);
+    private final JButton updateButton = new JButton(GetText.tr("Update"));
 
     public CheckForUpdatesDialog(Window parent, Instance instance, List<DisableableMod> mods) {
         super(parent);
@@ -100,6 +102,10 @@ public class CheckForUpdatesDialog extends JDialog {
     }
 
     private void close() {
+        if (!modCheckExecutor.isShutdown()) {
+            modCheckExecutor.shutdownNow();
+        }
+
         dispose();
     }
 
@@ -152,7 +158,7 @@ public class CheckForUpdatesDialog extends JDialog {
 
         bottomPanel.add(Box.createHorizontalStrut(20));
 
-        JButton updateButton = new JButton(GetText.tr("Update"));
+        updateButton.setEnabled(false);
         bottomPanel.add(updateButton);
         bottomPanel.add(Box.createHorizontalGlue());
 
@@ -175,11 +181,9 @@ public class CheckForUpdatesDialog extends JDialog {
 
                 SwingUtilities.invokeLater(() -> {
                     platformComboBox.setEnabled(false);
+                    updateButton.setEnabled(false);
                     addLoadingPanel();
                 });
-
-                // check for updates
-                ExecutorService executor = Executors.newFixedThreadPool(10);
 
                 ModPlatform platform = ((ComboItem<ModPlatform>) platformComboBox.getSelectedItem()).getValue();
 
@@ -187,7 +191,7 @@ public class CheckForUpdatesDialog extends JDialog {
 
                 // read in all mod files internal metadata
                 for (DisableableMod mod : mods) {
-                    executor.execute(() -> {
+                    modCheckExecutor.execute(() -> {
                         Pair<Boolean, Pair<Object, Object>> update = mod.checkForUpdate(instance, platform);
 
                         if (update.left()) {
@@ -195,14 +199,14 @@ public class CheckForUpdatesDialog extends JDialog {
                         }
                     });
                 }
-                executor.shutdown();
+                modCheckExecutor.shutdown();
 
                 try {
-                    if (!executor.awaitTermination(60, TimeUnit.SECONDS)) {
-                        executor.shutdownNow();
+                    if (!modCheckExecutor.awaitTermination(60, TimeUnit.SECONDS)) {
+                        modCheckExecutor.shutdownNow();
                     }
                 } catch (InterruptedException ex) {
-                    executor.shutdownNow();
+                    modCheckExecutor.shutdownNow();
                     Thread.currentThread().interrupt();
                 }
 
@@ -225,7 +229,9 @@ public class CheckForUpdatesDialog extends JDialog {
                     mainPanel.revalidate();
                     mainPanel.repaint();
                     mainPanel.add(modsScrollPane, BorderLayout.CENTER);
+
                     platformComboBox.setEnabled(true);
+                    updateButton.setEnabled(modUpdates.size() != 0);
                 });
                 checking = false;
             }).start();
