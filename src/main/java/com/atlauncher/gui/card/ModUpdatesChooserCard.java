@@ -24,11 +24,14 @@ import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Window;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.List;
 import java.util.Optional;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -63,7 +66,8 @@ import com.atlauncher.utils.Utils;
 public class ModUpdatesChooserCard extends JPanel {
     final private Window parentWindow;
     final private Instance instance;
-    final private DisableableMod mod;
+    public final DisableableMod mod;
+    final private ModUpdateCheckBoxCheckedCallback onCheckBoxChecked;
 
     final private CurseForgeProject curseForgeProject;
     final private List<CurseForgeFile> curseForgeVersions;
@@ -71,14 +75,17 @@ public class ModUpdatesChooserCard extends JPanel {
     final private ModrinthProject modrinthProject;
     final private List<ModrinthVersion> modrinthVersions;
     private JButton changelogButton = new JButton(GetText.tr("Changelog"));
+    private JComboBox<ComboItem<Object>> updatedVersionComboBox = new JComboBox<>();
+    private JCheckBox updateCheckBox = new JCheckBox(GetText.tr("Update?"));
 
     public ModUpdatesChooserCard(Window parentWindow, Instance instance, DisableableMod mod,
-            Pair<Object, Object> updateData) {
+            Pair<Object, Object> updateData, ModUpdateCheckBoxCheckedCallback onCheckBoxChecked) {
         super();
 
         this.parentWindow = parentWindow;
         this.instance = instance;
         this.mod = mod;
+        this.onCheckBoxChecked = onCheckBoxChecked;
 
         if (updateData.left() instanceof CurseForgeProject) {
             this.modrinthProject = null;
@@ -92,6 +99,7 @@ public class ModUpdatesChooserCard extends JPanel {
             this.curseForgeVersions = null;
         }
 
+        setOpaque(true);
         setBorder(new CompoundBorder(new EmptyBorder(10, 10, 10, 10),
                 new IconTitledBorder(mod.getNameFromFile(instance), App.THEME.getBoldFont().deriveFont(15f),
                         Utils.getIconImage(App.THEME.getResourcePath("image/modpack-platform",
@@ -105,6 +113,42 @@ public class ModUpdatesChooserCard extends JPanel {
     }
 
     private void setupComponents() {
+        JPanel topPanel = new JPanel();
+        topPanel.setLayout(null);
+
+        updateCheckBox.setHorizontalTextPosition(SwingConstants.LEFT);
+        updateCheckBox.setHorizontalAlignment(SwingConstants.RIGHT);
+        updateCheckBox.setSelected(true);
+        updateCheckBox.setBounds(200, 0, 70, 21);
+        updateCheckBox.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                onCheckBoxChecked.checkBoxStateChanged(updateCheckBox.isSelected());
+            }
+        });
+
+        topPanel.setPreferredSize(new Dimension(50, 50));
+
+        topPanel.add(updateCheckBox);
+
+        String iconUrl = getIconUrl();
+        if (iconUrl != null) {
+            BackgroundImageLabel iconLabel = new BackgroundImageLabel(iconUrl, 50, 50);
+            iconLabel.setHorizontalAlignment(SwingConstants.CENTER);
+            iconLabel.setBounds(110, 0, 50, 50);
+            topPanel.add(iconLabel);
+        } else {
+            JLabel emptyLabel = new JLabel();
+            emptyLabel.setMinimumSize(new Dimension(50, 50));
+            emptyLabel.setMaximumSize(new Dimension(50, 50));
+            emptyLabel.setPreferredSize(new Dimension(50, 50));
+            emptyLabel.setHorizontalAlignment(SwingConstants.CENTER);
+            emptyLabel.setBounds(110, 0, 50, 50);
+            topPanel.add(emptyLabel);
+        }
+
+        add(topPanel, BorderLayout.NORTH);
+
         JPanel mainPanel = new JPanel();
         mainPanel.setBorder(new EmptyBorder(0, 5, 0, 5));
         mainPanel.setLayout(new GridBagLayout());
@@ -153,7 +197,6 @@ public class ModUpdatesChooserCard extends JPanel {
         updatedVersionPanel.setBorder(new EmptyBorder(0, 10, 0, 0));
         updatedVersionPanel.setLayout(new BoxLayout(updatedVersionPanel, BoxLayout.X_AXIS));
 
-        JComboBox<ComboItem<Object>> updatedVersionComboBox = new JComboBox<>();
         if (curseForgeVersions != null) {
             for (CurseForgeFile curseForgeFile : curseForgeVersions) {
                 updatedVersionComboBox.addItem(new ComboItem<>(curseForgeFile, curseForgeFile.displayName));
@@ -242,20 +285,6 @@ public class ModUpdatesChooserCard extends JPanel {
         });
         bottomPanel.add(websiteButton);
         add(bottomPanel, BorderLayout.SOUTH);
-
-        String iconUrl = getIconUrl();
-        if (iconUrl != null) {
-            BackgroundImageLabel iconLabel = new BackgroundImageLabel(iconUrl, 50, 50);
-            iconLabel.setHorizontalAlignment(SwingConstants.CENTER);
-            add(iconLabel, BorderLayout.NORTH);
-        } else {
-            JLabel emptyLabel = new JLabel();
-            emptyLabel.setMinimumSize(new Dimension(50, 50));
-            emptyLabel.setMaximumSize(new Dimension(50, 50));
-            emptyLabel.setPreferredSize(new Dimension(50, 50));
-            emptyLabel.setHorizontalAlignment(SwingConstants.CENTER);
-            add(emptyLabel, BorderLayout.NORTH);
-        }
     }
 
     private String getIconUrl() {
@@ -284,5 +313,25 @@ public class ModUpdatesChooserCard extends JPanel {
         }
 
         return null;
+    }
+
+    public boolean isUpdating() {
+        return updateCheckBox.isSelected();
+    }
+
+    public Object getCurrentVersion() {
+        return curseForgeProject != null ? mod.curseForgeFile : mod.modrinthVersion;
+    }
+
+    public Object getVersionUpdatingTo() {
+        return ((ComboItem<Object>) updatedVersionComboBox.getSelectedItem()).getValue();
+    }
+
+    public boolean isCurseForgeMod() {
+        return curseForgeProject != null;
+    }
+
+    public boolean isModrinthMod() {
+        return modrinthProject != null;
     }
 }

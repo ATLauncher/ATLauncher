@@ -24,6 +24,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -52,6 +53,8 @@ import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.data.DisableableMod;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.ModPlatform;
+import com.atlauncher.data.curseforge.CurseForgeFile;
+import com.atlauncher.data.modrinth.ModrinthVersion;
 import com.atlauncher.gui.card.ModUpdatesChooserCard;
 import com.atlauncher.gui.components.JLabelWithHover;
 import com.atlauncher.gui.layouts.WrapLayout;
@@ -65,6 +68,7 @@ import com.atlauncher.utils.Utils;
 public class CheckForUpdatesDialog extends JDialog {
     private final Instance instance;
     private final List<DisableableMod> mods;
+    private final List<ModUpdatesChooserCard> modUpdateCards = new ArrayList<>();
 
     private boolean checking = false;
 
@@ -73,6 +77,7 @@ public class CheckForUpdatesDialog extends JDialog {
     private ExecutorService modCheckExecutor;
     private final JButton updateButton = new JButton(GetText.tr("Update"));
     private JButton closeButton = new JButton(GetText.tr("Close"));
+    private int modsToUpdate = 0;
 
     public CheckForUpdatesDialog(Window parent, Instance instance, List<DisableableMod> mods) {
         super(parent);
@@ -84,7 +89,7 @@ public class CheckForUpdatesDialog extends JDialog {
 
         setLayout(new BorderLayout());
         setResizable(true);
-        setTitle(GetText.tr("Checking For Updates For {0} Mods", mods.size()));
+        setTitle(GetText.tr("Checking For Updates"));
         setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
         addWindowListener(new WindowAdapter() {
             @Override
@@ -161,6 +166,38 @@ public class CheckForUpdatesDialog extends JDialog {
         bottomPanel.add(Box.createHorizontalStrut(20));
 
         updateButton.setEnabled(false);
+        updateButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                for (ModUpdatesChooserCard modUpdateCard : modUpdateCards) {
+                    if (modUpdateCard.isCurseForgeMod()) {
+                        CurseForgeFile currentVersion = (CurseForgeFile) modUpdateCard.getCurrentVersion();
+                        CurseForgeFile updateVersion = (CurseForgeFile) modUpdateCard.getVersionUpdatingTo();
+
+                        if (modUpdateCard.isUpdating() && currentVersion.id != updateVersion.id) {
+                            System.out.println(String.format("CurseForge Mod %s: Updating from %s to %s",
+                                    modUpdateCard.mod.name,
+                                    currentVersion.displayName,
+                                    updateVersion.displayName));
+                        } else {
+                            System.out.println(String.format("CurseForge Mod %s: Not updating",
+                                    modUpdateCard.mod.name));
+                        }
+                    } else if (modUpdateCard.isModrinthMod()) {
+                        ModrinthVersion currentVersion = (ModrinthVersion) modUpdateCard.getCurrentVersion();
+                        ModrinthVersion updateVersion = (ModrinthVersion) modUpdateCard.getVersionUpdatingTo();
+
+                        if (modUpdateCard.isUpdating() && !currentVersion.id.equals(updateVersion.id)) {
+                            System.out.println(String.format("Modrinth Mod %s: Updating from %s to %s",
+                                    modUpdateCard.mod.name, currentVersion.name,
+                                    updateVersion.name));
+                        } else {
+                            System.out.println(String.format("Modrinth Mod %s: Not updating", modUpdateCard.mod.name));
+                        }
+                    }
+                }
+            }
+        });
         bottomPanel.add(updateButton);
         bottomPanel.add(Box.createHorizontalGlue());
 
@@ -174,12 +211,14 @@ public class CheckForUpdatesDialog extends JDialog {
         mainPanel.revalidate();
         mainPanel.repaint();
         mainPanel.add(new LoadingPanel(GetText.tr("Checking For Updates")), BorderLayout.CENTER);
+        setTitle(GetText.tr("Checking For Updates"));
     }
 
     private void checkForUpdates() {
         if (!checking) {
             new Thread(() -> {
                 checking = true;
+                modUpdateCards.clear();
 
                 SwingUtilities.invokeLater(() -> {
                     platformComboBox.setEnabled(false);
@@ -221,10 +260,29 @@ public class CheckForUpdatesDialog extends JDialog {
                         mainPanel.revalidate();
                         mainPanel.repaint();
                         mainPanel.add(new CenteredTextPanel(GetText.tr("No Updates Found")), BorderLayout.CENTER);
+                        setTitle(GetText.tr("No Updates Found"));
                     } else {
                         JPanel modsPanel = new JPanel(new WrapLayout());
                         for (Map.Entry<DisableableMod, Pair<Object, Object>> entry : modUpdates.entrySet()) {
-                            modsPanel.add(new ModUpdatesChooserCard(this, instance, entry.getKey(), entry.getValue()));
+                            modUpdateCards
+                                    .add(new ModUpdatesChooserCard(this, instance, entry.getKey(), entry.getValue(),
+                                            (boolean checked) -> {
+                                                if (checked) {
+                                                    modsToUpdate += 1;
+                                                } else {
+                                                    modsToUpdate -= 1;
+                                                }
+
+                                                SwingUtilities.invokeLater(() -> {
+                                                    updateButton.setEnabled(modsToUpdate != 0);
+                                                    updateButton.setToolTipText(modsToUpdate != 0 ? null
+                                                            : GetText.tr("No Mods Selected For Update"));
+                                                });
+                                            }));
+                        }
+
+                        for (ModUpdatesChooserCard modUpdateCard : modUpdateCards) {
+                            modsPanel.add(modUpdateCard);
                         }
 
                         JScrollPane modsScrollPane = new JScrollPane(modsPanel,
@@ -235,14 +293,19 @@ public class CheckForUpdatesDialog extends JDialog {
                             }
                         };
 
+                        modsToUpdate = modUpdates.size();
+
                         mainPanel.removeAll();
                         mainPanel.revalidate();
                         mainPanel.repaint();
                         mainPanel.add(modsScrollPane, BorderLayout.CENTER);
+                        setTitle(GetText.tr("Select Updates For {0} Mods", modUpdates.size()));
                     }
 
                     platformComboBox.setEnabled(true);
                     updateButton.setEnabled(modUpdates.size() != 0);
+                    updateButton.setToolTipText(modUpdates.size() != 0 ? null
+                            : GetText.tr("No Mods To Update"));
                     closeButton.setText(GetText.tr("Close"));
                 });
                 checking = false;
