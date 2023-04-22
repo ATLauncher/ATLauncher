@@ -23,6 +23,7 @@ import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Window;
 import java.util.List;
 import java.util.Optional;
 
@@ -38,6 +39,7 @@ import javax.swing.border.EmptyBorder;
 import org.mini2Dx.gettext.GetText;
 
 import com.atlauncher.App;
+import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.constants.UIConstants;
 import com.atlauncher.data.DisableableMod;
 import com.atlauncher.data.Instance;
@@ -48,12 +50,18 @@ import com.atlauncher.data.modrinth.ModrinthProject;
 import com.atlauncher.data.modrinth.ModrinthVersion;
 import com.atlauncher.gui.borders.IconTitledBorder;
 import com.atlauncher.gui.components.BackgroundImageLabel;
+import com.atlauncher.gui.dialogs.HtmlDialog;
+import com.atlauncher.gui.dialogs.ProgressDialog;
+import com.atlauncher.managers.DialogManager;
 import com.atlauncher.utils.ComboItem;
+import com.atlauncher.utils.CurseForgeApi;
+import com.atlauncher.utils.Markdown;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Pair;
 import com.atlauncher.utils.Utils;
 
 public class ModUpdatesChooserCard extends JPanel {
+    final private Window parentWindow;
     final private Instance instance;
     final private DisableableMod mod;
 
@@ -62,10 +70,13 @@ public class ModUpdatesChooserCard extends JPanel {
 
     final private ModrinthProject modrinthProject;
     final private List<ModrinthVersion> modrinthVersions;
+    private JButton changelogButton = new JButton(GetText.tr("Changelog"));
 
-    public ModUpdatesChooserCard(Instance instance, DisableableMod mod, Pair<Object, Object> updateData) {
+    public ModUpdatesChooserCard(Window parentWindow, Instance instance, DisableableMod mod,
+            Pair<Object, Object> updateData) {
         super();
 
+        this.parentWindow = parentWindow;
         this.instance = instance;
         this.mod = mod;
 
@@ -141,10 +152,32 @@ public class ModUpdatesChooserCard extends JPanel {
         updatedVersionPanel.setBorder(new EmptyBorder(0, 10, 0, 0));
         updatedVersionPanel.setLayout(new BoxLayout(updatedVersionPanel, BoxLayout.X_AXIS));
 
-        JComboBox<ComboItem<String>> updatedVersionComboBox = new JComboBox<>();
-        updatedVersionComboBox.addItem(new ComboItem<String>("347HlKZS", "iris-mc1.19.4-1.6.1.jar"));
-        updatedVersionComboBox.addItem(new ComboItem<String>("rKiitlRl", "iris-mc1.19.4-1.6.0.jar"));
-        updatedVersionComboBox.addItem(new ComboItem<String>("mVGu4Ze2", "iris-mc1.19.4-1.5.2.jar"));
+        JComboBox<ComboItem<Object>> updatedVersionComboBox = new JComboBox<>();
+        if (curseForgeVersions != null) {
+            for (CurseForgeFile curseForgeFile : curseForgeVersions) {
+                updatedVersionComboBox.addItem(new ComboItem<>(curseForgeFile, curseForgeFile.displayName));
+            }
+        } else if (modrinthVersions != null) {
+            for (ModrinthVersion modrinthVersion : modrinthVersions) {
+                updatedVersionComboBox.addItem(new ComboItem<>(modrinthVersion, modrinthVersion.name));
+            }
+        }
+
+        updatedVersionComboBox.addActionListener(e -> {
+            Object selectedVersion = ((ComboItem<Object>) updatedVersionComboBox.getSelectedItem()).getValue();
+
+            if (selectedVersion instanceof CurseForgeFile) {
+                changelogButton.setEnabled(true);
+                changelogButton.setToolTipText(null);
+            } else if (selectedVersion instanceof ModrinthVersion) {
+                ModrinthVersion version = (ModrinthVersion) selectedVersion;
+                changelogButton.setEnabled(version.changelog != null && !version.changelog.isEmpty());
+                changelogButton.setToolTipText(version.changelog != null && !version.changelog.isEmpty() ? null
+                        : GetText.tr("No Changelog Available"));
+            }
+        });
+
+        updatedVersionComboBox.setSelectedIndex(0);
         updatedVersionPanel.add(updatedVersionComboBox);
         mainPanel.add(updatedVersionPanel, gbc);
         add(mainPanel, BorderLayout.CENTER);
@@ -153,9 +186,49 @@ public class ModUpdatesChooserCard extends JPanel {
         bottomPanel.setBorder(new EmptyBorder(10, 0, 0, 0));
         bottomPanel.setLayout(new FlowLayout());
 
-        JButton changelogButton = new JButton(GetText.tr("Changelog"));
         changelogButton.addActionListener((e) -> {
-            // OS.openWebBrowser(websiteUrl);
+            Object selectedVersion = ((ComboItem<Object>) updatedVersionComboBox.getSelectedItem()).getValue();
+
+            if (selectedVersion instanceof CurseForgeFile) {
+                CurseForgeFile version = (CurseForgeFile) selectedVersion;
+
+                ProgressDialog<String> progressDialog = new ProgressDialog<>(GetText.tr("Getting Changelog"), 1,
+                        GetText.tr("Getting Changelog"));
+                progressDialog.addThread(new Thread(() -> {
+                    progressDialog
+                            .setReturnValue(CurseForgeApi.getChangelogForProjectFile(curseForgeProject.id, version.id));
+                    progressDialog.doneTask();
+                    progressDialog.close();
+                }));
+                progressDialog.start();
+
+                if (progressDialog.getReturnValue() == null) {
+                    int ret = DialogManager.okDialog()
+                            .setTitle(GetText.tr("Failed To Get Changelog"))
+                            .setContent(new HTMLBuilder().text(GetText.tr(
+                                    "Failed to get changelog for this version.<br/>You can open the files page on CurseForge to view the changelog."))
+                                    .center().build())
+                            .addOption(GetText.tr("Open On CurseForge"))
+                            .setType(DialogManager.ERROR).show();
+
+                    if (ret == 1) {
+                        OS.openWebBrowser(
+                                String.format("%s/files/%d/changelog", curseForgeProject.getWebsiteUrl(), version.id));
+                    }
+                } else {
+                    new HtmlDialog(
+                            parentWindow,
+                            GetText.tr("Changelog For {0} Version {1}", curseForgeProject.name,
+                                    version.displayName),
+                            progressDialog.getReturnValue());
+                }
+            } else if (selectedVersion instanceof ModrinthVersion) {
+                ModrinthVersion version = (ModrinthVersion) selectedVersion;
+                new HtmlDialog(
+                        parentWindow,
+                        GetText.tr("Changelog For {0} Version {1}", modrinthProject.title, version.name),
+                        Markdown.render(version.changelog));
+            }
         });
         bottomPanel.add(changelogButton);
 

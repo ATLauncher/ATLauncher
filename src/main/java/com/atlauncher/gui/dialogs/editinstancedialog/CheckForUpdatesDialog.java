@@ -224,7 +224,7 @@ public class CheckForUpdatesDialog extends JDialog {
                     } else {
                         JPanel modsPanel = new JPanel(new WrapLayout());
                         for (Map.Entry<DisableableMod, Pair<Object, Object>> entry : modUpdates.entrySet()) {
-                            modsPanel.add(new ModUpdatesChooserCard(instance, entry.getKey(), entry.getValue()));
+                            modsPanel.add(new ModUpdatesChooserCard(this, instance, entry.getKey(), entry.getValue()));
                         }
 
                         JScrollPane modsScrollPane = new JScrollPane(modsPanel,

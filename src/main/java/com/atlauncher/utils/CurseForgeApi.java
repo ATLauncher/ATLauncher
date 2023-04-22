@@ -18,6 +18,7 @@
 package com.atlauncher.utils;
 
 import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -26,6 +27,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import com.atlauncher.Gsons;
@@ -188,6 +191,39 @@ public class CurseForgeApi {
 
         if (response != null) {
             return response.data;
+        }
+
+        return null;
+    }
+
+    public static String getChangelogForProjectFile(int projectId, int fileId) {
+        String url = String.format("%s/mods/%d/files/%d/changelog", Constants.CURSEFORGE_CORE_API_URL, projectId,
+                fileId);
+
+        Download download = Download.build().setUrl(url).header("x-api-key", Constants.CURSEFORGE_CORE_API_KEY)
+                .cached(new CacheControl.Builder().maxStale(1, TimeUnit.HOURS).build());
+
+        java.lang.reflect.Type type = new TypeToken<CurseForgeCoreApiResponse<String>>() {
+        }.getType();
+
+        CurseForgeCoreApiResponse<String> response = download.asType(type);
+
+        if (response != null) {
+            try {
+                Pattern pattern = Pattern.compile("\"/linkout\\?remoteUrl=(.*?)\"");
+                Matcher matcher = pattern.matcher(response.data);
+                StringBuffer buffer = new StringBuffer();
+                while (matcher.find()) {
+                    String decoded = URLDecoder.decode(URLDecoder.decode(matcher.group(1), "UTF-8"), "UTF-8");
+                    matcher.appendReplacement(buffer, "\"" + Matcher.quoteReplacement(decoded) + "\"");
+                }
+                matcher.appendTail(buffer);
+
+                return buffer.toString();
+            } catch (UnsupportedEncodingException e) {
+                return response.data.replaceAll("/(\\/linkout\\?remoteUrl)/g",
+                        "https://www.curseforge.com/linkout?remoteUrl");
+            }
         }
 
         return null;
