@@ -24,7 +24,13 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -42,7 +48,6 @@ import javax.swing.border.MatteBorder;
 
 import org.mini2Dx.gettext.GetText;
 
-import com.atlauncher.App;
 import com.atlauncher.data.DisableableMod;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.ModPlatform;
@@ -51,6 +56,7 @@ import com.atlauncher.gui.layouts.WrapLayout;
 import com.atlauncher.gui.panels.LoadingPanel;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.ComboItem;
+import com.atlauncher.utils.Pair;
 
 public class CheckForUpdatesDialog extends JDialog {
     private final Instance instance;
@@ -101,12 +107,11 @@ public class CheckForUpdatesDialog extends JDialog {
                 new EmptyBorder(5, 5, 5, 5)));
         topPanel.setLayout(new BoxLayout(topPanel, BoxLayout.X_AXIS));
 
+        platformComboBox.addItem(new ComboItem<ModPlatform>(null, "Any"));
         platformComboBox.addItem(new ComboItem<ModPlatform>(ModPlatform.CURSEFORGE, "CurseForge"));
         platformComboBox.addItem(new ComboItem<ModPlatform>(ModPlatform.MODRINTH, "Modrinth"));
         platformComboBox.setMaximumSize(new Dimension(100, 23));
         platformComboBox.setPreferredSize(new Dimension(100, 23));
-
-        platformComboBox.setSelectedIndex(App.settings.defaultModPlatform == ModPlatform.CURSEFORGE ? 0 : 1);
 
         platformComboBox.addActionListener(e -> {
             checkForUpdates();
@@ -165,16 +170,38 @@ public class CheckForUpdatesDialog extends JDialog {
                 });
 
                 // check for updates
+                ExecutorService executor = Executors.newFixedThreadPool(10);
+
+                ModPlatform platform = ((ComboItem<ModPlatform>) platformComboBox.getSelectedItem()).getValue();
+
+                Map<DisableableMod, Pair<Object, Object>> modUpdates = Collections.synchronizedMap(new HashMap<>());
+
+                // read in all mod files internal metadata
+                for (DisableableMod mod : mods) {
+                    executor.execute(() -> {
+                        Pair<Boolean, Pair<Object, Object>> update = mod.checkForUpdate(instance, platform);
+
+                        if (update.left()) {
+                            modUpdates.put(mod, update.right());
+                        }
+                    });
+                }
+                executor.shutdown();
+
                 try {
-                    Thread.sleep(5000);
-                } catch (InterruptedException e) {
+                    if (!executor.awaitTermination(60, TimeUnit.SECONDS)) {
+                        executor.shutdownNow();
+                    }
+                } catch (InterruptedException ex) {
+                    executor.shutdownNow();
+                    Thread.currentThread().interrupt();
                 }
 
                 // load in mods panel
                 SwingUtilities.invokeLater(() -> {
                     JPanel modsPanel = new JPanel(new WrapLayout());
-                    for (DisableableMod mod : mods) {
-                        modsPanel.add(new ModUpdatesChooserCard(instance, mod));
+                    for (Map.Entry<DisableableMod, Pair<Object, Object>> entry : modUpdates.entrySet()) {
+                        modsPanel.add(new ModUpdatesChooserCard(instance, entry.getKey(), entry.getValue()));
                     }
 
                     JScrollPane modsScrollPane = new JScrollPane(modsPanel,

@@ -373,149 +373,103 @@ public class DisableableMod implements Serializable {
         return this.type;
     }
 
-    public boolean checkForUpdate(Window parent, Instance instance) {
-        return checkForUpdate(parent, instance, null);
-    }
-
-    public boolean checkForUpdate(Window parent, Instance instance, ModPlatform platform) {
-        Analytics.sendEvent(instance.launcher.pack + " - " + instance.launcher.version, "UpdateMods", "Instance");
-
-        if (platform == ModPlatform.CURSEFORGE || (platform == null && isFromCurseForge()
+    public Pair<Boolean, Pair<Object, Object>> checkForUpdate(Instance instance, ModPlatform platform) {
+        if (platform == ModPlatform.CURSEFORGE && isFromCurseForge() || (platform == null && isFromCurseForge()
                 && (!isFromModrinth() || App.settings.defaultModPlatform == ModPlatform.CURSEFORGE))) {
-            ProgressDialog<Object> dialog = new ProgressDialog<>(
-                    // #. {0} is the platform were checking for updates (e.g. CurseForge/Modrinth)
-                    GetText.tr("Checking For Update On {0}", "CurseForge"), 0,
-                    // #. {0} is the platform were checking for updates (e.g. CurseForge/Modrinth)
-                    GetText.tr("Checking For Update On {0}", "CurseForge"),
-                    "Cancelled checking for update on CurseForge", parent);
-            dialog.addThread(new Thread(() -> {
-                List<CurseForgeFile> curseForgeFiles = CurseForgeApi.getFilesForProject(curseForgeProjectId);
+            CurseForgeProject curseForgeProject = CurseForgeApi.getProjectById(curseForgeProjectId);
+            List<CurseForgeFile> curseForgeFiles = CurseForgeApi.getFilesForProject(curseForgeProjectId);
 
-                if (curseForgeFiles == null) {
-                    dialog.setReturnValue(false);
-                    dialog.close();
-                    return;
-                }
-
-                Stream<CurseForgeFile> curseForgeFilesStream = curseForgeFiles.stream()
-                        .sorted(Comparator.comparingInt((CurseForgeFile file) -> file.id).reversed());
-
-                if (App.settings.addModRestriction == AddModRestriction.STRICT) {
-                    curseForgeFilesStream = curseForgeFilesStream
-                            .filter(file -> file.gameVersions.contains(instance.id));
-                }
-
-                if (App.settings.addModRestriction == AddModRestriction.LAX) {
-                    try {
-                        List<String> minecraftVersionsToSearch = MinecraftManager.getMajorMinecraftVersions(instance.id)
-                                .stream().map(mv -> mv.id).collect(Collectors.toList());
-
-                        curseForgeFilesStream = curseForgeFilesStream.filter(
-                                file -> file.gameVersions.stream()
-                                        .anyMatch(gv -> minecraftVersionsToSearch.contains(gv)));
-                    } catch (InvalidMinecraftVersion e) {
-                        LogManager.logStackTrace(e);
-                    }
-                }
-
-                // filter out files not for our loader
-                curseForgeFilesStream = curseForgeFilesStream.filter(cf -> {
-                    if (cf.gameVersions.contains("Fabric") && instance.launcher.loaderVersion != null
-                            && (instance.launcher.loaderVersion.isFabric()
-                                    || instance.launcher.loaderVersion.isLegacyFabric()
-                                    || instance.launcher.loaderVersion.isQuilt())) {
-                        return true;
-                    }
-
-                    if (cf.gameVersions.contains("Forge") && instance.launcher.loaderVersion != null
-                            && instance.launcher.loaderVersion.isForge()) {
-                        return true;
-                    }
-
-                    if (cf.gameVersions.contains("Quilt") && instance.launcher.loaderVersion != null
-                            && instance.launcher.loaderVersion.isQuilt()) {
-                        return true;
-                    }
-
-                    // if there's no loaders, assume the mod is untagged so we should show it
-                    if (!cf.gameVersions.contains("Fabric") && !cf.gameVersions.contains("Forge")
-                            && !cf.gameVersions.contains("Quilt")) {
-                        return true;
-                    }
-
-                    return false;
-                });
-
-                if (curseForgeFilesStream.noneMatch(file -> file.id > curseForgeFileId)) {
-                    dialog.setReturnValue(false);
-                    dialog.close();
-                    return;
-                }
-
-                dialog.setReturnValue(CurseForgeApi.getProjectById(curseForgeProjectId));
-                dialog.close();
-            }));
-            dialog.start();
-
-            if (dialog.getReturnValue() instanceof Boolean) {
-                return ((Boolean) dialog.getReturnValue()) == true;
+            if (curseForgeFiles == null) {
+                return new Pair<>(false, null);
             }
 
-            if (dialog.getReturnValue() == null) {
+            Stream<CurseForgeFile> curseForgeFilesStream = curseForgeFiles.stream()
+                    .sorted(Comparator.comparingInt((CurseForgeFile file) -> file.id).reversed());
+
+            if (App.settings.addModRestriction == AddModRestriction.STRICT) {
+                curseForgeFilesStream = curseForgeFilesStream
+                        .filter(file -> file.gameVersions.contains(instance.id));
+            }
+
+            if (App.settings.addModRestriction == AddModRestriction.LAX) {
+                try {
+                    List<String> minecraftVersionsToSearch = MinecraftManager.getMajorMinecraftVersions(instance.id)
+                            .stream().map(mv -> mv.id).collect(Collectors.toList());
+
+                    curseForgeFilesStream = curseForgeFilesStream.filter(
+                            file -> file.gameVersions.stream()
+                                    .anyMatch(gv -> minecraftVersionsToSearch.contains(gv)));
+                } catch (InvalidMinecraftVersion e) {
+                    LogManager.logStackTrace(e);
+                }
+            }
+
+            // filter out files not for our loader
+            curseForgeFilesStream = curseForgeFilesStream.filter(cf -> {
+                if (cf.gameVersions.contains("Fabric") && instance.launcher.loaderVersion != null
+                        && (instance.launcher.loaderVersion.isFabric()
+                                || instance.launcher.loaderVersion.isLegacyFabric()
+                                || instance.launcher.loaderVersion.isQuilt())) {
+                    return true;
+                }
+
+                if (cf.gameVersions.contains("Forge") && instance.launcher.loaderVersion != null
+                        && instance.launcher.loaderVersion.isForge()) {
+                    return true;
+                }
+
+                if (cf.gameVersions.contains("Quilt") && instance.launcher.loaderVersion != null
+                        && instance.launcher.loaderVersion.isQuilt()) {
+                    return true;
+                }
+
+                // if there's no loaders, assume the mod is untagged so we should show it
+                if (!cf.gameVersions.contains("Fabric") && !cf.gameVersions.contains("Forge")
+                        && !cf.gameVersions.contains("Quilt")) {
+                    return true;
+                }
+
                 return false;
+            });
+
+            List<CurseForgeFile> filteredVersions = curseForgeFilesStream.collect(Collectors.toList());
+
+            if (filteredVersions.stream().noneMatch(file -> file.id > curseForgeFileId)) {
+                return new Pair<>(false, null);
             }
 
-            new CurseForgeProjectFileSelectorDialog(parent, (CurseForgeProject) dialog.getReturnValue(), instance,
-                    curseForgeFileId);
-        } else if (platform == ModPlatform.MODRINTH || platform == null && isFromModrinth()
-                && (!isFromCurseForge() || App.settings.defaultModPlatform == ModPlatform.MODRINTH)) {
-            ProgressDialog<Pair<ModrinthProject, List<ModrinthVersion>>> dialog = new ProgressDialog<>(
-                    // #. {0} is the platform were checking for updates (e.g. CurseForge/Modrinth)
-                    GetText.tr("Checking For Update On {0}", "Modrinth"), 0,
-                    // #. {0} is the platform were checking for updates (e.g. CurseForge/Modrinth)
-                    GetText.tr("Checking For Update On {0}", "Modrinth"), "Cancelled checking for update on Modrinth",
-                    parent);
-            dialog.addThread(new Thread(() -> {
-                ModrinthProject mod = ModrinthApi.getProject(modrinthProject.id);
-                List<ModrinthVersion> versions = ModrinthApi.getVersions(modrinthProject.id, instance.id,
-                        instance.launcher.loaderVersion);
+            return new Pair<>(true, new Pair<>(curseForgeProject, filteredVersions));
+        } else if (platform == ModPlatform.MODRINTH && isFromModrinth() || (platform == null && isFromModrinth()
+                && (!isFromCurseForge() || App.settings.defaultModPlatform == ModPlatform.MODRINTH))) {
+            ModrinthProject mod = ModrinthApi.getProject(modrinthProject.id);
+            List<ModrinthVersion> versions = ModrinthApi.getVersions(modrinthProject.id, instance.id,
+                    instance.launcher.loaderVersion);
 
-                if (versions == null) {
-                    dialog.setReturnValue(null);
-                    dialog.close();
-                    return;
-                }
-
-                Stream<ModrinthVersion> versionsStream = versions.stream()
-                        .sorted(Comparator.comparing((ModrinthVersion version) -> version.datePublished).reversed());
-
-                if (App.settings.addModRestriction == AddModRestriction.STRICT) {
-                    versionsStream = versionsStream.filter(v -> v.gameVersions.contains(instance.id));
-                }
-
-                if (versionsStream.noneMatch(v -> ISODateTimeFormat.dateTimeParser().parseDateTime(v.datePublished)
-                        .minusSeconds(1)
-                        .isAfter(ISODateTimeFormat.dateTimeParser().parseDateTime(modrinthVersion.datePublished)))) {
-                    dialog.setReturnValue(null);
-                    dialog.close();
-                    return;
-                }
-
-                dialog.setReturnValue(new Pair<ModrinthProject, List<ModrinthVersion>>(mod, versions));
-                dialog.close();
-            }));
-            dialog.start();
-
-            if (dialog.getReturnValue() == null) {
-                return false;
+            if (versions == null) {
+                return new Pair<>(false, null);
             }
 
-            Pair<ModrinthProject, List<ModrinthVersion>> pair = dialog.getReturnValue();
+            Stream<ModrinthVersion> versionsStream = versions.stream()
+                    .sorted(Comparator.comparing((ModrinthVersion version) -> version.datePublished).reversed());
 
-            new ModrinthVersionSelectorDialog(parent, pair.left(), pair.right(), instance, modrinthVersion.id);
+            if (App.settings.addModRestriction == AddModRestriction.STRICT) {
+                versionsStream = versionsStream.filter(v -> v.gameVersions.contains(instance.id));
+            }
+
+            List<ModrinthVersion> filteredVersions = versionsStream.collect(Collectors.toList());
+
+            if (filteredVersions.stream()
+                    .noneMatch(v -> ISODateTimeFormat.dateTimeParser().parseDateTime(v.datePublished)
+                            .minusSeconds(1)
+                            .isAfter(
+                                    ISODateTimeFormat.dateTimeParser().parseDateTime(modrinthVersion.datePublished)))) {
+                return new Pair<>(false, null);
+            }
+
+            return new Pair<>(true, new Pair<>(mod, filteredVersions));
         }
 
-        return true;
+        return new Pair<>(false, null);
     }
 
     public boolean reinstall(Window parent, Instance instance) {

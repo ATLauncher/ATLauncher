@@ -6,8 +6,8 @@ import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -17,33 +17,56 @@ import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
-import javax.swing.border.TitledBorder;
 
 import org.mini2Dx.gettext.GetText;
 
+import com.atlauncher.App;
 import com.atlauncher.constants.UIConstants;
 import com.atlauncher.data.DisableableMod;
 import com.atlauncher.data.Instance;
+import com.atlauncher.data.curseforge.CurseForgeAttachment;
 import com.atlauncher.data.curseforge.CurseForgeFile;
+import com.atlauncher.data.curseforge.CurseForgeProject;
+import com.atlauncher.data.modrinth.ModrinthProject;
 import com.atlauncher.data.modrinth.ModrinthVersion;
+import com.atlauncher.gui.borders.IconTitledBorder;
 import com.atlauncher.gui.components.BackgroundImageLabel;
 import com.atlauncher.utils.ComboItem;
+import com.atlauncher.utils.Pair;
+import com.atlauncher.utils.Utils;
 
 public class ModUpdatesChooserCard extends JPanel {
     final private Instance instance;
     final private DisableableMod mod;
+
+    final private CurseForgeProject curseForgeProject;
     final private List<CurseForgeFile> curseForgeVersions;
+
+    final private ModrinthProject modrinthProject;
     final private List<ModrinthVersion> modrinthVersions;
 
-    public ModUpdatesChooserCard(Instance instance, DisableableMod mod) {
+    public ModUpdatesChooserCard(Instance instance, DisableableMod mod, Pair<Object, Object> updateData) {
         super();
 
         this.instance = instance;
         this.mod = mod;
-        this.curseForgeVersions = new ArrayList<>();
-        this.modrinthVersions = new ArrayList<>();
 
-        setBorder(new CompoundBorder(new EmptyBorder(10, 10, 10, 10), new TitledBorder(mod.getNameFromFile(instance))));
+        if (updateData.left() instanceof CurseForgeProject) {
+            this.modrinthProject = null;
+            this.modrinthVersions = null;
+            this.curseForgeProject = (CurseForgeProject) updateData.left();
+            this.curseForgeVersions = (List<CurseForgeFile>) updateData.right();
+        } else {
+            this.modrinthProject = (ModrinthProject) updateData.left();
+            this.modrinthVersions = (List<ModrinthVersion>) updateData.right();
+            this.curseForgeProject = null;
+            this.curseForgeVersions = null;
+        }
+
+        setBorder(new CompoundBorder(new EmptyBorder(10, 10, 10, 10),
+                new IconTitledBorder(mod.getNameFromFile(instance), App.THEME.getBoldFont().deriveFont(15f),
+                        Utils.getIconImage(App.THEME.getResourcePath("image/modpack-platform",
+                                this.curseForgeProject != null ? "curseforge" : "modrinth")))));
         setPreferredSize(new Dimension(300, 250));
         setMinimumSize(new Dimension(300, 250));
         setMaximumSize(new Dimension(300, 250));
@@ -119,7 +142,7 @@ public class ModUpdatesChooserCard extends JPanel {
         bottomPanel.add(websiteButton);
         add(bottomPanel, BorderLayout.SOUTH);
 
-        String iconUrl = mod.getIconUrl();
+        String iconUrl = getIconUrl();
         if (iconUrl != null) {
             BackgroundImageLabel iconLabel = new BackgroundImageLabel(iconUrl, 50, 50);
             iconLabel.setHorizontalAlignment(SwingConstants.CENTER);
@@ -132,5 +155,22 @@ public class ModUpdatesChooserCard extends JPanel {
             emptyLabel.setHorizontalAlignment(SwingConstants.CENTER);
             add(emptyLabel, BorderLayout.NORTH);
         }
+    }
+
+    private String getIconUrl() {
+        if (modrinthProject != null) {
+            return modrinthProject.iconUrl;
+        }
+
+        if (curseForgeProject != null) {
+            Optional<CurseForgeAttachment> logo = curseForgeProject.getLogo();
+
+            if (logo.isPresent()) {
+                return logo.get().thumbnailUrl;
+            }
+        }
+
+        return null;
+
     }
 }
