@@ -55,6 +55,7 @@ import com.atlauncher.data.ModPlatform;
 import com.atlauncher.gui.card.ModUpdatesChooserCard;
 import com.atlauncher.gui.components.JLabelWithHover;
 import com.atlauncher.gui.layouts.WrapLayout;
+import com.atlauncher.gui.panels.CenteredTextPanel;
 import com.atlauncher.gui.panels.LoadingPanel;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.ComboItem;
@@ -69,8 +70,9 @@ public class CheckForUpdatesDialog extends JDialog {
 
     private final JPanel mainPanel = new JPanel(new BorderLayout());
     private final JComboBox<ComboItem<ModPlatform>> platformComboBox = new JComboBox<>();
-    private final ExecutorService modCheckExecutor = Executors.newFixedThreadPool(10);
+    private ExecutorService modCheckExecutor;
     private final JButton updateButton = new JButton(GetText.tr("Update"));
+    private JButton closeButton = new JButton(GetText.tr("Close"));
 
     public CheckForUpdatesDialog(Window parent, Instance instance, List<DisableableMod> mods) {
         super(parent);
@@ -91,7 +93,8 @@ public class CheckForUpdatesDialog extends JDialog {
             }
         });
 
-        setMinimumSize(new Dimension(950, 650));
+        setMinimumSize(new Dimension(330, 350));
+        setSize(new Dimension(950, 650));
 
         setupComponents();
 
@@ -102,7 +105,7 @@ public class CheckForUpdatesDialog extends JDialog {
     }
 
     private void close() {
-        if (!modCheckExecutor.isShutdown()) {
+        if (modCheckExecutor != null && !modCheckExecutor.isShutdown()) {
             modCheckExecutor.shutdownNow();
         }
 
@@ -147,14 +150,13 @@ public class CheckForUpdatesDialog extends JDialog {
 
         bottomPanel.add(Box.createHorizontalGlue());
 
-        JButton cancelButton = new JButton(GetText.tr("Cancel"));
-        cancelButton.addActionListener(new ActionListener() {
+        closeButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 close();
             }
         });
-        bottomPanel.add(cancelButton);
+        bottomPanel.add(closeButton);
 
         bottomPanel.add(Box.createHorizontalStrut(20));
 
@@ -182,6 +184,7 @@ public class CheckForUpdatesDialog extends JDialog {
                 SwingUtilities.invokeLater(() -> {
                     platformComboBox.setEnabled(false);
                     updateButton.setEnabled(false);
+                    closeButton.setText(GetText.tr("Cancel"));
                     addLoadingPanel();
                 });
 
@@ -189,7 +192,8 @@ public class CheckForUpdatesDialog extends JDialog {
 
                 Map<DisableableMod, Pair<Object, Object>> modUpdates = Collections.synchronizedMap(new HashMap<>());
 
-                // read in all mod files internal metadata
+                // check all mods for update
+                modCheckExecutor = Executors.newFixedThreadPool(10);
                 for (DisableableMod mod : mods) {
                     modCheckExecutor.execute(() -> {
                         Pair<Boolean, Pair<Object, Object>> update = mod.checkForUpdate(instance, platform);
@@ -212,26 +216,34 @@ public class CheckForUpdatesDialog extends JDialog {
 
                 // load in mods panel
                 SwingUtilities.invokeLater(() -> {
-                    JPanel modsPanel = new JPanel(new WrapLayout());
-                    for (Map.Entry<DisableableMod, Pair<Object, Object>> entry : modUpdates.entrySet()) {
-                        modsPanel.add(new ModUpdatesChooserCard(instance, entry.getKey(), entry.getValue()));
-                    }
-
-                    JScrollPane modsScrollPane = new JScrollPane(modsPanel,
-                            JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-                            JScrollPane.HORIZONTAL_SCROLLBAR_NEVER) {
-                        {
-                            this.getVerticalScrollBar().setUnitIncrement(8);
+                    if (modUpdates.size() == 0) {
+                        mainPanel.removeAll();
+                        mainPanel.revalidate();
+                        mainPanel.repaint();
+                        mainPanel.add(new CenteredTextPanel(GetText.tr("No Updates Found")), BorderLayout.CENTER);
+                    } else {
+                        JPanel modsPanel = new JPanel(new WrapLayout());
+                        for (Map.Entry<DisableableMod, Pair<Object, Object>> entry : modUpdates.entrySet()) {
+                            modsPanel.add(new ModUpdatesChooserCard(instance, entry.getKey(), entry.getValue()));
                         }
-                    };
 
-                    mainPanel.removeAll();
-                    mainPanel.revalidate();
-                    mainPanel.repaint();
-                    mainPanel.add(modsScrollPane, BorderLayout.CENTER);
+                        JScrollPane modsScrollPane = new JScrollPane(modsPanel,
+                                JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+                                JScrollPane.HORIZONTAL_SCROLLBAR_NEVER) {
+                            {
+                                this.getVerticalScrollBar().setUnitIncrement(8);
+                            }
+                        };
+
+                        mainPanel.removeAll();
+                        mainPanel.revalidate();
+                        mainPanel.repaint();
+                        mainPanel.add(modsScrollPane, BorderLayout.CENTER);
+                    }
 
                     platformComboBox.setEnabled(true);
                     updateButton.setEnabled(modUpdates.size() != 0);
+                    closeButton.setText(GetText.tr("Close"));
                 });
                 checking = false;
             }).start();

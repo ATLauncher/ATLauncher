@@ -21,37 +21,22 @@ import java.awt.Component;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
-import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import org.mini2Dx.gettext.GetText;
-
 import com.atlauncher.App;
-import com.atlauncher.utils.Utils;
 
 @SuppressWarnings("serial")
-public class LoadingPanel extends JPanel {
-    public LoadingPanel() {
-        this(GetText.tr("Loading..."));
-    }
-
-    public LoadingPanel(String text) {
+public class CenteredTextPanel extends JPanel {
+    public CenteredTextPanel(String text) {
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
-        ImageIcon imageIcon = Utils.getIconImage("/assets/image/loading-bars.gif");
-
-        JLabel iconLabel = new JLabel();
-        iconLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-        iconLabel.setIcon(imageIcon);
-        imageIcon.setImageObserver(iconLabel);
-
         JLabel label = new JLabel(text);
-        label.setFont(App.THEME.getBoldFont().deriveFont(18f));
+        label.setFont(App.THEME.getBoldFont().deriveFont(30f));
         label.setAlignmentX(Component.CENTER_ALIGNMENT);
+        label.setAlignmentY(Component.CENTER_ALIGNMENT);
 
         add(Box.createVerticalGlue());
-        add(iconLabel);
         add(label);
         add(Box.createVerticalGlue());
     }
