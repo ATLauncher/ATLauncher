@@ -49,6 +49,7 @@ import com.atlauncher.data.modrinth.ModrinthVersion;
 import com.atlauncher.gui.borders.IconTitledBorder;
 import com.atlauncher.gui.components.BackgroundImageLabel;
 import com.atlauncher.utils.ComboItem;
+import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Pair;
 import com.atlauncher.utils.Utils;
 
@@ -153,9 +154,17 @@ public class ModUpdatesChooserCard extends JPanel {
         bottomPanel.setLayout(new FlowLayout());
 
         JButton changelogButton = new JButton(GetText.tr("Changelog"));
+        changelogButton.addActionListener((e) -> {
+            // OS.openWebBrowser(websiteUrl);
+        });
         bottomPanel.add(changelogButton);
 
+        String websiteUrl = getWebsiteUrl();
         JButton websiteButton = new JButton(GetText.tr("Website"));
+        websiteButton.setVisible(websiteUrl != null);
+        websiteButton.addActionListener((e) -> {
+            OS.openWebBrowser(websiteUrl);
+        });
         bottomPanel.add(websiteButton);
         add(bottomPanel, BorderLayout.SOUTH);
 
@@ -188,6 +197,17 @@ public class ModUpdatesChooserCard extends JPanel {
         }
 
         return null;
+    }
 
+    private String getWebsiteUrl() {
+        if (modrinthProject != null) {
+            return modrinthProject.getWebsiteUrl();
+        }
+
+        if (curseForgeProject != null) {
+            return curseForgeProject.getWebsiteUrl();
+        }
+
+        return null;
     }
 }

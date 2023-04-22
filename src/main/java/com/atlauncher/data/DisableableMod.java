@@ -535,8 +535,7 @@ public class DisableableMod implements Serializable {
 
     public String getWebsiteUrl() {
         if (modrinthProject != null && modrinthProject.projectType != null && modrinthProject.slug != null) {
-            return String.format("https://modrinth.com/%s/%s", modrinthProject.projectType.toString().toLowerCase(),
-                    modrinthProject.slug);
+            return modrinthProject.getWebsiteUrl();
         }
 
         if (curseForgeProject != null && curseForgeProject.hasWebsiteUrl()) {

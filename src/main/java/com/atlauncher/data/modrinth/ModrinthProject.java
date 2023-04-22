@@ -82,4 +82,9 @@ public class ModrinthProject {
 
     // TODO: what is this?
     public List<Object> gallery;
+
+    public String getWebsiteUrl() {
+        return String.format("https://modrinth.com/%s/%s", projectType.toString().toLowerCase(),
+                slug);
+    }
 }
