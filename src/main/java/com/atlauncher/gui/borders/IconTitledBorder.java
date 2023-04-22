@@ -57,6 +57,7 @@ public class IconTitledBorder extends TitledBorder {
     public void paintBorder(Component c, Graphics g, int x, int y, int width, int height) {
         super.paintBorder(c, g, x, y, width, height);
 
+        System.out.println(y);
         if (icon != null) {
             int iconWidth = icon.getIconWidth();
             int iconHeight = icon.getIconHeight();
@@ -65,8 +66,8 @@ public class IconTitledBorder extends TitledBorder {
 
             int titleWidth = fm.stringWidth(getTitle());
 
-            int iconX = titleWidth + 10;
-            int iconY = 1;
+            int iconX = titleWidth + x + 10;
+            int iconY = 1 + y;
 
             g.setColor(UIManager.getColor("Panel.background"));
             g.fillRect(iconX - 2, iconY, iconWidth + 4, iconHeight);
