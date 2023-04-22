@@ -37,7 +37,6 @@ import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
@@ -48,15 +47,19 @@ import javax.swing.border.MatteBorder;
 
 import org.mini2Dx.gettext.GetText;
 
+import com.atlauncher.App;
+import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.data.DisableableMod;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.ModPlatform;
 import com.atlauncher.gui.card.ModUpdatesChooserCard;
+import com.atlauncher.gui.components.JLabelWithHover;
 import com.atlauncher.gui.layouts.WrapLayout;
 import com.atlauncher.gui.panels.LoadingPanel;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.ComboItem;
 import com.atlauncher.utils.Pair;
+import com.atlauncher.utils.Utils;
 
 public class CheckForUpdatesDialog extends JDialog {
     private final Instance instance;
@@ -107,18 +110,24 @@ public class CheckForUpdatesDialog extends JDialog {
                 new EmptyBorder(5, 5, 5, 5)));
         topPanel.setLayout(new BoxLayout(topPanel, BoxLayout.X_AXIS));
 
-        platformComboBox.addItem(new ComboItem<ModPlatform>(null, "Any"));
+        JLabelWithHover platformLabel = new JLabelWithHover(GetText.tr("Platform") + ":",
+                Utils.getIconImage(App.THEME.getIconPath("question")),
+                new HTMLBuilder().text(GetText.tr(
+                        "The mod platform to use when checking for updates.<br/>The preferred platform when searching all platforms can be set in the launchers Mods settings tab."))
+                        .center().build());
+
+        platformComboBox.addItem(
+                new ComboItem<ModPlatform>(null, GetText.tr("All ({0} Preferred)", App.settings.defaultModPlatform)));
         platformComboBox.addItem(new ComboItem<ModPlatform>(ModPlatform.CURSEFORGE, "CurseForge"));
         platformComboBox.addItem(new ComboItem<ModPlatform>(ModPlatform.MODRINTH, "Modrinth"));
-        platformComboBox.setMaximumSize(new Dimension(100, 23));
-        platformComboBox.setPreferredSize(new Dimension(100, 23));
+        platformComboBox.setMaximumSize(new Dimension(platformComboBox.getPreferredSize().width, 23));
 
         platformComboBox.addActionListener(e -> {
             checkForUpdates();
         });
 
         topPanel.add(Box.createHorizontalGlue());
-        topPanel.add(new JLabel(GetText.tr("Platform:")));
+        topPanel.add(platformLabel);
         topPanel.add(Box.createHorizontalStrut(10));
         topPanel.add(platformComboBox);
 
