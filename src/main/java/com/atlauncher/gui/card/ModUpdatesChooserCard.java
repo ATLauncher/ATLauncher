@@ -128,7 +128,8 @@ public class ModUpdatesChooserCard extends JPanel {
         gbc.gridy++;
         gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-        JLabel currentVersion = new JLabel(String.format("%s (%s)", mod.getVersionFromFile(instance), mod.file));
+        JLabel currentVersion = new JLabel(
+                curseForgeProject != null ? mod.curseForgeFile.displayName : mod.modrinthVersion.name);
         currentVersion.setToolTipText(currentVersion.getText());
         currentVersion.setBorder(new EmptyBorder(0, 10, 0, 10));
         mainPanel.add(currentVersion, gbc);
@@ -178,6 +179,7 @@ public class ModUpdatesChooserCard extends JPanel {
         });
 
         updatedVersionComboBox.setSelectedIndex(0);
+        updatedVersionComboBox.setPreferredSize(new Dimension(230, 23));
         updatedVersionPanel.add(updatedVersionComboBox);
         mainPanel.add(updatedVersionPanel, gbc);
         add(mainPanel, BorderLayout.CENTER);
