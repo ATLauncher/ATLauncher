@@ -32,6 +32,7 @@ import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -54,6 +55,8 @@ import com.atlauncher.data.DisableableMod;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.ModPlatform;
 import com.atlauncher.data.curseforge.CurseForgeFile;
+import com.atlauncher.data.curseforge.CurseForgeProject;
+import com.atlauncher.data.modrinth.ModrinthProject;
 import com.atlauncher.data.modrinth.ModrinthVersion;
 import com.atlauncher.gui.card.ModUpdatesChooserCard;
 import com.atlauncher.gui.components.JLabelWithHover;
@@ -71,10 +74,11 @@ public class CheckForUpdatesDialog extends JDialog {
     private final List<ModUpdatesChooserCard> modUpdateCards = new ArrayList<>();
 
     private boolean checking = false;
+    private boolean updating = false;
 
     private final JPanel mainPanel = new JPanel(new BorderLayout());
     private final JComboBox<ComboItem<ModPlatform>> platformComboBox = new JComboBox<>();
-    private ExecutorService modCheckExecutor;
+    private ExecutorService executorService;
     private final JButton updateButton = new JButton(GetText.tr("Update"));
     private JButton closeButton = new JButton(GetText.tr("Close"));
     private int modsToUpdate = 0;
@@ -110,8 +114,8 @@ public class CheckForUpdatesDialog extends JDialog {
     }
 
     private void close() {
-        if (modCheckExecutor != null && !modCheckExecutor.isShutdown()) {
-            modCheckExecutor.shutdownNow();
+        if (executorService != null && !executorService.isShutdown()) {
+            executorService.shutdownNow();
         }
 
         dispose();
@@ -169,33 +173,76 @@ public class CheckForUpdatesDialog extends JDialog {
         updateButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                for (ModUpdatesChooserCard modUpdateCard : modUpdateCards) {
-                    if (modUpdateCard.isCurseForgeMod()) {
-                        CurseForgeFile currentVersion = (CurseForgeFile) modUpdateCard.getCurrentVersion();
-                        CurseForgeFile updateVersion = (CurseForgeFile) modUpdateCard.getVersionUpdatingTo();
+                List<Pair<DisableableMod, Pair<Object, Object>>> modsUpdating = modUpdateCards.parallelStream()
+                        .filter(modUpdateCard -> {
+                            if (modUpdateCard.isCurseForgeMod()) {
+                                CurseForgeFile currentVersion = (CurseForgeFile) modUpdateCard.getCurrentVersion();
+                                CurseForgeFile updateVersion = (CurseForgeFile) modUpdateCard.getVersionUpdatingTo();
 
-                        if (modUpdateCard.isUpdating() && currentVersion.id != updateVersion.id) {
-                            System.out.println(String.format("CurseForge Mod %s: Updating from %s to %s",
-                                    modUpdateCard.mod.name,
-                                    currentVersion.displayName,
-                                    updateVersion.displayName));
-                        } else {
-                            System.out.println(String.format("CurseForge Mod %s: Not updating",
-                                    modUpdateCard.mod.name));
-                        }
-                    } else if (modUpdateCard.isModrinthMod()) {
-                        ModrinthVersion currentVersion = (ModrinthVersion) modUpdateCard.getCurrentVersion();
-                        ModrinthVersion updateVersion = (ModrinthVersion) modUpdateCard.getVersionUpdatingTo();
+                                return modUpdateCard.isUpdating() && currentVersion.id != updateVersion.id;
+                            } else if (modUpdateCard.isModrinthMod()) {
+                                ModrinthVersion currentVersion = (ModrinthVersion) modUpdateCard.getCurrentVersion();
+                                ModrinthVersion updateVersion = (ModrinthVersion) modUpdateCard.getVersionUpdatingTo();
 
-                        if (modUpdateCard.isUpdating() && !currentVersion.id.equals(updateVersion.id)) {
-                            System.out.println(String.format("Modrinth Mod %s: Updating from %s to %s",
-                                    modUpdateCard.mod.name, currentVersion.name,
-                                    updateVersion.name));
-                        } else {
-                            System.out.println(String.format("Modrinth Mod %s: Not updating", modUpdateCard.mod.name));
+                                return modUpdateCard.isUpdating() && !currentVersion.id.equals(updateVersion.id);
+                            }
+
+                            return false;
+                        }).map(modUpdateCard -> {
+                            return new Pair<>(modUpdateCard.mod,
+                                    new Pair<>(modUpdateCard.getModProject(),
+                                            modUpdateCard.getVersionUpdatingTo()));
+                        }).collect(Collectors.toList());
+
+                // load in panel to show updated happening
+                SwingUtilities.invokeLater(() -> {
+                    platformComboBox.setEnabled(false);
+                    updateButton.setEnabled(false);
+                    closeButton.setText(GetText.tr("Cancel"));
+                    addLoadingPanel(GetText.tr("Updating {0} Mods", modsUpdating.size()));
+                });
+
+                // update all mods
+                executorService = Executors.newFixedThreadPool(10);
+                for (Pair<DisableableMod, Pair<Object, Object>> mod : modsUpdating) {
+                    executorService.execute(() -> {
+                        if (mod.right().left() instanceof CurseForgeProject) {
+                            CurseForgeProject project = (CurseForgeProject) mod.right().left();
+                            CurseForgeFile updateVersion = (CurseForgeFile) mod.right().right();
+
+                            mod.left().reinstallFromCurseForge(project, updateVersion);
+                        } else if (mod.right().left() instanceof ModrinthProject) {
+                            ModrinthProject project = (ModrinthProject) mod.right().left();
+                            ModrinthVersion updateVersion = (ModrinthVersion) mod.right().right();
+
+                            mod.left().reinstallFromModrinth(project, updateVersion);
                         }
-                    }
+                    });
                 }
+                executorService.shutdown();
+
+                try {
+                    if (!executorService.awaitTermination(60, TimeUnit.SECONDS)) {
+                        executorService.shutdownNow();
+                    }
+                } catch (InterruptedException ex) {
+                    executorService.shutdownNow();
+                    Thread.currentThread().interrupt();
+                }
+
+                // process complete, only show close button and disable everything else
+                SwingUtilities.invokeLater(() -> {
+                    mainPanel.removeAll();
+                    mainPanel.revalidate();
+                    mainPanel.repaint();
+                    mainPanel.add(new CenteredTextPanel(GetText.tr("{0} Mods Have Been Updated", modsUpdating.size())),
+                            BorderLayout.CENTER);
+                    setTitle(GetText.tr("{0} Mods Have Been Updated", modsUpdating.size()));
+
+                    topPanel.setVisible(false);
+                    updateButton.setVisible(false);
+                    closeButton.setText(GetText.tr("Close"));
+                });
             }
         });
         bottomPanel.add(updateButton);
@@ -206,12 +253,12 @@ public class CheckForUpdatesDialog extends JDialog {
         add(mainPanel, BorderLayout.CENTER);
     }
 
-    private void addLoadingPanel() {
+    private void addLoadingPanel(String text) {
         mainPanel.removeAll();
         mainPanel.revalidate();
         mainPanel.repaint();
-        mainPanel.add(new LoadingPanel(GetText.tr("Checking For Updates")), BorderLayout.CENTER);
-        setTitle(GetText.tr("Checking For Updates"));
+        mainPanel.add(new LoadingPanel(text), BorderLayout.CENTER);
+        setTitle(text);
     }
 
     private void checkForUpdates() {
@@ -224,7 +271,7 @@ public class CheckForUpdatesDialog extends JDialog {
                     platformComboBox.setEnabled(false);
                     updateButton.setEnabled(false);
                     closeButton.setText(GetText.tr("Cancel"));
-                    addLoadingPanel();
+                    addLoadingPanel(GetText.tr("Checking For Updates"));
                 });
 
                 ModPlatform platform = ((ComboItem<ModPlatform>) platformComboBox.getSelectedItem()).getValue();
@@ -232,9 +279,9 @@ public class CheckForUpdatesDialog extends JDialog {
                 Map<DisableableMod, Pair<Object, Object>> modUpdates = Collections.synchronizedMap(new HashMap<>());
 
                 // check all mods for update
-                modCheckExecutor = Executors.newFixedThreadPool(10);
+                executorService = Executors.newFixedThreadPool(10);
                 for (DisableableMod mod : mods) {
-                    modCheckExecutor.execute(() -> {
+                    executorService.execute(() -> {
                         Pair<Boolean, Pair<Object, Object>> update = mod.checkForUpdate(instance, platform);
 
                         if (update.left()) {
@@ -242,14 +289,14 @@ public class CheckForUpdatesDialog extends JDialog {
                         }
                     });
                 }
-                modCheckExecutor.shutdown();
+                executorService.shutdown();
 
                 try {
-                    if (!modCheckExecutor.awaitTermination(60, TimeUnit.SECONDS)) {
-                        modCheckExecutor.shutdownNow();
+                    if (!executorService.awaitTermination(60, TimeUnit.SECONDS)) {
+                        executorService.shutdownNow();
                     }
                 } catch (InterruptedException ex) {
-                    modCheckExecutor.shutdownNow();
+                    executorService.shutdownNow();
                     Thread.currentThread().interrupt();
                 }
 

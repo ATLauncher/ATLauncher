@@ -23,6 +23,7 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.SwingConstants;
 
 import com.atlauncher.App;
 
@@ -34,6 +35,7 @@ public class CenteredTextPanel extends JPanel {
         JLabel label = new JLabel(text);
         label.setFont(App.THEME.getBoldFont().deriveFont(30f));
         label.setAlignmentX(Component.CENTER_ALIGNMENT);
+        label.setHorizontalAlignment(SwingConstants.CENTER);
         label.setAlignmentY(Component.CENTER_ALIGNMENT);
 
         add(Box.createVerticalGlue());

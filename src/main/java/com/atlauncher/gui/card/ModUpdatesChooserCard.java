@@ -334,4 +334,8 @@ public class ModUpdatesChooserCard extends JPanel {
     public boolean isModrinthMod() {
         return modrinthProject != null;
     }
+
+    public Object getModProject() {
+        return curseForgeProject != null ? curseForgeProject : modrinthProject;
+    }
 }

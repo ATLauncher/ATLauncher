@@ -460,8 +460,6 @@ public class ModsSection extends SectionPanel {
     }
 
     private void checkForUpdates(int[] rows) {
-        ignoreTableEvents = true;
-
         List<DisableableMod> mods = Arrays.stream(rows).boxed().map(row -> {
             String filename = (String) tableModel.getValueAt(row, 0);
 
@@ -474,7 +472,7 @@ public class ModsSection extends SectionPanel {
         new CheckForUpdatesDialog(this.parent, this.instance, mods);
 
         instance.save();
-        ignoreTableEvents = false;
+        reloadRows(rows);
     }
 
     private void reinstallMods(int[] rows) {

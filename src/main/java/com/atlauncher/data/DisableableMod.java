@@ -872,4 +872,10 @@ public class DisableableMod implements Serializable {
 
         return null;
     }
+
+    public void reinstallFromCurseForge(CurseForgeProject project, CurseForgeFile updateVersion) {
+    }
+
+    public void reinstallFromModrinth(ModrinthProject project, ModrinthVersion updateVersion) {
+    }
 }
