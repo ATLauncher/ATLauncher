@@ -323,7 +323,7 @@ public class ModrinthApi {
             Map<String, Object> body = new HashMap<>();
             body.put("hashes", hashes);
             body.put("algorithm", algorithm);
-            body.put("game_versions", List.of(minecraftVersion));
+            body.put("game_versions", Arrays.asList(minecraftVersion));
 
             List<String> loaders = new ArrayList<>();
             if (loaderVersion.isForge()) {
