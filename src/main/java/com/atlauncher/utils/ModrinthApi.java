@@ -146,10 +146,21 @@ public class ModrinthApi {
     }
 
     public static ModrinthProject getProject(String projectId) {
-        return Download.build()
-                .setUrl(String.format("%s/project/%s", Constants.MODRINTH_API_URL, projectId.replace("local-", "")))
-                .cached(new CacheControl.Builder().maxStale(10, TimeUnit.MINUTES).build())
-                .asClass(ModrinthProject.class);
+        try {
+            return Download.build()
+                    .setUrl(String.format("%s/project/%s", Constants.MODRINTH_API_URL, projectId.replace("local-", "")))
+                    .cached(new CacheControl.Builder().maxStale(10, TimeUnit.MINUTES).build())
+                    .asClassWithThrow(ModrinthProject.class);
+        } catch (DownloadException e) {
+            // 404 is not something we care to log really
+            if (e.statusCode != 404) {
+                LogManager.logStackTrace(e);
+            }
+
+            return null;
+        } catch (IOException e) {
+            return null;
+        }
     }
 
     public static List<ModrinthVersion> getVersions(String projectId) {
@@ -182,7 +193,7 @@ public class ModrinthApi {
 
             if (loaderVersion.isForge()) {
                 loaders.add("forge");
-            } else if (loaderVersion.isFabric()) {
+            } else if (loaderVersion.isFabric() || loaderVersion.isLegacyFabric()) {
                 loaders.add("fabric");
             } else if (loaderVersion.isQuilt()) {
                 loaders.add("fabric");
@@ -284,6 +295,52 @@ public class ModrinthApi {
 
             return Download.build()
                     .setUrl(String.format("%s/version_files", Constants.MODRINTH_API_URL))
+                    .post(RequestBody.create(Gsons.DEFAULT_SLIM.toJson(body),
+                            MediaType.get("application/json; charset=utf-8")))
+                    .asTypeWithThrow(type);
+        } catch (Exception e) {
+            return new HashMap<>();
+        }
+    }
+
+    public static Map<String, ModrinthVersion> getLatestVersionFromSha1Hashes(String[] hashes,
+            String minecraftVersion, LoaderVersion loaderVersion) {
+        return getLatestVersionFromHashes(hashes, "sha1", minecraftVersion, loaderVersion);
+    }
+
+    public static Map<String, ModrinthVersion> getLatestVersionFromSha512Hashes(String[] hashes,
+            String minecraftVersion, LoaderVersion loaderVersion) {
+        return getLatestVersionFromHashes(hashes, "sha512", minecraftVersion, loaderVersion);
+    }
+
+    private static Map<String, ModrinthVersion> getLatestVersionFromHashes(String[] hashes, String algorithm,
+            String minecraftVersion, LoaderVersion loaderVersion) {
+        if (hashes.length == 0) {
+            return new HashMap<>();
+        }
+
+        try {
+            Map<String, Object> body = new HashMap<>();
+            body.put("hashes", hashes);
+            body.put("algorithm", algorithm);
+            body.put("game_versions", List.of(minecraftVersion));
+
+            List<String> loaders = new ArrayList<>();
+            if (loaderVersion.isForge()) {
+                loaders.add("forge");
+            } else if (loaderVersion.isFabric() || loaderVersion.isLegacyFabric()) {
+                loaders.add("fabric");
+            } else if (loaderVersion.isQuilt()) {
+                loaders.add("fabric");
+                loaders.add("quilt");
+            }
+            body.put("loaders", loaders);
+
+            java.lang.reflect.Type type = new TypeToken<Map<String, ModrinthVersion>>() {
+            }.getType();
+
+            return Download.build()
+                    .setUrl(String.format("%s/version_files/update", Constants.MODRINTH_API_URL))
                     .post(RequestBody.create(Gsons.DEFAULT_SLIM.toJson(body),
                             MediaType.get("application/json; charset=utf-8")))
                     .asTypeWithThrow(type);

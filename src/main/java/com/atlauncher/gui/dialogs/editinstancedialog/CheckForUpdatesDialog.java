@@ -25,6 +25,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -55,6 +56,7 @@ import com.atlauncher.data.DisableableMod;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.ModPlatform;
 import com.atlauncher.data.curseforge.CurseForgeFile;
+import com.atlauncher.data.curseforge.CurseForgeFingerprint;
 import com.atlauncher.data.curseforge.CurseForgeProject;
 import com.atlauncher.data.modrinth.ModrinthProject;
 import com.atlauncher.data.modrinth.ModrinthVersion;
@@ -63,8 +65,12 @@ import com.atlauncher.gui.components.JLabelWithHover;
 import com.atlauncher.gui.layouts.WrapLayout;
 import com.atlauncher.gui.panels.CenteredTextPanel;
 import com.atlauncher.gui.panels.LoadingPanel;
+import com.atlauncher.managers.LogManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.ComboItem;
+import com.atlauncher.utils.CurseForgeApi;
+import com.atlauncher.utils.Hashing;
+import com.atlauncher.utils.ModrinthApi;
 import com.atlauncher.utils.Pair;
 import com.atlauncher.utils.Utils;
 
@@ -278,17 +284,21 @@ public class CheckForUpdatesDialog extends JDialog {
 
                 Map<DisableableMod, Pair<Object, Object>> modUpdates = Collections.synchronizedMap(new HashMap<>());
 
-                // check all mods for update
-                executorService = Executors.newFixedThreadPool(10);
-                for (DisableableMod mod : mods) {
-                    executorService.execute(() -> {
-                        Pair<Boolean, Pair<Object, Object>> update = mod.checkForUpdate(instance, platform);
+                List<DisableableMod> modsCheckedForUpdates = new ArrayList<>();
 
-                        if (update.left()) {
-                            modUpdates.put(mod, update.right());
-                        }
-                    });
+                executorService = Executors.newFixedThreadPool(10);
+
+                if (platform == ModPlatform.MODRINTH
+                        || (platform == null && App.settings.defaultModPlatform == ModPlatform.MODRINTH)) {
+                    checkForUpdatesOnModrinth(mods, modUpdates, modsCheckedForUpdates);
                 }
+
+                if (platform == ModPlatform.CURSEFORGE
+                        || (platform == null && App.settings.defaultModPlatform == ModPlatform.CURSEFORGE)) {
+                    checkForUpdatesOnCurseForge(mods, modUpdates, modsCheckedForUpdates);
+                }
+
+                // download the mods from the specific platform
                 executorService.shutdown();
 
                 try {
@@ -298,6 +308,34 @@ public class CheckForUpdatesDialog extends JDialog {
                 } catch (InterruptedException ex) {
                     executorService.shutdownNow();
                     Thread.currentThread().interrupt();
+                }
+
+                // if the platform is set to null then we need to fill in the blanks with the users non default mod
+                // platform
+                if (platform == null) {
+                    executorService = Executors.newFixedThreadPool(10);
+
+                    List<DisableableMod> modsToCheck = mods.stream().filter(m -> !modsCheckedForUpdates.contains(m))
+                            .collect(Collectors.toList());
+
+                    if (App.settings.defaultModPlatform == ModPlatform.CURSEFORGE) {
+                        checkForUpdatesOnModrinth(modsToCheck, modUpdates, modsCheckedForUpdates);
+                    }
+
+                    if (App.settings.defaultModPlatform == ModPlatform.MODRINTH) {
+                        checkForUpdatesOnCurseForge(modsToCheck, modUpdates, modsCheckedForUpdates);
+                    }
+
+                    executorService.shutdown();
+
+                    try {
+                        if (!executorService.awaitTermination(60, TimeUnit.SECONDS)) {
+                            executorService.shutdownNow();
+                        }
+                    } catch (InterruptedException ex) {
+                        executorService.shutdownNow();
+                        Thread.currentThread().interrupt();
+                    }
                 }
 
                 // load in mods panel
@@ -357,6 +395,134 @@ public class CheckForUpdatesDialog extends JDialog {
                 });
                 checking = false;
             }).start();
+        }
+    }
+
+    // Request heirachy:
+    // 1. Get latest versions of all mods - /v2/version_files/update
+    // 2. Get all projects that have updates from api - /v2/projects?ids=[]
+    // 3. In parallel get all files for those projects matching loader/mc version - /v2/project/???/version
+    private void checkForUpdatesOnModrinth(List<DisableableMod> mods,
+            Map<DisableableMod, Pair<Object, Object>> modUpdates,
+            List<DisableableMod> modsCheckedForUpdates) {
+        Map<DisableableMod, String> sha1Hashes = new HashMap<>();
+        mods.stream()
+                .filter(dm -> dm.getActualFile(instance) != null).forEach(dm -> {
+                    try {
+                        sha1Hashes.put(dm, Hashing
+                                .sha1(dm.getActualFile(instance).toPath()).toString());
+                    } catch (Throwable t) {
+                        LogManager.logStackTrace(t);
+                    }
+                });
+
+        Collection<String> values = sha1Hashes.values();
+        Map<String, ModrinthVersion> latestVersionsFromHash = ModrinthApi.getLatestVersionFromSha1Hashes(
+                values.toArray(new String[values.size()]), instance.id,
+                instance.launcher.loaderVersion);
+
+        List<DisableableMod> modsWithNewerVersions = mods.stream().filter(dm -> {
+            ModrinthVersion modrinthVersion = latestVersionsFromHash.get(sha1Hashes.get(dm));
+
+            if (modrinthVersion == null) {
+                return false;
+            }
+
+            modsCheckedForUpdates.add(dm);
+
+            // if there is no mod info for the mod from Modrinth, but we have found it on there, add it
+            if ((dm.modrinthProject == null || dm.modrinthVersion == null) && !dm.dontScanOnModrinth) {
+                ModrinthProject modrinthProject = ModrinthApi.getProject(modrinthVersion.projectId);
+
+                if (modrinthProject != null) {
+                    ModrinthVersion currentModrinthVersion = ModrinthApi.getVersionFromSha1Hash(sha1Hashes.get(dm));
+
+                    if (currentModrinthVersion != null) {
+                        dm.modrinthProject = modrinthProject;
+                        dm.modrinthVersion = currentModrinthVersion;
+                    } else {
+                        dm.dontScanOnModrinth = true;
+                    }
+                }
+            }
+
+            return !dm.modrinthVersion.id.equals(modrinthVersion.id);
+        }).collect(Collectors.toList());
+
+        Map<String, ModrinthProject> projectIdsToProjects = ModrinthApi.getProjectsAsMap(
+                modsWithNewerVersions.parallelStream().map(mv -> mv.modrinthProject.id)
+                        .toArray(String[]::new));
+
+        modsWithNewerVersions.forEach(dm -> {
+            executorService.execute(() -> {
+                Pair<Boolean, Pair<Object, Object>> update = dm.checkForUpdateOnModrinth(instance,
+                        projectIdsToProjects.get(dm.modrinthProject.id));
+
+                if (update.left()) {
+                    modUpdates.put(dm, update.right());
+                }
+            });
+        });
+    }
+
+    // Request heirachy:
+    // 1. Match files to CurseForge files by hash - /v1/fingerprints/432
+    // 2. Get all projects that were found by their file hash - /v1/mods
+    // 3. In parallel get all files for those projects and filter loader/mc version - /v1/mods/???/files
+    private void checkForUpdatesOnCurseForge(List<DisableableMod> mods,
+            Map<DisableableMod, Pair<Object, Object>> modUpdates,
+            List<DisableableMod> modsCheckedForUpdates) {
+        Map<Long, DisableableMod> murmurHashes = new HashMap<>();
+
+        mods.stream()
+                .forEach(dm -> {
+                    try {
+                        long hash = Hashing.murmur(dm.getActualFile(instance).toPath());
+                        murmurHashes.put(hash, dm);
+                    } catch (Throwable t) {
+                        LogManager.logStackTrace(t);
+                    }
+                });
+
+        if (murmurHashes.size() != 0) {
+            CurseForgeFingerprint fingerprintResponse = CurseForgeApi
+                    .checkFingerprints(murmurHashes.keySet().stream().toArray(Long[]::new));
+
+            if (fingerprintResponse != null && fingerprintResponse.exactMatches != null) {
+                int[] projectIdsFound = fingerprintResponse.exactMatches.stream().mapToInt(em -> em.id)
+                        .toArray();
+
+                if (projectIdsFound.length != 0) {
+                    Map<Integer, CurseForgeProject> foundProjects = CurseForgeApi
+                            .getProjectsAsMap(projectIdsFound);
+
+                    if (foundProjects != null) {
+                        fingerprintResponse.exactMatches.stream()
+                                .filter(em -> em != null && em.file != null
+                                        && murmurHashes.containsKey(em.file.packageFingerprint))
+                                .forEach(foundMod -> {
+                                    DisableableMod dm = murmurHashes
+                                            .get(foundMod.file.packageFingerprint);
+
+                                    CurseForgeProject curseForgeProject = foundProjects
+                                            .get(foundMod.id);
+
+                                    if (curseForgeProject != null) {
+                                        modsCheckedForUpdates.add(dm);
+                                        executorService.execute(() -> {
+                                            Pair<Boolean, Pair<Object, Object>> update = dm
+                                                    .checkforUpdateOnCurseForge(instance,
+                                                            curseForgeProject);
+
+                                            if (update.left()) {
+                                                modUpdates.put(dm, update.right());
+                                            }
+                                        });
+                                    }
+                                });
+                    }
+                }
+            }
         }
     }
 }

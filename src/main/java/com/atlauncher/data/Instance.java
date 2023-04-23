@@ -2626,6 +2626,7 @@ public class Instance extends MinecraftVersion {
         });
         backupThread.start();
         dialog.addWindowListener(new WindowAdapter() {
+            @Override
             public void windowClosing(WindowEvent e) {
                 backupThread.interrupt();
                 dialog.dispose();

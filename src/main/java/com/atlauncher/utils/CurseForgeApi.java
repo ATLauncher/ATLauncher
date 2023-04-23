@@ -347,7 +347,8 @@ public class CurseForgeApi {
     public static CurseForgeFingerprint checkFingerprints(Long[] murmurHashes) {
         Download download = Download.build();
 
-        String url = String.format("%s/fingerprints", Constants.CURSEFORGE_CORE_API_URL);
+        String url = String.format("%s/fingerprints/%d", Constants.CURSEFORGE_CORE_API_URL,
+                Constants.CURSEFORGE_MINECRAFT_GAME_ID);
 
         Map<String, Long[]> body = new HashMap<>();
         body.put("fingerprints", murmurHashes);

@@ -90,6 +90,7 @@ public class DisableableMod implements Serializable {
     @SerializedName(value = "modrinthProject", alternate = { "modrinthMod" })
     public ModrinthProject modrinthProject;
     public ModrinthVersion modrinthVersion;
+	public boolean dontScanOnModrinth = false;
 
     public DisableableMod(String name, String version, boolean optional, String file, String path, Type type,
             Color colour, String description, boolean disabled, boolean userAdded, boolean wasSelected, boolean skipped,
@@ -877,5 +878,103 @@ public class DisableableMod implements Serializable {
     }
 
     public void reinstallFromModrinth(ModrinthProject project, ModrinthVersion updateVersion) {
+    }
+
+    public Pair<Boolean, Pair<Object, Object>> checkForUpdateOnModrinth(Instance instance,
+            ModrinthProject modrinthProject) {
+        this.modrinthProject = modrinthProject;
+
+        List<ModrinthVersion> versions = ModrinthApi.getVersions(modrinthProject.id, instance.id,
+                instance.launcher.loaderVersion);
+
+        if (versions == null) {
+            return new Pair<>(false, null);
+        }
+
+        Stream<ModrinthVersion> versionsStream = versions.stream()
+                .sorted(Comparator.comparing((ModrinthVersion version) -> version.datePublished).reversed());
+
+        if (App.settings.addModRestriction == AddModRestriction.STRICT) {
+            versionsStream = versionsStream.filter(v -> v.gameVersions.contains(instance.id));
+        }
+
+        List<ModrinthVersion> filteredVersions = versionsStream.collect(Collectors.toList());
+
+        if (filteredVersions.stream()
+                .noneMatch(v -> ISODateTimeFormat.dateTimeParser().parseDateTime(v.datePublished)
+                        .minusSeconds(1)
+                        .isAfter(
+                                ISODateTimeFormat.dateTimeParser().parseDateTime(modrinthVersion.datePublished)))) {
+            return new Pair<>(false, null);
+        }
+
+        return new Pair<>(true, new Pair<>(modrinthProject, filteredVersions));
+    }
+
+    public Pair<Boolean, Pair<Object, Object>> checkforUpdateOnCurseForge(Instance instance,
+            CurseForgeProject curseForgeProject) {
+        this.curseForgeProject = curseForgeProject;
+        List<CurseForgeFile> curseForgeFiles = CurseForgeApi.getFilesForProject(curseForgeProject.id);
+
+        if (curseForgeFiles == null) {
+            return new Pair<>(false, null);
+        }
+
+        Stream<CurseForgeFile> curseForgeFilesStream = curseForgeFiles.stream()
+                .sorted(Comparator.comparingInt((CurseForgeFile file) -> file.id).reversed());
+
+        if (App.settings.addModRestriction == AddModRestriction.STRICT) {
+            curseForgeFilesStream = curseForgeFilesStream
+                    .filter(file -> file.gameVersions.contains(instance.id));
+        }
+
+        if (App.settings.addModRestriction == AddModRestriction.LAX) {
+            try {
+                List<String> minecraftVersionsToSearch = MinecraftManager.getMajorMinecraftVersions(instance.id)
+                        .stream().map(mv -> mv.id).collect(Collectors.toList());
+
+                curseForgeFilesStream = curseForgeFilesStream.filter(
+                        file -> file.gameVersions.stream()
+                                .anyMatch(gv -> minecraftVersionsToSearch.contains(gv)));
+            } catch (InvalidMinecraftVersion e) {
+                LogManager.logStackTrace(e);
+            }
+        }
+
+        // filter out files not for our loader
+        curseForgeFilesStream = curseForgeFilesStream.filter(cf -> {
+            if (cf.gameVersions.contains("Fabric") && instance.launcher.loaderVersion != null
+                    && (instance.launcher.loaderVersion.isFabric()
+                            || instance.launcher.loaderVersion.isLegacyFabric()
+                            || instance.launcher.loaderVersion.isQuilt())) {
+                return true;
+            }
+
+            if (cf.gameVersions.contains("Forge") && instance.launcher.loaderVersion != null
+                    && instance.launcher.loaderVersion.isForge()) {
+                return true;
+            }
+
+            if (cf.gameVersions.contains("Quilt") && instance.launcher.loaderVersion != null
+                    && instance.launcher.loaderVersion.isQuilt()) {
+                return true;
+            }
+
+            // if there's no loaders, assume the mod is untagged so we should show it
+            if (!cf.gameVersions.contains("Fabric") && !cf.gameVersions.contains("Forge")
+                    && !cf.gameVersions.contains("Quilt")) {
+                return true;
+            }
+
+            return false;
+        });
+
+        List<CurseForgeFile> filteredVersions = curseForgeFilesStream.collect(Collectors.toList());
+
+        if (filteredVersions.stream().noneMatch(file -> file.id > curseForgeFileId)) {
+            return new Pair<>(false, null);
+        }
+
+        return new Pair<>(true, new Pair<>(curseForgeProject, filteredVersions));
     }
 }

@@ -27,7 +27,12 @@
         "java.awt.List",
         "com.sun.*"
     ],
+    "java.settings.url": ".vscode/settings.prefs",
     "java.codeGeneration.generateComments": true,
     "git.inputValidationLength": 100,
     "java.compile.nullAnalysis.mode": "automatic",
+    "java.cleanup.actionsOnSave": [
+        "tryWithResource",
+        "addOverride"
+    ],
 }
