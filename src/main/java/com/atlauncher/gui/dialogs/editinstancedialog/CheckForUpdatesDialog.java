@@ -451,7 +451,8 @@ public class CheckForUpdatesDialog extends JDialog {
 
     // Request heirachy:
     // 1. Get latest versions of all mods - /v2/version_files/update
-    // 2. Get all projects that have updates from api - /v2/projects?ids=[]
+    // 1a. For reinstalling get the users version of all mods - /v2/version_files
+    // 2. Get all projects that have a matching file from api - /v2/projects?ids=[]
     // 3. In parallel get all files for those projects matching loader/mc version - /v2/project/???/version
     private void checkForUpdatesOnModrinth(List<DisableableMod> mods,
             Map<DisableableMod, Pair<Object, Object>> modUpdates,
@@ -474,7 +475,7 @@ public class CheckForUpdatesDialog extends JDialog {
                         values.toArray(new String[values.size()]), instance.id,
                         instance.launcher.loaderVersion);
 
-        List<DisableableMod> modsWithNewerVersions = mods.stream().filter(dm -> {
+        List<DisableableMod> modsWithVersions = mods.stream().filter(dm -> {
             ModrinthVersion modrinthVersion = latestVersionsFromHash.get(sha1Hashes.get(dm));
 
             if (modrinthVersion == null) {
@@ -502,11 +503,15 @@ public class CheckForUpdatesDialog extends JDialog {
             return reinstalling || !dm.modrinthVersion.id.equals(modrinthVersion.id);
         }).collect(Collectors.toList());
 
+        if (modsWithVersions.size() == 0) {
+            return;
+        }
+
         Map<String, ModrinthProject> projectIdsToProjects = ModrinthApi.getProjectsAsMap(
-                modsWithNewerVersions.parallelStream().map(mv -> mv.modrinthProject.id)
+                modsWithVersions.parallelStream().map(mv -> mv.modrinthProject.id)
                         .toArray(String[]::new));
 
-        modsWithNewerVersions.forEach(dm -> {
+        modsWithVersions.forEach(dm -> {
             executorService.execute(() -> {
                 Pair<Boolean, Pair<Object, Object>> update = dm.checkForUpdateOnModrinth(instance,
                         projectIdsToProjects.get(dm.modrinthProject.id), reinstalling);

@@ -65,7 +65,6 @@ import com.atlauncher.utils.Utils;
 
 public class ModUpdatesChooserCard extends JPanel {
     final private Window parentWindow;
-    final private Instance instance;
     public final DisableableMod mod;
     final private ModUpdateCheckBoxCheckedCallback onCheckBoxChecked;
     private final boolean reinstall;
@@ -84,7 +83,6 @@ public class ModUpdatesChooserCard extends JPanel {
         super();
 
         this.parentWindow = parentWindow;
-        this.instance = instance;
         this.mod = mod;
         this.reinstall = reinstall;
         this.onCheckBoxChecked = onCheckBoxChecked;

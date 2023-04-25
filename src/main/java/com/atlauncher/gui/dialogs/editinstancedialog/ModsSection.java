@@ -74,7 +74,6 @@ import com.atlauncher.data.DisableableMod;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.Type;
 import com.atlauncher.managers.LogManager;
-import com.atlauncher.utils.FileUtils;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Pair;
 import com.atlauncher.utils.Utils;
@@ -472,10 +471,7 @@ public class ModsSection extends SectionPanel {
                 continue;
             }
 
-            // remove the old mod file
-            FileUtils.delete(oldMod.getActualFile(instance).toPath());
-
-            // then update the mods list
+            // update the mods list
             instance.launcher.mods.remove(oldMod);
             instance.launcher.mods.add(newMod);
 
