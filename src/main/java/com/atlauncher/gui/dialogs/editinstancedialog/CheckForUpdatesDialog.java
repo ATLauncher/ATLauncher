@@ -51,6 +51,7 @@ import javax.swing.border.MatteBorder;
 import org.mini2Dx.gettext.GetText;
 
 import com.atlauncher.App;
+import com.atlauncher.Network;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.data.DisableableMod;
 import com.atlauncher.data.Instance;
@@ -69,10 +70,13 @@ import com.atlauncher.managers.LogManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.ComboItem;
 import com.atlauncher.utils.CurseForgeApi;
+import com.atlauncher.utils.FileUtils;
 import com.atlauncher.utils.Hashing;
 import com.atlauncher.utils.ModrinthApi;
 import com.atlauncher.utils.Pair;
 import com.atlauncher.utils.Utils;
+
+import okhttp3.OkHttpClient;
 
 public class CheckForUpdatesDialog extends JDialog {
     private final Instance instance;
@@ -179,76 +183,161 @@ public class CheckForUpdatesDialog extends JDialog {
         updateButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                List<Pair<DisableableMod, Pair<Object, Object>>> modsUpdating = modUpdateCards.parallelStream()
-                        .filter(modUpdateCard -> {
-                            if (modUpdateCard.isCurseForgeMod()) {
-                                CurseForgeFile currentVersion = (CurseForgeFile) modUpdateCard.getCurrentVersion();
-                                CurseForgeFile updateVersion = (CurseForgeFile) modUpdateCard.getVersionUpdatingTo();
+                new Thread(() -> {
+                    List<Pair<DisableableMod, Pair<Object, Object>>> modsUpdating = modUpdateCards.parallelStream()
+                            .filter(modUpdateCard -> {
+                                if (modUpdateCard.isCurseForgeMod()) {
+                                    CurseForgeFile currentVersion = (CurseForgeFile) modUpdateCard.getCurrentVersion();
+                                    CurseForgeFile updateVersion = (CurseForgeFile) modUpdateCard
+                                            .getVersionUpdatingTo();
 
-                                return modUpdateCard.isUpdating() && currentVersion.id != updateVersion.id;
-                            } else if (modUpdateCard.isModrinthMod()) {
-                                ModrinthVersion currentVersion = (ModrinthVersion) modUpdateCard.getCurrentVersion();
-                                ModrinthVersion updateVersion = (ModrinthVersion) modUpdateCard.getVersionUpdatingTo();
+                                    return modUpdateCard.isUpdating() && currentVersion.id != updateVersion.id;
+                                } else if (modUpdateCard.isModrinthMod()) {
+                                    ModrinthVersion currentVersion = (ModrinthVersion) modUpdateCard
+                                            .getCurrentVersion();
+                                    ModrinthVersion updateVersion = (ModrinthVersion) modUpdateCard
+                                            .getVersionUpdatingTo();
 
-                                return modUpdateCard.isUpdating() && !currentVersion.id.equals(updateVersion.id);
-                            }
+                                    return modUpdateCard.isUpdating() && !currentVersion.id.equals(updateVersion.id);
+                                }
 
-                            return false;
-                        }).map(modUpdateCard -> {
-                            return new Pair<>(modUpdateCard.mod,
-                                    new Pair<>(modUpdateCard.getModProject(),
-                                            modUpdateCard.getVersionUpdatingTo()));
-                        }).collect(Collectors.toList());
+                                return false;
+                            }).map(modUpdateCard -> {
+                                return new Pair<>(modUpdateCard.mod,
+                                        new Pair<>(modUpdateCard.getModProject(),
+                                                modUpdateCard.getVersionUpdatingTo()));
+                            }).collect(Collectors.toList());
 
-                // load in panel to show updated happening
-                SwingUtilities.invokeLater(() -> {
-                    platformComboBox.setEnabled(false);
-                    updateButton.setEnabled(false);
-                    closeButton.setText(GetText.tr("Cancel"));
-                    addLoadingPanel(GetText.tr("Updating {0} Mods", modsUpdating.size()));
-                });
-
-                // update all mods
-                executorService = Executors.newFixedThreadPool(10);
-                for (Pair<DisableableMod, Pair<Object, Object>> mod : modsUpdating) {
-                    executorService.execute(() -> {
+                    // update all mods
+                    long totalBytes = modsUpdating.stream().mapToLong(mod -> {
                         if (mod.right().left() instanceof CurseForgeProject) {
-                            CurseForgeProject project = (CurseForgeProject) mod.right().left();
                             CurseForgeFile updateVersion = (CurseForgeFile) mod.right().right();
 
-                            mod.left().reinstallFromCurseForge(project, updateVersion);
+                            // these are downloaded externally so not included in the total bytes
+                            if (updateVersion.downloadUrl == null) {
+                                return 0;
+                            }
+
+                            return (long) updateVersion.fileLength;
                         } else if (mod.right().left() instanceof ModrinthProject) {
-                            ModrinthProject project = (ModrinthProject) mod.right().left();
                             ModrinthVersion updateVersion = (ModrinthVersion) mod.right().right();
 
-                            mod.left().reinstallFromModrinth(project, updateVersion);
+                            return updateVersion.getPrimaryFile().size;
                         }
+
+                        return 0;
+                    }).sum();
+
+                    // load in panel to show update happening
+                    System.out.println(totalBytes + " bytes to download");
+                    String text = GetText.tr("Updating {0} Mods", modsUpdating.size());
+                    LoadingPanel loadingPanel = new LoadingPanel(text);
+                    loadingPanel.setTotalBytes(totalBytes);
+                    OkHttpClient progressClient = Network.createProgressClient(loadingPanel);
+                    SwingUtilities.invokeLater(() -> {
+                        platformComboBox.setEnabled(false);
+                        updateButton.setEnabled(false);
+                        closeButton.setText(GetText.tr("Cancel"));
+                        addLoadingPanel(loadingPanel, text);
                     });
-                }
-                executorService.shutdown();
 
-                try {
-                    if (!executorService.awaitTermination(60, TimeUnit.SECONDS)) {
-                        executorService.shutdownNow();
+                    List<Pair<DisableableMod, DisableableMod>> updatedMods = Collections
+                            .synchronizedList(new ArrayList<>());
+
+                    executorService = Executors.newFixedThreadPool(10);
+                    for (Pair<DisableableMod, Pair<Object, Object>> mod : modsUpdating) {
+                        executorService.execute(() -> {
+                            DisableableMod newMod = null;
+
+                            if (mod.right().left() instanceof CurseForgeProject) {
+                                CurseForgeProject project = (CurseForgeProject) mod.right().left();
+                                CurseForgeFile updateVersion = (CurseForgeFile) mod.right().right();
+
+                                newMod = instance.reinstallModFromCurseForge(mod.left(), project, updateVersion,
+                                        progressClient);
+                            } else if (mod.right().left() instanceof ModrinthProject) {
+                                ModrinthProject project = (ModrinthProject) mod.right().left();
+                                ModrinthVersion updateVersion = (ModrinthVersion) mod.right().right();
+
+                                newMod = instance.reinstallModFromModrinth(mod.left(),
+                                        project, updateVersion, progressClient);
+                            }
+
+                            if (newMod != null) {
+                                updatedMods.add(new Pair<>(mod.left(), newMod));
+                            }
+                        });
                     }
-                } catch (InterruptedException ex) {
-                    executorService.shutdownNow();
-                    Thread.currentThread().interrupt();
-                }
+                    executorService.shutdown();
 
-                // process complete, only show close button and disable everything else
-                SwingUtilities.invokeLater(() -> {
-                    mainPanel.removeAll();
-                    mainPanel.revalidate();
-                    mainPanel.repaint();
-                    mainPanel.add(new CenteredTextPanel(GetText.tr("{0} Mods Have Been Updated", modsUpdating.size())),
-                            BorderLayout.CENTER);
-                    setTitle(GetText.tr("{0} Mods Have Been Updated", modsUpdating.size()));
+                    try {
+                        if (!executorService.awaitTermination(5, TimeUnit.MINUTES)) {
+                            executorService.shutdownNow();
+                        }
+                    } catch (InterruptedException ex) {
+                        executorService.shutdownNow();
+                        Thread.currentThread().interrupt();
+                    }
 
-                    topPanel.setVisible(false);
-                    updateButton.setVisible(false);
-                    closeButton.setText(GetText.tr("Close"));
-                });
+                    updatedMods.forEach(p -> {
+                        DisableableMod oldMod = p.left();
+                        DisableableMod newMod = p.right();
+
+                        System.out.println("Size: " + instance.launcher.mods.size());
+                        // remove the old mod by reference else find the same modrinth porject id and delete
+                        if (!instance.launcher.mods.remove(oldMod)) {
+                            System.out.println("Failed to find mod to remove");
+                            System.out.println("Size: " + instance.launcher.mods.size());
+
+                            if (newMod.isFromCurseForge()) {
+                                List<DisableableMod> sameMods = instance.launcher.mods.stream().filter(
+                                        m -> m.isFromCurseForge()
+                                                && m.curseForgeProjectId == newMod.curseForgeProjectId)
+                                        .collect(Collectors.toList());
+
+                                sameMods.forEach(m -> FileUtils.delete(m.getActualFile(instance).toPath()));
+
+                                instance.launcher.mods = instance.launcher.mods.stream().filter(
+                                        m -> !m.isFromCurseForge()
+                                                || m.curseForgeProjectId != newMod.curseForgeProjectId)
+                                        .collect(Collectors.toList());
+                            } else if (newMod.isFromModrinth()) {
+                                List<DisableableMod> sameMods = instance.launcher.mods.stream().filter(
+                                        m -> m.isFromModrinth()
+                                                && m.modrinthProject.id.equals(newMod.modrinthProject.id))
+                                        .collect(Collectors.toList());
+
+                                sameMods.forEach(m -> FileUtils.delete(m.getActualFile(instance).toPath()));
+
+                                instance.launcher.mods = instance.launcher.mods.stream().filter(
+                                        m -> !m.isFromModrinth()
+                                                || !m.modrinthProject.id.equals(newMod.modrinthProject.id))
+                                        .collect(Collectors.toList());
+                            }
+                        }
+                        System.out.println("Size: " + instance.launcher.mods.size());
+
+                        instance.launcher.mods.add(newMod);
+                        System.out.println("Size: " + instance.launcher.mods.size());
+                    });
+
+                    instance.save();
+
+                    // process complete, only show close button and disable everything else
+                    SwingUtilities.invokeLater(() -> {
+                        mainPanel.removeAll();
+                        mainPanel.revalidate();
+                        mainPanel.repaint();
+                        mainPanel.add(
+                                new CenteredTextPanel(GetText.tr("{0} Mods Have Been Updated", updatedMods.size())),
+                                BorderLayout.CENTER);
+                        setTitle(GetText.tr("{0} Mods Have Been Updated", updatedMods.size()));
+
+                        topPanel.setVisible(false);
+                        updateButton.setVisible(false);
+                        closeButton.setText(GetText.tr("Close"));
+                    });
+                }).start();
             }
         });
         bottomPanel.add(updateButton);
@@ -260,11 +349,19 @@ public class CheckForUpdatesDialog extends JDialog {
     }
 
     private void addLoadingPanel(String text) {
+        addLoadingPanel(new LoadingPanel(text), text);
+    }
+
+    private void addLoadingPanel(LoadingPanel loadingPanel, String text) {
         mainPanel.removeAll();
         mainPanel.revalidate();
         mainPanel.repaint();
-        mainPanel.add(new LoadingPanel(text), BorderLayout.CENTER);
+        mainPanel.add(loadingPanel, BorderLayout.CENTER);
+
         setTitle(text);
+
+        revalidate();
+        repaint();
     }
 
     private void checkForUpdates() {

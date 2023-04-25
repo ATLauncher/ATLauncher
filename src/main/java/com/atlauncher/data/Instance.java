@@ -3385,4 +3385,105 @@ public class Instance extends MinecraftVersion {
 
         return null;
     }
+
+    public DisableableMod reinstallModFromModrinth(DisableableMod mod, ModrinthProject project, ModrinthVersion version,
+            OkHttpClient progressClient) {
+        ModrinthFile fileToDownload = version.getPrimaryFile();
+        String modFileNameInSystem = mod.disabled ? fileToDownload.filename + ".disabled" : fileToDownload.filename;
+
+        Path downloadLocation = FileSystem.DOWNLOADS.resolve(fileToDownload.filename);
+        Path finalLocation = mod.getActualFile(this).toPath().resolveSibling(modFileNameInSystem);
+        com.atlauncher.network.Download download = com.atlauncher.network.Download.build().setUrl(fileToDownload.url)
+                .downloadTo(downloadLocation).copyTo(finalLocation).withHttpClient(progressClient);
+
+        if (fileToDownload.hashes != null && fileToDownload.hashes.containsKey("sha512")) {
+            download = download.hash(fileToDownload.hashes.get("sha512"));
+        } else if (fileToDownload.hashes != null && fileToDownload.hashes.containsKey("sha1")) {
+            download = download.hash(fileToDownload.hashes.get("sha1"));
+        }
+
+        if (fileToDownload.size != null && fileToDownload.size != 0) {
+            download = download.size(fileToDownload.size);
+        }
+
+        if (download.needToDownload()) {
+            try {
+                download.downloadFile();
+            } catch (IOException e) {
+                LogManager.logStackTrace("Failed to download " + fileToDownload.filename, e);
+                return null;
+            }
+        } else {
+            download.copy();
+        }
+
+        // delete old mod
+        FileUtils.delete(mod.getActualFile(this).toPath());
+
+        // create the new mod
+        DisableableMod newMod = new DisableableMod(project.title, version.name, true, modFileNameInSystem, mod.type,
+                null, project.description, false, true, true, false, project, version);
+
+        // scan the internal mod metadata
+        newMod.scanInternalModMetadata(finalLocation);
+
+        return newMod;
+    }
+
+    public DisableableMod reinstallModFromCurseForge(DisableableMod mod, CurseForgeProject project,
+            CurseForgeFile version, OkHttpClient progressClient) {
+        String modFileNameInSystem = mod.disabled ? version.fileName + ".disabled" : version.fileName;
+
+        Path downloadLocation = FileSystem.DOWNLOADS.resolve(version.fileName);
+        Path finalLocation = mod.getActualFile(this).toPath().resolveSibling(modFileNameInSystem);
+
+        Optional<CurseForgeFileHash> md5Hash = version.hashes.stream().filter(h -> h.isMd5())
+                .findFirst();
+        Optional<CurseForgeFileHash> sha1Hash = version.hashes.stream().filter(h -> h.isSha1())
+                .findFirst();
+
+        if (version.downloadUrl == null) {
+            LogManager.warn("Failed to download " + version.fileName + " as there is no downloadUrl");
+            return null;
+        }
+
+        com.atlauncher.network.Download download = com.atlauncher.network.Download.build().setUrl(version.downloadUrl)
+                .downloadTo(downloadLocation).size(version.fileLength)
+                .withHttpClient(progressClient);
+
+        download = download.copyTo(finalLocation);
+        if (Files.exists(finalLocation)) {
+            FileUtils.delete(finalLocation);
+        }
+
+        if (md5Hash.isPresent()) {
+            download = download.hash(md5Hash.get().value);
+        } else if (sha1Hash.isPresent()) {
+            download = download.hash(sha1Hash.get().value);
+        }
+
+        if (download.needToDownload()) {
+            try {
+                download.downloadFile();
+            } catch (IOException e) {
+                LogManager.logStackTrace(e);
+                return null;
+            }
+        } else {
+            download.copy();
+        }
+
+        // delete old mod
+        FileUtils.delete(mod.getActualFile(this).toPath());
+
+        // create the new mod
+        DisableableMod newMod = new DisableableMod(project.name, version.displayName, true, modFileNameInSystem,
+                mod.type,
+                null, project.summary, false, true, true, false, project, version);
+
+        // scan the internal mod metadata
+        newMod.scanInternalModMetadata(finalLocation);
+
+        return newMod;
+    }
 }

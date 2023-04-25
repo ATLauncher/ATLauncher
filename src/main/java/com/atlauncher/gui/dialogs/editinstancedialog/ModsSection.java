@@ -104,6 +104,7 @@ public class ModsSection extends SectionPanel {
 
         searchField.setMaximumSize(new Dimension(100, 23));
         searchField.addKeyListener(new KeyAdapter() {
+            @Override
             public void keyReleased(KeyEvent e) {
                 executeSearch();
             }
@@ -198,6 +199,7 @@ public class ModsSection extends SectionPanel {
         modsTable.getTableHeader().setReorderingAllowed(false);
 
         modsTable.addMouseListener(new MouseAdapter() {
+            @Override
             public void mouseReleased(MouseEvent e) {
                 if (e.isPopupTrigger()) {
                     Point point = e.getPoint();
@@ -471,7 +473,6 @@ public class ModsSection extends SectionPanel {
 
         new CheckForUpdatesDialog(this.parent, this.instance, mods);
 
-        instance.save();
         reloadRows(rows);
     }
 
@@ -511,6 +512,7 @@ public class ModsSection extends SectionPanel {
 
         JMenuItem checkForUpdateMenuItem = new JMenuItem(GetText.tr("Check For Updates"));
         checkForUpdateMenuItem.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent e) {
                 int selectedRow = modsTable.convertRowIndexToModel(modsTable.getSelectedRow());
                 checkForUpdates(new int[] { selectedRow });
@@ -519,6 +521,7 @@ public class ModsSection extends SectionPanel {
 
         JMenuItem reinstallMenuItem = new JMenuItem(GetText.tr("Reinstall"));
         reinstallMenuItem.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent e) {
                 int selectedRow = modsTable.convertRowIndexToModel(modsTable.getSelectedRow());
                 reinstallMods(new int[] { selectedRow });
@@ -527,6 +530,7 @@ public class ModsSection extends SectionPanel {
 
         JMenuItem enableMenuItem = new JMenuItem(GetText.tr("Enable"));
         enableMenuItem.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent e) {
                 int selectedRow = modsTable.convertRowIndexToModel(modsTable.getSelectedRow());
                 disableEnableRows(new int[] { selectedRow }, false, false);
@@ -535,6 +539,7 @@ public class ModsSection extends SectionPanel {
 
         JMenuItem disableMenuItem = new JMenuItem(GetText.tr("Disable"));
         disableMenuItem.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent e) {
                 int selectedRow = modsTable.convertRowIndexToModel(modsTable.getSelectedRow());
                 disableEnableRows(new int[] { selectedRow }, true, false);
@@ -543,6 +548,7 @@ public class ModsSection extends SectionPanel {
 
         JMenuItem deleteMenuItem = new JMenuItem(GetText.tr("Delete"));
         deleteMenuItem.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent e) {
                 int selectedRow = modsTable.convertRowIndexToModel(modsTable.getSelectedRow());
                 deleteRows(new int[] { selectedRow });
@@ -553,6 +559,7 @@ public class ModsSection extends SectionPanel {
 
         JMenuItem showInExplorerMenuItem = new JMenuItem(GetText.tr("Show In File Explorer"));
         showInExplorerMenuItem.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent e) {
                 Optional<DisableableMod> mod = getFirstSelectedMod();
 
@@ -566,6 +573,7 @@ public class ModsSection extends SectionPanel {
 
         JMenuItem openDiscordMenuItem = new JMenuItem(GetText.tr("Open Discord"));
         openDiscordMenuItem.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent e) {
                 Optional<DisableableMod> selectedMod = getFirstSelectedMod();
                 if (selectedMod.isPresent() && selectedMod.get().getDiscordInviteUrl() != null) {
@@ -576,6 +584,7 @@ public class ModsSection extends SectionPanel {
 
         JMenuItem openSourceMenuItem = new JMenuItem(GetText.tr("Open Source"));
         openSourceMenuItem.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent e) {
                 Optional<DisableableMod> selectedMod = getFirstSelectedMod();
                 if (selectedMod.isPresent() && selectedMod.get().getSourceUrl() != null) {
@@ -586,6 +595,7 @@ public class ModsSection extends SectionPanel {
 
         JMenuItem openSupportMenuItem = new JMenuItem(GetText.tr("Open Support"));
         openSupportMenuItem.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent e) {
                 Optional<DisableableMod> selectedMod = getFirstSelectedMod();
                 if (selectedMod.isPresent() && selectedMod.get().getSupportUrl() != null) {
@@ -596,6 +606,7 @@ public class ModsSection extends SectionPanel {
 
         JMenuItem openWebsiteMenuItem = new JMenuItem(GetText.tr("Open Website"));
         openWebsiteMenuItem.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent e) {
                 Optional<DisableableMod> selectedMod = getFirstSelectedMod();
                 if (selectedMod.isPresent() && selectedMod.get().getWebsiteUrl() != null) {
@@ -606,6 +617,7 @@ public class ModsSection extends SectionPanel {
 
         JMenuItem openWikiMenuItem = new JMenuItem(GetText.tr("Open Wiki"));
         openWikiMenuItem.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent e) {
                 Optional<DisableableMod> selectedMod = getFirstSelectedMod();
                 if (selectedMod.isPresent() && selectedMod.get().getWikiUrl() != null) {

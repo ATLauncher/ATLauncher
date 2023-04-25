@@ -20,6 +20,7 @@ package com.atlauncher.data;
 import java.awt.Color;
 import java.awt.Window;
 import java.io.File;
+import java.io.IOException;
 import java.io.Serializable;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
@@ -36,9 +37,11 @@ import org.joda.time.format.ISODateTimeFormat;
 import org.mini2Dx.gettext.GetText;
 
 import com.atlauncher.App;
+import com.atlauncher.FileSystem;
 import com.atlauncher.data.curseforge.CurseForgeAttachment;
 import com.atlauncher.data.curseforge.CurseForgeFile;
 import com.atlauncher.data.curseforge.CurseForgeProject;
+import com.atlauncher.data.modrinth.ModrinthFile;
 import com.atlauncher.data.modrinth.ModrinthProject;
 import com.atlauncher.data.modrinth.ModrinthVersion;
 import com.atlauncher.exceptions.InvalidMinecraftVersion;
@@ -50,6 +53,7 @@ import com.atlauncher.managers.MinecraftManager;
 import com.atlauncher.managers.PerformanceManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.CurseForgeApi;
+import com.atlauncher.utils.FileUtils;
 import com.atlauncher.utils.InternalModMetadataUtils;
 import com.atlauncher.utils.ModrinthApi;
 import com.atlauncher.utils.Pair;
@@ -57,6 +61,8 @@ import com.atlauncher.utils.Utils;
 import com.google.gson.JsonObject;
 import com.google.gson.annotations.SerializedName;
 import com.moandjiezana.toml.Toml;
+
+import okhttp3.OkHttpClient;
 
 @SuppressWarnings("serial")
 public class DisableableMod implements Serializable {
@@ -70,6 +76,7 @@ public class DisableableMod implements Serializable {
     public String description;
     public boolean disabled;
     public boolean userAdded = false; // Default to not being user added
+    public boolean userChanged = false; // Default to not being user changed
     public boolean wasSelected = true; // Default to it being selected on install
     public boolean skipped = false; // For browser download mods if they were skipped or not
 
@@ -90,7 +97,7 @@ public class DisableableMod implements Serializable {
     @SerializedName(value = "modrinthProject", alternate = { "modrinthMod" })
     public ModrinthProject modrinthProject;
     public ModrinthVersion modrinthVersion;
-	public boolean dontScanOnModrinth = false;
+    public boolean dontScanOnModrinth = false;
 
     public DisableableMod(String name, String version, boolean optional, String file, String path, Type type,
             Color colour, String description, boolean disabled, boolean userAdded, boolean wasSelected, boolean skipped,
@@ -872,12 +879,6 @@ public class DisableableMod implements Serializable {
         }
 
         return null;
-    }
-
-    public void reinstallFromCurseForge(CurseForgeProject project, CurseForgeFile updateVersion) {
-    }
-
-    public void reinstallFromModrinth(ModrinthProject project, ModrinthVersion updateVersion) {
     }
 
     public Pair<Boolean, Pair<Object, Object>> checkForUpdateOnModrinth(Instance instance,
