@@ -70,7 +70,6 @@ import com.atlauncher.managers.LogManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.ComboItem;
 import com.atlauncher.utils.CurseForgeApi;
-import com.atlauncher.utils.FileUtils;
 import com.atlauncher.utils.Hashing;
 import com.atlauncher.utils.ModrinthApi;
 import com.atlauncher.utils.Pair;
@@ -82,9 +81,11 @@ public class CheckForUpdatesDialog extends JDialog {
     private final Instance instance;
     private final List<DisableableMod> mods;
     private final List<ModUpdatesChooserCard> modUpdateCards = new ArrayList<>();
+    public final Map<DisableableMod, DisableableMod> updatedMods = Collections.synchronizedMap(new HashMap<>());
 
     private boolean checking = false;
     private final boolean reinstalling;
+    private final ModUpdatesComplete modUpdatesCompleteRunnable;
 
     private final JPanel mainPanel = new JPanel(new BorderLayout());
     private final JComboBox<ComboItem<ModPlatform>> platformComboBox = new JComboBox<>();
@@ -93,15 +94,18 @@ public class CheckForUpdatesDialog extends JDialog {
     private JButton closeButton = new JButton(GetText.tr("Close"));
     private int modsToUpdate = 0;
 
-    public CheckForUpdatesDialog(Window parent, Instance instance, List<DisableableMod> mods, boolean reinstalling) {
+    public CheckForUpdatesDialog(Window parent, Instance instance, List<DisableableMod> mods, boolean reinstalling,
+            ModUpdatesComplete modUpdatesCompleteRunnable) {
         super(parent);
 
         this.instance = instance;
         this.mods = mods;
         this.reinstalling = reinstalling;
+        this.modUpdatesCompleteRunnable = modUpdatesCompleteRunnable;
 
         Analytics.sendScreenView("Check For Updates Dialog");
 
+        setModal(true);
         setLayout(new BorderLayout());
         setResizable(true);
         setTitle(GetText.tr("Checking For Updates"));
@@ -242,9 +246,6 @@ public class CheckForUpdatesDialog extends JDialog {
                         addLoadingPanel(loadingPanel, text);
                     });
 
-                    List<Pair<DisableableMod, DisableableMod>> updatedMods = Collections
-                            .synchronizedList(new ArrayList<>());
-
                     executorService = Executors.newFixedThreadPool(10);
                     for (Pair<DisableableMod, Pair<Object, Object>> mod : modsUpdating) {
                         executorService.execute(() -> {
@@ -264,9 +265,7 @@ public class CheckForUpdatesDialog extends JDialog {
                                         project, updateVersion, progressClient);
                             }
 
-                            if (newMod != null) {
-                                updatedMods.add(new Pair<>(mod.left(), newMod));
-                            }
+                            updatedMods.put(mod.left(), newMod);
                         });
                     }
                     executorService.shutdown();
@@ -279,45 +278,6 @@ public class CheckForUpdatesDialog extends JDialog {
                         executorService.shutdownNow();
                         Thread.currentThread().interrupt();
                     }
-
-                    updatedMods.forEach(p -> {
-                        DisableableMod oldMod = p.left();
-                        DisableableMod newMod = p.right();
-
-                        System.out.println("Size: " + instance.launcher.mods.size());
-                        // remove the old mod by reference else find the same modrinth porject id and delete
-                        if (!instance.launcher.mods.remove(oldMod)) {
-                            if (newMod.isFromCurseForge()) {
-                                List<DisableableMod> sameMods = instance.launcher.mods.stream().filter(
-                                        m -> m.isFromCurseForge()
-                                                && m.curseForgeProjectId == newMod.curseForgeProjectId)
-                                        .collect(Collectors.toList());
-
-                                sameMods.forEach(m -> FileUtils.delete(m.getActualFile(instance).toPath()));
-
-                                instance.launcher.mods = instance.launcher.mods.stream().filter(
-                                        m -> !m.isFromCurseForge()
-                                                || m.curseForgeProjectId != newMod.curseForgeProjectId)
-                                        .collect(Collectors.toList());
-                            } else if (newMod.isFromModrinth()) {
-                                List<DisableableMod> sameMods = instance.launcher.mods.stream().filter(
-                                        m -> m.isFromModrinth()
-                                                && m.modrinthProject.id.equals(newMod.modrinthProject.id))
-                                        .collect(Collectors.toList());
-
-                                sameMods.forEach(m -> FileUtils.delete(m.getActualFile(instance).toPath()));
-
-                                instance.launcher.mods = instance.launcher.mods.stream().filter(
-                                        m -> !m.isFromModrinth()
-                                                || !m.modrinthProject.id.equals(newMod.modrinthProject.id))
-                                        .collect(Collectors.toList());
-                            }
-                        }
-
-                        instance.launcher.mods.add(newMod);
-                    });
-
-                    instance.save();
 
                     // process complete, only show close button and disable everything else
                     SwingUtilities.invokeLater(() -> {
@@ -332,6 +292,8 @@ public class CheckForUpdatesDialog extends JDialog {
                         topPanel.setVisible(false);
                         updateButton.setVisible(false);
                         closeButton.setText(GetText.tr("Close"));
+
+                        modUpdatesCompleteRunnable.modsInstalled(updatedMods);
                     });
                 }).start();
             }

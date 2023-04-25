@@ -38,6 +38,8 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -72,6 +74,7 @@ import com.atlauncher.data.DisableableMod;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.Type;
 import com.atlauncher.managers.LogManager;
+import com.atlauncher.utils.FileUtils;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Pair;
 import com.atlauncher.utils.Utils;
@@ -396,6 +399,8 @@ public class ModsSection extends SectionPanel {
             }
 
             tableModel.setValueAt(!mod.disabled, row, 1);
+            tableModel.setValueAt(mod.getNameFromFile(instance), row, 2);
+            tableModel.setValueAt(mod.getVersionFromFile(instance), row, 3);
             tableModel.setValueAt(
                     attrs == null ? Instant.now().toDate() : new Date(attrs.lastModifiedTime().toMillis()),
                     row, 4);
@@ -441,9 +446,10 @@ public class ModsSection extends SectionPanel {
             return (DisableableMod) tableModel.getValueAt(row, 0);
         }).collect(Collectors.toList());
 
-        new CheckForUpdatesDialog(this.parent, this.instance, mods, false);
-
-        reloadRows(rows);
+        new CheckForUpdatesDialog(this.parent, this.instance, mods, false,
+                (Map<DisableableMod, DisableableMod> updatedMods) -> {
+                    saveAndReloadAfterUpdatingMods(rows, updatedMods);
+                });
     }
 
     private void reinstallMods(int[] rows) {
@@ -451,7 +457,38 @@ public class ModsSection extends SectionPanel {
             return (DisableableMod) tableModel.getValueAt(row, 0);
         }).collect(Collectors.toList());
 
-        new CheckForUpdatesDialog(this.parent, this.instance, mods, true);
+        new CheckForUpdatesDialog(this.parent, this.instance, mods, true,
+                (Map<DisableableMod, DisableableMod> updatedMods) -> {
+                    saveAndReloadAfterUpdatingMods(rows, updatedMods);
+                });
+    }
+
+    private void saveAndReloadAfterUpdatingMods(int[] rows, Map<DisableableMod, DisableableMod> updatedMods) {
+        for (Entry<DisableableMod, DisableableMod> entry : updatedMods.entrySet()) {
+            DisableableMod oldMod = entry.getKey();
+            DisableableMod newMod = entry.getValue();
+
+            if (oldMod == null || newMod == null || !instance.launcher.mods.remove(oldMod)) {
+                continue;
+            }
+
+            // remove the old mod file
+            FileUtils.delete(oldMod.getActualFile(instance).toPath());
+
+            // then update the mods list
+            instance.launcher.mods.remove(oldMod);
+            instance.launcher.mods.add(newMod);
+
+            // then update the tables Mod to be correct
+            Optional<Integer> foundRow = Arrays.stream(rows).boxed()
+                    .filter(row -> tableModel.getValueAt(row, 0) == oldMod).findFirst();
+
+            if (foundRow.isPresent()) {
+                tableModel.setValueAt(newMod, foundRow.get(), 0);
+            }
+        }
+
+        instance.save();
 
         reloadRows(rows);
     }
