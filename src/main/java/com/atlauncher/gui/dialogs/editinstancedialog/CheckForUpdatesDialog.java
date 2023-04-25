@@ -75,6 +75,7 @@ import com.atlauncher.utils.ModrinthApi;
 import com.atlauncher.utils.Pair;
 import com.atlauncher.utils.Utils;
 
+import io.github.asyncronous.toast.Toaster;
 import okhttp3.OkHttpClient;
 
 public class CheckForUpdatesDialog extends JDialog {
@@ -281,19 +282,12 @@ public class CheckForUpdatesDialog extends JDialog {
 
                     // process complete, only show close button and disable everything else
                     SwingUtilities.invokeLater(() -> {
-                        String text1 = reinstalling ? GetText.tr("{0} Mods Have Been Installed", updatedMods.size())
+                        String toasterText = reinstalling
+                                ? GetText.tr("{0} Mods Have Been Reinstalled", updatedMods.size())
                                 : GetText.tr("{0} Mods Have Been Updated", updatedMods.size());
-                        mainPanel.removeAll();
-                        mainPanel.revalidate();
-                        mainPanel.repaint();
-                        mainPanel.add(new CenteredTextPanel(text1), BorderLayout.CENTER);
-                        setTitle(text1);
-
-                        topPanel.setVisible(false);
-                        updateButton.setVisible(false);
-                        closeButton.setText(GetText.tr("Close"));
-
+                        Toaster.instance().pop(toasterText);
                         modUpdatesCompleteRunnable.modsInstalled(updatedMods);
+                        close();
                     });
                 }).start();
             }
