@@ -20,7 +20,6 @@ package com.atlauncher.data;
 import java.awt.Color;
 import java.awt.Window;
 import java.io.File;
-import java.io.IOException;
 import java.io.Serializable;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
@@ -37,11 +36,9 @@ import org.joda.time.format.ISODateTimeFormat;
 import org.mini2Dx.gettext.GetText;
 
 import com.atlauncher.App;
-import com.atlauncher.FileSystem;
 import com.atlauncher.data.curseforge.CurseForgeAttachment;
 import com.atlauncher.data.curseforge.CurseForgeFile;
 import com.atlauncher.data.curseforge.CurseForgeProject;
-import com.atlauncher.data.modrinth.ModrinthFile;
 import com.atlauncher.data.modrinth.ModrinthProject;
 import com.atlauncher.data.modrinth.ModrinthVersion;
 import com.atlauncher.exceptions.InvalidMinecraftVersion;
@@ -53,7 +50,6 @@ import com.atlauncher.managers.MinecraftManager;
 import com.atlauncher.managers.PerformanceManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.CurseForgeApi;
-import com.atlauncher.utils.FileUtils;
 import com.atlauncher.utils.InternalModMetadataUtils;
 import com.atlauncher.utils.ModrinthApi;
 import com.atlauncher.utils.Pair;
@@ -61,8 +57,6 @@ import com.atlauncher.utils.Utils;
 import com.google.gson.JsonObject;
 import com.google.gson.annotations.SerializedName;
 import com.moandjiezana.toml.Toml;
-
-import okhttp3.OkHttpClient;
 
 @SuppressWarnings("serial")
 public class DisableableMod implements Serializable {
@@ -882,7 +876,7 @@ public class DisableableMod implements Serializable {
     }
 
     public Pair<Boolean, Pair<Object, Object>> checkForUpdateOnModrinth(Instance instance,
-            ModrinthProject modrinthProject) {
+            ModrinthProject modrinthProject, boolean reinstalling) {
         this.modrinthProject = modrinthProject;
 
         List<ModrinthVersion> versions = ModrinthApi.getVersions(modrinthProject.id, instance.id,
@@ -901,11 +895,12 @@ public class DisableableMod implements Serializable {
 
         List<ModrinthVersion> filteredVersions = versionsStream.collect(Collectors.toList());
 
-        if (filteredVersions.stream()
+        if ((!reinstalling && filteredVersions.stream()
                 .noneMatch(v -> ISODateTimeFormat.dateTimeParser().parseDateTime(v.datePublished)
                         .minusSeconds(1)
                         .isAfter(
-                                ISODateTimeFormat.dateTimeParser().parseDateTime(modrinthVersion.datePublished)))) {
+                                ISODateTimeFormat.dateTimeParser().parseDateTime(modrinthVersion.datePublished))))
+                || filteredVersions.size() == 0) {
             return new Pair<>(false, null);
         }
 
@@ -913,7 +908,7 @@ public class DisableableMod implements Serializable {
     }
 
     public Pair<Boolean, Pair<Object, Object>> checkforUpdateOnCurseForge(Instance instance,
-            CurseForgeProject curseForgeProject) {
+            CurseForgeProject curseForgeProject, boolean reinstalling) {
         this.curseForgeProject = curseForgeProject;
         List<CurseForgeFile> curseForgeFiles = CurseForgeApi.getFilesForProject(curseForgeProject.id);
 
@@ -972,7 +967,8 @@ public class DisableableMod implements Serializable {
 
         List<CurseForgeFile> filteredVersions = curseForgeFilesStream.collect(Collectors.toList());
 
-        if (filteredVersions.stream().noneMatch(file -> file.id > curseForgeFileId)) {
+        if ((reinstalling && filteredVersions.stream().noneMatch(file -> file.id > curseForgeFileId))
+                || filteredVersions.size() == 0) {
             return new Pair<>(false, null);
         }
 

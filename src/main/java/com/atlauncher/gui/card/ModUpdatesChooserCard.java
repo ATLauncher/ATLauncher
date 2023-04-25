@@ -68,6 +68,7 @@ public class ModUpdatesChooserCard extends JPanel {
     final private Instance instance;
     public final DisableableMod mod;
     final private ModUpdateCheckBoxCheckedCallback onCheckBoxChecked;
+    private final boolean reinstall;
 
     final private CurseForgeProject curseForgeProject;
     final private List<CurseForgeFile> curseForgeVersions;
@@ -76,15 +77,16 @@ public class ModUpdatesChooserCard extends JPanel {
     final private List<ModrinthVersion> modrinthVersions;
     private JButton changelogButton = new JButton(GetText.tr("Changelog"));
     private JComboBox<ComboItem<Object>> updatedVersionComboBox = new JComboBox<>();
-    private JCheckBox updateCheckBox = new JCheckBox(GetText.tr("Update?"));
+    private JCheckBox updateCheckBox = new JCheckBox();
 
     public ModUpdatesChooserCard(Window parentWindow, Instance instance, DisableableMod mod,
-            Pair<Object, Object> updateData, ModUpdateCheckBoxCheckedCallback onCheckBoxChecked) {
+            Pair<Object, Object> updateData, boolean reinstall, ModUpdateCheckBoxCheckedCallback onCheckBoxChecked) {
         super();
 
         this.parentWindow = parentWindow;
         this.instance = instance;
         this.mod = mod;
+        this.reinstall = reinstall;
         this.onCheckBoxChecked = onCheckBoxChecked;
 
         if (updateData.left() instanceof CurseForgeProject) {
@@ -116,6 +118,7 @@ public class ModUpdatesChooserCard extends JPanel {
         JPanel topPanel = new JPanel();
         topPanel.setLayout(null);
 
+        updateCheckBox.setText(reinstall ? GetText.tr("Install?") : GetText.tr("Update?"));
         updateCheckBox.setHorizontalTextPosition(SwingConstants.LEFT);
         updateCheckBox.setHorizontalAlignment(SwingConstants.RIGHT);
         updateCheckBox.setSelected(true);
@@ -221,7 +224,9 @@ public class ModUpdatesChooserCard extends JPanel {
             }
         });
 
-        updatedVersionComboBox.setSelectedIndex(0);
+        if (updatedVersionComboBox.getItemCount() != 0) {
+            updatedVersionComboBox.setSelectedIndex(0);
+        }
         updatedVersionComboBox.setPreferredSize(new Dimension(230, 23));
         updatedVersionPanel.add(updatedVersionComboBox);
         mainPanel.add(updatedVersionPanel, gbc);

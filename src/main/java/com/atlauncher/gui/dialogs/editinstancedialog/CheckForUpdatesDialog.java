@@ -84,20 +84,21 @@ public class CheckForUpdatesDialog extends JDialog {
     private final List<ModUpdatesChooserCard> modUpdateCards = new ArrayList<>();
 
     private boolean checking = false;
-    private boolean updating = false;
+    private final boolean reinstalling;
 
     private final JPanel mainPanel = new JPanel(new BorderLayout());
     private final JComboBox<ComboItem<ModPlatform>> platformComboBox = new JComboBox<>();
     private ExecutorService executorService;
-    private final JButton updateButton = new JButton(GetText.tr("Update"));
+    private final JButton updateButton = new JButton();
     private JButton closeButton = new JButton(GetText.tr("Close"));
     private int modsToUpdate = 0;
 
-    public CheckForUpdatesDialog(Window parent, Instance instance, List<DisableableMod> mods) {
+    public CheckForUpdatesDialog(Window parent, Instance instance, List<DisableableMod> mods, boolean reinstalling) {
         super(parent);
 
         this.instance = instance;
         this.mods = mods;
+        this.reinstalling = reinstalling;
 
         Analytics.sendScreenView("Check For Updates Dialog");
 
@@ -141,7 +142,7 @@ public class CheckForUpdatesDialog extends JDialog {
         JLabelWithHover platformLabel = new JLabelWithHover(GetText.tr("Platform") + ":",
                 Utils.getIconImage(App.THEME.getIconPath("question")),
                 new HTMLBuilder().text(GetText.tr(
-                        "The mod platform to use when checking for updates.<br/>The preferred platform when searching all platforms can be set in the launchers Mods settings tab."))
+                        "The mod platform to use when querying versions for a mod.<br/>The preferred platform when searching all platforms can be set in the launchers Mods settings tab."))
                         .center().build());
 
         platformComboBox.addItem(
@@ -179,6 +180,7 @@ public class CheckForUpdatesDialog extends JDialog {
 
         bottomPanel.add(Box.createHorizontalStrut(20));
 
+        updateButton.setText(reinstalling ? GetText.tr("Reinstall") : GetText.tr("Update"));
         updateButton.setEnabled(false);
         updateButton.addActionListener(new ActionListener() {
             @Override
@@ -229,8 +231,7 @@ public class CheckForUpdatesDialog extends JDialog {
                     }).sum();
 
                     // load in panel to show update happening
-                    System.out.println(totalBytes + " bytes to download");
-                    String text = GetText.tr("Updating {0} Mods", modsUpdating.size());
+                    String text = GetText.tr("Downloading {0} Mods", modsUpdating.size());
                     LoadingPanel loadingPanel = new LoadingPanel(text);
                     loadingPanel.setTotalBytes(totalBytes);
                     OkHttpClient progressClient = Network.createProgressClient(loadingPanel);
@@ -286,9 +287,6 @@ public class CheckForUpdatesDialog extends JDialog {
                         System.out.println("Size: " + instance.launcher.mods.size());
                         // remove the old mod by reference else find the same modrinth porject id and delete
                         if (!instance.launcher.mods.remove(oldMod)) {
-                            System.out.println("Failed to find mod to remove");
-                            System.out.println("Size: " + instance.launcher.mods.size());
-
                             if (newMod.isFromCurseForge()) {
                                 List<DisableableMod> sameMods = instance.launcher.mods.stream().filter(
                                         m -> m.isFromCurseForge()
@@ -315,23 +313,21 @@ public class CheckForUpdatesDialog extends JDialog {
                                         .collect(Collectors.toList());
                             }
                         }
-                        System.out.println("Size: " + instance.launcher.mods.size());
 
                         instance.launcher.mods.add(newMod);
-                        System.out.println("Size: " + instance.launcher.mods.size());
                     });
 
                     instance.save();
 
                     // process complete, only show close button and disable everything else
                     SwingUtilities.invokeLater(() -> {
+                        String text1 = reinstalling ? GetText.tr("{0} Mods Have Been Installed", updatedMods.size())
+                                : GetText.tr("{0} Mods Have Been Updated", updatedMods.size());
                         mainPanel.removeAll();
                         mainPanel.revalidate();
                         mainPanel.repaint();
-                        mainPanel.add(
-                                new CenteredTextPanel(GetText.tr("{0} Mods Have Been Updated", updatedMods.size())),
-                                BorderLayout.CENTER);
-                        setTitle(GetText.tr("{0} Mods Have Been Updated", updatedMods.size()));
+                        mainPanel.add(new CenteredTextPanel(text1), BorderLayout.CENTER);
+                        setTitle(text1);
 
                         topPanel.setVisible(false);
                         updateButton.setVisible(false);
@@ -374,7 +370,8 @@ public class CheckForUpdatesDialog extends JDialog {
                     platformComboBox.setEnabled(false);
                     updateButton.setEnabled(false);
                     closeButton.setText(GetText.tr("Cancel"));
-                    addLoadingPanel(GetText.tr("Checking For Updates"));
+                    addLoadingPanel(
+                            reinstalling ? GetText.tr("Fetching Versions") : GetText.tr("Checking For Updates"));
                 });
 
                 ModPlatform platform = ((ComboItem<ModPlatform>) platformComboBox.getSelectedItem()).getValue();
@@ -438,17 +435,18 @@ public class CheckForUpdatesDialog extends JDialog {
                 // load in mods panel
                 SwingUtilities.invokeLater(() -> {
                     if (modUpdates.size() == 0) {
+                        String text = reinstalling ? GetText.tr("No Versions Found") : GetText.tr("No Updates Found");
                         mainPanel.removeAll();
                         mainPanel.revalidate();
                         mainPanel.repaint();
-                        mainPanel.add(new CenteredTextPanel(GetText.tr("No Updates Found")), BorderLayout.CENTER);
-                        setTitle(GetText.tr("No Updates Found"));
+                        mainPanel.add(new CenteredTextPanel(text), BorderLayout.CENTER);
+                        setTitle(text);
                     } else {
                         JPanel modsPanel = new JPanel(new WrapLayout());
                         for (Map.Entry<DisableableMod, Pair<Object, Object>> entry : modUpdates.entrySet()) {
                             modUpdateCards
                                     .add(new ModUpdatesChooserCard(this, instance, entry.getKey(), entry.getValue(),
-                                            (boolean checked) -> {
+                                            reinstalling, (boolean checked) -> {
                                                 if (checked) {
                                                     modsToUpdate += 1;
                                                 } else {
@@ -458,7 +456,7 @@ public class CheckForUpdatesDialog extends JDialog {
                                                 SwingUtilities.invokeLater(() -> {
                                                     updateButton.setEnabled(modsToUpdate != 0);
                                                     updateButton.setToolTipText(modsToUpdate != 0 ? null
-                                                            : GetText.tr("No Mods Selected For Update"));
+                                                            : GetText.tr("No Mods Selected"));
                                                 });
                                             }));
                         }
@@ -481,13 +479,13 @@ public class CheckForUpdatesDialog extends JDialog {
                         mainPanel.revalidate();
                         mainPanel.repaint();
                         mainPanel.add(modsScrollPane, BorderLayout.CENTER);
-                        setTitle(GetText.tr("Select Updates For {0} Mods", modUpdates.size()));
+                        setTitle(GetText.tr("Select Versions For {0} Mods", modUpdates.size()));
                     }
 
                     platformComboBox.setEnabled(true);
                     updateButton.setEnabled(modUpdates.size() != 0);
                     updateButton.setToolTipText(modUpdates.size() != 0 ? null
-                            : GetText.tr("No Mods To Update"));
+                            : GetText.tr("No Mods Selected"));
                     closeButton.setText(GetText.tr("Close"));
                 });
                 checking = false;
@@ -514,9 +512,11 @@ public class CheckForUpdatesDialog extends JDialog {
                 });
 
         Collection<String> values = sha1Hashes.values();
-        Map<String, ModrinthVersion> latestVersionsFromHash = ModrinthApi.getLatestVersionFromSha1Hashes(
-                values.toArray(new String[values.size()]), instance.id,
-                instance.launcher.loaderVersion);
+        Map<String, ModrinthVersion> latestVersionsFromHash = reinstalling ? ModrinthApi.getVersionsFromSha1Hashes(
+                values.toArray(new String[values.size()]))
+                : ModrinthApi.getLatestVersionFromSha1Hashes(
+                        values.toArray(new String[values.size()]), instance.id,
+                        instance.launcher.loaderVersion);
 
         List<DisableableMod> modsWithNewerVersions = mods.stream().filter(dm -> {
             ModrinthVersion modrinthVersion = latestVersionsFromHash.get(sha1Hashes.get(dm));
@@ -543,7 +543,7 @@ public class CheckForUpdatesDialog extends JDialog {
                 }
             }
 
-            return !dm.modrinthVersion.id.equals(modrinthVersion.id);
+            return reinstalling || !dm.modrinthVersion.id.equals(modrinthVersion.id);
         }).collect(Collectors.toList());
 
         Map<String, ModrinthProject> projectIdsToProjects = ModrinthApi.getProjectsAsMap(
@@ -553,7 +553,7 @@ public class CheckForUpdatesDialog extends JDialog {
         modsWithNewerVersions.forEach(dm -> {
             executorService.execute(() -> {
                 Pair<Boolean, Pair<Object, Object>> update = dm.checkForUpdateOnModrinth(instance,
-                        projectIdsToProjects.get(dm.modrinthProject.id));
+                        projectIdsToProjects.get(dm.modrinthProject.id), reinstalling);
 
                 if (update.left()) {
                     modUpdates.put(dm, update.right());
@@ -609,7 +609,7 @@ public class CheckForUpdatesDialog extends JDialog {
                                         executorService.execute(() -> {
                                             Pair<Boolean, Pair<Object, Object>> update = dm
                                                     .checkforUpdateOnCurseForge(instance,
-                                                            curseForgeProject);
+                                                            curseForgeProject, reinstalling);
 
                                             if (update.left()) {
                                                 modUpdates.put(dm, update.right());

@@ -151,7 +151,7 @@ public class ModsSection extends SectionPanel {
             } catch (IOException ignored) {
             }
 
-            return new Object[] { instance.ROOT.relativize(pair.left()).toString(), !pair.right().disabled,
+            return new Object[] { pair.right(), !pair.right().disabled,
                     pair.right().getNameFromFile(instance, pair.left()),
                     pair.right().getVersionFromFile(instance, pair.left()),
                     attrs == null ? Instant.now().toDate() : new Date(attrs.lastModifiedTime().toMillis()) };
@@ -162,6 +162,10 @@ public class ModsSection extends SectionPanel {
         }) {
             @Override
             public Class<?> getColumnClass(int columnIndex) {
+                if (columnIndex == 0) {
+                    return DisableableMod.class;
+                }
+
                 if (columnIndex == 1) {
                     return Boolean.class;
                 }
@@ -232,7 +236,7 @@ public class ModsSection extends SectionPanel {
             }
         });
 
-        // remove the filename column so it's not visible
+        // remove the 0th column so it's not visible
         cm.removeColumn(cm.getColumn(0));
 
         TableRowSorter<TableModel> sorter = new TableRowSorter<>(tableModel);
@@ -383,53 +387,33 @@ public class ModsSection extends SectionPanel {
     private void reloadRows(int[] rows) {
         ignoreTableEvents = true;
         for (int row : rows) {
-            String filename = (String) tableModel.getValueAt(row, 0);
-
-            Optional<DisableableMod> mod = instance.launcher.mods.stream()
-                    .filter(m -> m.type == Type.mods
-                            && (m.getFile(instance).toPath().equals(instance.ROOT.resolve(filename))
-                                    || m.getDisabledFile(instance).toPath().equals(instance.ROOT.resolve(filename))))
-                    .findFirst();
-
-            if (mod.isPresent()) {
-                Path actualPath = mod.get().getActualFile(instance).toPath();
-                BasicFileAttributes attrs = null;
-                try {
-                    attrs = Files.readAttributes(actualPath, BasicFileAttributes.class);
-                } catch (IOException ignored) {
-                }
-
-                tableModel.setValueAt(instance.ROOT.relativize(actualPath).toString(),
-                        row, 0);
-                tableModel.setValueAt(!mod.get().disabled, row, 1);
-                tableModel.setValueAt(
-                        attrs == null ? Instant.now().toDate() : new Date(attrs.lastModifiedTime().toMillis()),
-                        row, 4);
+            DisableableMod mod = (DisableableMod) tableModel.getValueAt(row, 0);
+            Path actualPath = mod.getActualFile(instance).toPath();
+            BasicFileAttributes attrs = null;
+            try {
+                attrs = Files.readAttributes(actualPath, BasicFileAttributes.class);
+            } catch (IOException ignored) {
             }
+
+            tableModel.setValueAt(!mod.disabled, row, 1);
+            tableModel.setValueAt(
+                    attrs == null ? Instant.now().toDate() : new Date(attrs.lastModifiedTime().toMillis()),
+                    row, 4);
         }
         ignoreTableEvents = false;
     }
 
     private void disableEnableRows(int[] rows, boolean disable, boolean toggle) {
         for (int row : rows) {
-            String filename = (String) tableModel.getValueAt(row, 0);
+            DisableableMod mod = (DisableableMod) tableModel.getValueAt(row, 0);
 
-            Optional<DisableableMod> modOptional = instance.launcher.mods.stream()
-                    .filter(m -> m.type == Type.mods
-                            && m.getActualFile(instance).toPath().equals(instance.ROOT.resolve(filename)))
-                    .findFirst();
-
-            if (modOptional.isPresent()) {
-                DisableableMod mod = modOptional.get();
-
-                boolean shouldEnable = toggle ? mod.disabled : !disable;
-                if (shouldEnable) {
-                    LogManager.debug(String.format("Enabling mod %s", mod.name));
-                    mod.enable(instance);
-                } else {
-                    LogManager.debug(String.format("Disabling mod %s", mod.name));
-                    mod.disable(instance);
-                }
+            boolean shouldEnable = toggle ? mod.disabled : !disable;
+            if (shouldEnable) {
+                LogManager.debug(String.format("Enabling mod %s", mod.name));
+                mod.enable(instance);
+            } else {
+                LogManager.debug(String.format("Disabling mod %s", mod.name));
+                mod.disable(instance);
             }
         }
         instance.save();
@@ -442,20 +426,11 @@ public class ModsSection extends SectionPanel {
                 .sorted(Comparator.reverseOrder()).toArray(Integer[]::new);
 
         for (int row : sortedArr) {
-            String filename = (String) tableModel.getValueAt(row, 0);
+            DisableableMod mod = (DisableableMod) tableModel.getValueAt(row, 0);
 
-            Optional<DisableableMod> modOptional = instance.launcher.mods.stream()
-                    .filter(m -> m.type == Type.mods
-                            && m.getActualFile(instance).toPath().equals(instance.ROOT.resolve(filename)))
-                    .findFirst();
-
-            if (modOptional.isPresent()) {
-                DisableableMod mod = modOptional.get();
-
-                instance.launcher.mods.remove(mod);
-                Utils.delete(mod.getActualFile(instance));
-                tableModel.removeRow(row);
-            }
+            instance.launcher.mods.remove(mod);
+            Utils.delete(mod.getActualFile(instance));
+            tableModel.removeRow(row);
         }
         instance.save();
         ignoreTableEvents = false;
@@ -463,33 +438,22 @@ public class ModsSection extends SectionPanel {
 
     private void checkForUpdates(int[] rows) {
         List<DisableableMod> mods = Arrays.stream(rows).boxed().map(row -> {
-            String filename = (String) tableModel.getValueAt(row, 0);
+            return (DisableableMod) tableModel.getValueAt(row, 0);
+        }).collect(Collectors.toList());
 
-            return instance.launcher.mods.stream()
-                    .filter(m -> m.type == Type.mods
-                            && m.getActualFile(instance).toPath().equals(instance.ROOT.resolve(filename)))
-                    .findFirst();
-        }).filter(m -> m.isPresent()).map(m -> m.get()).collect(Collectors.toList());
-
-        new CheckForUpdatesDialog(this.parent, this.instance, mods);
+        new CheckForUpdatesDialog(this.parent, this.instance, mods, false);
 
         reloadRows(rows);
     }
 
     private void reinstallMods(int[] rows) {
-        ignoreTableEvents = true;
-
         List<DisableableMod> mods = Arrays.stream(rows).boxed().map(row -> {
-            String filename = (String) tableModel.getValueAt(row, 0);
+            return (DisableableMod) tableModel.getValueAt(row, 0);
+        }).collect(Collectors.toList());
 
-            return instance.launcher.mods.stream()
-                    .filter(m -> m.type == Type.mods
-                            && m.getActualFile(instance).toPath().equals(instance.ROOT.resolve(filename)))
-                    .findFirst();
-        }).filter(m -> m.isPresent()).map(m -> m.get()).collect(Collectors.toList());
+        new CheckForUpdatesDialog(this.parent, this.instance, mods, true);
 
-        instance.save();
-        ignoreTableEvents = false;
+        reloadRows(rows);
     }
 
     private Optional<DisableableMod> getFirstSelectedMod() {
@@ -498,12 +462,9 @@ public class ModsSection extends SectionPanel {
         }
 
         int selectedRow = modsTable.convertRowIndexToModel(modsTable.getSelectedRow());
-        String filename = (String) tableModel.getValueAt(selectedRow, 0);
+        DisableableMod mod = (DisableableMod) tableModel.getValueAt(selectedRow, 0);
 
-        return instance.launcher.mods.stream()
-                .filter(m -> m.type == Type.mods
-                        && m.getActualFile(instance).toPath().equals(instance.ROOT.resolve(filename)))
-                .findFirst();
+        return Optional.of(mod);
     }
 
     private void setupTableContextMenu() {
@@ -640,8 +601,8 @@ public class ModsSection extends SectionPanel {
 
                     if (modsTable.getSelectedRow() != -1) {
                         int selectedRow = modsTable.convertRowIndexToModel(modsTable.getSelectedRow());
-                        String filename = (String) tableModel.getValueAt(selectedRow, 0);
-                        fileNameMenuItem.setText(filename);
+                        DisableableMod mod = (DisableableMod) tableModel.getValueAt(selectedRow, 0);
+                        fileNameMenuItem.setText(mod.getActualFile(instance).getName());
 
                         openDiscordMenuItem.setVisible(hasExactlyOneModSelected && selectedMod.isPresent()
                                 && selectedMod.get().getDiscordInviteUrl() != null);
