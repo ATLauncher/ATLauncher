@@ -349,6 +349,7 @@ public class VanillaPacksViewModel implements SettingsListener, IVanillaPacksVie
 
     public VanillaPacksViewModel() {
         SettingsManager.addListener(this);
+        setLoaderType(null); // Happen first to prevent race condition
         Map<VersionManifestVersionType, Boolean> map = new HashMap<>();
         map.put(VersionManifestVersionType.RELEASE, true);
         minecraftVersionTypeFiltersPublisher.onNext(map);
