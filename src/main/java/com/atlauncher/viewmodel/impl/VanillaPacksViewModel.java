@@ -164,7 +164,7 @@ public class VanillaPacksViewModel implements SettingsListener, IVanillaPacksVie
 
             return MinecraftManager.getFilteredMinecraftVersions(filtered).stream().map(it ->
                 new MCVersionRow(
-                    it.id, fmt.print(ISODateTimeFormat.dateTimeParser().parseDateTime(it.releaseTime)), it.id
+                    it.id, fmt.print(ISODateTimeFormat.dateTimeParser().parseDateTime(it.releaseTime)), it.type.toString()
                 )
             ).collect(Collectors.toList());
         }).subscribeOn(Schedulers.io());
