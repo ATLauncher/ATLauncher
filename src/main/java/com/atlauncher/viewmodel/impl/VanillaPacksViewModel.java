@@ -850,15 +850,15 @@ public class VanillaPacksViewModel implements SettingsListener, IVanillaPacksVie
 
             if (data != null)
                 switch (selectedLoader) {
-                    case FABRIC: {
+                    case FABRIC:
                         loaderVersionsList.addAll(data.loaderVersions().fabric().stream()
                             .filter(fv -> !disabledFabricVersions.contains(fv.version()))
                             .map(version -> new LoaderVersion(version.version(), false, "Fabric"))
                             .collect(Collectors.toList())
                         );
-                    }
+                        break;
 
-                    case FORGE: {
+                    case FORGE:
                         loaderVersionsList.addAll(data.loaderVersions().forge().stream()
                             .filter(fv -> !disabledForgeVersions.contains(fv.version()))
                             .map(version -> {
@@ -888,18 +888,17 @@ public class VanillaPacksViewModel implements SettingsListener, IVanillaPacksVie
                                 return lv;
                             }).collect(Collectors.toList())
                         );
-                    }
+                        break;
 
-                    case QUILT: {
+                    case QUILT:
                         loaderVersionsList.addAll(data.loaderVersions().quilt().stream()
                             .filter(fv -> !disabledQuiltVersions.contains(fv.version()))
                             .map(version -> new LoaderVersion(version.version(), false, "Quilt"))
                             .collect(Collectors.toList())
                         );
-                    }
+                        break;
 
-                    case LEGACY_FABRIC: {
-
+                    case LEGACY_FABRIC:
                         loaderVersionsList.addAll(data.loaderVersions().legacyfabric()
                             .stream()
                             .filter(fv -> !disabledLegacyFabricVersions.contains(fv.version()))
@@ -912,7 +911,7 @@ public class VanillaPacksViewModel implements SettingsListener, IVanillaPacksVie
                             )
                             .collect(Collectors.toList())
                         );
-                    }
+                        break;
                 }
             if (loaderVersionsList.size() == 0) {
                 setLoaderGroupEnabled(true, enableCreateServers);
