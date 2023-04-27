@@ -56,6 +56,9 @@ public abstract class HierarchyPanel extends JPanel implements HierarchyListener
                 LogManager.debug("Showing UI for: " + getClass().getName());
                 onShow();
             } else {
+                // A little trick here. We can guess the UI has not been created yet if the view model hasn't.
+                // Thus, no need to destroy.
+                if (!isViewModelCreated) return;
                 LogManager.debug("Destroying UI for: " + getClass().getName());
                 // Destroy layer so the UI can hurry on
                 onDestroy();
