@@ -43,6 +43,7 @@ import org.mini2Dx.gettext.GetText;
 import com.atlauncher.App;
 import com.atlauncher.constants.UIConstants;
 import com.atlauncher.data.Instance;
+import com.atlauncher.data.minecraft.loaders.LoaderType;
 
 public class InformationSection extends SectionPanel {
     public InformationSection(Window parent, Instance instance) {
@@ -294,6 +295,9 @@ public class InformationSection extends SectionPanel {
 
         SideBarButton changeLoaderVersionButton = new SideBarButton();
         changeLoaderVersionButton.setVisible(instance.launcher.loaderVersion != null);
+        changeLoaderVersionButton.addActionListener(e -> {
+            instance.changeLoaderVersion();
+        });
         if (instance.launcher.loaderVersion != null) {
             changeLoaderVersionButton
                     .setText(GetText.tr("Change {0} Version", instance.launcher.loaderVersion.getLoaderType()));
@@ -307,6 +311,13 @@ public class InformationSection extends SectionPanel {
                         : GetText.tr("Install {0}", "Fabric"));
         removeInstallFabricButton
                 .setEnabled(instance.launcher.loaderVersion == null || instance.launcher.loaderVersion.isFabric());
+        removeInstallFabricButton.addActionListener(e -> {
+            if (instance.launcher.loaderVersion == null) {
+                instance.addLoader(LoaderType.FABRIC);
+            } else {
+                instance.removeLoader();
+            }
+        });
         if (instance.launcher.loaderVersion != null && !instance.launcher.loaderVersion.isFabric()) {
             removeInstallFabricButton.setToolTipText(GetText.tr(
                     "You can only install 1 mod loader at a time. To install {0}, please remove {1}", "Fabric",
@@ -320,6 +331,13 @@ public class InformationSection extends SectionPanel {
                         : GetText.tr("Install {0}", "Forge"));
         removeInstallForgeButton
                 .setEnabled(instance.launcher.loaderVersion == null || instance.launcher.loaderVersion.isForge());
+        removeInstallForgeButton.addActionListener(e -> {
+            if (instance.launcher.loaderVersion == null) {
+                instance.addLoader(LoaderType.FORGE);
+            } else {
+                instance.removeLoader();
+            }
+        });
         if (instance.launcher.loaderVersion != null && !instance.launcher.loaderVersion.isForge()) {
             removeInstallForgeButton.setToolTipText(GetText.tr(
                     "You can only install 1 mod loader at a time. To install {0}, please remove {1}", "Forge",
@@ -333,6 +351,13 @@ public class InformationSection extends SectionPanel {
                         : GetText.tr("Install {0}", "Legacy Fabric"));
         removeInstallLegacyFabricButton.setEnabled(
                 instance.launcher.loaderVersion == null || instance.launcher.loaderVersion.isLegacyFabric());
+        removeInstallLegacyFabricButton.addActionListener(e -> {
+            if (instance.launcher.loaderVersion == null) {
+                instance.addLoader(LoaderType.LEGACY_FABRIC);
+            } else {
+                instance.removeLoader();
+            }
+        });
         if (instance.launcher.loaderVersion != null && !instance.launcher.loaderVersion.isLegacyFabric()) {
             removeInstallLegacyFabricButton.setToolTipText(
                     GetText.tr("You can only install 1 mod loader at a time. To install {0}, please remove {1}",
@@ -346,6 +371,13 @@ public class InformationSection extends SectionPanel {
                         : GetText.tr("Install {0}", "Quilt"));
         removeInstallQuiltButton
                 .setEnabled(instance.launcher.loaderVersion == null || instance.launcher.loaderVersion.isQuilt());
+        removeInstallQuiltButton.addActionListener(e -> {
+            if (instance.launcher.loaderVersion == null) {
+                instance.addLoader(LoaderType.QUILT);
+            } else {
+                instance.removeLoader();
+            }
+        });
         if (instance.launcher.loaderVersion != null && !instance.launcher.loaderVersion.isQuilt()) {
             removeInstallQuiltButton.setToolTipText(GetText.tr(
                     "You can only install 1 mod loader at a time. To install {0}, please remove {1}", "Quilt",
