@@ -417,7 +417,7 @@ public class VanillaPacksViewModel implements SettingsListener, IVanillaPacksVie
                     if (!descriptionDirty) {
                         description.onNext(Optional.of(defaultNameFieldValue));
                     }
-                    loaderVersions.onNext(Optional.of(singletonList(new LoaderVersion(GetText.tr("Select Loader First")))));
+                    loaderVersions.onNext(Optional.empty());
                     return;
                 }
                 LoaderType loaderType = loaderTypeOptional.get();
