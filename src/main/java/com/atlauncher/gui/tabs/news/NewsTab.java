@@ -33,14 +33,12 @@ import javax.swing.event.HyperlinkEvent;
 import javax.swing.text.html.HTMLEditorKit;
 import javax.swing.text.html.StyleSheet;
 
-import com.atlauncher.FileSystem;
-import com.atlauncher.gui.panels.HierarchyPanel;
-import com.atlauncher.gui.tabs.Tab;
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.mini2Dx.gettext.GetText;
 
+import com.atlauncher.gui.panels.HierarchyPanel;
 import com.atlauncher.gui.tabs.Tab;
+import com.atlauncher.managers.LogManager;
 import com.atlauncher.utils.OS;
 import com.atlauncher.viewmodel.base.INewsViewModel;
 import com.atlauncher.viewmodel.impl.NewsViewModel;
@@ -51,27 +49,14 @@ import com.atlauncher.viewmodel.impl.NewsViewModel;
  */
 @SuppressWarnings("serial")
 public class NewsTab extends HierarchyPanel implements Tab {
-    private static final Logger LOG = LogManager.getLogger(NewsTab.class);
-    private final HTMLEditorKit NEWS_KIT = new HTMLEditorKit() {
-        {
-            StyleSheet styleSheet = new StyleSheet();
+    private HTMLEditorKit NEWS_KIT;
+    private ContextMenu NEWS_MENU;
+    private INewsViewModel viewModel;
 
-            styleSheet.addRule(String.format("a { color: %s; }",
-                    Integer.toHexString(UIManager.getColor("News.linkColor").getRGB()).substring(2)));
-
-            styleSheet.addRule(String.format(
-                    "h2 { padding-left: 7px; padding-top: 8px; font-weight: bold; font-size: 14px; color: %s; }",
-                    Integer.toHexString(UIManager.getColor("News.headerColor").getRGB()).substring(2)));
-
-            styleSheet.addRule(
-                    "p { font-size: 10px; padding-left: 8px; padding-right: 8px; padding-top: 8px; padding-bottom: 8px; }");
-
-            this.setStyleSheet(styleSheet);
-        }
-    };
-
-    private final ContextMenu NEWS_MENU = new ContextMenu();
-    private final INewsViewModel viewModel = new NewsViewModel();
+    /**
+     * {@link JEditorPane} which contains all the news for this panel.
+     */
+    private JEditorPane NEWS_PANE;
 
     /**
      * Instantiates a new instance of this class which sets the layout and loads the
@@ -79,9 +64,22 @@ public class NewsTab extends HierarchyPanel implements Tab {
      */
     public NewsTab() {
         super(new BorderLayout());
+    }
+
+
+    @Override
+    protected void createViewModel() {
+        viewModel = new NewsViewModel();
+    }
+
+    @Override
+    protected void onShow() {
+        createNewsKit();
+        NEWS_MENU = new ContextMenu();
+        createNewsPane();
 
         JScrollPane scrollPane = new JScrollPane(this.NEWS_PANE, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-                JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+            JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scrollPane.getVerticalScrollBar().setUnitIncrement(16);
         this.add(scrollPane, BorderLayout.CENTER);
 
@@ -94,44 +92,61 @@ public class NewsTab extends HierarchyPanel implements Tab {
                 this.NEWS_PANE.setCaretPosition(0);
             }
         });
-    }
-
-    @Override
-    protected void onShow() {
-        LOG.debug("NewsTab.onShow");
         reload();
     }
 
     @Override
     protected void onDestroy() {
-        LOG.debug("NewsTab.onHide");
-        NEWS_PANE.setText(null);
+        NEWS_KIT = null;
+        NEWS_MENU = null;
+        NEWS_PANE = null;
+        removeAll();
+        viewModel.addOnReloadListener(null);
     }
 
-    /**
-     * {@link JEditorPane} which contains all the news for this panel.
-     */
-    private final JEditorPane NEWS_PANE = new JEditorPane("text/html;charset=UTF-8", "") {
-        {
-            this.setEditable(false);
-            this.setEditorKit(NEWS_KIT);
-            this.addHyperlinkListener(e -> {
-                if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
-                    OS.openWebBrowser(e.getURL());
-                }
-            });
-            this.addMouseListener(new MouseAdapter() {
-                @Override
-                public void mouseReleased(MouseEvent e) {
-                    if (NEWS_PANE.getSelectedText() != null) {
-                        if (e.getButton() == MouseEvent.BUTTON3) {
-                            NEWS_MENU.show(NEWS_PANE, e.getX(), e.getY());
+    private void createNewsKit() {
+        NEWS_KIT = new HTMLEditorKit() {
+            {
+                StyleSheet styleSheet = new StyleSheet();
+
+                styleSheet.addRule(String.format("a { color: %s; }",
+                    Integer.toHexString(UIManager.getColor("News.linkColor").getRGB()).substring(2)));
+
+                styleSheet.addRule(String.format(
+                    "h2 { padding-left: 7px; padding-top: 8px; font-weight: bold; font-size: 14px; color: %s; }",
+                    Integer.toHexString(UIManager.getColor("News.headerColor").getRGB()).substring(2)));
+
+                styleSheet.addRule(
+                    "p { font-size: 10px; padding-left: 8px; padding-right: 8px; padding-top: 8px; padding-bottom: 8px; }");
+
+                this.setStyleSheet(styleSheet);
+            }
+        };
+    }
+
+    private void createNewsPane() {
+        NEWS_PANE = new JEditorPane("text/html;charset=UTF-8", "") {
+            {
+                this.setEditable(false);
+                this.setEditorKit(NEWS_KIT);
+                this.addHyperlinkListener(e -> {
+                    if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+                        OS.openWebBrowser(e.getURL());
+                    }
+                });
+                this.addMouseListener(new MouseAdapter() {
+                    @Override
+                    public void mouseReleased(MouseEvent e) {
+                        if (NEWS_PANE.getSelectedText() != null) {
+                            if (e.getButton() == MouseEvent.BUTTON3) {
+                                NEWS_MENU.show(NEWS_PANE, e.getX(), e.getY());
+                            }
                         }
                     }
-                }
-            });
-        }
-    };
+                });
+            }
+        };
+    }
 
     /**
      * Reloads the panel with updated news.
@@ -161,5 +176,4 @@ public class NewsTab extends HierarchyPanel implements Tab {
             });
         }
     }
-
 }

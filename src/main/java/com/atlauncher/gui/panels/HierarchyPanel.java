@@ -17,19 +17,27 @@
  */
 package com.atlauncher.gui.panels;
 
-import javax.swing.*;
-import java.awt.*;
+import java.awt.LayoutManager;
 import java.awt.event.HierarchyEvent;
 import java.awt.event.HierarchyListener;
+
+import javax.swing.JPanel;
+
+import com.atlauncher.managers.LogManager;
 
 /**
  * 24 / 06 / 2022
  * <p>
  * This panel uses {@link HierarchyListener} to react the visibility changes.
  * By implementing this panel instead of {@link JPanel} one can lower background
- * memory usage.
+ * memory usage and increase application boot times by delegating resource intensive tasks to runtime.
  */
 public abstract class HierarchyPanel extends JPanel implements HierarchyListener {
+    /**
+     * Used to keep track of the view model lifecycle.
+     */
+    private boolean isViewModelCreated = false;
+
     public HierarchyPanel(LayoutManager layout) {
         super(layout);
         addNotify();
@@ -40,8 +48,16 @@ public abstract class HierarchyPanel extends JPanel implements HierarchyListener
     public void hierarchyChanged(HierarchyEvent e) {
         if ((e.getChangeFlags() & HierarchyEvent.SHOWING_CHANGED) != 0) {
             if (isShowing()) {
+                if (!isViewModelCreated) {
+                    LogManager.debug("Creating view-model for: " + getClass().getName());
+                    createViewModel();
+                    isViewModelCreated = true;
+                }
+                LogManager.debug("Showing UI for: " + getClass().getName());
                 onShow();
             } else {
+                LogManager.debug("Destroying UI for: " + getClass().getName());
+                // Destroy layer so the UI can hurry on
                 onDestroy();
                 System.gc(); // Run GC to clear out any now stale data
             }
@@ -49,12 +65,26 @@ public abstract class HierarchyPanel extends JPanel implements HierarchyListener
     }
 
     /**
-     * Populate the UI, so the user can view it
+     * Create the view model.
+     * <p>
+     * This is invoked before the first invocation of [onShow].
+     * <p>
+     * This is important as view model instantiation is process intensive,
+     * thus should occur on the fly just before the view is created for the first time.
+     */
+    protected abstract void createViewModel();
+
+    /**
+     * Populate the UI, so the user can view it.
+     * <p>
+     * This is invoked when this panel is visible.
      */
     protected abstract void onShow();
 
     /**
-     * Destroy the UI
+     * Destroy the UI.
+     * <p>
+     * This is invoked when this panel is no longer visible.
      */
     protected abstract void onDestroy();
 }
