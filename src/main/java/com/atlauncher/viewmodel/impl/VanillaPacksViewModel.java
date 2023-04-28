@@ -743,7 +743,6 @@ public class VanillaPacksViewModel implements SettingsListener, IVanillaPacksVie
     }
 
     public void setName(String name) {
-        LogManager.debug("setName $name");
         this.name.onNext(Optional.of(name));
         nameDirty = isNameDirty();
     }
