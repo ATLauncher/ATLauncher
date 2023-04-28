@@ -21,7 +21,6 @@ import static java.lang.Math.max;
 import static java.lang.Math.min;
 
 import java.awt.BorderLayout;
-import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
@@ -59,6 +58,7 @@ import com.atlauncher.data.minecraft.loaders.LoaderType;
 import com.atlauncher.data.minecraft.loaders.LoaderVersion;
 import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.RelocalizationManager;
+import com.atlauncher.gui.components.PreservingCaretTextSetter;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.utils.ComboItem;
 import com.atlauncher.viewmodel.base.IVanillaPacksViewModel;
@@ -144,7 +144,8 @@ public class VanillaPacksTab extends JPanel implements Tab, RelocalizationListen
         gbc.gridx++;
         gbc.insets = UIConstants.FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-        viewModel.name().subscribe((it) -> nameField.setText(it.orElse(null)));
+        PreservingCaretTextSetter nameFieldSetter = new PreservingCaretTextSetter(nameField);
+        viewModel.name().subscribe((it) -> nameFieldSetter.setText(it.orElse(null)));
         nameField.addKeyListener(new KeyAdapter() {
             public void keyReleased(@Nullable KeyEvent e) {
                 if (e != null && !e.isActionKey())
@@ -169,7 +170,8 @@ public class VanillaPacksTab extends JPanel implements Tab, RelocalizationListen
         descriptionScrollPane.setPreferredSize(new Dimension(450, 80));
         descriptionScrollPane.setViewportView(descriptionField);
 
-        viewModel.description().subscribe((it) -> descriptionField.setText(it.orElse(null)));
+        PreservingCaretTextSetter descriptionFieldSetter = new PreservingCaretTextSetter(descriptionField);
+        viewModel.description().subscribe((it) -> descriptionFieldSetter.setText(it.orElse(null)));
         descriptionField.addKeyListener(new KeyAdapter() {
             public void keyReleased(@Nullable KeyEvent e) {
                 if (e != null && !e.isActionKey())
