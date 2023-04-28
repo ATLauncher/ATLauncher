@@ -21,6 +21,7 @@ import static java.lang.Math.max;
 import static java.lang.Math.min;
 
 import java.awt.BorderLayout;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
@@ -145,8 +146,9 @@ public class VanillaPacksTab extends JPanel implements Tab, RelocalizationListen
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         viewModel.name().subscribe((it) -> nameField.setText(it.orElse(null)));
         nameField.addKeyListener(new KeyAdapter() {
-            public void keyTyped(@Nullable KeyEvent e) {
-                viewModel.setName(nameField.getText());
+            public void keyReleased(@Nullable KeyEvent e) {
+                if (e != null && !e.isActionKey())
+                    viewModel.setName(nameField.getText());
             }
         });
         mainPanel.add(nameField, gbc);
@@ -169,8 +171,9 @@ public class VanillaPacksTab extends JPanel implements Tab, RelocalizationListen
 
         viewModel.description().subscribe((it) -> descriptionField.setText(it.orElse(null)));
         descriptionField.addKeyListener(new KeyAdapter() {
-            public void keyTyped(@Nullable KeyEvent e) {
-                viewModel.setDescription(descriptionField.getText());
+            public void keyReleased(@Nullable KeyEvent e) {
+                if (e != null && !e.isActionKey())
+                    viewModel.setDescription(descriptionField.getText());
             }
         });
         mainPanel.add(descriptionScrollPane, gbc);
