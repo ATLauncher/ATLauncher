@@ -344,7 +344,7 @@ public abstract class DisableableModsSection extends SectionPanel {
         openFolderSideBarButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                OS.openFileExplorer(filePaths.get(0).getParent());
+                OS.openFileExplorer(filePaths.get(0));
             }
         });
 
