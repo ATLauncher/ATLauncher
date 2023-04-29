@@ -44,6 +44,10 @@ public class EditInstanceDialog extends JDialog {
 
     public JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.LEFT);
 
+    private final ModsSection modsSection;
+    private final ResourcePacksSection resourcePacksSection;
+    private final ShaderPacksSection shaderPacksSection;
+
     public EditInstanceDialog(Instance instance) {
         this(App.launcher.getParent(), instance);
     }
@@ -66,6 +70,10 @@ public class EditInstanceDialog extends JDialog {
             }
         });
 
+        modsSection = new ModsSection(this, instance);
+        resourcePacksSection = new ResourcePacksSection(this, instance);
+        shaderPacksSection = new ShaderPacksSection(this, instance);
+
         setupTabbedPane();
         setupBottomPanel();
 
@@ -80,9 +88,9 @@ public class EditInstanceDialog extends JDialog {
     private void setupTabbedPane() {
         tabbedPane.setFont(App.THEME.getNormalFont().deriveFont(14.0F));
         tabbedPane.addTab(GetText.tr("Information"), new InformationSection(this, instance));
-        tabbedPane.addTab(GetText.tr("Mods"), new ModsSection(this, instance));
-        tabbedPane.addTab(GetText.tr("Resource Packs"), new ResourcePacksSection(this, instance));
-        tabbedPane.addTab(GetText.tr("Shader Packs"), new ShaderPacksSection(this, instance));
+        tabbedPane.addTab(GetText.tr("Mods"), modsSection);
+        tabbedPane.addTab(GetText.tr("Resource Packs"), resourcePacksSection);
+        tabbedPane.addTab(GetText.tr("Shader Packs"), shaderPacksSection);
         tabbedPane.addTab(GetText.tr("Logs"), new LogsSection(this, instance));
         tabbedPane.addTab(GetText.tr("Settings"), new SettingsSection(this, instance));
         tabbedPane.setOpaque(true);
@@ -114,5 +122,11 @@ public class EditInstanceDialog extends JDialog {
         bottomActionsPanel.add(closeButton);
 
         add(bottomActionsPanel, BorderLayout.SOUTH);
+    }
+
+    public void refreshTableModels() {
+        modsSection.refreshTableModel();
+        resourcePacksSection.refreshTableModel();
+        shaderPacksSection.refreshTableModel();
     }
 }

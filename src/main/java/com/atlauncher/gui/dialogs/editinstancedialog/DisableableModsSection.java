@@ -271,7 +271,7 @@ public abstract class DisableableModsSection extends SectionPanel {
                 Analytics.sendEvent(instance.launcher.pack + " - " + instance.launcher.version, "AddMods",
                         instance.getAnalyticsCategory());
                 new AddModsDialog(parent, instance, modTypes.get(0));
-                refreshTableModel();
+                parent.refreshTableModels();
             }
         });
 
@@ -462,7 +462,7 @@ public abstract class DisableableModsSection extends SectionPanel {
         add(splitPane, BorderLayout.CENTER);
     }
 
-    private void refreshTableModel() {
+    public void refreshTableModel() {
         List<Path> modPaths = instance.getModPathsFromFilesystem(this.filePaths);
 
         List<DisableableMod> newMods = new ArrayList<>();
