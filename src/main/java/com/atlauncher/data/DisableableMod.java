@@ -23,6 +23,7 @@ import java.io.File;
 import java.io.Serializable;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -60,6 +61,9 @@ import com.moandjiezana.toml.Toml;
 
 @SuppressWarnings("serial")
 public class DisableableMod implements Serializable {
+    private static final List<Type> excludedModTypesFromLoaderFiltering = Arrays.asList(Type.resourcepack,
+            Type.texturepack, Type.shaderpack, Type.worlds);
+
     public String name;
     public String version;
     public boolean optional;
@@ -880,7 +884,7 @@ public class DisableableMod implements Serializable {
         this.modrinthProject = modrinthProject;
 
         List<ModrinthVersion> versions = ModrinthApi.getVersions(modrinthProject.id, instance.id,
-                instance.launcher.loaderVersion);
+                excludedModTypesFromLoaderFiltering.contains(this.type) ? null : instance.launcher.loaderVersion);
 
         if (versions == null) {
             return new Pair<>(false, null);
@@ -938,36 +942,39 @@ public class DisableableMod implements Serializable {
         }
 
         // filter out files not for our loader
-        curseForgeFilesStream = curseForgeFilesStream.filter(cf -> {
-            if (cf.gameVersions.contains("Fabric") && instance.launcher.loaderVersion != null
-                    && (instance.launcher.loaderVersion.isFabric()
-                            || instance.launcher.loaderVersion.isLegacyFabric()
-                            || instance.launcher.loaderVersion.isQuilt())) {
-                return true;
-            }
+        if (!excludedModTypesFromLoaderFiltering.contains(this.type)) {
+            curseForgeFilesStream = curseForgeFilesStream.filter(cf -> {
+                if (cf.gameVersions.contains("Fabric") && instance.launcher.loaderVersion != null
+                        && (instance.launcher.loaderVersion.isFabric()
+                                || instance.launcher.loaderVersion.isLegacyFabric()
+                                || instance.launcher.loaderVersion.isQuilt())) {
+                    return true;
+                }
 
-            if (cf.gameVersions.contains("Forge") && instance.launcher.loaderVersion != null
-                    && instance.launcher.loaderVersion.isForge()) {
-                return true;
-            }
+                if (cf.gameVersions.contains("Forge") && instance.launcher.loaderVersion != null
+                        && instance.launcher.loaderVersion.isForge()) {
+                    return true;
+                }
 
-            if (cf.gameVersions.contains("Quilt") && instance.launcher.loaderVersion != null
-                    && instance.launcher.loaderVersion.isQuilt()) {
-                return true;
-            }
+                if (cf.gameVersions.contains("Quilt") && instance.launcher.loaderVersion != null
+                        && instance.launcher.loaderVersion.isQuilt()) {
+                    return true;
+                }
 
-            // if there's no loaders, assume the mod is untagged so we should show it
-            if (!cf.gameVersions.contains("Fabric") && !cf.gameVersions.contains("Forge")
-                    && !cf.gameVersions.contains("Quilt")) {
-                return true;
-            }
+                // if there's no loaders, assume the mod is untagged so we should show it
+                if (!cf.gameVersions.contains("Fabric") && !cf.gameVersions.contains("Forge")
+                        && !cf.gameVersions.contains("Quilt")) {
+                    return true;
+                }
 
-            return false;
-        });
+                return false;
+            });
+        }
 
         List<CurseForgeFile> filteredVersions = curseForgeFilesStream.collect(Collectors.toList());
 
-        if ((!reinstalling && filteredVersions.stream().noneMatch(file -> file.id > curseForgeFileId))
+        if ((!reinstalling
+                && filteredVersions.stream().noneMatch(file -> curseForgeFileId != null && file.id > curseForgeFileId))
                 || filteredVersions.size() == 0) {
             return new Pair<>(false, null);
         }
