@@ -422,6 +422,8 @@ public abstract class DisableableModsSection extends SectionPanel {
     private void refreshTableModel() {
         List<Path> modPaths = instance.getModPathsFromFilesystem(this.filePaths);
 
+        List<DisableableMod> newMods = new ArrayList<>();
+
         List<Pair<Path, DisableableMod>> modsData = modPaths.stream().map(path -> {
             DisableableMod mod = instance.launcher.mods.parallelStream()
                     .filter(m -> modTypes.contains(m.type) && (m.getActualFile(instance).toPath().equals(path)
@@ -431,16 +433,22 @@ public abstract class DisableableModsSection extends SectionPanel {
                     .orElseGet(() -> {
                         LogManager
                                 .warn(String.format(
-                                        "Failed to find DisableableMod for file %s. Generating temporary DisableableMod for it.",
+                                        "Failed to find DisableableMod for file %s. Generating DisableableMod for it.",
                                         path.getFileName().toString()));
 
                         int indexOfModPath = modPaths.indexOf(path.getParent());
-                        return DisableableMod.generateMod(path.toFile(),
+                        DisableableMod generatedMod = DisableableMod.generateMod(path.toFile(),
                                 modTypes.get(indexOfModPath == -1 ? 0 : indexOfModPath), !path.endsWith(".disabled"));
+                        generatedMod.scanInternalModMetadata(path);
+                        newMods.add(generatedMod);
+                        return generatedMod;
                     });
 
             return new Pair<Path, DisableableMod>(path, mod);
         }).collect(Collectors.toList());
+
+        instance.launcher.mods.addAll(newMods);
+        instance.save();
 
         ignoreTableEvents = true;
 
