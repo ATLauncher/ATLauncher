@@ -61,7 +61,7 @@ import com.moandjiezana.toml.Toml;
 
 @SuppressWarnings("serial")
 public class DisableableMod implements Serializable {
-    private static final List<Type> excludedModTypesFromLoaderFiltering = Arrays.asList(Type.resourcepack,
+    private static final List<Type> nonModTypes = Arrays.asList(Type.resourcepack,
             Type.texturepack, Type.shaderpack, Type.worlds);
 
     public String name;
@@ -671,6 +671,18 @@ public class DisableableMod implements Serializable {
     }
 
     public String getNameFromFile(Instance instance, Path path) {
+        if (nonModTypes.contains(type)) {
+            if (modrinthProject != null) {
+                return modrinthProject.title;
+            }
+
+            if (curseForgeProject != null) {
+                return curseForgeProject.name;
+            }
+
+            return name;
+        }
+
         if (instance != null && instance.getLoaderVersion() != null) {
             if (instance.getLoaderVersion().isFabric() || instance.getLoaderVersion().isLegacyFabric()) {
                 JsonObject fabricMod = getFabricModFile(path);
@@ -734,6 +746,18 @@ public class DisableableMod implements Serializable {
     }
 
     public String getVersionFromFile(Instance instance, Path path) {
+        if (nonModTypes.contains(type)) {
+            if (modrinthVersion != null) {
+                return modrinthVersion.name;
+            }
+
+            if (curseForgeFile != null) {
+                return curseForgeFile.displayName;
+            }
+
+            return version;
+        }
+
         if (instance != null && instance.getLoaderVersion() != null) {
             if (instance.getLoaderVersion().isFabric() || instance.getLoaderVersion().isLegacyFabric()) {
                 JsonObject fabricMod = getFabricModFile(path);
@@ -809,6 +833,18 @@ public class DisableableMod implements Serializable {
     }
 
     public String getDescriptionFromFile(Instance instance, Path path) {
+        if (nonModTypes.contains(type)) {
+            if (modrinthProject != null) {
+                return modrinthProject.description;
+            }
+
+            if (curseForgeProject != null) {
+                return curseForgeProject.summary;
+            }
+
+            return description;
+        }
+
         if (instance != null && instance.getLoaderVersion() != null) {
             if (instance.getLoaderVersion().isFabric() || instance.getLoaderVersion().isLegacyFabric()) {
                 JsonObject fabricMod = getFabricModFile(path);
@@ -884,7 +920,7 @@ public class DisableableMod implements Serializable {
         this.modrinthProject = modrinthProject;
 
         List<ModrinthVersion> versions = ModrinthApi.getVersions(modrinthProject.id, instance.id,
-                excludedModTypesFromLoaderFiltering.contains(this.type) ? null : instance.launcher.loaderVersion);
+                nonModTypes.contains(this.type) ? null : instance.launcher.loaderVersion);
 
         if (versions == null) {
             return new Pair<>(false, null);
@@ -942,7 +978,7 @@ public class DisableableMod implements Serializable {
         }
 
         // filter out files not for our loader
-        if (!excludedModTypesFromLoaderFiltering.contains(this.type)) {
+        if (!nonModTypes.contains(this.type)) {
             curseForgeFilesStream = curseForgeFilesStream.filter(cf -> {
                 if (cf.gameVersions.contains("Fabric") && instance.launcher.loaderVersion != null
                         && (instance.launcher.loaderVersion.isFabric()
