@@ -36,7 +36,8 @@ import com.google.gson.JsonSyntaxException;
 
 public class DateTypeAdapter implements JsonDeserializer<Date>, JsonSerializer<Date> {
     private final DateFormat enUsFormat = DateFormat.getDateTimeInstance(2, 2, Locale.US);
-    private final DateFormat iso8601Format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+    private final DateFormat iso8601Format1 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+    private final DateFormat iso8601Format2 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSSS'Z'");
 
     @Override
     public Date deserialize(JsonElement json, Type type, JsonDeserializationContext context) throws JsonParseException {
@@ -48,14 +49,19 @@ public class DateTypeAdapter implements JsonDeserializer<Date>, JsonSerializer<D
         }
         String value = json.getAsString();
         synchronized (enUsFormat) {
-            this.iso8601Format.setTimeZone(TimeZone.getTimeZone("UTC"));
+            this.iso8601Format1.setTimeZone(TimeZone.getTimeZone("UTC"));
+            this.iso8601Format2.setTimeZone(TimeZone.getTimeZone("UTC"));
             try {
                 return enUsFormat.parse(value);
             } catch (ParseException e) {
                 try {
-                    return iso8601Format.parse(value);
+                    return iso8601Format1.parse(value);
                 } catch (ParseException e2) {
-                    throw new JsonSyntaxException("Invalid date " + value, e2);
+                    try {
+                        return iso8601Format2.parse(value);
+                    } catch (ParseException e3) {
+                        throw new JsonSyntaxException("Invalid date " + value, e3);
+                    }
                 }
             }
         }
@@ -64,8 +70,8 @@ public class DateTypeAdapter implements JsonDeserializer<Date>, JsonSerializer<D
     @Override
     public JsonElement serialize(Date value, Type type, JsonSerializationContext context) {
         synchronized (enUsFormat) {
-            this.iso8601Format.setTimeZone(TimeZone.getTimeZone("UTC"));
-            return new JsonPrimitive(this.iso8601Format.format(value));
+            this.iso8601Format1.setTimeZone(TimeZone.getTimeZone("UTC"));
+            return new JsonPrimitive(this.iso8601Format1.format(value));
         }
     }
 }
