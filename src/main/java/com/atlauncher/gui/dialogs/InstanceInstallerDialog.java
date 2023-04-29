@@ -231,7 +231,7 @@ public class InstanceInstallerDialog extends JDialog {
 
         setLocationRelativeTo(parent);
         setLayout(new BorderLayout());
-        setResizable(false);
+        setResizable(true);
         this.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 
         install = new JButton(
@@ -265,6 +265,7 @@ public class InstanceInstallerDialog extends JDialog {
             nameField.setEnabled(false);
         }
         nameField.addComponentListener(new ComponentAdapter() {
+            @Override
             public void componentShown(ComponentEvent ce) {
                 nameField.requestFocusInWindow();
             }
@@ -320,7 +321,7 @@ public class InstanceInstallerDialog extends JDialog {
             middle.add(saveModsLabel, gbc);
 
             gbc.gridx++;
-            gbc.insets = UIConstants.FIELD_INSETS;
+            gbc.insets = UIConstants.CHECKBOX_FIELD_INSETS;
             gbc.anchor = GridBagConstraints.BASELINE_LEADING;
             saveModsCheckbox = new JCheckBox();
 
@@ -339,6 +340,7 @@ public class InstanceInstallerDialog extends JDialog {
         JPanel bottom = new JPanel();
         bottom.setLayout(new FlowLayout());
         install.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent e) {
                 Installable installable = null;
 
@@ -979,6 +981,8 @@ public class InstanceInstallerDialog extends JDialog {
                             && !minecraftVersion.get().id.equalsIgnoreCase(this.instance.id));
                     saveModsCheckbox.setVisible(minecraftVersion.isPresent()
                             && !minecraftVersion.get().id.equalsIgnoreCase(this.instance.id));
+
+                    WindowUtils.resizeForContent(this);
                 }
             }
         });

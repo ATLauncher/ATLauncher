@@ -42,7 +42,7 @@ import com.atlauncher.network.Analytics;
 public class EditInstanceDialog extends JDialog {
     private Instance instance;
 
-    private JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.LEFT);
+    public JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.LEFT);
 
     public EditInstanceDialog(Instance instance) {
         this(App.launcher.getParent(), instance);
