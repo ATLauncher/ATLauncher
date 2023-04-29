@@ -242,12 +242,10 @@ public class VanillaPacksTab extends JPanel implements Tab, RelocalizationListen
         JPanel loaderTypePanel = new JPanel(new FlowLayout());
 
         setupLoaderNoneButton(loaderTypePanel);
-
-        setupLoaderQuiltButton(loaderTypePanel);
         setupLoaderFabricButton(loaderTypePanel);
-
         setupLoaderForgeButton(loaderTypePanel);
         setupLoaderLegacyFabricButton(loaderTypePanel);
+        setupLoaderQuiltButton(loaderTypePanel);
 
         mainPanel.add(loaderTypePanel, gbc);
 
