@@ -58,12 +58,12 @@ public class PreservingCaretTextSetter {
         // Set text as soon as possible
         component.setText(newText);
 
-        /*
-         * Preserve cursor position if text is null (user deleted all text)
-         *  or if the new text length is *not* larger than the old text length.
-         */
-        if (newText == null || !(oldText.length() < newText.length())) {
+        // Ignore if new text is null
+        // Ignore if oldCaret is further along then new text length
+        if (newText != null && oldCaret < newText.length()) {
             component.setCaretPosition(oldCaret);
         }
+
+        // Nothing to preserve
     }
 }
