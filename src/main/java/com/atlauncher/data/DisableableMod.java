@@ -967,7 +967,7 @@ public class DisableableMod implements Serializable {
 
         List<CurseForgeFile> filteredVersions = curseForgeFilesStream.collect(Collectors.toList());
 
-        if ((reinstalling && filteredVersions.stream().noneMatch(file -> file.id > curseForgeFileId))
+        if ((!reinstalling && filteredVersions.stream().noneMatch(file -> file.id > curseForgeFileId))
                 || filteredVersions.size() == 0) {
             return new Pair<>(false, null);
         }

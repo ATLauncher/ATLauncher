@@ -174,7 +174,8 @@ public class ModUpdatesChooserCard extends JPanel {
         gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         JLabel currentVersion = new JLabel(
-                curseForgeProject != null ? mod.curseForgeFile.displayName : mod.modrinthVersion.name);
+                curseForgeProject != null ? (mod.curseForgeFile == null ? mod.name : mod.curseForgeFile.displayName)
+                        : mod.modrinthVersion.name);
         currentVersion.setToolTipText(currentVersion.getText());
         currentVersion.setBorder(new EmptyBorder(0, 10, 0, 10));
         mainPanel.add(currentVersion, gbc);
