@@ -30,6 +30,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.text.SimpleDateFormat;
@@ -426,9 +427,16 @@ public abstract class DisableableModsSection extends SectionPanel {
 
         List<Pair<Path, DisableableMod>> modsData = modPaths.stream().map(path -> {
             DisableableMod mod = instance.launcher.mods.parallelStream()
-                    .filter(m -> modTypes.contains(m.type) && (m.getActualFile(instance).toPath().equals(path)
-                            || m.file.equals(path.getFileName().toString().toLowerCase())
-                            || m.file.equals(path.getFileName().toString().toUpperCase())))
+                    .filter(m -> {
+                        try {
+                            return modTypes.contains(m.type) && (m.getActualFile(instance).toPath().equals(path)
+                                    || m.file.equals(path.getFileName().toString().toLowerCase())
+                                    || m.file.equals(path.getFileName().toString().toUpperCase()));
+                        } catch (InvalidPathException e) {
+                            LogManager.warn("Invalid path for mod " + m.name);
+                            return false;
+                        }
+                    })
                     .findFirst()
                     .orElseGet(() -> {
                         LogManager
