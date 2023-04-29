@@ -19,7 +19,6 @@ package com.atlauncher.gui.dialogs.editinstancedialog;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
-import java.awt.Window;
 
 import javax.swing.JButton;
 import javax.swing.JPanel;
@@ -33,7 +32,7 @@ import com.atlauncher.gui.tabs.InstanceSettingsTabbedPane;
 public class SettingsSection extends SectionPanel {
     private InstanceSettingsTabbedPane tabbedPane = new InstanceSettingsTabbedPane(this.instance);
 
-    public SettingsSection(Window parent, Instance instance) {
+    public SettingsSection(EditInstanceDialog parent, Instance instance) {
         super(parent, instance);
 
         setupComponents();

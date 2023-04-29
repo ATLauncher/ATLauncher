@@ -151,6 +151,7 @@ public class FileChooserDialog extends JDialog {
         add(bottom, BorderLayout.SOUTH);
 
         addWindowListener(new WindowAdapter() {
+            @Override
             public void windowClosing(WindowEvent arg0) {
                 closed = true;
                 close();

@@ -17,14 +17,13 @@
  */
 package com.atlauncher.gui.dialogs.editinstancedialog;
 
-import java.awt.Window;
 import java.util.Arrays;
 
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.Type;
 
 public class ResourcePacksSection extends DisableableModsSection {
-    public ResourcePacksSection(Window parent, Instance instance) {
+    public ResourcePacksSection(EditInstanceDialog parent, Instance instance) {
         super(parent, instance,
                 Arrays.asList(instance.ROOT.resolve("resourcepacks"), instance.ROOT.resolve("texturepacks")),
                 Arrays.asList(Type.resourcepack, Type.texturepack), false);

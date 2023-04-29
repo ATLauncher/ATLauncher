@@ -17,14 +17,13 @@
  */
 package com.atlauncher.gui.dialogs.editinstancedialog;
 
-import java.awt.Window;
 import java.util.Arrays;
 
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.Type;
 
 public class ModsSection extends DisableableModsSection {
-    public ModsSection(Window parent, Instance instance) {
+    public ModsSection(EditInstanceDialog parent, Instance instance) {
         super(parent, instance, Arrays.asList(instance.ROOT.resolve("mods")), Arrays.asList(Type.mods), true);
     }
 }

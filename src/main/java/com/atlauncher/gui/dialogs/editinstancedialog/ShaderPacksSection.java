@@ -17,14 +17,13 @@
  */
 package com.atlauncher.gui.dialogs.editinstancedialog;
 
-import java.awt.Window;
 import java.util.Arrays;
 
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.Type;
 
 public class ShaderPacksSection extends DisableableModsSection {
-    public ShaderPacksSection(Window parent, Instance instance) {
+    public ShaderPacksSection(EditInstanceDialog parent, Instance instance) {
         super(parent, instance,
                 Arrays.asList(instance.ROOT.resolve("shaderpacks")), Arrays.asList(Type.shaderpack), false);
     }

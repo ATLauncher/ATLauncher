@@ -21,13 +21,13 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Point;
-import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
@@ -75,9 +75,11 @@ import com.atlauncher.App;
 import com.atlauncher.data.DisableableMod;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.Type;
+import com.atlauncher.dbus.DBusUtils;
 import com.atlauncher.gui.dialogs.AddModsDialog;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.network.Analytics;
+import com.atlauncher.utils.FileUtils;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Pair;
 import com.atlauncher.utils.Utils;
@@ -95,7 +97,8 @@ public abstract class DisableableModsSection extends SectionPanel {
     private final List<Type> modTypes;
     private final boolean showVersionColumn;
 
-    public DisableableModsSection(Window parent, Instance instance, List<Path> filePaths, List<Type> modTypes,
+    public DisableableModsSection(EditInstanceDialog parent, Instance instance, List<Path> filePaths,
+            List<Type> modTypes,
             boolean showVersionColumn) {
         super(parent, instance);
 
@@ -273,6 +276,45 @@ public abstract class DisableableModsSection extends SectionPanel {
         });
 
         SideBarButton addFileSideBarButton = new SideBarButton(GetText.tr("Add File"));
+        addFileSideBarButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Analytics.sendEvent(instance.launcher.pack + " - " + instance.launcher.version, "AddModsManual",
+                        instance.getAnalyticsCategory());
+
+                File[] filesChosen;
+
+                if (OS.isUsingFlatpak()) {
+                    filesChosen = DBusUtils.selectFiles();
+                } else if (App.settings.useNativeFilePicker) {
+                    filesChosen = FileUtils.getFilesUsingFileDialog(parent);
+                } else {
+                    filesChosen = FileUtils.getFilesUsingJFileChooser(parent);
+                }
+
+                for (File file : filesChosen) {
+                    DisableableMod mod = DisableableMod.generateMod(file, modTypes.get(0),
+                            App.settings.enableAddedModsByDefault);
+                    File copyTo = mod.getActualFile(instance);
+
+                    if (copyTo.exists()) {
+                        LogManager.warn("The file " + file.getName() + " already exists. Not adding!");
+                        continue;
+                    }
+
+                    if (!copyTo.getParentFile().exists()) {
+                        copyTo.getParentFile().mkdirs();
+                    }
+
+                    if (Utils.copyFile(file, copyTo, true)) {
+                        instance.launcher.mods.add(mod);
+                        addDataForMod(copyTo.toPath(), mod);
+                    }
+                }
+
+                instance.save();
+            }
+        });
 
         SideBarButton checkForUpdatesSideBarButton = new SideBarButton(GetText.tr("Check For Updates"));
         checkForUpdatesSideBarButton
@@ -467,19 +509,23 @@ public abstract class DisableableModsSection extends SectionPanel {
 
         // add all mods in
         modsData.forEach(pair -> {
-            BasicFileAttributes attrs = null;
-            try {
-                attrs = Files.readAttributes(pair.left(), BasicFileAttributes.class);
-            } catch (IOException ignored) {
-            }
-
-            tableModel.addRow(new Object[] { pair.right(), !pair.right().disabled,
-                    pair.right().getNameFromFile(instance, pair.left()),
-                    pair.right().getVersionFromFile(instance, pair.left()),
-                    attrs == null ? Instant.now().toDate() : new Date(attrs.lastModifiedTime().toMillis()) });
+            addDataForMod(pair.left(), pair.right());
         });
 
         ignoreTableEvents = false;
+    }
+
+    private void addDataForMod(Path left, DisableableMod right) {
+        BasicFileAttributes attrs = null;
+        try {
+            attrs = Files.readAttributes(left, BasicFileAttributes.class);
+        } catch (IOException ignored) {
+        }
+
+        tableModel.addRow(new Object[] { right, !right.disabled,
+                right.getNameFromFile(instance, left),
+                right.getVersionFromFile(instance, left),
+                attrs == null ? Instant.now().toDate() : new Date(attrs.lastModifiedTime().toMillis()) });
     }
 
     private void reloadRows(int[] rows) {
