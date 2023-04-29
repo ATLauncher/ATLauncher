@@ -574,16 +574,18 @@ public class InformationSection extends SectionPanel {
             sb.append(GetText.tr("1 hour,") + " ");
         }
 
-        if (minutes > 1) {
-            sb.append(GetText.tr("{0} minutes,", minutes) + " ");
-        } else if (minutes == 1) {
-            sb.append(GetText.tr("1 minute,") + " ");
-        }
+        if (sb.length() == 0) {
+            if (minutes > 1) {
+                sb.append(GetText.tr("{0} minutes,", minutes) + " ");
+            } else if (minutes == 1) {
+                sb.append(GetText.tr("1 minute,") + " ");
+            }
 
-        if (seconds > 1) {
-            sb.append(GetText.tr("{0} seconds", seconds) + " ");
-        } else if (seconds == 1) {
-            sb.append(GetText.tr("{0} second", seconds) + " ");
+            if (seconds > 1) {
+                sb.append(GetText.tr("{0} seconds", seconds) + " ");
+            } else if (seconds == 1) {
+                sb.append(GetText.tr("{0} second", seconds) + " ");
+            }
         }
 
         if (sb.charAt(sb.length() - 2) == ',') {
