@@ -74,7 +74,9 @@ import com.atlauncher.App;
 import com.atlauncher.data.DisableableMod;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.Type;
+import com.atlauncher.gui.dialogs.AddModsDialog;
 import com.atlauncher.managers.LogManager;
+import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Pair;
 import com.atlauncher.utils.Utils;
@@ -139,42 +141,7 @@ public abstract class DisableableModsSection extends SectionPanel {
         splitPane.setEnabled(false);
         splitPane.setResizeWeight(1.0);
 
-        List<Path> modPaths = instance.getModPathsFromFilesystem(this.filePaths);
-
-        List<Pair<Path, DisableableMod>> modsData = modPaths.stream().map(path -> {
-            DisableableMod mod = instance.launcher.mods.parallelStream()
-                    .filter(m -> modTypes.contains(m.type) && (m.getActualFile(instance).toPath().equals(path)
-                            || m.file.equals(path.getFileName().toString().toLowerCase())
-                            || m.file.equals(path.getFileName().toString().toUpperCase())))
-                    .findFirst()
-                    .orElseGet(() -> {
-                        LogManager
-                                .warn(String.format(
-                                        "Failed to find DisableableMod for file %s. Generating temporary DisableableMod for it.",
-                                        path.getFileName().toString()));
-
-                        int indexOfModPath = modPaths.indexOf(path.getParent());
-                        return DisableableMod.generateMod(path.toFile(),
-                                modTypes.get(indexOfModPath == -1 ? 0 : indexOfModPath), !path.endsWith(".disabled"));
-                    });
-
-            return new Pair<Path, DisableableMod>(path, mod);
-        }).collect(Collectors.toList());
-
-        Object[][] initialTableData = modsData.stream().map(pair -> {
-            BasicFileAttributes attrs = null;
-            try {
-                attrs = Files.readAttributes(pair.left(), BasicFileAttributes.class);
-            } catch (IOException ignored) {
-            }
-
-            return new Object[] { pair.right(), !pair.right().disabled,
-                    pair.right().getNameFromFile(instance, pair.left()),
-                    pair.right().getVersionFromFile(instance, pair.left()),
-                    attrs == null ? Instant.now().toDate() : new Date(attrs.lastModifiedTime().toMillis()) };
-        }).toArray(Object[][]::new);
-
-        tableModel = new DefaultTableModel(initialTableData, new String[] {
+        tableModel = new DefaultTableModel(new Object[][] {}, new String[] {
                 "", GetText.tr("Enabled?"), GetText.tr("Name"), GetText.tr("Version"), GetText.tr("Last Change")
         }) {
             @Override
@@ -199,6 +166,8 @@ public abstract class DisableableModsSection extends SectionPanel {
                 return columnIndex == 1;
             }
         };
+
+        refreshTableModel();
 
         tableModel.addTableModelListener(new TableModelListener() {
             @Override
@@ -283,7 +252,24 @@ public abstract class DisableableModsSection extends SectionPanel {
 
         splitPane.setLeftComponent(tableScrollPane);
 
-        SideBarButton downloadModsSideBarButton = new SideBarButton(GetText.tr("Download More"));
+        SideBarButton downloadMoreSideBarButton = new SideBarButton(GetText.tr("Download More"));
+        if (instance.launcher.loaderVersion == null && modTypes.contains(Type.mods)) {
+            downloadMoreSideBarButton.setEnabled(false);
+            downloadMoreSideBarButton
+                    .setToolTipText(GetText.tr("In order to download mods, you must have a modloader installed"));
+        } else {
+            downloadMoreSideBarButton.setEnabled(true);
+            downloadMoreSideBarButton.setToolTipText(null);
+        }
+        downloadMoreSideBarButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Analytics.sendEvent(instance.launcher.pack + " - " + instance.launcher.version, "AddMods",
+                        instance.getAnalyticsCategory());
+                new AddModsDialog(parent, instance, modTypes.get(0));
+                refreshTableModel();
+            }
+        });
 
         SideBarButton addFileSideBarButton = new SideBarButton(GetText.tr("Add File"));
 
@@ -344,6 +330,23 @@ public abstract class DisableableModsSection extends SectionPanel {
             }
         });
 
+        SideBarButton refreshSideBarButton = new SideBarButton(GetText.tr("Refresh List"));
+        refreshSideBarButton.setToolTipText(GetText.tr("Refreshes the table with any changes from the filesystem"));
+        refreshSideBarButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                refreshTableModel();
+            }
+        });
+
+        SideBarButton openFolderSideBarButton = new SideBarButton(GetText.tr("Open Folder"));
+        openFolderSideBarButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                OS.openFileExplorer(filePaths.get(0).getParent());
+            }
+        });
+
         JToolBar sideBar = new JToolBar();
         sideBar.setMinimumSize(new Dimension(160, 0));
         sideBar.setPreferredSize(new Dimension(160, 0));
@@ -351,7 +354,7 @@ public abstract class DisableableModsSection extends SectionPanel {
         sideBar.setFloatable(false);
 
         sideBar.addSeparator();
-        sideBar.add(downloadModsSideBarButton);
+        sideBar.add(downloadMoreSideBarButton);
         sideBar.add(addFileSideBarButton);
         sideBar.addSeparator();
         sideBar.add(checkForUpdatesSideBarButton);
@@ -362,6 +365,11 @@ public abstract class DisableableModsSection extends SectionPanel {
         sideBar.addSeparator();
         sideBar.add(deleteSideBarButton);
         sideBar.addSeparator();
+        sideBar.add(Box.createVerticalGlue());
+        sideBar.addSeparator();
+        sideBar.add(refreshSideBarButton);
+        sideBar.addSeparator();
+        sideBar.add(openFolderSideBarButton);
 
         splitPane.setRightComponent(sideBar);
 
@@ -409,6 +417,53 @@ public abstract class DisableableModsSection extends SectionPanel {
         });
 
         add(splitPane, BorderLayout.CENTER);
+    }
+
+    private void refreshTableModel() {
+        List<Path> modPaths = instance.getModPathsFromFilesystem(this.filePaths);
+
+        List<Pair<Path, DisableableMod>> modsData = modPaths.stream().map(path -> {
+            DisableableMod mod = instance.launcher.mods.parallelStream()
+                    .filter(m -> modTypes.contains(m.type) && (m.getActualFile(instance).toPath().equals(path)
+                            || m.file.equals(path.getFileName().toString().toLowerCase())
+                            || m.file.equals(path.getFileName().toString().toUpperCase())))
+                    .findFirst()
+                    .orElseGet(() -> {
+                        LogManager
+                                .warn(String.format(
+                                        "Failed to find DisableableMod for file %s. Generating temporary DisableableMod for it.",
+                                        path.getFileName().toString()));
+
+                        int indexOfModPath = modPaths.indexOf(path.getParent());
+                        return DisableableMod.generateMod(path.toFile(),
+                                modTypes.get(indexOfModPath == -1 ? 0 : indexOfModPath), !path.endsWith(".disabled"));
+                    });
+
+            return new Pair<Path, DisableableMod>(path, mod);
+        }).collect(Collectors.toList());
+
+        ignoreTableEvents = true;
+
+        // clear current table model
+        for (int i = tableModel.getRowCount() - 1; i >= 0; i--) {
+            tableModel.removeRow(i);
+        }
+
+        // add all mods in
+        modsData.forEach(pair -> {
+            BasicFileAttributes attrs = null;
+            try {
+                attrs = Files.readAttributes(pair.left(), BasicFileAttributes.class);
+            } catch (IOException ignored) {
+            }
+
+            tableModel.addRow(new Object[] { pair.right(), !pair.right().disabled,
+                    pair.right().getNameFromFile(instance, pair.left()),
+                    pair.right().getVersionFromFile(instance, pair.left()),
+                    attrs == null ? Instant.now().toDate() : new Date(attrs.lastModifiedTime().toMillis()) });
+        });
+
+        ignoreTableEvents = false;
     }
 
     private void reloadRows(int[] rows) {

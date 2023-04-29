@@ -127,6 +127,13 @@ public class CurseForgeApi {
                 categoryIdParam);
     }
 
+    public static List<CurseForgeProject> searchShaders(String versionToSearchFor, String query, int page,
+            String sort) {
+        return searchCurseForge(Constants.CURSEFORGE_SHADER_PACKS_SECTION_ID,
+                (query == null || query.length() == 0 ? "" : query + " ") + "Shaders", page, 0, sort,
+                null);
+    }
+
     public static List<CurseForgeProject> searchMods(String gameVersion, String query, int page, String sort,
             String categoryId) {
         Integer categoryIdParam = categoryId == null ? null : Integer.parseInt(categoryId);
