@@ -25,8 +25,6 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
 import java.util.List;
 import java.util.Optional;
 
@@ -59,6 +57,7 @@ import com.atlauncher.data.minecraft.loaders.LoaderVersion;
 import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.gui.components.PreservingCaretTextSetter;
+import com.atlauncher.listener.StatefulTextKeyAdapter;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.utils.ComboItem;
 import com.atlauncher.viewmodel.base.IVanillaPacksViewModel;
@@ -146,12 +145,7 @@ public class VanillaPacksTab extends JPanel implements Tab, RelocalizationListen
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         PreservingCaretTextSetter nameFieldSetter = new PreservingCaretTextSetter(nameField);
         viewModel.name().subscribe((it) -> nameFieldSetter.setText(it.orElse(null)));
-        nameField.addKeyListener(new KeyAdapter() {
-            public void keyReleased(@Nullable KeyEvent e) {
-                if (e != null && !e.isActionKey())
-                    viewModel.setName(nameField.getText());
-            }
-        });
+        nameField.addKeyListener(new StatefulTextKeyAdapter((e) -> viewModel.setName(nameField.getText())));
         mainPanel.add(nameField, gbc);
 
         // Description
@@ -172,12 +166,7 @@ public class VanillaPacksTab extends JPanel implements Tab, RelocalizationListen
 
         PreservingCaretTextSetter descriptionFieldSetter = new PreservingCaretTextSetter(descriptionField);
         viewModel.description().subscribe((it) -> descriptionFieldSetter.setText(it.orElse(null)));
-        descriptionField.addKeyListener(new KeyAdapter() {
-            public void keyReleased(@Nullable KeyEvent e) {
-                if (e != null && !e.isActionKey())
-                    viewModel.setDescription(descriptionField.getText());
-            }
-        });
+        descriptionField.addKeyListener(new StatefulTextKeyAdapter((e) -> viewModel.setDescription(descriptionField.getText())));
         mainPanel.add(descriptionScrollPane, gbc);
 
         // Minecraft Version
