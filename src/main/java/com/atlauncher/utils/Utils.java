@@ -1628,6 +1628,14 @@ public class Utils {
                 || filename.endsWith(".disabled");
     }
 
+    public static boolean isAcceptedLogFile(Path path) {
+        return isAcceptedLogFile(path.getFileName().toString());
+    }
+
+    public static boolean isAcceptedLogFile(String filename) {
+        return filename.endsWith(".txt") || filename.endsWith(".log") || filename.endsWith(".log.gz");
+    }
+
     public static boolean isDevelopment() {
         try {
             if (Utils.class.getResource("").getProtocol().equals("file")) {

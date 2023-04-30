@@ -3075,6 +3075,26 @@ public class Instance extends MinecraftVersion {
         return launcher.version;
     }
 
+    public List<Path> getLogPathsFromFilesystem(List<Path> logPaths) {
+        List<Path> files = new ArrayList<>();
+
+        for (Path path : logPaths) {
+            if (!Files.exists(path)) {
+                continue;
+            }
+
+            try (Stream<Path> stream = Files.list(path)) {
+                files.addAll(stream
+                        .filter(file -> !Files.isDirectory(file) && Utils.isAcceptedLogFile(file))
+                        .collect(Collectors.toList()));
+            } catch (IOException e) {
+                LogManager.logStackTrace("Error getting log paths", e);
+            }
+        }
+
+        return files;
+    }
+
     private List<Path> getModPathsFromFilesystem() {
         return getModPathsFromFilesystem(Arrays.asList(ROOT.resolve("mods"),
                 ROOT.resolve("resourcepacks"),
