@@ -28,15 +28,20 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.util.concurrent.Callable;
 
-import com.atlauncher.App;
 import com.atlauncher.Network;
 import com.atlauncher.constants.Constants;
 import com.atlauncher.managers.LogManager;
 
 public final class PasteUpload implements Callable<String> {
+    private final String log;
+
+    public PasteUpload(String log) {
+        super();
+        this.log = log.replace(System.getProperty("line.separator"), "\n");
+    }
+
     @Override
     public String call() {
-        String log = App.console.getLog().replace(System.getProperty("line.separator"), "\n");
         String urlParameters = "";
         try {
             urlParameters += "title=" + URLEncoder.encode(Constants.LAUNCHER_NAME + " - Log", "UTF-8") + "&";

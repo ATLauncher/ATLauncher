@@ -54,7 +54,10 @@ import org.mini2Dx.gettext.GetText;
 
 import com.atlauncher.data.Instance;
 import com.atlauncher.managers.LogManager;
+import com.atlauncher.utils.ATLauncherApi;
 import com.atlauncher.utils.ComboItem;
+import com.atlauncher.utils.FileUtils;
+import com.atlauncher.utils.OS;
 import com.formdev.flatlaf.icons.FlatSearchIcon;
 
 public class LogsSection extends SectionPanel {
@@ -109,47 +112,51 @@ public class LogsSection extends SectionPanel {
         topPanel.setLayout(new BoxLayout(topPanel, BoxLayout.X_AXIS));
 
         logsComboBox.addActionListener(e -> {
-            Path selectedPath = ((ComboItem<Path>) logsComboBox.getSelectedItem()).getValue();
+            if (logsComboBox.getSelectedItem() != null) {
+                Path selectedPath = ((ComboItem<Path>) logsComboBox.getSelectedItem()).getValue();
 
-            searchField.setText("");
-            logTextArea.setText(null);
-            lastSearchIndex = 0;
+                searchField.setText("");
+                logTextArea.setText(null);
+                lastSearchIndex = 0;
 
-            uploadSideBarButton.setEnabled(selectedPath != null);
-            copyToClipboardSideBarButton.setEnabled(selectedPath != null);
-            showInFileExplorerSideBarButton.setEnabled(selectedPath != null);
-            deleteSideBarButton.setEnabled(selectedPath != null);
+                uploadSideBarButton.setEnabled(selectedPath != null);
+                copyToClipboardSideBarButton.setEnabled(selectedPath != null);
+                showInFileExplorerSideBarButton.setEnabled(selectedPath != null);
+                deleteSideBarButton.setEnabled(selectedPath != null);
 
-            if (selectedPath != null) {
-                try {
-                    String contents;
+                if (selectedPath != null) {
+                    try {
+                        String contents;
 
-                    if (selectedPath.toString().endsWith(".gz")) {
-                        StringBuilder sb = new StringBuilder();
-                        try (InputStream fileStream = new FileInputStream(selectedPath.toFile());
-                                InputStream gzipStream = new GZIPInputStream(fileStream);
-                                Reader decoder = new InputStreamReader(gzipStream, "UTF-8");
-                                BufferedReader buffered = new BufferedReader(decoder)) {
-                            String line;
-                            while ((line = buffered.readLine()) != null) {
-                                sb.append(line);
-                                sb.append("\n");
+                        if (selectedPath.toString().endsWith(".gz")) {
+                            StringBuilder sb = new StringBuilder();
+                            try (InputStream fileStream = new FileInputStream(selectedPath.toFile());
+                                    InputStream gzipStream = new GZIPInputStream(fileStream);
+                                    Reader decoder = new InputStreamReader(gzipStream, "UTF-8");
+                                    BufferedReader buffered = new BufferedReader(decoder)) {
+                                String line;
+                                while ((line = buffered.readLine()) != null) {
+                                    sb.append(line);
+                                    sb.append("\n");
+                                }
+                            } catch (Exception e2) {
+                                LogManager.logStackTrace("Failed to read file " + selectedPath.getFileName().toString(),
+                                        e2,
+                                        false);
                             }
-                        } catch (Exception e2) {
-                            LogManager.logStackTrace("Failed to read file " + selectedPath.getFileName().toString(), e2,
-                                    false);
+                            contents = sb.toString();
+                        } else {
+                            contents = new String(Files.readAllBytes(selectedPath));
                         }
-                        contents = sb.toString();
-                    } else {
-                        contents = new String(Files.readAllBytes(selectedPath));
+
+                        Document doc = logTextArea.getDocument();
+                        doc.insertString(0, contents, null);
+
+                        logTextArea.setCaretPosition(0);
+                    } catch (Exception e2) {
+                        LogManager.logStackTrace("Failed to read file " + selectedPath.getFileName().toString(), e2,
+                                false);
                     }
-
-                    Document doc = logTextArea.getDocument();
-                    doc.insertString(0, contents, null);
-
-                    logTextArea.setCaretPosition(0);
-                } catch (Exception e2) {
-                    LogManager.logStackTrace("Failed to read file " + selectedPath.getFileName().toString(), e2, false);
                 }
             }
         });
@@ -204,14 +211,46 @@ public class LogsSection extends SectionPanel {
         sideBar.setFloatable(false);
 
         uploadSideBarButton.setEnabled(false);
+        uploadSideBarButton.addActionListener(e -> {
+            ATLauncherApi.uploadLog(this.parent, logTextArea.getText());
+        });
 
         copyToClipboardSideBarButton.setEnabled(false);
+        copyToClipboardSideBarButton.addActionListener(e -> {
+            String text = logTextArea.getText();
+            OS.copyToClipboard(text);
+        });
 
         showInFileExplorerSideBarButton.setEnabled(false);
+        showInFileExplorerSideBarButton.addActionListener(e -> {
+            Path selectedPath = ((ComboItem<Path>) logsComboBox.getSelectedItem()).getValue();
+            if (selectedPath != null) {
+                OS.openFileExplorer(selectedPath, true);
+            }
+        });
+
+        deleteSideBarButton.setEnabled(false);
+        deleteSideBarButton.addActionListener(e -> {
+            Path selectedPath = ((ComboItem<Path>) logsComboBox.getSelectedItem()).getValue();
+            if (selectedPath != null) {
+                FileUtils.delete(selectedPath);
+                loadLogFiles();
+            }
+        });
 
         SideBarButton deleteAllButton = new SideBarButton(GetText.tr("Delete All"));
+        deleteAllButton.addActionListener(e -> {
+            instance.getLogPathsFromFilesystem(Arrays.asList(instance.ROOT.resolve("logs"))).forEach(path -> {
+                FileUtils.delete(path);
+            });
+
+            loadLogFiles();
+        });
 
         SideBarButton openFolderButton = new SideBarButton(GetText.tr("Open Folder"));
+        openFolderButton.addActionListener(e -> {
+            OS.openFileExplorer(instance.ROOT.resolve("logs"));
+        });
 
         sideBar.addSeparator();
         sideBar.add(uploadSideBarButton);
