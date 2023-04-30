@@ -119,8 +119,11 @@ public class MCLauncher {
 
                             boolean isCustomAdded = filename.lastIndexOf(File.separator) == 0
                                     && (mod == null || mod.userAdded);
+                            boolean isCustomChanged = filename.lastIndexOf(File.separator) == 0
+                                    && (mod == null || mod.userChanged);
 
-                            LogManager.info(String.format(" - %s%s", filename, isCustomAdded ? " (Added)" : ""));
+                            LogManager.info(String.format(" - %s%s", filename,
+                                    isCustomAdded ? " (Added)" : (isCustomChanged ? " (Changed)" : "")));
                         });
             }
 

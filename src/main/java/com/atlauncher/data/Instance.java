@@ -3480,8 +3480,8 @@ public class Instance extends MinecraftVersion {
 
         // create the new mod
         DisableableMod newMod = new DisableableMod(project.name, version.displayName, true, modFileNameInSystem,
-                mod.type,
-                null, project.summary, false, true, true, false, project, version);
+                mod.type, null, project.summary, false, mod.userAdded, true, false, project, version);
+        newMod.userChanged = true;
 
         // scan the internal mod metadata
         newMod.scanInternalModMetadata(finalLocation);

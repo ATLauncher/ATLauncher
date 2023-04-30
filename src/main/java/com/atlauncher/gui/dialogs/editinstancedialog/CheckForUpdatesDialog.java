@@ -236,7 +236,8 @@ public class CheckForUpdatesDialog extends JDialog {
                     }).sum();
 
                     // load in panel to show update happening
-                    String text = GetText.tr("Downloading {0} Mods", modsUpdating.size());
+                    String text = modsUpdating.size() == 1 ? GetText.tr("Downloading 1 Mod")
+                            : GetText.tr("Downloading {0} Mods", modsUpdating.size());
                     LoadingPanel loadingPanel = new LoadingPanel(text);
                     loadingPanel.setTotalBytes(totalBytes);
                     OkHttpClient progressClient = Network.createProgressClient(loadingPanel);

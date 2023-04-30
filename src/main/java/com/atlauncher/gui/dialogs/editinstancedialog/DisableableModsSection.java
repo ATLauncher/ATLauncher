@@ -46,6 +46,7 @@ import java.util.stream.Collectors;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.JCheckBox;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
@@ -65,7 +66,6 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
-import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
 import org.joda.time.Instant;
@@ -91,7 +91,12 @@ public abstract class DisableableModsSection extends SectionPanel {
     private DefaultTableModel tableModel;
     private final JTable table = new JTable();
     private boolean ignoreTableEvents = false;
-    private TableRowSorter<TableModel> sorter;
+    private TableRowSorter<DefaultTableModel> sorter;
+
+    private RowFilter<DefaultTableModel, Object> searchRowFilter = null;
+    private RowFilter<DefaultTableModel, Object> userAddedRowFilter = null;
+    private RowFilter<DefaultTableModel, Object> enabledRowFilter = null;
+    private RowFilter<DefaultTableModel, Object> disabledRowFilter = null;
 
     private final List<Path> filePaths;
     private final List<Type> modTypes;
@@ -112,14 +117,19 @@ public abstract class DisableableModsSection extends SectionPanel {
     }
 
     private void executeSearch() {
-        sorter.setRowFilter(RowFilter.regexFilter(searchField.getText(), 2));
+        if (searchField.getText().length() == 0) {
+            searchRowFilter = null;
+        } else {
+            searchRowFilter = RowFilter.regexFilter(searchField.getText(), 2);
+        }
+
+        updateRowFilter();
     }
 
     private void setupComponents() {
         JPanel topPanel = new JPanel();
         topPanel.setBorder(new EmptyBorder(0, 0, 5, 5));
         topPanel.setLayout(new BoxLayout(topPanel, BoxLayout.X_AXIS));
-        topPanel.add(Box.createHorizontalGlue());
 
         searchField.setMaximumSize(new Dimension(100, 23));
         searchField.addKeyListener(new KeyAdapter() {
@@ -135,6 +145,75 @@ public abstract class DisableableModsSection extends SectionPanel {
             searchField.setText("");
             executeSearch();
         });
+
+        JCheckBox onlyShowUserAddedCheckbox = new JCheckBox(GetText.tr("Only Show User Added") + ":");
+        onlyShowUserAddedCheckbox.setHorizontalTextPosition(SwingConstants.LEFT);
+        onlyShowUserAddedCheckbox
+                .setToolTipText(GetText
+                        .tr("Only show files that you have added, reinstalled or updated since installing the pack"));
+        onlyShowUserAddedCheckbox.setVisible(!instance.isVanillaInstance());
+        onlyShowUserAddedCheckbox.addActionListener(e -> {
+            if (onlyShowUserAddedCheckbox.isSelected()) {
+                RowFilter<DefaultTableModel, Object> customAddedModsFilter = new RowFilter<DefaultTableModel, Object>() {
+                    @Override
+                    public boolean include(Entry<? extends DefaultTableModel, ? extends Object> entry) {
+                        DisableableMod mod = (DisableableMod) entry.getValue(0);
+                        return mod.userAdded || mod.userChanged;
+                    }
+                };
+
+                userAddedRowFilter = customAddedModsFilter;
+            } else {
+                userAddedRowFilter = null;
+            }
+
+            updateRowFilter();
+        });
+
+        JCheckBox onlyShowEnabledCheckbox = new JCheckBox(GetText.tr("Only Show Enabled") + ":");
+        JCheckBox onlyShowDisabledCheckbox = new JCheckBox(GetText.tr("Only Show Disabled") + ":");
+
+        onlyShowEnabledCheckbox.setHorizontalTextPosition(SwingConstants.LEFT);
+        onlyShowEnabledCheckbox.setToolTipText(GetText.tr("Only show files that are currently enabled"));
+        onlyShowEnabledCheckbox.addActionListener(e -> {
+            if (onlyShowEnabledCheckbox.isSelected()) {
+                enabledRowFilter = RowFilter.regexFilter("true", 1);
+
+                if (onlyShowDisabledCheckbox.isSelected()) {
+                    onlyShowDisabledCheckbox.setSelected(false);
+                    disabledRowFilter = null;
+                }
+            } else {
+                enabledRowFilter = null;
+            }
+
+            updateRowFilter();
+        });
+
+        onlyShowDisabledCheckbox.setHorizontalTextPosition(SwingConstants.LEFT);
+        onlyShowDisabledCheckbox.setToolTipText(GetText.tr("Only show files that are currently disabled"));
+        onlyShowDisabledCheckbox.addActionListener(e -> {
+            if (onlyShowDisabledCheckbox.isSelected()) {
+                disabledRowFilter = RowFilter.regexFilter("false", 1);
+
+                if (onlyShowEnabledCheckbox.isSelected()) {
+                    onlyShowEnabledCheckbox.setSelected(false);
+                    enabledRowFilter = null;
+                }
+            } else {
+                disabledRowFilter = null;
+            }
+
+            updateRowFilter();
+        });
+
+        topPanel.add(Box.createHorizontalGlue());
+        topPanel.add(onlyShowUserAddedCheckbox);
+        topPanel.add(Box.createHorizontalStrut(10));
+        topPanel.add(onlyShowEnabledCheckbox);
+        topPanel.add(Box.createHorizontalStrut(10));
+        topPanel.add(onlyShowDisabledCheckbox);
+        topPanel.add(Box.createHorizontalStrut(10));
         topPanel.add(searchField);
 
         add(topPanel, BorderLayout.NORTH);
@@ -462,6 +541,19 @@ public abstract class DisableableModsSection extends SectionPanel {
         add(splitPane, BorderLayout.CENTER);
     }
 
+    private void updateRowFilter() {
+        List<RowFilter<DefaultTableModel, Object>> activeFilters = Arrays.asList(searchRowFilter,
+                userAddedRowFilter, enabledRowFilter, disabledRowFilter).stream().filter(f -> f != null)
+                .collect(Collectors.toList());
+
+        if (activeFilters.size() == 0) {
+            sorter.setRowFilter(null);
+        } else {
+            RowFilter<DefaultTableModel, Object> combinedFilter = RowFilter.andFilter(activeFilters);
+            sorter.setRowFilter(combinedFilter);
+        }
+    }
+
     public void refreshTableModel() {
         List<Path> modPaths = instance.getModPathsFromFilesystem(this.filePaths);
 
@@ -562,6 +654,7 @@ public abstract class DisableableModsSection extends SectionPanel {
         }
         instance.save();
         reloadRows(rows);
+        sorter.sort();
     }
 
     private void deleteRows(int[] rows) {
