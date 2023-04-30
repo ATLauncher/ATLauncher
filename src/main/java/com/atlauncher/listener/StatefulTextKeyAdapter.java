@@ -45,10 +45,20 @@ public class StatefulTextKeyAdapter extends KeyAdapter {
 
     @Override
     public void keyReleased(KeyEvent e) {
+
         // Ignore if the event is null
         // Ignore if it is an action key (arrows)
         // Ignore if it is a shift key (for shift selection)
-        if (e != null && !e.isActionKey() && e.getKeyCode() != KeyEvent.VK_SHIFT) {
+        // Ignore if it is a control key (for ctrl commands)
+        // Ignore if it is an alt key
+        // Ignore if the modifiers has control down (for ctrl commands)
+        if (e != null &&
+            !e.isActionKey() &&
+            e.getKeyCode() != KeyEvent.VK_SHIFT &&
+            e.getKeyCode() != KeyEvent.VK_CONTROL &&
+            e.getKeyCode() != KeyEvent.VK_ALT &&
+            e.getModifiersEx() != KeyEvent.CTRL_DOWN_MASK
+        ) {
             consumer.accept(e);
         } else super.keyReleased(e);
     }
