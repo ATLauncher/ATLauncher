@@ -21,6 +21,10 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Point;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.dnd.DnDConstants;
+import java.awt.dnd.DropTarget;
+import java.awt.dnd.DropTargetDropEvent;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
@@ -332,6 +336,54 @@ public abstract class DisableableModsSection extends SectionPanel {
                 this.getVerticalScrollBar().setUnitIncrement(8);
             }
         };
+        tableScrollPane.setDropTarget(new DropTarget() {
+            @Override
+            public synchronized void drop(DropTargetDropEvent event) {
+                try {
+                    event.acceptDrop(DnDConstants.ACTION_COPY);
+
+                    // Get the list of dropped files
+                    List<File> droppedFiles = (List<File>) event.getTransferable()
+                            .getTransferData(DataFlavor.javaFileListFlavor);
+
+                    // Filter out files with invalid extensions
+                    List<File> validFiles = new ArrayList<>();
+                    for (File file : droppedFiles) {
+                        String fileName = file.getName().toLowerCase();
+                        if (fileName.endsWith(".jar") || fileName.endsWith(".zip") || fileName.endsWith(".litemod")) {
+                            validFiles.add(file);
+                        }
+                    }
+
+                    // Add the valid files to the table
+                    for (File file : validFiles) {
+                        DisableableMod mod = DisableableMod.generateMod(file, modTypes.get(0),
+                                App.settings.enableAddedModsByDefault);
+                        File copyTo = mod.getActualFile(instance);
+
+                        if (copyTo.exists()) {
+                            LogManager.warn("The file " + file.getName() + " already exists. Not adding!");
+                            continue;
+                        }
+
+                        if (!copyTo.getParentFile().exists()) {
+                            copyTo.getParentFile().mkdirs();
+                        }
+
+                        if (Utils.copyFile(file, copyTo, true)) {
+                            instance.launcher.mods.add(mod);
+                            addDataForMod(copyTo.toPath(), mod);
+                        }
+                    }
+
+                    event.dropComplete(true);
+                } catch (Exception e) {
+                    LogManager.logStackTrace("Failed dropping file", e);
+                    e.printStackTrace();
+                    event.rejectDrop();
+                }
+            }
+        });
 
         splitPane.setLeftComponent(tableScrollPane);
 
