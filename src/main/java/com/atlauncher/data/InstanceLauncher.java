@@ -112,4 +112,7 @@ public class InstanceLauncher {
     public String lastExportVersion = null;
     public String lastExportAuthor = null;
     public String lastExportSaveTo = null;
+
+    public String notes = "";
+    public boolean wrapNotes = true;
 }

@@ -30,6 +30,7 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
+import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 
@@ -47,6 +48,7 @@ public class EditInstanceDialog extends JDialog {
     private final ModsSection modsSection;
     private final ResourcePacksSection resourcePacksSection;
     private final ShaderPacksSection shaderPacksSection;
+    private final NotesSection notesSection;
 
     public EditInstanceDialog(Instance instance) {
         this(App.launcher.getParent(), instance);
@@ -73,6 +75,7 @@ public class EditInstanceDialog extends JDialog {
         modsSection = new ModsSection(this, instance);
         resourcePacksSection = new ResourcePacksSection(this, instance);
         shaderPacksSection = new ShaderPacksSection(this, instance);
+        notesSection = new NotesSection(this, instance);
 
         setupTabbedPane();
         setupBottomPanel();
@@ -82,6 +85,15 @@ public class EditInstanceDialog extends JDialog {
     }
 
     private void close() {
+        final String notes = notesSection.getNotes();
+
+        if (!instance.launcher.notes.equals(notes)
+                || instance.launcher.wrapNotes != notesSection.wrapCheckBox.isSelected()) {
+            instance.launcher.notes = notes;
+            instance.launcher.wrapNotes = notesSection.wrapCheckBox.isSelected();
+            instance.save();
+        }
+
         dispose();
     }
 
@@ -92,6 +104,7 @@ public class EditInstanceDialog extends JDialog {
         tabbedPane.addTab(GetText.tr("Resource Packs"), resourcePacksSection);
         tabbedPane.addTab(GetText.tr("Shader Packs"), shaderPacksSection);
         tabbedPane.addTab(GetText.tr("Logs"), new LogsSection(this, instance));
+        tabbedPane.addTab(GetText.tr("Notes"), notesSection);
         tabbedPane.addTab(GetText.tr("Settings"), new SettingsSection(this, instance));
         tabbedPane.setOpaque(true);
 
@@ -106,19 +119,32 @@ public class EditInstanceDialog extends JDialog {
         bottomActionsPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
         bottomActionsPanel.setLayout(new BoxLayout(bottomActionsPanel, BoxLayout.X_AXIS));
 
-        bottomActionsPanel.add(new JButton(GetText.tr("Some Button")));
-        bottomActionsPanel.add(Box.createHorizontalGlue());
+        JButton playButton = new JButton(GetText.tr("Play"));
+        playButton.addActionListener(e -> {
+            SwingUtilities.invokeLater(() -> {
+                close();
+            });
+            instance.launch(false);
+        });
 
-        bottomActionsPanel.add(new JButton(GetText.tr("Some Button")));
-        bottomActionsPanel.add(Box.createHorizontalStrut(5));
-
-        bottomActionsPanel.add(new JButton(GetText.tr("Some Button")));
-        bottomActionsPanel.add(Box.createHorizontalStrut(5));
+        JButton playOfflineButton = new JButton(GetText.tr("Play Offline"));
+        playOfflineButton.addActionListener(e -> {
+            SwingUtilities.invokeLater(() -> {
+                close();
+            });
+            instance.launch(true);
+        });
 
         JButton closeButton = new JButton(GetText.tr("Close"));
         closeButton.addActionListener(e -> {
             close();
         });
+
+        bottomActionsPanel.add(Box.createHorizontalGlue());
+        bottomActionsPanel.add(playButton);
+        bottomActionsPanel.add(Box.createHorizontalStrut(5));
+        bottomActionsPanel.add(playOfflineButton);
+        bottomActionsPanel.add(Box.createHorizontalStrut(5));
         bottomActionsPanel.add(closeButton);
 
         add(bottomActionsPanel, BorderLayout.SOUTH);
