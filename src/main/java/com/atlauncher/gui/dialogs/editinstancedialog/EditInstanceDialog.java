@@ -28,6 +28,7 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.SwingUtilities;
@@ -111,6 +112,13 @@ public class EditInstanceDialog extends JDialog {
         tabbedPane.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, UIManager.getColor("Component.borderColor")));
 
         add(tabbedPane, BorderLayout.CENTER);
+
+        for (int i = 0; i < tabbedPane.getTabCount(); i++) {
+            JLabel titleLabel = new JLabel(tabbedPane.getTitleAt(i));
+            titleLabel.setFont(App.THEME.getBoldFont().deriveFont(14f));
+            titleLabel.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
+            tabbedPane.setTabComponentAt(i, titleLabel);
+        }
     }
 
     private void setupBottomPanel() {
