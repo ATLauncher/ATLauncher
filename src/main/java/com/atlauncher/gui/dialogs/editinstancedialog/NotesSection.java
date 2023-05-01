@@ -26,11 +26,14 @@ import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JCheckBox;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.ScrollPaneConstants;
+import javax.swing.SwingUtilities;
+import javax.swing.Timer;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultHighlighter;
 import javax.swing.text.Highlighter;
@@ -38,6 +41,7 @@ import javax.swing.text.Highlighter;
 import org.mini2Dx.gettext.GetText;
 
 import com.atlauncher.data.Instance;
+import com.atlauncher.utils.OS;
 import com.formdev.flatlaf.icons.FlatSearchIcon;
 
 public class NotesSection extends SectionPanel {
@@ -46,7 +50,11 @@ public class NotesSection extends SectionPanel {
     private final Highlighter highlighter = new DefaultHighlighter();
     public final JCheckBox wrapCheckBox = new JCheckBox(GetText.tr("Wrap Text"));
     private int lastSearchIndex = 0;
-    private JScrollPane noteScrollPane = new JScrollPane();
+    private final JScrollPane noteScrollPane = new JScrollPane();
+    private Timer saveTimer = null;
+    private final String saveLabelText = GetText.tr("Saved when window closed or press '{0} + S'",
+            OS.isMac() ? "Cmd" : "Ctrl");
+    private final JLabel saveLabel = new JLabel(saveLabelText);
 
     public NotesSection(EditInstanceDialog parent, Instance instance) {
         super(parent, instance);
@@ -109,6 +117,9 @@ public class NotesSection extends SectionPanel {
             instance.launcher.wrapNotes = wrapCheckBox.isSelected();
         });
 
+        saveLabel.setFont(saveLabel.getFont().deriveFont(12f));
+
+        topPanel.add(saveLabel);
         topPanel.add(Box.createHorizontalGlue());
         topPanel.add(wrapCheckBox);
         topPanel.add(Box.createHorizontalStrut(10));
@@ -118,12 +129,43 @@ public class NotesSection extends SectionPanel {
 
         noteTextArea.setText(instance.launcher.notes);
         noteTextArea.setLineWrap(instance.launcher.wrapNotes);
+        noteTextArea.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                int key = e.getKeyCode();
+                boolean isCtrlPressed = OS.isMac() ? e.isMetaDown() : e.isControlDown();
+
+                if (key == KeyEvent.VK_S && isCtrlPressed) {
+                    saveNotes();
+                }
+            }
+        });
 
         noteScrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         noteScrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
         noteScrollPane.setViewportView(noteTextArea);
 
         add(noteScrollPane, BorderLayout.CENTER);
+    }
+
+    public void saveNotes() {
+        instance.launcher.notes = noteTextArea.getText();
+        instance.save();
+
+        saveLabel.setText(GetText.tr("Saved"));
+
+        if (saveTimer != null && saveTimer.isRunning()) {
+            saveTimer.stop();
+        }
+
+        saveTimer = new Timer(5000, e -> {
+            SwingUtilities.invokeLater(() -> {
+                saveLabel.setText(saveLabelText);
+            });
+        });
+        saveTimer.setRepeats(false);
+        saveTimer.start();
+
     }
 
     public String getNotes() {
