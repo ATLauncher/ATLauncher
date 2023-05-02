@@ -11,6 +11,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Make Console sizing a bit more responsive and flexible with sizes
 - Issue with mod files with invalid characters causing Edit Mods screen to not open
 - Issue with loading in some dates from JSON
+- Issue with opening instance settings on some systems
 
 ### Misc
 - Consolodate GSON configs
