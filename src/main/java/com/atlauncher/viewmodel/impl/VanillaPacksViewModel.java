@@ -385,18 +385,6 @@ public class VanillaPacksViewModel implements SettingsListener, IVanillaPacksVie
                 } else {
                     createServerEnabled.onNext(false);
                 }
-
-                final String defaultNameFieldValue = String.format(
-                    "Minecraft %s", selectedVersion.orElse(null)
-                );
-                if (!name.getValue().isPresent() || name.getValue().get().isEmpty() || !nameDirty) {
-                    nameDirty = false;
-                    name.onNext(Optional.of(defaultNameFieldValue));
-                }
-                if (!description.getValue().isPresent() || description.getValue().get().isEmpty() || !descriptionDirty) {
-                    descriptionDirty = false;
-                    description.onNext(Optional.of(defaultNameFieldValue));
-                }
             });
 
         combineLatest(selectedLoaderType, selectedMinecraftVersionFlow, Pair::new)
@@ -411,18 +399,13 @@ public class VanillaPacksViewModel implements SettingsListener, IVanillaPacksVie
 
                 if (!loaderTypeOptional.isPresent()) {
                     // update the name and description fields if they're not dirty
-                    final String defaultNameFieldValue = String.format("Minecraft %s", selectedMinecraftVersionOptional.get());
-                    if (!nameDirty) {
-                        name.onNext(Optional.of(defaultNameFieldValue));
-                    }
-                    if (!descriptionDirty) {
-                        description.onNext(Optional.of(defaultNameFieldValue));
-                    }
-                    loaderVersions.onNext(Optional.empty());
+                    updateNameAndDescription(selectedMinecraftVersionOptional.get(), null);
                     return;
                 }
                 LoaderType loaderType = loaderTypeOptional.get();
                 String selectedMinecraftVersion = selectedMinecraftVersionOptional.get();
+
+                updateNameAndDescription(selectedMinecraftVersion, loaderType);
 
                 loaderLoading.onNext(true);
 
@@ -452,11 +435,7 @@ public class VanillaPacksViewModel implements SettingsListener, IVanillaPacksVie
                     }
                 }
 
-
                 setLoaderGroupEnabled(true, enableCreateServers);
-
-                updateNameAndDescription(selectedMinecraftVersion, loaderType);
-
             });
     }
 
@@ -974,16 +953,23 @@ public class VanillaPacksViewModel implements SettingsListener, IVanillaPacksVie
      * Update the name and description fields if they're not dirty with loader type information
      */
     private void updateNameAndDescription(
-        String selectedMinecraftVersion, LoaderType selectedLoader
+        @Nonnull String selectedMinecraftVersion,
+        @Nullable LoaderType selectedLoader
     ) {
-        final String defaultNameField = String.format(
-            "Minecraft %s with %s", selectedMinecraftVersion, selectedLoader.toString()
-        );
+        final String defaultNameField;
 
-        if (!nameDirty) {
+        if (selectedLoader == null) {
+            defaultNameField = String.format("Minecraft %s", selectedMinecraftVersion);
+        } else {
+            defaultNameField = String.format("Minecraft %s with %s", selectedMinecraftVersion, selectedLoader);
+        }
+
+        if (!name.getValue().isPresent() || name.getValue().get().isEmpty() || !nameDirty) {
+            nameDirty = false;
             name.onNext(Optional.of(defaultNameField));
         }
-        if (!descriptionDirty) {
+        if (!description.getValue().isPresent() || description.getValue().get().isEmpty() || !descriptionDirty) {
+            descriptionDirty = false;
             description.onNext(Optional.of(defaultNameField));
         }
     }
