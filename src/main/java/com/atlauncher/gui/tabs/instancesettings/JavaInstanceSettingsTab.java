@@ -444,13 +444,17 @@ public class JavaInstanceSettingsTab extends JPanel {
         int selectedIndexRuntime = 0;
         Map<String, List<JavaRuntime>> runtimes = Data.JAVA_RUNTIMES.getForSystem();
         for (String runtime : runtimes.keySet()) {
-            javaRuntimeOverride.addItem(
-                    new ComboItem<>(runtime,
-                            String.format("%s (Java %s)", runtime, runtimes.get(runtime).get(0).version.name)));
+            List<JavaRuntime> runtimeObject = runtimes.get(runtime);
 
-            if (this.instance.launcher.javaRuntimeOverride != null
-                    && this.instance.launcher.javaRuntimeOverride.equals(runtime)) {
-                selectedIndexRuntime = javaRuntimeOverride.getItemCount() - 1;
+            if (runtimeObject != null && runtimeObject.size() != 0) {
+                javaRuntimeOverride.addItem(
+                        new ComboItem<>(runtime,
+                                String.format("%s (Java %s)", runtime, runtimeObject.get(0).version.name)));
+
+                if (this.instance.launcher.javaRuntimeOverride != null
+                        && this.instance.launcher.javaRuntimeOverride.equals(runtime)) {
+                    selectedIndexRuntime = javaRuntimeOverride.getItemCount() - 1;
+                }
             }
         }
 

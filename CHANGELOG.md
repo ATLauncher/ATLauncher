@@ -14,6 +14,8 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Issue with mod files with invalid characters causing Edit Mods screen to not open
 - Main progress bar when installing instances not being super accurate
 - Mod files not being upper/lower cased when modpack devs set it
+- Issue with loading in some dates from JSON
+- Issue with opening instance settings on some systems
 
 ### Misc
 - Consolodate GSON configs

@@ -1,5 +1,5 @@
 name: Feature Request
-description: File a bug report
+description: Request a feature
 labels: ["enhancement", "triage"]
 body:
   - type: markdown
