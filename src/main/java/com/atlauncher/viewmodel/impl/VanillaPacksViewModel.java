@@ -400,6 +400,7 @@ public class VanillaPacksViewModel implements SettingsListener, IVanillaPacksVie
                 if (!loaderTypeOptional.isPresent()) {
                     // update the name and description fields if they're not dirty
                     updateNameAndDescription(selectedMinecraftVersionOptional.get(), null);
+                    loaderVersions.onNext(Optional.empty());
                     return;
                 }
                 LoaderType loaderType = loaderTypeOptional.get();
