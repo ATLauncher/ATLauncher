@@ -119,7 +119,6 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
         JPanel rightPanel = new JPanel();
         rightPanel.setLayout(new BorderLayout());
 
-        JPanel topPanel = new JPanel();
 
         JPanel bottomPanel = new JPanel();
         bottomPanel.setLayout(new GridBagLayout());
@@ -139,7 +138,6 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
                 viewModel.setSelectedAccount(accountsComboBox.getSelectedIndex());
             }
         });
-        topPanel.add(accountsComboBox, gbc);
         bottomPanel.add(accountsComboBox, gbc);
 
         gbc.gridx = 0;
@@ -275,7 +273,6 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
         buttons.add(loginWithMicrosoftButton);
         bottomPanel.add(buttons, gbc);
 
-        rightPanel.add(topPanel, BorderLayout.NORTH);
         rightPanel.add(bottomPanel, BorderLayout.CENTER);
 
         contextMenu = new JPopupMenu();
