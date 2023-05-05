@@ -62,6 +62,8 @@ public final class Analytics implements SettingsListener {
             return;
         }
 
+        LogManager.debug(String.format("[Analytics][Screen View] %s", title), 5);
+
         ga.screenView(Constants.LAUNCHER_NAME, title).sendAsync();
     }
 
@@ -70,6 +72,8 @@ public final class Analytics implements SettingsListener {
             return;
         }
 
+        LogManager.debug(String.format("[Analytics][Outbound Link] %s", url), 5);
+
         ga.event().eventLabel(url).eventAction("Outbound").eventCategory("Link").sendAsync();
     }
 
@@ -77,6 +81,9 @@ public final class Analytics implements SettingsListener {
         if (ga == null) {
             return;
         }
+
+        LogManager.debug(String.format("[Analytics][Event] Value: %d, Action: %s, Label: %s, Category: %s", value,
+                label, action, category), 5);
 
         ga.event().eventValue(value).eventLabel(label).eventAction(action).eventCategory(category).sendAsync();
     }

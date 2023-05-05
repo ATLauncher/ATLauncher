@@ -19,7 +19,6 @@ package com.atlauncher.gui.dialogs.editinstancedialog;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.Window;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
@@ -43,6 +42,7 @@ import com.atlauncher.data.AbstractAccount;
 import com.atlauncher.data.Instance;
 import com.atlauncher.evnt.listener.MinecraftLaunchListener;
 import com.atlauncher.evnt.manager.MinecraftLaunchManager;
+import com.atlauncher.evnt.manager.TabChangeManager;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.Utils;
@@ -63,18 +63,12 @@ public class EditInstanceDialog extends JFrame implements MinecraftLaunchListene
     private final JButton playOfflineButton = new JButton(GetText.tr("Play Offline"));
     private final JButton playButton = new JButton(GetText.tr("Play"));
 
-    public EditInstanceDialog(Instance instance) {
-        this(App.launcher.getParent(), instance);
-    }
-
-    public EditInstanceDialog(Window parent, Instance instance) {
+    public EditInstanceDialog(Instance instance, Integer selectedTabIndex) {
         super(GetText.tr("Editing Instance {0}", instance.launcher.name));
 
         this.instance = instance;
 
         MinecraftLaunchManager.addListener(this);
-
-        Analytics.sendScreenView("Edit Instance Dialog");
 
         setIconImage(Utils.getImage("/assets/image/icon.png"));
         setLayout(new BorderLayout());
@@ -94,11 +88,11 @@ public class EditInstanceDialog extends JFrame implements MinecraftLaunchListene
         shaderPacksSection = new ShaderPacksSection(this, instance);
         notesSection = new NotesSection(this, instance);
 
-        setupTabbedPane();
+        setupTabbedPane(selectedTabIndex);
         setupBottomPanel();
         updateUIState();
 
-        setLocationRelativeTo(parent);
+        setLocationRelativeTo(App.launcher.getParent());
         setVisible(true);
     }
 
@@ -115,7 +109,7 @@ public class EditInstanceDialog extends JFrame implements MinecraftLaunchListene
         dispose();
     }
 
-    private void setupTabbedPane() {
+    private void setupTabbedPane(Integer selectedTabIndex) {
         tabbedPane.setFont(App.THEME.getNormalFont().deriveFont(14.0F));
         tabbedPane.addTab(GetText.tr("Information"), new InformationSection(this, instance));
         tabbedPane.addTab(GetText.tr("Mods"), modsSection);
@@ -126,6 +120,21 @@ public class EditInstanceDialog extends JFrame implements MinecraftLaunchListene
         tabbedPane.addTab(GetText.tr("Export"), new ExportSection(this, instance));
         tabbedPane.addTab(GetText.tr("Settings"), new SettingsSection(this, instance));
         tabbedPane.setOpaque(true);
+
+        tabbedPane.addChangeListener(e -> {
+            Analytics.sendScreenView(
+                    String.format("Edit Instance Dialog - %s",
+                            tabbedPane.getSelectedComponent().getClass().getSimpleName()));
+            TabChangeManager.post(tabbedPane.getSelectedIndex());
+        });
+
+        if (selectedTabIndex == null) {
+            Analytics.sendScreenView(
+                    String.format("Edit Instance Dialog - %s",
+                            tabbedPane.getSelectedComponent().getClass().getSimpleName()));
+        } else {
+            tabbedPane.setSelectedIndex(selectedTabIndex);
+        }
 
         tabbedPane.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, UIManager.getColor("Component.borderColor")));
 

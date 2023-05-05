@@ -316,7 +316,7 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
 
     private void openEditInstanceDialog(Integer selectedTabIndex) {
         if (editInstanceDialog == null) {
-            editInstanceDialog = new EditInstanceDialog(instance);
+            editInstanceDialog = new EditInstanceDialog(instance, selectedTabIndex);
             editInstanceDialog.addWindowListener(new WindowAdapter() {
                 @Override
                 public void windowClosed(WindowEvent e) {
@@ -325,11 +325,12 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
             });
         } else {
             editInstanceDialog.requestFocus();
+
+            if (selectedTabIndex != null) {
+                editInstanceDialog.tabbedPane.setSelectedIndex(selectedTabIndex);
+            }
         }
 
-        if (selectedTabIndex != null) {
-            editInstanceDialog.tabbedPane.setSelectedIndex(selectedTabIndex);
-        }
     }
 
     private void play(boolean offline) {
