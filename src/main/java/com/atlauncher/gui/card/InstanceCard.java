@@ -53,8 +53,6 @@ import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.gui.components.CollapsiblePanel;
 import com.atlauncher.gui.components.DropDownButton;
 import com.atlauncher.gui.components.ImagePanel;
-import com.atlauncher.gui.dialogs.InstanceExportDialog;
-import com.atlauncher.gui.dialogs.InstanceSettingsDialog;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.gui.dialogs.editinstancedialog.EditInstanceDialog;
 import com.atlauncher.managers.AccountManager;
@@ -78,7 +76,7 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
     private final JButton updateButton = new JButton(GetText.tr("Update"));
     private final JButton deleteButton = new JButton(GetText.tr("Delete"));
     private final JButton exportButton = new JButton(GetText.tr("Export"));
-    private final JButton editInstanceButton = new JButton(GetText.tr("Edit Instance"));
+    private final JButton editButton = new JButton(GetText.tr("Edit"));
     private final JButton serversButton = new JButton(GetText.tr("Servers"));
     private final JButton openWebsite = new JButton(GetText.tr("Open Website"));
     private final JButton openButton = new JButton(GetText.tr("Open Folder"));
@@ -153,7 +151,7 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
 
         top.add(this.playButton);
         top.add(this.updateButton);
-        top.add(this.editInstanceButton);
+        top.add(this.editButton);
         top.add(this.backupButton);
         top.add(this.settingsButton);
 
@@ -269,21 +267,11 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
                     instance.getAnalyticsCategory());
             instance.update();
         });
-        this.editInstanceButton.addActionListener(e -> {
+        this.editButton.addActionListener(e -> {
             Analytics.sendEvent(instance.launcher.pack + " - " + instance.launcher.version, "EditInstance",
                     instance.getAnalyticsCategory());
 
-            if (editInstanceDialog == null) {
-                editInstanceDialog = new EditInstanceDialog(instance);
-                editInstanceDialog.addWindowListener(new WindowAdapter() {
-                    @Override
-                    public void windowClosed(WindowEvent e) {
-                        editInstanceDialog = null;
-                    }
-                });
-            } else {
-                editInstanceDialog.requestFocus();
-            }
+            openEditInstanceDialog();
         });
         this.serversButton.addActionListener(e -> OS.openWebBrowser(
                 String.format("%s/%s?utm_source=launcher&utm_medium=button&utm_campaign=instance_v2_button",
@@ -293,7 +281,8 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
         this.settingsButton.addActionListener(e -> {
             Analytics.sendEvent(instance.launcher.pack + " - " + instance.launcher.version, "Settings",
                     instance.getAnalyticsCategory());
-            new InstanceSettingsDialog(instance);
+
+            openEditInstanceDialog(7);
         });
         this.deleteButton.addActionListener(e -> {
             int ret = DialogManager.yesNoDialog(false).setTitle(GetText.tr("Delete Instance"))
@@ -317,8 +306,30 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
         this.exportButton.addActionListener(e -> {
             Analytics.sendEvent(instance.launcher.pack + " - " + instance.launcher.version, "Export",
                     instance.getAnalyticsCategory());
-            new InstanceExportDialog(instance);
+            openEditInstanceDialog(6);
         });
+    }
+
+    private void openEditInstanceDialog() {
+        openEditInstanceDialog(null);
+    }
+
+    private void openEditInstanceDialog(Integer selectedTabIndex) {
+        if (editInstanceDialog == null) {
+            editInstanceDialog = new EditInstanceDialog(instance);
+            editInstanceDialog.addWindowListener(new WindowAdapter() {
+                @Override
+                public void windowClosed(WindowEvent e) {
+                    editInstanceDialog = null;
+                }
+            });
+        } else {
+            editInstanceDialog.requestFocus();
+        }
+
+        if (selectedTabIndex != null) {
+            editInstanceDialog.tabbedPane.setSelectedIndex(selectedTabIndex);
+        }
     }
 
     private void play(boolean offline) {
@@ -504,7 +515,7 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
         this.updateButton.setText(GetText.tr("Update"));
         this.backupButton.setText(GetText.tr("Backup"));
         this.deleteButton.setText(GetText.tr("Delete"));
-        this.editInstanceButton.setText(GetText.tr("Edit Instance"));
+        this.editButton.setText(GetText.tr("Edit"));
         this.serversButton.setText(GetText.tr("Servers"));
         this.openWebsite.setText(GetText.tr("Open Website"));
         this.openButton.setText(GetText.tr("Open Folder"));

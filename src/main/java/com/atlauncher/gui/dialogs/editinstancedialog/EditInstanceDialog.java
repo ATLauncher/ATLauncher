@@ -123,6 +123,7 @@ public class EditInstanceDialog extends JFrame implements MinecraftLaunchListene
         tabbedPane.addTab(GetText.tr("Shader Packs"), shaderPacksSection);
         tabbedPane.addTab(GetText.tr("Logs"), new LogsSection(this, instance));
         tabbedPane.addTab(GetText.tr("Notes"), notesSection);
+        tabbedPane.addTab(GetText.tr("Export"), new ExportSection(this, instance));
         tabbedPane.addTab(GetText.tr("Settings"), new SettingsSection(this, instance));
         tabbedPane.setOpaque(true);
 

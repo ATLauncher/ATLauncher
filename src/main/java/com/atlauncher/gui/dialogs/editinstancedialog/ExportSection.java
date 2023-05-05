@@ -15,15 +15,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.atlauncher.gui.dialogs;
+package com.atlauncher.gui.dialogs.editinstancedialog;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.io.File;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -37,7 +35,6 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
-import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -50,47 +47,32 @@ import com.atlauncher.constants.UIConstants;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.InstanceExportFormat;
 import com.atlauncher.gui.components.JLabelWithHover;
+import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.managers.AccountManager;
 import com.atlauncher.utils.ComboItem;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
-import com.atlauncher.utils.WindowUtils;
 
-@SuppressWarnings("serial")
-public class InstanceExportDialog extends JDialog {
-    private final Instance instance;
+public class ExportSection extends SectionPanel {
     private final List<String> overrides = new ArrayList<>();
 
     private final JPanel topPanel = new JPanel();
     private final JPanel bottomPanel = new JPanel();
+    private final JPanel overridesPanel = new JPanel();
 
     final ImageIcon HELP_ICON = Utils.getIconImage(App.THEME.getIconPath("question"));
 
     final GridBagConstraints gbc = new GridBagConstraints();
 
-    public InstanceExportDialog(Instance instance) {
-        // #. {0} is the name of the instance we're exporting
-        super(App.launcher.getParent(), GetText.tr("Export {0}", instance.launcher.name), ModalityType.DOCUMENT_MODAL);
-        this.instance = instance;
+    public ExportSection(EditInstanceDialog parent, Instance instance) {
+        super(parent, instance);
 
         setupComponents();
-
-        addWindowListener(new WindowAdapter() {
-            public void windowClosing(WindowEvent arg0) {
-                close();
-            }
-        });
-
-        WindowUtils.resizeForContent(this);
-
-        setVisible(true);
+        resetOverrides();
     }
 
     private void setupComponents() {
-        setLocationRelativeTo(App.launcher.getParent());
         setLayout(new BorderLayout());
-        setResizable(true);
-        setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 
         topPanel.setLayout(new GridBagLayout());
 
@@ -230,9 +212,76 @@ public class InstanceExportDialog extends JDialog {
         gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
 
-        JPanel overridesPanel = new JPanel();
         overridesPanel.setLayout(new BoxLayout(overridesPanel, BoxLayout.Y_AXIS));
         overridesPanel.setBorder(BorderFactory.createEmptyBorder(0, -3, 0, 0));
+
+        JScrollPane overridesScrollPanel = new JScrollPane(overridesPanel, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+                JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED) {
+            {
+                this.getVerticalScrollBar().setUnitIncrement(8);
+            }
+        };
+        overridesScrollPanel.setPreferredSize(new Dimension(350, 200));
+
+        topPanel.add(overridesScrollPanel, gbc);
+
+        // bottom panel
+        bottomPanel.setLayout(new FlowLayout());
+
+        JButton exportButton = new JButton(GetText.tr("Export"));
+        exportButton.addActionListener(arg0 -> {
+            instance.scanMissingMods(parent);
+
+            final ProgressDialog dialog = new ProgressDialog(GetText.tr("Exporting Instance"), 0,
+                    GetText.tr("Exporting Instance. Please wait..."), null, parent);
+
+            dialog.addThread(new Thread(() -> {
+                InstanceExportFormat exportFormat = ((ComboItem<InstanceExportFormat>) format.getSelectedItem())
+                        .getValue();
+
+                if (instance.export(name.getText(), version.getText(), author.getText(),
+                        exportFormat, saveTo.getText(), overrides)) {
+                    instance.launcher.lastExportName = name.getText();
+                    instance.launcher.lastExportVersion = version.getText();
+                    instance.launcher.lastExportAuthor = author.getText();
+                    instance.launcher.lastExportSaveTo = saveTo.getText();
+                    instance.save();
+
+                    App.TOASTER.pop(GetText.tr("Exported Instance Successfully"));
+                    String safePathName = name.getText().replaceAll("[\\\"?:*<>|]", "");
+                    if (exportFormat == InstanceExportFormat.CURSEFORGE_AND_MODRINTH) {
+                        OS.openFileExplorer(Paths.get(saveTo.getText()));
+                    } else {
+                        OS.openFileExplorer(
+                                Paths.get(saveTo.getText())
+                                        .resolve(String.format("%s.%s", safePathName,
+                                                (exportFormat == InstanceExportFormat.MODRINTH ? "mrpack" : "zip"))),
+                                true);
+                    }
+                } else {
+                    App.TOASTER.popError(GetText.tr("Failed to export instance. Check the console for details"));
+                }
+                dialog.close();
+            }));
+
+            dialog.start();
+            resetOverrides();
+        });
+
+        JButton resetButton = new JButton(GetText.tr("Reset"));
+        resetButton.addActionListener(arg0 -> {
+            resetOverrides();
+        });
+
+        bottomPanel.add(resetButton);
+        bottomPanel.add(exportButton);
+
+        add(topPanel, BorderLayout.CENTER);
+        add(bottomPanel, BorderLayout.SOUTH);
+    }
+
+    public void resetOverrides() {
+        overridesPanel.removeAll();
 
         // get all files ignoring ATLauncher specific things as well as naughtys
         File[] files = instance.getRoot().toFile()
@@ -268,73 +317,9 @@ public class InstanceExportDialog extends JDialog {
 
             overridesPanel.add(checkBox);
         }
-
-        JScrollPane overridesScrollPanel = new JScrollPane(overridesPanel, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-                JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED) {
-            {
-                this.getVerticalScrollBar().setUnitIncrement(8);
-            }
-        };
-        overridesScrollPanel.setPreferredSize(new Dimension(350, 200));
-
-        topPanel.add(overridesScrollPanel, gbc);
-
-        // bottom panel
-        bottomPanel.setLayout(new FlowLayout());
-
-        JButton exportButton = new JButton(GetText.tr("Export"));
-        exportButton.addActionListener(arg0 -> {
-            instance.scanMissingMods(this);
-
-            final ProgressDialog dialog = new ProgressDialog(GetText.tr("Exporting Instance"), 0,
-                    GetText.tr("Exporting Instance. Please wait..."), null, this);
-
-            dialog.addThread(new Thread(() -> {
-                InstanceExportFormat exportFormat = ((ComboItem<InstanceExportFormat>) format.getSelectedItem())
-                        .getValue();
-
-                if (instance.export(name.getText(), version.getText(), author.getText(),
-                        exportFormat, saveTo.getText(), overrides)) {
-                    instance.launcher.lastExportName = name.getText();
-                    instance.launcher.lastExportVersion = version.getText();
-                    instance.launcher.lastExportAuthor = author.getText();
-                    instance.launcher.lastExportSaveTo = saveTo.getText();
-                    instance.save();
-
-                    App.TOASTER.pop(GetText.tr("Exported Instance Successfully"));
-                    String safePathName = name.getText().replaceAll("[\\\"?:*<>|]", "");
-                    if (exportFormat == InstanceExportFormat.CURSEFORGE_AND_MODRINTH) {
-                        OS.openFileExplorer(Paths.get(saveTo.getText()));
-                    } else {
-                        OS.openFileExplorer(
-                                Paths.get(saveTo.getText())
-                                        .resolve(String.format("%s.%s", safePathName,
-                                                (exportFormat == InstanceExportFormat.MODRINTH ? "mrpack" : "zip"))),
-                                true);
-                    }
-                } else {
-                    App.TOASTER.popError(GetText.tr("Failed to export instance. Check the console for details"));
-                }
-                dialog.close();
-                close();
-            }));
-
-            dialog.start();
-        });
-        bottomPanel.add(exportButton);
-
-        JButton cancelButton = new JButton(GetText.tr("Cancel"));
-        cancelButton.addActionListener(arg0 -> {
-            close();
-        });
-        bottomPanel.add(cancelButton);
-
-        add(topPanel, BorderLayout.CENTER);
-        add(bottomPanel, BorderLayout.SOUTH);
     }
 
-    private void close() {
-        setVisible(false);
-        dispose();
+    @Override
+    public void updateUIState() {
     }
 }
