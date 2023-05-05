@@ -28,21 +28,29 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
-import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 
 import org.mini2Dx.gettext.GetText;
 
 import com.atlauncher.App;
+import com.atlauncher.builders.HTMLBuilder;
+import com.atlauncher.data.AbstractAccount;
 import com.atlauncher.data.Instance;
+import com.atlauncher.evnt.listener.MinecraftLaunchListener;
+import com.atlauncher.evnt.manager.MinecraftLaunchManager;
+import com.atlauncher.managers.DialogManager;
 import com.atlauncher.network.Analytics;
+import com.atlauncher.utils.Utils;
 
-public class EditInstanceDialog extends JDialog {
+public class EditInstanceDialog extends JFrame implements MinecraftLaunchListener {
     private Instance instance;
+    private Process runningProcess = null;
+    private boolean launching = false;
 
     public JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.LEFT);
 
@@ -51,17 +59,24 @@ public class EditInstanceDialog extends JDialog {
     private final ShaderPacksSection shaderPacksSection;
     private final NotesSection notesSection;
 
+    private final JButton endProcessButton = new JButton(GetText.tr("End Process"));
+    private final JButton playOfflineButton = new JButton(GetText.tr("Play Offline"));
+    private final JButton playButton = new JButton(GetText.tr("Play"));
+
     public EditInstanceDialog(Instance instance) {
         this(App.launcher.getParent(), instance);
     }
 
     public EditInstanceDialog(Window parent, Instance instance) {
-        super(parent, GetText.tr("Editing Instance {0}", instance.launcher.name), ModalityType.DOCUMENT_MODAL);
+        super(GetText.tr("Editing Instance {0}", instance.launcher.name));
 
         this.instance = instance;
 
+        MinecraftLaunchManager.addListener(this);
+
         Analytics.sendScreenView("Edit Instance Dialog");
 
+        setIconImage(Utils.getImage("/assets/image/icon.png"));
         setLayout(new BorderLayout());
         setResizable(true);
         setMinimumSize(new Dimension(950, 600));
@@ -69,6 +84,7 @@ public class EditInstanceDialog extends JDialog {
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent arg0) {
+                MinecraftLaunchManager.removeListener(EditInstanceDialog.this);
                 close();
             }
         });
@@ -80,6 +96,7 @@ public class EditInstanceDialog extends JDialog {
 
         setupTabbedPane();
         setupBottomPanel();
+        updateUIState();
 
         setLocationRelativeTo(parent);
         setVisible(true);
@@ -112,13 +129,6 @@ public class EditInstanceDialog extends JDialog {
         tabbedPane.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, UIManager.getColor("Component.borderColor")));
 
         add(tabbedPane, BorderLayout.CENTER);
-
-        for (int i = 0; i < tabbedPane.getTabCount(); i++) {
-            JLabel titleLabel = new JLabel(tabbedPane.getTitleAt(i));
-            titleLabel.setFont(App.THEME.getBoldFont().deriveFont(14f));
-            titleLabel.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
-            tabbedPane.setTabComponentAt(i, titleLabel);
-        }
     }
 
     private void setupBottomPanel() {
@@ -127,19 +137,23 @@ public class EditInstanceDialog extends JDialog {
         bottomActionsPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
         bottomActionsPanel.setLayout(new BoxLayout(bottomActionsPanel, BoxLayout.X_AXIS));
 
-        JButton playButton = new JButton(GetText.tr("Play"));
+        endProcessButton.addActionListener(e -> {
+            int ret = DialogManager.yesNoDialog().setTitle(GetText.tr("End Process?"))
+                    .setContent(new HTMLBuilder().center().text(GetText.tr(
+                            "Are you sure you want to end the Minecraft process?<br/><br/>Doing so can cause corruption of your instance including corruption of your worlds."))
+                            .build())
+                    .setType(DialogManager.QUESTION).show();
+            if (ret == DialogManager.YES_OPTION) {
+                Analytics.sendEvent("EndProcess", "EditInstanceDialog");
+                App.launcher.killMinecraft(runningProcess);
+            }
+        });
+
         playButton.addActionListener(e -> {
-            SwingUtilities.invokeLater(() -> {
-                close();
-            });
             instance.launch(false);
         });
 
-        JButton playOfflineButton = new JButton(GetText.tr("Play Offline"));
         playOfflineButton.addActionListener(e -> {
-            SwingUtilities.invokeLater(() -> {
-                close();
-            });
             instance.launch(true);
         });
 
@@ -149,6 +163,8 @@ public class EditInstanceDialog extends JDialog {
         });
 
         bottomActionsPanel.add(Box.createHorizontalGlue());
+        bottomActionsPanel.add(endProcessButton);
+        bottomActionsPanel.add(Box.createHorizontalStrut(5));
         bottomActionsPanel.add(playButton);
         bottomActionsPanel.add(Box.createHorizontalStrut(5));
         bottomActionsPanel.add(playOfflineButton);
@@ -158,9 +174,64 @@ public class EditInstanceDialog extends JDialog {
         add(bottomActionsPanel, BorderLayout.SOUTH);
     }
 
+    private void updateUIState() {
+        for (int i = 0; i < tabbedPane.getTabCount(); i++) {
+            JLabel titleLabel = new JLabel(tabbedPane.getTitleAt(i));
+            titleLabel.setFont(App.THEME.getBoldFont().deriveFont(14f));
+            titleLabel.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
+            tabbedPane.setTabComponentAt(i, titleLabel);
+        }
+
+        boolean isLaunchingOrLaunched = launching || runningProcess != null;
+
+        endProcessButton.setVisible(isLaunchingOrLaunched);
+
+        playButton.setEnabled(!isLaunchingOrLaunched);
+        playButton.setToolTipText(!isLaunchingOrLaunched ? null : GetText.tr("Minecraft is already running"));
+
+        playOfflineButton.setEnabled(!isLaunchingOrLaunched);
+        playOfflineButton.setToolTipText(!isLaunchingOrLaunched ? null : GetText.tr("Minecraft is already running"));
+    }
+
     public void refreshTableModels() {
         modsSection.refreshTableModel();
         resourcePacksSection.refreshTableModel();
         shaderPacksSection.refreshTableModel();
+    }
+
+    @Override
+    public void minecraftLaunching(Instance instance) {
+        if (instance == this.instance) {
+            launching = true;
+            updateUIState();
+        } else {
+            close();
+        }
+    }
+
+    @Override
+    public void minecraftLaunchFailed(Instance instance, String reason) {
+        if (instance == this.instance) {
+            launching = false;
+            updateUIState();
+        }
+    }
+
+    @Override
+    public void minecraftLaunched(Instance instance, AbstractAccount account, Process process) {
+        if (instance == this.instance) {
+            launching = false;
+            runningProcess = process;
+            updateUIState();
+        }
+    }
+
+    @Override
+    public void minecraftClosed(Instance instance) {
+        if (instance == this.instance) {
+            launching = false;
+            runningProcess = null;
+            updateUIState();
+        }
     }
 }

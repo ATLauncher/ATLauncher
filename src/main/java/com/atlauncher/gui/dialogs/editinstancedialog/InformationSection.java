@@ -50,6 +50,8 @@ public class InformationSection extends SectionPanel {
 
     private final EditInstanceDialog editInstanceDialog;
 
+    private final SideBarButton update = new SideBarButton();
+    private final SideBarButton reinstall = new SideBarButton();
     private final SideBarButton changeLoaderVersionButton = new SideBarButton();
     private final SideBarButton removeInstallFabricButton = new SideBarButton();
     private final SideBarButton removeInstallForgeButton = new SideBarButton();
@@ -81,7 +83,7 @@ public class InformationSection extends SectionPanel {
         this.editInstanceDialog = editInstanceDialog;
 
         setupComponents();
-        reloadState();
+        updateUIState();
     }
 
     private void setupComponents() {
@@ -287,29 +289,29 @@ public class InformationSection extends SectionPanel {
 
         sideBar.addSeparator();
 
-        SideBarButton update = new SideBarButton(GetText.tr("Update"));
+        update.setText(GetText.tr("Update"));
         update.setVisible(instance.isUpdatable() && instance.hasUpdate());
         update.addActionListener(e -> {
             instance.update();
 
-            reloadState();
+            updateUIState();
         });
         sideBar.add(update);
 
-        SideBarButton reinstall = new SideBarButton(
+        reinstall.setText(
                 instance.isVanillaInstance() ? GetText.tr("Change Minecraft Version") : GetText.tr("Reinstall"));
         reinstall.setVisible(instance.isUpdatable());
         reinstall.addActionListener(e -> {
             instance.startReinstall();
 
-            reloadState();
+            updateUIState();
         });
         sideBar.add(reinstall);
 
         changeLoaderVersionButton.addActionListener(e -> {
             instance.changeLoaderVersion();
 
-            reloadState();
+            updateUIState();
         });
         sideBar.add(changeLoaderVersionButton);
         sideBar.addSeparator();
@@ -321,7 +323,7 @@ public class InformationSection extends SectionPanel {
                 instance.removeLoader();
             }
 
-            reloadState();
+            updateUIState();
         });
         sideBar.add(removeInstallFabricButton);
 
@@ -332,7 +334,7 @@ public class InformationSection extends SectionPanel {
                 instance.removeLoader();
             }
 
-            reloadState();
+            updateUIState();
         });
         sideBar.add(removeInstallForgeButton);
 
@@ -343,7 +345,7 @@ public class InformationSection extends SectionPanel {
                 instance.removeLoader();
             }
 
-            reloadState();
+            updateUIState();
         });
         sideBar.add(removeInstallLegacyFabricButton);
 
@@ -354,7 +356,7 @@ public class InformationSection extends SectionPanel {
                 instance.removeLoader();
             }
 
-            reloadState();
+            updateUIState();
         });
         sideBar.add(removeInstallQuiltButton);
         sideBar.addSeparator();
@@ -390,7 +392,8 @@ public class InformationSection extends SectionPanel {
         add(splitPane, BorderLayout.CENTER);
     }
 
-    private void reloadState() {
+    @Override
+    public void updateUIState() {
         packLabel.setVisible(!instance.isVanillaInstance());
         pack.setVisible(!instance.isVanillaInstance());
         platformLabel.setVisible(!instance.isVanillaInstance());
@@ -491,6 +494,33 @@ public class InformationSection extends SectionPanel {
                             "Legacy Fabric", instance.launcher.loaderVersion.getLoaderType()));
         } else {
             removeInstallLegacyFabricButton.setToolTipText(null);
+        }
+
+        update.setEnabled(!isLaunchingOrLaunched);
+        reinstall.setEnabled(!isLaunchingOrLaunched);
+        changeLoaderVersionButton.setEnabled(!isLaunchingOrLaunched);
+
+        update.setToolTipText(
+                !isLaunchingOrLaunched ? null : GetText.tr("This cannot be done while Minecraft is running"));
+        reinstall.setToolTipText(
+                !isLaunchingOrLaunched ? null : GetText.tr("This cannot be done while Minecraft is running"));
+        changeLoaderVersionButton.setToolTipText(
+                !isLaunchingOrLaunched ? null : GetText.tr("This cannot be done while Minecraft is running"));
+
+        if (isLaunchingOrLaunched) {
+            update.setEnabled(false);
+            reinstall.setEnabled(false);
+            changeLoaderVersionButton.setEnabled(false);
+            removeInstallFabricButton.setEnabled(false);
+            removeInstallForgeButton.setEnabled(false);
+            removeInstallQuiltButton.setEnabled(false);
+            removeInstallLegacyFabricButton.setEnabled(false);
+
+            removeInstallFabricButton.setToolTipText(GetText.tr("This cannot be done while Minecraft is running"));
+            removeInstallForgeButton.setToolTipText(GetText.tr("This cannot be done while Minecraft is running"));
+            removeInstallQuiltButton.setToolTipText(GetText.tr("This cannot be done while Minecraft is running"));
+            removeInstallLegacyFabricButton
+                    .setToolTipText(GetText.tr("This cannot be done while Minecraft is running"));
         }
     }
 

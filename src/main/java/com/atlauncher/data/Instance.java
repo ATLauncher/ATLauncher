@@ -123,6 +123,7 @@ import com.atlauncher.data.multimc.MultiMCManifest;
 import com.atlauncher.data.multimc.MultiMCRequire;
 import com.atlauncher.data.technic.TechnicModpack;
 import com.atlauncher.data.technic.TechnicSolderModpack;
+import com.atlauncher.evnt.manager.MinecraftLaunchManager;
 import com.atlauncher.exceptions.CommandException;
 import com.atlauncher.exceptions.InvalidMinecraftVersion;
 import com.atlauncher.exceptions.InvalidPack;
@@ -919,6 +920,8 @@ public class Instance extends MinecraftVersion {
             }
         }
 
+        MinecraftLaunchManager.minecraftLaunching(this);
+
         Path nativesTempDir = FileSystem.TEMP.resolve("natives-" + UUID.randomUUID().toString().replace("-", ""));
         Path lwjglNativesTempDir = FileSystem.TEMP
                 .resolve("lwjgl-natives-" + UUID.randomUUID().toString().replace("-", ""));
@@ -954,7 +957,6 @@ public class Instance extends MinecraftVersion {
         }
 
         Analytics.sendEvent(this.launcher.pack + " - " + this.launcher.version, offline ? "PlayOffline" : "Play",
-
                 getAnalyticsCategory());
 
         Thread launcher = new Thread(() -> {
@@ -1002,6 +1004,7 @@ public class Instance extends MinecraftVersion {
                         session = loginDialog.getReturnValue();
 
                         if (session == null) {
+                            MinecraftLaunchManager.minecraftLaunchFailed(this, "Mojang session was null");
                             App.launcher.setMinecraftLaunched(false);
                             if (App.launcher.getParent() != null) {
                                 App.launcher.getParent().setVisible(true);
@@ -1012,6 +1015,7 @@ public class Instance extends MinecraftVersion {
 
                     if (enableCommands && preLaunchCommand != null) {
                         if (!executeCommand(preLaunchCommand)) {
+                            MinecraftLaunchManager.minecraftLaunchFailed(this, "Failed to execute pre-launch command");
                             LogManager.error("Failed to execute pre-launch command");
 
                             App.launcher.setMinecraftLaunched(false);
@@ -1049,12 +1053,14 @@ public class Instance extends MinecraftVersion {
                             DialogManager.okDialog().setTitle(GetText.tr("Error Logging In"))
                                     .setContent(GetText.tr("Couldn't login with Microsoft account"))
                                     .setType(DialogManager.ERROR).show();
+                            MinecraftLaunchManager.minecraftLaunchFailed(this, "Failed to login to Microsoft account");
                             return;
                         }
                     }
 
                     if (enableCommands && preLaunchCommand != null) {
                         if (!executeCommand(preLaunchCommand)) {
+                            MinecraftLaunchManager.minecraftLaunchFailed(this, "Failed to execute pre-launch command");
                             LogManager.error("Failed to execute pre-launch command");
 
                             App.launcher.setMinecraftLaunched(false);
@@ -1073,6 +1079,7 @@ public class Instance extends MinecraftVersion {
                 }
 
                 if (process == null) {
+                    MinecraftLaunchManager.minecraftLaunchFailed(this, "Failed to get process for Minecraft");
                     LogManager.error("Failed to get process for Minecraft");
                     App.launcher.setMinecraftLaunched(false);
                     if (App.launcher.getParent() != null) {
@@ -1117,7 +1124,7 @@ public class Instance extends MinecraftVersion {
                 } catch (Throwable t) {
                     // ignored
                 }
-
+                MinecraftLaunchManager.minecraftLaunched(this, account, process);
                 App.launcher.showKillMinecraft(process);
                 InputStream is = process.getInputStream();
                 InputStreamReader isr = new InputStreamReader(is);
@@ -1188,6 +1195,7 @@ public class Instance extends MinecraftVersion {
 
                     LogManager.minecraft(line);
                 }
+                MinecraftLaunchManager.minecraftClosed(this);
                 App.launcher.hideKillMinecraft();
                 if (App.launcher.getParent() != null && App.settings.keepLauncherOpen) {
                     App.launcher.getParent().setVisible(true);

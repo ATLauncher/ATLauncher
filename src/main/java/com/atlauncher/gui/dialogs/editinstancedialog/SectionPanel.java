@@ -22,11 +22,15 @@ import java.awt.BorderLayout;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
+import com.atlauncher.data.AbstractAccount;
 import com.atlauncher.data.Instance;
+import com.atlauncher.evnt.listener.MinecraftLaunchListener;
+import com.atlauncher.evnt.manager.MinecraftLaunchManager;
 
-public class SectionPanel extends JPanel {
+public abstract class SectionPanel extends JPanel implements MinecraftLaunchListener {
     protected EditInstanceDialog parent;
     protected Instance instance;
+    protected boolean isLaunchingOrLaunched = false;
 
     public SectionPanel(EditInstanceDialog parent, Instance instance) {
         super();
@@ -36,5 +40,41 @@ public class SectionPanel extends JPanel {
 
         setBorder(new EmptyBorder(5, 5, 5, 5));
         setLayout(new BorderLayout());
+
+        MinecraftLaunchManager.addListener(this);
+    }
+
+    public abstract void updateUIState();
+
+    @Override
+    public void minecraftLaunching(Instance instance) {
+        if (instance == this.instance) {
+            isLaunchingOrLaunched = true;
+            updateUIState();
+        }
+    }
+
+    @Override
+    public void minecraftLaunchFailed(Instance instance, String reason) {
+        if (instance == this.instance) {
+            isLaunchingOrLaunched = false;
+            updateUIState();
+        }
+    }
+
+    @Override
+    public void minecraftLaunched(Instance instance, AbstractAccount account, Process process) {
+        if (instance == this.instance) {
+            isLaunchingOrLaunched = true;
+            updateUIState();
+        }
+    }
+
+    @Override
+    public void minecraftClosed(Instance instance) {
+        if (instance == this.instance) {
+            isLaunchingOrLaunched = false;
+            updateUIState();
+        }
     }
 }

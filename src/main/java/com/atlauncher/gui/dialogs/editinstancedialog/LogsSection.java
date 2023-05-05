@@ -279,4 +279,8 @@ public class LogsSection extends SectionPanel {
             logsComboBox.addItem(new ComboItem<>(path, instance.ROOT.relativize(path).toString()));
         });
     }
+
+    @Override
+    public void updateUIState() {
+    }
 }

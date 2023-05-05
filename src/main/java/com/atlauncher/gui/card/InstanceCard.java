@@ -26,6 +26,8 @@ import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.IOException;
 
 import javax.swing.BorderFactory;
@@ -108,6 +110,7 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
     private final DropDownButton getHelpButton = new DropDownButton(GetText.tr("Get Help"), getHelpPopupMenu);
 
     private final JMenuItem renameMenuItem = new JMenuItem(GetText.tr("Rename"));
+    private EditInstanceDialog editInstanceDialog = null;
 
     public InstanceCard(Instance instance) {
         super(instance);
@@ -269,8 +272,18 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
         this.editInstanceButton.addActionListener(e -> {
             Analytics.sendEvent(instance.launcher.pack + " - " + instance.launcher.version, "EditInstance",
                     instance.getAnalyticsCategory());
-            new EditInstanceDialog(instance);
-            exportButton.setVisible(instance.canBeExported());
+
+            if (editInstanceDialog == null) {
+                editInstanceDialog = new EditInstanceDialog(instance);
+                editInstanceDialog.addWindowListener(new WindowAdapter() {
+                    @Override
+                    public void windowClosed(WindowEvent e) {
+                        editInstanceDialog = null;
+                    }
+                });
+            } else {
+                editInstanceDialog.requestFocus();
+            }
         });
         this.serversButton.addActionListener(e -> OS.openWebBrowser(
                 String.format("%s/%s?utm_source=launcher&utm_medium=button&utm_campaign=instance_v2_button",

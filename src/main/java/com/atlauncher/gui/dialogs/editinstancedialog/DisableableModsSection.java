@@ -106,6 +106,21 @@ public abstract class DisableableModsSection extends SectionPanel {
     private final List<Type> modTypes;
     private final boolean showVersionColumn;
 
+    private final SideBarButton downloadMoreSideBarButton = new SideBarButton(GetText.tr("Download More"));
+    private final SideBarButton addFileSideBarButton = new SideBarButton(GetText.tr("Add File"));
+    private final SideBarButton checkForUpdatesSideBarButton = new SideBarButton(GetText.tr("Check For Updates"));
+    private final SideBarButton reinstallSideBarButton = new SideBarButton(GetText.tr("Reinstall"));
+    private final SideBarButton enableSideBarButton = new SideBarButton(GetText.tr("Enable"));
+    private final SideBarButton disableSideBarButton = new SideBarButton(GetText.tr("Disable"));
+    private final SideBarButton deleteSideBarButton = new SideBarButton(GetText.tr("Delete"));
+    private final SideBarButton refreshSideBarButton = new SideBarButton(GetText.tr("Refresh List"));
+
+    private final JMenuItem checkForUpdateMenuItem = new JMenuItem(GetText.tr("Check For Updates"));
+    private final JMenuItem reinstallMenuItem = new JMenuItem(GetText.tr("Reinstall"));
+    private final JMenuItem enableMenuItem = new JMenuItem(GetText.tr("Enable"));
+    private final JMenuItem disableMenuItem = new JMenuItem(GetText.tr("Disable"));
+    private final JMenuItem deleteMenuItem = new JMenuItem(GetText.tr("Delete"));
+
     public DisableableModsSection(EditInstanceDialog parent, Instance instance, List<Path> filePaths,
             List<Type> modTypes,
             boolean showVersionColumn) {
@@ -118,6 +133,8 @@ public abstract class DisableableModsSection extends SectionPanel {
         setupComponents();
 
         setupTableContextMenu();
+
+        updateUIState();
     }
 
     private void executeSearch() {
@@ -250,7 +267,7 @@ public abstract class DisableableModsSection extends SectionPanel {
 
             @Override
             public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return columnIndex == 1;
+                return !isLaunchingOrLaunched && columnIndex == 1;
             }
         };
 
@@ -387,15 +404,6 @@ public abstract class DisableableModsSection extends SectionPanel {
 
         splitPane.setLeftComponent(tableScrollPane);
 
-        SideBarButton downloadMoreSideBarButton = new SideBarButton(GetText.tr("Download More"));
-        if (instance.launcher.loaderVersion == null && modTypes.contains(Type.mods)) {
-            downloadMoreSideBarButton.setEnabled(false);
-            downloadMoreSideBarButton
-                    .setToolTipText(GetText.tr("In order to download mods, you must have a modloader installed"));
-        } else {
-            downloadMoreSideBarButton.setEnabled(true);
-            downloadMoreSideBarButton.setToolTipText(null);
-        }
         downloadMoreSideBarButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -406,7 +414,6 @@ public abstract class DisableableModsSection extends SectionPanel {
             }
         });
 
-        SideBarButton addFileSideBarButton = new SideBarButton(GetText.tr("Add File"));
         addFileSideBarButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -447,9 +454,6 @@ public abstract class DisableableModsSection extends SectionPanel {
             }
         });
 
-        SideBarButton checkForUpdatesSideBarButton = new SideBarButton(GetText.tr("Check For Updates"));
-        checkForUpdatesSideBarButton
-                .setToolTipText(GetText.tr("Select one or more items in the table to the left"));
         checkForUpdatesSideBarButton.setEnabled(false);
         checkForUpdatesSideBarButton.addActionListener(new ActionListener() {
             @Override
@@ -459,9 +463,6 @@ public abstract class DisableableModsSection extends SectionPanel {
             }
         });
 
-        SideBarButton reinstallSideBarButton = new SideBarButton(GetText.tr("Reinstall"));
-        reinstallSideBarButton
-                .setToolTipText(GetText.tr("Select one or more items in the table to the left"));
         reinstallSideBarButton.setEnabled(false);
         reinstallSideBarButton.addActionListener(new ActionListener() {
             @Override
@@ -471,8 +472,6 @@ public abstract class DisableableModsSection extends SectionPanel {
             }
         });
 
-        SideBarButton enableSideBarButton = new SideBarButton(GetText.tr("Enable"));
-        enableSideBarButton.setToolTipText(GetText.tr("Select one or more items in the table to the left"));
         enableSideBarButton.setEnabled(false);
         enableSideBarButton.addActionListener(new ActionListener() {
             @Override
@@ -482,8 +481,6 @@ public abstract class DisableableModsSection extends SectionPanel {
             }
         });
 
-        SideBarButton disableSideBarButton = new SideBarButton(GetText.tr("Disable"));
-        disableSideBarButton.setToolTipText(GetText.tr("Select one or more items in the table to the left"));
         disableSideBarButton.setEnabled(false);
         disableSideBarButton.addActionListener(new ActionListener() {
             @Override
@@ -493,8 +490,6 @@ public abstract class DisableableModsSection extends SectionPanel {
             }
         });
 
-        SideBarButton deleteSideBarButton = new SideBarButton(GetText.tr("Delete"));
-        deleteSideBarButton.setToolTipText(GetText.tr("Select one or more items in the table to the left"));
         deleteSideBarButton.setEnabled(false);
         deleteSideBarButton.addActionListener(new ActionListener() {
             @Override
@@ -504,8 +499,6 @@ public abstract class DisableableModsSection extends SectionPanel {
             }
         });
 
-        SideBarButton refreshSideBarButton = new SideBarButton(GetText.tr("Refresh List"));
-        refreshSideBarButton.setToolTipText(GetText.tr("Refreshes the table with any changes from the filesystem"));
         refreshSideBarButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -552,40 +545,7 @@ public abstract class DisableableModsSection extends SectionPanel {
             @Override
             public void valueChanged(ListSelectionEvent e) {
                 if (!e.getValueIsAdjusting()) {
-                    boolean hasSomethingSelected = table.getSelectedRowCount() != 0;
-
-                    checkForUpdatesSideBarButton.setEnabled(hasSomethingSelected);
-                    reinstallSideBarButton.setEnabled(hasSomethingSelected);
-                    enableSideBarButton.setEnabled(hasSomethingSelected);
-                    disableSideBarButton.setEnabled(hasSomethingSelected);
-                    deleteSideBarButton.setEnabled(hasSomethingSelected);
-
-                    if (hasSomethingSelected) {
-                        checkForUpdatesSideBarButton
-                                .setToolTipText(GetText.tr("Check for updates to the selected item/s"));
-                        reinstallSideBarButton.setToolTipText(
-                                GetText.tr("Reinstall the selected item/s, choosing which version to install"));
-                        enableSideBarButton
-                                .setToolTipText(
-                                        GetText.tr("Enable the selected item/s for play in the current instance"));
-                        disableSideBarButton
-                                .setToolTipText(
-                                        GetText.tr("Disable the selected item/s for play in the current instance"));
-                        deleteSideBarButton
-                                .setToolTipText(
-                                        GetText.tr("Delete the selected item/s completely from the current instance"));
-                    } else {
-                        checkForUpdatesSideBarButton
-                                .setToolTipText(GetText.tr("Select one or more items in the table to the left"));
-                        reinstallSideBarButton
-                                .setToolTipText(GetText.tr("Select one or more items in the table to the left"));
-                        enableSideBarButton
-                                .setToolTipText(GetText.tr("Select one or more items in the table to the left"));
-                        disableSideBarButton
-                                .setToolTipText(GetText.tr("Select one or more items in the table to the left"));
-                        deleteSideBarButton
-                                .setToolTipText(GetText.tr("Select one or more items in the table to the left"));
-                    }
+                    updateUIState();
                 }
             }
         });
@@ -789,7 +749,6 @@ public abstract class DisableableModsSection extends SectionPanel {
         JMenuItem fileNameMenuItem = new JMenuItem();
         fileNameMenuItem.setEnabled(false);
 
-        JMenuItem checkForUpdateMenuItem = new JMenuItem(GetText.tr("Check For Updates"));
         checkForUpdateMenuItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -798,7 +757,6 @@ public abstract class DisableableModsSection extends SectionPanel {
             }
         });
 
-        JMenuItem reinstallMenuItem = new JMenuItem(GetText.tr("Reinstall"));
         reinstallMenuItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -807,7 +765,6 @@ public abstract class DisableableModsSection extends SectionPanel {
             }
         });
 
-        JMenuItem enableMenuItem = new JMenuItem(GetText.tr("Enable"));
         enableMenuItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -816,7 +773,6 @@ public abstract class DisableableModsSection extends SectionPanel {
             }
         });
 
-        JMenuItem disableMenuItem = new JMenuItem(GetText.tr("Disable"));
         disableMenuItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -825,7 +781,6 @@ public abstract class DisableableModsSection extends SectionPanel {
             }
         });
 
-        JMenuItem deleteMenuItem = new JMenuItem(GetText.tr("Delete"));
         deleteMenuItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -954,5 +909,77 @@ public abstract class DisableableModsSection extends SectionPanel {
         tableContextMenu.add(openSupportMenuItem);
         tableContextMenu.add(openWebsiteMenuItem);
         tableContextMenu.add(openWikiMenuItem);
+    }
+
+    private void updateContextMenuUIState() {
+        checkForUpdateMenuItem.setEnabled(!isLaunchingOrLaunched);
+        reinstallMenuItem.setEnabled(!isLaunchingOrLaunched);
+        enableMenuItem.setEnabled(!isLaunchingOrLaunched);
+        disableMenuItem.setEnabled(!isLaunchingOrLaunched);
+        deleteMenuItem.setEnabled(!isLaunchingOrLaunched);
+    }
+
+    @Override
+    public void updateUIState() {
+        updateContextMenuUIState();
+
+        boolean hasSomethingSelected = table.getSelectedRowCount() != 0;
+
+        checkForUpdatesSideBarButton.setEnabled(!this.isLaunchingOrLaunched && hasSomethingSelected);
+        reinstallSideBarButton.setEnabled(!this.isLaunchingOrLaunched && hasSomethingSelected);
+        enableSideBarButton.setEnabled(!this.isLaunchingOrLaunched && hasSomethingSelected);
+        disableSideBarButton.setEnabled(!this.isLaunchingOrLaunched && hasSomethingSelected);
+        deleteSideBarButton.setEnabled(!this.isLaunchingOrLaunched && hasSomethingSelected);
+
+        if (this.isLaunchingOrLaunched) {
+            checkForUpdatesSideBarButton
+                    .setToolTipText(GetText.tr("This cannot be done while Minecraft is running"));
+            reinstallSideBarButton
+                    .setToolTipText(GetText.tr("This cannot be done while Minecraft is running"));
+            enableSideBarButton
+                    .setToolTipText(GetText.tr("This cannot be done while Minecraft is running"));
+            disableSideBarButton
+                    .setToolTipText(GetText.tr("This cannot be done while Minecraft is running"));
+            deleteSideBarButton
+                    .setToolTipText(GetText.tr("This cannot be done while Minecraft is running"));
+        } else if (hasSomethingSelected) {
+            checkForUpdatesSideBarButton
+                    .setToolTipText(GetText.tr("Check for updates to the selected item/s"));
+            reinstallSideBarButton.setToolTipText(
+                    GetText.tr("Reinstall the selected item/s, choosing which version to install"));
+            enableSideBarButton
+                    .setToolTipText(
+                            GetText.tr("Enable the selected item/s for play in the current instance"));
+            disableSideBarButton
+                    .setToolTipText(
+                            GetText.tr("Disable the selected item/s for play in the current instance"));
+            deleteSideBarButton
+                    .setToolTipText(
+                            GetText.tr("Delete the selected item/s completely from the current instance"));
+        } else {
+            checkForUpdatesSideBarButton
+                    .setToolTipText(GetText.tr("Select one or more items in the table to the left"));
+            reinstallSideBarButton
+                    .setToolTipText(GetText.tr("Select one or more items in the table to the left"));
+            enableSideBarButton
+                    .setToolTipText(GetText.tr("Select one or more items in the table to the left"));
+            disableSideBarButton
+                    .setToolTipText(GetText.tr("Select one or more items in the table to the left"));
+            deleteSideBarButton
+                    .setToolTipText(GetText.tr("Select one or more items in the table to the left"));
+        }
+
+        if (instance.launcher.loaderVersion == null && modTypes.contains(Type.mods)) {
+            downloadMoreSideBarButton.setEnabled(false);
+            downloadMoreSideBarButton
+                    .setToolTipText(GetText.tr("In order to download mods, you must have a modloader installed"));
+        } else {
+            downloadMoreSideBarButton.setEnabled(!this.isLaunchingOrLaunched);
+            downloadMoreSideBarButton.setToolTipText(!this.isLaunchingOrLaunched ? null
+                    : GetText.tr("Select one or more items in the table to the left"));
+        }
+
+        addFileSideBarButton.setEnabled(!this.isLaunchingOrLaunched);
+        refreshSideBarButton.setEnabled(!this.isLaunchingOrLaunched);
     }
 }

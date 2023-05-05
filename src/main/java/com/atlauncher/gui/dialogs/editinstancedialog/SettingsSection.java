@@ -30,7 +30,9 @@ import com.atlauncher.data.Instance;
 import com.atlauncher.gui.tabs.InstanceSettingsTabbedPane;
 
 public class SettingsSection extends SectionPanel {
-    private InstanceSettingsTabbedPane tabbedPane = new InstanceSettingsTabbedPane(this.instance);
+    private final InstanceSettingsTabbedPane tabbedPane = new InstanceSettingsTabbedPane(this.instance);
+    private final JButton saveButton = new JButton(GetText.tr("Save"));
+    private final JButton resetButton = new JButton(GetText.tr("Reset"));
 
     public SettingsSection(EditInstanceDialog parent, Instance instance) {
         super(parent, instance);
@@ -44,20 +46,25 @@ public class SettingsSection extends SectionPanel {
         JPanel bottomPanel = new JPanel();
         bottomPanel.setLayout(new FlowLayout());
 
-        JButton saveButton = new JButton(GetText.tr("Save"));
         saveButton.addActionListener(arg0 -> {
             if (tabbedPane.saveSettings()) {
                 App.TOASTER.pop("Instance Settings Saved");
             }
         });
-        bottomPanel.add(saveButton);
 
-        JButton resetButton = new JButton(GetText.tr("Reset"));
         resetButton.addActionListener(arg0 -> {
             tabbedPane.resetSettings();
         });
+
         bottomPanel.add(resetButton);
+        bottomPanel.add(saveButton);
 
         add(bottomPanel, BorderLayout.SOUTH);
+    }
+
+    @Override
+    public void updateUIState() {
+        resetButton.setEnabled(!isLaunchingOrLaunched);
+        saveButton.setEnabled(!isLaunchingOrLaunched);
     }
 }

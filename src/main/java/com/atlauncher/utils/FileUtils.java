@@ -17,8 +17,8 @@
  */
 package com.atlauncher.utils;
 
-import java.awt.Dialog;
 import java.awt.FileDialog;
+import java.awt.Frame;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
@@ -223,7 +223,7 @@ public class FileUtils {
         return false;
     }
 
-    public static File[] getFilesUsingJFileChooser(Dialog parent) {
+    public static File[] getFilesUsingJFileChooser(Frame parent) {
         JFileChooser fileChooser = new JFileChooser(FileSystem.BASE_DIR.toFile());
         fileChooser.setMultiSelectionEnabled(true);
         fileChooser.setFileFilter(new FileFilter() {
@@ -246,7 +246,7 @@ public class FileUtils {
         return fileChooser.getSelectedFiles();
     }
 
-    public static File[] getFilesUsingFileDialog(Dialog parent) {
+    public static File[] getFilesUsingFileDialog(Frame parent) {
         FileDialog fd = new FileDialog(parent, GetText.tr("Select file/s"), FileDialog.LOAD);
         fd.setFilenameFilter(new FilenameFilter() {
             @Override

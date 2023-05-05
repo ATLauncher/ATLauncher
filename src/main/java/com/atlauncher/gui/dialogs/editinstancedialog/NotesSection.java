@@ -171,4 +171,8 @@ public class NotesSection extends SectionPanel {
     public String getNotes() {
         return noteTextArea.getText();
     }
+
+    @Override
+    public void updateUIState() {
+    }
 }

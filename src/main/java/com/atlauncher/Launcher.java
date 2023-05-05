@@ -509,16 +509,20 @@ public class Launcher {
 
     public void killMinecraft() {
         if (this.minecraftProcess != null) {
-            LogManager.error("Killing Minecraft");
-
-            if (App.discordInitialized) {
-                DiscordRPC.discordClearPresence();
-            }
-
-            this.minecraftProcess.destroy();
+            killMinecraft(this.minecraftProcess);
             this.minecraftProcess = null;
         } else {
             LogManager.error("Cannot kill Minecraft as there is no instance open!");
         }
+    }
+
+    public void killMinecraft(Process runningProcess) {
+        if (App.discordInitialized) {
+            DiscordRPC.discordClearPresence();
+        }
+
+        LogManager.error("Killing Minecraft");
+
+        runningProcess.destroy();
     }
 }
