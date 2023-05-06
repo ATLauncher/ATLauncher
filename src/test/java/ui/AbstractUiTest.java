@@ -88,6 +88,7 @@ public class AbstractUiTest extends AssertJSwingTestCaseTemplate {
 
         // get a reference to the main launcher frame
         frame = WindowFinder.findFrame(new GenericTypeMatcher<Frame>(Frame.class) {
+            @Override
             protected boolean isMatching(Frame frame) {
                 return Constants.LAUNCHER_NAME.equals(frame.getTitle()) && frame.isShowing();
             }
@@ -95,6 +96,7 @@ public class AbstractUiTest extends AssertJSwingTestCaseTemplate {
 
         // get a reference to the console frame
         consoleFrame = WindowFinder.findFrame(new GenericTypeMatcher<Frame>(Frame.class) {
+            @Override
             protected boolean isMatching(Frame frame) {
                 return (Constants.LAUNCHER_NAME + " Console").equals(frame.getTitle()) && frame.isShowing();
             }
@@ -116,10 +118,7 @@ public class AbstractUiTest extends AssertJSwingTestCaseTemplate {
         MockHelper.mockFileResponse(mockServer, "config.json");
         MockHelper.mockFileResponse(mockServer, "minecraft_versions.json");
         MockHelper.mockFileResponse(mockServer, "lwjgl.json");
-
-        // files from Minecraft servers
-        MockHelper.mockJson(mockServer, "GET", "launchermeta.mojang.com",
-                "/v1/products/java-runtime/2ec0cc96c44e5a76b9c8b7c39df7210883d12871/all.json", "java_runtimes.json");
+        MockHelper.mockFileResponse(mockServer, "java_runtimes.json");
     }
 
     protected void onSetUp() {
