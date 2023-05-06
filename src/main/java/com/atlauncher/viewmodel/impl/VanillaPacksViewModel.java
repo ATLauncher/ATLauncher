@@ -74,7 +74,6 @@ import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 import io.reactivex.rxjava3.subjects.BehaviorSubject;
 
-
 /**
  * 25 / 06 / 2022
  */
@@ -112,22 +111,17 @@ public class VanillaPacksViewModel implements SettingsListener, IVanillaPacksVie
     // was true
     public final BehaviorSubject<Boolean> loaderTypeQuiltEnabled = BehaviorSubject.create();
     // was lazy
-    public final Boolean showReleaseOption =
-        ConfigManager.getConfigItem("minecraft.release.enabled", true);
+    public final Boolean showReleaseOption = ConfigManager.getConfigItem("minecraft.release.enabled", true);
     // was lazy
-    public final Boolean showExperimentOption =
-        ConfigManager.getConfigItem(
+    public final Boolean showExperimentOption = ConfigManager.getConfigItem(
             "minecraft.experiment.enabled",
-            true
-        );
+            true);
     // was lazy
     public final Boolean showSnapshotOption = ConfigManager.getConfigItem("minecraft.snapshot.enabled", true);
     // was lazy
-    public final Boolean showOldAlphaOption =
-        ConfigManager.getConfigItem(
+    public final Boolean showOldAlphaOption = ConfigManager.getConfigItem(
             "minecraft.old_alpha.enabled",
-            true
-        );
+            true);
     // was lazy
     public final Boolean showOldBetaOption = ConfigManager.getConfigItem("minecraft.old_beta.enabled", true);
     // was lazy
@@ -135,103 +129,84 @@ public class VanillaPacksViewModel implements SettingsListener, IVanillaPacksVie
     // was lazy
     public final Boolean showForgeOption = ConfigManager.getConfigItem("loaders.forge.enabled", true);
     // was lazy
-    public final Boolean showLegacyFabricOption =
-        ConfigManager.getConfigItem(
+    public final Boolean showLegacyFabricOption = ConfigManager.getConfigItem(
             "loaders.legacyfabric.enabled",
-            true
-        );
+            true);
     // was lazy
     public final Boolean showQuiltOption = ConfigManager.getConfigItem("loaders.quilt.enabled", false);
     /**
      * Filters applied to the version table
      */
-    private final BehaviorSubject<Map<VersionManifestVersionType, Boolean>> minecraftVersionTypeFiltersPublisher =
-        BehaviorSubject.create();
+    private final BehaviorSubject<Map<VersionManifestVersionType, Boolean>> minecraftVersionTypeFiltersPublisher = BehaviorSubject
+            .create();
 
     /**
      * Represents the version list
      */
-    public final Observable<List<MCVersionRow>> minecraftVersions =
-        minecraftVersionTypeFiltersPublisher.map(versionFilter -> {
-            final List<VersionManifestVersionType> filtered = versionFilter
-                .entrySet()
-                .stream()
-                .filter(Map.Entry::getValue)
-                .map(Map.Entry::getKey)
-                .collect(Collectors.toList());
+    public final Observable<List<MCVersionRow>> minecraftVersions = minecraftVersionTypeFiltersPublisher
+            .map(versionFilter -> {
+                final List<VersionManifestVersionType> filtered = versionFilter
+                        .entrySet()
+                        .stream()
+                        .filter(Map.Entry::getValue)
+                        .map(Map.Entry::getKey)
+                        .collect(Collectors.toList());
 
-            final DateTimeFormatter fmt = DateTimeFormat.forPattern(App.settings.dateFormat);
+                final DateTimeFormatter fmt = DateTimeFormat.forPattern(App.settings.dateFormat);
 
-            return MinecraftManager.getFilteredMinecraftVersions(filtered).stream().map(it ->
-                new MCVersionRow(
-                    it.id, fmt.print(ISODateTimeFormat.dateTimeParser().parseDateTime(it.releaseTime)), it.type.toString()
-                )
-            ).collect(Collectors.toList());
-        }).subscribeOn(Schedulers.io());
+                return MinecraftManager.getFilteredMinecraftVersions(filtered).stream().map(it -> new MCVersionRow(
+                        it.id, fmt.print(ISODateTimeFormat.dateTimeParser().parseDateTime(it.releaseTime)),
+                        it.type.toString())).collect(Collectors.toList());
+            }).subscribeOn(Schedulers.io());
 
-    public final Observable<Boolean> releaseSelected =
-        minecraftVersionTypeFiltersPublisher
+    public final Observable<Boolean> releaseSelected = minecraftVersionTypeFiltersPublisher
             .map(it -> it.getOrDefault(VersionManifestVersionType.RELEASE, false))
             .subscribeOn(Schedulers.computation());
 
-    public final Observable<Boolean> releaseEnabled =
-        combineLatest(
+    public final Observable<Boolean> releaseEnabled = combineLatest(
             releaseSelected, minecraftVersionTypeFiltersPublisher,
-            (a, b) -> !(a && (b.values().stream().filter(it -> it).toArray().length == 1))
-        ).subscribeOn(Schedulers.computation());
+            (a, b) -> !(a && (b.values().stream().filter(it -> it).toArray().length == 1)))
+            .subscribeOn(Schedulers.computation());
 
-    public final Observable<Boolean> experimentSelected =
-        minecraftVersionTypeFiltersPublisher
+    public final Observable<Boolean> experimentSelected = minecraftVersionTypeFiltersPublisher
             .map(it -> it.getOrDefault(VersionManifestVersionType.EXPERIMENT, false))
             .subscribeOn(Schedulers.computation());
 
-    public final Observable<Boolean> experimentEnabled =
-        combineLatest(experimentSelected,
-            minecraftVersionTypeFiltersPublisher, (a, b) ->
-                !(a && (count(b, Map.Entry::getValue) == 1))
-        ).subscribeOn(Schedulers.computation());
+    public final Observable<Boolean> experimentEnabled = combineLatest(experimentSelected,
+            minecraftVersionTypeFiltersPublisher, (a, b) -> !(a && (count(b, Map.Entry::getValue) == 1)))
+            .subscribeOn(Schedulers.computation());
 
-    public final Observable<Boolean> snapshotSelected =
-        minecraftVersionTypeFiltersPublisher
+    public final Observable<Boolean> snapshotSelected = minecraftVersionTypeFiltersPublisher
             .map(it -> it.getOrDefault(VersionManifestVersionType.SNAPSHOT, false))
             .subscribeOn(Schedulers.computation());
 
-    public final Observable<Boolean> snapshotEnabled =
-        combineLatest(
+    public final Observable<Boolean> snapshotEnabled = combineLatest(
             snapshotSelected,
             minecraftVersionTypeFiltersPublisher,
-            (a, b) -> !(a && (count(b, Map.Entry::getValue) == 1))
-        ).subscribeOn(Schedulers.computation());
+            (a, b) -> !(a && (count(b, Map.Entry::getValue) == 1))).subscribeOn(Schedulers.computation());
 
-    public final Observable<Boolean> oldAlphaSelected =
-        minecraftVersionTypeFiltersPublisher
+    public final Observable<Boolean> oldAlphaSelected = minecraftVersionTypeFiltersPublisher
             .map(it -> it.getOrDefault(VersionManifestVersionType.OLD_ALPHA, false))
             .subscribeOn(Schedulers.computation());
 
-    public final Observable<Boolean> oldAlphaEnabled =
-        combineLatest(
+    public final Observable<Boolean> oldAlphaEnabled = combineLatest(
             oldAlphaSelected,
             minecraftVersionTypeFiltersPublisher,
-            (a, b) -> !(a && (count(b, Map.Entry::getValue) == 1))
-        ).subscribeOn(Schedulers.computation());
+            (a, b) -> !(a && (count(b, Map.Entry::getValue) == 1))).subscribeOn(Schedulers.computation());
 
-    public final Observable<Boolean> oldBetaSelected =
-        minecraftVersionTypeFiltersPublisher
+    public final Observable<Boolean> oldBetaSelected = minecraftVersionTypeFiltersPublisher
             .map(it -> it.getOrDefault(VersionManifestVersionType.OLD_BETA, false))
             .subscribeOn(Schedulers.computation());
 
-    public final Observable<Boolean> oldBetaEnabled =
-        combineLatest(
+    public final Observable<Boolean> oldBetaEnabled = combineLatest(
             oldBetaSelected,
             minecraftVersionTypeFiltersPublisher,
-            (a, b) -> !(a && (count(b, Map.Entry::getValue) == 1))
-        ).subscribeOn(Schedulers.computation());
+            (a, b) -> !(a && (count(b, Map.Entry::getValue) == 1))).subscribeOn(Schedulers.computation());
 
     // was null
     private final BehaviorSubject<Optional<String>> selectedMinecraftVersionFlow = BehaviorSubject.create();
 
-    public final Observable<Integer> selectedMinecraftVersionIndex =
-        combineLatest(
+    public final Observable<Integer> selectedMinecraftVersionIndex = combineLatest(
             minecraftVersions,
             selectedMinecraftVersionFlow,
             (versions, version) -> {
@@ -245,96 +220,79 @@ public class VanillaPacksViewModel implements SettingsListener, IVanillaPacksVie
                     }
                 }
 
-                if (index == -1) return 0;
+                if (index == -1)
+                    return 0;
                 return index;
-            }
-        ).subscribeOn(Schedulers.computation());
+            }).subscribeOn(Schedulers.computation());
 
     private final BehaviorSubject<Optional<LoaderType>> selectedLoaderType = BehaviorSubject.create();
 
-    public final Observable<Boolean> loaderTypeFabricSelected =
-        selectedLoaderType
+    public final Observable<Boolean> loaderTypeFabricSelected = selectedLoaderType
             .map(it -> it.orElse(null) == LoaderType.FABRIC)
             .subscribeOn(Schedulers.computation());
 
-    public final Observable<Boolean> loaderTypeForgeSelected =
-        selectedLoaderType.map(it -> it.orElse(null) == LoaderType.FORGE)
+    public final Observable<Boolean> loaderTypeForgeSelected = selectedLoaderType
+            .map(it -> it.orElse(null) == LoaderType.FORGE)
             .subscribeOn(Schedulers.computation());
 
-    public final Observable<Boolean> loaderTypeLegacyFabricSelected =
-        selectedLoaderType.map(it -> it.orElse(null) == LoaderType.LEGACY_FABRIC)
+    public final Observable<Boolean> loaderTypeLegacyFabricSelected = selectedLoaderType
+            .map(it -> it.orElse(null) == LoaderType.LEGACY_FABRIC)
             .subscribeOn(Schedulers.computation());
 
-    public final Observable<Boolean> loaderTypeNoneSelected =
-        selectedLoaderType.map(it -> it.orElse(null) == null)
+    public final Observable<Boolean> loaderTypeNoneSelected = selectedLoaderType.map(it -> it.orElse(null) == null)
             .subscribeOn(Schedulers.computation());
 
-    public final Observable<Boolean> loaderTypeQuiltSelected =
-        selectedLoaderType.map(it -> it.orElse(null) == LoaderType.QUILT)
+    public final Observable<Boolean> loaderTypeQuiltSelected = selectedLoaderType
+            .map(it -> it.orElse(null) == LoaderType.QUILT)
             .subscribeOn(Schedulers.computation());
 
     // was lazy
-    private final List<String> fabricDisabledMCVersions =
-        ConfigManager.getConfigItem("loaders.fabric.disabledMinecraftVersions", emptyList());
+    private final List<String> fabricDisabledMCVersions = ConfigManager
+            .getConfigItem("loaders.fabric.disabledMinecraftVersions", emptyList());
 
-    public final Observable<Boolean> isFabricVisible =
-        selectedMinecraftVersionFlow
+    public final Observable<Boolean> isFabricVisible = selectedMinecraftVersionFlow
             .map(version -> !fabricDisabledMCVersions.contains(version.orElse(null)))
             .subscribeOn(Schedulers.computation());
 
     // was lazy
-    private final List<String> legacyFabricDisabledMCVersions =
-        ConfigManager.getConfigItem(
-            "loaders.fabric.disabledMinecraftVersions", emptyList()
-        );
+    private final List<String> legacyFabricDisabledMCVersions = ConfigManager.getConfigItem(
+            "loaders.fabric.disabledMinecraftVersions", emptyList());
 
-    public final Observable<Boolean> isLegacyFabricVisible =
-        selectedMinecraftVersionFlow.map(version -> !legacyFabricDisabledMCVersions.contains(version.orElse(null)))
+    public final Observable<Boolean> isLegacyFabricVisible = selectedMinecraftVersionFlow
+            .map(version -> !legacyFabricDisabledMCVersions.contains(version.orElse(null)))
             .subscribeOn(Schedulers.computation());
 
     // was lazy
-    private final List<String> forgeDisabledMCVersions =
-        ConfigManager.getConfigItem(
-            "loaders.forge.disabledMinecraftVersions", emptyList()
-        );
+    private final List<String> forgeDisabledMCVersions = ConfigManager.getConfigItem(
+            "loaders.forge.disabledMinecraftVersions", emptyList());
 
-    public final Observable<Boolean> isForgeVisible =
-        selectedMinecraftVersionFlow.map(version -> !forgeDisabledMCVersions.contains(version.orElse(null)))
+    public final Observable<Boolean> isForgeVisible = selectedMinecraftVersionFlow
+            .map(version -> !forgeDisabledMCVersions.contains(version.orElse(null)))
             .subscribeOn(Schedulers.computation());
 
     // was lazy
-    private final List<String> quiltDisabledMCVersions =
-        ConfigManager.getConfigItem(
-            "loaders.quilt.disabledMinecraftVersions", emptyList()
-        );
+    private final List<String> quiltDisabledMCVersions = ConfigManager.getConfigItem(
+            "loaders.quilt.disabledMinecraftVersions", emptyList());
 
-    public final Observable<Boolean> isQuiltVisible =
-        selectedMinecraftVersionFlow.map(version -> !quiltDisabledMCVersions.contains(version.orElse(null)))
+    public final Observable<Boolean> isQuiltVisible = selectedMinecraftVersionFlow
+            .map(version -> !quiltDisabledMCVersions.contains(version.orElse(null)))
             .subscribeOn(Schedulers.computation());
 
     // was lazy
-    private final List<String> disabledQuiltVersions =
-        ConfigManager.getConfigItem(
-            "loaders.quilt.disabledVersions", emptyList()
-        );
+    private final List<String> disabledQuiltVersions = ConfigManager.getConfigItem(
+            "loaders.quilt.disabledVersions", emptyList());
 
     // was lazy
-    private final List<String> disabledFabricVersions =
-        ConfigManager.getConfigItem(
-            "loaders.fabric.disabledVersions", emptyList()
-        );
+    private final List<String> disabledFabricVersions = ConfigManager.getConfigItem(
+            "loaders.fabric.disabledVersions", emptyList());
 
     // was lazy
-    private final List<String> disabledLegacyFabricVersions =
-        ConfigManager.getConfigItem(
-            "loaders.legacyfabric.disabledVersions", emptyList()
-        );
+    private final List<String> disabledLegacyFabricVersions = ConfigManager.getConfigItem(
+            "loaders.legacyfabric.disabledVersions", emptyList());
 
     // was lazy
-    private final List<String> disabledForgeVersions =
-        ConfigManager.getConfigItem(
-            "loaders.forge.disabledVersions", emptyList()
-        );
+    private final List<String> disabledForgeVersions = ConfigManager.getConfigItem(
+            "loaders.forge.disabledVersions", emptyList());
 
     private final LoaderVersion noLoaderVersions = new LoaderVersion(GetText.tr("No Versions Found"));
     private final LoaderVersion errorLoadingVersions = new LoaderVersion(GetText.tr("Error Getting Versions"));
@@ -373,71 +331,75 @@ public class VanillaPacksViewModel implements SettingsListener, IVanillaPacksVie
         selectedMinecraftVersionFlow.onNext(Optional.empty());
 
         selectedMinecraftVersionFlow
-            .observeOn(Schedulers.computation())
-            .subscribe(selectedVersion -> {
-                if (selectedVersion.isPresent()) {
-                    try {
-                        final VersionManifestVersion version = MinecraftManager.getMinecraftVersion(selectedVersion.get());
-                        createServerEnabled.onNext(version.hasServer());
-                    } catch (InvalidMinecraftVersion ignored) {
+                .observeOn(Schedulers.computation())
+                .subscribe(selectedVersion -> {
+                    if (selectedVersion.isPresent()) {
+                        try {
+                            final VersionManifestVersion version = MinecraftManager
+                                    .getMinecraftVersion(selectedVersion.get());
+                            createServerEnabled.onNext(version.hasServer());
+                        } catch (InvalidMinecraftVersion ignored) {
+                            createServerEnabled.onNext(false);
+                        }
+                    } else {
                         createServerEnabled.onNext(false);
                     }
-                } else {
-                    createServerEnabled.onNext(false);
-                }
-            });
+                });
 
         combineLatest(selectedLoaderType, selectedMinecraftVersionFlow, Pair::new)
-            .observeOn(Schedulers.io())
-            .subscribe(optionalOptionalPair -> {
-                Optional<LoaderType> loaderTypeOptional = optionalOptionalPair.left();
-                Optional<String> selectedMinecraftVersionOptional = optionalOptionalPair.right();
+                .observeOn(Schedulers.io())
+                .subscribe(optionalOptionalPair -> {
+                    Optional<LoaderType> loaderTypeOptional = optionalOptionalPair.left();
+                    Optional<String> selectedMinecraftVersionOptional = optionalOptionalPair.right();
 
-                if (!selectedMinecraftVersionOptional.isPresent()) return;
+                    if (!selectedMinecraftVersionOptional.isPresent())
+                        return;
 
-                loaderVersionsDropDownEnabled.onNext(false);
+                    loaderVersionsDropDownEnabled.onNext(false);
 
-                if (!loaderTypeOptional.isPresent()) {
-                    // update the name and description fields if they're not dirty
-                    updateNameAndDescription(selectedMinecraftVersionOptional.get(), null);
-                    loaderVersions.onNext(Optional.empty());
-                    return;
-                }
-                LoaderType loaderType = loaderTypeOptional.get();
-                String selectedMinecraftVersion = selectedMinecraftVersionOptional.get();
-
-                updateNameAndDescription(selectedMinecraftVersion, loaderType);
-
-                loaderLoading.onNext(true);
-
-                setLoaderGroupEnabled(false);
-
-                // Legacy Forge doesn't support servers easily
-                final boolean enableCreateServers = (loaderType == LoaderType.FORGE || !Utils.matchVersion(
-                    selectedMinecraftVersion, "1.5", true, true
-                ));
-                final List<LoaderVersion> loaders;
-                if (ConfigManager.getConfigItem("useGraphql.vanillaLoaderVersions", false)) {
-                    loaders = apolloLoad(loaderType, selectedMinecraftVersion, enableCreateServers);
-                } else {
-                    loaders = legacyLoad(loaderType, selectedMinecraftVersion, enableCreateServers);
-                }
-
-                loaderVersions.onNext(Optional.of(loaders));
-
-                if (!loaders.isEmpty()) {
-                    if (loaderType == LoaderType.FORGE) {
-                        Optional<LoaderVersion> optionalLoaderType = first(loaders, it -> it.recommended);
-                        if (optionalLoaderType.isPresent())
-                            selectedLoaderVersion.onNext(optionalLoaderType);
-                        else selectedLoaderVersion.onNext(loaders.stream().findFirst());
-                    } else {
-                        selectedLoaderVersion.onNext(loaders.stream().findFirst());
+                    if (!loaderTypeOptional.isPresent()) {
+                        // update the name and description fields if they're not dirty
+                        updateNameAndDescription(selectedMinecraftVersionOptional.get(), null);
+                        loaderVersions.onNext(Optional.empty());
+                        return;
                     }
-                }
+                    LoaderType loaderType = loaderTypeOptional.get();
+                    String selectedMinecraftVersion = selectedMinecraftVersionOptional.get();
 
-                setLoaderGroupEnabled(true, enableCreateServers);
-            });
+                    updateNameAndDescription(selectedMinecraftVersion, loaderType);
+
+                    loaderLoading.onNext(true);
+
+                    setLoaderGroupEnabled(false);
+
+                    // Legacy Forge doesn't support servers easily
+                    final boolean enableCreateServers = (loaderType == LoaderType.FORGE || !Utils.matchVersion(
+                            selectedMinecraftVersion, "1.5", true, true));
+                    final List<LoaderVersion> loaders;
+                    if (ConfigManager.getConfigItem("useGraphql.vanillaLoaderVersions", false)) {
+                        loaders = apolloLoad(loaderType, selectedMinecraftVersion, enableCreateServers);
+                    } else {
+                        loaders = legacyLoad(loaderType, selectedMinecraftVersion, enableCreateServers);
+                    }
+
+                    loaderVersions.onNext(Optional.of(loaders));
+
+                    if (!loaders.isEmpty()) {
+                        if (loaderType == LoaderType.FORGE) {
+                            Optional<LoaderVersion> optionalLoaderType = first(loaders, it -> it.recommended);
+                            if (optionalLoaderType.isPresent())
+                                selectedLoaderVersion.onNext(optionalLoaderType);
+                            else
+                                selectedLoaderVersion.onNext(loaders.stream().findFirst());
+                        } else {
+                            selectedLoaderVersion.onNext(loaders.stream().findFirst());
+                        }
+                    }
+
+                    boolean hasLoaderVersions = !loaders.isEmpty() && loaders.get(0) != noLoaderVersions;
+
+                    setLoaderGroupEnabled(true, hasLoaderVersions, enableCreateServers);
+                });
     }
 
     private static <K, V> long count(Map<K, V> map, Predicate<Map.Entry<K, V>> predicate) {
@@ -692,10 +654,9 @@ public class VanillaPacksViewModel implements SettingsListener, IVanillaPacksVie
             final @Nullable String name = this.name.getValue().orElse(null);
 
             installable = new VanillaInstallable(
-                MinecraftManager.getMinecraftVersion(selectedMinecraftVersion),
-                selectedLoaderVersion,
-                description
-            );
+                    MinecraftManager.getMinecraftVersion(selectedMinecraftVersion),
+                    selectedLoaderVersion,
+                    description);
             installable.instanceName = name;
             installable.isReinstall = false;
             installable.isServer = isServer;
@@ -703,11 +664,11 @@ public class VanillaPacksViewModel implements SettingsListener, IVanillaPacksVie
 
             // if (success) {
             // - Reset the view, currently disabled
-            //nameFieldDirty = false
-            //descriptionFieldDirty = false
-            //loaderTypeNoneRadioButton.isSelected = true
-            //selectedLoaderTypeChanged(null)
-            //minecraftVersionTable!!.setRowSelectionInterfinal void(0, 0)
+            // nameFieldDirty = false
+            // descriptionFieldDirty = false
+            // loaderTypeNoneRadioButton.isSelected = true
+            // selectedLoaderTypeChanged(null)
+            // minecraftVersionTable!!.setRowSelectionInterfinal void(0, 0)
             // }
         } catch (InvalidMinecraftVersion e) {
             LogManager.logStackTrace(e);
@@ -715,11 +676,13 @@ public class VanillaPacksViewModel implements SettingsListener, IVanillaPacksVie
     }
 
     private boolean isNameDirty() {
-        return !(
-            Objects.equals(name.getValue().orElse(null), String.format("Minecraft %s", selectedMinecraftVersionFlow.getValue().orElse(null))) ||
+        return !(Objects.equals(name.getValue().orElse(null),
+                String.format("Minecraft %s", selectedMinecraftVersionFlow.getValue().orElse(null))) ||
                 selectedLoaderType.getValue().isPresent() &&
-                    Objects.equals(name.getValue().orElse(null), String.format("Minecraft %s with %s", selectedMinecraftVersionFlow.getValue().orElse(null), selectedLoaderType.getValue().orElse(null)))
-        );
+                        Objects.equals(name.getValue().orElse(null),
+                                String.format("Minecraft %s with %s",
+                                        selectedMinecraftVersionFlow.getValue().orElse(null),
+                                        selectedLoaderType.getValue().orElse(null))));
     }
 
     public void setName(String name) {
@@ -728,11 +691,13 @@ public class VanillaPacksViewModel implements SettingsListener, IVanillaPacksVie
     }
 
     private boolean isDescriptionDirty() {
-        return !(
-            Objects.equals(description.getValue().orElse(null), String.format("Minecraft %s", selectedMinecraftVersionFlow.getValue().orElse(null))) ||
+        return !(Objects.equals(description.getValue().orElse(null),
+                String.format("Minecraft %s", selectedMinecraftVersionFlow.getValue().orElse(null))) ||
                 selectedLoaderType.getValue().isPresent() &&
-                    Objects.equals(description.getValue().orElse(null), String.format("Minecraft %s with %s", selectedMinecraftVersionFlow.getValue().orElse(null), selectedLoaderType.getValue().orElse(null)))
-        );
+                        Objects.equals(description.getValue().orElse(null),
+                                String.format("Minecraft %s with %s",
+                                        selectedMinecraftVersionFlow.getValue().orElse(null),
+                                        selectedLoaderType.getValue().orElse(null))));
     }
 
     public void setDescription(String description) {
@@ -741,31 +706,36 @@ public class VanillaPacksViewModel implements SettingsListener, IVanillaPacksVie
     }
 
     public void setReleaseSelected(Boolean b) {
-        final HashMap<VersionManifestVersionType, Boolean> map = new HashMap<>(minecraftVersionTypeFiltersPublisher.getValue());
+        final HashMap<VersionManifestVersionType, Boolean> map = new HashMap<>(
+                minecraftVersionTypeFiltersPublisher.getValue());
         map.put(VersionManifestVersionType.RELEASE, b);
         minecraftVersionTypeFiltersPublisher.onNext((HashMap) map.clone());
     }
 
     public void setExperimentSelected(Boolean b) {
-        final HashMap<VersionManifestVersionType, Boolean> map = new HashMap(minecraftVersionTypeFiltersPublisher.getValue());
+        final HashMap<VersionManifestVersionType, Boolean> map = new HashMap(
+                minecraftVersionTypeFiltersPublisher.getValue());
         map.put(VersionManifestVersionType.EXPERIMENT, b);
         minecraftVersionTypeFiltersPublisher.onNext((HashMap) map.clone());
     }
 
     public void setSnapshotSelected(Boolean b) {
-        final HashMap<VersionManifestVersionType, Boolean> map = new HashMap(minecraftVersionTypeFiltersPublisher.getValue());
+        final HashMap<VersionManifestVersionType, Boolean> map = new HashMap(
+                minecraftVersionTypeFiltersPublisher.getValue());
         map.put(VersionManifestVersionType.SNAPSHOT, b);
         minecraftVersionTypeFiltersPublisher.onNext((HashMap) map.clone());
     }
 
     public void setOldAlphaSelected(Boolean b) {
-        final HashMap<VersionManifestVersionType, Boolean> map = new HashMap(minecraftVersionTypeFiltersPublisher.getValue());
+        final HashMap<VersionManifestVersionType, Boolean> map = new HashMap(
+                minecraftVersionTypeFiltersPublisher.getValue());
         map.put(VersionManifestVersionType.OLD_ALPHA, b);
         minecraftVersionTypeFiltersPublisher.onNext((HashMap) map.clone());
     }
 
     public void setOldBetaSelected(Boolean b) {
-        final HashMap<VersionManifestVersionType, Boolean> map = new HashMap(minecraftVersionTypeFiltersPublisher.getValue());
+        final HashMap<VersionManifestVersionType, Boolean> map = new HashMap(
+                minecraftVersionTypeFiltersPublisher.getValue());
         map.put(VersionManifestVersionType.OLD_BETA, b);
         minecraftVersionTypeFiltersPublisher.onNext((HashMap) map.clone());
     }
@@ -809,18 +779,15 @@ public class VanillaPacksViewModel implements SettingsListener, IVanillaPacksVie
     }
 
     private List<LoaderVersion> apolloLoad(
-        LoaderType selectedLoader, @Nonnull String selectedMinecraftVersion, Boolean enableCreateServers
-    ) {
+            LoaderType selectedLoader, @Nonnull String selectedMinecraftVersion, Boolean enableCreateServers) {
         try {
             ApolloQueryCall<GetLoaderVersionsForMinecraftVersionQuery.Data> call = GraphqlClient.apolloClient.query(
-                new GetLoaderVersionsForMinecraftVersionQuery(
-                    selectedMinecraftVersion
-                )
-            ).toBuilder().httpCachePolicy(
-                new HttpCachePolicy.Policy(
-                    HttpCachePolicy.FetchStrategy.CACHE_FIRST, 5, TimeUnit.MINUTES, false
-                )
-            ).build();
+                    new GetLoaderVersionsForMinecraftVersionQuery(
+                            selectedMinecraftVersion))
+                    .toBuilder().httpCachePolicy(
+                            new HttpCachePolicy.Policy(
+                                    HttpCachePolicy.FetchStrategy.CACHE_FIRST, 5, TimeUnit.MINUTES, false))
+                    .build();
 
             Response<GetLoaderVersionsForMinecraftVersionQuery.Data> response = Rx3Apollo.from(call).blockingFirst();
 
@@ -831,84 +798,72 @@ public class VanillaPacksViewModel implements SettingsListener, IVanillaPacksVie
                 switch (selectedLoader) {
                     case FABRIC:
                         loaderVersionsList.addAll(data.loaderVersions().fabric().stream()
-                            .filter(fv -> !disabledFabricVersions.contains(fv.version()))
-                            .map(version -> new LoaderVersion(version.version(), false, "Fabric"))
-                            .collect(Collectors.toList())
-                        );
+                                .filter(fv -> !disabledFabricVersions.contains(fv.version()))
+                                .map(version -> new LoaderVersion(version.version(), false, "Fabric"))
+                                .collect(Collectors.toList()));
                         break;
 
                     case FORGE:
                         loaderVersionsList.addAll(data.loaderVersions().forge().stream()
-                            .filter(fv -> !disabledForgeVersions.contains(fv.version()))
-                            .map(version -> {
-                                final LoaderVersion lv = new LoaderVersion(
-                                    version.version(), version.rawVersion(), version.recommended(), "Forge"
-                                );
-                                if (version.installerSha1Hash() != null && version.installerSize() != null) {
-                                    lv.downloadables.put("installer", new Pair<>(
-                                        version.installerSha1Hash(), version.installerSize().longValue()
-                                    ));
-                                }
-                                if (version.universalSha1Hash() != null && version.universalSize() != null) {
-                                    lv.downloadables.put("universal", new Pair<>(
-                                        version.universalSha1Hash(), version.universalSize().longValue()
-                                    ));
-                                }
-                                if (version.clientSha1Hash() != null && version.clientSize() != null) {
-                                    lv.downloadables.put("client", new Pair<>(
-                                        version.clientSha1Hash(), version.clientSize().longValue()
-                                    ));
-                                }
-                                if (version.serverSha1Hash() != null && version.serverSize() != null) {
-                                    lv.downloadables.put("server", new Pair<>(
-                                        version.serverSha1Hash(), version.serverSize().longValue()
-                                    ));
-                                }
-                                return lv;
-                            }).collect(Collectors.toList())
-                        );
+                                .filter(fv -> !disabledForgeVersions.contains(fv.version()))
+                                .map(version -> {
+                                    final LoaderVersion lv = new LoaderVersion(
+                                            version.version(), version.rawVersion(), version.recommended(), "Forge");
+                                    if (version.installerSha1Hash() != null && version.installerSize() != null) {
+                                        lv.downloadables.put("installer", new Pair<>(
+                                                version.installerSha1Hash(), version.installerSize().longValue()));
+                                    }
+                                    if (version.universalSha1Hash() != null && version.universalSize() != null) {
+                                        lv.downloadables.put("universal", new Pair<>(
+                                                version.universalSha1Hash(), version.universalSize().longValue()));
+                                    }
+                                    if (version.clientSha1Hash() != null && version.clientSize() != null) {
+                                        lv.downloadables.put("client", new Pair<>(
+                                                version.clientSha1Hash(), version.clientSize().longValue()));
+                                    }
+                                    if (version.serverSha1Hash() != null && version.serverSize() != null) {
+                                        lv.downloadables.put("server", new Pair<>(
+                                                version.serverSha1Hash(), version.serverSize().longValue()));
+                                    }
+                                    return lv;
+                                }).collect(Collectors.toList()));
                         break;
 
                     case QUILT:
                         loaderVersionsList.addAll(data.loaderVersions().quilt().stream()
-                            .filter(fv -> !disabledQuiltVersions.contains(fv.version()))
-                            .map(version -> new LoaderVersion(version.version(), false, "Quilt"))
-                            .collect(Collectors.toList())
-                        );
+                                .filter(fv -> !disabledQuiltVersions.contains(fv.version()))
+                                .map(version -> new LoaderVersion(version.version(), false, "Quilt"))
+                                .collect(Collectors.toList()));
                         break;
 
                     case LEGACY_FABRIC:
                         loaderVersionsList.addAll(data.loaderVersions().legacyfabric()
-                            .stream()
-                            .filter(fv -> !disabledLegacyFabricVersions.contains(fv.version()))
-                            .map(version ->
-                                new LoaderVersion(
-                                    version.version(),
-                                    false,
-                                    "LegacyFabric"
-                                )
-                            )
-                            .collect(Collectors.toList())
-                        );
+                                .stream()
+                                .filter(fv -> !disabledLegacyFabricVersions.contains(fv.version()))
+                                .map(version -> new LoaderVersion(
+                                        version.version(),
+                                        false,
+                                        "LegacyFabric"))
+                                .collect(Collectors.toList()));
                         break;
                 }
             if (loaderVersionsList.size() == 0) {
-                setLoaderGroupEnabled(true, enableCreateServers);
+                setLoaderGroupEnabled(true, false, enableCreateServers);
                 return singletonList(noLoaderVersions);
             }
             return loaderVersionsList;
         } catch (RuntimeException e) {
             LogManager.logStackTrace("Error fetching loading versions", e);
-            setLoaderGroupEnabled(true, enableCreateServers);
+            setLoaderGroupEnabled(true, false, enableCreateServers);
             return singletonList(errorLoadingVersions);
         }
     }
 
     private void setLoaderGroupEnabled(Boolean enabled) {
-        setLoaderGroupEnabled(enabled, enabled);
+        setLoaderGroupEnabled(enabled, enabled, enabled);
     }
 
-    private void setLoaderGroupEnabled(Boolean enabled, Boolean enableCreateServers) {
+    private void setLoaderGroupEnabled(Boolean enabled, Boolean loaderVersionsDropDown, Boolean enableCreateServers) {
         loaderTypeNoneEnabled.onNext(enabled);
         loaderTypeFabricEnabled.onNext(enabled);
         loaderTypeForgeEnabled.onNext(enabled);
@@ -916,15 +871,14 @@ public class VanillaPacksViewModel implements SettingsListener, IVanillaPacksVie
         loaderTypeQuiltEnabled.onNext(enabled);
         createServerEnabled.onNext(enableCreateServers);
         createInstanceEnabled.onNext(enabled);
-        loaderVersionsDropDownEnabled.onNext(enabled);
+        loaderVersionsDropDownEnabled.onNext(loaderVersionsDropDown);
     }
 
     /**
      * Use legacy loading mechanic
      */
     List<LoaderVersion> legacyLoad(
-        LoaderType selectedLoader, String selectedMinecraftVersion, Boolean enableCreateServers
-    ) {
+            LoaderType selectedLoader, String selectedMinecraftVersion, Boolean enableCreateServers) {
         final ArrayList<LoaderVersion> loaderVersionsList = new ArrayList<>();
         switch (selectedLoader) {
             case FABRIC:
@@ -941,9 +895,8 @@ public class VanillaPacksViewModel implements SettingsListener, IVanillaPacksVie
                 break;
         }
 
-
         if (loaderVersionsList.size() == 0) {
-            setLoaderGroupEnabled(true, enableCreateServers);
+            setLoaderGroupEnabled(true, false, enableCreateServers);
             return singletonList(noLoaderVersions);
         }
 
@@ -951,12 +904,12 @@ public class VanillaPacksViewModel implements SettingsListener, IVanillaPacksVie
     }
 
     /**
-     * Update the name and description fields if they're not dirty with loader type information
+     * Update the name and description fields if they're not dirty with loader type
+     * information
      */
     private void updateNameAndDescription(
-        @Nonnull String selectedMinecraftVersion,
-        @Nullable LoaderType selectedLoader
-    ) {
+            @Nonnull String selectedMinecraftVersion,
+            @Nullable LoaderType selectedLoader) {
         final String defaultNameField;
 
         if (selectedLoader == null) {

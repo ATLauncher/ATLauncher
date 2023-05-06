@@ -159,14 +159,14 @@ public class VanillaPacksTab extends JPanel implements Tab, RelocalizationListen
         gbc.insets = UIConstants.FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         JScrollPane descriptionScrollPane = new JScrollPane(
-            JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER
-        );
+                JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         descriptionScrollPane.setPreferredSize(new Dimension(450, 80));
         descriptionScrollPane.setViewportView(descriptionField);
 
         PreservingCaretTextSetter descriptionFieldSetter = new PreservingCaretTextSetter(descriptionField);
         viewModel.description().subscribe((it) -> descriptionFieldSetter.setText(it.orElse(null)));
-        descriptionField.addKeyListener(new StatefulTextKeyAdapter((e) -> viewModel.setDescription(descriptionField.getText())));
+        descriptionField.addKeyListener(
+                new StatefulTextKeyAdapter((e) -> viewModel.setDescription(descriptionField.getText())));
         mainPanel.add(descriptionScrollPane, gbc);
 
         // Minecraft Version
@@ -206,8 +206,7 @@ public class VanillaPacksTab extends JPanel implements Tab, RelocalizationListen
         gbc.insets = UIConstants.FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         JScrollPane minecraftVersionScrollPane = new JScrollPane(
-            JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER
-        );
+                JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         minecraftVersionScrollPane.setPreferredSize(new Dimension(450, 300));
         setupMinecraftVersionsTable();
         minecraftVersionScrollPane.setViewportView(minecraftVersionTable);
@@ -266,17 +265,14 @@ public class VanillaPacksTab extends JPanel implements Tab, RelocalizationListen
                 for (LoaderVersion version : loaderVersions) {
                     // ensures that font width is taken into account
                     loaderVersionLength = max(
-                        loaderVersionLength,
-                        getFontMetrics(App.THEME.getNormalFont())
-                            .stringWidth(version.toString()) + 25
-                    );
+                            loaderVersionLength,
+                            getFontMetrics(App.THEME.getNormalFont())
+                                    .stringWidth(version.toString()) + 25);
 
                     loaderVersionsDropDown.addItem(
-                        new ComboItem(
-                            version,
-                            version.version
-                        )
-                    );
+                            new ComboItem(
+                                    version,
+                                    version.version));
                 }
 
                 // ensures that the dropdown is at least 200 px wide
@@ -287,7 +283,8 @@ public class VanillaPacksTab extends JPanel implements Tab, RelocalizationListen
                 loaderVersionsDropDown.setPreferredSize(new Dimension(loaderVersionLength, 23));
 
                 selectionDisposable = viewModel.selectedLoaderVersion().subscribe((it) -> {
-                    it.ifPresent(loaderVersion -> loaderVersionsDropDown.setSelectedIndex(loaderVersions.indexOf(loaderVersion)));
+                    it.ifPresent(loaderVersion -> loaderVersionsDropDown
+                            .setSelectedIndex(loaderVersions.indexOf(loaderVersion)));
                 });
             }
         });
@@ -334,11 +331,8 @@ public class VanillaPacksTab extends JPanel implements Tab, RelocalizationListen
         viewModel.loaderTypeLegacyFabricEnabled().subscribe(loaderTypeLegacyFabricRadioButton::setEnabled);
         viewModel.isLegacyFabricVisible().subscribe(loaderTypeLegacyFabricRadioButton::setVisible);
         loaderTypeLegacyFabricRadioButton.addActionListener(
-            e ->
-                viewModel.setLoaderType(
-                    LoaderType.LEGACY_FABRIC
-                )
-        );
+                e -> viewModel.setLoaderType(
+                        LoaderType.LEGACY_FABRIC));
         if (viewModel.showLegacyFabricOption()) {
             loaderTypePanel.add(loaderTypeLegacyFabricRadioButton);
         }
@@ -349,11 +343,8 @@ public class VanillaPacksTab extends JPanel implements Tab, RelocalizationListen
         viewModel.loaderTypeFabricEnabled().subscribe(loaderTypeFabricRadioButton::setEnabled);
         viewModel.isFabricVisible().subscribe(loaderTypeFabricRadioButton::setVisible);
         loaderTypeFabricRadioButton.addActionListener(
-            e ->
-                viewModel.setLoaderType(
-                    LoaderType.FABRIC
-                )
-        );
+                e -> viewModel.setLoaderType(
+                        LoaderType.FABRIC));
         if (viewModel.showFabricOption()) {
             loaderTypePanel.add(loaderTypeFabricRadioButton);
         }
@@ -371,9 +362,8 @@ public class VanillaPacksTab extends JPanel implements Tab, RelocalizationListen
     private void setupOldAlphasCheckbox(JPanel minecraftVersionFilterPanel) {
         viewModel.oldAlphaSelected().subscribe(minecraftVersionAlphasFilterCheckbox::setSelected);
         viewModel.oldAlphaEnabled().subscribe(minecraftVersionAlphasFilterCheckbox::setEnabled);
-        minecraftVersionAlphasFilterCheckbox.addActionListener(it ->
-            viewModel.setOldAlphaSelected(minecraftVersionAlphasFilterCheckbox.isSelected())
-        );
+        minecraftVersionAlphasFilterCheckbox.addActionListener(
+                it -> viewModel.setOldAlphaSelected(minecraftVersionAlphasFilterCheckbox.isSelected()));
         if (viewModel.showOldAlphaOption()) {
             minecraftVersionFilterPanel.add(minecraftVersionAlphasFilterCheckbox);
         }
@@ -382,9 +372,8 @@ public class VanillaPacksTab extends JPanel implements Tab, RelocalizationListen
     private void setupOldBetasCheckbox(JPanel minecraftVersionFilterPanel) {
         viewModel.oldBetaSelected().subscribe(minecraftVersionBetasFilterCheckbox::setSelected);
         viewModel.oldBetaEnabled().subscribe(minecraftVersionBetasFilterCheckbox::setEnabled);
-        minecraftVersionBetasFilterCheckbox.addActionListener(it ->
-            viewModel.setOldBetaSelected(minecraftVersionBetasFilterCheckbox.isSelected())
-        );
+        minecraftVersionBetasFilterCheckbox.addActionListener(
+                it -> viewModel.setOldBetaSelected(minecraftVersionBetasFilterCheckbox.isSelected()));
         if (viewModel.showOldBetaOption()) {
             minecraftVersionFilterPanel.add(minecraftVersionBetasFilterCheckbox);
         }
@@ -393,9 +382,8 @@ public class VanillaPacksTab extends JPanel implements Tab, RelocalizationListen
     private void setupSnapshotsCheckbox(JPanel minecraftVersionFilterPanel) {
         viewModel.snapshotSelected().subscribe(minecraftVersionSnapshotsFilterCheckbox::setSelected);
         viewModel.snapshotEnabled().subscribe(minecraftVersionSnapshotsFilterCheckbox::setEnabled);
-        minecraftVersionSnapshotsFilterCheckbox.addActionListener(it ->
-            viewModel.setSnapshotSelected(minecraftVersionSnapshotsFilterCheckbox.isSelected())
-        );
+        minecraftVersionSnapshotsFilterCheckbox.addActionListener(
+                it -> viewModel.setSnapshotSelected(minecraftVersionSnapshotsFilterCheckbox.isSelected()));
         if (viewModel.showSnapshotOption()) {
             minecraftVersionFilterPanel.add(minecraftVersionSnapshotsFilterCheckbox);
         }
@@ -404,9 +392,8 @@ public class VanillaPacksTab extends JPanel implements Tab, RelocalizationListen
     private void setupExperimentsCheckbox(JPanel minecraftVersionFilterPanel) {
         viewModel.experimentSelected().subscribe(minecraftVersionExperimentsFilterCheckbox::setSelected);
         viewModel.experimentEnabled().subscribe(minecraftVersionExperimentsFilterCheckbox::setEnabled);
-        minecraftVersionExperimentsFilterCheckbox.addActionListener(it ->
-            viewModel.setExperimentSelected(minecraftVersionExperimentsFilterCheckbox.isSelected())
-        );
+        minecraftVersionExperimentsFilterCheckbox.addActionListener(
+                it -> viewModel.setExperimentSelected(minecraftVersionExperimentsFilterCheckbox.isSelected()));
         if (viewModel.showExperimentOption()) {
             minecraftVersionFilterPanel.add(minecraftVersionExperimentsFilterCheckbox);
         }
@@ -416,9 +403,8 @@ public class VanillaPacksTab extends JPanel implements Tab, RelocalizationListen
         viewModel.releaseSelected().subscribe(minecraftVersionReleasesFilterCheckbox::setSelected);
         viewModel.releaseEnabled().subscribe(minecraftVersionReleasesFilterCheckbox::setEnabled);
         minecraftVersionReleasesFilterCheckbox.setSelected(true);
-        minecraftVersionReleasesFilterCheckbox.addActionListener(it ->
-            viewModel.setReleaseSelected(minecraftVersionReleasesFilterCheckbox.isSelected())
-        );
+        minecraftVersionReleasesFilterCheckbox.addActionListener(
+                it -> viewModel.setReleaseSelected(minecraftVersionReleasesFilterCheckbox.isSelected()));
         if (viewModel.showReleaseOption()) {
             minecraftVersionFilterPanel.add(minecraftVersionReleasesFilterCheckbox);
         }
@@ -426,9 +412,8 @@ public class VanillaPacksTab extends JPanel implements Tab, RelocalizationListen
 
     private void setupMinecraftVersionsTable() {
         minecraftVersionTableModel = new DefaultTableModel(
-            new String[][]{},
-            new String[]{GetText.tr("Version"), GetText.tr("Released"), GetText.tr("Type")}
-        ) {
+                new String[][] {},
+                new String[] { GetText.tr("Version"), GetText.tr("Released"), GetText.tr("Type") }) {
             @Override
             public boolean isCellEditable(int rowIndex, int columnIndex) {
                 return false;
@@ -449,8 +434,7 @@ public class VanillaPacksTab extends JPanel implements Tab, RelocalizationListen
             for (int i = minIndex; i <= maxIndex; i++) {
                 if (lsm.isSelectedIndex(i)) {
                     viewModel.setSelectedMinecraftVersion(
-                        (String) minecraftVersionTableModel.getValueAt(i, 0)
-                    );
+                            (String) minecraftVersionTableModel.getValueAt(i, 0));
                 }
             }
         });
@@ -470,28 +454,27 @@ public class VanillaPacksTab extends JPanel implements Tab, RelocalizationListen
             for (MCVersionRow row : minecraftVersions) {
                 if (minecraftVersionTableModel != null)
                     minecraftVersionTableModel.addRow(
-                        new Object[]{
-                            row.id,
-                            row.date,
-                            row.type
-                        }
-                    );
+                            new Object[] {
+                                    row.id,
+                                    row.date,
+                                    row.type
+                            });
             }
 
             // refresh the table
-            if (minecraftVersionTable != null) minecraftVersionTable.revalidate();
+            if (minecraftVersionTable != null)
+                minecraftVersionTable.revalidate();
         });
         viewModel.selectedMinecraftVersionIndex().subscribe(it -> {
-                if (minecraftVersionTable != null) {
-                    int rowCount = minecraftVersionTable.getRowCount();
+            if (minecraftVersionTable != null) {
+                int rowCount = minecraftVersionTable.getRowCount();
 
-                    if (it < rowCount) {
-                        minecraftVersionTable.setRowSelectionInterval(it, it);
-                        minecraftVersionTable.revalidate();
-                    }
+                if (it < rowCount) {
+                    minecraftVersionTable.setRowSelectionInterval(it, it);
+                    minecraftVersionTable.revalidate();
                 }
             }
-        );
+        });
 
         TableColumnModel cm = minecraftVersionTable.getColumnModel();
         cm.getColumn(0).setResizable(false);
@@ -506,16 +489,16 @@ public class VanillaPacksTab extends JPanel implements Tab, RelocalizationListen
     private void setupBottomPanel() {
         JPanel bottomPanel = new JPanel(new FlowLayout());
         bottomPanel.add(createServerButton);
-        createServerButton.addActionListener((event) -> { // user has no instances, they may not be aware this is not how to play
+        createServerButton.addActionListener((event) -> { // user has no instances, they may not be aware this is not
+                                                          // how to play
             if (viewModel.warnUserAboutServer()) {
                 int ret = DialogManager.yesNoDialog().setTitle(GetText.tr("Are you sure you want to create a server?"))
-                    .setContent(
-                        new HTMLBuilder().center().text(
-                            GetText.tr(
-                                "Creating a server won't allow you play Minecraft, it's for letting others play together.<br/><br/>If you just want to play Minecraft, you don't want to create a server, and instead will want to create an instance.<br/><br/>Are you sure you want to create a server?"
-                            )
-                        ).build()
-                    ).setType(DialogManager.QUESTION).show();
+                        .setContent(
+                                new HTMLBuilder().center().text(
+                                        GetText.tr(
+                                                "Creating a server won't allow you play Minecraft, it's for letting others play together.<br/><br/>If you just want to play Minecraft, you don't want to create a server, and instead will want to create an instance.<br/><br/>Are you sure you want to create a server?"))
+                                        .build())
+                        .setType(DialogManager.QUESTION).show();
                 if (ret != 0) {
                     return;
                 }
