@@ -269,10 +269,7 @@ public class VanillaPacksTab extends JPanel implements Tab, RelocalizationListen
                             getFontMetrics(App.THEME.getNormalFont())
                                     .stringWidth(version.toString()) + 25);
 
-                    loaderVersionsDropDown.addItem(
-                            new ComboItem(
-                                    version,
-                                    version.version));
+                    loaderVersionsDropDown.addItem(new ComboItem(version, version.toString()));
                 }
 
                 // ensures that the dropdown is at least 200 px wide
