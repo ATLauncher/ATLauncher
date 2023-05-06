@@ -77,6 +77,14 @@ public class InformationSection extends SectionPanel {
 
     private JLabel versionLabel = new JLabel(GetText.tr("Version") + ": ");
 
+    private JLabel created = new JLabel();
+
+    private JLabel lastPlayed = new JLabel();
+
+    private JLabel totalTimePlayed = new JLabel();
+
+    private JLabel numberOfLaunches = new JLabel();
+
     public InformationSection(EditInstanceDialog editInstanceDialog, Instance instance) {
         super(editInstanceDialog, instance);
 
@@ -207,7 +215,6 @@ public class InformationSection extends SectionPanel {
         gbc.gridx++;
         gbc.insets = UIConstants.FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-        JLabel numberOfLaunches = new JLabel(instance.launcher.numPlays + "");
         mainPanel.add(numberOfLaunches, gbc);
 
         // Total Time Played
@@ -222,7 +229,6 @@ public class InformationSection extends SectionPanel {
         gbc.gridx++;
         gbc.insets = UIConstants.FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-        JLabel totalTimePlayed = new JLabel(convertDurationToHumanString(instance.launcher.totalPlayTime));
         mainPanel.add(totalTimePlayed, gbc);
 
         // Last Played
@@ -237,11 +243,6 @@ public class InformationSection extends SectionPanel {
         gbc.gridx++;
         gbc.insets = UIConstants.FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-        JLabel lastPlayed = new JLabel(instance.launcher.lastPlayed == Instant.EPOCH ? GetText.tr("Never")
-                : getTimeAgo(instance.launcher.lastPlayed));
-        if (instance.launcher.lastPlayed != Instant.EPOCH) {
-            lastPlayed.setToolTipText(formatter.format(new Date(instance.launcher.lastPlayed.toEpochMilli())));
-        }
         mainPanel.add(lastPlayed, gbc);
 
         // Created
@@ -256,11 +257,6 @@ public class InformationSection extends SectionPanel {
         gbc.gridx++;
         gbc.insets = UIConstants.FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-        JLabel created = new JLabel(instance.launcher.createdAt == Instant.EPOCH ? GetText.tr("Unknown")
-                : getTimeAgo(instance.launcher.createdAt));
-        if (instance.launcher.createdAt != Instant.EPOCH) {
-            created.setToolTipText(formatter.format(new Date(instance.launcher.createdAt.toEpochMilli())));
-        }
         mainPanel.add(created, gbc);
 
         // Last Updated
@@ -290,7 +286,6 @@ public class InformationSection extends SectionPanel {
         sideBar.addSeparator();
 
         update.setText(GetText.tr("Update"));
-        update.setVisible(instance.isUpdatable() && instance.hasUpdate());
         update.addActionListener(e -> {
             instance.update();
 
@@ -300,7 +295,6 @@ public class InformationSection extends SectionPanel {
 
         reinstall.setText(
                 instance.isVanillaInstance() ? GetText.tr("Change Minecraft Version") : GetText.tr("Reinstall"));
-        reinstall.setVisible(instance.isUpdatable());
         reinstall.addActionListener(e -> {
             instance.startReinstall();
 
@@ -394,12 +388,27 @@ public class InformationSection extends SectionPanel {
 
     @Override
     public void updateUIState() {
+        numberOfLaunches.setText(instance.launcher.numPlays + "");
+        totalTimePlayed.setText(convertDurationToHumanString(instance.launcher.totalPlayTime));
+        lastPlayed.setText(instance.launcher.lastPlayed == Instant.EPOCH ? GetText.tr("Never")
+                : getTimeAgo(instance.launcher.lastPlayed));
+        if (instance.launcher.lastPlayed != Instant.EPOCH) {
+            lastPlayed.setToolTipText(formatter.format(new Date(instance.launcher.lastPlayed.toEpochMilli())));
+        }
+        created.setText(instance.launcher.createdAt == Instant.EPOCH ? GetText.tr("Unknown")
+                : getTimeAgo(instance.launcher.createdAt));
+        if (instance.launcher.createdAt != Instant.EPOCH) {
+            created.setToolTipText(formatter.format(new Date(instance.launcher.createdAt.toEpochMilli())));
+        }
+
         packLabel.setVisible(!instance.isVanillaInstance());
         pack.setVisible(!instance.isVanillaInstance());
         platformLabel.setVisible(!instance.isVanillaInstance());
         platform.setVisible(!instance.isVanillaInstance());
         versionLabel.setVisible(!instance.isVanillaInstance());
         version.setVisible(!instance.isVanillaInstance());
+        update.setVisible(instance.isUpdatable() && instance.hasUpdate());
+        reinstall.setVisible(instance.isUpdatable());
 
         if (instance.isVanillaInstance()) {
             ((GridBagLayout) mainPanel.getLayout()).rowHeights = new int[] { 0, 0, 0, 0, 0, 25, 0, 0, 25, 0, 0, 0, 0,
