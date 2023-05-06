@@ -1,5 +1,4 @@
 import java.text.SimpleDateFormat
-import java.util.stream.Collectors
 
 buildscript {
     repositories {
@@ -49,6 +48,7 @@ repositories {
         content {
             includeGroup "com.github.RyanTheAllmighty.gettext"
             includeGroup "com.github.Vatuu"
+            includeGroup "com.gitlab.doomsdayrs"
         }
     }
 }
@@ -85,6 +85,11 @@ dependencies {
     implementation 'com.apollographql.apollo:apollo-runtime:2.5.14'
     implementation 'com.apollographql.apollo:apollo-http-cache:2.5.14'
     implementation 'com.moandjiezana.toml:toml4j:0.7.2'
+    implementation 'com.apollographql.apollo:apollo-rx3-support:2.5.14'
+
+    // RxJava
+    implementation("io.reactivex.rxjava3:rxjava:3.1.6")
+    implementation("com.gitlab.doomsdayrs:rxswing:a5749ad421") // TODO tag
 
     testImplementation 'junit:junit:4.13.2'
     testImplementation 'org.mockito:mockito-core:4.6.1'
