@@ -25,6 +25,7 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.jar.Attributes;
@@ -139,7 +140,8 @@ public class Processor {
                 // checking for local file paths returned "/data/client.lzma" and then makes
                 // sure we localise it to the libraries folder if it's indeed local
                 if (value.charAt(0) == '/') {
-                    if (value.toLowerCase().contains(FileSystem.BASE_DIR.toString().toLowerCase())) {
+                    if (value.toLowerCase(Locale.ENGLISH)
+                            .contains(FileSystem.BASE_DIR.toString().toLowerCase(Locale.ENGLISH))) {
                         // if the value starts with our base launcher dir, then it's likely already
                         // resolved (such as {INSTALLER})
                         args.add(value);

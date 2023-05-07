@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.swing.ImageIcon;
@@ -95,7 +96,7 @@ public class Pack {
     }
 
     public ImageIcon getImage() {
-        File imageFile = FileSystem.IMAGES.resolve(getSafeName().toLowerCase() + ".png").toFile();
+        File imageFile = FileSystem.IMAGES.resolve(getSafeName().toLowerCase(Locale.ENGLISH) + ".png").toFile();
         if (!imageFile.exists()) {
             return Utils.getIconImage("/assets/image/default-image.png");
         }

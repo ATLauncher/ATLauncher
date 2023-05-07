@@ -40,6 +40,7 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManagerFactory;
 
 import com.atlauncher.Network;
+import com.atlauncher.managers.ConfigManager;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.managers.PerformanceManager;
 import com.atlauncher.utils.javafinder.JavaFinder;

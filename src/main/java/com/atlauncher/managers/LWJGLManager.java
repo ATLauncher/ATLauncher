@@ -121,7 +121,7 @@ public class LWJGLManager {
         }
 
         // take a copy of this so we're not modifying the original
-        Library replacedLibrary = Gsons.MINECRAFT.fromJson(Gsons.MINECRAFT.toJson(library), Library.class);
+        Library replacedLibrary = Gsons.DEFAULT.fromJson(Gsons.DEFAULT.toJson(library), Library.class);
 
         // 1.19-pre1 and onwards removed natives/classifiers, but we're worried about
         // the base library, no natives library here

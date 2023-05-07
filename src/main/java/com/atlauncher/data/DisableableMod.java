@@ -21,6 +21,7 @@ import java.awt.Color;
 import java.awt.Window;
 import java.io.File;
 import java.io.Serializable;
+import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.util.Comparator;
 import java.util.List;
@@ -265,7 +266,12 @@ public class DisableableMod implements Serializable {
     }
 
     public File getDisabledFile(Instance instance) {
-        return instance.getRoot().resolve("disabledmods/" + this.file).toFile();
+        try {
+            return instance.getRoot().resolve("disabledmods/" + this.file).toFile();
+        } catch (InvalidPathException e) {
+            LogManager.warn("Invalid path for mod " + this.name);
+            return null;
+        }
     }
 
     public File getFile(Instance instance) {
@@ -281,52 +287,57 @@ public class DisableableMod implements Serializable {
     }
 
     public File getFile(Path base, String mcVersion) {
-        File dir = null;
-        if (path != null) {
-            dir = base.resolve(path).toFile();
-        } else {
-            switch (type) {
-                case jar:
-                case forge:
-                case mcpc:
-                    dir = base.resolve("jarmods").toFile();
-                    break;
-                case texturepack:
-                    dir = base.resolve("texturepacks").toFile();
-                    break;
-                case resourcepack:
-                    dir = base.resolve("resourcepacks").toFile();
-                    break;
-                case mods:
-                    dir = base.resolve("mods").toFile();
-                    break;
-                case ic2lib:
-                    dir = base.resolve("mods/ic2").toFile();
-                    break;
-                case denlib:
-                    dir = base.resolve("mods/denlib").toFile();
-                    break;
-                case coremods:
-                    dir = base.resolve("coremods").toFile();
-                    break;
-                case shaderpack:
-                    dir = base.resolve("shaderpacks").toFile();
-                    break;
-                case dependency:
-                    if (mcVersion != null) {
-                        dir = base.resolve("mods/" + mcVersion).toFile();
-                    }
-                    break;
-                default:
-                    LogManager.warn("Unsupported mod for enabling/disabling " + this.name);
-                    break;
+        try {
+            File dir = null;
+            if (path != null) {
+                dir = base.resolve(path).toFile();
+            } else {
+                switch (type) {
+                    case jar:
+                    case forge:
+                    case mcpc:
+                        dir = base.resolve("jarmods").toFile();
+                        break;
+                    case texturepack:
+                        dir = base.resolve("texturepacks").toFile();
+                        break;
+                    case resourcepack:
+                        dir = base.resolve("resourcepacks").toFile();
+                        break;
+                    case mods:
+                        dir = base.resolve("mods").toFile();
+                        break;
+                    case ic2lib:
+                        dir = base.resolve("mods/ic2").toFile();
+                        break;
+                    case denlib:
+                        dir = base.resolve("mods/denlib").toFile();
+                        break;
+                    case coremods:
+                        dir = base.resolve("coremods").toFile();
+                        break;
+                    case shaderpack:
+                        dir = base.resolve("shaderpacks").toFile();
+                        break;
+                    case dependency:
+                        if (mcVersion != null) {
+                            dir = base.resolve("mods/" + mcVersion).toFile();
+                        }
+                        break;
+                    default:
+                        LogManager.warn("Unsupported mod for enabling/disabling " + this.name);
+                        break;
+                }
             }
-        }
-        if (dir == null) {
-            LogManager.warn("null path returned for mod " + this.name);
+            if (dir == null) {
+                LogManager.warn("null path returned for mod " + this.name);
+                return null;
+            }
+            return new File(dir, file);
+        } catch (InvalidPathException e) {
+            LogManager.warn("Invalid path for mod " + this.name);
             return null;
         }
-        return new File(dir, file);
     }
 
     public Type getType() {

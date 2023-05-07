@@ -88,11 +88,11 @@ public class QuiltLoader implements Loader {
             }
 
             if (instanceInstaller.isServer) {
-                return Gsons.MINECRAFT.fromJson(response.quiltLoaderVersion().serverJson(),
+                return Gsons.DEFAULT.fromJson(response.quiltLoaderVersion().serverJson(),
                         QuiltMetaProfile.class);
             }
 
-            return Gsons.MINECRAFT.fromJson(response.quiltLoaderVersion().clientJson(),
+            return Gsons.DEFAULT.fromJson(response.quiltLoaderVersion().clientJson(),
                     QuiltMetaProfile.class);
         }
 

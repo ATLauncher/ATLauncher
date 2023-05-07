@@ -39,6 +39,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
+import javax.swing.Timer;
 import javax.swing.UIManager;
 
 import org.mini2Dx.gettext.GetText;
@@ -110,6 +111,8 @@ public final class PacksBrowserTab extends JPanel
     private boolean loading = false;
     private int page = 1;
 
+    private Timer tabsEnabledTimer = null;
+
     public PacksBrowserTab() {
         super(new BorderLayout());
         setName("packsBrowserPanel");
@@ -136,7 +139,7 @@ public final class PacksBrowserTab extends JPanel
                 page = 1;
 
                 // disable the tabs
-                platformTabbedPane.setEnabled(false);
+                disableTabsWhileLoading();
 
                 load(true);
             }
@@ -153,7 +156,7 @@ public final class PacksBrowserTab extends JPanel
                 page = 1;
 
                 // disable the tabs
-                platformTabbedPane.setEnabled(false);
+                disableTabsWhileLoading();
 
                 load(true);
             }
@@ -173,7 +176,7 @@ public final class PacksBrowserTab extends JPanel
                 page = 1;
 
                 // disable the tabs
-                platformTabbedPane.setEnabled(false);
+                disableTabsWhileLoading();
 
                 String newSort = ((ComboItem<String>) sortComboBox.getSelectedItem()).getValue();
 
@@ -318,6 +321,25 @@ public final class PacksBrowserTab extends JPanel
         add(platformTabbedPane, BorderLayout.CENTER);
     }
 
+    private void disableTabsWhileLoading() {
+        if (tabsEnabledTimer != null && tabsEnabledTimer.isRunning()) {
+            tabsEnabledTimer.stop();
+        }
+        platformTabbedPane.setEnabled(false);
+        tabsEnabledTimer = new Timer(30000, e2 -> {
+            platformTabbedPane.setEnabled(true);
+        });
+        tabsEnabledTimer.setRepeats(false);
+        tabsEnabledTimer.start();
+    }
+
+    private void enableTabsAfterLoading() {
+        if (tabsEnabledTimer != null && tabsEnabledTimer.isRunning()) {
+            tabsEnabledTimer.stop();
+        }
+        platformTabbedPane.setEnabled(true);
+    }
+
     private void afterTabChange() {
         // add the scrollPane to the newly selected panel
         PackBrowserPlatformPanel selectedPanel = (PackBrowserPlatformPanel) platformTabbedPane.getSelectedComponent();
@@ -332,7 +354,7 @@ public final class PacksBrowserTab extends JPanel
         page = 1;
 
         // disable the tabs
-        platformTabbedPane.setEnabled(false);
+        disableTabsWhileLoading();
 
         // remove minecraft version, category and sort values
         minecraftVersionComboBox.removeAllItems();
@@ -410,7 +432,7 @@ public final class PacksBrowserTab extends JPanel
 
         if (selectedPanel.hasPagination()) {
             loading = true;
-            platformTabbedPane.setEnabled(false);
+            disableTabsWhileLoading();
             page += 1;
 
             Analytics.sendEvent(page, "Next", "Navigation", selectedPanel.getAnalyticsCategory());
@@ -440,7 +462,7 @@ public final class PacksBrowserTab extends JPanel
                     @Override
                     public void run() {
                         loading = false;
-                        platformTabbedPane.setEnabled(true);
+                        enableTabsAfterLoading();
                     }
                 });
 
@@ -457,7 +479,7 @@ public final class PacksBrowserTab extends JPanel
         page = 1;
 
         // disable the tabs
-        platformTabbedPane.setEnabled(false);
+        disableTabsWhileLoading();
 
         if (!searchField.getText().isEmpty()) {
             Analytics.sendEvent(searchField.getText(), "Search", selectedPanel.getAnalyticsCategory());
@@ -500,7 +522,7 @@ public final class PacksBrowserTab extends JPanel
                     }
 
                     loading = false;
-                    platformTabbedPane.setEnabled(true);
+                    enableTabsAfterLoading();
                 }
             });
 

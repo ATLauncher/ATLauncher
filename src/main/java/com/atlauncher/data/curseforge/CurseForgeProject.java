@@ -92,7 +92,7 @@ public class CurseForgeProject {
     }
 
     public boolean hasWebsiteUrl() {
-        return links.containsKey("websiteUrl");
+        return links.containsKey("websiteUrl") && links.get("websiteUrl") != null && !links.get("websiteUrl").isEmpty();
     }
 
     public String getIssuesUrl() {
@@ -100,7 +100,7 @@ public class CurseForgeProject {
     }
 
     public boolean hasIssuesUrl() {
-        return links.containsKey("issuesUrl") && !links.get("issuesUrl").isEmpty();
+        return links.containsKey("issuesUrl") && links.get("issuesUrl") != null && !links.get("issuesUrl").isEmpty();
     }
 
     public String getWikiUrl() {
@@ -108,7 +108,7 @@ public class CurseForgeProject {
     }
 
     public boolean hasWikiUrl() {
-        return links.containsKey("wikiUrl") && !links.get("wikiUrl").isEmpty();
+        return links.containsKey("wikiUrl") && links.get("wikiUrl") != null && !links.get("wikiUrl").isEmpty();
     }
 
     public String getClassUrlSlug() {

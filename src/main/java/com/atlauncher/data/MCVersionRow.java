@@ -15,24 +15,19 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.atlauncher.data.curseforge;
+package com.atlauncher.data;
 
-import com.google.gson.annotations.SerializedName;
+/**
+ * Specifies a row to display in the VanillaPacksTab
+ *
+ * @see [com.atlauncher.gui.tabs.VanillaPacksTab]
+ */
+public class MCVersionRow {
+    public final String id, date, type;
 
-public class CurseForgeFileDependency {
-    public int fileId;
-
-    @SerializedName(value = "modId", alternate = { "addonId" })
-    public int modId;
-
-    @SerializedName(value = "relationType", alternate = { "type" })
-    public int relationType;
-
-    public boolean isRequired() {
-        return this.relationType == 3;
-    }
-
-    public boolean isOptional() {
-        return this.relationType == 2;
+    public MCVersionRow(String id, String date, String type) {
+        this.id = id;
+        this.date = date;
+        this.type = type;
     }
 }

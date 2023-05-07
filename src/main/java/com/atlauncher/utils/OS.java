@@ -42,6 +42,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -82,7 +83,7 @@ public enum OS {
                     || WINDOWS_ANTIVIRUS_PROCESS_PATHS.contains(process.getPath());
 
     public static OS getOS() {
-        String osName = System.getProperty("os.name").toLowerCase();
+        String osName = System.getProperty("os.name").toLowerCase(Locale.ENGLISH);
 
         if (osName.contains("win")) {
             return OS.WINDOWS;
@@ -119,12 +120,14 @@ public enum OS {
     public static Path storagePath() {
         switch (getOS()) {
             case WINDOWS:
-                return Paths.get(System.getenv("APPDATA")).resolve("." + Constants.LAUNCHER_NAME.toLowerCase());
+                return Paths.get(System.getenv("APPDATA"))
+                        .resolve("." + Constants.LAUNCHER_NAME.toLowerCase(Locale.ENGLISH));
             case OSX:
                 return Paths.get(System.getProperty("user.home")).resolve("Library").resolve("Application Support")
-                        .resolve("." + Constants.LAUNCHER_NAME.toLowerCase());
+                        .resolve("." + Constants.LAUNCHER_NAME.toLowerCase(Locale.ENGLISH));
             default:
-                return Paths.get(System.getProperty("user.home")).resolve("." + Constants.LAUNCHER_NAME.toLowerCase());
+                return Paths.get(System.getProperty("user.home"))
+                        .resolve("." + Constants.LAUNCHER_NAME.toLowerCase(Locale.ENGLISH));
         }
     }
 

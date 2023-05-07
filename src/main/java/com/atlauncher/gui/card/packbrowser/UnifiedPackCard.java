@@ -20,6 +20,7 @@ package com.atlauncher.gui.card.packbrowser;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.util.Locale;
 
 import javax.swing.JButton;
 import javax.swing.JEditorPane;
@@ -61,7 +62,7 @@ public class UnifiedPackCard extends JPanel implements RelocalizationListener {
         setLayout(new BorderLayout());
         setBorder(new IconTitledBorder(result.name(), App.THEME.getBoldFont().deriveFont(15f),
                 Utils.getIconImage(App.THEME.getResourcePath("image/modpack-platform",
-                        result.platform().toString().toLowerCase().replace("modpacksch", "ftb")))));
+                        result.platform().toString().toLowerCase(Locale.ENGLISH).replace("modpacksch", "ftb")))));
 
         RelocalizationManager.addListener(this);
 

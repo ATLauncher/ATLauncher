@@ -29,6 +29,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.imageio.IIOException;
@@ -342,7 +343,8 @@ public class Server {
         }
 
         if (getPack() != null) {
-            File instancesImage = FileSystem.IMAGES.resolve(this.getSafePackName().toLowerCase() + ".png").toFile();
+            File instancesImage = FileSystem.IMAGES.resolve(this.getSafePackName().toLowerCase(Locale.ENGLISH) + ".png")
+                    .toFile();
             if (instancesImage.exists()) {
                 return Utils.getIconImage(instancesImage);
             }
@@ -353,7 +355,7 @@ public class Server {
 
     public void save() {
         try (FileWriter fileWriter = new FileWriter(this.getRoot().resolve("server.json").toFile())) {
-            Gsons.MINECRAFT.toJson(this, fileWriter);
+            Gsons.DEFAULT.toJson(this, fileWriter);
         } catch (JsonIOException | IOException e) {
             LogManager.logStackTrace(e);
         }

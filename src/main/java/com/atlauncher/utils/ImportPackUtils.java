@@ -23,6 +23,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.regex.Matcher;
@@ -171,7 +172,8 @@ public class ImportPackUtils {
 
     public static boolean loadFromFile(File file) {
         try {
-            Path tmpDir = FileSystem.TEMP.resolve("multimcimport" + file.getName().toString().toLowerCase());
+            Path tmpDir = FileSystem.TEMP
+                    .resolve("multimcimport" + file.getName().toString().toLowerCase(Locale.ENGLISH));
 
             ArchiveUtils.extract(file.toPath(), tmpDir);
 
@@ -185,7 +187,7 @@ public class ImportPackUtils {
             }
 
             FileUtils.deleteDirectory(tmpDir);
-            
+
             if (ArchiveUtils.archiveContainsFile(file.toPath(), "manifest.json")) {
                 return loadCurseForgeFormat(file, null, null);
             }
@@ -208,10 +210,11 @@ public class ImportPackUtils {
             return false;
         }
 
-        Path tmpDir = FileSystem.TEMP.resolve("curseforgeimport" + file.getName().toString().toLowerCase());
+        Path tmpDir = FileSystem.TEMP
+                .resolve("curseforgeimport" + file.getName().toString().toLowerCase(Locale.ENGLISH));
 
         try {
-            CurseForgeManifest manifest = Gsons.MINECRAFT.fromJson(ArchiveUtils.getFile(file.toPath(), "manifest.json"),
+            CurseForgeManifest manifest = Gsons.DEFAULT.fromJson(ArchiveUtils.getFile(file.toPath(), "manifest.json"),
                     CurseForgeManifest.class);
 
             if (projectId != null) {
@@ -265,10 +268,10 @@ public class ImportPackUtils {
             }
         }
 
-        Path tmpDir = FileSystem.TEMP.resolve("modrinthimport" + file.getName().toString().toLowerCase());
+        Path tmpDir = FileSystem.TEMP.resolve("modrinthimport" + file.getName().toString().toLowerCase(Locale.ENGLISH));
 
         try {
-            ModrinthModpackManifest manifest = Gsons.MINECRAFT
+            ModrinthModpackManifest manifest = Gsons.DEFAULT
                     .fromJson(ArchiveUtils.getFile(file.toPath(), "modrinth.index.json"),
                             ModrinthModpackManifest.class);
 
@@ -302,7 +305,7 @@ public class ImportPackUtils {
     public static boolean loadMultiMCFormat(Path extractedPath) {
         try (FileReader fileReader = new FileReader(extractedPath.resolve("mmc-pack.json").toFile());
                 InputStream instanceCfgStream = new FileInputStream(extractedPath.resolve("instance.cfg").toFile())) {
-            MultiMCManifest manifest = Gsons.MINECRAFT.fromJson(fileReader, MultiMCManifest.class);
+            MultiMCManifest manifest = Gsons.DEFAULT.fromJson(fileReader, MultiMCManifest.class);
 
             Properties props = new Properties();
             props.load(instanceCfgStream);
