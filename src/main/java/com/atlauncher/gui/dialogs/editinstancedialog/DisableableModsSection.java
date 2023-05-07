@@ -291,6 +291,8 @@ public abstract class DisableableModsSection extends SectionPanel {
         table.setShowVerticalLines(false);
         table.setDefaultRenderer(String.class, new TableCellRenderer());
         table.getTableHeader().setReorderingAllowed(false);
+        table.setTransferHandler(new DisableableModsTableTransferHandler(instance));
+        table.setDragEnabled(true);
 
         table.addMouseListener(new MouseAdapter() {
             @Override
@@ -357,6 +359,7 @@ public abstract class DisableableModsSection extends SectionPanel {
             @Override
             public synchronized void drop(DropTargetDropEvent event) {
                 try {
+                    System.out.println(event.getTransferable().getTransferDataFlavors()[0].getHumanPresentableName());
                     event.acceptDrop(DnDConstants.ACTION_COPY);
 
                     // Get the list of dropped files
