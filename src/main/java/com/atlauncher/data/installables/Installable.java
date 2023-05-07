@@ -166,6 +166,7 @@ public abstract class Installable {
                 curseExtractedPath, modpacksChPackManifest, modrinthManifest, modrinthExtractedPath, multiMCManifest,
                 multiMCExtractedPath, technicModpack, dialog) {
 
+            @Override
             protected void done() {
                 Boolean success = false;
                 int type;
@@ -387,6 +388,7 @@ public abstract class Installable {
         });
 
         dialog.addWindowListener(new WindowAdapter() {
+            @Override
             public void windowClosing(WindowEvent e) {
                 instanceInstaller.cancel(true);
             }

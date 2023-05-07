@@ -287,7 +287,7 @@ public class InformationSection extends SectionPanel {
 
         update.setText(GetText.tr("Update"));
         update.addActionListener(e -> {
-            instance.update();
+            instance.update(parent);
 
             updateUIState();
         });
@@ -296,14 +296,14 @@ public class InformationSection extends SectionPanel {
         reinstall.setText(
                 instance.isVanillaInstance() ? GetText.tr("Change Minecraft Version") : GetText.tr("Reinstall"));
         reinstall.addActionListener(e -> {
-            instance.startReinstall();
+            instance.startReinstall(parent);
 
             updateUIState();
         });
         sideBar.add(reinstall);
 
         changeLoaderVersionButton.addActionListener(e -> {
-            instance.changeLoaderVersion();
+            instance.changeLoaderVersion(parent);
 
             updateUIState();
         });
@@ -312,9 +312,9 @@ public class InformationSection extends SectionPanel {
 
         removeInstallFabricButton.addActionListener(e -> {
             if (instance.launcher.loaderVersion == null) {
-                instance.addLoader(LoaderType.FABRIC);
+                instance.addLoader(parent, LoaderType.FABRIC);
             } else {
-                instance.removeLoader();
+                instance.removeLoader(parent);
             }
 
             updateUIState();
@@ -323,9 +323,9 @@ public class InformationSection extends SectionPanel {
 
         removeInstallForgeButton.addActionListener(e -> {
             if (instance.launcher.loaderVersion == null) {
-                instance.addLoader(LoaderType.FORGE);
+                instance.addLoader(parent, LoaderType.FORGE);
             } else {
-                instance.removeLoader();
+                instance.removeLoader(parent);
             }
 
             updateUIState();
@@ -334,9 +334,9 @@ public class InformationSection extends SectionPanel {
 
         removeInstallLegacyFabricButton.addActionListener(e -> {
             if (instance.launcher.loaderVersion == null) {
-                instance.addLoader(LoaderType.LEGACY_FABRIC);
+                instance.addLoader(parent, LoaderType.LEGACY_FABRIC);
             } else {
-                instance.removeLoader();
+                instance.removeLoader(parent);
             }
 
             updateUIState();
@@ -345,9 +345,9 @@ public class InformationSection extends SectionPanel {
 
         removeInstallQuiltButton.addActionListener(e -> {
             if (instance.launcher.loaderVersion == null) {
-                instance.addLoader(LoaderType.QUILT);
+                instance.addLoader(parent, LoaderType.QUILT);
             } else {
-                instance.removeLoader();
+                instance.removeLoader(parent);
             }
 
             updateUIState();

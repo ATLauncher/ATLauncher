@@ -2569,7 +2569,11 @@ public class Instance extends MinecraftVersion {
     }
 
     public void update() {
-        new InstanceInstallerDialog(this, true, false, null, null, true, null, App.launcher.getParent(), null);
+        update(App.launcher.getParent());
+    }
+
+    public void update(Window parent) {
+        new InstanceInstallerDialog(this, true, false, null, null, true, null, parent, null);
     }
 
     public boolean hasCurseForgeProjectId() {
@@ -2650,8 +2654,12 @@ public class Instance extends MinecraftVersion {
     }
 
     public void startReinstall() {
+        startReinstall(App.launcher.getParent());
+    }
+
+    public void startReinstall(Window parent) {
         Analytics.sendEvent(launcher.pack + " - " + launcher.version, "Reinstall", getAnalyticsCategory());
-        new InstanceInstallerDialog(this);
+        new InstanceInstallerDialog(parent, this);
     }
 
     public void startRename() {
@@ -2753,11 +2761,11 @@ public class Instance extends MinecraftVersion {
         }
     }
 
-    public void changeLoaderVersion() {
+    public void changeLoaderVersion(Window parent) {
         Analytics.sendEvent(launcher.loaderVersion.getAnalyticsValue(), launcher.pack + " - " + launcher.version,
                 "ChangeLoaderVersion", getAnalyticsCategory());
 
-        LoaderVersion loaderVersion = showLoaderVersionSelector(launcher.loaderVersion.getLoaderType());
+        LoaderVersion loaderVersion = showLoaderVersionSelector(parent, launcher.loaderVersion.getLoaderType());
 
         if (loaderVersion == null) {
             return;
@@ -2774,6 +2782,8 @@ public class Instance extends MinecraftVersion {
             installable.changingLoader = true;
             installable.isServer = false;
             installable.saveMods = true;
+
+            installable.parent = parent;
 
             success = installable.startInstall();
         } catch (InvalidMinecraftVersion e) {
@@ -2802,11 +2812,11 @@ public class Instance extends MinecraftVersion {
         }
     }
 
-    public void addLoader(LoaderType loaderType) {
+    public void addLoader(Window parent, LoaderType loaderType) {
         Analytics.sendEvent(loaderType.getAnalyticsValue(), launcher.pack + " - " + launcher.version, "AddLoader",
                 getAnalyticsCategory());
 
-        LoaderVersion loaderVersion = showLoaderVersionSelector(loaderType);
+        LoaderVersion loaderVersion = showLoaderVersionSelector(parent, loaderType);
 
         if (loaderVersion == null) {
             return;
@@ -2823,6 +2833,8 @@ public class Instance extends MinecraftVersion {
             installable.addingLoader = true;
             installable.isServer = false;
             installable.saveMods = true;
+
+            installable.parent = parent;
 
             success = installable.startInstall();
         } catch (InvalidMinecraftVersion e) {
@@ -2847,12 +2859,12 @@ public class Instance extends MinecraftVersion {
         }
     }
 
-    private LoaderVersion showLoaderVersionSelector(LoaderType loaderType) {
+    private LoaderVersion showLoaderVersionSelector(Window parent, LoaderType loaderType) {
         ProgressDialog<List<LoaderVersion>> progressDialog = new ProgressDialog<>(
                 // #. {0} is the loader (Forge/Fabric/Quilt)
                 GetText.tr("Checking For {0} Versions", loaderType), 0,
                 // #. {0} is the loader (Forge/Fabric/Quilt)
-                GetText.tr("Checking For {0} Versions", loaderType));
+                GetText.tr("Checking For {0} Versions", loaderType), parent);
         progressDialog.addThread(new Thread(() -> {
             if (loaderType == LoaderType.FABRIC) {
                 progressDialog.setReturnValue(FabricLoader.getChoosableVersions(id));
@@ -2873,7 +2885,7 @@ public class Instance extends MinecraftVersion {
 
         if (loaderVersions == null || loaderVersions.size() == 0) {
             // #. {0} is the loader (Forge/Fabric/Quilt)
-            DialogManager.okDialog().setTitle(GetText.tr("No Versions Available For {0}", loaderType))
+            DialogManager.okDialog().setParent(parent).setTitle(GetText.tr("No Versions Available For {0}", loaderType))
                     .setContent(new HTMLBuilder().center()
                             // #. {0} is the loader (Forge/Fabric/Quilt)
                             .text(GetText.tr("{0} has not been installed/updated as there are no versions available.",
@@ -2940,7 +2952,7 @@ public class Instance extends MinecraftVersion {
         panel.add(loaderVersionsDropDown);
         panel.add(Box.createVerticalStrut(20));
 
-        int ret = JOptionPane.showConfirmDialog(App.launcher.getParent(), panel,
+        int ret = JOptionPane.showConfirmDialog(parent, panel,
                 // #. {0} is the loader (Forge/Fabric/Quilt)
                 launcher.loaderVersion == null ? GetText.tr("Installing {0}", loaderType)
                         // #. {0} is the loader (Forge/Fabric/Quilt)
@@ -2954,7 +2966,7 @@ public class Instance extends MinecraftVersion {
         return ((ComboItem<LoaderVersion>) loaderVersionsDropDown.getSelectedItem()).getValue();
     }
 
-    public void removeLoader() {
+    public void removeLoader(Window parent) {
         Analytics.sendEvent(launcher.loaderVersion.getAnalyticsValue(), launcher.pack + " - " + launcher.version,
                 "RemoveLoader", getAnalyticsCategory());
         String loaderType = launcher.loaderVersion.type;
@@ -2971,6 +2983,8 @@ public class Instance extends MinecraftVersion {
             installable.isServer = false;
             installable.saveMods = true;
 
+            installable.parent = parent;
+
             success = installable.startInstall();
         } catch (InvalidMinecraftVersion e) {
             LogManager.logStackTrace(e);
@@ -2980,14 +2994,14 @@ public class Instance extends MinecraftVersion {
             App.launcher.reloadInstancesPanel();
 
             // #. {0} is the loader (Forge/Fabric/Quilt)
-            DialogManager.okDialog().setTitle(GetText.tr("{0} Removed", loaderType))
+            DialogManager.okDialog().setParent(parent).setTitle(GetText.tr("{0} Removed", loaderType))
                     .setContent(new HTMLBuilder().center()
                             // #. {0} is the loader (Forge/Fabric/Quilt)
                             .text(GetText.tr("{0} has been removed from this instance.", loaderType)).build())
                     .setType(DialogManager.INFO).show();
         } else {
             // #. {0} is the loader (Forge/Fabric/Quilt)
-            DialogManager.okDialog().setTitle(GetText.tr("{0} Not Removed", loaderType))
+            DialogManager.okDialog().setParent(parent).setTitle(GetText.tr("{0} Not Removed", loaderType))
                     .setContent(new HTMLBuilder().center().text(
                             // #. {0} is the loader (Forge/Fabric/Quilt)
                             GetText.tr("{0} has not been removed. Check the console for more information.", loaderType))
