@@ -699,6 +699,22 @@ public abstract class DisableableModsSection extends SectionPanel {
                 });
     }
 
+    public void reinstallAllMods() {
+        List<Integer> rows = new ArrayList<>();
+        List<DisableableMod> mods = new ArrayList<>();
+        for (int i = 0; i < table.getRowCount(); i++) {
+            int row = table.convertRowIndexToModel(i);
+            rows.add(row);
+
+            mods.add((DisableableMod) tableModel.getValueAt(row, 0));
+        }
+
+        new CheckForUpdatesDialog(this.parent, this.instance, mods, true,
+                (Map<DisableableMod, DisableableMod> updatedMods) -> {
+                    saveAndReloadAfterUpdatingMods(rows.stream().mapToInt(Integer::intValue).toArray(), updatedMods);
+                });
+    }
+
     private void reinstallMods(int[] rows) {
         List<DisableableMod> mods = Arrays.stream(rows).boxed().map(row -> {
             return (DisableableMod) tableModel.getValueAt(row, 0);

@@ -40,9 +40,11 @@ import org.joda.time.Period;
 import org.mini2Dx.gettext.GetText;
 
 import com.atlauncher.App;
+import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.constants.UIConstants;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.minecraft.loaders.LoaderType;
+import com.atlauncher.managers.DialogManager;
 import com.atlauncher.utils.OS;
 
 public class InformationSection extends SectionPanel {
@@ -296,9 +298,26 @@ public class InformationSection extends SectionPanel {
         reinstall.setText(
                 instance.isVanillaInstance() ? GetText.tr("Change Minecraft Version") : GetText.tr("Reinstall"));
         reinstall.addActionListener(e -> {
+            // TODO: Java pass by value makes this shit and not work, fix it
+            String mcVersion = instance.id;
             instance.startReinstall(parent);
 
             updateUIState();
+
+            if (instance.isVanillaInstance() && !mcVersion.equals(instance.id)) {
+                int ret = DialogManager.yesNoDialog().setType(DialogManager.WARNING)
+                        .setTitle(GetText.tr("Minecraft Version Changed"))
+                        .setContent(new HTMLBuilder().center().split(100).text(GetText.tr(
+                                "You've changed the Minecraft version of this instance and your mods will likely no longer work.<br/><br/>Do you want to reinstall all mods now to make sure you have the correct versions?")))
+                        .show();
+
+                if (ret == 0) {
+                    editInstanceDialog.tabbedPane.setSelectedIndex(1);
+
+                    ModsSection modsSection = (ModsSection) editInstanceDialog.tabbedPane.getComponentAt(1);
+                    modsSection.reinstallAllMods();
+                }
+            }
         });
         sideBar.add(reinstall);
 
