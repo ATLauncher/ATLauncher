@@ -27,6 +27,7 @@ import java.lang.reflect.Type;
 import java.nio.file.Files;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.mini2Dx.gettext.GetText;
 
@@ -70,7 +71,17 @@ public class AccountManager {
 
         if (Files.exists(FileSystem.ACCOUNTS)) {
             try (FileReader fileReader = new FileReader(FileSystem.ACCOUNTS.toFile())) {
-                Data.ACCOUNTS.addAll(Gsons.DEFAULT.fromJson(fileReader, abstractAccountListType));
+                List<AbstractAccount> accounts = Gsons.DEFAULT.fromJson(fileReader, abstractAccountListType);
+
+                Data.ACCOUNTS.addAll(accounts.stream().filter(account -> {
+                    if (account instanceof MicrosoftAccount) {
+                        MicrosoftAccount microsoftAccount = (MicrosoftAccount) account;
+                        return microsoftAccount.accessToken != null
+                                && microsoftAccount.accessToken.split("\\.").length == 3;
+                    }
+
+                    return !account.uuid.equals("00000000000000000000000000000000");
+                }).collect(Collectors.toList()));
             } catch (Exception e) {
                 LogManager.logStackTrace("Exception loading accounts", e);
             }
