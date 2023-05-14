@@ -17,10 +17,10 @@
  */
 package com.atlauncher.managers;
 
-import java.io.FileNotFoundException;
-import java.io.FileReader;
+import java.io.FileInputStream;
 import java.io.IOException;
-import java.nio.file.Path;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -49,17 +49,17 @@ public class MinecraftManager {
 
         Data.MINECRAFT.clear();
 
-        try {
-            Path manifestPath = FileSystem.JSON.resolve("minecraft_versions.json");
-            VersionManifest versionManifest = Gsons.DEFAULT.fromJson(
-                    new FileReader(manifestPath.toFile()), VersionManifest.class);
+        try (InputStreamReader fileReader = new InputStreamReader(
+                new FileInputStream(FileSystem.JSON.resolve("minecraft_versions.json").toFile()),
+                StandardCharsets.UTF_8)) {
+            VersionManifest versionManifest = Gsons.DEFAULT.fromJson(fileReader, VersionManifest.class);
 
             if (versionManifest != null) {
                 versionManifest.versions.forEach((version) -> {
                     Data.MINECRAFT.put(version.id, version);
                 });
             }
-        } catch (JsonSyntaxException | FileNotFoundException | JsonIOException e) {
+        } catch (JsonSyntaxException | IOException | JsonIOException e) {
             LogManager.logStackTrace(e);
         }
 
@@ -74,11 +74,11 @@ public class MinecraftManager {
         PerformanceManager.start();
         LogManager.debug("Loading Java runtimes");
 
-        try {
-            Path javaRuntimesPath = FileSystem.JSON.resolve("java_runtimes.json");
-            Data.JAVA_RUNTIMES = Gsons.DEFAULT.fromJson(
-                    new FileReader(javaRuntimesPath.toFile()), JavaRuntimes.class);
-        } catch (JsonSyntaxException | FileNotFoundException | JsonIOException e) {
+        try (InputStreamReader fileReader = new InputStreamReader(
+                new FileInputStream(FileSystem.JSON.resolve("java_runtimes.json").toFile()),
+                StandardCharsets.UTF_8)) {
+            Data.JAVA_RUNTIMES = Gsons.DEFAULT.fromJson(fileReader, JavaRuntimes.class);
+        } catch (JsonSyntaxException | IOException | JsonIOException e) {
             LogManager.logStackTrace(e);
         }
 

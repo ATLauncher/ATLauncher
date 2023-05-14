@@ -27,8 +27,9 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
-import java.io.FileReader;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.lang.management.ManagementFactory;
 import java.lang.reflect.Method;
 import java.net.InetSocketAddress;
@@ -36,6 +37,7 @@ import java.net.Proxy;
 import java.net.ProxySelector;
 import java.net.SocketAddress;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -705,7 +707,8 @@ public class App {
     private static void loadSettings() {
         // load the users settings or load defaults if settings file doesn't exist
         if (Files.exists(FileSystem.SETTINGS)) {
-            try (FileReader fileReader = new FileReader(FileSystem.SETTINGS.toFile())) {
+            try (InputStreamReader fileReader = new InputStreamReader(new FileInputStream(FileSystem.SETTINGS.toFile()),
+                    StandardCharsets.UTF_8)) {
                 settings = Gsons.DEFAULT.fromJson(fileReader, Settings.class);
             } catch (Throwable t) {
                 LogManager.logStackTrace("Error loading settings, using defaults", t, false);
@@ -716,7 +719,8 @@ public class App {
         }
 
         if (Files.exists(FileSystem.LAUNCHER_CONFIG)) {
-            try (FileReader fileReader = new FileReader(FileSystem.LAUNCHER_CONFIG.toFile())) {
+            try (InputStreamReader fileReader = new InputStreamReader(
+                    new FileInputStream(FileSystem.LAUNCHER_CONFIG.toFile()), StandardCharsets.UTF_8)) {
                 Properties properties = new Properties();
                 properties.load(fileReader);
                 settings.convert(properties);

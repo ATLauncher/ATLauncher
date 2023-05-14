@@ -29,7 +29,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -46,6 +45,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.nio.channels.FileChannel;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -751,19 +751,20 @@ public class Utils {
 
         BufferedReader br = new BufferedReader(new InputStreamReader(fs));
 
-        FileWriter writer1 = new FileWriter(destinationFile);
+        OutputStreamWriter fileWriter = new OutputStreamWriter(
+                new FileOutputStream(destinationFile), StandardCharsets.UTF_8);
 
         String line = br.readLine();
         while (line != null) {
             if (line.contains(replaceThis)) {
                 line = line.replace(replaceThis, withThis);
             }
-            writer1.write(line);
-            writer1.write(System.getProperty("line.separator"));
+            fileWriter.write(line);
+            fileWriter.write(System.getProperty("line.separator"));
             line = br.readLine();
         }
-        writer1.flush();
-        writer1.close();
+        fileWriter.flush();
+        fileWriter.close();
         br.close();
     }
 
@@ -778,16 +779,17 @@ public class Utils {
 
         BufferedReader br = new BufferedReader(new InputStreamReader(fs));
 
-        FileWriter writer1 = new FileWriter(destinationFile);
+        OutputStreamWriter fileWriter = new OutputStreamWriter(
+                new FileOutputStream(destinationFile), StandardCharsets.UTF_8);
 
         String line = br.readLine();
         while (line != null) {
-            writer1.write(line);
-            writer1.write(System.getProperty("line.separator"));
+            fileWriter.write(line);
+            fileWriter.write(System.getProperty("line.separator"));
             line = br.readLine();
         }
-        writer1.flush();
-        writer1.close();
+        fileWriter.flush();
+        fileWriter.close();
         br.close();
     }
 

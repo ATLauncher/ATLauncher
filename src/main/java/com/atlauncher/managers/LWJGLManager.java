@@ -17,8 +17,10 @@
  */
 package com.atlauncher.managers;
 
-import java.io.FileNotFoundException;
-import java.io.FileReader;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Optional;
@@ -51,9 +53,10 @@ public class LWJGLManager {
         Path lwjglPath = FileSystem.JSON.resolve("lwjgl.json");
 
         if (Files.exists(lwjglPath)) {
-            try {
-                Data.LWJGL_VERSIONS = Gsons.DEFAULT.fromJson(new FileReader(lwjglPath.toFile()), LWJGLVersions.class);
-            } catch (JsonSyntaxException | FileNotFoundException | JsonIOException e1) {
+            try (InputStreamReader fileReader = new InputStreamReader(
+                    new FileInputStream(lwjglPath.toFile()), StandardCharsets.UTF_8)) {
+                Data.LWJGL_VERSIONS = Gsons.DEFAULT.fromJson(fileReader, LWJGLVersions.class);
+            } catch (JsonSyntaxException | IOException | JsonIOException e1) {
                 LogManager.logStackTrace(e1);
             }
         }

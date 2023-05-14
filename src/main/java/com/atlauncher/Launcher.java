@@ -21,10 +21,11 @@ import java.awt.Dialog.ModalityType;
 import java.awt.FlowLayout;
 import java.awt.Window;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -159,10 +160,10 @@ public class Launcher {
     }
 
     public boolean launcherHasUpdate() {
-        try {
-            this.latestLauncherVersion = Gsons.DEFAULT
-                    .fromJson(new FileReader(FileSystem.JSON.resolve("version.json").toFile()), LauncherVersion.class);
-        } catch (JsonSyntaxException | FileNotFoundException | JsonIOException e) {
+        try (InputStreamReader fileReader = new InputStreamReader(
+                new FileInputStream(FileSystem.JSON.resolve("version.json").toFile()), StandardCharsets.UTF_8)) {
+            this.latestLauncherVersion = Gsons.DEFAULT.fromJson(fileReader, LauncherVersion.class);
+        } catch (JsonSyntaxException | JsonIOException | IOException e) {
             LogManager.logStackTrace("Exception when loading latest launcher version!", e);
         }
 

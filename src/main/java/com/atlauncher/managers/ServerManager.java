@@ -18,7 +18,9 @@
 package com.atlauncher.managers;
 
 import java.io.File;
-import java.io.FileReader;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.LinkedList;
@@ -71,7 +73,9 @@ public class ServerManager {
 
             Server server;
 
-            try (FileReader fileReader = new FileReader(new File(serverDir, "server.json"))) {
+            try (InputStreamReader fileReader = new InputStreamReader(
+                    new FileInputStream(new File(serverDir, "server.json")),
+                    StandardCharsets.UTF_8)) {
                 server = Gsons.DEFAULT.fromJson(fileReader, Server.class);
                 LogManager.debug("Loaded server from " + serverDir);
             } catch (Exception e) {

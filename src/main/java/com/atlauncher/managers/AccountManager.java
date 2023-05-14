@@ -19,11 +19,13 @@ package com.atlauncher.managers;
 
 import java.io.EOFException;
 import java.io.FileInputStream;
-import java.io.FileReader;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
+import java.io.OutputStreamWriter;
 import java.lang.reflect.Type;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.LinkedList;
 import java.util.List;
@@ -70,7 +72,8 @@ public class AccountManager {
         }
 
         if (Files.exists(FileSystem.ACCOUNTS)) {
-            try (FileReader fileReader = new FileReader(FileSystem.ACCOUNTS.toFile())) {
+            try (InputStreamReader fileReader = new InputStreamReader(
+                    new FileInputStream(FileSystem.ACCOUNTS.toFile()), StandardCharsets.UTF_8)) {
                 List<AbstractAccount> accounts = Gsons.DEFAULT.fromJson(fileReader, abstractAccountListType);
 
                 Data.ACCOUNTS.addAll(accounts.stream().filter(account -> {
@@ -168,7 +171,8 @@ public class AccountManager {
     }
 
     private static void saveAccounts(List<AbstractAccount> accounts) {
-        try (FileWriter fileWriter = new FileWriter(FileSystem.ACCOUNTS.toFile())) {
+        try (OutputStreamWriter fileWriter = new OutputStreamWriter(
+                new FileOutputStream(FileSystem.ACCOUNTS.toFile()), StandardCharsets.UTF_8)) {
             Gsons.DEFAULT.toJson(accounts, abstractAccountListType, fileWriter);
         } catch (JsonIOException | IOException e) {
             LogManager.logStackTrace(e);

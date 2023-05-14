@@ -18,8 +18,10 @@
 package com.atlauncher.managers;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -53,12 +55,13 @@ public class PackManager {
         PerformanceManager.start();
         LogManager.debug("Loading packs");
         Data.PACKS.clear();
-        try {
+        try (InputStreamReader fileReader = new InputStreamReader(
+                new FileInputStream(FileSystem.JSON.resolve("packsnew.json").toFile()),
+                StandardCharsets.UTF_8)) {
             java.lang.reflect.Type type = new TypeToken<List<Pack>>() {
             }.getType();
-            Data.PACKS.addAll(Gsons.DEFAULT
-                    .fromJson(new FileReader(FileSystem.JSON.resolve("packsnew.json").toFile()), type));
-        } catch (JsonSyntaxException | FileNotFoundException | JsonIOException e) {
+            Data.PACKS.addAll(Gsons.DEFAULT.fromJson(fileReader, type));
+        } catch (JsonSyntaxException | IOException | JsonIOException e) {
             LogManager.logStackTrace(e);
         }
         LogManager.debug("Finished loading packs");
@@ -267,12 +270,13 @@ public class PackManager {
         LogManager.debug("Loading users");
         List<PackUsers> packUsers = new ArrayList<>();
 
-        try {
+        try (InputStreamReader fileReader = new InputStreamReader(
+                new FileInputStream(FileSystem.JSON.resolve("users.json").toFile()),
+                StandardCharsets.UTF_8)) {
             java.lang.reflect.Type type = new TypeToken<List<PackUsers>>() {
             }.getType();
-            packUsers.addAll(
-                    Gsons.DEFAULT.fromJson(new FileReader(FileSystem.JSON.resolve("users.json").toFile()), type));
-        } catch (JsonSyntaxException | FileNotFoundException | JsonIOException e) {
+            packUsers.addAll(Gsons.DEFAULT.fromJson(fileReader, type));
+        } catch (JsonSyntaxException | IOException | JsonIOException e) {
             LogManager.logStackTrace(e);
         }
 

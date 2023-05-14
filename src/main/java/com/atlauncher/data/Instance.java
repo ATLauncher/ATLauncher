@@ -29,7 +29,6 @@ import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -1839,7 +1838,8 @@ public class Instance extends MinecraftVersion {
         FileUtils.createDirectory(tempDir);
 
         // create mmc-pack.json
-        try (FileWriter fileWriter = new FileWriter(tempDir.resolve("mmc-pack.json").toFile())) {
+        try (OutputStreamWriter fileWriter = new OutputStreamWriter(
+                new FileOutputStream(tempDir.resolve("mmc-pack.json").toFile()), StandardCharsets.UTF_8)) {
             Gsons.DEFAULT.toJson(manifest, fileWriter);
         } catch (JsonIOException | IOException e) {
             LogManager.logStackTrace("Failed to save mmc-pack.json", e);
@@ -1867,7 +1867,9 @@ public class Instance extends MinecraftVersion {
             patch.add("+libraries", plusLibraries);
 
             // create net.fabricmc.intermediary.json
-            try (FileWriter fileWriter = new FileWriter(tempDir.resolve("net.fabricmc.intermediary.json").toFile())) {
+            try (OutputStreamWriter fileWriter = new OutputStreamWriter(
+                    new FileOutputStream(tempDir.resolve("net.fabricmc.intermediary.json").toFile()),
+                    StandardCharsets.UTF_8)) {
                 Gsons.DEFAULT.toJson(patch, fileWriter);
             } catch (JsonIOException | IOException e) {
                 LogManager.logStackTrace("Failed to save net.fabricmc.intermediary.json", e);
@@ -2084,7 +2086,8 @@ public class Instance extends MinecraftVersion {
         FileUtils.createDirectory(tempDir);
 
         // create manifest.json
-        try (FileWriter fileWriter = new FileWriter(tempDir.resolve("manifest.json").toFile())) {
+        try (OutputStreamWriter fileWriter = new OutputStreamWriter(
+                new FileOutputStream(tempDir.resolve("manifest.json").toFile()), StandardCharsets.UTF_8)) {
             Gsons.DEFAULT.toJson(manifest, fileWriter);
         } catch (JsonIOException | IOException e) {
             LogManager.logStackTrace("Failed to save manifest.json", e);
@@ -2106,7 +2109,8 @@ public class Instance extends MinecraftVersion {
         });
         sb.append("</ul>");
 
-        try (FileWriter fileWriter = new FileWriter(tempDir.resolve("modlist.html").toFile())) {
+        try (OutputStreamWriter fileWriter = new OutputStreamWriter(
+                new FileOutputStream(tempDir.resolve("modlist.html").toFile()), StandardCharsets.UTF_8)) {
             fileWriter.write(sb.toString());
         } catch (JsonIOException | IOException e) {
             LogManager.logStackTrace("Failed to save modlist.html", e);
@@ -2327,7 +2331,8 @@ public class Instance extends MinecraftVersion {
     }
 
     public void save() {
-        try (FileWriter fileWriter = new FileWriter(this.getRoot().resolve("instance.json").toFile())) {
+        try (OutputStreamWriter fileWriter = new OutputStreamWriter(
+                new FileOutputStream(this.getRoot().resolve("instance.json").toFile()), StandardCharsets.UTF_8)) {
             Gsons.DEFAULT.toJson(this, fileWriter);
         } catch (JsonIOException | IOException e) {
             LogManager.logStackTrace(e);

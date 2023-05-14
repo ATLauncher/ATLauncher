@@ -19,8 +19,8 @@ package com.atlauncher.workers;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -839,7 +839,9 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         modrinthExtractedPath = this.temp.resolve("modrinthimport");
         ArchiveUtils.extract(manifestFile, modrinthExtractedPath);
 
-        try (FileReader fileReader = new FileReader(modrinthExtractedPath.resolve("modrinth.index.json").toFile())) {
+        try (InputStreamReader fileReader = new InputStreamReader(
+                new FileInputStream(modrinthExtractedPath.resolve("modrinth.index.json").toFile()),
+                StandardCharsets.UTF_8)) {
             modrinthManifest = Gsons.DEFAULT.fromJson(fileReader, ModrinthModpackManifest.class);
         } catch (Exception e) {
             LogManager.logStackTrace("Failed to read modrinth.index.json file", e);
@@ -1300,7 +1302,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         MinecraftVersion versionJson = null;
 
         if (Files.exists(versionJsonPath)) {
-            try (FileReader fileReader = new FileReader(versionJsonPath.toFile())) {
+            try (InputStreamReader fileReader = new InputStreamReader(
+                    new FileInputStream(versionJsonPath.toFile()), StandardCharsets.UTF_8)) {
                 versionJson = Gsons.DEFAULT.fromJson(fileReader, MinecraftVersion.class);
             } catch (Exception e) {
                 LogManager.error("Error reading in version.json");
