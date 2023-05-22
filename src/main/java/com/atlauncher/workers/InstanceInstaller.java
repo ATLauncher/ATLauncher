@@ -28,6 +28,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -597,7 +598,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         List<CurseForgeFile> filesFound = CurseForgeApi
                 .getFiles(curseForgeManifest.files.stream().mapToInt(file -> file.fileID).toArray());
 
-        List<Pair<CurseForgeProject, CurseForgeFile>> manualDownloadMods = new ArrayList<>();
+        List<Pair<CurseForgeProject, CurseForgeFile>> manualDownloadMods = Collections
+                .synchronizedList(new ArrayList<>());
 
         List<CurseForgeFile> filesForManualDownload = curseForgeManifest.files.parallelStream()
                 .filter(file -> {

@@ -14,6 +14,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Issue with opening instance settings on some systems
 - Make sure accounts valid before loading in to fix NPE
 - Issues with unicode characters breaking instances and not showing properly
+- Issue with threads trying to write to a non thread safe list causing install issues
 
 ### Misc
 - Consolodate GSON configs
