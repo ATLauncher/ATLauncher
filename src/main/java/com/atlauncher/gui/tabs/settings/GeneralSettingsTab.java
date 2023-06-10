@@ -75,6 +75,7 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
     private final JCheckBox useNativeFilePicker;
     private final JCheckBox useRecycleBin;
     private JCheckBox enableArmSupport;
+    private JCheckBox scanModsOnLaunch;
 
     public GeneralSettingsTab() {
         // Language
@@ -537,6 +538,25 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
             enableArmSupport.setSelected(App.settings.enableArmSupport);
             add(enableArmSupport, gbc);
         }
+
+        // Enable scanning mods on launch
+        gbc.gridx = 0;
+        gbc.gridy++;
+        gbc.insets = UIConstants.LABEL_INSETS;
+        gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
+        JLabelWithHover scanModsOnLaunchLabel = new JLabelWithHover(GetText.tr("Scan Mods On Launch?"), HELP_ICON,
+                new HTMLBuilder().center().split(100)
+                        .text(GetText.tr(
+                                "This will scan the mods in instances before launching to ensure they do not contain malware or have been modified since installing."))
+                        .build());
+        add(scanModsOnLaunchLabel, gbc);
+
+        gbc.gridx++;
+        gbc.insets = UIConstants.CHECKBOX_FIELD_INSETS;
+        gbc.anchor = GridBagConstraints.BASELINE_LEADING;
+        scanModsOnLaunch = new JCheckBox();
+        scanModsOnLaunch.setSelected(App.settings.scanModsOnLaunch);
+        add(scanModsOnLaunch, gbc);
     }
 
     @SuppressWarnings("unchecked")

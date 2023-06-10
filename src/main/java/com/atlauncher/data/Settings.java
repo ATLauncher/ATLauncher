@@ -81,6 +81,7 @@ public class Settings {
     public boolean useNativeFilePicker = OS.isMac();
     public boolean useRecycleBin = true;
     public boolean enableArmSupport = true;
+    public boolean scanModsOnLaunch = true;
 
     // Mods
     public ModPlatform defaultModPlatform = ModPlatform.CURSEFORGE;

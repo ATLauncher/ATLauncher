@@ -159,6 +159,7 @@ import com.atlauncher.utils.Hashing;
 import com.atlauncher.utils.Java;
 import com.atlauncher.utils.ModrinthApi;
 import com.atlauncher.utils.OS;
+import com.atlauncher.utils.SecurityUtils;
 import com.atlauncher.utils.Utils;
 import com.atlauncher.utils.ZipNameMapper;
 import com.google.gson.JsonArray;
@@ -841,7 +842,21 @@ public class Instance extends MinecraftVersion {
             }
             PerformanceManager.end("Creating custom minecraft.jar");
         }
+        progressDialog.doneTask();
 
+        if (App.settings.scanModsOnLaunch) {
+            PerformanceManager.start("Scanning mods for Fractureiser");
+            progressDialog.setLabel(GetText.tr("Scanning mods for Fractureiser"));
+
+            List<Path> foundInfections = SecurityUtils.scanForFractureiser(this.getModPathsFromFilesystem());
+            PerformanceManager.end("Scanning mods for Fractureiser");
+
+            if (foundInfections.size() != 0) {
+                LogManager.error("Infections have been found in your mods. See the below list of paths");
+                foundInfections.forEach(p -> LogManager.error(p.toAbsolutePath().toString()));
+                return false;
+            }
+        }
         progressDialog.doneTask();
 
         PerformanceManager.end();
@@ -937,7 +952,7 @@ public class Instance extends MinecraftVersion {
         }
 
         ProgressDialog<Boolean> prepareDialog = new ProgressDialog<>(GetText.tr("Preparing For Launch"),
-                LWJGLManager.shouldUseLegacyLWJGL(this) ? 8 : 7,
+                9,
                 GetText.tr("Preparing For Launch"));
         prepareDialog.addThread(new Thread(() -> {
             LogManager.info("Preparing for launch!");
@@ -3067,6 +3082,33 @@ public class Instance extends MinecraftVersion {
         }
 
         return launcher.version;
+    }
+
+    private List<Path> getModPathsFromFilesystem() {
+        return getModPathsFromFilesystem(Arrays.asList(ROOT.resolve("mods"),
+                ROOT.resolve("resourcepacks"),
+                ROOT.resolve("shaderpacks"),
+                ROOT.resolve("jarmods")));
+    }
+
+    public List<Path> getModPathsFromFilesystem(List<Path> paths) {
+        List<Path> files = new ArrayList<>();
+
+        for (Path path : paths) {
+            if (!Files.exists(path)) {
+                continue;
+            }
+
+            try (Stream<Path> stream = Files.list(path)) {
+                files.addAll(stream
+                        .filter(file -> !Files.isDirectory(file) && Utils.isAcceptedModFile(file))
+                        .collect(Collectors.toList()));
+            } catch (IOException e) {
+                LogManager.logStackTrace("Error getting mod paths", e);
+            }
+        }
+
+        return files;
     }
 
     public void scanMissingMods() {

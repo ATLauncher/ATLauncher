@@ -3,9 +3,10 @@
 This changelog only contains the changes that are unreleased. For changes for individual releases, please visit the
 [releases](https://github.com/ATLauncher/ATLauncher/releases) page on GitHub.
 
-## 3.4.28.2O
+## 3.4.29.0
 
 ### New Features
+- Scan mods for malware (specifically Fractureiser for now) before launching an instance
 
 ### Fixes
 - Make Console sizing a bit more responsive and flexible with sizes
