@@ -176,7 +176,7 @@ public final class FileSystem {
         copyResourcesOutJar();
     }
 
-    private static void filesMove(Path a, Path b) throws IOException {
+    private static void filesMove(Path a, Path b) {
         System.out.println("Moving " + a + " -> " + b);
         if (a.toFile().exists()) {
             FileUtils.moveFile(a, b);
@@ -187,7 +187,7 @@ public final class FileSystem {
     /**
      * Move directories to XDG
      */
-    private static void moveToXDG() throws IOException {
+    private static void moveToXDG() {
         if (useXdg()) {
             for (XDG xdg : XDG.values()) {
                 resolveDirectory(xdg, null, new File(xdg.defaultValue).toPath()).toFile().mkdirs();
