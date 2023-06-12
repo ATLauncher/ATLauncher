@@ -178,8 +178,10 @@ public final class FileSystem {
 
     private static void filesMove(Path a, Path b) throws IOException {
         System.out.println("Moving " + a + " -> " + b);
-        FileUtils.moveFile(a, b);
-        FileUtils.delete(a);
+        if (a.toFile().exists()) {
+            FileUtils.moveFile(a, b);
+            FileUtils.delete(a);
+        }
     }
 
     /**
