@@ -204,7 +204,7 @@ public final class FileSystem {
             filesMove(B_INSTANCES, INSTANCES);
             filesMove(B_SERVERS, SERVERS);
             filesMove(B_FAILEDDOWNLOADS, FAILED_DOWNLOADS);
-            Files.delete(B_TEMP);
+            FileUtils.delete(B_TEMP);
         }
     }
 
