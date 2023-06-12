@@ -205,6 +205,12 @@ public final class FileSystem {
             filesMove(B_SERVERS, SERVERS);
             filesMove(B_FAILEDDOWNLOADS, FAILED_DOWNLOADS);
             FileUtils.delete(B_TEMP);
+
+            // log4j is hard linked
+            try {
+                Files.createSymbolicLink(B_LOGS, LOGS);
+            } catch (Exception ignored) {
+            }
         }
     }
 
