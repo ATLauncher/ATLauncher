@@ -49,6 +49,7 @@ repositories {
             includeGroup "com.github.RyanTheAllmighty.gettext"
             includeGroup "com.github.Vatuu"
             includeGroup "com.gitlab.doomsdayrs"
+            includeGroup "com.github.MCRcortex"
         }
     }
 }
@@ -85,6 +86,7 @@ dependencies {
     implementation 'com.apollographql.apollo:apollo-runtime:2.5.14'
     implementation 'com.apollographql.apollo:apollo-http-cache:2.5.14'
     implementation 'com.apollographql.apollo:apollo-rx3-support:2.5.14'
+    implementation 'com.github.MCRcortex:nekodetector:Version-1.1-pre'
 
     // RxJava
     implementation("io.reactivex.rxjava3:rxjava:3.1.6")
