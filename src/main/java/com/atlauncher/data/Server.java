@@ -55,6 +55,7 @@ import com.atlauncher.managers.DialogManager;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.managers.PackManager;
 import com.atlauncher.network.Analytics;
+import com.atlauncher.network.analytics.AnalyticsEvent;
 import com.atlauncher.utils.ArchiveUtils;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
@@ -248,7 +249,7 @@ public class Server {
     }
 
     public void backup() {
-        Analytics.sendEvent(pack + " - " + version, "Backup", "Server");
+        Analytics.trackEvent(AnalyticsEvent.forServerEvent("server_backup", this));
 
         Timestamp timestamp = new Timestamp(new Date().getTime());
         String time = timestamp.toString().replaceAll("[^0-9]", "_");

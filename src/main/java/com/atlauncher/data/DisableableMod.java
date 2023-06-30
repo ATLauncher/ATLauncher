@@ -46,6 +46,7 @@ import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.managers.MinecraftManager;
 import com.atlauncher.network.Analytics;
+import com.atlauncher.network.analytics.AnalyticsEvent;
 import com.atlauncher.utils.CurseForgeApi;
 import com.atlauncher.utils.ModrinthApi;
 import com.atlauncher.utils.Pair;
@@ -349,7 +350,7 @@ public class DisableableMod implements Serializable {
     }
 
     public boolean checkForUpdate(Window parent, Instance instance, ModPlatform platform) {
-        Analytics.sendEvent(instance.launcher.pack + " - " + instance.launcher.version, "UpdateMods", "Instance");
+        Analytics.trackEvent(AnalyticsEvent.simpleEvent("mod_update_check"));
 
         if (platform == ModPlatform.CURSEFORGE || (platform == null && isFromCurseForge()
                 && (!isFromModrinth() || App.settings.defaultModPlatform == ModPlatform.CURSEFORGE))) {
@@ -494,7 +495,7 @@ public class DisableableMod implements Serializable {
     }
 
     public boolean reinstall(Window parent, Instance instance, ModPlatform platform) {
-        Analytics.sendEvent(instance.launcher.pack + " - " + instance.launcher.version, "ReinstallMods", "Instance");
+        Analytics.trackEvent(AnalyticsEvent.simpleEvent("mod_reinstall"));
 
         if (platform == ModPlatform.CURSEFORGE || (platform == null && isFromCurseForge()
                 && (!isFromModrinth() || App.settings.defaultModPlatform == ModPlatform.CURSEFORGE))) {

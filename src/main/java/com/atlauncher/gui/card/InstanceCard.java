@@ -64,6 +64,7 @@ import com.atlauncher.managers.DialogManager;
 import com.atlauncher.managers.InstanceManager;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.network.Analytics;
+import com.atlauncher.network.analytics.AnalyticsEvent;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
 import com.google.gson.reflect.TypeToken;
@@ -449,19 +450,16 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
                 return;
             }
 
-            Analytics.sendEvent(instance.launcher.pack + " - " + instance.launcher.version, "Update",
-                    instance.getAnalyticsCategory());
+            Analytics.trackEvent(AnalyticsEvent.forInstanceEvent("instance_update", instance));
             instance.update();
         });
         this.addButton.addActionListener(e -> {
-            Analytics.sendEvent(instance.launcher.pack + " - " + instance.launcher.version, "AddMods",
-                    instance.getAnalyticsCategory());
+            Analytics.trackEvent(AnalyticsEvent.forInstanceEvent("instance_add_mods", instance));
             new AddModsDialog(instance);
             exportButton.setVisible(instance.canBeExported());
         });
         this.editButton.addActionListener(e -> {
-            Analytics.sendEvent(instance.launcher.pack + " - " + instance.launcher.version, "EditMods",
-                    instance.getAnalyticsCategory());
+            Analytics.trackEvent(AnalyticsEvent.forInstanceEvent("instance_edit_mods", instance));
             new EditModsDialog(instance);
             exportButton.setVisible(instance.canBeExported());
         });
@@ -471,8 +469,7 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
         this.openWebsite.addActionListener(e -> OS.openWebBrowser(instance.getWebsiteUrl()));
         this.openButton.addActionListener(e -> OS.openFileExplorer(instance.getRoot()));
         this.settingsButton.addActionListener(e -> {
-            Analytics.sendEvent(instance.launcher.pack + " - " + instance.launcher.version, "Settings",
-                    instance.getAnalyticsCategory());
+            Analytics.trackEvent(AnalyticsEvent.forInstanceEvent("instance_settings", instance));
             new InstanceSettingsDialog(instance);
         });
         this.deleteButton.addActionListener(e -> {
@@ -482,8 +479,7 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
                     .setType(DialogManager.ERROR).show();
 
             if (ret == DialogManager.YES_OPTION) {
-                Analytics.sendEvent(instance.launcher.pack + " - " + instance.launcher.version, "Delete",
-                        instance.getAnalyticsCategory());
+                Analytics.trackEvent(AnalyticsEvent.forInstanceEvent("instance_delete", instance));
                 final ProgressDialog dialog = new ProgressDialog(GetText.tr("Deleting Instance"), 0,
                         GetText.tr("Deleting Instance. Please wait..."), null, App.launcher.getParent());
                 dialog.addThread(new Thread(() -> {
@@ -495,8 +491,7 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
             }
         });
         this.exportButton.addActionListener(e -> {
-            Analytics.sendEvent(instance.launcher.pack + " - " + instance.launcher.version, "Export",
-                    instance.getAnalyticsCategory());
+            Analytics.trackEvent(AnalyticsEvent.forInstanceEvent("instance_export", instance));
             new InstanceExportDialog(instance);
         });
     }
@@ -535,8 +530,7 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
                             .setContent(GetText.tr("Cannot update pack as you have no account selected."))
                             .setType(DialogManager.ERROR).show();
                 } else {
-                    Analytics.sendEvent(instance.launcher.pack + " - " + instance.launcher.version, "UpdateFromPlay",
-                            instance.getAnalyticsCategory());
+                    Analytics.trackEvent(AnalyticsEvent.forInstanceEvent("instance_update", instance));
                     instance.update();
                 }
             } else if (ret == 1 || ret == DialogManager.CLOSED_OPTION || ret == 2 || ret == 3) {
@@ -626,8 +620,7 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
 
                     JMenuItem shareCodeItem = new JMenuItem(GetText.tr("Share Code"));
                     shareCodeItem.addActionListener(e1 -> {
-                        Analytics.sendEvent(instance.launcher.pack + " - " + instance.launcher.version, "MakeShareCode",
-                                instance.getAnalyticsCategory());
+                        Analytics.trackEvent(AnalyticsEvent.forInstanceEvent("instance_make_share_code", instance));
                         try {
                             java.lang.reflect.Type type = new TypeToken<APIResponse<String>>() {
                             }.getType();

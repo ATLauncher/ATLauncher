@@ -42,6 +42,7 @@ import com.atlauncher.data.Account;
 import com.atlauncher.data.MicrosoftAccount;
 import com.atlauncher.data.MojangAccount;
 import com.atlauncher.network.Analytics;
+import com.atlauncher.network.analytics.AnalyticsEvent;
 import com.atlauncher.utils.Utils;
 import com.google.gson.JsonIOException;
 import com.google.gson.reflect.TypeToken;
@@ -182,7 +183,7 @@ public class AccountManager {
     public static void addAccount(AbstractAccount account) {
         String accountType = account instanceof MicrosoftAccount ? "Microsoft" : "Mojang";
 
-        Analytics.sendEvent(accountType, "Add", "Account");
+        Analytics.trackEvent(AnalyticsEvent.forAccountAdd(accountType));
         LogManager.info("Added " + accountType + " Account " + account);
 
         Data.ACCOUNTS.add(account);

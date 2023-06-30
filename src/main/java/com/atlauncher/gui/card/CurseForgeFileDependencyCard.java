@@ -39,6 +39,7 @@ import com.atlauncher.data.curseforge.CurseForgeFileDependency;
 import com.atlauncher.data.curseforge.CurseForgeProject;
 import com.atlauncher.gui.dialogs.CurseForgeProjectFileSelectorDialog;
 import com.atlauncher.network.Analytics;
+import com.atlauncher.network.analytics.AnalyticsEvent;
 import com.atlauncher.utils.CurseForgeApi;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
@@ -91,7 +92,7 @@ public final class CurseForgeFileDependencyCard extends JPanel {
         buttonsPanel.add(viewButton);
 
         addButton.addActionListener(e -> {
-            Analytics.sendEvent(mod.name, "AddDependency", "CurseForgeMod");
+            Analytics.trackEvent(AnalyticsEvent.forAddMod(mod));
             new CurseForgeProjectFileSelectorDialog(parent, mod, instance);
             parent.reloadDependenciesPanel();
         });

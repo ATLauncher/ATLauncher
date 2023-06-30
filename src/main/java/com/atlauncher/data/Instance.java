@@ -150,6 +150,7 @@ import com.atlauncher.mclauncher.MCLauncher;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.network.DownloadPool;
 import com.atlauncher.network.GraphqlClient;
+import com.atlauncher.network.analytics.AnalyticsEvent;
 import com.atlauncher.utils.ArchiveUtils;
 import com.atlauncher.utils.ComboItem;
 import com.atlauncher.utils.CommandExecutor;
@@ -967,9 +968,7 @@ public class Instance extends MinecraftVersion {
             return false;
         }
 
-        Analytics.sendEvent(this.launcher.pack + " - " + this.launcher.version, offline ? "PlayOffline" : "Play",
-
-                getAnalyticsCategory());
+        Analytics.trackEvent(AnalyticsEvent.forStartInstanceLaunch(this, offline));
 
         Thread launcher = new Thread(() -> {
             try {
@@ -979,7 +978,7 @@ public class Instance extends MinecraftVersion {
                 }
 
                 LogManager.info(String.format("Launching pack %s %s (%s) for Minecraft %s", this.launcher.pack,
-                        this.launcher.version, getPlatformNameForLogging(), this.id));
+                        this.launcher.version, getPlatformName(), this.id));
 
                 Process process = null;
 
@@ -2498,7 +2497,7 @@ public class Instance extends MinecraftVersion {
                         && ConfigManager.getConfigItem("platforms.modrinth.modpacksEnabled", true) == true));
     }
 
-    public String getPlatformNameForLogging() {
+    public String getPlatformName() {
         if (isCurseForgePack()) {
             return "CurseForge";
         }
@@ -2623,7 +2622,7 @@ public class Instance extends MinecraftVersion {
         dialog.add(topPanel, BorderLayout.CENTER);
         dialog.add(bottomPanel, BorderLayout.SOUTH);
 
-        Analytics.sendEvent(launcher.pack + " - " + launcher.version, "Backup", getAnalyticsCategory());
+        Analytics.trackEvent(AnalyticsEvent.forInstanceEvent("instance_backup", this));
 
         final Thread backupThread = new Thread(() -> {
             Timestamp timestamp = new Timestamp(new Date().getTime());
@@ -2651,12 +2650,12 @@ public class Instance extends MinecraftVersion {
     }
 
     public void startReinstall() {
-        Analytics.sendEvent(launcher.pack + " - " + launcher.version, "Reinstall", getAnalyticsCategory());
+        Analytics.trackEvent(AnalyticsEvent.forInstanceEvent("instance_reinstall", this));
         new InstanceInstallerDialog(this);
     }
 
     public void startRename() {
-        Analytics.sendEvent(launcher.pack + " - " + launcher.version, "Rename", getAnalyticsCategory());
+        Analytics.trackEvent(AnalyticsEvent.forInstanceEvent("instance_rename", this));
         new RenameInstanceDialog(this);
     }
 
@@ -2671,8 +2670,7 @@ public class Instance extends MinecraftVersion {
                         .getInstanceBySafeName(clonedName.replaceAll("[^A-Za-z0-9]", "")) == null
                 && clonedName.replaceAll("[^A-Za-z0-9]", "").length() >= 1 && !Files.exists(
                         FileSystem.INSTANCES.resolve(clonedName.replaceAll("[^A-Za-z0-9]", "")))) {
-            Analytics.sendEvent(launcher.pack + " - " + launcher.version, "Clone",
-                    getAnalyticsCategory());
+            Analytics.trackEvent(AnalyticsEvent.forInstanceEvent("instance_clone", this));
 
             final String newName = clonedName;
             final ProgressDialog dialog = new ProgressDialog(GetText.tr("Cloning Instance"), 0,
@@ -2743,7 +2741,7 @@ public class Instance extends MinecraftVersion {
         if (ret == JFileChooser.APPROVE_OPTION) {
             File img = chooser.getSelectedFile();
             if (img.getAbsolutePath().endsWith(".png")) {
-                Analytics.sendEvent(launcher.pack + " - " + launcher.version, "ChangeImage", getAnalyticsCategory());
+                Analytics.trackEvent(AnalyticsEvent.forInstanceEvent("instance_image_change", this));
                 try {
                     Utils.safeCopy(img, getRoot().resolve("instance.png").toFile());
                     save();
@@ -2755,8 +2753,8 @@ public class Instance extends MinecraftVersion {
     }
 
     public void changeLoaderVersion() {
-        Analytics.sendEvent(launcher.loaderVersion.getAnalyticsValue(), launcher.pack + " - " + launcher.version,
-                "ChangeLoaderVersion", getAnalyticsCategory());
+        Analytics.trackEvent(
+                AnalyticsEvent.forInstanceLoaderEvent("instance_change_loader_version", this, launcher.loaderVersion));
 
         LoaderVersion loaderVersion = showLoaderVersionSelector(launcher.loaderVersion.getLoaderType());
 
@@ -2804,8 +2802,8 @@ public class Instance extends MinecraftVersion {
     }
 
     public void addLoader(LoaderType loaderType) {
-        Analytics.sendEvent(loaderType.getAnalyticsValue(), launcher.pack + " - " + launcher.version, "AddLoader",
-                getAnalyticsCategory());
+        Analytics
+                .trackEvent(AnalyticsEvent.forInstanceAddLoader(this, loaderType));
 
         LoaderVersion loaderVersion = showLoaderVersionSelector(loaderType);
 
@@ -2956,8 +2954,8 @@ public class Instance extends MinecraftVersion {
     }
 
     public void removeLoader() {
-        Analytics.sendEvent(launcher.loaderVersion.getAnalyticsValue(), launcher.pack + " - " + launcher.version,
-                "RemoveLoader", getAnalyticsCategory());
+        Analytics.trackEvent(
+                AnalyticsEvent.forInstanceLoaderEvent("instance_remove_loader", this, launcher.loaderVersion));
         String loaderType = launcher.loaderVersion.type;
 
         boolean success = false;

@@ -65,6 +65,7 @@ import com.atlauncher.managers.ConfigManager;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.managers.MinecraftManager;
 import com.atlauncher.network.Analytics;
+import com.atlauncher.network.analytics.AnalyticsEvent;
 import com.atlauncher.utils.ComboItem;
 import com.atlauncher.utils.Utils;
 import com.formdev.flatlaf.icons.FlatSearchIcon;
@@ -435,7 +436,9 @@ public final class PacksBrowserTab extends JPanel
             disableTabsWhileLoading();
             page += 1;
 
-            Analytics.sendEvent(page, "Next", "Navigation", selectedPanel.getAnalyticsCategory());
+            Analytics.trackEvent(
+                    AnalyticsEvent.forSearchEventPlatform("add_pack", searchField.getText(), page,
+                            selectedPanel.getPlatformName()));
 
             // load in the content for the platform
             new Thread(() -> {
@@ -482,7 +485,9 @@ public final class PacksBrowserTab extends JPanel
         disableTabsWhileLoading();
 
         if (!searchField.getText().isEmpty()) {
-            Analytics.sendEvent(searchField.getText(), "Search", selectedPanel.getAnalyticsCategory());
+            Analytics.trackEvent(
+                    AnalyticsEvent.forSearchEventPlatform("add_pack", searchField.getText(), page,
+                            selectedPanel.getPlatformName()));
         }
 
         // load in the content for the platform

@@ -128,6 +128,7 @@ import com.atlauncher.network.Analytics;
 import com.atlauncher.network.DownloadPool;
 import com.atlauncher.network.ErrorReporting;
 import com.atlauncher.network.GraphqlClient;
+import com.atlauncher.network.analytics.AnalyticsEvent;
 import com.atlauncher.utils.ArchiveUtils;
 import com.atlauncher.utils.CurseForgeApi;
 import com.atlauncher.utils.FileUtils;
@@ -376,9 +377,9 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                 saveServerJson();
             }
 
-            Analytics.sendEvent(pack.name + " - " + version.version,
-                    (this.isServer ? "Server" : "") + (this.isReinstall ? "Reinstalled" : "Installed"),
-                    getAnalyticsCategory());
+            Analytics.trackEvent(
+                    AnalyticsEvent.forPackInstalled(pack, version, this.isServer, this.isReinstall,
+                            getAnalyticsPlatform()));
 
             return success(true);
         } catch (Exception e) {
@@ -390,20 +391,20 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         return success(false);
     }
 
-    private String getAnalyticsCategory() {
+    private String getAnalyticsPlatform() {
         if (this.curseForgeManifest != null) {
-            return "CurseForgePack";
+            return "CurseForge";
         } else if (this.modpacksChPackManifest != null) {
-            return "ModpacksChPack";
+            return "ModpacksCh";
         } else if (this.modrinthManifest != null) {
-            return "ModrinthPack";
+            return "Modrinth";
         } else if (this.multiMCManifest != null) {
-            return "MultiMCPack";
+            return "MultiMC";
         } else if (this.pack.vanillaInstance) {
             return "Vanilla";
         }
 
-        return "Pack";
+        return "ATLauncher";
     }
 
     private void downloadPackVersionJson() throws Exception {

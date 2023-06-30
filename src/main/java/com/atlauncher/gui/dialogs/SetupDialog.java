@@ -44,6 +44,7 @@ import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.gui.components.JLabelWithHover;
 import com.atlauncher.network.Analytics;
+import com.atlauncher.network.analytics.AnalyticsEvent;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
 
@@ -146,7 +147,7 @@ public class SetupDialog extends JDialog implements RelocalizationListener {
 
             if (enableAnalytics.isSelected()) {
                 Analytics.startSession();
-                Analytics.sendEvent("SetupDialogComplete", "Launcher");
+                Analytics.trackEvent(AnalyticsEvent.simpleEvent("setup_dialog_complete"));
             }
 
             setVisible(false);

@@ -48,6 +48,7 @@ import com.atlauncher.managers.ConfigManager;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.network.Analytics;
+import com.atlauncher.network.analytics.AnalyticsEvent;
 import com.atlauncher.utils.ModrinthApi;
 
 public class ModrinthPacksPanel extends PackBrowserPlatformPanel {
@@ -247,8 +248,7 @@ public class ModrinthPacksPanel extends PackBrowserPlatformPanel {
                     .setContent(GetText.tr("Cannot create instance as you have no account selected."))
                     .setType(DialogManager.ERROR).show();
         } else {
-            Analytics.sendEvent(project.title, "InstallManual", getAnalyticsCategory());
-            Analytics.sendEvent(project.title, "Install", getAnalyticsCategory());
+            Analytics.trackEvent(AnalyticsEvent.forPackInstall(project));
             new InstanceInstallerDialog(project);
         }
     }

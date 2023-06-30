@@ -74,10 +74,10 @@ public final class Analytics {
         });
     }
 
-    private static void addEventToQueue(AnalyticsEvent event) {
+    public static void trackEvent(AnalyticsEvent event) {
         events.add(event);
 
-        if (events.size() >= 10) {
+        if (events.size() >= 10 && sessionInitialised) {
             synchronized (events) {
                 sendEvents(events);
                 events.clear();
@@ -94,10 +94,6 @@ public final class Analytics {
     }
 
     private static void sendEvents(List<AnalyticsEvent> events, boolean wait) {
-        if (!sessionInitialised) {
-            return;
-        }
-
         LogManager.debug(String.format("Sending %d batched events", events.size()));
 
         Map<String, Object> body = new HashMap<>();
@@ -148,38 +144,11 @@ public final class Analytics {
     }
 
     public static void sendScreenView(String title) {
-        addEventToQueue(AnalyticsEvent.forScreenView(title));
+        trackEvent(AnalyticsEvent.forScreenView(title));
     }
 
     public static void sendOutboundLink(String url) {
-        addEventToQueue(AnalyticsEvent.forLinkClick(url));
-    }
-
-    /**
-     * @deprecated No longer used, use
-     *             Analytics.addEventToQueue(AnalyticsEvent.forX())
-     */
-    public static void sendEvent(Integer value, String label, String action, String category) {
-        // final Map<String, Object> payload = new HashMap<>();
-        // payload.put("url", url);
-
-        // addEventToQueue(new AnalyticsEvent("link_click", payload));
-    }
-
-    /**
-     * @deprecated No longer used, use
-     *             Analytics.addEventToQueue(AnalyticsEvent.forX())
-     */
-    public static void sendEvent(String label, String action, String category) {
-        sendEvent(null, label, action, category);
-    }
-
-    /**
-     * @deprecated No longer used, use
-     *             Analytics.addEventToQueue(AnalyticsEvent.forX())
-     */
-    public static void sendEvent(String action, String category) {
-        sendEvent(null, null, action, category);
+        trackEvent(AnalyticsEvent.forLinkClick(url));
     }
 
     public static void endSession() {

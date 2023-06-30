@@ -49,24 +49,4 @@ public enum LoaderType {
             return "Quilt";
         }
     },;
-
-    public Integer getAnalyticsValue() {
-        if (this == FORGE) {
-            return 1;
-        }
-
-        if (this == FABRIC) {
-            return 2;
-        }
-
-        if (this == QUILT) {
-            return 3;
-        }
-
-        if (this == LEGACY_FABRIC) {
-            return 4;
-        }
-
-        return 0;
-    }
 }

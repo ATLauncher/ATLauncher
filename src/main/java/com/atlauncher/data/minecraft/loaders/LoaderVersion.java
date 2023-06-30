@@ -122,23 +122,23 @@ public class LoaderVersion {
         return "forge";
     }
 
-    public Integer getAnalyticsValue() {
+    public String getAnalyticsValue() {
         if (isForge()) {
-            return 1;
+            return "Forge";
         }
 
         if (isFabric()) {
-            return 2;
+            return "Fabric";
         }
 
         if (isQuilt()) {
-            return 3;
+            return "Quilt";
         }
 
         if (isLegacyFabric()) {
-            return 4;
+            return "Legacy Fabric";
         }
 
-        return 0;
+        return "None";
     }
 }

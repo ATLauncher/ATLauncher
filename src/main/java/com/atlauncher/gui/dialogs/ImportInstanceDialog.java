@@ -50,6 +50,7 @@ import com.atlauncher.constants.UIConstants;
 import com.atlauncher.dbus.DBusUtils;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.network.Analytics;
+import com.atlauncher.network.analytics.AnalyticsEvent;
 import com.atlauncher.utils.ImportPackUtils;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
@@ -206,10 +207,11 @@ public class ImportInstanceDialog extends JDialog {
 
             dialog.addThread(new Thread(() -> {
                 if (!url.getText().isEmpty()) {
-                    Analytics.sendEvent(url.getText(), "AddFromUrl", "ImportInstance");
+                    Analytics.trackEvent(AnalyticsEvent.forImportInstance("Url", url.getText()));
                     dialog.setReturnValue(ImportPackUtils.loadFromUrl(url.getText()));
                 } else if (!filePath.getText().isEmpty()) {
-                    Analytics.sendEvent(new File(filePath.getText()).getName(), "AddFromZip", "ImportInstance");
+                    Analytics.trackEvent(
+                            AnalyticsEvent.forImportInstance("Archive", new File(filePath.getText()).getName()));
                     dialog.setReturnValue(ImportPackUtils.loadFromFile(new File(filePath.getText())));
                 } else {
                     dialog.setReturnValue(false);

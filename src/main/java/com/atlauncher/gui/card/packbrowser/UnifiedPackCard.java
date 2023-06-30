@@ -47,6 +47,7 @@ import com.atlauncher.managers.DialogManager;
 import com.atlauncher.managers.InstanceManager;
 import com.atlauncher.managers.PackManager;
 import com.atlauncher.network.Analytics;
+import com.atlauncher.network.analytics.AnalyticsEvent;
 import com.atlauncher.utils.Markdown;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
@@ -98,7 +99,7 @@ public class UnifiedPackCard extends JPanel implements RelocalizationListener {
                         .setContent(GetText.tr("Cannot create instance as you have no account selected."))
                         .setType(DialogManager.ERROR).show();
             } else {
-                Analytics.sendEvent(result.name(), "Install", "UnifiedModPackSearch");
+                Analytics.trackEvent(AnalyticsEvent.forPackInstall(result));
                 new InstanceInstallerDialog(result, false);
             }
         });
@@ -123,7 +124,7 @@ public class UnifiedPackCard extends JPanel implements RelocalizationListener {
                         .setContent(GetText.tr("Cannot create server as you have no account selected."))
                         .setType(DialogManager.ERROR).show();
             } else {
-                Analytics.sendEvent(result.name(), "ServerInstall", "UnifiedModPackSearch");
+                Analytics.trackEvent(AnalyticsEvent.forPackInstall(result, true));
                 new InstanceInstallerDialog(result, true);
             }
         });

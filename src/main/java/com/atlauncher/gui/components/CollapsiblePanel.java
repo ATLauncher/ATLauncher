@@ -54,7 +54,6 @@ import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.InstanceManager;
 import com.atlauncher.managers.PackManager;
 import com.atlauncher.managers.ServerManager;
-import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.Utils;
 
 /**
@@ -291,14 +290,10 @@ public class CollapsiblePanel extends JPanel implements ThemeListener, Relocaliz
         public void actionPerformed(ActionEvent e) {
             setCollapsed(!isCollapsed());
             if (pack != null) {
-                Analytics.sendEvent(isCollapsed() ? 1 : 0, pack.getName(), "Collapse", "Pack");
                 PackManager.setPackVisbility(pack, isCollapsed());
             } else if (instance != null) {
-                Analytics.sendEvent(isCollapsed() ? 1 : 0, instance.getPackName() + " - " + instance.getVersion(),
-                        "Collapse", "Instance");
                 InstanceManager.setInstanceVisbility(instance, isCollapsed());
             } else if (server != null) {
-                Analytics.sendEvent(isCollapsed() ? 1 : 0, server.pack + " - " + server.version, "Collapse", "Server");
                 ServerManager.setServerVisibility(server, isCollapsed());
             }
         }

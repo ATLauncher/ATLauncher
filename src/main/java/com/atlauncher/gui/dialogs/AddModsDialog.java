@@ -68,6 +68,7 @@ import com.atlauncher.managers.DialogManager;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.managers.MinecraftManager;
 import com.atlauncher.network.Analytics;
+import com.atlauncher.network.analytics.AnalyticsEvent;
 import com.atlauncher.utils.ComboItem;
 import com.atlauncher.utils.CurseForgeApi;
 import com.atlauncher.utils.ModrinthApi;
@@ -260,7 +261,7 @@ public final class AddModsDialog extends JDialog {
                     return;
                 }
 
-                Analytics.sendEvent("AddFabricApi", "CurseForgeMod");
+                Analytics.trackEvent(AnalyticsEvent.forAddMod("Fabric API", "CurseForge"));
                 new CurseForgeProjectFileSelectorDialog(this, mod, instance);
 
                 if (instance.launcher.mods.stream().anyMatch(
@@ -301,7 +302,7 @@ public final class AddModsDialog extends JDialog {
                     return;
                 }
 
-                Analytics.sendEvent("AddFabricApi", "ModrinthMod");
+                Analytics.trackEvent(AnalyticsEvent.forAddMod("Fabric API", "Modrinth"));
                 new ModrinthVersionSelectorDialog(this, mod, instance);
 
                 if (instance.launcher.mods.stream().anyMatch(
@@ -348,7 +349,7 @@ public final class AddModsDialog extends JDialog {
                     return;
                 }
 
-                Analytics.sendEvent("AddLegacyFabricApi", "CurseForgeMod");
+                Analytics.trackEvent(AnalyticsEvent.forAddMod("Legacy Fabric API", "CurseForge"));
                 new CurseForgeProjectFileSelectorDialog(this, mod, instance);
 
                 if (instance.launcher.mods.stream().anyMatch(
@@ -391,7 +392,7 @@ public final class AddModsDialog extends JDialog {
                     return;
                 }
 
-                Analytics.sendEvent("AddLegacyFabricApi", "ModrinthMod");
+                Analytics.trackEvent(AnalyticsEvent.forAddMod("Legacy Fabric API", "Modrinth"));
                 new ModrinthVersionSelectorDialog(this, mod, instance);
 
                 if (instance.launcher.mods.stream().anyMatch(
@@ -438,7 +439,7 @@ public final class AddModsDialog extends JDialog {
                 return;
             }
 
-            Analytics.sendEvent("AddQuiltStandardLibraries", "ModrinthMod");
+            Analytics.trackEvent(AnalyticsEvent.forAddMod("Quilt Standard Libraries", "Modrinth"));
             new ModrinthVersionSelectorDialog(this, mod, instance);
 
             if (instance.launcher.mods.stream().anyMatch(
@@ -635,7 +636,9 @@ public final class AddModsDialog extends JDialog {
 
         boolean isCurseForge = ((ComboItem<ModPlatform>) hostComboBox.getSelectedItem())
                 .getValue() == ModPlatform.CURSEFORGE;
-        Analytics.sendEvent(page, "Previous", "Navigation", isCurseForge ? "CurseForgeMod" : "ModrinthMod");
+        Analytics.trackEvent(
+                AnalyticsEvent.forSearchEventPlatform("add_mods", searchField.getText(), page + 1,
+                        isCurseForge ? "CurseForge" : "Modrinth"));
 
         getMods();
     }
@@ -647,7 +650,9 @@ public final class AddModsDialog extends JDialog {
 
         boolean isCurseForge = ((ComboItem<ModPlatform>) hostComboBox.getSelectedItem())
                 .getValue() == ModPlatform.CURSEFORGE;
-        Analytics.sendEvent(page, "Next", "Navigation", isCurseForge ? "CurseForgeMod" : "ModrinthMod");
+        Analytics.trackEvent(
+                AnalyticsEvent.forSearchEventPlatform("add_mods", searchField.getText(), page + 1,
+                        isCurseForge ? "CurseForge" : "Modrinth"));
 
         getMods();
     }
@@ -762,7 +767,9 @@ public final class AddModsDialog extends JDialog {
 
         boolean isCurseForge = ((ComboItem<ModPlatform>) hostComboBox.getSelectedItem())
                 .getValue() == ModPlatform.CURSEFORGE;
-        Analytics.sendEvent(query, "Search", isCurseForge ? "CurseForgeMod" : "ModrinthMod");
+        Analytics.trackEvent(
+                AnalyticsEvent.forSearchEventPlatform("add_mods", query, page + 1,
+                        isCurseForge ? "CurseForge" : "Modrinth"));
 
         getMods();
     }
@@ -790,7 +797,7 @@ public final class AddModsDialog extends JDialog {
                 CurseForgeProject castMod = (CurseForgeProject) mod;
 
                 contentPanel.add(new CurseForgeProjectCard(castMod, e -> {
-                    Analytics.sendEvent(castMod.name, "Add", "CurseForgeMod");
+                    Analytics.trackEvent(AnalyticsEvent.forAddMod(castMod));
                     new CurseForgeProjectFileSelectorDialog(this, castMod, instance);
                 }), gbc);
 
@@ -850,7 +857,7 @@ public final class AddModsDialog extends JDialog {
                         return;
                     }
 
-                    Analytics.sendEvent(castMod.title, "Add", "ModrinthMod");
+                    Analytics.trackEvent(AnalyticsEvent.forAddMod(castMod));
                     new ModrinthVersionSelectorDialog(this, modrinthMod, instance);
                 }), gbc);
 

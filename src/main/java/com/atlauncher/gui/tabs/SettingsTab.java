@@ -42,6 +42,7 @@ import com.atlauncher.gui.tabs.settings.ModsSettingsTab;
 import com.atlauncher.gui.tabs.settings.NetworkSettingsTab;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.network.Analytics;
+import com.atlauncher.network.analytics.AnalyticsEvent;
 import com.atlauncher.utils.OS;
 import com.formdev.flatlaf.FlatLaf;
 
@@ -98,7 +99,7 @@ public class SettingsTab extends JPanel implements Tab, RelocalizationListener {
                     App.launcher.reloadInstancesPanel();
                 }
                 if (themeChanged) {
-                    Analytics.sendEvent(App.THEME.getName(), "ChangeTheme", "Launcher");
+                    Analytics.trackEvent(AnalyticsEvent.forThemeChange(App.THEME.getName()));
                 }
                 if (languageChanged) {
                     int ret = DialogManager.yesNoDialog().setType(DialogManager.INFO)

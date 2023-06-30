@@ -42,6 +42,7 @@ import com.atlauncher.gui.dialogs.InstanceInstallerDialog;
 import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.network.Analytics;
+import com.atlauncher.network.analytics.AnalyticsEvent;
 import com.atlauncher.utils.OS;
 
 @SuppressWarnings("serial")
@@ -82,7 +83,7 @@ public class CurseForgePackCard extends JPanel implements RelocalizationListener
                         .setContent(GetText.tr("Cannot create instance as you have no account selected."))
                         .setType(DialogManager.ERROR).show();
             } else {
-                Analytics.sendEvent(project.name, "Install", "CurseForgePack");
+                Analytics.trackEvent(AnalyticsEvent.forPackInstall(project));
                 new InstanceInstallerDialog(project);
             }
         });

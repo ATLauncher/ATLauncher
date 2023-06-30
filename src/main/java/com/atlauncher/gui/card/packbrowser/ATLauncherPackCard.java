@@ -44,6 +44,7 @@ import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.managers.InstanceManager;
 import com.atlauncher.network.Analytics;
+import com.atlauncher.network.analytics.AnalyticsEvent;
 import com.atlauncher.utils.OS;
 
 @SuppressWarnings("serial")
@@ -144,7 +145,7 @@ public class ATLauncherPackCard extends JPanel implements RelocalizationListener
                         .setContent(GetText.tr("Cannot create instance as you have no account selected."))
                         .setType(DialogManager.ERROR).show();
             } else {
-                Analytics.sendEvent(pack.getName(), "Install", "ATLauncherPack");
+                Analytics.trackEvent(AnalyticsEvent.forPackInstall(pack));
                 new InstanceInstallerDialog(pack);
             }
         });
@@ -168,7 +169,7 @@ public class ATLauncherPackCard extends JPanel implements RelocalizationListener
                         .setContent(GetText.tr("Cannot create server as you have no account selected."))
                         .setType(DialogManager.ERROR).show();
             } else {
-                Analytics.sendEvent(pack.getName(), "ServerInstall", "ATLauncherPack");
+                Analytics.trackEvent(AnalyticsEvent.forPackInstall(pack, true));
                 new InstanceInstallerDialog(pack, true);
             }
         });
@@ -184,7 +185,7 @@ public class ATLauncherPackCard extends JPanel implements RelocalizationListener
                         Constants.SERVERS_LIST_PACK, pack.getSafeName())));
 
         this.modsButton.addActionListener(e -> {
-            Analytics.sendEvent(pack.getName(), "ViewMods", "ATLauncherPack");
+            Analytics.trackEvent(AnalyticsEvent.forPackEvent("pack_view_mods", pack.getName(), "ATLauncher"));
             new ViewModsDialog(pack).setVisible(true);
         });
     }

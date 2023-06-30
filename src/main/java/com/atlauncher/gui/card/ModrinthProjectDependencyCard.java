@@ -37,6 +37,7 @@ import com.atlauncher.data.modrinth.ModrinthDependency;
 import com.atlauncher.data.modrinth.ModrinthProject;
 import com.atlauncher.gui.dialogs.ModrinthVersionSelectorDialog;
 import com.atlauncher.network.Analytics;
+import com.atlauncher.network.analytics.AnalyticsEvent;
 import com.atlauncher.utils.ModrinthApi;
 import com.atlauncher.utils.Utils;
 import com.atlauncher.workers.BackgroundImageWorker;
@@ -88,7 +89,7 @@ public final class ModrinthProjectDependencyCard extends JPanel {
         buttonsPanel.add(viewButton);
 
         addButton.addActionListener(e -> {
-            Analytics.sendEvent(mod.title, "AddDependency", "ModrinthMod");
+            Analytics.trackEvent(AnalyticsEvent.forAddMod(mod));
             new ModrinthVersionSelectorDialog(parent, mod, instance);
             parent.reloadDependenciesPanel();
         });

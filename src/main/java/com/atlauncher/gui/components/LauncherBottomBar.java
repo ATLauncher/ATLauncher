@@ -41,6 +41,7 @@ import com.atlauncher.gui.AccountsDropDownRenderer;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.managers.AccountManager;
 import com.atlauncher.network.Analytics;
+import com.atlauncher.network.analytics.AnalyticsEvent;
 import com.atlauncher.utils.OS;
 
 @SuppressWarnings("serial")
@@ -97,7 +98,7 @@ public class LauncherBottomBar extends BottomBar implements RelocalizationListen
             final ProgressDialog dialog = new ProgressDialog(GetText.tr("Checking For Updates"), 0,
                     GetText.tr("Checking For Updates"), "Aborting Update Check!");
             dialog.addThread(new Thread(() -> {
-                Analytics.sendEvent("UpdateData", "Launcher");
+                Analytics.trackEvent(AnalyticsEvent.simpleEvent("update_data"));
                 App.launcher.updateData(true);
                 dialog.close();
             }));
@@ -106,7 +107,7 @@ public class LauncherBottomBar extends BottomBar implements RelocalizationListen
         username.addItemListener(e -> {
             if (e.getStateChange() == ItemEvent.SELECTED) {
                 if (!dontSave) {
-                    Analytics.sendEvent("Switch", "Account");
+                    Analytics.trackEvent(AnalyticsEvent.simpleEvent("switch_account"));
                     AccountManager.switchAccount((AbstractAccount) username.getSelectedItem());
                 }
             }

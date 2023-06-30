@@ -42,6 +42,7 @@ import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.managers.InstanceManager;
 import com.atlauncher.network.Analytics;
+import com.atlauncher.network.analytics.AnalyticsEvent;
 import com.atlauncher.utils.OS;
 
 @SuppressWarnings("serial")
@@ -79,7 +80,7 @@ public class ModrinthPackCard extends JPanel implements RelocalizationListener {
                         .setContent(GetText.tr("Cannot create instance as you have no account selected."))
                         .setType(DialogManager.ERROR).show();
             } else {
-                Analytics.sendEvent(searchHit.title, "Install", "ModrinthPack");
+                Analytics.trackEvent(AnalyticsEvent.forPackInstall(searchHit));
                 new InstanceInstallerDialog(searchHit, false);
             }
         });
@@ -104,7 +105,7 @@ public class ModrinthPackCard extends JPanel implements RelocalizationListener {
                         .setContent(GetText.tr("Cannot create server as you have no account selected."))
                         .setType(DialogManager.ERROR).show();
             } else {
-                Analytics.sendEvent(searchHit.title, "ServerInstall", "ModrinthPack");
+                Analytics.trackEvent(AnalyticsEvent.forPackInstall(searchHit, true));
                 new InstanceInstallerDialog(searchHit, true);
             }
         });
