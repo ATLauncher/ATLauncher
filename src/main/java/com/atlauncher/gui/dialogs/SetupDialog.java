@@ -146,7 +146,6 @@ public class SetupDialog extends JDialog implements RelocalizationListener {
             App.settings.save();
 
             if (enableAnalytics.isSelected()) {
-                Analytics.startSession();
                 Analytics.trackEvent(AnalyticsEvent.simpleEvent("setup_dialog_complete"));
             }
 

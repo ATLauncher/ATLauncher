@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
@@ -32,6 +33,7 @@ import com.atlauncher.App;
 import com.atlauncher.Gsons;
 import com.atlauncher.Network;
 import com.atlauncher.constants.Constants;
+import com.atlauncher.managers.ConfigManager;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.network.analytics.AnalyticsApiResponse;
 import com.atlauncher.network.analytics.AnalyticsEvent;
@@ -161,5 +163,23 @@ public final class Analytics {
         body.put("sessionId", sessionId);
 
         makeApiCall("/session/end", body);
+    }
+
+    public static boolean isEnabled() {
+        if (ConfigManager.getConfigItem("analytics.enabled", false) != true) {
+            return false;
+        }
+
+        try {
+            Double enrolledPercentage = ConfigManager.getConfigItem("analytics.percentage", 0d);
+
+            if (enrolledPercentage == 0) {
+                return false;
+            }
+
+            return new Random().nextInt(100) <= enrolledPercentage;
+        } catch (Exception ignored) {
+            return false;
+        }
     }
 }
