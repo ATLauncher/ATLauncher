@@ -29,7 +29,6 @@ import com.atlauncher.Gsons;
 import com.atlauncher.evnt.LogEvent;
 import com.atlauncher.evnt.LogEvent.LogType;
 import com.atlauncher.exceptions.LocalException;
-import com.atlauncher.network.Analytics;
 import com.atlauncher.network.DownloadException;
 import com.atlauncher.network.ErrorReporting;
 import com.atlauncher.thread.LoggingThread;
@@ -105,8 +104,6 @@ public final class LogManager {
         t.printStackTrace();
 
         try (CharArrayWriter writer = new CharArrayWriter()) {
-            Analytics.sendException(t.getMessage());
-
             if (!(t instanceof LocalException) && sendRemote) {
                 ErrorReporting.captureException(t);
             }

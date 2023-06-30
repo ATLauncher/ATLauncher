@@ -20,3 +20,4 @@ This changelog only contains the changes that are unreleased. For changes for in
 ### Misc
 - Consolodate GSON configs
 - Implement view model for VanillaPacksTab [#743]
+- Switch analytics from Google Analytics to own platform [#775]

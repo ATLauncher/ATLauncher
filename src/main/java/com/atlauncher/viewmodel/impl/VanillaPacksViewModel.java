@@ -406,7 +406,7 @@ public class VanillaPacksViewModel implements SettingsListener, IVanillaPacksVie
         return map.entrySet().stream().filter(predicate).count();
     }
 
-    private static <T> @Nonnull Optional<T> first(@Nonnull List<T> list, @Nonnull Predicate<T> predicate) {
+    private static <T> Optional<T> first(@Nonnull List<T> list, @Nonnull Predicate<T> predicate) {
         for (T item : list) {
             if (predicate.test(item)) {
                 return Optional.of(item);
@@ -414,10 +414,6 @@ public class VanillaPacksViewModel implements SettingsListener, IVanillaPacksVie
         }
 
         return Optional.empty();
-    }
-
-    private static <T> @Nullable T firstOrNull(@Nonnull List<T> list, @Nonnull Predicate<T> predicate) {
-        return first(list, predicate).orElse(null);
     }
 
     @Override

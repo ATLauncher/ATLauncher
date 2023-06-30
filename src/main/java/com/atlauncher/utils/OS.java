@@ -633,6 +633,36 @@ public enum OS {
         return false;
     }
 
+    public static String getAnalyticsOSName() {
+        if (isWindows()) {
+            return "WINDOWS";
+        } else if (isMac()) {
+            return "MACOS";
+        } else if (isLinux()) {
+            return "LINUX";
+        }
+
+        return "UNKNOWN";
+    }
+
+    public static String getAnalyticsOSArch() {
+        if (isArm()) {
+            if (is64Bit()) {
+                return "ARM64";
+            } else {
+                return "ARM32";
+            }
+        }
+
+        if (is64Bit()) {
+            return "X64";
+        } else if (!is64Bit()) {
+            return "X86";
+        }
+
+        return "UNKNOWN";
+    }
+
     public static String getLWJGLClassifier() {
         StringBuilder builder = new StringBuilder();
 
@@ -738,6 +768,41 @@ public enum OS {
             }
 
             return LauncherInstallMethod.LINUX_UNKNOWN;
+        }
+    }
+
+    public static String getInstallMethodForAnalytics() {
+        switch (getInstallMethod()) {
+            case LINUX_AUR:
+                return "AUR";
+            case LINUX_AUR_BIN:
+                return "AUR_BIN";
+            case LINUX_DEB:
+                return "DEB";
+            case LINUX_FLATPAK:
+                return "FLATPAK";
+            case LINUX_RPM:
+                return "RPM";
+            case MAC_APP:
+                return "MAC_APP";
+            case WINDOWS_JAR:
+            case LINUX_JAR:
+            case MAC_JAR:
+                return "JAR";
+            case WINDOWS_PORTABLE:
+                return "EXE";
+            case WINDOWS_SETUP:
+                return "WINDOWS_SETUP";
+            case LINUX_SOURCE:
+            case MAC_SOURCE:
+            case WINDOWS_SOURCE:
+                return "SOURCE";
+            default:
+            case $UNKNOWN:
+            case WINDOWS_UNKNOWN:
+            case MAC_UNKNOWN:
+            case LINUX_UNKNOWN:
+                return "UNKNOWN";
         }
     }
 
