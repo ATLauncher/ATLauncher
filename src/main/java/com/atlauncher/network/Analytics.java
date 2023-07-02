@@ -23,6 +23,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
@@ -51,6 +53,7 @@ public final class Analytics {
     private static List<AnalyticsEvent> events = new ArrayList<>();
     private static String sessionId = UUID.randomUUID().toString();
     private static boolean sessionInitialised = false;
+    private static Timer timer = new Timer();
 
     public static void startSession() {
         Map<String, Object> body = new HashMap<>();
@@ -70,6 +73,17 @@ public final class Analytics {
         responseFuture.thenApply((AnalyticsApiResponse response) -> {
             Analytics.sessionInitialised = response.statusCode >= 200 && response.statusCode < 300;
 
+            Double autoSendInSeconds = ConfigManager.getConfigItem("analytics.autoSendInSeconds", 60d);
+
+            timer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    if (events.size() != 0) {
+                        sendAllStoredEvents(false);
+                    }
+                }
+            }, (int) (autoSendInSeconds * 1000), (int) (autoSendInSeconds * 1000));
+
             Runtime.getRuntime().addShutdownHook(new Thread(Analytics::endSession));
 
             return response;
@@ -80,19 +94,15 @@ public final class Analytics {
         events.add(event);
 
         if (events.size() >= 10 && sessionInitialised) {
-            synchronized (events) {
-                sendEvents(events);
-                events.clear();
-            }
+            sendAllStoredEvents(false);
         }
     }
 
-    private static void sendEvents(List<AnalyticsEvent> events) {
-        if (!sessionInitialised) {
-            return;
+    public static synchronized void sendAllStoredEvents(boolean wait) {
+        synchronized (events) {
+            sendEvents(events, wait);
+            events.clear();
         }
-
-        sendEvents(events, false);
     }
 
     private static void sendEvents(List<AnalyticsEvent> events, boolean wait) {
@@ -152,8 +162,10 @@ public final class Analytics {
     }
 
     public static void endSession() {
+        timer.cancel();
+
         if (events.size() != 0) {
-            sendEvents(events, true);
+            sendAllStoredEvents(true);
         }
 
         Map<String, Object> body = new HashMap<>();
