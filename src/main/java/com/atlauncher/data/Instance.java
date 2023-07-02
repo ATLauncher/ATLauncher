@@ -952,6 +952,8 @@ public class Instance extends MinecraftVersion {
             }
         }
 
+        Analytics.trackEvent(AnalyticsEvent.forStartInstanceLaunch(this, offline));
+
         ProgressDialog<Boolean> prepareDialog = new ProgressDialog<>(GetText.tr("Preparing For Launch"),
                 9,
                 GetText.tr("Preparing For Launch"));
@@ -963,12 +965,11 @@ public class Instance extends MinecraftVersion {
         prepareDialog.start();
 
         if (prepareDialog.getReturnValue() == null || !prepareDialog.getReturnValue()) {
+            Analytics.trackEvent(AnalyticsEvent.forInstanceLaunchFailed(this, offline, "prepare_failure"));
             LogManager.error(
                     "Failed to prepare instance " + this.launcher.name + " for launch. Check the logs and try again.");
             return false;
         }
-
-        Analytics.trackEvent(AnalyticsEvent.forStartInstanceLaunch(this, offline));
 
         Thread launcher = new Thread(() -> {
             try {
@@ -1015,6 +1016,8 @@ public class Instance extends MinecraftVersion {
                         session = loginDialog.getReturnValue();
 
                         if (session == null) {
+                            Analytics.trackEvent(
+                                    AnalyticsEvent.forInstanceLaunchFailed(this, offline, "mojang_no_session"));
                             App.launcher.setMinecraftLaunched(false);
                             if (App.launcher.getParent() != null) {
                                 App.launcher.getParent().setVisible(true);
@@ -1027,6 +1030,8 @@ public class Instance extends MinecraftVersion {
                         if (!executeCommand(preLaunchCommand)) {
                             LogManager.error("Failed to execute pre-launch command");
 
+                            Analytics.trackEvent(
+                                    AnalyticsEvent.forInstanceLaunchFailed(this, offline, "pre_launch_failure"));
                             App.launcher.setMinecraftLaunched(false);
 
                             if (App.launcher.getParent() != null) {
@@ -1055,6 +1060,8 @@ public class Instance extends MinecraftVersion {
 
                         if (!(Boolean) loginDialog.getReturnValue()) {
                             LogManager.error("Failed to login");
+                            Analytics.trackEvent(
+                                    AnalyticsEvent.forInstanceLaunchFailed(this, offline, "microsoft_login_failure"));
                             App.launcher.setMinecraftLaunched(false);
                             if (App.launcher.getParent() != null) {
                                 App.launcher.getParent().setVisible(true);
@@ -1070,6 +1077,8 @@ public class Instance extends MinecraftVersion {
                         if (!executeCommand(preLaunchCommand)) {
                             LogManager.error("Failed to execute pre-launch command");
 
+                            Analytics.trackEvent(
+                                    AnalyticsEvent.forInstanceLaunchFailed(this, offline, "pre_launch_failure"));
                             App.launcher.setMinecraftLaunched(false);
 
                             if (App.launcher.getParent() != null) {
@@ -1086,6 +1095,7 @@ public class Instance extends MinecraftVersion {
                 }
 
                 if (process == null) {
+                    Analytics.trackEvent(AnalyticsEvent.forInstanceLaunchFailed(this, offline, "no_process"));
                     LogManager.error("Failed to get process for Minecraft");
                     App.launcher.setMinecraftLaunched(false);
                     if (App.launcher.getParent() != null) {
@@ -1093,6 +1103,8 @@ public class Instance extends MinecraftVersion {
                     }
                     return;
                 }
+
+                Analytics.trackEvent(AnalyticsEvent.forInstanceLaunched(this, offline));
 
                 if (this.getPack() != null && this.getPack().isLoggingEnabled() && !this.launcher.isDev
                         && App.settings.enableLogs) {
@@ -1258,9 +1270,10 @@ public class Instance extends MinecraftVersion {
                 }
 
                 App.launcher.setMinecraftLaunched(false);
+                final int timePlayed = (int) (end - start) / 1000;
+                Analytics.trackEvent(AnalyticsEvent.forInstanceLaunchCompleted(this, offline, timePlayed));
                 if (this.getPack() != null && this.getPack().isLoggingEnabled() && !this.launcher.isDev
                         && App.settings.enableLogs) {
-                    final int timePlayed = (int) (end - start) / 1000;
                     if (timePlayed > 0) {
                         App.TASKPOOL.submit(() -> {
                             addTimePlayed(timePlayed, this.launcher.version);
@@ -1288,6 +1301,7 @@ public class Instance extends MinecraftVersion {
                 }
             } catch (Exception e1) {
                 LogManager.logStackTrace(e1);
+                Analytics.trackEvent(AnalyticsEvent.forInstanceLaunchFailed(this, offline, "exception"));
                 App.launcher.setMinecraftLaunched(false);
                 if (App.launcher.getParent() != null) {
                     App.launcher.getParent().setVisible(true);

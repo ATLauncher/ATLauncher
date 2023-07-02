@@ -379,7 +379,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
 
             Analytics.trackEvent(
                     AnalyticsEvent.forPackInstalled(pack, version, this.isServer, this.isReinstall,
-                            getAnalyticsPlatform()));
+                            getAnalyticsPlatform(),
+                            this.loaderVersion == null ? null : this.loaderVersion.getLoaderType()));
 
             return success(true);
         } catch (Exception e) {

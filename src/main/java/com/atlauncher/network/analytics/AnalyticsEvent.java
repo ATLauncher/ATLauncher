@@ -52,7 +52,7 @@ public class AnalyticsEvent {
 
     public static AnalyticsEvent forScreenView(String title) {
         final Map<String, Object> payload = new HashMap<>();
-        payload.put("screen_name", title);
+        payload.put("name", title);
 
         return new AnalyticsEvent("screen_view", payload);
     }
@@ -68,26 +68,42 @@ public class AnalyticsEvent {
         return new AnalyticsEvent(eventName);
     }
 
-    private static Map<String, Object> getPayloadForStartingInstance(Instance instance, boolean offline) {
+    private static Map<String, Object> getPayloadForStartingInstance(Instance instance, boolean offline,
+            String reason, Integer time) {
         final Map<String, Object> payload = new HashMap<>();
         payload.put("offline", offline);
         payload.put("name", instance.launcher.pack);
         payload.put("version", instance.launcher.version);
         payload.put("platform", instance.getPlatformName());
 
+        if (reason != null) {
+            payload.put("reason", reason);
+        }
+
+        if (time != null) {
+            payload.put("time", time);
+        }
+
         return payload;
     }
 
     public static AnalyticsEvent forStartInstanceLaunch(Instance instance, boolean offline) {
-        return new AnalyticsEvent("start_instance_launch", getPayloadForStartingInstance(instance, offline));
+        return new AnalyticsEvent("instance_launch_started",
+                getPayloadForStartingInstance(instance, offline, null, null));
     }
 
-    public static AnalyticsEvent forInstanceLaunchFailed(Instance instance, boolean offline) {
-        return new AnalyticsEvent("instance_launch_failed", getPayloadForStartingInstance(instance, offline));
+    public static AnalyticsEvent forInstanceLaunchFailed(Instance instance, boolean offline, String reason) {
+        return new AnalyticsEvent("instance_launch_failed",
+                getPayloadForStartingInstance(instance, offline, reason, null));
     }
 
     public static AnalyticsEvent forInstanceLaunched(Instance instance, boolean offline) {
-        return new AnalyticsEvent("instance_launched", getPayloadForStartingInstance(instance, offline));
+        return new AnalyticsEvent("instance_launched", getPayloadForStartingInstance(instance, offline, null, null));
+    }
+
+    public static AnalyticsEvent forInstanceLaunchCompleted(Instance instance, boolean offline, int time) {
+        return new AnalyticsEvent("instance_launch_completed",
+                getPayloadForStartingInstance(instance, offline, null, time));
     }
 
     public static AnalyticsEvent forInstanceEvent(String event, Instance instance) {
@@ -127,18 +143,18 @@ public class AnalyticsEvent {
         return new AnalyticsEvent(event, payload);
     }
 
-    public static AnalyticsEvent forToolRun(String tool) {
+    public static AnalyticsEvent forToolRun(String name) {
         final Map<String, Object> payload = new HashMap<>();
-        payload.put("tool", tool);
+        payload.put("name", name);
 
         return new AnalyticsEvent("tool_run", payload);
     }
 
-    public static AnalyticsEvent forAccountAdd(String accountType) {
+    public static AnalyticsEvent forAccountAdd(String type) {
         final Map<String, Object> payload = new HashMap<>();
-        payload.put("account_type", accountType);
+        payload.put("type", type);
 
-        return new AnalyticsEvent("add_account", payload);
+        return new AnalyticsEvent("account_added", payload);
     }
 
     public static AnalyticsEvent forSearchEvent(String area, String query) {
@@ -169,7 +185,7 @@ public class AnalyticsEvent {
         final Map<String, Object> payload = new HashMap<>();
         payload.put("name", theme);
 
-        return new AnalyticsEvent("theme_change", payload);
+        return new AnalyticsEvent("theme_changed", payload);
     }
 
     public static AnalyticsEvent forAddMod(CurseForgeProject mod) {
@@ -310,7 +326,7 @@ public class AnalyticsEvent {
     }
 
     public static AnalyticsEvent forPackInstalled(Pack pack, PackVersion version, boolean server,
-            boolean isReinstall, String platform) {
+            boolean isReinstall, String platform, LoaderType loaderType) {
         final Map<String, Object> payload = new HashMap<>();
         payload.put("name", pack.name);
         payload.put("version", version.version);
@@ -318,6 +334,10 @@ public class AnalyticsEvent {
 
         if (server) {
             payload.put("server", server);
+        }
+
+        if (loaderType != null) {
+            payload.put("loader", loaderType.toString());
         }
 
         return new AnalyticsEvent("pack_installed", payload);

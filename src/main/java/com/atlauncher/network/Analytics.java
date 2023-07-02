@@ -116,8 +116,6 @@ public final class Analytics {
     public static CompletableFuture<AnalyticsApiResponse> makeApiCall(String path, Map<String, Object> body) {
         LogManager.debug(String.format("Calling %s analytics call", path));
 
-        LogManager.debug(Gsons.DEFAULT.toJson(body));
-
         CompletableFuture<AnalyticsApiResponse> completableFuture = new CompletableFuture<>();
 
         Request request = new Request.Builder()
@@ -162,7 +160,11 @@ public final class Analytics {
         body.put("userId", App.settings.analyticsClientId);
         body.put("sessionId", sessionId);
 
-        makeApiCall("/session/end", body);
+        try {
+            CompletableFuture<AnalyticsApiResponse> response = makeApiCall("/session/end", body);
+            response.get(10, TimeUnit.SECONDS);
+        } catch (InterruptedException | ExecutionException | TimeoutException ignored) {
+        }
     }
 
     public static boolean isEnabled() {
