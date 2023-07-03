@@ -84,6 +84,12 @@ public class AccountManager {
                                 && microsoftAccount.accessToken.split("\\.").length == 3;
                     }
 
+                    if (account instanceof MojangAccount) {
+                        MojangAccount mojangAccount = (MojangAccount) account;
+                        return !mojangAccount.uuid.equals("00000000000000000000000000000000")
+                                && !mojangAccount.clientToken.isEmpty();
+                    }
+
                     return !account.uuid.equals("00000000000000000000000000000000");
                 }).collect(Collectors.toList()));
             } catch (Exception e) {
