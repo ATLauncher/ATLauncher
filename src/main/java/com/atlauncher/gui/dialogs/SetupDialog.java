@@ -113,7 +113,7 @@ public class SetupDialog extends JDialog implements RelocalizationListener {
         enableAnalyticsLabel = new JLabelWithHover(GetText.tr("Enable Anonymous Analytics") + "? ",
                 Utils.getIconImage(App.THEME.getIconPath("question")),
                 "<html>" + Utils.splitMultilinedString(GetText.tr(
-                        "The Launcher sends back anonymous analytics to Google Analytics in order to track what people do and don't use in the launcher. This helps determine what new features we implement in the future. All analytics are anonymous and contain no user/instance information in it at all. If you don't want to send anonymous analytics, you can disable this option."),
+                        "The Launcher sends back anonymous analytics to our own servers in a non identifying way in order to track what people do and don't use in the launcher. This helps determine what new features we implement in the future. All analytics are anonymous and contain no user/instance information in it at all. If you don't want to send anonymous analytics, you can disable this option."),
                         80, "<br/>") + "</html>");
         middle.add(enableAnalyticsLabel, gbc);
 
