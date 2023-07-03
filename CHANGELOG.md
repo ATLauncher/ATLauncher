@@ -17,6 +17,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Issues with unicode characters breaking instances and not showing properly
 - Issue with threads trying to write to a non thread safe list causing install issues
 - Creating vanilla packs or importing not checking for account first
+- Issue with collapsing things without an account causing an NPE [#770]
 
 ### Misc
 - Consolodate GSON configs

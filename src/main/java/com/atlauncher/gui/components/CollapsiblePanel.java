@@ -289,23 +289,27 @@ public class CollapsiblePanel extends JPanel implements ThemeListener, Relocaliz
 
         public void actionPerformed(ActionEvent e) {
             setCollapsed(!isCollapsed());
-            if (pack != null) {
-                PackManager.setPackVisbility(pack, isCollapsed());
-            } else if (instance != null) {
-                InstanceManager.setInstanceVisbility(instance, isCollapsed());
-            } else if (server != null) {
-                ServerManager.setServerVisibility(server, isCollapsed());
+            if (AccountManager.getSelectedAccount() != null) {
+                if (pack != null) {
+                    PackManager.setPackVisbility(pack, isCollapsed());
+                } else if (instance != null) {
+                    InstanceManager.setInstanceVisbility(instance, isCollapsed());
+                } else if (server != null) {
+                    ServerManager.setServerVisibility(server, isCollapsed());
+                }
             }
         }
 
         public void itemStateChanged(ItemEvent e) {
             setCollapsed(!isCollapsed());
-            if (pack != null) {
-                PackManager.setPackVisbility(pack, isCollapsed());
-            } else if (instance != null) {
-                InstanceManager.setInstanceVisbility(instance, isCollapsed());
-            } else if (server != null) {
-                ServerManager.setServerVisibility(server, isCollapsed());
+            if (AccountManager.getSelectedAccount() != null) {
+                if (pack != null) {
+                    PackManager.setPackVisbility(pack, isCollapsed());
+                } else if (instance != null) {
+                    InstanceManager.setInstanceVisbility(instance, isCollapsed());
+                } else if (server != null) {
+                    ServerManager.setServerVisibility(server, isCollapsed());
+                }
             }
         }
     }
