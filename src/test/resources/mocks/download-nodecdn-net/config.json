@@ -1,5 +1,10 @@
 {
-  "useLwjglReplacement": true,
+  "useLwjglReplacement": false,
+  "analytics": {
+    "enabled": false,
+    "percentage": 0,
+    "autoSendInSeconds": 300
+  },
   "useGraphql": {
     "vanillaLoaderVersions": false,
     "loaderVersions": false,
