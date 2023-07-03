@@ -48,6 +48,7 @@ import com.atlauncher.FileSystem;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.constants.UIConstants;
 import com.atlauncher.dbus.DBusUtils;
+import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.network.analytics.AnalyticsEvent;
@@ -200,6 +201,13 @@ public class ImportInstanceDialog extends JDialog {
         bottom.setLayout(new FlowLayout());
         addButton = new JButton(GetText.tr("Import"));
         addButton.addActionListener(e -> {
+            if (AccountManager.getSelectedAccount() == null) {
+                DialogManager.okDialog().setTitle(GetText.tr("No Account Selected"))
+                        .setContent(GetText.tr("Cannot create instance as you have no account selected."))
+                        .setType(DialogManager.ERROR).show();
+                return;
+            }
+
             setVisible(false);
 
             final ProgressDialog<Boolean> dialog = new ProgressDialog<>(GetText.tr("Import Instance"), 0,

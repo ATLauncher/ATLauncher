@@ -60,7 +60,9 @@ import com.atlauncher.evnt.listener.SettingsListener;
 import com.atlauncher.evnt.manager.SettingsManager;
 import com.atlauncher.exceptions.InvalidMinecraftVersion;
 import com.atlauncher.graphql.GetLoaderVersionsForMinecraftVersionQuery;
+import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.ConfigManager;
+import com.atlauncher.managers.DialogManager;
 import com.atlauncher.managers.InstanceManager;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.managers.MinecraftManager;
@@ -637,6 +639,19 @@ public class VanillaPacksViewModel implements SettingsListener, IVanillaPacksVie
     }
 
     private void install(Boolean isServer) {
+        if (AccountManager.getSelectedAccount() == null) {
+            if (isServer) {
+                DialogManager.okDialog().setTitle(GetText.tr("No Account Selected"))
+                        .setContent(GetText.tr("Cannot create server as you have no account selected."))
+                        .setType(DialogManager.ERROR).show();
+            } else {
+                DialogManager.okDialog().setTitle(GetText.tr("No Account Selected"))
+                        .setContent(GetText.tr("Cannot create instance as you have no account selected."))
+                        .setType(DialogManager.ERROR).show();
+            }
+            return;
+        }
+
         final Installable installable;
         try {
             final @Nullable LoaderVersion selectedLoaderVersion = this.selectedLoaderVersion.getValue().orElse(null);
