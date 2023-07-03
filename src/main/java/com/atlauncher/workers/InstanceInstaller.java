@@ -401,6 +401,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
             return "Modrinth";
         } else if (this.multiMCManifest != null) {
             return "MultiMC";
+        } else if (this.technicModpack != null) {
+            return "Technic";
         } else if (this.pack.vanillaInstance) {
             return "Vanilla";
         }
