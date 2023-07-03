@@ -439,7 +439,11 @@ public class JavaInstanceSettingsTab extends JPanel {
         gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.FIRST_LINE_START;
         javaRuntimeOverride = new JComboBox<>();
-        javaRuntimeOverride.addItem(new ComboItem<>(null, GetText.tr("Use Default (Recommended)")));
+        if (instance.javaVersion != null) {
+            javaRuntimeOverride.addItem(new ComboItem<>(null, GetText.tr("Use Default (Recommended)")));
+        } else {
+            javaRuntimeOverride.addItem(new ComboItem<>(null, GetText.tr("Use System Java")));
+        }
 
         int selectedIndexRuntime = 0;
         Map<String, List<JavaRuntime>> runtimes = Data.JAVA_RUNTIMES.getForSystem();
@@ -459,8 +463,8 @@ public class JavaInstanceSettingsTab extends JPanel {
         }
 
         javaRuntimeOverride.setSelectedIndex(selectedIndexRuntime);
-        javaRuntimeOverrideLabel.setVisible(instance.javaVersion != null && isUsingMinecraftProvidedJava);
-        javaRuntimeOverride.setVisible(instance.javaVersion != null && isUsingMinecraftProvidedJava);
+        javaRuntimeOverrideLabel.setVisible(isUsingMinecraftProvidedJava);
+        javaRuntimeOverride.setVisible(isUsingMinecraftProvidedJava);
 
         add(javaRuntimeOverride, gbc);
 

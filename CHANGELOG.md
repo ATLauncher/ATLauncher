@@ -7,6 +7,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 
 ### New Features
 - Scan mods for malware (specifically Fractureiser for now) before launching an instance
+- Allow setting a runtime override for instances without a Java runtime set [#777]
 
 ### Fixes
 - Make Console sizing a bit more responsive and flexible with sizes

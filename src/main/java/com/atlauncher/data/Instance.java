@@ -3033,7 +3033,11 @@ public class Instance extends MinecraftVersion {
     }
 
     public boolean isUsingJavaRuntime() {
-        return javaVersion != null && Optional.ofNullable(launcher.useJavaProvidedByMinecraft)
+        if (javaVersion == null) {
+            return launcher.javaRuntimeOverride != null;
+        }
+
+        return Optional.ofNullable(launcher.useJavaProvidedByMinecraft)
                 .orElse(App.settings.useJavaProvidedByMinecraft);
     }
 
@@ -3043,7 +3047,8 @@ public class Instance extends MinecraftVersion {
         // are we using Mojangs provided runtime?
         if (isUsingJavaRuntime()) {
             Map<String, List<JavaRuntime>> runtimesForSystem = Data.JAVA_RUNTIMES.getForSystem();
-            String runtimeToUse = Optional.ofNullable(launcher.javaRuntimeOverride).orElse(javaVersion.component);
+            String runtimeToUse = Optional.ofNullable(launcher.javaRuntimeOverride)
+                    .orElseGet(() -> javaVersion.component);
 
             // make sure the runtime is available in the data set (so it's not disabled
             // remotely)
