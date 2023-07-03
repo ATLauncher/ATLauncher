@@ -2277,17 +2277,21 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
 
             if (multiMCManifest != null) {
                 if (multiMCManifest.config.preLaunchCommand != null
+                        && !multiMCManifest.config.preLaunchCommand.equals("null")
                         && !multiMCManifest.config.preLaunchCommand.isEmpty()) {
                     instanceLauncher.preLaunchCommand = multiMCManifest.config.preLaunchCommand;
                     instanceLauncher.enableCommands = true;
                 }
 
                 if (multiMCManifest.config.postExitCommand != null
+                        && !multiMCManifest.config.postExitCommand.equals("null")
                         && !multiMCManifest.config.postExitCommand.isEmpty()) {
                     instanceLauncher.postExitCommand = multiMCManifest.config.postExitCommand;
                     instanceLauncher.enableCommands = true;
                 }
-                if (multiMCManifest.config.wrapperCommand != null && !multiMCManifest.config.wrapperCommand.isEmpty()) {
+                if (multiMCManifest.config.wrapperCommand != null
+                        && !multiMCManifest.config.wrapperCommand.equals("null")
+                        && !multiMCManifest.config.wrapperCommand.isEmpty()) {
                     instanceLauncher.wrapperCommand = multiMCManifest.config.wrapperCommand;
                     instanceLauncher.enableCommands = true;
                 }
