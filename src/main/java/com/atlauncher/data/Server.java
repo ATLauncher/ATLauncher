@@ -114,6 +114,8 @@ public class Server {
             }
         }
 
+        Analytics.trackEvent(AnalyticsEvent.forServerEvent("server_run", this));
+
         boolean usesRunSh = Files.exists(getRoot().resolve("run.sh"));
         String serverScript = usesRunSh ? "run" : "LaunchServer";
 
