@@ -40,20 +40,20 @@ main() {
 prepare_ssh() {
     echo '::group::Preparing SSH'
 
-    if [ ! -d $HOME/.ssh ] ; then
+    if [ ! -d $HOME/.ssh ]; then
         mkdir -m 0700 $HOME/.ssh
     fi
 
     # pull down the public key(s) from the AUR servers
-    if ! ssh-keyscan -H aur.archlinux.org > $HOME/.ssh/known_hosts ; then
+    if ! ssh-keyscan -H aur.archlinux.org >$HOME/.ssh/known_hosts; then
         echo "Couldn't get SSH public key from AUR servers"
         exit 1
     fi
 
     # write the private SSH key out to disk
-    if [ ! -z "${INPUT_AURSSHPRIVATEKEY}" ] ; then
+    if [ ! -z "${INPUT_AURSSHPRIVATEKEY}" ]; then
         # write the key out to disk
-        echo "${INPUT_AURSSHPRIVATEKEY}" > $HOME/.ssh/ssh_key
+        echo "${INPUT_AURSSHPRIVATEKEY}" >$HOME/.ssh/ssh_key
 
         # ensure correct permissions
         chmod 0400 $HOME/.ssh/ssh_key
@@ -84,7 +84,7 @@ clone_package() {
 build() {
     echo '::group::Building package'
 
-    if ! namcap PKGBUILD ; then
+    if ! namcap PKGBUILD; then
         echo "PKGBUILD failed namcap check"
         exit 1
     fi
@@ -103,7 +103,7 @@ build() {
     su notroot -c "makepkg -f"
 
     BUILT_PKG_FILE=$(find -name \*pkg.tar.zst)
-    if ! namcap ${BUILT_PKG_FILE} ; then
+    if ! namcap ${BUILT_PKG_FILE}; then
         echo "${BUILT_PKG_FILE} failed namcap check"
         exit 1
     fi
@@ -124,7 +124,7 @@ push_package() {
     su notroot -c "makepkg --printsrcinfo > .SRCINFO"
 
     # add files for committing
-    if ! git add . ; then
+    if ! git add .; then
         echo "Couldn't add files for committing"
         exit 1
     fi
@@ -139,7 +139,7 @@ push_package() {
     git commit -m "${INPUT_AURCOMMITMESSAGE}"
 
     # # push changes to the repo
-    if ! git push ; then
+    if ! git push; then
         echo "Couldn't push commit to AUR"
         exit 1
     fi
