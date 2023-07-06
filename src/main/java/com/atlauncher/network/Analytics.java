@@ -162,25 +162,30 @@ public final class Analytics {
     }
 
     public static void endSession() {
-        timer.cancel();
+        if (sessionInitialised) {
+            timer.cancel();
 
-        if (events.size() != 0) {
-            sendAllStoredEvents(true);
-        }
+            if (events.size() != 0) {
+                sendAllStoredEvents(true);
+            }
 
-        Map<String, Object> body = new HashMap<>();
-        body.put("userId", App.settings.analyticsClientId);
-        body.put("sessionId", sessionId);
+            Map<String, Object> body = new HashMap<>();
+            body.put("userId", App.settings.analyticsClientId);
+            body.put("sessionId", sessionId);
 
-        try {
-            CompletableFuture<AnalyticsApiResponse> response = makeApiCall("/session/end", body);
-            response.get(10, TimeUnit.SECONDS);
-        } catch (InterruptedException | ExecutionException | TimeoutException ignored) {
+            try {
+                CompletableFuture<AnalyticsApiResponse> response = makeApiCall("/session/end", body);
+                response.get(10, TimeUnit.SECONDS);
+            } catch (InterruptedException | ExecutionException | TimeoutException ignored) {
+            }
+
+            sessionInitialised = false;
         }
     }
 
     public static boolean isEnabled() {
-        if (ConfigManager.getConfigItem("analytics.enabled", false) != true) {
+        if (!ConfigManager.getConfigItem("analytics.enabledVersion", "None")
+                .equals(Constants.VERSION.toStringForLogging())) {
             return false;
         }
 
