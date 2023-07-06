@@ -12,3 +12,5 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Run analytics only on version specified in config
 
 ### Misc
+- Upgrade to Gradle 8.2
+- Update dependency versions
