@@ -243,6 +243,7 @@ public class Server {
                                 .build())
                         .setType(DialogManager.INFO).show();
             } else {
+                Analytics.endSession();
                 System.exit(0);
             }
         } catch (IOException e) {

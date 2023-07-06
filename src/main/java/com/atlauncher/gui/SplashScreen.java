@@ -30,6 +30,7 @@ import javax.swing.JWindow;
 import org.mini2Dx.gettext.GetText;
 
 import com.atlauncher.App;
+import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.Utils;
 
 /**
@@ -89,6 +90,7 @@ public class SplashScreen extends JWindow {
                 } catch (Exception ignored) {
                 }
 
+                Analytics.endSession();
                 System.exit(0);
             });
             add(forceQuit);

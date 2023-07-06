@@ -1115,6 +1115,7 @@ public class Instance extends MinecraftVersion {
 
                 if ((App.autoLaunch != null && App.closeLauncher)
                         || (!App.settings.keepLauncherOpen && !App.settings.enableLogs)) {
+                    Analytics.endSession();
                     System.exit(0);
                 }
 
@@ -1297,6 +1298,7 @@ public class Instance extends MinecraftVersion {
                     FileUtils.delete(getCustomMinecraftJarLibraryPath());
                 }
                 if (!App.settings.keepLauncherOpen) {
+                    Analytics.endSession();
                     System.exit(0);
                 }
             } catch (Exception e1) {

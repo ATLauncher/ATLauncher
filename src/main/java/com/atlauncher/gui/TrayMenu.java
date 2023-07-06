@@ -110,6 +110,7 @@ public final class TrayMenu extends JPopupMenu implements ConsoleCloseListener, 
             } catch (Exception ignored) {
             }
 
+            Analytics.endSession();
             System.exit(0);
         });
     }

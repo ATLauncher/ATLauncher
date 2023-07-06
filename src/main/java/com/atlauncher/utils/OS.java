@@ -519,6 +519,7 @@ public enum OS {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        Analytics.endSession();
         System.exit(0);
     }
 

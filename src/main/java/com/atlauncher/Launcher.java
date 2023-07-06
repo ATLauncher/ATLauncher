@@ -247,6 +247,7 @@ public class Launcher {
             LogManager.logStackTrace(e);
         }
 
+        Analytics.endSession();
         System.exit(0);
     }
 
@@ -418,6 +419,7 @@ public class Launcher {
                                 .build())
                         .setType(DialogManager.ERROR).show();
                 OS.openWebBrowser("https://atlauncher.com/downloads");
+                Analytics.endSession();
                 System.exit(0);
             }
         }
