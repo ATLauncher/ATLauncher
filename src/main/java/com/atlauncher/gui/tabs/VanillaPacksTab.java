@@ -80,6 +80,12 @@ public class VanillaPacksTab extends JPanel implements Tab, RelocalizationListen
     private final JButton createServerButton = new JButton(getCreateServerText());
     private final JButton createInstanceButton = new JButton(getCreateInstanceText());
     private final IVanillaPacksViewModel viewModel = new VanillaPacksViewModel();
+    /**
+     * Last time the loaderVersion has been changed.
+     * <p>
+     * Used to prevent an infinite changes from occuring.
+     */
+    private long loaderVersionLastChange = System.currentTimeMillis();
     @Nullable
     private JTable minecraftVersionTable = null;
     @Nullable
@@ -274,17 +280,22 @@ public class VanillaPacksTab extends JPanel implements Tab, RelocalizationListen
             }
         });
         viewModel.selectedLoaderVersionIndex().subscribe((index) -> {
-            if (loaderVersionsDropDown.getItemAt(index) != null)
+            if (loaderVersionsDropDown.getItemAt(index) != null) {
+                loaderVersionLastChange = System.currentTimeMillis();
                 loaderVersionsDropDown.setSelectedIndex(index);
+            }
         });
         loaderVersionsDropDown.addActionListener((e) -> {
-            ComboItem<LoaderVersion> comboItem =
-                (ComboItem<LoaderVersion>) loaderVersionsDropDown.getSelectedItem();
+            // A user cannot change the loader version in under 100 ms. It is physically impossible.
+            if (e.getWhen() > (loaderVersionLastChange + 100)) {
+                ComboItem<LoaderVersion> comboItem =
+                    (ComboItem<LoaderVersion>) loaderVersionsDropDown.getSelectedItem();
 
-            if (comboItem != null) {
-                LoaderVersion version = comboItem.getValue();
-                if (version != null) {
-                    viewModel.setLoaderVersion(version);
+                if (comboItem != null) {
+                    LoaderVersion version = comboItem.getValue();
+                    if (version != null) {
+                        viewModel.setLoaderVersion(version);
+                    }
                 }
             }
         });
