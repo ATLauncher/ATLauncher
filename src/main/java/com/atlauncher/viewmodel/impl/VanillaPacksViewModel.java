@@ -136,6 +136,26 @@ public class VanillaPacksViewModel implements SettingsListener, IVanillaPacksVie
             true);
     // was lazy
     public final Boolean showQuiltOption = ConfigManager.getConfigItem("loaders.quilt.enabled", false);
+    public final Observable<Integer> selectedLoaderVersionIndex = combineLatest(
+        loaderVersions,
+        selectedLoaderVersion,
+        (versionsOptional, selectedOptional) -> {
+            int index = -1;
+
+            if (versionsOptional.isPresent()) {
+                List<LoaderVersion> versions = versionsOptional.get();
+                for (int i = 0; i < versions.size(); i++) {
+                    if (Objects.equals(versions.get(i), selectedOptional.orElse(null))) {
+                        index = i;
+                        break;
+                    }
+                }
+            }
+
+            if (index == -1)
+                return 0;
+            return index;
+        }).subscribeOn(Schedulers.computation());
     /**
      * Filters applied to the version table
      */
@@ -426,11 +446,6 @@ public class VanillaPacksViewModel implements SettingsListener, IVanillaPacksVie
     @Override
     public Observable<Optional<String>> description() {
         return description.observeOn(SwingSchedulers.edt());
-    }
-
-    @Override
-    public Observable<Optional<LoaderVersion>> selectedLoaderVersion() {
-        return selectedLoaderVersion.observeOn(SwingSchedulers.edt());
     }
 
     @Override
@@ -759,17 +774,19 @@ public class VanillaPacksViewModel implements SettingsListener, IVanillaPacksVie
         selectedLoaderType.onNext(Optional.ofNullable(loader));
     }
 
-    public void setLoaderVersion(String loaderVersion) {
-        Optional<List<LoaderVersion>> versions = loaderVersions.getValue();
-
-        if (versions.isPresent()) {
-            for (LoaderVersion version : versions.get()) {
-                if (version.version.equals(loaderVersion)) {
-                    selectedLoaderVersion.onNext(Optional.of(version));
-                    break;
-                }
-            }
+    public void setLoaderVersion(@Nonnull LoaderVersion loaderVersion) {
+        Optional<LoaderVersion> currentOptional = selectedLoaderVersion.getValue();
+        // Do not push two of the same?
+        if (currentOptional.isPresent()) {
+            if (currentOptional.get() == loaderVersion)
+                return;
         }
+        selectedLoaderVersion.onNext(Optional.of(loaderVersion));
+    }
+
+    @Override
+    public Observable<Integer> selectedLoaderVersionIndex() {
+        return selectedLoaderVersionIndex.observeOn(SwingSchedulers.edt());
     }
 
     public void createServer() {
