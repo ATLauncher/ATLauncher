@@ -10,6 +10,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 ### Fixes
 - Add missing server_run analytics event
 - Run analytics only on version specified in config
+- Importing packs from CurseForge with distribution disabled not prompting to download
 
 ### Misc
 - Upgrade to Gradle 8.2
