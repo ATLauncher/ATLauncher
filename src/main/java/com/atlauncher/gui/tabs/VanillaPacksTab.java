@@ -26,7 +26,6 @@ import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.util.List;
-import java.util.Optional;
 
 import javax.annotation.Nullable;
 import javax.swing.Box;
@@ -63,8 +62,6 @@ import com.atlauncher.utils.ComboItem;
 import com.atlauncher.viewmodel.base.IVanillaPacksViewModel;
 import com.atlauncher.viewmodel.impl.VanillaPacksViewModel;
 
-import io.reactivex.rxjava3.disposables.Disposable;
-
 public class VanillaPacksTab extends JPanel implements Tab, RelocalizationListener {
     private final JTextField nameField = new JTextField(32);
     private final JTextArea descriptionField = new JTextArea(2, 40);
@@ -79,15 +76,20 @@ public class VanillaPacksTab extends JPanel implements Tab, RelocalizationListen
     private final JRadioButton loaderTypeForgeRadioButton = new JRadioButton("Forge");
     private final JRadioButton loaderTypeLegacyFabricRadioButton = new JRadioButton("Legacy Fabric");
     private final JRadioButton loaderTypeQuiltRadioButton = new JRadioButton("Quilt");
-    private final JComboBox<ComboItem<Optional<LoaderVersion>>> loaderVersionsDropDown = new JComboBox<>();
+    private final JComboBox<ComboItem<LoaderVersion>> loaderVersionsDropDown = new JComboBox<>();
     private final JButton createServerButton = new JButton(getCreateServerText());
     private final JButton createInstanceButton = new JButton(getCreateInstanceText());
     private final IVanillaPacksViewModel viewModel = new VanillaPacksViewModel();
+    /**
+     * Last time the loaderVersion has been changed.
+     * <p>
+     * Used to prevent an infinite changes from occuring.
+     */
+    private long loaderVersionLastChange = System.currentTimeMillis();
     @Nullable
     private JTable minecraftVersionTable = null;
     @Nullable
     private DefaultTableModel minecraftVersionTableModel = null;
-    private Disposable selectionDisposable;
 
     public VanillaPacksTab() {
         super(new BorderLayout());
@@ -250,10 +252,6 @@ public class VanillaPacksTab extends JPanel implements Tab, RelocalizationListen
         viewModel.loaderVersionsDropDownEnabled().subscribe(loaderVersionsDropDown::setEnabled);
 
         viewModel.loaderVersions().subscribe((loaderVersionsOptional) -> {
-            if (selectionDisposable != null) {
-                selectionDisposable.dispose();
-                selectionDisposable = null;
-            }
             loaderVersionsDropDown.removeAllItems();
             if (!loaderVersionsOptional.isPresent()) {
                 setEmpty();
@@ -279,12 +277,29 @@ public class VanillaPacksTab extends JPanel implements Tab, RelocalizationListen
                 loaderVersionLength = min(400, loaderVersionLength);
                 loaderVersionsDropDown.setPreferredSize(new Dimension(loaderVersionLength, 23));
 
-                selectionDisposable = viewModel.selectedLoaderVersion().subscribe((it) -> {
-                    it.ifPresent(loaderVersion -> loaderVersionsDropDown
-                            .setSelectedIndex(loaderVersions.indexOf(loaderVersion)));
-                });
             }
         });
+        viewModel.selectedLoaderVersionIndex().subscribe((index) -> {
+            if (loaderVersionsDropDown.getItemAt(index) != null) {
+                loaderVersionLastChange = System.currentTimeMillis();
+                loaderVersionsDropDown.setSelectedIndex(index);
+            }
+        });
+        loaderVersionsDropDown.addActionListener((e) -> {
+            // A user cannot change the loader version in under 100 ms. It is physically impossible.
+            if (e.getWhen() > (loaderVersionLastChange + 100)) {
+                ComboItem<LoaderVersion> comboItem =
+                    (ComboItem<LoaderVersion>) loaderVersionsDropDown.getSelectedItem();
+
+                if (comboItem != null) {
+                    LoaderVersion version = comboItem.getValue();
+                    if (version != null) {
+                        viewModel.setLoaderVersion(version);
+                    }
+                }
+            }
+        });
+
         viewModel.loaderLoading().subscribe((it) -> {
             loaderVersionsDropDown.removeAllItems();
             if (it) {

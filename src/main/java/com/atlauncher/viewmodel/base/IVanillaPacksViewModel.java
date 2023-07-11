@@ -328,7 +328,7 @@ public interface IVanillaPacksViewModel {
     /**
      * Set the selected loader version
      */
-    void setLoaderVersion(@NotNull String loaderVersion);
+    void setLoaderVersion(@NotNull LoaderVersion loaderVersion);
 
     /**
      * Is the loader versions drop down enabled
@@ -346,7 +346,7 @@ public interface IVanillaPacksViewModel {
      * The selected mod loader version
      */
     @NotNull
-    Observable<Optional<LoaderVersion>> selectedLoaderVersion();
+    Observable<Integer> selectedLoaderVersionIndex();
 
     /**
      * Is the loader loading.
