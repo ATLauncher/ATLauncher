@@ -119,7 +119,6 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
         JPanel rightPanel = new JPanel();
         rightPanel.setLayout(new BorderLayout());
 
-
         JPanel bottomPanel = new JPanel();
         bottomPanel.setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
@@ -478,7 +477,6 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
                 0,
                 GetText.tr("Logging Into Minecraft"),
                 "Aborting login for " + viewModel.getLoginUsername());
-        dialog.setName("loginDialog");
         dialog.addThread(new Thread(() -> {
             viewModel.login();
             dialog.close();

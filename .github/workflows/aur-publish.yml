@@ -35,5 +35,5 @@ jobs:
       - name: Commit changed files
         uses: EndBug/add-and-commit@v7.0.0
         with:
-          add: 'packaging/aur/'
-          message: 'chore: update aur packages'
+          add: "packaging/aur/"
+          message: "chore: update aur packages"

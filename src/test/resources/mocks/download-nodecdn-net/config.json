@@ -2,6 +2,7 @@
   "useLwjglReplacement": false,
   "analytics": {
     "enabled": false,
+    "enabledVersion": "0.0.0.0",
     "percentage": 0,
     "autoSendInSeconds": 300
   },

@@ -46,6 +46,8 @@ public class MockHelper {
     static {
         mockedFilePaths.put("newnews.json", Paths.get("src/test/resources/mocks/download-nodecdn-net/newnews.json"));
         mockedFilePaths.put("runtimes.json", Paths.get("src/test/resources/mocks/download-nodecdn-net/runtimes.json"));
+        mockedFilePaths.put("java_runtimes.json",
+                Paths.get("src/test/resources/mocks/download-nodecdn-net/java_runtimes.json"));
         mockedFilePaths.put("users.json", Paths.get("src/test/resources/mocks/download-nodecdn-net/users.json"));
         mockedFilePaths.put("packsnew.json", Paths.get("src/test/resources/mocks/download-nodecdn-net/packsnew.json"));
         mockedFilePaths.put("version.json", Paths.get("src/test/resources/mocks/download-nodecdn-net/version.json"));
@@ -121,6 +123,13 @@ public class MockHelper {
             minecraftVersions.size = (int) Files.size(mockedFilePaths.get("minecraft_versions.json"));
             minecraftVersions.sha1 = Hashing.sha1(mockedFilePaths.get("minecraft_versions.json")).toString();
             downloadableFiles.add(minecraftVersions);
+
+            DownloadableFile javaRuntimes = new DownloadableFile();
+            javaRuntimes.name = "java_runtimes.json";
+            javaRuntimes.folder = "json";
+            javaRuntimes.size = (int) Files.size(mockedFilePaths.get("java_runtimes.json"));
+            javaRuntimes.sha1 = Hashing.sha1(mockedFilePaths.get("java_runtimes.json")).toString();
+            downloadableFiles.add(javaRuntimes);
         } catch (IOException e) {
             e.printStackTrace();
         }

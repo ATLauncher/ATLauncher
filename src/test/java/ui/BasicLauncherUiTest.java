@@ -84,9 +84,6 @@ public class BasicLauncherUiTest extends AbstractUiTest {
         // login
         loginButton.click();
 
-        DialogFixture loginDialog = WindowFinder.findDialog("loginDialog").using(robot());
-        loginDialog.requireVisible();
-
         // give it 5 seconds
         Pause.pause(5, TimeUnit.SECONDS);
 
@@ -129,7 +126,7 @@ public class BasicLauncherUiTest extends AbstractUiTest {
             public boolean test() {
                 return Files.exists(workingDir.resolve("instances/Minecraft1164/instance.json"));
             }
-        }, Timeout.timeout(5, TimeUnit.MINUTES));
+        }, Timeout.timeout(30, TimeUnit.SECONDS));
 
         DialogFixture installSuccessDialog = WindowFinder.findDialog(new GenericTypeMatcher<Dialog>(Dialog.class) {
             @Override

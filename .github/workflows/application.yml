@@ -15,9 +15,9 @@ jobs:
       - name: Set up JDK 1.8
         uses: actions/setup-java@v3
         with:
-          distribution: 'temurin'
+          distribution: "temurin"
           java-version: 8
-          cache: 'gradle'
+          cache: "gradle"
 
       - name: Check license headers
         run: ./gradlew checkLicenses
@@ -27,7 +27,7 @@ jobs:
     strategy:
       matrix:
         java-version: ["8", "11", "17", "19"] # LTS + Latest
-        os: [ 'ubuntu-latest', 'macos-latest', 'windows-latest' ]
+        os: ["ubuntu-latest", "macos-latest", "windows-latest"]
     name: Java ${{ matrix.java-version }} (${{ matrix.os }}) Tests
     steps:
       - uses: actions/checkout@v3
@@ -35,15 +35,15 @@ jobs:
       - name: Set up JDK ${{ matrix.java-version }}
         uses: actions/setup-java@v3
         with:
-          distribution: 'temurin'
+          distribution: "temurin"
           java-version: ${{ matrix.java-version }}
-          cache: 'gradle'
+          cache: "gradle"
 
       - name: Run Unit Tests
         run: ./gradlew --no-daemon test --tests com.atlauncher.*
 
       - name: Run UI Tests
-        uses: GabrielBB/xvfb-action@v1
+        uses: coactions/setup-xvfb@v1
         if: matrix.os != 'macos-latest' # skipped on OSX as not working and no way to test fixes
         continue-on-error: ${{ matrix.os == 'windows-latest' }} # Windows seems flaky
         with:
@@ -60,9 +60,9 @@ jobs:
       - name: Set up JDK 1.8
         uses: actions/setup-java@v3
         with:
-          distribution: 'temurin'
+          distribution: "temurin"
           java-version: 8
-          cache: 'gradle'
+          cache: "gradle"
 
       - name: Read version
         id: version
@@ -77,7 +77,7 @@ jobs:
         with:
           string: ${{ steps.version.outputs.text }}
           pattern: '([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)\.?\w*'
-          replace-with: '$1'
+          replace-with: "$1"
 
       - name: Build
         run: ./gradlew build -x test
@@ -111,7 +111,7 @@ jobs:
         with:
           string: ${{ steps.changelog.outputs.text }}
           pattern: '^.*?(### (New Features|Fixes|Misc)\n.*)$'
-          replace-with: '$1'
+          replace-with: "$1"
           flags: gs
 
       - name: Clean up the changelog to only have used sections
@@ -190,12 +190,12 @@ jobs:
       - name: Commit new version/CHANGELOG file
         uses: EndBug/add-and-commit@v7.0.0
         with:
-          add: 'CHANGELOG.md src/main/resources/version'
-          message: 'chore: bump version'
+          add: "CHANGELOG.md src/main/resources/version"
+          message: "chore: bump version"
 
       - name: Add comment, remove label and then close issues labeled with 'awaiting-release'
         uses: ./.github/actions/label-cleanup
         with:
-          label: 'awaiting-release'
-          comment: 'This has been fixed with version ${{ needs.build.outputs.clean-version }}'
+          label: "awaiting-release"
+          comment: "This has been fixed with version ${{ needs.build.outputs.clean-version }}"
           token: ${{ secrets.BOT_GITHUB_TOKEN }}

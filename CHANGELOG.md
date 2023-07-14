@@ -16,3 +16,4 @@ This changelog only contains the changes that are unreleased. For changes for in
 ### Misc
 - Upgrade to Gradle 8.2
 - Update dependency versions
+- Fix ui tests failing constantly

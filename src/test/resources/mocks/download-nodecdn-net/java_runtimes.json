@@ -1,0 +1,11 @@
+{
+  "linux": {},
+  "linux-i386": {},
+  "mac-os": {},
+  "mac-os-arm64": {},
+  "windows-arm64": {},
+  "windows-x64": {},
+  "windows-x86": {},
+  "linux-arm": {},
+  "linux-arm64": {}
+}

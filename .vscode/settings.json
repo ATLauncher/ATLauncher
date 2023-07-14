@@ -9,6 +9,9 @@
             "source.organizeImports": true
         }
     },
+    "[github-actions-workflow]": {
+        "editor.tabSize": 2
+    },
     "editor.formatOnSave": true,
     "better-comments.tags": [
         {

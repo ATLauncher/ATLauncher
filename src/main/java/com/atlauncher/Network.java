@@ -52,7 +52,8 @@ import okhttp3.tls.HandshakeCertificates;
 public final class Network {
     public static Cache CACHE = new Cache(FileSystem.CACHE.toFile(), 100 * 1024 * 1024); // 100MB cache
 
-    private static List<Protocol> protocols = App.settings.dontUseHttp2 ? Arrays.asList(Protocol.HTTP_1_1)
+    private static List<Protocol> protocols = (App.disableHttp2 || App.settings.dontUseHttp2)
+            ? Arrays.asList(Protocol.HTTP_1_1)
             : Arrays.asList(Protocol.HTTP_2, Protocol.HTTP_1_1);
 
     public static OkHttpClient CLIENT = new OkHttpClient.Builder().protocols(protocols)
