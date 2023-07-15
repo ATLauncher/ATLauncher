@@ -318,3 +318,4 @@ build.dependsOn createExe, createMacApp
 startScripts.dependsOn shadowJar
 createExe.dependsOn shadowJar
 createAppZip.dependsOn downloadNewerUniversalJavaApplicationStub
+createDmg.dependsOn downloadNewerUniversalJavaApplicationStub
