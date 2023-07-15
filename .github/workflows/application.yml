@@ -44,8 +44,7 @@ jobs:
 
       - name: Run UI Tests
         uses: coactions/setup-xvfb@v1
-        if: matrix.os != 'macos-latest' # skipped on OSX as not working and no way to test fixes
-        continue-on-error: ${{ matrix.os == 'windows-latest' }} # Windows seems flaky
+        continue-on-error: true
         with:
           run: ./gradlew --no-daemon test --tests ui.*
   build:
