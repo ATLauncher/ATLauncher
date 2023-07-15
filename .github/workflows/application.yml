@@ -113,7 +113,7 @@ jobs:
   release:
     runs-on: ubuntu-latest
     needs: [test, build, package]
-    if: ${{ github.ref == 'refs/heads/master' && !endsWith(needs.build.outputs.version, '.Beta') }}
+    if: ${{ github.ref == 'refs/heads/master' && !endsWith(needs.package.outputs.version, '.Beta') }}
     permissions:
       contents: write
     steps:
@@ -152,27 +152,27 @@ jobs:
         timeout-minutes: 30
         with:
           api-key: ${{ secrets.ATLAUNCHER_API_KEY }}
-          version: ${{ needs.build.outputs.clean-version }}
+          version: ${{ needs.package.outputs.clean-version }}
           changelog: ${{ env.cleaned-changelog }}
           files: |
-            ./ATLauncher/ATLauncher-${{ needs.build.outputs.clean-version }}.exe
-            ./ATLauncher/ATLauncher-${{ needs.build.outputs.clean-version }}.zip
-            ./ATLauncher/ATLauncher-${{ needs.build.outputs.clean-version }}.jar
+            ./ATLauncher/ATLauncher-${{ needs.package.outputs.clean-version }}.exe
+            ./ATLauncher/ATLauncher-${{ needs.package.outputs.clean-version }}.zip
+            ./ATLauncher/ATLauncher-${{ needs.package.outputs.clean-version }}.jar
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          tag_name: v${{ needs.build.outputs.clean-version }}
+          tag_name: v${{ needs.package.outputs.clean-version }}
           target_commitish: master
-          name: ${{ needs.build.outputs.clean-version }}
+          name: ${{ needs.package.outputs.clean-version }}
           body: ${{ env.cleaned-changelog }}
           prerelease: false
           draft: false
           files: |
-            ./ATLauncher/ATLauncher-${{ needs.build.outputs.clean-version }}.exe
-            ./ATLauncher/ATLauncher-${{ needs.build.outputs.clean-version }}.zip
-            ./ATLauncher/ATLauncher-${{ needs.build.outputs.clean-version }}.jar
+            ./ATLauncher/ATLauncher-${{ needs.package.outputs.clean-version }}.exe
+            ./ATLauncher/ATLauncher-${{ needs.package.outputs.clean-version }}.zip
+            ./ATLauncher/ATLauncher-${{ needs.package.outputs.clean-version }}.jar
 
       - name: Create Sentry release
         uses: getsentry/action-release@v1
@@ -182,18 +182,18 @@ jobs:
           SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
         with:
           environment: production
-          version: "${{ needs.build.outputs.clean-version }}"
+          version: "${{ needs.package.outputs.clean-version }}"
 
       - name: Package up AUR versions
         uses: peter-evans/repository-dispatch@v1
         with:
           token: ${{ secrets.BOT_GITHUB_TOKEN }}
           event-type: aur-publish
-          client-payload: '{"version": "${{ needs.build.outputs.clean-version }}"}'
+          client-payload: '{"version": "${{ needs.package.outputs.clean-version }}"}'
 
       - name: Update version
         run: |
-          NEW_VERSION=`echo ${{ needs.build.outputs.clean-version }} | perl -pe 's/^((\d+\.)*)(\d+)(.*)$/$1.($3+1).$4/e'`
+          NEW_VERSION=`echo ${{ needs.package.outputs.clean-version }} | perl -pe 's/^((\d+\.)*)(\d+)(.*)$/$1.($3+1).$4/e'`
           cat <<EOF > CHANGELOG.md
           # Changelog
 
@@ -220,5 +220,5 @@ jobs:
         uses: ./.github/actions/label-cleanup
         with:
           label: "awaiting-release"
-          comment: "This has been fixed with version ${{ needs.build.outputs.clean-version }}"
+          comment: "This has been fixed with version ${{ needs.package.outputs.clean-version }}"
           token: ${{ secrets.BOT_GITHUB_TOKEN }}
