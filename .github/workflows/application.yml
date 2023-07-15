@@ -21,6 +21,7 @@ jobs:
 
       - name: Check license headers
         run: ./gradlew checkLicenses
+
   test:
     runs-on: ${{ matrix.os }}
     needs: ci
@@ -47,7 +48,29 @@ jobs:
         continue-on-error: true
         with:
           run: ./gradlew --no-daemon test --tests ui.*
+
   build:
+    runs-on: ${{ matrix.os }}
+    needs: ci
+    strategy:
+      matrix:
+        java-version: ["8", "11", "17", "20"] # LTS + Latest
+        os: ["ubuntu-latest", "macos-latest", "windows-latest"]
+    name: Java ${{ matrix.java-version }} (${{ matrix.os }}) Build
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up JDK ${{ matrix.java-version }}
+        uses: actions/setup-java@v3
+        with:
+          distribution: "temurin"
+          java-version: ${{ matrix.java-version }}
+          cache: "gradle"
+
+      - name: Build
+        run: ./gradlew build -x test
+
+  package:
     runs-on: ubuntu-latest
     needs: ci
     outputs:
@@ -86,9 +109,10 @@ jobs:
         with:
           name: ATLauncher
           path: dist/*
+
   release:
     runs-on: ubuntu-latest
-    needs: [test, build]
+    needs: [test, build, package]
     if: ${{ github.ref == 'refs/heads/master' && !endsWith(needs.build.outputs.version, '.Beta') }}
     permissions:
       contents: write
