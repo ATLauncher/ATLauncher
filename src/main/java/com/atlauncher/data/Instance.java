@@ -2010,6 +2010,16 @@ public class Instance extends MinecraftVersion {
             }
         }
 
+        // remove any .DS_Store files
+        try (Stream<Path> walk = Files.walk(dotMinecraftPath)) {
+            walk.filter(Files::isRegularFile)
+                    .filter(path -> path.getFileName().toString().equals(".DS_Store"))
+                    .forEach(f -> {
+                        FileUtils.delete(f, false);
+                    });
+        } catch (IOException ignored) {
+        }
+
         ArchiveUtils.createZip(tempDir, to);
 
         FileUtils.deleteDirectory(tempDir);
@@ -2166,6 +2176,16 @@ public class Instance extends MinecraftVersion {
             }
         }
 
+        // remove any .DS_Store files
+        try (Stream<Path> walk = Files.walk(overridesPath)) {
+            walk.filter(Files::isRegularFile)
+                    .filter(path -> path.getFileName().toString().equals(".DS_Store"))
+                    .forEach(f -> {
+                        FileUtils.delete(f, false);
+                    });
+        } catch (IOException ignored) {
+        }
+
         // remove files that come from CurseForge or aren't disabled
         launcher.mods.stream().filter(m -> !m.disabled && m.isFromCurseForge()).forEach(mod -> {
             File file = mod.getFile(this, overridesPath);
@@ -2314,6 +2334,16 @@ public class Instance extends MinecraftVersion {
                     Utils.copyFile(getRoot().resolve(path).toFile(), overridesPath.resolve(path).toFile(), true);
                 }
             }
+        }
+
+        // remove any .DS_Store files
+        try (Stream<Path> walk = Files.walk(overridesPath)) {
+            walk.filter(Files::isRegularFile)
+                    .filter(path -> path.getFileName().toString().equals(".DS_Store"))
+                    .forEach(f -> {
+                        FileUtils.delete(f, false);
+                    });
+        } catch (IOException ignored) {
         }
 
         // remove files that come from Modrinth or aren't disabled
