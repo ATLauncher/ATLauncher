@@ -55,6 +55,7 @@ import com.atlauncher.data.minecraft.loaders.LoaderVersion;
 import com.atlauncher.data.minecraft.loaders.fabric.FabricLoader;
 import com.atlauncher.data.minecraft.loaders.forge.ForgeLoader;
 import com.atlauncher.data.minecraft.loaders.legacyfabric.LegacyFabricLoader;
+import com.atlauncher.data.minecraft.loaders.neoforge.NeoForgeLoader;
 import com.atlauncher.data.minecraft.loaders.quilt.QuiltLoader;
 import com.atlauncher.evnt.listener.SettingsListener;
 import com.atlauncher.evnt.manager.SettingsManager;
@@ -109,6 +110,8 @@ public class VanillaPacksViewModel implements SettingsListener, IVanillaPacksVie
     // was true
     public final BehaviorSubject<Boolean> loaderTypeLegacyFabricEnabled = BehaviorSubject.create();
     // was true
+    public final BehaviorSubject<Boolean> loaderTypeNeoForgeEnabled = BehaviorSubject.create();
+    // was true
     public final BehaviorSubject<Boolean> loaderTypeNoneEnabled = BehaviorSubject.create();
     // was true
     public final BehaviorSubject<Boolean> loaderTypeQuiltEnabled = BehaviorSubject.create();
@@ -135,27 +138,31 @@ public class VanillaPacksViewModel implements SettingsListener, IVanillaPacksVie
             "loaders.legacyfabric.enabled",
             true);
     // was lazy
+    public final Boolean showNeoForgeOption = ConfigManager.getConfigItem(
+            "loaders.neoforge.enabled",
+            true);
+    // was lazy
     public final Boolean showQuiltOption = ConfigManager.getConfigItem("loaders.quilt.enabled", false);
     public final Observable<Integer> selectedLoaderVersionIndex = combineLatest(
-        loaderVersions,
-        selectedLoaderVersion,
-        (versionsOptional, selectedOptional) -> {
-            int index = -1;
+            loaderVersions,
+            selectedLoaderVersion,
+            (versionsOptional, selectedOptional) -> {
+                int index = -1;
 
-            if (versionsOptional.isPresent()) {
-                List<LoaderVersion> versions = versionsOptional.get();
-                for (int i = 0; i < versions.size(); i++) {
-                    if (Objects.equals(versions.get(i), selectedOptional.orElse(null))) {
-                        index = i;
-                        break;
+                if (versionsOptional.isPresent()) {
+                    List<LoaderVersion> versions = versionsOptional.get();
+                    for (int i = 0; i < versions.size(); i++) {
+                        if (Objects.equals(versions.get(i), selectedOptional.orElse(null))) {
+                            index = i;
+                            break;
+                        }
                     }
                 }
-            }
 
-            if (index == -1)
-                return 0;
-            return index;
-        }).subscribeOn(Schedulers.computation());
+                if (index == -1)
+                    return 0;
+                return index;
+            }).subscribeOn(Schedulers.computation());
     /**
      * Filters applied to the version table
      */
@@ -261,6 +268,10 @@ public class VanillaPacksViewModel implements SettingsListener, IVanillaPacksVie
             .map(it -> it.orElse(null) == LoaderType.LEGACY_FABRIC)
             .subscribeOn(Schedulers.computation());
 
+    public final Observable<Boolean> loaderTypeNeoForgeSelected = selectedLoaderType
+            .map(it -> it.orElse(null) == LoaderType.NEOFORGE)
+            .subscribeOn(Schedulers.computation());
+
     public final Observable<Boolean> loaderTypeNoneSelected = selectedLoaderType.map(it -> it.orElse(null) == null)
             .subscribeOn(Schedulers.computation());
 
@@ -282,6 +293,14 @@ public class VanillaPacksViewModel implements SettingsListener, IVanillaPacksVie
 
     public final Observable<Boolean> isLegacyFabricVisible = selectedMinecraftVersionFlow
             .map(version -> !legacyFabricDisabledMCVersions.contains(version.orElse(null)))
+            .subscribeOn(Schedulers.computation());
+
+    // was lazy
+    private final List<String> neoForgeDisabledMCVersions = ConfigManager.getConfigItem(
+            "loaders.neoforge.disabledMinecraftVersions", emptyList());
+
+    public final Observable<Boolean> isNeoForgeVisible = selectedMinecraftVersionFlow
+            .map(version -> !neoForgeDisabledMCVersions.contains(version.orElse(null)))
             .subscribeOn(Schedulers.computation());
 
     // was lazy
@@ -311,6 +330,10 @@ public class VanillaPacksViewModel implements SettingsListener, IVanillaPacksVie
     // was lazy
     private final List<String> disabledLegacyFabricVersions = ConfigManager.getConfigItem(
             "loaders.legacyfabric.disabledVersions", emptyList());
+
+    // was lazy
+    private final List<String> disabledNeoForgeVersions = ConfigManager.getConfigItem(
+            "loaders.neoforge.disabledVersions", emptyList());
 
     // was lazy
     private final List<String> disabledForgeVersions = ConfigManager.getConfigItem(
@@ -349,6 +372,7 @@ public class VanillaPacksViewModel implements SettingsListener, IVanillaPacksVie
         loaderTypeFabricEnabled.onNext(true);
         loaderTypeForgeEnabled.onNext(true);
         loaderTypeLegacyFabricEnabled.onNext(true);
+        loaderTypeNeoForgeEnabled.onNext(true);
 
         selectedMinecraftVersionFlow.onNext(Optional.empty());
 
@@ -494,6 +518,11 @@ public class VanillaPacksViewModel implements SettingsListener, IVanillaPacksVie
     }
 
     @Override
+    public Observable<Boolean> loaderTypeNeoForgeEnabled() {
+        return loaderTypeNeoForgeEnabled.observeOn(SwingSchedulers.edt());
+    }
+
+    @Override
     public Observable<Boolean> loaderTypeNoneEnabled() {
         return loaderTypeNoneEnabled.observeOn(SwingSchedulers.edt());
     }
@@ -541,6 +570,11 @@ public class VanillaPacksViewModel implements SettingsListener, IVanillaPacksVie
     @Override
     public Boolean showLegacyFabricOption() {
         return showLegacyFabricOption;
+    }
+
+    @Override
+    public Boolean showNeoForgeOption() {
+        return showNeoForgeOption;
     }
 
     @Override
@@ -624,6 +658,11 @@ public class VanillaPacksViewModel implements SettingsListener, IVanillaPacksVie
     }
 
     @Override
+    public Observable<Boolean> loaderTypeNeoForgeSelected() {
+        return loaderTypeNeoForgeSelected.observeOn(SwingSchedulers.edt());
+    }
+
+    @Override
     public Observable<Boolean> loaderTypeNoneSelected() {
         return loaderTypeNoneSelected.observeOn(SwingSchedulers.edt());
     }
@@ -641,6 +680,11 @@ public class VanillaPacksViewModel implements SettingsListener, IVanillaPacksVie
     @Override
     public Observable<Boolean> isLegacyFabricVisible() {
         return isLegacyFabricVisible.observeOn(SwingSchedulers.edt());
+    }
+
+    @Override
+    public Observable<Boolean> isNeoForgeVisible() {
+        return isNeoForgeVisible.observeOn(SwingSchedulers.edt());
     }
 
     @Override
@@ -857,13 +901,6 @@ public class VanillaPacksViewModel implements SettingsListener, IVanillaPacksVie
                                 }).collect(Collectors.toList()));
                         break;
 
-                    case QUILT:
-                        loaderVersionsList.addAll(data.loaderVersions().quilt().stream()
-                                .filter(fv -> !disabledQuiltVersions.contains(fv.version()))
-                                .map(version -> new LoaderVersion(version.version(), false, "Quilt"))
-                                .collect(Collectors.toList()));
-                        break;
-
                     case LEGACY_FABRIC:
                         loaderVersionsList.addAll(data.loaderVersions().legacyfabric()
                                 .stream()
@@ -872,6 +909,24 @@ public class VanillaPacksViewModel implements SettingsListener, IVanillaPacksVie
                                         version.version(),
                                         false,
                                         "LegacyFabric"))
+                                .collect(Collectors.toList()));
+                        break;
+
+                    case NEOFORGE:
+                        loaderVersionsList.addAll(data.loaderVersions().neoforge()
+                                .stream()
+                                .filter(fv -> !disabledNeoForgeVersions.contains(fv.version()))
+                                .map(version -> new LoaderVersion(
+                                        version.version(),
+                                        false,
+                                        "NeoForge"))
+                                .collect(Collectors.toList()));
+                        break;
+
+                    case QUILT:
+                        loaderVersionsList.addAll(data.loaderVersions().quilt().stream()
+                                .filter(fv -> !disabledQuiltVersions.contains(fv.version()))
+                                .map(version -> new LoaderVersion(version.version(), false, "Quilt"))
                                 .collect(Collectors.toList()));
                         break;
                 }
@@ -896,6 +951,7 @@ public class VanillaPacksViewModel implements SettingsListener, IVanillaPacksVie
         loaderTypeFabricEnabled.onNext(enabled);
         loaderTypeForgeEnabled.onNext(enabled);
         loaderTypeLegacyFabricEnabled.onNext(enabled);
+        loaderTypeNeoForgeEnabled.onNext(enabled);
         loaderTypeQuiltEnabled.onNext(enabled);
         createServerEnabled.onNext(enableCreateServers);
         createInstanceEnabled.onNext(enabled);
@@ -915,11 +971,14 @@ public class VanillaPacksViewModel implements SettingsListener, IVanillaPacksVie
             case FORGE:
                 loaderVersionsList.addAll(ForgeLoader.getChoosableVersions(selectedMinecraftVersion));
                 break;
-            case QUILT:
-                loaderVersionsList.addAll(QuiltLoader.getChoosableVersions(selectedMinecraftVersion));
-                break;
             case LEGACY_FABRIC:
                 loaderVersionsList.addAll(LegacyFabricLoader.getChoosableVersions(selectedMinecraftVersion));
+                break;
+            case NEOFORGE:
+                loaderVersionsList.addAll(NeoForgeLoader.getChoosableVersions(selectedMinecraftVersion));
+                break;
+            case QUILT:
+                loaderVersionsList.addAll(QuiltLoader.getChoosableVersions(selectedMinecraftVersion));
                 break;
         }
 

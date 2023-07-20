@@ -133,7 +133,7 @@ public class ToolsViewModel implements IToolsViewModel, SettingsListener, Accoun
 
     private final String[] HOSTS = { "authserver.mojang.com", "session.minecraft.net", "libraries.minecraft.net",
             "launchermeta.mojang.com", "launcher.mojang.com", Constants.API_HOST, Constants.PASTE_HOST,
-            Constants.DOWNLOAD_HOST, Constants.FABRIC_HOST, Constants.LEGACY_FABRIC_HOST, Constants.FORGE_HOST,
+            Constants.DOWNLOAD_HOST, Constants.FABRIC_HOST, Constants.LEGACY_FABRIC_HOST, Constants.NEOFORGE_HOST, Constants.FORGE_HOST,
             Constants.QUILT_HOST, Constants.CURSEFORGE_CORE_API_HOST, Constants.MODRINTH_HOST,
             Constants.MODPACKS_CH_HOST };
 
@@ -218,6 +218,15 @@ public class ToolsViewModel implements IToolsViewModel, SettingsListener, Accoun
 
         results.append("Tracert to " + Constants.LEGACY_FABRIC_HOST + " was ")
                 .append(Utils.traceRoute(Constants.LEGACY_FABRIC_HOST)).append("\n\n----------------\n\n");
+        onTaskComplete.accept(null);
+
+        // Connection to NeoForge CDN
+        results.append("Ping results to " + Constants.NEOFORGE_HOST + " was ")
+                .append(Utils.pingAddress(Constants.NEOFORGE_HOST));
+        onTaskComplete.accept(null);
+
+        results.append("Tracert to " + Constants.NEOFORGE_HOST + " was ")
+                .append(Utils.traceRoute(Constants.NEOFORGE_HOST)).append("\n\n----------------\n\n");
         onTaskComplete.accept(null);
 
         // Connection to Quilt CDN

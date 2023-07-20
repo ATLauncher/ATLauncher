@@ -217,16 +217,22 @@ public interface IVanillaPacksViewModel {
     Observable<Boolean> isFabricVisible();
 
     /**
+     * Is forge an option currently
+     */
+    @NotNull
+    Observable<Boolean> isForgeVisible();
+
+    /**
      * Is legacy fabric an option currently
      */
     @NotNull
     Observable<Boolean> isLegacyFabricVisible();
 
     /**
-     * Is forge an option currently
+     * Is neoforge an option currently
      */
     @NotNull
-    Observable<Boolean> isForgeVisible();
+    Observable<Boolean> isNeoForgeVisible();
 
     /**
      * Is quilt an option currently
@@ -251,6 +257,12 @@ public interface IVanillaPacksViewModel {
      */
     @NotNull
     Boolean showLegacyFabricOption();
+
+    /**
+     * If neoforge should be enabled or not
+     */
+    @NotNull
+    Boolean showNeoForgeOption();
 
     /**
      * If quilt is enabled in config or not
@@ -289,22 +301,34 @@ public interface IVanillaPacksViewModel {
     Observable<Boolean> loaderTypeForgeSelected();
 
     /**
-     * Is legacy fabric selected
-     */
-    @NotNull
-    Observable<Boolean> loaderTypeLegacyFabricSelected();
-
-    /**
      * Is the forge button enabled or not
      */
     @NotNull
     Observable<Boolean> loaderTypeForgeEnabled();
 
     /**
+     * Is legacy fabric selected
+     */
+    @NotNull
+    Observable<Boolean> loaderTypeLegacyFabricSelected();
+
+    /**
      * Is legacy fabric enabled
      */
     @NotNull
     Observable<Boolean> loaderTypeLegacyFabricEnabled();
+
+    /**
+     * Is neoforge selected
+     */
+    @NotNull
+    Observable<Boolean> loaderTypeNeoForgeSelected();
+
+    /**
+     * Is neoforge enabled
+     */
+    @NotNull
+    Observable<Boolean> loaderTypeNeoForgeEnabled();
 
     /**
      * Has quilt been selected

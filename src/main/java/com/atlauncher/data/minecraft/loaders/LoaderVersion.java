@@ -50,12 +50,16 @@ public class LoaderVersion {
         return this.type.equalsIgnoreCase("Fabric");
     }
 
+    public boolean isForge() {
+        return this.type.equalsIgnoreCase("Forge");
+    }
+
     public boolean isLegacyFabric() {
         return this.type.equalsIgnoreCase("LegacyFabric");
     }
 
-    public boolean isForge() {
-        return this.type.equalsIgnoreCase("Forge");
+    public boolean isNeoForge() {
+        return this.type.equalsIgnoreCase("NeoForge");
     }
 
     public boolean isQuilt() {
@@ -77,6 +81,10 @@ public class LoaderVersion {
 
         if (isLegacyFabric()) {
             return LoaderType.LEGACY_FABRIC;
+        }
+
+        if (isNeoForge()) {
+            return LoaderType.NEOFORGE;
         }
 
         if (isQuilt()) {
@@ -131,12 +139,16 @@ public class LoaderVersion {
             return "Fabric";
         }
 
-        if (isQuilt()) {
-            return "Quilt";
-        }
-
         if (isLegacyFabric()) {
             return "Legacy Fabric";
+        }
+
+        if (isNeoForge()) {
+            return "NeoForge";
+        }
+
+        if (isQuilt()) {
+            return "Quilt";
         }
 
         return "None";

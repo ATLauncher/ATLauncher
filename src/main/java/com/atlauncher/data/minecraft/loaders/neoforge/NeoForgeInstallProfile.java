@@ -15,45 +15,27 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.atlauncher.data.minecraft.loaders;
+package com.atlauncher.data.minecraft.loaders.neoforge;
+
+import java.util.List;
+import java.util.Map;
 
 import com.atlauncher.annot.Json;
-import com.google.gson.annotations.SerializedName;
 
 @Json
-public enum LoaderType {
-    @SerializedName("fabric")
-    FABRIC {
-        public String toString() {
-            return "Fabric";
-        }
-    },
+public class NeoForgeInstallProfile {
+    public String version;
+    public Integer spec;
+    public String json;
+    public String path;
+    public String serverJarPath;
+    public String minecraft;
 
-    @SerializedName("forge")
-    FORGE {
-        public String toString() {
-            return "Forge";
-        }
-    },
+    public Map<String, Data> data;
+    public List<NeoForgeProcessor> processors;
+    private List<NeoForgeLibrary> libraries;
 
-    @SerializedName("legacyfabric")
-    LEGACY_FABRIC {
-        public String toString() {
-            return "Legacy Fabric";
-        }
-    },
-
-    @SerializedName("neoforge")
-    NEOFORGE {
-        public String toString() {
-            return "NeoForge";
-        }
-    },
-
-    @SerializedName("quilt")
-    QUILT {
-        public String toString() {
-            return "Quilt";
-        }
-    },;
+    public List<NeoForgeLibrary> getLibraries() {
+        return this.libraries;
+    }
 }

@@ -75,6 +75,7 @@ public class VanillaPacksTab extends JPanel implements Tab, RelocalizationListen
     private final JRadioButton loaderTypeFabricRadioButton = new JRadioButton("Fabric");
     private final JRadioButton loaderTypeForgeRadioButton = new JRadioButton("Forge");
     private final JRadioButton loaderTypeLegacyFabricRadioButton = new JRadioButton("Legacy Fabric");
+    private final JRadioButton loaderTypeNeoForgeRadioButton = new JRadioButton("NeoForge");
     private final JRadioButton loaderTypeQuiltRadioButton = new JRadioButton("Quilt");
     private final JComboBox<ComboItem<LoaderVersion>> loaderVersionsDropDown = new JComboBox<>();
     private final JButton createServerButton = new JButton(getCreateServerText());
@@ -228,6 +229,7 @@ public class VanillaPacksTab extends JPanel implements Tab, RelocalizationListen
         loaderTypeButtonGroup.add(loaderTypeFabricRadioButton);
         loaderTypeButtonGroup.add(loaderTypeForgeRadioButton);
         loaderTypeButtonGroup.add(loaderTypeLegacyFabricRadioButton);
+        loaderTypeButtonGroup.add(loaderTypeNeoForgeRadioButton);
         loaderTypeButtonGroup.add(loaderTypeQuiltRadioButton);
         JPanel loaderTypePanel = new JPanel(new FlowLayout());
 
@@ -235,6 +237,7 @@ public class VanillaPacksTab extends JPanel implements Tab, RelocalizationListen
         setupLoaderFabricButton(loaderTypePanel);
         setupLoaderForgeButton(loaderTypePanel);
         setupLoaderLegacyFabricButton(loaderTypePanel);
+        setupLoaderNeoForgeButton(loaderTypePanel);
         setupLoaderQuiltButton(loaderTypePanel);
 
         mainPanel.add(loaderTypePanel, gbc);
@@ -286,10 +289,11 @@ public class VanillaPacksTab extends JPanel implements Tab, RelocalizationListen
             }
         });
         loaderVersionsDropDown.addActionListener((e) -> {
-            // A user cannot change the loader version in under 100 ms. It is physically impossible.
+            // A user cannot change the loader version in under 100 ms. It is physically
+            // impossible.
             if (e.getWhen() > (loaderVersionLastChange + 100)) {
-                ComboItem<LoaderVersion> comboItem =
-                    (ComboItem<LoaderVersion>) loaderVersionsDropDown.getSelectedItem();
+                ComboItem<LoaderVersion> comboItem = (ComboItem<LoaderVersion>) loaderVersionsDropDown
+                        .getSelectedItem();
 
                 if (comboItem != null) {
                     LoaderVersion version = comboItem.getValue();
@@ -347,6 +351,18 @@ public class VanillaPacksTab extends JPanel implements Tab, RelocalizationListen
                         LoaderType.LEGACY_FABRIC));
         if (viewModel.showLegacyFabricOption()) {
             loaderTypePanel.add(loaderTypeLegacyFabricRadioButton);
+        }
+    }
+
+    private void setupLoaderNeoForgeButton(JPanel loaderTypePanel) {
+        viewModel.loaderTypeNeoForgeSelected().subscribe(loaderTypeNeoForgeRadioButton::setSelected);
+        viewModel.loaderTypeNeoForgeEnabled().subscribe(loaderTypeNeoForgeRadioButton::setEnabled);
+        viewModel.isNeoForgeVisible().subscribe(loaderTypeNeoForgeRadioButton::setVisible);
+        loaderTypeNeoForgeRadioButton.addActionListener(
+                e -> viewModel.setLoaderType(
+                        LoaderType.NEOFORGE));
+        if (viewModel.showNeoForgeOption()) {
+            loaderTypePanel.add(loaderTypeNeoForgeRadioButton);
         }
     }
 

@@ -1827,6 +1827,13 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
             loaderMeta.put("loader", loaderVersion.version);
             packVersion.loader.metadata = loaderMeta;
             packVersion.loader.className = "com.atlauncher.data.minecraft.loaders.legacyfabric.LegacyFabricLoader";
+        } else if (loaderVersion != null && loaderVersion.isNeoForge()) {
+            packVersion.loader = new com.atlauncher.data.json.Loader();
+            Map<String, Object> loaderMeta = new HashMap<>();
+            loaderMeta.put("minecraft", version.minecraftVersion.id);
+            loaderMeta.put("loader", loaderVersion.version);
+            packVersion.loader.metadata = loaderMeta;
+            packVersion.loader.className = "com.atlauncher.data.minecraft.loaders.neoforge.NeoForgeLoader";
         } else if (loaderVersion != null && loaderVersion.isQuilt()) {
             packVersion.loader = new com.atlauncher.data.json.Loader();
             Map<String, Object> loaderMeta = new HashMap<>();
@@ -2780,7 +2787,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                         });
             }
 
-            if (this.loader != null) {
+            if (this.loader != null && this.loaderVersion != null && this.loaderVersion.isForge()) {
                 Library forgeLibrary = this.loader.getLibraries().stream()
                         .filter(library -> library.name.startsWith("net.minecraftforge:forge")).findFirst()
                         .orElse(null);
