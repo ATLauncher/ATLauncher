@@ -124,6 +124,10 @@ public class Constants {
     public static final String LEGACY_FABRIC_MAVEN = "https://maven.legacyfabric.net/";
     public static final String LEGACY_FABRIC_HOST = "maven.legacyfabric.net";
 
+    // NeoForge domains, endpoints, etc
+    public static final String NEOFORGE_MAVEN = "https://maven.neoforged.net/";
+    public static final String NEOFORGE_HOST = "maven.neoforged.net";
+
     // Quilt domains, endpoints, etc
     public static final String QUILT_MAVEN = "https://maven.quiltmc.org/repository/release/";
     public static final String QUILT_HOST = "maven.quiltmc.org";
