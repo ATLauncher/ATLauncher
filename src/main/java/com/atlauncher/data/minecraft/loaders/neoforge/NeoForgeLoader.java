@@ -32,6 +32,7 @@ import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
 import com.atlauncher.Network;
 import com.atlauncher.constants.Constants;
+import com.atlauncher.data.minecraft.ArgumentRule;
 import com.atlauncher.data.minecraft.Arguments;
 import com.atlauncher.data.minecraft.Library;
 import com.atlauncher.data.minecraft.loaders.Loader;
@@ -207,7 +208,18 @@ public class NeoForgeLoader implements Loader {
 
     @Override
     public Arguments getArguments() {
-        return this.getVersion().arguments;
+        List<ArgumentRule> jvmArgs = this.getVersion().arguments.jvm.stream().map(arg -> {
+            // we replace this as we prefix the MC jar with `client-` but NeoForge expects
+            // `${MC_VERSION}.jar`
+            if (arg.getValueAsString().startsWith("-DignoreList=")) {
+                return new ArgumentRule(
+                        arg.getValueAsString().replace("${version_name}.jar", "client-${version_name}.jar"));
+            }
+
+            return arg;
+        }).collect(Collectors.toList());
+
+        return new Arguments(this.getVersion().arguments.game, jvmArgs);
     }
 
     @Override

@@ -115,7 +115,8 @@ public class LoaderVersion {
             return false;
         }
 
-        return true;
+        // NeoForge also use their own run scripts
+        return !this.isNeoForge();
     }
 
     public String getTypeForModrinthExport() {
