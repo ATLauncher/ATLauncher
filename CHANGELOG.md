@@ -10,5 +10,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 
 ### Fixes
 - Remove .DS_Store files from exported instances
+- Duplicate Java arguments getting removed [#787]
 
 ### Misc

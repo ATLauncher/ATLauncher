@@ -333,11 +333,6 @@ public class MCLauncher {
         if (!javaArguments.isEmpty()) {
             for (String arg : javaArguments.split(" ")) {
                 if (!arg.isEmpty()) {
-                    if (arguments.toString().contains(arg)) {
-                        LogManager.error("Duplicate argument " + arg + " found and not added!");
-                        continue;
-                    }
-
                     arguments.add(arg);
                 }
             }
