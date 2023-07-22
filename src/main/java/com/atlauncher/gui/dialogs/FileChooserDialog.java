@@ -27,9 +27,9 @@ import java.awt.Window;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
-import java.io.FilenameFilter;
 import java.util.ArrayList;
 
+import javax.annotation.Nullable;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -62,8 +62,51 @@ public class FileChooserDialog extends JDialog {
 
     private boolean closed = false;
 
-    public FileChooserDialog(Window parent, String title, String labelName, String bottomText, String selectorText,
-            String[] subOptions) {
+    public FileChooserDialog(
+        Window parent,
+        String title,
+        String labelName,
+        String bottomText,
+        String selectorText,
+        String[] subOptions
+    ) {
+        this(
+            parent,
+            title,
+            labelName,
+            bottomText,
+            selectorText,
+            subOptions,
+            false
+        );
+    }
+
+    public FileChooserDialog(
+        Window parent,
+        String title,
+        String labelName,
+        String bottomText
+    ) {
+        this(
+            parent,
+            title,
+            labelName,
+            bottomText,
+            null,
+            null,
+            true
+        );
+    }
+
+    public FileChooserDialog(
+        Window parent,
+        String title,
+        String labelName,
+        String bottomText,
+        @Nullable String selectorText,
+        @Nullable String[] subOptions,
+        Boolean directory
+    ) {
         super(parent, title, ModalityType.DOCUMENT_MODAL);
         setSize(400, 175);
         setMinimumSize(new Dimension(400, 175));
@@ -102,7 +145,7 @@ public class FileChooserDialog extends JDialog {
         JButton selectButton = new JButton(GetText.tr("Select"));
         selectButton.addActionListener(e -> {
             if (OS.isUsingFlatpak()) {
-                filesChosen = DBusUtils.selectFiles();
+                filesChosen = DBusUtils.selectFiles(directory);
             } else if (App.settings.useNativeFilePicker) {
                 filesChosen = getFilesUsingFileDialog();
             } else {
@@ -123,21 +166,26 @@ public class FileChooserDialog extends JDialog {
 
         middle.add(filePathPanel, gbc);
 
-        gbc.gridx = 0;
-        gbc.gridy++;
-        gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        gbc.insets = UIConstants.LABEL_INSETS;
-        JLabel selectorLabel = new JLabel(selectorText + ": ");
-        middle.add(selectorLabel, gbc);
+        if (selectorText != null && subOptions != null && subOptions.length != 0) {
+            gbc.gridx = 0;
+            gbc.gridy++;
+            gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
+            gbc.insets = UIConstants.LABEL_INSETS;
 
-        gbc.gridx++;
-        gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-        gbc.insets = UIConstants.FIELD_INSETS;
-        selector = new JComboBox<>();
-        for (String item : subOptions) {
-            selector.addItem(item);
+            JLabel selectorLabel = new JLabel(selectorText + ": ");
+            middle.add(selectorLabel, gbc);
+
+            gbc.gridx++;
+            gbc.anchor = GridBagConstraints.BASELINE_LEADING;
+            gbc.insets = UIConstants.FIELD_INSETS;
+            selector = new JComboBox<>();
+            for (String item : subOptions) {
+                selector.addItem(item);
+            }
+            middle.add(selector, gbc);
+        } else {
+            selector = new JComboBox<>();
         }
-        middle.add(selector, gbc);
 
         // Bottom Panel Stuff
         JPanel bottom = new JPanel();
@@ -189,12 +237,7 @@ public class FileChooserDialog extends JDialog {
 
     private File[] getFilesUsingFileDialog() {
         FileDialog fd = new FileDialog(this, GetText.tr("Select file/s"), FileDialog.LOAD);
-        fd.setFilenameFilter(new FilenameFilter() {
-            @Override
-            public boolean accept(File dir, String name) {
-                return shouldAcceptFilename(name);
-            }
-        });
+        fd.setFilenameFilter((dir, name) -> shouldAcceptFilename(name));
         fd.setVisible(true);
 
         return fd.getFiles();
