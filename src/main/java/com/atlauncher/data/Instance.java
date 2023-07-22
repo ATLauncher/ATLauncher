@@ -108,6 +108,7 @@ import com.atlauncher.data.minecraft.loaders.forge.FMLLibrariesConstants;
 import com.atlauncher.data.minecraft.loaders.forge.FMLLibrary;
 import com.atlauncher.data.minecraft.loaders.forge.ForgeLoader;
 import com.atlauncher.data.minecraft.loaders.legacyfabric.LegacyFabricLoader;
+import com.atlauncher.data.minecraft.loaders.neoforge.NeoForgeLoader;
 import com.atlauncher.data.minecraft.loaders.quilt.QuiltLoader;
 import com.atlauncher.data.modpacksch.ModpacksChPackVersion;
 import com.atlauncher.data.modrinth.ModrinthFile;
@@ -2905,6 +2906,8 @@ public class Instance extends MinecraftVersion {
                 progressDialog.setReturnValue(ForgeLoader.getChoosableVersions(id));
             } else if (loaderType == LoaderType.LEGACY_FABRIC) {
                 progressDialog.setReturnValue(LegacyFabricLoader.getChoosableVersions(id));
+            } else if (loaderType == LoaderType.NEOFORGE) {
+                progressDialog.setReturnValue(NeoForgeLoader.getChoosableVersions(id));
             } else if (loaderType == LoaderType.QUILT) {
                 progressDialog.setReturnValue(QuiltLoader.getChoosableVersions(id));
             }

@@ -139,6 +139,12 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
     // #. {0} is the loader (Forge/LegacyFabric/Quilt)
     private final JMenuItem removeLegacyFabricMenuItem = new JMenuItem(GetText.tr("Remove {0}", "Legacy Fabric"));
     // #. {0} is the loader (Forge/Fabric/Quilt)
+    private final JMenuItem addNeoForgeMenuItem = new JMenuItem(GetText.tr("Add {0}", "NeoForge"));
+    // #. {0} is the loader (Forge/Fabric/Quilt)
+    private final JMenuItem changeNeoForgeVersionMenuItem = new JMenuItem(GetText.tr("Change {0} Version", "NeoForge"));
+    // #. {0} is the loader (Forge/Fabric/Quilt)
+    private final JMenuItem removeNeoForgeMenuItem = new JMenuItem(GetText.tr("Remove {0}", "NeoForge"));
+    // #. {0} is the loader (Forge/Fabric/Quilt)
     private final JMenuItem addQuiltMenuItem = new JMenuItem(GetText.tr("Add {0}", "Quilt"));
     // #. {0} is the loader (Forge/Fabric/Quilt)
     private final JMenuItem changeQuiltVersionMenuItem = new JMenuItem(GetText.tr("Change {0} Version", "Quilt"));
@@ -337,6 +343,15 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
         }
         editInstancePopupMenu.add(removeLegacyFabricMenuItem);
 
+        if (ConfigManager.getConfigItem("loaders.neoforge.enabled", true) == true
+                && !ConfigManager
+                        .getConfigItem("loaders.neoforge.disabledMinecraftVersions", new ArrayList<String>())
+                        .contains(instance.id)) {
+            editInstancePopupMenu.add(addNeoForgeMenuItem);
+            editInstancePopupMenu.add(changeNeoForgeVersionMenuItem);
+        }
+        editInstancePopupMenu.add(removeNeoForgeMenuItem);
+
         if (ConfigManager.getConfigItem("loaders.quilt.enabled", false) == true
                 && !ConfigManager.getConfigItem("loaders.quilt.disabledMinecraftVersions", new ArrayList<String>())
                         .contains(instance.id)) {
@@ -372,6 +387,10 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
             instance.addLoader(LoaderType.LEGACY_FABRIC);
             setEditInstanceMenuItemVisbility();
         });
+        addNeoForgeMenuItem.addActionListener(e -> {
+            instance.addLoader(LoaderType.NEOFORGE);
+            setEditInstanceMenuItemVisbility();
+        });
         addQuiltMenuItem.addActionListener(e -> {
             instance.addLoader(LoaderType.QUILT);
             setEditInstanceMenuItemVisbility();
@@ -386,6 +405,10 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
             setEditInstanceMenuItemVisbility();
         });
         changeLegacyFabricVersionMenuItem.addActionListener(e -> {
+            instance.changeLoaderVersion();
+            setEditInstanceMenuItemVisbility();
+        });
+        changeNeoForgeVersionMenuItem.addActionListener(e -> {
             instance.changeLoaderVersion();
             setEditInstanceMenuItemVisbility();
         });
@@ -406,6 +429,10 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
             instance.removeLoader();
             setEditInstanceMenuItemVisbility();
         });
+        removeNeoForgeMenuItem.addActionListener(e -> {
+            instance.removeLoader();
+            setEditInstanceMenuItemVisbility();
+        });
         removeQuiltMenuItem.addActionListener(e -> {
             instance.removeLoader();
             setEditInstanceMenuItemVisbility();
@@ -418,6 +445,7 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
         addFabricMenuItem.setVisible(instance.launcher.loaderVersion == null);
         addForgeMenuItem.setVisible(instance.launcher.loaderVersion == null);
         addLegacyFabricMenuItem.setVisible(instance.launcher.loaderVersion == null);
+        addNeoForgeMenuItem.setVisible(instance.launcher.loaderVersion == null);
         addQuiltMenuItem.setVisible(instance.launcher.loaderVersion == null);
 
         changeFabricVersionMenuItem
@@ -427,6 +455,9 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
         changeLegacyFabricVersionMenuItem
                 .setVisible(
                         instance.launcher.loaderVersion != null && instance.launcher.loaderVersion.isLegacyFabric());
+        changeNeoForgeVersionMenuItem
+                .setVisible(
+                        instance.launcher.loaderVersion != null && instance.launcher.loaderVersion.isNeoForge());
         changeQuiltVersionMenuItem
                 .setVisible(instance.launcher.loaderVersion != null && instance.launcher.loaderVersion.isQuilt());
 
@@ -437,6 +468,9 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
         removeLegacyFabricMenuItem
                 .setVisible(
                         instance.launcher.loaderVersion != null && instance.launcher.loaderVersion.isLegacyFabric());
+        removeNeoForgeMenuItem
+                .setVisible(
+                        instance.launcher.loaderVersion != null && instance.launcher.loaderVersion.isNeoForge());
         removeQuiltMenuItem
                 .setVisible(instance.launcher.loaderVersion != null && instance.launcher.loaderVersion.isQuilt());
     }
