@@ -87,6 +87,8 @@ public class NeoForgeLoader implements Loader {
 
     @Override
     public void downloadAndExtractInstaller() throws Exception {
+        getInstallerMetadata();
+
         OkHttpClient httpClient = Network.createProgressClient(instanceInstaller);
 
         Download download = Download.build().setUrl(this.installerUrl).downloadTo(installerPath)
@@ -111,6 +113,12 @@ public class NeoForgeLoader implements Loader {
         download.downloadFile();
 
         this.copyLocalLibraries();
+    }
+
+    private void getInstallerMetadata() {
+        if (installerSha1 == null) {
+            installerSha1 = Download.build().setUrl(this.installerUrl + ".sha1").asString();
+        }
     }
 
     public Version getVersion() {
