@@ -692,7 +692,7 @@ public final class AddModsDialog extends JDialog {
                                 ((ComboItem<String>) sortComboBox.getSelectedItem()).getValue(),
                                 ((ComboItem<String>) categoriesComboBox.getSelectedItem()) == null ? null
                                         : ((ComboItem<String>) categoriesComboBox.getSelectedItem()).getValue()));
-                    } else if (this.instance.launcher.loaderVersion.isForge()) {
+                    } else if (this.instance.launcher.loaderVersion.isForge() || this.instance.launcher.loaderVersion.isNeoForge()) {
                         setCurseForgeMods(CurseForgeApi.searchModsForForge(versionToSearchFor, query, page,
                                 ((ComboItem<String>) sortComboBox.getSelectedItem()).getValue(),
                                 ((ComboItem<String>) categoriesComboBox.getSelectedItem()) == null ? null
@@ -745,6 +745,11 @@ public final class AddModsDialog extends JDialog {
                                         : ((ComboItem<String>) categoriesComboBox.getSelectedItem()).getValue()));
                     } else if (this.instance.launcher.loaderVersion.isForge()) {
                         setModrinthMods(ModrinthApi.searchModsForForge(versionsToSearchFor, query, page,
+                                ((ComboItem<String>) sortComboBox.getSelectedItem()).getValue(),
+                                ((ComboItem<String>) categoriesComboBox.getSelectedItem()) == null ? null
+                                        : ((ComboItem<String>) categoriesComboBox.getSelectedItem()).getValue()));
+                    } else if (this.instance.launcher.loaderVersion.isNeoForge()) {
+                        setModrinthMods(ModrinthApi.searchModsForForgeOrNeoForge(versionsToSearchFor, query, page,
                                 ((ComboItem<String>) sortComboBox.getSelectedItem()).getValue(),
                                 ((ComboItem<String>) categoriesComboBox.getSelectedItem()) == null ? null
                                         : ((ComboItem<String>) categoriesComboBox.getSelectedItem()).getValue()));

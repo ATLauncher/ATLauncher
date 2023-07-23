@@ -114,6 +114,14 @@ public class ModrinthApi {
                 ModrinthProjectType.MOD);
     }
 
+    public static ModrinthSearchResult searchModsForForgeOrNeoForge(List<String> gameVersions, String query, int page,
+            String sort, String category) {
+        List<String> categories = category == null ? Arrays.asList("forge", "neoforge")
+                : Arrays.asList(category, "forge", "neoforge");
+
+        return searchModrinth(gameVersions, query, page, sort, categories, ModrinthProjectType.MOD);
+    }
+
     public static ModrinthSearchResult searchModsForFabric(List<String> gameVersions, String query, int page,
             String sort, String category) {
         List<String> categories = category == null ? Arrays.asList("fabric") : Arrays.asList(category, "fabric");
