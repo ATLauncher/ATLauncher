@@ -195,24 +195,39 @@ public class InstanceExportDialog extends JDialog {
 
         final JTextField saveTo = new JTextField(25);
         saveTo.setText(Optional.ofNullable(instance.launcher.lastExportSaveTo)
-                .orElse(instance.getRoot().toAbsolutePath().toString()));
+            .orElse(instance.getRoot().toAbsolutePath().toString()));
+
+        // Disable manual input on flatpak (require proper xdg selection)
+        saveTo.setEnabled(!OS.isUsingFlatpak());
 
         JButton browseButton = new JButton(GetText.tr("Browse"));
         browseButton.addActionListener(e -> {
-            JFileChooser chooser = new JFileChooser();
-            chooser.setCurrentDirectory(new File(saveTo.getText()));
-            chooser.setDialogTitle(GetText.tr("Select path to save to"));
-            chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-            chooser.setAcceptAllFileFilterUsed(false);
+            FileChooserDialog fcd = new FileChooserDialog(this,
+                GetText.tr("Select export directory"),
+                GetText.tr("Directory"),
+                GetText.tr("Select"));
 
-            if (chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
-                saveTo.setText(chooser.getSelectedFile().getAbsolutePath());
+            if (fcd.wasClosed()) {
+                return;
             }
+
+            List<File> files = fcd.getChosenFiles();
+
+            if (files != null && !files.isEmpty()) {
+                File dir = files.get(0);
+                saveTo.setText(dir.getAbsolutePath());
+            }
+        });
+
+        JButton resetButton = new JButton(GetText.tr("Reset"));
+        resetButton.addActionListener(e -> {
+            saveTo.setText(instance.getRoot().toAbsolutePath().toString());
         });
 
         saveToPanel.add(saveTo);
         saveToPanel.add(Box.createHorizontalStrut(5));
         saveToPanel.add(browseButton);
+        saveToPanel.add(resetButton);
 
         topPanel.add(saveToPanel, gbc);
 

@@ -13,3 +13,4 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Duplicate Java arguments getting removed [#787]
 
 ### Misc
+- Use FileChooserDialog in InstanceExportDialog [#791]
