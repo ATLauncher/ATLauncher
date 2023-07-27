@@ -1710,6 +1710,15 @@ public class Instance extends MinecraftVersion {
 
     public boolean export(String name, String version, String author, InstanceExportFormat format, String saveTo,
             List<String> overrides) {
+        try {
+            if (!Files.isDirectory(Paths.get(saveTo))) {
+                Files.createDirectories(Paths.get(saveTo));
+            }
+        } catch (IOException e) {
+            LogManager.logStackTrace("Failed to create export directory", e);
+            return false;
+        }
+
         if (format == InstanceExportFormat.CURSEFORGE) {
             return exportAsCurseForgeZip(name, version, author, saveTo, overrides);
         } else if (format == InstanceExportFormat.MODRINTH) {

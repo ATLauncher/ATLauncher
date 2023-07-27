@@ -8,5 +8,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 ### New Features
 
 ### Fixes
+- Exporting an instance not working if the directory doesn't exist
 
 ### Misc
