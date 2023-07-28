@@ -76,8 +76,10 @@ public class Server {
     public List<DisableableMod> mods = new ArrayList<>();
     public List<String> ignoredUpdates = new ArrayList<>();
 
+    public transient Path ROOT;
+
     public Path getRoot() {
-        return FileSystem.SERVERS.resolve(this.getSafeName());
+        return this.ROOT;
     }
 
     public String getSafeName() {

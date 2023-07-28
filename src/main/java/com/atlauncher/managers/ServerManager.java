@@ -77,14 +77,10 @@ public class ServerManager {
                     new FileInputStream(new File(serverDir, "server.json")),
                     StandardCharsets.UTF_8)) {
                 server = Gsons.DEFAULT.fromJson(fileReader, Server.class);
+                server.ROOT = serverDir.toPath();
                 LogManager.debug("Loaded server from " + serverDir);
             } catch (Exception e) {
                 LogManager.logStackTrace("Failed to load server in the folder " + serverDir, e);
-                continue;
-            }
-
-            if (server == null) {
-                LogManager.error("Failed to load server in the folder " + serverDir);
                 continue;
             }
 
@@ -125,8 +121,9 @@ public class ServerManager {
     @SuppressWarnings("ConstantConditions")
     public static boolean addServer(Server server) {
         boolean added = Data.SERVERS.add(server);
-        if (added)
+        if (added) {
             post();
+        }
         return added;
     }
 

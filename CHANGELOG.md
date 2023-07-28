@@ -9,5 +9,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 
 ### Fixes
 - Exporting an instance not working if the directory doesn't exist
+- Don't allow NeoForge instances to be exported (no platforms support modpacks yet)
+- Issue with servers copy/pasted in the servers folder not being linked up to the right folder
 
 ### Misc

@@ -2361,6 +2361,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
     private void saveServerJson() {
         Server server = new Server();
 
+        server.ROOT = this.root;
         server.name = this.name;
         server.pack = this.pack.name;
         server.packId = this.pack.id;
