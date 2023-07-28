@@ -57,8 +57,8 @@ public class MultiMCInstanceConfig {
             javaPath = props.getProperty("JavaPath");
         }
 
-        if (props.getProperty("JvmArgs") != null) {
-            javaArguments = props.getProperty("JvmArgs");
+        if (props.getProperty("JVMArgs") != null) {
+            javaArguments = props.getProperty("JVMArgs");
         }
 
         if (props.getProperty("PreLaunchCommand") != null) {

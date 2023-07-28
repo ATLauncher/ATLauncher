@@ -2302,6 +2302,22 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                     instanceLauncher.wrapperCommand = multiMCManifest.config.wrapperCommand;
                     instanceLauncher.enableCommands = true;
                 }
+                if (multiMCManifest.config.javaPath != null
+                        && !multiMCManifest.config.javaPath.equals("null")
+                        && !multiMCManifest.config.javaPath.isEmpty()) {
+                    instanceLauncher.javaPath = multiMCManifest.config.javaPath;
+                }
+                if (multiMCManifest.config.javaArguments != null
+                        && !multiMCManifest.config.javaArguments.equals("null")
+                        && !multiMCManifest.config.javaArguments.isEmpty()) {
+                    instanceLauncher.javaArguments = multiMCManifest.config.javaArguments;
+                }
+                if (multiMCManifest.config.permGen != null && multiMCManifest.config.permGen != null) {
+                    instanceLauncher.permGen = multiMCManifest.config.permGen;
+                }
+                if (multiMCManifest.config.maximumMemory != null && multiMCManifest.config.maximumMemory != null) {
+                    instanceLauncher.maximumMemory = multiMCManifest.config.maximumMemory;
+                }
             }
 
             if (instanceLauncher.curseForgeManifest != null) {
