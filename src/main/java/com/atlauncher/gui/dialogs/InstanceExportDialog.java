@@ -25,6 +25,7 @@ import java.awt.GridBagLayout;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
@@ -38,7 +39,6 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
-import javax.swing.JFileChooser;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
@@ -53,6 +53,7 @@ import com.atlauncher.gui.components.JLabelWithHover;
 import com.atlauncher.managers.AccountManager;
 import com.atlauncher.utils.ComboItem;
 import com.atlauncher.utils.OS;
+import com.atlauncher.utils.Pair;
 import com.atlauncher.utils.Utils;
 import com.atlauncher.utils.WindowUtils;
 
@@ -195,7 +196,7 @@ public class InstanceExportDialog extends JDialog {
 
         final JTextField saveTo = new JTextField(25);
         saveTo.setText(Optional.ofNullable(instance.launcher.lastExportSaveTo)
-            .orElse(instance.getRoot().toAbsolutePath().toString()));
+                .orElse(instance.getRoot().toAbsolutePath().toString()));
 
         // Disable manual input on flatpak (require proper xdg selection)
         saveTo.setEnabled(!OS.isUsingFlatpak());
@@ -203,9 +204,9 @@ public class InstanceExportDialog extends JDialog {
         JButton browseButton = new JButton(GetText.tr("Browse"));
         browseButton.addActionListener(e -> {
             FileChooserDialog fcd = new FileChooserDialog(this,
-                GetText.tr("Select export directory"),
-                GetText.tr("Directory"),
-                GetText.tr("Select"));
+                    GetText.tr("Select export directory"),
+                    GetText.tr("Directory"),
+                    GetText.tr("Select"));
 
             if (fcd.wasClosed()) {
                 return;
@@ -308,24 +309,33 @@ public class InstanceExportDialog extends JDialog {
                 InstanceExportFormat exportFormat = ((ComboItem<InstanceExportFormat>) format.getSelectedItem())
                         .getValue();
 
-                if (instance.export(name.getText(), version.getText(), author.getText(),
-                        exportFormat, saveTo.getText(), overrides)) {
+                Pair<Boolean, String> exportResult = instance.export(name.getText(), version.getText(),
+                        author.getText(),
+                        exportFormat, saveTo.getText(), overrides);
+
+                if (exportResult.left()) {
                     instance.launcher.lastExportName = name.getText();
                     instance.launcher.lastExportVersion = version.getText();
                     instance.launcher.lastExportAuthor = author.getText();
                     instance.launcher.lastExportSaveTo = saveTo.getText();
                     instance.save();
 
-                    App.TOASTER.pop(GetText.tr("Exported Instance Successfully"));
                     String safePathName = name.getText().replaceAll("[\\\"?:*<>|]", "");
+                    Path exportPath = Paths.get(saveTo.getText())
+                            .resolve(String.format("%s.%s", safePathName,
+                                    (exportFormat == InstanceExportFormat.MODRINTH ? "mrpack" : "zip")));
+
+                    if ((exportFormat == InstanceExportFormat.MODRINTH
+                            || exportFormat == InstanceExportFormat.CURSEFORGE_AND_MODRINTH)
+                            && exportResult.right() != null && !exportResult.right().isEmpty()) {
+                        new ModrinthExportOverridesDialog(dialog, exportResult.right());
+                    }
+
+                    App.TOASTER.pop(GetText.tr("Exported Instance Successfully"));
                     if (exportFormat == InstanceExportFormat.CURSEFORGE_AND_MODRINTH) {
                         OS.openFileExplorer(Paths.get(saveTo.getText()));
                     } else {
-                        OS.openFileExplorer(
-                                Paths.get(saveTo.getText())
-                                        .resolve(String.format("%s.%s", safePathName,
-                                                (exportFormat == InstanceExportFormat.MODRINTH ? "mrpack" : "zip"))),
-                                true);
+                        OS.openFileExplorer(exportPath, true);
                     }
                 } else {
                     App.TOASTER.popError(GetText.tr("Failed to export instance. Check the console for details"));

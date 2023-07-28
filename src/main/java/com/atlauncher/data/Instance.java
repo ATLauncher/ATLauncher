@@ -161,6 +161,7 @@ import com.atlauncher.utils.Hashing;
 import com.atlauncher.utils.Java;
 import com.atlauncher.utils.ModrinthApi;
 import com.atlauncher.utils.OS;
+import com.atlauncher.utils.Pair;
 import com.atlauncher.utils.SecurityUtils;
 import com.atlauncher.utils.Utils;
 import com.atlauncher.utils.ZipNameMapper;
@@ -1713,7 +1714,8 @@ public class Instance extends MinecraftVersion {
         return true;
     }
 
-    public boolean export(String name, String version, String author, InstanceExportFormat format, String saveTo,
+    public Pair<Boolean, String> export(String name, String version, String author, InstanceExportFormat format,
+            String saveTo,
             List<String> overrides) {
         try {
             if (!Files.isDirectory(Paths.get(saveTo))) {
@@ -1721,7 +1723,7 @@ public class Instance extends MinecraftVersion {
             }
         } catch (IOException e) {
             LogManager.logStackTrace("Failed to create export directory", e);
-            return false;
+            return new Pair<Boolean, String>(false, null);
         }
 
         if (format == InstanceExportFormat.CURSEFORGE) {
@@ -1729,8 +1731,8 @@ public class Instance extends MinecraftVersion {
         } else if (format == InstanceExportFormat.MODRINTH) {
             return exportAsModrinthZip(name, version, author, saveTo, overrides);
         } else if (format == InstanceExportFormat.CURSEFORGE_AND_MODRINTH) {
-            if (!exportAsCurseForgeZip(name, version, author, saveTo, overrides)) {
-                return false;
+            if (!exportAsCurseForgeZip(name, version, author, saveTo, overrides).left()) {
+                return new Pair<Boolean, String>(false, null);
             }
 
             return exportAsModrinthZip(name, version, author, saveTo, overrides);
@@ -1738,10 +1740,10 @@ public class Instance extends MinecraftVersion {
             return exportAsMultiMcZip(name, version, author, saveTo, overrides);
         }
 
-        return false;
+        return new Pair<Boolean, String>(false, null);
     }
 
-    public boolean exportAsMultiMcZip(String name, String version, String author, String saveTo,
+    public Pair<Boolean, String> exportAsMultiMcZip(String name, String version, String author, String saveTo,
             List<String> overrides) {
         String safePathName = name.replaceAll("[\\\"?:*<>|]", "");
         Path to = Paths.get(saveTo).resolve(safePathName + ".zip");
@@ -1891,7 +1893,7 @@ public class Instance extends MinecraftVersion {
 
             FileUtils.deleteDirectory(tempDir);
 
-            return false;
+            return new Pair<Boolean, String>(false, null);
         }
 
         // if Legacy Fabric, add patch in
@@ -1921,7 +1923,7 @@ public class Instance extends MinecraftVersion {
 
                 FileUtils.deleteDirectory(tempDir);
 
-                return false;
+                return new Pair<Boolean, String>(false, null);
             }
 
         }
@@ -1998,7 +2000,7 @@ public class Instance extends MinecraftVersion {
 
             FileUtils.deleteDirectory(tempDir);
 
-            return false;
+            return new Pair<Boolean, String>(false, null);
         }
 
         // create an empty .packignore file
@@ -2039,10 +2041,10 @@ public class Instance extends MinecraftVersion {
 
         FileUtils.deleteDirectory(tempDir);
 
-        return true;
+        return new Pair<Boolean, String>(true, null);
     }
 
-    public boolean exportAsCurseForgeZip(String name, String version, String author, String saveTo,
+    public Pair<Boolean, String> exportAsCurseForgeZip(String name, String version, String author, String saveTo,
             List<String> overrides) {
         String safePathName = name.replaceAll("[\\\"?:*<>|]", "");
         Path to = Paths.get(saveTo).resolve(String.format("%s %s.zip", safePathName, version));
@@ -2149,7 +2151,7 @@ public class Instance extends MinecraftVersion {
 
             FileUtils.deleteDirectory(tempDir);
 
-            return false;
+            return new Pair<Boolean, String>(false, null);
         }
 
         // create modlist.html
@@ -2172,7 +2174,7 @@ public class Instance extends MinecraftVersion {
 
             FileUtils.deleteDirectory(tempDir);
 
-            return false;
+            return new Pair<Boolean, String>(false, null);
         }
 
         // copy over the overrides folder
@@ -2227,10 +2229,10 @@ public class Instance extends MinecraftVersion {
 
         FileUtils.deleteDirectory(tempDir);
 
-        return true;
+        return new Pair<Boolean, String>(true, null);
     }
 
-    public boolean exportAsModrinthZip(String name, String version, String author, String saveTo,
+    public Pair<Boolean, String> exportAsModrinthZip(String name, String version, String author, String saveTo,
             List<String> overrides) {
         String safePathName = name.replaceAll("[\\\"?:*<>|]", "");
         Path to = Paths.get(saveTo).resolve(String.format("%s %s.mrpack", safePathName, version));
@@ -2332,7 +2334,7 @@ public class Instance extends MinecraftVersion {
 
             FileUtils.deleteDirectory(tempDir);
 
-            return false;
+            return new Pair<Boolean, String>(false, null);
         }
 
         // copy over the overrides folder
@@ -2383,11 +2385,23 @@ public class Instance extends MinecraftVersion {
             FileUtils.deleteDirectory(overridesPath);
         }
 
+        // find any override jar/zip files
+        StringBuilder overridesForPermissions = new StringBuilder();
+        try (Stream<Path> walk = Files.walk(overridesPath)) {
+            walk.filter(Files::isRegularFile)
+                    .filter(path -> path.getFileName().toString().endsWith(".jar")
+                            || path.getFileName().toString().endsWith(".zip"))
+                    .forEach(f -> {
+                        overridesForPermissions.append(String.format("%s\n", tempDir.relativize(f)));
+                    });
+        } catch (IOException ignored) {
+        }
+
         ArchiveUtils.createZip(tempDir, to);
 
         FileUtils.deleteDirectory(tempDir);
 
-        return true;
+        return new Pair<Boolean, String>(true, overridesForPermissions.toString());
     }
 
     public boolean rename(String newName) {

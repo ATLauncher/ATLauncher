@@ -3,9 +3,10 @@
 This changelog only contains the changes that are unreleased. For changes for individual releases, please visit the
 [releases](https://github.com/ATLauncher/ATLauncher/releases) page on GitHub.
 
-## 3.4.30.1
+## 3.4.31.0
 
 ### New Features
+- Add dialog when exporting instances for Modrinth showing the override files [#785]
 
 ### Fixes
 - Exporting an instance not working if the directory doesn't exist
