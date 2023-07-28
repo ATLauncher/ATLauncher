@@ -98,6 +98,7 @@ import com.atlauncher.exceptions.InvalidPack;
 import com.atlauncher.graphql.fragment.UnifiedModPackResultsFragment;
 import com.atlauncher.gui.components.JLabelWithHover;
 import com.atlauncher.managers.ConfigManager;
+import com.atlauncher.managers.DialogManager;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.managers.MinecraftManager;
 import com.atlauncher.managers.PackManager;
@@ -204,11 +205,12 @@ public class InstanceInstallerDialog extends JDialog {
         this.autoInstallVersion = autoInstallVersion;
         this.extractedPath = extractedPathCon;
         this.preselectedModrinthVersion = preselectedModrinthVersion;
+        this.isServer = true;
 
         Analytics.sendScreenView("Instance Installer Dialog");
 
         if (object instanceof Pack) {
-            handlePackInstall(object, isServer);
+            handlePackInstall(object);
         } else if (object instanceof CurseForgeProject) {
             handleCurseForgeInstall(object);
         } else if (object instanceof ModpacksChPackManifest) {
@@ -419,14 +421,13 @@ public class InstanceInstallerDialog extends JDialog {
         setVisible(true);
     }
 
-    private void handlePackInstall(Object object, final boolean isServer) {
+    private void handlePackInstall(Object object) {
         pack = (Pack) object;
         // #. {0} is the name of the pack the user is installing
         setTitle(GetText.tr("Installing {0}", pack.getName()));
-        if (isServer) {
+        if (this.isServer) {
             // #. {0} is the name of the pack the user is installing
             setTitle(GetText.tr("Installing {0} Server", pack.getName()));
-            this.isServer = true;
         }
     }
 
@@ -445,7 +446,17 @@ public class InstanceInstallerDialog extends JDialog {
                 GetText.tr("Getting Versions"), "Aborting Getting Versions");
 
         dialog.addThread(new Thread(() -> {
-            dialog.setReturnValue(CurseForgeApi.getFilesForProject(curseForgeProject.id));
+            List<CurseForgeFile> files = CurseForgeApi.getFilesForProject(curseForgeProject.id);
+
+            if (isServer) {
+                int[] serverFileIds = files.stream().filter(file -> file.serverPackFileId != null)
+                        .mapToInt(file -> file.serverPackFileId).toArray();
+                List<CurseForgeFile> serverFiles = CurseForgeApi.getFiles(serverFileIds);
+
+                dialog.setReturnValue(serverFiles);
+            } else {
+                dialog.setReturnValue(files);
+            }
 
             dialog.close();
         }));
@@ -453,6 +464,17 @@ public class InstanceInstallerDialog extends JDialog {
         dialog.start();
 
         List<CurseForgeFile> files = dialog.getReturnValue();
+
+        if (files == null || files.size() == 0) {
+            // TODO: this still throws an exception, fix at some point
+            DialogManager.okDialog().setTitle(GetText.tr("No Server Files Available"))
+                    .setContent(new HTMLBuilder().text(GetText.tr(
+                            "No server files are available for this pack, so a server cannot be created."))
+                            .center().build())
+                    .setType(DialogManager.ERROR)
+                    .show();
+            return;
+        }
 
         pack.versions = files.stream().sorted(Comparator.comparingInt((CurseForgeFile file) -> file.id).reversed())
                 .map(f -> {
@@ -804,7 +826,7 @@ public class InstanceInstallerDialog extends JDialog {
                 try {
                     Pack pack = PackManager.getPackByID(Integer.parseInt(unifiedModpackResult.id()));
 
-                    handlePackInstall(pack, isServer);
+                    handlePackInstall(pack);
                     return;
                 } catch (NumberFormatException | InvalidPack e) {
                     LogManager.logStackTrace("Failed to get ATLauncher pack", e);

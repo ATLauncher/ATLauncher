@@ -48,6 +48,7 @@ public class CurseForgeFile {
     public int alternateFileId;
     public List<CurseForgeFileModule> modules;
     public boolean isServerPack;
+    public Integer serverPackFileId;
 
     public List<CurseForgeFileHash> hashes = new ArrayList<>();
     @ExcludeFromGsonSerialization

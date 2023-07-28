@@ -116,22 +116,26 @@ public class Server {
             }
         }
 
-        Analytics.trackEvent(AnalyticsEvent.forServerEvent("server_run", this));
-
-        boolean usesRunSh = Files.exists(getRoot().resolve("run.sh"));
-        String serverScript = usesRunSh ? "run" : "LaunchServer";
-
-        if (OS.isWindows()) {
-            serverScript += ".bat";
-        } else if (OS.isLinux() || OS.isMac()) {
-            serverScript += ".sh";
+        String serverScript = getServerScript();
+        if (serverScript == null) {
+            DialogManager.okDialog().setTitle(GetText.tr("Cannot Launch Server"))
+                    .setContent(new HTMLBuilder().text(GetText.tr(
+                            "We cannot launch this server for you. Please \"Open Folder\" and run the server manually."))
+                            .center().build())
+                    .setType(DialogManager.ERROR)
+                    .show();
+            return;
         }
+
+        boolean isATLauncherLaunchScript = isATLauncherLaunchScript();
+
+        Analytics.trackEvent(AnalyticsEvent.forServerEvent("server_run", this));
 
         LogManager.info("Starting server " + name);
         List<String> arguments = new ArrayList<>();
 
         String javaPath = null;
-        if (!usesRunSh && javaVersion != null && App.settings.useJavaProvidedByMinecraft) {
+        if (isATLauncherLaunchScript && javaVersion != null && App.settings.useJavaProvidedByMinecraft) {
             Map<String, List<JavaRuntime>> runtimesForSystem = Data.JAVA_RUNTIMES.getForSystem();
 
             if (runtimesForSystem.containsKey(javaVersion.component)
@@ -155,11 +159,18 @@ public class Server {
                 arguments.add("\"" + name + "\"");
                 arguments.add("/D");
                 arguments.add("\"" + getRoot().toString() + "\"");
-                arguments.add(serverScript);
 
-                if (javaPath != null) {
-                    arguments.add("ATLcustomjava");
-                    arguments.add("\"" + javaPath + "\\bin\\java.exe" + "\"");
+                if (isPowershellScript()) {
+                    arguments.add("powershell");
+                    arguments.add("-NoExit");
+                    arguments.add("./" + serverScript);
+                } else {
+                    arguments.add(serverScript);
+
+                    if (javaPath != null) {
+                        arguments.add("ATLcustomjava");
+                        arguments.add("\"" + javaPath + "\\bin\\java.exe" + "\"");
+                    }
                 }
 
                 if (!args.isEmpty()) {
@@ -172,7 +183,7 @@ public class Server {
                     arguments.add("-e");
 
                     arguments.add(getRoot().resolve(serverScript).toString()
-                            + (!usesRunSh && javaPath != null ? String.format(" ATLcustomjava %s",
+                            + (isATLauncherLaunchScript && javaPath != null ? String.format(" ATLcustomjava %s",
                                     javaPath + "/bin/java ") : " ")
                             + args);
                 } else if (Utils.executableInPath("exo-open")) {
@@ -182,7 +193,7 @@ public class Server {
                     arguments.add("--working-directory");
                     arguments.add(getRoot().toAbsolutePath().toString());
                     arguments.add(String.format(
-                            "./%s %s%s", serverScript, (!usesRunSh && javaPath != null
+                            "./%s %s%s", serverScript, (isATLauncherLaunchScript && javaPath != null
                                     ? String.format(" ATLcustomjava %s",
                                             javaPath + "/bin/java ")
                                     : ""),
@@ -199,7 +210,7 @@ public class Server {
             } else if (OS.isMac()) {
                 String launchCommand = serverScript;
 
-                if (!usesRunSh) {
+                if (isATLauncherLaunchScript) {
                     // unfortunately OSX doesn't allow us to pass arguments with open and Terminal
                     // so create a temporary script, run it and then delete after
                     List<String> launchScript = new ArrayList<>();
@@ -251,6 +262,54 @@ public class Server {
         } catch (IOException e) {
             LogManager.logStackTrace("Failed to launch server", e);
         }
+    }
+
+    private String getServerScript() {
+        if (OS.isWindows()) {
+            if (Files.exists(this.ROOT.resolve("LaunchServer.bat"))) {
+                return "LaunchServer.bat";
+            }
+
+            if (Files.exists(this.ROOT.resolve("start.ps1"))) {
+                return "start.ps1";
+            }
+
+            if (Files.exists(this.ROOT.resolve("run.bat"))) {
+                return "run.bat";
+            }
+        } else if (OS.isLinux() || OS.isMac()) {
+            if (Files.exists(this.ROOT.resolve("LaunchServer.sh"))) {
+                return "LaunchServer.sh";
+            }
+
+            if (Files.exists(this.ROOT.resolve("start.sh"))) {
+                return "start.sh";
+            }
+
+            if (Files.exists(this.ROOT.resolve("run.sh"))) {
+                return "run.sh";
+            }
+        }
+
+        return null;
+    }
+
+    private boolean isPowershellScript() {
+        if (OS.isWindows()) {
+            return getServerScript().endsWith(".ps1");
+        }
+
+        return false;
+    }
+
+    private boolean isATLauncherLaunchScript() {
+        if (OS.isWindows()) {
+            return Files.exists(this.ROOT.resolve("LaunchServer.bat"));
+        } else if (OS.isLinux() || OS.isMac()) {
+            return Files.exists(this.ROOT.resolve("LaunchServer.sh"));
+        }
+
+        return false;
     }
 
     public void backup() {

@@ -278,6 +278,10 @@ public class AnalyticsEvent {
         return AnalyticsEvent.forPackInstall(searchHit.title, "Modrinth", server);
     }
 
+    public static AnalyticsEvent forPackInstall(CurseForgeProject project, boolean server) {
+        return AnalyticsEvent.forPackInstall(project.name, "CurseForge", server);
+    }
+
     public static AnalyticsEvent forPackInstall(ModpacksChPackManifest pack) {
         return AnalyticsEvent.forPackInstall(pack.name, "ModpacksCh", false);
     }

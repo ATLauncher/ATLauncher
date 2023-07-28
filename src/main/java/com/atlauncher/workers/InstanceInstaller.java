@@ -262,6 +262,17 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
 
         try {
 
+            if (pack.curseForgeProject != null && isServer) {
+                downloadCurseForgeServerPack();
+                if (isCancelled()) {
+                    return success(false);
+                }
+
+                saveServerJson();
+
+                return success(true);
+            }
+
             if (changingLoader) {
                 generatePackVersionForVanilla();
 
@@ -390,6 +401,120 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         }
 
         return success(false);
+    }
+
+    private void downloadCurseForgeServerPack() throws Exception {
+        addPercent(5);
+
+        // #. {0} is the platform the modpack is from (e.g. CurseForge/Modrinth)
+        fireTask(GetText.tr("Downloading Server Pack From {0}", "CurseForge"));
+        fireSubProgressUnknown();
+
+        Path serverPackFile = this.temp.resolve(version._curseForgeFile.fileName.toLowerCase(Locale.ENGLISH));
+
+        if (version._curseForgeFile.downloadUrl == null) {
+            if (!App.settings.seenCurseForgeProjectDistributionDialog) {
+                App.settings.seenCurseForgeProjectDistributionDialog = true;
+                App.settings.save();
+
+                DialogManager.okDialog().setType(DialogManager.WARNING)
+                        .setTitle(GetText.tr("Mod Not Available"))
+                        .setContent(new HTMLBuilder().center().text(GetText.tr(
+                                "We were unable to download this modpack.<br/>This is likely due to the author of the modpack disabling third party clients from downloading it.<br/><br/>You'll be prompted shortly to download the modpack manually through your browser to your downloads folder.<br/>Once you've downloaded the file that was opened in your browser to your downloads folder, we can continue with installing the modpack.<br/><br/>This process is unfortunate, but we don't have any choice in this matter and has to be done this way."))
+                                .build())
+                        .show();
+            }
+
+            String filename = version._curseForgeFile.fileName.replace(" ", "+");
+
+            File fileLocation = FileSystem.DOWNLOADS.resolve(filename).toFile();
+            if (!fileLocation.exists()) {
+                File downloadsFolderFile = new File(FileSystem.getUserDownloadsPath().toFile(),
+                        filename);
+                if (downloadsFolderFile.exists()) {
+                    Utils.moveFile(downloadsFolderFile, fileLocation, true);
+                }
+
+                while (!fileLocation.exists()) {
+                    int retValue = 1;
+                    do {
+                        if (retValue == 1) {
+                            OS.openWebBrowser(pack.curseForgeProject.getBrowserDownloadUrl(version._curseForgeFile));
+                        }
+
+                        retValue = DialogManager.optionDialog()
+                                .setTitle(GetText.tr("Downloading") + " "
+                                        + filename)
+                                .setContent(new HTMLBuilder().center().text(GetText.tr(
+                                        "Browser opened to download file {0}",
+                                        filename)
+                                        + "<br/><br/>" + GetText.tr("Please save this file to the following location")
+                                        + "<br/><br/>"
+                                        + (OS.isUsingMacApp()
+                                                ? FileSystem.getUserDownloadsPath().toFile().getAbsolutePath()
+                                                : FileSystem.DOWNLOADS.toAbsolutePath().toString()
+                                                        + " or<br/>"
+                                                        + FileSystem.getUserDownloadsPath().toFile()))
+                                        .build())
+                                .addOption(GetText.tr("Open Folder"), true)
+                                .addOption(GetText.tr("I've Downloaded This File")).setType(DialogManager.INFO)
+                                .showWithFileMonitoring(fileLocation, downloadsFolderFile,
+                                        version._curseForgeFile.fileLength, 1);
+
+                        if (retValue == DialogManager.CLOSED_OPTION) {
+                            return;
+                        } else if (retValue == 0) {
+                            OS.openFileExplorer(FileSystem.DOWNLOADS);
+                        }
+                    } while (retValue != 1);
+
+                    if (!fileLocation.exists()) {
+                        // Check users downloads folder to see if it's there
+                        if (downloadsFolderFile.exists()) {
+                            Utils.moveFile(downloadsFolderFile, fileLocation, true);
+                        }
+                    }
+                }
+            }
+
+            FileUtils.moveFile(fileLocation.toPath(), serverPackFile, true);
+        } else {
+            com.atlauncher.network.Download serverPackDownload = com.atlauncher.network.Download.build()
+                    .setUrl(version._curseForgeFile.downloadUrl).downloadTo(serverPackFile)
+                    .size(version._curseForgeFile.fileLength);
+
+            Optional<CurseForgeFileHash> md5Hash = version._curseForgeFile.hashes.stream().filter(h -> h.isMd5())
+                    .findFirst();
+            Optional<CurseForgeFileHash> sha1Hash = version._curseForgeFile.hashes.stream().filter(h -> h.isSha1())
+                    .findFirst();
+
+            if (md5Hash.isPresent()) {
+                serverPackDownload = serverPackDownload.hash(md5Hash.get().value);
+            } else if (sha1Hash.isPresent()) {
+                serverPackDownload = serverPackDownload.hash(sha1Hash.get().value);
+            } else {
+                serverPackDownload = serverPackDownload.fingerprint(version._curseForgeFile.packageFingerprint);
+            }
+
+            serverPackDownload = serverPackDownload.withInstanceInstaller(this)
+                    .withHttpClient(Network.createProgressClient(this));
+
+            this.setTotalBytes(version._curseForgeFile.fileLength);
+            serverPackDownload.downloadFile();
+        }
+
+        addPercent(30);
+        fireTask(GetText.tr("Extracting Server Pack"));
+        fireSubProgressUnknown();
+
+        ArchiveUtils.extract(serverPackFile, root);
+        Files.delete(serverPackFile);
+
+        hideSubProgressBar();
+        addPercent(30);
+
+        this.packVersion = new Version();
+        packVersion.version = version._curseForgeFile.displayName;
     }
 
     private String getAnalyticsPlatform() {
@@ -2383,9 +2508,12 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         server.packId = this.pack.id;
         server.version = this.packVersion.version;
         server.isDev = this.version.isDev;
-        server.mods = this.modsInstalled;
         server.isPatchedForLog4Shell = true;
-        server.javaVersion = this.minecraftVersion.javaVersion;
+
+        if (pack.curseForgeProject == null) {
+            server.mods = this.modsInstalled;
+            server.javaVersion = this.minecraftVersion.javaVersion;
+        }
 
         if (this.version.isDev) {
             server.hash = this.version.hash;

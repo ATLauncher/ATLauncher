@@ -130,7 +130,8 @@ public class UnifiedPackCard extends JPanel implements RelocalizationListener {
         });
         buttonsPanel.add(createServerButton);
 
-        boolean showCreateServerButton = result.platform() == ModPackPlatformType.MODRINTH;
+        boolean showCreateServerButton = result.platform() == ModPackPlatformType.MODRINTH
+                || result.platform() == ModPackPlatformType.CURSEFORGE;
         if (result.platform() == ModPackPlatformType.ATLAUNCHER) {
             try {
                 showCreateServerButton = PackManager.getPackByID(Integer.parseInt(result.id())).createServer;

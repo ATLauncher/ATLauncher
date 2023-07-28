@@ -33,6 +33,7 @@ import javax.swing.border.TitledBorder;
 import org.mini2Dx.gettext.GetText;
 
 import com.atlauncher.App;
+import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.data.curseforge.CurseForgeAttachment;
 import com.atlauncher.data.curseforge.CurseForgeProject;
 import com.atlauncher.evnt.listener.RelocalizationListener;
@@ -41,6 +42,7 @@ import com.atlauncher.gui.components.BackgroundImageLabel;
 import com.atlauncher.gui.dialogs.InstanceInstallerDialog;
 import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.DialogManager;
+import com.atlauncher.managers.InstanceManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.network.analytics.AnalyticsEvent;
 import com.atlauncher.utils.OS;
@@ -48,6 +50,7 @@ import com.atlauncher.utils.OS;
 @SuppressWarnings("serial")
 public class CurseForgePackCard extends JPanel implements RelocalizationListener {
     private final JButton newInstanceButton = new JButton(GetText.tr("New Instance"));
+    private final JButton createServerButton = new JButton(GetText.tr("Create Server"));
     private final JButton websiteButton = new JButton(GetText.tr("Website"));
 
     public CurseForgePackCard(final CurseForgeProject project) {
@@ -88,6 +91,32 @@ public class CurseForgePackCard extends JPanel implements RelocalizationListener
             }
         });
         buttonsPanel.add(newInstanceButton);
+
+        createServerButton.addActionListener(e -> {
+            // user has no instances, they may not be aware this is not how to play
+            if (InstanceManager.getInstances().size() == 0) {
+                int ret = DialogManager.yesNoDialog().setTitle(GetText.tr("Are you sure you want to create a server?"))
+                        .setContent(new HTMLBuilder().center().text(GetText.tr(
+                                "Creating a server won't allow you play Minecraft, it's for letting others play together.<br/><br/>If you just want to play Minecraft, you don't want to create a server, and instead will want to create an instance.<br/><br/>Are you sure you want to create a server?"))
+                                .build())
+                        .setType(DialogManager.QUESTION).show();
+
+                if (ret != 0) {
+                    return;
+                }
+            }
+
+            if (AccountManager.getSelectedAccount() == null) {
+                DialogManager.okDialog().setTitle(GetText.tr("No Account Selected"))
+                        .setContent(GetText.tr("Cannot create server as you have no account selected."))
+                        .setType(DialogManager.ERROR).show();
+            } else {
+                Analytics.trackEvent(AnalyticsEvent.forPackInstall(project, true));
+                new InstanceInstallerDialog(project, true);
+            }
+        });
+        createServerButton.setVisible(project.latestFiles.stream().anyMatch(f -> f.serverPackFileId != null));
+        buttonsPanel.add(createServerButton);
 
         websiteButton.addActionListener(e -> OS.openWebBrowser(project.getWebsiteUrl()));
         buttonsPanel.add(websiteButton);
