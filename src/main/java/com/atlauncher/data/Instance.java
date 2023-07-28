@@ -1705,6 +1705,11 @@ public class Instance extends MinecraftVersion {
             return false;
         }
 
+        if (launcher.loaderVersion.isNeoForge()) {
+            LogManager.debug("Instance " + launcher.name + " cannot be exported due to: NeoForge is not supported");
+            return false;
+        }
+
         return true;
     }
 
