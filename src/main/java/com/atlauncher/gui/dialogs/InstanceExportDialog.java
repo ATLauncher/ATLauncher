@@ -309,21 +309,16 @@ public class InstanceExportDialog extends JDialog {
                 InstanceExportFormat exportFormat = ((ComboItem<InstanceExportFormat>) format.getSelectedItem())
                         .getValue();
 
-                Pair<Boolean, String> exportResult = instance.export(name.getText(), version.getText(),
+                Pair<Path, String> exportResult = instance.export(name.getText(), version.getText(),
                         author.getText(),
                         exportFormat, saveTo.getText(), overrides);
 
-                if (exportResult.left()) {
+                if (exportResult.left() != null) {
                     instance.launcher.lastExportName = name.getText();
                     instance.launcher.lastExportVersion = version.getText();
                     instance.launcher.lastExportAuthor = author.getText();
                     instance.launcher.lastExportSaveTo = saveTo.getText();
                     instance.save();
-
-                    String safePathName = name.getText().replaceAll("[\\\"?:*<>|]", "");
-                    Path exportPath = Paths.get(saveTo.getText())
-                            .resolve(String.format("%s.%s", safePathName,
-                                    (exportFormat == InstanceExportFormat.MODRINTH ? "mrpack" : "zip")));
 
                     if ((exportFormat == InstanceExportFormat.MODRINTH
                             || exportFormat == InstanceExportFormat.CURSEFORGE_AND_MODRINTH)
@@ -335,7 +330,7 @@ public class InstanceExportDialog extends JDialog {
                     if (exportFormat == InstanceExportFormat.CURSEFORGE_AND_MODRINTH) {
                         OS.openFileExplorer(Paths.get(saveTo.getText()));
                     } else {
-                        OS.openFileExplorer(exportPath, true);
+                        OS.openFileExplorer(exportResult.left(), true);
                     }
                 } else {
                     App.TOASTER.popError(GetText.tr("Failed to export instance. Check the console for details"));

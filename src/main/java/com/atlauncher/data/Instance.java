@@ -1714,7 +1714,7 @@ public class Instance extends MinecraftVersion {
         return true;
     }
 
-    public Pair<Boolean, String> export(String name, String version, String author, InstanceExportFormat format,
+    public Pair<Path, String> export(String name, String version, String author, InstanceExportFormat format,
             String saveTo,
             List<String> overrides) {
         try {
@@ -1723,7 +1723,7 @@ public class Instance extends MinecraftVersion {
             }
         } catch (IOException e) {
             LogManager.logStackTrace("Failed to create export directory", e);
-            return new Pair<Boolean, String>(false, null);
+            return new Pair<Path, String>(null, null);
         }
 
         if (format == InstanceExportFormat.CURSEFORGE) {
@@ -1731,8 +1731,8 @@ public class Instance extends MinecraftVersion {
         } else if (format == InstanceExportFormat.MODRINTH) {
             return exportAsModrinthZip(name, version, author, saveTo, overrides);
         } else if (format == InstanceExportFormat.CURSEFORGE_AND_MODRINTH) {
-            if (!exportAsCurseForgeZip(name, version, author, saveTo, overrides).left()) {
-                return new Pair<Boolean, String>(false, null);
+            if (exportAsCurseForgeZip(name, version, author, saveTo, overrides).left() == null) {
+                return new Pair<Path, String>(null, null);
             }
 
             return exportAsModrinthZip(name, version, author, saveTo, overrides);
@@ -1740,10 +1740,10 @@ public class Instance extends MinecraftVersion {
             return exportAsMultiMcZip(name, version, author, saveTo, overrides);
         }
 
-        return new Pair<Boolean, String>(false, null);
+        return new Pair<Path, String>(null, null);
     }
 
-    public Pair<Boolean, String> exportAsMultiMcZip(String name, String version, String author, String saveTo,
+    public Pair<Path, String> exportAsMultiMcZip(String name, String version, String author, String saveTo,
             List<String> overrides) {
         String safePathName = name.replaceAll("[\\\"?:*<>|]", "");
         Path to = Paths.get(saveTo).resolve(safePathName + ".zip");
@@ -1893,7 +1893,7 @@ public class Instance extends MinecraftVersion {
 
             FileUtils.deleteDirectory(tempDir);
 
-            return new Pair<Boolean, String>(false, null);
+            return new Pair<Path, String>(null, null);
         }
 
         // if Legacy Fabric, add patch in
@@ -1923,7 +1923,7 @@ public class Instance extends MinecraftVersion {
 
                 FileUtils.deleteDirectory(tempDir);
 
-                return new Pair<Boolean, String>(false, null);
+                return new Pair<Path, String>(null, null);
             }
 
         }
@@ -2000,7 +2000,7 @@ public class Instance extends MinecraftVersion {
 
             FileUtils.deleteDirectory(tempDir);
 
-            return new Pair<Boolean, String>(false, null);
+            return new Pair<Path, String>(null, null);
         }
 
         // create an empty .packignore file
@@ -2041,10 +2041,10 @@ public class Instance extends MinecraftVersion {
 
         FileUtils.deleteDirectory(tempDir);
 
-        return new Pair<Boolean, String>(true, null);
+        return new Pair<Path, String>(to, null);
     }
 
-    public Pair<Boolean, String> exportAsCurseForgeZip(String name, String version, String author, String saveTo,
+    public Pair<Path, String> exportAsCurseForgeZip(String name, String version, String author, String saveTo,
             List<String> overrides) {
         String safePathName = name.replaceAll("[\\\"?:*<>|]", "");
         Path to = Paths.get(saveTo).resolve(String.format("%s %s.zip", safePathName, version));
@@ -2151,7 +2151,7 @@ public class Instance extends MinecraftVersion {
 
             FileUtils.deleteDirectory(tempDir);
 
-            return new Pair<Boolean, String>(false, null);
+            return new Pair<Path, String>(null, null);
         }
 
         // create modlist.html
@@ -2174,7 +2174,7 @@ public class Instance extends MinecraftVersion {
 
             FileUtils.deleteDirectory(tempDir);
 
-            return new Pair<Boolean, String>(false, null);
+            return new Pair<Path, String>(null, null);
         }
 
         // copy over the overrides folder
@@ -2229,10 +2229,10 @@ public class Instance extends MinecraftVersion {
 
         FileUtils.deleteDirectory(tempDir);
 
-        return new Pair<Boolean, String>(true, null);
+        return new Pair<Path, String>(to, null);
     }
 
-    public Pair<Boolean, String> exportAsModrinthZip(String name, String version, String author, String saveTo,
+    public Pair<Path, String> exportAsModrinthZip(String name, String version, String author, String saveTo,
             List<String> overrides) {
         String safePathName = name.replaceAll("[\\\"?:*<>|]", "");
         Path to = Paths.get(saveTo).resolve(String.format("%s %s.mrpack", safePathName, version));
@@ -2334,7 +2334,7 @@ public class Instance extends MinecraftVersion {
 
             FileUtils.deleteDirectory(tempDir);
 
-            return new Pair<Boolean, String>(false, null);
+            return new Pair<Path, String>(null, null);
         }
 
         // copy over the overrides folder
@@ -2401,7 +2401,7 @@ public class Instance extends MinecraftVersion {
 
         FileUtils.deleteDirectory(tempDir);
 
-        return new Pair<Boolean, String>(true, overridesForPermissions.toString());
+        return new Pair<Path, String>(to, overridesForPermissions.toString());
     }
 
     public boolean rename(String newName) {
