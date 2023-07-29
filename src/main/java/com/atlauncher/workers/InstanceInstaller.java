@@ -19,6 +19,7 @@ package com.atlauncher.workers;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
@@ -511,9 +512,21 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         ArchiveUtils.extract(serverPackFile, serverPackExtractedPath);
         Files.delete(serverPackFile);
 
-        // folder within a folder
-        if (serverPackExtractedPath.toFile().listFiles().length == 1) {
-            Utils.moveDirectory(serverPackExtractedPath.toFile().listFiles()[0], root.toFile());
+        File[] directories = serverPackExtractedPath.toFile().listFiles(new FilenameFilter() {
+            @Override
+            public boolean accept(File dir, String name) {
+                return !name.startsWith(".") && new File(dir, name).isDirectory();
+            }
+        });
+
+        // Only 1 folder, so likely a folder within the folder
+        if (directories.length == 1) {
+            Utils.moveDirectory(directories[0], root.toFile());
+
+            // move any other files in the root
+            for (File file : serverPackExtractedPath.toFile().listFiles()) {
+                FileUtils.moveFile(file.toPath(), root);
+            }
             FileUtils.deleteDirectory(serverPackExtractedPath);
         } else {
             Utils.moveDirectory(serverPackExtractedPath.toFile(), root.toFile());
