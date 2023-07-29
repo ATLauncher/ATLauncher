@@ -277,6 +277,14 @@ public class Server {
             if (Files.exists(this.ROOT.resolve("run.bat"))) {
                 return "run.bat";
             }
+
+            if (Files.exists(this.ROOT.resolve("StartServer.bat"))) {
+                return "StartServer.bat";
+            }
+
+            if (Files.exists(this.ROOT.resolve("ServerStart.bat"))) {
+                return "ServerStart.bat";
+            }
         } else if (OS.isLinux() || OS.isMac()) {
             if (Files.exists(this.ROOT.resolve("LaunchServer.sh"))) {
                 return "LaunchServer.sh";
@@ -288,6 +296,14 @@ public class Server {
 
             if (Files.exists(this.ROOT.resolve("run.sh"))) {
                 return "run.sh";
+            }
+
+            if (Files.exists(this.ROOT.resolve("StartServer.sh"))) {
+                return "StartServer.sh";
+            }
+
+            if (Files.exists(this.ROOT.resolve("ServerStart.sh"))) {
+                return "ServerStart.sh";
             }
         }
 
