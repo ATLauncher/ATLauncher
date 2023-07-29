@@ -507,8 +507,17 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         fireTask(GetText.tr("Extracting Server Pack"));
         fireSubProgressUnknown();
 
-        ArchiveUtils.extract(serverPackFile, root);
+        Path serverPackExtractedPath = this.temp.resolve("serverpack");
+        ArchiveUtils.extract(serverPackFile, serverPackExtractedPath);
         Files.delete(serverPackFile);
+
+        // folder within a folder
+        if (serverPackExtractedPath.toFile().listFiles().length == 1) {
+            Utils.moveDirectory(serverPackExtractedPath.toFile().listFiles()[0], root.toFile());
+            FileUtils.deleteDirectory(serverPackExtractedPath);
+        } else {
+            Utils.moveDirectory(serverPackExtractedPath.toFile(), root.toFile());
+        }
 
         hideSubProgressBar();
         addPercent(30);
