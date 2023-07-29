@@ -60,6 +60,7 @@ public final class Download {
     public Path unzipTo;
     public Path extractedTo;
     public Path copyTo;
+    private boolean forceDownload = false;
     private boolean ignoreFailures = false;
     private boolean deleteAfterExtract = false;
     private String hash;
@@ -216,6 +217,12 @@ public final class Download {
 
     public Download unzipTo(Path unzipTo) {
         this.unzipTo = unzipTo;
+
+        return this;
+    }
+
+    public Download forceDownload() {
+        this.forceDownload = true;
 
         return this;
     }
@@ -411,7 +418,7 @@ public final class Download {
     }
 
     public boolean needToDownload() {
-        if (this.to == null) {
+        if (this.to == null || this.forceDownload) {
             return true;
         }
 
