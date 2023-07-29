@@ -327,6 +327,9 @@ public final class Download {
         this.response = httpClient.newCall(builder.build()).execute();
 
         if (this.response == null || (!this.ignoreFailures && !this.response.isSuccessful())) {
+            if (this.response != null && this.response.code() == 429) {
+                LogManager.info(this.response.headers().toString());
+            }
             throw new DownloadException(this);
         }
     }

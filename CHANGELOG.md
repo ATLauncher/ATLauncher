@@ -16,5 +16,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 - File not being shown correctly when export is complete
 - Importing MultiMC zips not importing settings [#792]
 - Issue with saveMods throwing NPE
+- Log headers of request when 429 response is returned from a download [#771]
 
 ### Misc
