@@ -453,7 +453,9 @@ public class InstanceInstallerDialog extends JDialog {
                         .mapToInt(file -> file.serverPackFileId).toArray();
                 List<CurseForgeFile> serverFiles = CurseForgeApi.getFiles(serverFileIds);
 
-                dialog.setReturnValue(serverFiles);
+                dialog.setReturnValue(
+                        serverFiles.stream().filter(f -> f.isAvailable && f.isServerPack && f.getGameVersion() != null)
+                                .collect(Collectors.toList()));
             } else {
                 dialog.setReturnValue(files);
             }
@@ -486,6 +488,7 @@ public class InstanceInstallerDialog extends JDialog {
                     try {
                         packVersion.minecraftVersion = MinecraftManager.getMinecraftVersion(f.getGameVersion());
                     } catch (InvalidMinecraftVersion e) {
+                        LogManager.warn(String.format("Failed to find Minecraft version for %s", f.getGameVersion()));
                         // somewhat valid, can happen, so grab version from the manifest
                         packVersion.minecraftVersion = null;
                     }
