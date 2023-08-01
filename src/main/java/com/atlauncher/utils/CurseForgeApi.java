@@ -21,6 +21,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -35,6 +36,7 @@ import com.atlauncher.data.curseforge.CurseForgeCoreApiResponse;
 import com.atlauncher.data.curseforge.CurseForgeFile;
 import com.atlauncher.data.curseforge.CurseForgeFingerprint;
 import com.atlauncher.data.curseforge.CurseForgeProject;
+import com.atlauncher.managers.ConfigManager;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.network.Download;
 import com.google.gson.reflect.TypeToken;
@@ -47,23 +49,25 @@ import okhttp3.RequestBody;
  * Various utility methods for interacting with the CurseForge API.
  */
 public class CurseForgeApi {
-    public static List<CurseForgeProject> searchCurseForge(int sectionId, String query, int page, int modLoaderType,
+    public static List<CurseForgeProject> searchCurseForge(int sectionId, String query, int page,
+            List<Integer> modLoaderTypes,
             String sort) {
-        return searchCurseForge(null, sectionId, query, page, modLoaderType, sort);
+        return searchCurseForge(null, sectionId, query, page, modLoaderTypes, sort);
     }
 
-    public static List<CurseForgeProject> searchCurseForge(int sectionId, String query, int page, int modLoaderType,
+    public static List<CurseForgeProject> searchCurseForge(int sectionId, String query, int page,
+            List<Integer> modLoaderTypes,
             String sort, Integer categoryId) {
-        return searchCurseForge(null, sectionId, query, page, modLoaderType, sort, true, categoryId);
+        return searchCurseForge(null, sectionId, query, page, modLoaderTypes, sort, true, categoryId);
     }
 
     public static List<CurseForgeProject> searchCurseForge(String gameVersion, int sectionId, String query, int page,
-            int modLoaderType, String sort, Integer categoryId) {
-        return searchCurseForge(gameVersion, sectionId, query, page, modLoaderType, sort, true, categoryId);
+            List<Integer> modLoaderTypes, String sort, Integer categoryId) {
+        return searchCurseForge(gameVersion, sectionId, query, page, modLoaderTypes, sort, true, categoryId);
     }
 
     public static List<CurseForgeProject> searchCurseForge(String gameVersion, int sectionId, String query, int page,
-            int modLoaderType, String sort, boolean sortDescending, Integer categoryId) {
+            List<Integer> modLoaderTypes, String sort, boolean sortDescending, Integer categoryId) {
         try {
             String url = String.format(
                     "%s/mods/search?gameId=432&classId=%s&searchFilter=%s&sortField=%s&sortOrder=%s&pageSize=%d&index=%d",
@@ -73,8 +77,8 @@ public class CurseForgeApi {
                     sortDescending ? "desc" : "asc",
                     Constants.CURSEFORGE_PAGINATION_SIZE, page * Constants.CURSEFORGE_PAGINATION_SIZE);
 
-            if (modLoaderType != 0) {
-                url += "&modLoaderType=" + modLoaderType;
+            if (modLoaderTypes != null && modLoaderTypes.size() != 0) {
+                url += "&modLoaderTypes=" + Gsons.DEFAULT.toJson(modLoaderTypes);
             }
 
             if (gameVersion != null) {
@@ -105,22 +109,22 @@ public class CurseForgeApi {
     }
 
     public static List<CurseForgeProject> searchCurseForge(String gameVersion, int sectionId, String query, int page,
-            int modLoaderType, String sort) {
-        return searchCurseForge(gameVersion, sectionId, query, page, modLoaderType, sort, null);
+            List<Integer> modLoaderTypes, String sort) {
+        return searchCurseForge(gameVersion, sectionId, query, page, modLoaderTypes, sort, null);
     }
 
     public static List<CurseForgeProject> searchWorlds(String gameVersion, String query, int page, String sort,
             String categoryId) {
         Integer categoryIdParam = categoryId == null ? null : Integer.parseInt(categoryId);
 
-        return searchCurseForge(gameVersion, Constants.CURSEFORGE_WORLDS_SECTION_ID, query, page, 0, sort,
+        return searchCurseForge(gameVersion, Constants.CURSEFORGE_WORLDS_SECTION_ID, query, page, null, sort,
                 categoryIdParam);
     }
 
     public static List<CurseForgeProject> searchResourcePacks(String query, int page, String sort, String categoryId) {
         Integer categoryIdParam = categoryId == null ? null : Integer.parseInt(categoryId);
 
-        return searchCurseForge(Constants.CURSEFORGE_RESOURCE_PACKS_SECTION_ID, query, page, 0, sort,
+        return searchCurseForge(Constants.CURSEFORGE_RESOURCE_PACKS_SECTION_ID, query, page, null, sort,
                 categoryIdParam);
     }
 
@@ -128,7 +132,7 @@ public class CurseForgeApi {
             String categoryId) {
         Integer categoryIdParam = categoryId == null ? null : Integer.parseInt(categoryId);
 
-        return searchCurseForge(gameVersion, Constants.CURSEFORGE_MODS_SECTION_ID, query, page, 0, sort,
+        return searchCurseForge(gameVersion, Constants.CURSEFORGE_MODS_SECTION_ID, query, page, null, sort,
                 categoryIdParam);
     }
 
@@ -137,24 +141,53 @@ public class CurseForgeApi {
             String minecraftVersion) {
         Integer categoryIdParam = categoryId == null ? null : Integer.parseInt(categoryId);
 
-        return searchCurseForge(minecraftVersion, Constants.CURSEFORGE_MODPACKS_SECTION_ID, query, page, 0, sort,
+        return searchCurseForge(minecraftVersion, Constants.CURSEFORGE_MODPACKS_SECTION_ID, query, page, null, sort,
                 sortDescending, categoryIdParam);
     }
 
     public static List<CurseForgeProject> searchModsForFabric(String gameVersion, String query, int page, String sort,
             String categoryId) {
         Integer categoryIdParam = categoryId == null ? null : Integer.parseInt(categoryId);
+        List<Integer> modLoaderTypes = Arrays.asList(Constants.CURSEFORGE_FABRIC_MODLOADER_ID);
 
         return searchCurseForge(gameVersion, Constants.CURSEFORGE_MODS_SECTION_ID, query, page,
-                Constants.CURSEFORGE_FABRIC_MODLOADER_ID, sort, categoryIdParam);
+                modLoaderTypes, sort, categoryIdParam);
+    }
+
+    public static List<CurseForgeProject> searchModsForQuilt(String gameVersion, String query, int page, String sort,
+            String categoryId) {
+        Integer categoryIdParam = categoryId == null ? null : Integer.parseInt(categoryId);
+        List<Integer> modLoaderTypes = Arrays.asList(Constants.CURSEFORGE_FABRIC_MODLOADER_ID,
+                Constants.CURSEFORGE_QUILT_MODLOADER_ID);
+
+        return searchCurseForge(gameVersion, Constants.CURSEFORGE_MODS_SECTION_ID, query, page,
+                modLoaderTypes, sort, categoryIdParam);
     }
 
     public static List<CurseForgeProject> searchModsForForge(String gameVersion, String query, int page, String sort,
             String categoryId) {
         Integer categoryIdParam = categoryId == null ? null : Integer.parseInt(categoryId);
+        List<Integer> modLoaderTypes = Arrays.asList(Constants.CURSEFORGE_FORGE_MODLOADER_ID);
 
         return searchCurseForge(gameVersion, Constants.CURSEFORGE_MODS_SECTION_ID, query, page,
-                Constants.CURSEFORGE_FORGE_MODLOADER_ID, sort, categoryIdParam);
+                modLoaderTypes, sort, categoryIdParam);
+    }
+
+    public static List<CurseForgeProject> searchModsForNeoForge(String gameVersion, String query, int page, String sort,
+            String categoryId) {
+        Integer categoryIdParam = categoryId == null ? null : Integer.parseInt(categoryId);
+
+        List<Integer> modLoaderTypes = new ArrayList<>();
+        modLoaderTypes.add(Constants.CURSEFORGE_NEOFORGE_MODLOADER_ID);
+
+        List<String> neoForgeForgeCompatabilityVersions = ConfigManager
+                .getConfigItem("loaders.neoforge.forgeCompatibleMinecraftVersions", new ArrayList<String>());
+        if (neoForgeForgeCompatabilityVersions.contains(gameVersion)) {
+            modLoaderTypes.add(Constants.CURSEFORGE_FORGE_MODLOADER_ID);
+        }
+
+        return searchCurseForge(gameVersion, Constants.CURSEFORGE_MODS_SECTION_ID, query, page,
+                modLoaderTypes, sort, categoryIdParam);
     }
 
     public static List<CurseForgeFile> getFilesForProject(int projectId) {

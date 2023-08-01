@@ -685,15 +685,23 @@ public final class AddModsDialog extends JDialog {
                                     : ((ComboItem<String>) categoriesComboBox.getSelectedItem()).getValue()));
                 } else {
                     if (this.instance.launcher.loaderVersion.isFabric()
-                            || this.instance.launcher.loaderVersion.isLegacyFabric()
-                            || this.instance.launcher.loaderVersion
-                                    .isQuilt()) {
+                            || this.instance.launcher.loaderVersion.isLegacyFabric()) {
                         setCurseForgeMods(CurseForgeApi.searchModsForFabric(versionToSearchFor, query, page,
                                 ((ComboItem<String>) sortComboBox.getSelectedItem()).getValue(),
                                 ((ComboItem<String>) categoriesComboBox.getSelectedItem()) == null ? null
                                         : ((ComboItem<String>) categoriesComboBox.getSelectedItem()).getValue()));
-                    } else if (this.instance.launcher.loaderVersion.isForge() || this.instance.launcher.loaderVersion.isNeoForge()) {
+                    } else if (this.instance.launcher.loaderVersion.isQuilt()) {
+                        setCurseForgeMods(CurseForgeApi.searchModsForQuilt(versionToSearchFor, query, page,
+                                ((ComboItem<String>) sortComboBox.getSelectedItem()).getValue(),
+                                ((ComboItem<String>) categoriesComboBox.getSelectedItem()) == null ? null
+                                        : ((ComboItem<String>) categoriesComboBox.getSelectedItem()).getValue()));
+                    } else if (this.instance.launcher.loaderVersion.isForge()) {
                         setCurseForgeMods(CurseForgeApi.searchModsForForge(versionToSearchFor, query, page,
+                                ((ComboItem<String>) sortComboBox.getSelectedItem()).getValue(),
+                                ((ComboItem<String>) categoriesComboBox.getSelectedItem()) == null ? null
+                                        : ((ComboItem<String>) categoriesComboBox.getSelectedItem()).getValue()));
+                    } else if (this.instance.launcher.loaderVersion.isNeoForge()) {
+                        setCurseForgeMods(CurseForgeApi.searchModsForNeoForge(versionToSearchFor, query, page,
                                 ((ComboItem<String>) sortComboBox.getSelectedItem()).getValue(),
                                 ((ComboItem<String>) categoriesComboBox.getSelectedItem()) == null ? null
                                         : ((ComboItem<String>) categoriesComboBox.getSelectedItem()).getValue()));
@@ -749,7 +757,7 @@ public final class AddModsDialog extends JDialog {
                                 ((ComboItem<String>) categoriesComboBox.getSelectedItem()) == null ? null
                                         : ((ComboItem<String>) categoriesComboBox.getSelectedItem()).getValue()));
                     } else if (this.instance.launcher.loaderVersion.isNeoForge()) {
-                        setModrinthMods(ModrinthApi.searchModsForForgeOrNeoForge(versionsToSearchFor, query, page,
+                        setModrinthMods(ModrinthApi.searchModsForNeoForge(versionsToSearchFor, query, page,
                                 ((ComboItem<String>) sortComboBox.getSelectedItem()).getValue(),
                                 ((ComboItem<String>) categoriesComboBox.getSelectedItem()) == null ? null
                                         : ((ComboItem<String>) categoriesComboBox.getSelectedItem()).getValue()));

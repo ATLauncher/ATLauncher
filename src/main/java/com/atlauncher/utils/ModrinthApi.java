@@ -39,6 +39,7 @@ import com.atlauncher.data.modrinth.ModrinthProject;
 import com.atlauncher.data.modrinth.ModrinthProjectType;
 import com.atlauncher.data.modrinth.ModrinthSearchResult;
 import com.atlauncher.data.modrinth.ModrinthVersion;
+import com.atlauncher.managers.ConfigManager;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.network.Download;
 import com.atlauncher.network.DownloadException;
@@ -114,10 +115,20 @@ public class ModrinthApi {
                 ModrinthProjectType.MOD);
     }
 
-    public static ModrinthSearchResult searchModsForForgeOrNeoForge(List<String> gameVersions, String query, int page,
+    public static ModrinthSearchResult searchModsForNeoForge(List<String> gameVersions, String query, int page,
             String sort, String category) {
-        List<String> categories = category == null ? Arrays.asList("forge", "neoforge")
-                : Arrays.asList(category, "forge", "neoforge");
+        List<String> categories = new ArrayList<>();
+
+        categories.add("neoforge");
+        if (category != null) {
+            categories.add(category);
+        }
+
+        List<String> neoForgeForgeCompatabilityVersions = ConfigManager
+                .getConfigItem("loaders.neoforge.forgeCompatibleMinecraftVersions", new ArrayList<String>());
+        if (gameVersions.stream().anyMatch(gv -> neoForgeForgeCompatabilityVersions.contains(gv))) {
+            categories.add("forge");
+        }
 
         return searchModrinth(gameVersions, query, page, sort, categories, ModrinthProjectType.MOD);
     }

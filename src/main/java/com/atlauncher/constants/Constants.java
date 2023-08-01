@@ -82,6 +82,8 @@ public class Constants {
     public static final String CURSEFORGE_CORE_API_HOST = "api.curseforge.com";
     public static final int CURSEFORGE_FORGE_MODLOADER_ID = 1;
     public static final int CURSEFORGE_FABRIC_MODLOADER_ID = 4;
+    public static final int CURSEFORGE_QUILT_MODLOADER_ID = 5;
+    public static final int CURSEFORGE_NEOFORGE_MODLOADER_ID = 6;
     public static final int CURSEFORGE_PAGINATION_SIZE = 20;
     public static final int CURSEFORGE_FABRIC_MOD_ID = 306612;
     public static final int CURSEFORGE_LEGACY_FABRIC_MOD_ID = 400281;

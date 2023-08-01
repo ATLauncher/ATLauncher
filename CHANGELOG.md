@@ -8,6 +8,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 ### New Features
 - Add dialog when exporting instances for Modrinth showing the override files [#785]
 - Support installing servers from CurseForge packs
+- Support searching CurseForge for NeoForge mods
 
 ### Fixes
 - Exporting an instance not working if the directory doesn't exist
