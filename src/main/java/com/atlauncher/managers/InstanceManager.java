@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import javax.swing.SwingUtilities;
@@ -33,6 +34,8 @@ import com.atlauncher.Data;
 import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
 import com.atlauncher.data.Instance;
+import com.atlauncher.data.Pack;
+import com.atlauncher.exceptions.InvalidPack;
 import com.atlauncher.utils.CurseForgeApi;
 import com.atlauncher.utils.FileUtils;
 import com.atlauncher.utils.Utils;
@@ -138,14 +141,44 @@ public class InstanceManager {
             }
         }
 
-        // convert all old system instances into just a Vanilla instance
+        List<Map<String, String>> movedPacks = ConfigManager.getConfigItem("movedPacks", new ArrayList<>());
+
+        System.out.println(Gsons.DEFAULT.toJson(movedPacks));
+
         Data.INSTANCES.forEach(instance -> {
+            // convert all old system instances into just a Vanilla instance
             if (instance.getPack() != null && instance.getPack().system) {
                 instance.launcher.vanillaInstance = true;
                 instance.launcher.packId = 0;
                 instance.launcher.pack = "Minecraft";
 
                 instance.save();
+            }
+
+            // convert packs marked as moved by ATLauncher to their new pack id & version
+            try {
+                if (instance.getPack() != null) {
+                    Optional<Map<String, String>> packMove = movedPacks.stream()
+                            .filter(mp -> Integer.parseInt(mp.get("fromPack")) == instance.launcher.packId).findFirst();
+
+                    if (packMove.isPresent()) {
+                        if (packMove.get().get("fromVersion").equals(instance.launcher.version)) {
+                            Pack newPack = PackManager.getPackByID(Integer.parseInt(packMove.get().get("toPack")));
+
+                            LogManager.info(String.format("Converting instance %s from pack %s to %s",
+                                    instance.launcher.name, instance.launcher.pack, newPack.name));
+
+                            instance.launcher.packId = newPack.id;
+                            instance.launcher.pack = newPack.name;
+                            instance.launcher.description = newPack.description;
+                            instance.launcher.version = packMove.get().get("toVersion");
+
+                            instance.save();
+                        }
+                    }
+                }
+            } catch (NumberFormatException | InvalidPack e) {
+                LogManager.logStackTrace("Error converting moved pack", e);
             }
         });
 
