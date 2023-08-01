@@ -143,8 +143,6 @@ public class InstanceManager {
 
         List<Map<String, String>> movedPacks = ConfigManager.getConfigItem("movedPacks", new ArrayList<>());
 
-        System.out.println(Gsons.DEFAULT.toJson(movedPacks));
-
         Data.INSTANCES.forEach(instance -> {
             // convert all old system instances into just a Vanilla instance
             if (instance.getPack() != null && instance.getPack().system) {
