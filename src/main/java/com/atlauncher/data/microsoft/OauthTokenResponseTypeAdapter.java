@@ -38,7 +38,10 @@ public class OauthTokenResponseTypeAdapter implements JsonDeserializer<OauthToke
         oauthTokenResponse.scope = rootObject.get("scope").getAsString();
         oauthTokenResponse.accessToken = rootObject.get("access_token").getAsString();
         oauthTokenResponse.refreshToken = rootObject.get("refresh_token").getAsString();
-        oauthTokenResponse.userId = rootObject.get("user_id").getAsString();
+
+        if (rootObject.has("user_id")) {
+            oauthTokenResponse.userId = rootObject.get("user_id").getAsString();
+        }
 
         if (rootObject.has("foci")) {
             oauthTokenResponse.foci = rootObject.get("foci").getAsString();

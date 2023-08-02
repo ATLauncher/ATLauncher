@@ -22,26 +22,30 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.IOException;
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JDialog;
-import javax.swing.JLabel;
+import javax.swing.JEditorPane;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
+import javax.swing.event.HyperlinkEvent;
 
 import org.mini2Dx.gettext.GetText;
 
 import com.atlauncher.App;
 import com.atlauncher.Gsons;
 import com.atlauncher.builders.HTMLBuilder;
-import com.atlauncher.constants.Constants;
 import com.atlauncher.data.MicrosoftAccount;
 import com.atlauncher.data.microsoft.Entitlements;
 import com.atlauncher.data.microsoft.LoginResponse;
+import com.atlauncher.data.microsoft.OauthDeviceCodeResponse;
+import com.atlauncher.data.microsoft.OauthDeviceCodeTokenError;
 import com.atlauncher.data.microsoft.OauthTokenResponse;
 import com.atlauncher.data.microsoft.Profile;
 import com.atlauncher.data.microsoft.XboxLiveAuthErrorResponse;
@@ -54,15 +58,10 @@ import com.atlauncher.network.DownloadException;
 import com.atlauncher.utils.MicrosoftAuthAPI;
 import com.atlauncher.utils.OS;
 
-import net.freeutils.httpserver.HTTPServer;
-import net.freeutils.httpserver.HTTPServer.VirtualHost;
-
 @SuppressWarnings("serial")
 public final class LoginWithMicrosoftDialog extends JDialog {
-    private static final HTTPServer server = new HTTPServer(Constants.MICROSOFT_LOGIN_REDIRECT_PORT);
-    private static final VirtualHost host = server.getVirtualHost(null);
-
     private MicrosoftAccount account = null;
+    private ScheduledExecutorService codeCheckExecutor = Executors.newScheduledThreadPool(1);
 
     public LoginWithMicrosoftDialog() {
         this(null);
@@ -72,35 +71,53 @@ public final class LoginWithMicrosoftDialog extends JDialog {
         super(App.launcher.getParent(), GetText.tr("Login with Microsoft"), ModalityType.DOCUMENT_MODAL);
 
         this.account = account;
-        this.setMinimumSize(new Dimension(400, 400));
+        this.setMinimumSize(new Dimension(400, 350));
         this.setResizable(false);
         this.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 
-        this.add(new LoadingPanel(GetText.tr("Browser opened to complete the login process")), BorderLayout.CENTER);
+        addWindowListener(new WindowAdapter() {
+            public void windowClosing(WindowEvent arg0) {
+                close();
+            }
+        });
+
+        OauthDeviceCodeResponse deviceCodeResponse = MicrosoftAuthAPI.getDeviceCode();
+
+        this.add(new LoadingPanel(null), BorderLayout.CENTER);
 
         JPanel bottomPanel = new JPanel(new BorderLayout());
         JPanel linkPanel = new JPanel(new FlowLayout());
 
-        JTextField linkTextField = new JTextField(Constants.MICROSOFT_LOGIN_URL);
-        linkTextField.setPreferredSize(new Dimension(300, 23));
-        linkPanel.add(linkTextField, BorderLayout.SOUTH);
-
-        JButton linkCopyButton = new JButton("Copy");
-        linkCopyButton.addActionListener(new ActionListener() {
+        JButton copyCodeButton = new JButton(GetText.tr("Copy Code"));
+        copyCodeButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                linkTextField.selectAll();
-                OS.copyToClipboard(Constants.MICROSOFT_LOGIN_URL);
+                OS.copyToClipboard(deviceCodeResponse.userCode);
             }
         });
-        linkPanel.add(linkCopyButton);
+        linkPanel.add(copyCodeButton);
 
-        JLabel infoLabel = new JLabel("<html>"
-                + GetText.tr("If your browser hasn't opened, please manually open the below link in your browser")
-                + "</html>");
-        infoLabel.setBorder(BorderFactory.createEmptyBorder(0, 32, 0, 32));
+        JButton openLinkButton = new JButton(GetText.tr("Open Link"));
+        openLinkButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                OS.openWebBrowser("https://www.microsoft.com/link");
+            }
+        });
+        linkPanel.add(openLinkButton);
 
-        bottomPanel.add(infoLabel, BorderLayout.CENTER);
+        JEditorPane infoPane = new JEditorPane("text/html", new HTMLBuilder().center().text(GetText.tr(
+                "To complete login, open <a href=\"https://www.microsoft.com/link\">https://www.microsoft.com/link</a> in a web browser and enter the code <b>{0}</b>.",
+                deviceCodeResponse.userCode)).build());
+        infoPane.setEditable(false);
+        infoPane.addHyperlinkListener(e -> {
+            if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+                OS.openWebBrowser(e.getURL());
+            }
+        });
+        infoPane.setBorder(BorderFactory.createEmptyBorder(0, 32, 0, 32));
+
+        bottomPanel.add(infoPane, BorderLayout.CENTER);
         bottomPanel.add(linkPanel, BorderLayout.SOUTH);
 
         this.add(bottomPanel, BorderLayout.SOUTH);
@@ -108,63 +125,66 @@ public final class LoginWithMicrosoftDialog extends JDialog {
         setVisible(false);
         dispose();
 
-        OS.openWebBrowser(Constants.MICROSOFT_LOGIN_URL);
+        pollForToken(deviceCodeResponse);
 
-        try {
-            startServer();
-        } catch (IOException e) {
-            LogManager.logStackTrace("Error starting web server for Microsoft login", e);
-
-            close();
-        }
-
-        this.setLocationRelativeTo(App.launcher.getParent());
-        this.setVisible(true);
+        setLocationRelativeTo(App.launcher.getParent());
+        setVisible(true);
     }
 
     private void close() {
-        server.stop();
+        if (!codeCheckExecutor.isShutdown()) {
+            codeCheckExecutor.shutdown();
+        }
+
         setVisible(false);
         dispose();
     }
 
-    private void startServer() throws IOException {
-        host.addContext("/", (req, res) -> {
-            if (req.getParams().containsKey("error")) {
-                res.getHeaders().add("Content-Type", "text/plain");
-                res.send(500, GetText.tr("Error logging in. Check console for more information"));
-                LogManager.error("Error logging into Microsoft account: " + URLDecoder
-                        .decode(req.getParams().get("error_description"), StandardCharsets.UTF_8.toString()));
-                close();
-                return 0;
-            }
+    private void pollForToken(OauthDeviceCodeResponse deviceCodeResponse) {
+        Runnable checkDeviceCodeRunnable = new Runnable() {
+            public void run() {
+                try {
+                    OauthTokenResponse oauthTokenResponse = MicrosoftAuthAPI
+                            .checkDeviceCodeForToken(deviceCodeResponse.deviceCode);
 
-            if (!req.getParams().containsKey("code")) {
-                res.getHeaders().add("Content-Type", "text/plain");
-                res.send(400, GetText.tr("Code is missing"));
-                close();
-                return 0;
-            }
+                    System.out.println(Gsons.DEFAULT.toJson(oauthTokenResponse));
 
-            try {
-                acquireAccessToken(req.getParams().get("code"));
-            } catch (Exception e) {
-                LogManager.logStackTrace("Error acquiring accessToken", e);
-                res.getHeaders().add("Content-Type", "text/html");
-                res.send(500, GetText.tr("Error logging in. Check console for more information"));
-                close();
-                return 0;
-            }
+                    acquireXBLToken(oauthTokenResponse);
 
-            res.getHeaders().add("Content-Type", "text/plain");
-            // #. {0} is the name of the launcher (ATLauncher)
-            res.send(200, GetText.tr("Login complete. You can now close this window and go back to {0}",
-                    Constants.LAUNCHER_NAME));
+                    close();
+                } catch (DownloadException e) {
+                    if (e.response != null) {
+                        OauthDeviceCodeTokenError deviceCodeTokenError = Gsons.DEFAULT.fromJson(e.response,
+                                OauthDeviceCodeTokenError.class);
+
+                        if (deviceCodeTokenError.error.equalsIgnoreCase("authorization_declined")) {
+                            LogManager.error("Authorization was declined");
+                            close();
+                        } else if (deviceCodeTokenError.error.equalsIgnoreCase("expired_token")) {
+                            LogManager.error("Token expired. Please try again");
+                            close();
+                        } else if (!deviceCodeTokenError.error.equalsIgnoreCase("authorization_pending")) {
+                            LogManager.error("An unknown error occured. Please try again");
+                            close();
+                        }
+                    } else {
+                        LogManager.error("An unknown error occured. Please try again");
+                        close();
+                    }
+                } catch (Exception e) {
+                    LogManager.logStackTrace("Error when checking for device code for token", e);
+                    close();
+                }
+            }
+        };
+
+        try {
+            codeCheckExecutor.scheduleAtFixedRate(checkDeviceCodeRunnable, deviceCodeResponse.interval,
+                    deviceCodeResponse.interval, TimeUnit.SECONDS);
+        } catch (Exception e) {
+            e.printStackTrace();
             close();
-            return 0;
-        }, "GET");
-
-        server.start();
+        }
     }
 
     private void addAccount(OauthTokenResponse oauthTokenResponse, XboxLiveAuthResponse xstsAuthResponse,
@@ -195,12 +215,6 @@ public final class LoginWithMicrosoftDialog extends JDialog {
         }
     }
 
-    private void acquireAccessToken(String authcode) throws Exception {
-        OauthTokenResponse oauthTokenResponse = MicrosoftAuthAPI.tradeCodeForAccessToken(authcode);
-
-        acquireXBLToken(oauthTokenResponse);
-    }
-
     private void acquireXBLToken(OauthTokenResponse oauthTokenResponse) throws Exception {
         XboxLiveAuthResponse xblAuthResponse = MicrosoftAuthAPI.getXBLToken(oauthTokenResponse.accessToken);
 
@@ -212,6 +226,7 @@ public final class LoginWithMicrosoftDialog extends JDialog {
 
         try {
             xstsAuthResponse = MicrosoftAuthAPI.getXstsToken(xblToken);
+            System.out.println(Gsons.DEFAULT.toJson(xstsAuthResponse));
         } catch (DownloadException e) {
             if (e.response != null) {
                 LogManager.debug(Gsons.DEFAULT.toJson(e.response));
@@ -222,15 +237,12 @@ public final class LoginWithMicrosoftDialog extends JDialog {
 
                 if (error != null) {
                     LogManager.warn(error);
-                    DialogManager.okDialog().setTitle(GetText.tr("Error logging into Xbox Live"))
-                            .setContent(new HTMLBuilder().center().text(error).build()).setType(DialogManager.ERROR)
-                            .show();
+                    DialogManager dialog = DialogManager.okDialog().setTitle(GetText.tr("Error logging into Xbox Live"))
+                            .setContent(new HTMLBuilder().center().text(error).build()).setType(DialogManager.ERROR);
 
                     String link = xboxLiveAuthErrorResponse.getBrowserLinkForCode();
 
-                    if (link != null) {
-                        OS.openWebBrowser(link);
-                    }
+                    throw new DialogException(dialog, e.getMessage(), link);
                 }
 
                 throw e;
@@ -257,12 +269,13 @@ public final class LoginWithMicrosoftDialog extends JDialog {
 
         if (!(entitlements.items.stream().anyMatch(i -> i.name.equalsIgnoreCase("product_minecraft"))
                 && entitlements.items.stream().anyMatch(i -> i.name.equalsIgnoreCase("game_minecraft")))) {
-            DialogManager.okDialog().setTitle(GetText.tr("Minecraft Has Not Been Purchased"))
+            DialogManager dialog = DialogManager.okDialog().setTitle(GetText.tr("Minecraft Has Not Been Purchased"))
                     .setContent(new HTMLBuilder().center().text(GetText.tr(
-                            "This account doesn't have a valid purchase of Minecraft.<br/><br/>Please make sure you've bought the Java edition of Minecraft and then try again."))
+                            "This account doesn't have a valid purchase of Minecraft.<br/><br/>Please make sure you've bought the Java edition of Minecraft and then try again.<br/><br/>If you have Xbox Game Pass, you need to login through the Minecraft launcher<br/>at least once and launch the game once in order to create your username."))
                             .build())
-                    .setType(DialogManager.ERROR).show();
-            throw new Exception("Account does not own Minecraft");
+                    .setType(DialogManager.ERROR);
+
+            throw new DialogException(dialog, "Account does not own Minecraft");
         }
 
         Profile profile = null;

@@ -28,6 +28,7 @@ import com.atlauncher.Gsons;
 import com.atlauncher.constants.Constants;
 import com.atlauncher.data.microsoft.Entitlements;
 import com.atlauncher.data.microsoft.LoginResponse;
+import com.atlauncher.data.microsoft.OauthDeviceCodeResponse;
 import com.atlauncher.data.microsoft.OauthTokenResponse;
 import com.atlauncher.data.microsoft.Profile;
 import com.atlauncher.data.microsoft.XboxLiveAuthResponse;
@@ -41,17 +42,27 @@ import okhttp3.RequestBody;
  * Various utility methods for interacting with the Microsoft Auth API.
  */
 public class MicrosoftAuthAPI {
-    public static OauthTokenResponse tradeCodeForAccessToken(String code) {
+    public static OauthDeviceCodeResponse getDeviceCode() {
         RequestBody data = new FormBody.Builder().add("client_id", Constants.MICROSOFT_LOGIN_CLIENT_ID)
-                .add("code", code).add("grant_type", "authorization_code")
-                .add("redirect_uri", Constants.MICROSOFT_LOGIN_REDIRECT_URL)
                 .add("scope", String.join(" ", Constants.MICROSOFT_LOGIN_SCOPES)).build();
 
-        OauthTokenResponse oauthTokenResponse = Download.build().setUrl(Constants.MICROSOFT_AUTH_TOKEN_URL)
+        OauthDeviceCodeResponse deviceCodeResponse = Download.build().setUrl(Constants.MICROSOFT_DEVICE_CODE_URL)
                 .header("Content-Type", "application/x-www-form-urlencoded").post(data)
-                .asClass(OauthTokenResponse.class, Gsons.DEFAULT);
+                .asClass(OauthDeviceCodeResponse.class, Gsons.DEFAULT);
 
-        return oauthTokenResponse;
+        return deviceCodeResponse;
+    }
+
+    public static OauthTokenResponse checkDeviceCodeForToken(String deviceCode) throws IOException {
+        RequestBody data = new FormBody.Builder().add("client_id", Constants.MICROSOFT_LOGIN_CLIENT_ID)
+                .add("device_code", deviceCode).add("grant_type", "urn:ietf:params:oauth:grant-type:device_code")
+                .build();
+
+        OauthTokenResponse deviceCodeTokenResponse = Download.build().setUrl(Constants.MICROSOFT_AUTH_TOKEN_URL)
+                .header("Content-Type", "application/x-www-form-urlencoded").post(data)
+                .asClassWithThrow(OauthTokenResponse.class, Gsons.DEFAULT);
+
+        return deviceCodeTokenResponse;
     }
 
     public static OauthTokenResponse refreshAccessToken(String refreshToken) {

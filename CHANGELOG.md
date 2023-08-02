@@ -10,6 +10,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Support installing servers from CurseForge packs
 - Support searching CurseForge for NeoForge mods
 - Convert packs from one ATLauncher pack to another, used for migration in ATLauncher backend
+- Use device code login method for Microsoft authentication [#755]
 
 ### Fixes
 - Exporting an instance not working if the directory doesn't exist
