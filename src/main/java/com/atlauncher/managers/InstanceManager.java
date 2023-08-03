@@ -27,10 +27,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
-import javax.swing.SwingUtilities;
-
-import com.atlauncher.Data;
 import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
 import com.atlauncher.data.Instance;
@@ -42,33 +40,18 @@ import com.atlauncher.utils.Utils;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
 
+import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.subjects.BehaviorSubject;
+
 public class InstanceManager {
-    private static final List<Listener> listeners = new LinkedList<>();
+    private static final BehaviorSubject<List<Instance>> INSTANCES = BehaviorSubject.createDefault(new LinkedList<>());
 
-    public static synchronized void addListener(Listener listener) {
-        listeners.add(listener);
-    }
-
-    public static synchronized void removeListener(Listener listener) {
-        listeners.remove(listener);
-    }
-
-    public static synchronized void post() {
-        SwingUtilities.invokeLater(() -> {
-            for (Listener listener : listeners) {
-                listener.onInstancesChanged();
-            }
-        });
+    public static Observable<List<Instance>> getInstancesObservable() {
+        return INSTANCES;
     }
 
     public static List<Instance> getInstances() {
-        return Data.INSTANCES;
-    }
-
-    public static ArrayList<Instance> getInstancesSorted() {
-        ArrayList<Instance> instances = new ArrayList<>(Data.INSTANCES);
-        instances.sort(Comparator.comparing(i -> i.launcher.name));
-        return instances;
+        return INSTANCES.getValue();
     }
 
     /**
@@ -77,17 +60,17 @@ public class InstanceManager {
     public static void loadInstances() {
         PerformanceManager.start();
         LogManager.debug("Loading instances");
-        Data.INSTANCES.clear();
+        List<Instance> newInstances = new LinkedList<>();
 
         for (String folder : Optional.of(FileSystem.INSTANCES.toFile().list(Utils.getInstanceFileFilter()))
-                .orElse(new String[0])) {
+            .orElse(new String[0])) {
             File instanceDir = FileSystem.INSTANCES.resolve(folder).toFile();
 
             Instance instance = null;
 
             try {
                 try (InputStreamReader fileReader = new InputStreamReader(
-                        new FileInputStream(new File(instanceDir, "instance.json")), StandardCharsets.UTF_8)) {
+                    new FileInputStream(new File(instanceDir, "instance.json")), StandardCharsets.UTF_8)) {
                     instance = Gsons.DEFAULT.fromJson(fileReader, Instance.class);
                     instance.ROOT = instanceDir.toPath();
                     LogManager.debug("Loaded instance from " + instanceDir);
@@ -102,15 +85,15 @@ public class InstanceManager {
                 }
 
                 if (instance.launcher.curseForgeManifest != null
-                        && instance.launcher.curseForgeManifest.projectID != null
-                        && instance.launcher.curseForgeManifest.fileID != null) {
+                    && instance.launcher.curseForgeManifest.projectID != null
+                    && instance.launcher.curseForgeManifest.fileID != null) {
                     LogManager.info(String.format("Converting instance \"%s\" CurseForge information",
-                            instance.launcher.name));
+                        instance.launcher.name));
                     instance.launcher.curseForgeProject = CurseForgeApi
-                            .getProjectById(instance.launcher.curseForgeManifest.projectID);
+                        .getProjectById(instance.launcher.curseForgeManifest.projectID);
                     instance.launcher.curseForgeFile = CurseForgeApi.getFileForProject(
-                            instance.launcher.curseForgeManifest.projectID,
-                            instance.launcher.curseForgeManifest.fileID);
+                        instance.launcher.curseForgeManifest.projectID,
+                        instance.launcher.curseForgeManifest.fileID);
                     instance.launcher.curseForgeManifest = null;
 
                     instance.save();
@@ -118,7 +101,7 @@ public class InstanceManager {
 
                 if (instance.launcher.numPlays == null) {
                     LogManager.info(String.format("Converting instance \"%s\" numPlays/lastPlayed",
-                            instance.launcher.name));
+                        instance.launcher.name));
                     instance.launcher.numPlays = instance.numPlays;
                     instance.launcher.lastPlayed = instance.lastPlayed;
 
@@ -126,15 +109,15 @@ public class InstanceManager {
                 }
 
                 if (instance.launcher.account != null
-                        && !AccountManager.isAccountByName(instance.launcher.account)) {
+                    && !AccountManager.isAccountByName(instance.launcher.account)) {
                     LogManager.warn(
-                            String.format("No account with name of %s, so setting instance account back to default",
-                                    instance.launcher.account));
+                        String.format("No account with name of %s, so setting instance account back to default",
+                            instance.launcher.account));
                     instance.launcher.account = null;
                     instance.save();
                 }
 
-                Data.INSTANCES.add(instance);
+                newInstances.add(instance);
             } catch (Exception e2) {
                 LogManager.logStackTrace("Failed to load instance in the folder " + instanceDir, e2);
                 continue;
@@ -143,7 +126,7 @@ public class InstanceManager {
 
         List<Map<String, String>> movedPacks = ConfigManager.getConfigItem("movedPacks", new ArrayList<>());
 
-        Data.INSTANCES.forEach(instance -> {
+        newInstances.forEach(instance -> {
             // convert all old system instances into just a Vanilla instance
             if (instance.getPack() != null && instance.getPack().system) {
                 instance.launcher.vanillaInstance = true;
@@ -157,14 +140,14 @@ public class InstanceManager {
             try {
                 if (instance.getPack() != null) {
                     Optional<Map<String, String>> packMove = movedPacks.stream()
-                            .filter(mp -> Integer.parseInt(mp.get("fromPack")) == instance.launcher.packId).findFirst();
+                        .filter(mp -> Integer.parseInt(mp.get("fromPack")) == instance.launcher.packId).findFirst();
 
                     if (packMove.isPresent()) {
                         if (packMove.get().get("fromVersion").equals(instance.launcher.version)) {
                             Pack newPack = PackManager.getPackByID(Integer.parseInt(packMove.get().get("toPack")));
 
                             LogManager.info(String.format("Converting instance %s from pack %s to %s",
-                                    instance.launcher.name, instance.launcher.pack, newPack.name));
+                                instance.launcher.name, instance.launcher.pack, newPack.name));
 
                             instance.launcher.packId = newPack.id;
                             instance.launcher.pack = newPack.name;
@@ -180,6 +163,7 @@ public class InstanceManager {
             }
         });
 
+        INSTANCES.onNext(newInstances);
         LogManager.debug("Finished loading instances");
         PerformanceManager.end();
     }
@@ -198,9 +182,10 @@ public class InstanceManager {
     }
 
     public static void removeInstance(Instance instance) {
-        if (Data.INSTANCES.remove(instance)) {
+        List<Instance> instances = INSTANCES.getValue();
+        if (instances.remove(instance)) {
             FileUtils.delete(instance.getRoot(), true);
-            post();
+            INSTANCES.onNext(instances);
         }
     }
 
@@ -211,8 +196,8 @@ public class InstanceManager {
      * @return True if there is an instance with the same name already
      */
     public static boolean isInstance(String name) {
-        return Data.INSTANCES.stream()
-                .anyMatch(i -> i.getSafeName().equalsIgnoreCase(name.replaceAll("[^A-Za-z0-9]", "")));
+        return INSTANCES.getValue().stream()
+            .anyMatch(i -> i.getSafeName().equalsIgnoreCase(name.replaceAll("[^A-Za-z0-9]", "")));
     }
 
     /**
@@ -222,7 +207,7 @@ public class InstanceManager {
      * @return True if the instance is found from the name
      */
     public static boolean isInstanceByName(String name) {
-        return Data.INSTANCES.stream().anyMatch(i -> i.launcher.name.equalsIgnoreCase(name));
+        return INSTANCES.getValue().stream().anyMatch(i -> i.launcher.name.equalsIgnoreCase(name));
     }
 
     /**
@@ -232,7 +217,7 @@ public class InstanceManager {
      * @return True if the instance is found from the name
      */
     public static boolean isInstanceBySafeName(String name) {
-        return Data.INSTANCES.stream().anyMatch(i -> i.getSafeName().equalsIgnoreCase(name));
+        return INSTANCES.getValue().stream().anyMatch(i -> i.getSafeName().equalsIgnoreCase(name));
     }
 
     /**
@@ -242,7 +227,7 @@ public class InstanceManager {
      * @return Instance if the instance is found from the name
      */
     public static Instance getInstanceByName(String name) {
-        return Data.INSTANCES.stream().filter(i -> i.launcher.name.equalsIgnoreCase(name)).findFirst().orElse(null);
+        return INSTANCES.getValue().stream().filter(i -> i.launcher.name.equalsIgnoreCase(name)).findFirst().orElse(null);
     }
 
     /**
@@ -252,7 +237,7 @@ public class InstanceManager {
      * @return Instance if the instance is found from the name
      */
     public static Instance getInstanceBySafeName(String name) {
-        return Data.INSTANCES.stream().filter(i -> i.getSafeName().equalsIgnoreCase(name)).findFirst().orElse(null);
+        return INSTANCES.getValue().stream().filter(i -> i.getSafeName().equalsIgnoreCase(name)).findFirst().orElse(null);
     }
 
     public static void cloneInstance(Instance instance, String clonedName) {
@@ -266,12 +251,15 @@ public class InstanceManager {
             FileUtils.createDirectory(clonedInstance.getRoot());
             Utils.copyDirectory(instance.getRoot().toFile(), clonedInstance.getRoot().toFile());
             clonedInstance.save();
-            Data.INSTANCES.add(clonedInstance);
-            post();
+            List<Instance> instances = INSTANCES.getValue();
+            instances.add(clonedInstance);
+            INSTANCES.onNext(instances);
         }
     }
 
-    public interface Listener {
-        void onInstancesChanged();
+    public static void addInstance(Instance instance) {
+        List<Instance> instances = INSTANCES.getValue();
+        instances.add(instance);
+        INSTANCES.onNext(instances);
     }
 }

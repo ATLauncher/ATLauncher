@@ -456,7 +456,6 @@ public class Launcher {
      * Reloads the panel used for Instances
      */
     public void reloadInstancesPanel() {
-        InstanceManager.post();
     }
 
     public void reloadServersPanel() {

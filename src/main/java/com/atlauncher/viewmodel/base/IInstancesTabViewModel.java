@@ -17,14 +17,18 @@
  */
 package com.atlauncher.viewmodel.base;
 
-import com.atlauncher.data.Instance;
-import com.atlauncher.utils.sort.InstanceSortingStrategy;
+import java.util.List;
+import java.util.regex.Pattern;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nullable;
-import java.util.List;
-import java.util.function.Consumer;
-import java.util.regex.Pattern;
+import com.atlauncher.data.Instance;
+import com.atlauncher.utils.sort.InstanceSortingStrategy;
+
+import io.reactivex.rxjava3.core.Observable;
 
 /**
  * 20 / 11 / 2022
@@ -34,5 +38,6 @@ public interface IInstancesTabViewModel {
 
     void setSearch(@Nullable Pattern search);
 
-    void setOnViewChanged(@NotNull Consumer<List<Instance>> consumer);
+    @Nonnull
+    Observable<List<Instance>> getInstances();
 }

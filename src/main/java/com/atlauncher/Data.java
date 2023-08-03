@@ -47,6 +47,10 @@ public final class Data {
 
     public static final List<Pack> PACKS = new LinkedList<>();
 
+    /**
+     * Moved to InstancesManager
+     */
+    @Deprecated
     public static final List<Instance> INSTANCES = new LinkedList<>();
 
     public static final List<Server> SERVERS = new LinkedList<>();
