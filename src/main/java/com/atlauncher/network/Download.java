@@ -356,6 +356,10 @@ public final class Download {
         return this.hash != null && this.hash.length() == 32;
     }
 
+    private boolean sha256() {
+        return this.hash != null && this.hash.length() == 64;
+    }
+
     private boolean sha512() {
         return this.hash != null && this.hash.length() == 128;
     }
@@ -442,6 +446,8 @@ public final class Download {
                 }
             } else if (this.md5() && Hashing.md5(this.to).equals(Hashing.toHashCode(this.getHash()))) {
                 return false;
+            } else if (this.sha256() && Hashing.sha256(this.to).equals(Hashing.toHashCode(this.getHash()))) {
+                return false;
             } else if (this.sha512() && Hashing.sha512(this.to).equals(Hashing.toHashCode(this.getHash()))) {
                 return false;
             } else if (Hashing.sha1(this.to).equals(Hashing.toHashCode(this.getHash()))) {
@@ -484,6 +490,8 @@ public final class Download {
                 }
             } else if (this.md5()) {
                 return Hashing.md5(this.to).equals(Hashing.toHashCode(this.getHash()));
+            } else if (this.sha256()) {
+                return Hashing.sha256(this.to).equals(Hashing.toHashCode(this.getHash()));
             } else if (this.sha512()) {
                 return Hashing.sha512(this.to).equals(Hashing.toHashCode(this.getHash()));
             } else {
@@ -585,6 +593,8 @@ public final class Download {
                     if (Files.exists(this.copyTo)) {
                         if (this.md5()) {
                             fileHash = Hashing.md5(this.copyTo);
+                        } else if (this.sha256()) {
+                            fileHash = Hashing.sha256(this.copyTo);
                         } else if (this.sha512()) {
                             fileHash = Hashing.sha512(this.copyTo);
                         } else {
@@ -671,7 +681,8 @@ public final class Download {
                     LogManager.error("Error downloading " + this.to.getFileName() + " from " + this.url + ". Expected"
                             + " hash of " + expected.toString() + " (with size of " + this.size + ") but got "
                             + (this.md5() ? Hashing.md5(this.to)
-                                    : (this.sha512() ? Hashing.sha512(this.to) : Hashing.sha1(this.to)))
+                                    : (this.sha256() ? Hashing.sha256(this.to)
+                                            : (this.sha512() ? Hashing.sha512(this.to) : Hashing.sha1(this.to))))
                             + " (with size of " + (Files.exists(this.to) ? Files.size(this.to) : 0)
                             + ") instead. Copied to FailedDownloads folder & cancelling install! ("
                             + App.settings.connectionTimeout + "/" + App.settings.concurrentConnections + ")");
@@ -694,6 +705,8 @@ public final class Download {
                     if (Files.exists(this.copyTo)) {
                         if (this.md5()) {
                             fileHash2 = Hashing.md5(this.copyTo);
+                        } else if (this.sha256()) {
+                            fileHash2 = Hashing.sha256(this.copyTo);
                         } else if (this.sha512()) {
                             fileHash2 = Hashing.sha512(this.copyTo);
                         } else {

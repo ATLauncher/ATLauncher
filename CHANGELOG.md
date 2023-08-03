@@ -10,6 +10,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Support installing servers from CurseForge packs
 - Support searching CurseForge for NeoForge mods
 - Convert packs from one ATLauncher pack to another, used for migration in ATLauncher backend
+- Add dialog to prompt exe users to download bundled JRE or update it if out of date [#601]
 
 ### Fixes
 - Exporting an instance not working if the directory doesn't exist
