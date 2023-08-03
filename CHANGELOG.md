@@ -10,3 +10,4 @@ This changelog only contains the changes that are unreleased. For changes for in
 ### Fixes
 
 ### Misc
+- Implement RxJava in InstanceManager for IInstancesTabViewModel [#795]
