@@ -39,7 +39,7 @@ public class ModrinthModpackUpdateManager {
         PerformanceManager.start();
         LogManager.info("Checking for updates to Modrinth instances");
 
-        boolean refreshInstancesPanel = Data.INSTANCES.parallelStream()
+        boolean refreshInstancesPanel = InstanceManager.getInstances().parallelStream()
                 .filter(i -> i.isModrinthPack()).map(i -> {
                     boolean wasUpdated = false;
 

@@ -40,7 +40,7 @@ public class CurseForgeUpdateManager {
         PerformanceManager.start();
         LogManager.info("Checking for updates to CurseForge instances");
 
-        int[] projectIdsFound = Data.INSTANCES.parallelStream()
+        int[] projectIdsFound = InstanceManager.getInstances().parallelStream()
                 .filter(i -> i.isCurseForgePack() && i.hasCurseForgeProjectId())
                 .mapToInt(i -> i.launcher.curseForgeManifest != null
                         ? i.launcher.curseForgeManifest.projectID
@@ -51,7 +51,7 @@ public class CurseForgeUpdateManager {
 
         if (foundProjects != null) {
 
-            boolean refreshInstancesPanel = Data.INSTANCES.parallelStream()
+            boolean refreshInstancesPanel = InstanceManager.getInstances().parallelStream()
                     .filter(i -> i.isCurseForgePack() && i.hasCurseForgeProjectId()).map(i -> {
                         boolean wasUpdated = false;
 

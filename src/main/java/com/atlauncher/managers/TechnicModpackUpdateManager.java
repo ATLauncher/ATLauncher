@@ -45,7 +45,7 @@ public class TechnicModpackUpdateManager {
         PerformanceManager.start();
         LogManager.info("Checking for updates to Technic Modpack instances");
 
-        boolean refreshInstancesPanel = Data.INSTANCES.parallelStream()
+        boolean refreshInstancesPanel = InstanceManager.getInstances().parallelStream()
                 .filter(i -> i.isTechnicPack() && i.launcher.checkForUpdates).map(i -> {
                     boolean wasUpdated = false;
 

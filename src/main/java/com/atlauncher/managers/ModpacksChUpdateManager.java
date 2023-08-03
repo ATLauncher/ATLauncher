@@ -42,7 +42,7 @@ public class ModpacksChUpdateManager {
         PerformanceManager.start();
         LogManager.info("Checking for updates to modpacks.ch instances");
 
-        boolean refreshInstancesPanel = Data.INSTANCES.parallelStream().filter(
+        boolean refreshInstancesPanel = InstanceManager.getInstances().parallelStream().filter(
                 i -> i.launcher.modpacksChPackManifest != null && i.launcher.modpacksChPackVersionManifest != null)
                 .map(i -> {
                     boolean wasUpdated = false;
