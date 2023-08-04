@@ -80,6 +80,7 @@ import com.atlauncher.Network;
 import com.atlauncher.annot.Json;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.constants.Constants;
+import com.atlauncher.constants.UIConstants;
 import com.atlauncher.data.curseforge.CurseForgeFile;
 import com.atlauncher.data.curseforge.CurseForgeFileHash;
 import com.atlauncher.data.curseforge.CurseForgeFingerprint;
@@ -879,6 +880,10 @@ public class Instance extends MinecraftVersion {
                     .setContent(new HTMLBuilder().center()
                             .text(GetText.tr("Cannot play instance as you have no account selected.")).build())
                     .setType(DialogManager.ERROR).show();
+
+            if (AccountManager.getAccounts().size() == 0) {
+                App.launcherFrame.tabbedPane.setSelectedIndex(UIConstants.LAUNCHER_ACCOUNTS_TAB);
+            }
 
             App.launcher.setMinecraftLaunched(false);
             return false;

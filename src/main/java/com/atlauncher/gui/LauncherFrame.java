@@ -25,8 +25,9 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.util.Arrays;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -35,6 +36,7 @@ import javax.swing.WindowConstants;
 
 import com.atlauncher.App;
 import com.atlauncher.constants.Constants;
+import com.atlauncher.constants.UIConstants;
 import com.atlauncher.data.Pack;
 import com.atlauncher.data.PackVersion;
 import com.atlauncher.evnt.listener.RelocalizationListener;
@@ -60,9 +62,9 @@ import com.atlauncher.utils.Utils;
 
 @SuppressWarnings("serial")
 public final class LauncherFrame extends JFrame implements RelocalizationListener {
-    private JTabbedPane tabbedPane;
+    public JTabbedPane tabbedPane;
 
-    private List<Tab> tabs;
+    private Map<Integer, Tab> tabs = new HashMap<>();
 
     public LauncherFrame(boolean show) {
         LogManager.info("Launcher opening");
@@ -194,43 +196,48 @@ public final class LauncherFrame extends JFrame implements RelocalizationListene
 
         PerformanceManager.start("newsTab");
         NewsTab newsTab = new NewsTab();
+        this.tabs.put(UIConstants.LAUNCHER_NEWS_TAB, newsTab);
         App.launcher.setNewsPanel(newsTab);
         PerformanceManager.end("newsTab");
 
         PerformanceManager.start("vanillaPacksTab");
         VanillaPacksTab vanillaPacksTab = new VanillaPacksTab();
+        this.tabs.put(UIConstants.LAUNCHER_VANILLA_PACKS_TAB, vanillaPacksTab);
         PerformanceManager.end("vanillaPacksTab");
 
         PerformanceManager.start("packsBrowserTab");
         PacksBrowserTab packsBrowserTab = new PacksBrowserTab();
+        this.tabs.put(UIConstants.LAUNCHER_PACKS_TAB, packsBrowserTab);
         App.launcher.setPacksBrowserPanel(packsBrowserTab);
         PerformanceManager.end("packsBrowserTab");
 
         PerformanceManager.start("instancesTab");
         InstancesTab instancesTab = new InstancesTab();
+        this.tabs.put(UIConstants.LAUNCHER_INSTANCES_TAB, instancesTab);
         PerformanceManager.end("instancesTab");
 
         PerformanceManager.start("serversTab");
         ServersTab serversTab = new ServersTab();
+        this.tabs.put(UIConstants.LAUNCHER_SERVERS_TAB, serversTab);
         PerformanceManager.end("serversTab");
 
         PerformanceManager.start("accountsTab");
         AccountsTab accountsTab = new AccountsTab();
+        this.tabs.put(UIConstants.LAUNCHER_ACCOUNTS_TAB, accountsTab);
         PerformanceManager.end("accountsTab");
 
         PerformanceManager.start("toolsTab");
         ToolsTab toolsTab = new ToolsTab();
+        this.tabs.put(UIConstants.LAUNCHER_TOOLS_TAB, toolsTab);
         PerformanceManager.end("toolsTab");
 
         PerformanceManager.start("settingsTab");
         SettingsTab settingsTab = new SettingsTab();
+        this.tabs.put(UIConstants.LAUNCHER_SETTINGS_TAB, settingsTab);
         PerformanceManager.end("settingsTab");
 
-        this.tabs = Arrays.asList(new Tab[] { newsTab, vanillaPacksTab, packsBrowserTab, instancesTab,
-                serversTab, accountsTab, toolsTab, settingsTab });
-
         tabbedPane.setFont(App.THEME.getTabFont());
-        for (Tab tab : this.tabs) {
+        for (Tab tab : this.tabs.values()) {
             this.tabbedPane.addTab(tab.getTitle(), (JPanel) tab);
         }
         tabbedPane.setOpaque(true);
@@ -247,8 +254,8 @@ public final class LauncherFrame extends JFrame implements RelocalizationListene
 
     @Override
     public void onRelocalization() {
-        for (int i = 0; i < this.tabbedPane.getTabCount(); i++) {
-            this.tabbedPane.setTitleAt(i, this.tabs.get(i).getTitle());
+        for (Entry<Integer, Tab> entry : this.tabs.entrySet()) {
+            this.tabbedPane.setTitleAt(entry.getKey(), entry.getValue().getTitle());
         }
 
         tabbedPane.setFont(App.THEME.getTabFont());

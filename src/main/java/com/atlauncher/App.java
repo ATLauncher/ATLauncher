@@ -122,6 +122,8 @@ public class App {
 
     public static LauncherConsole console;
 
+    public static LauncherFrame launcherFrame;
+
     /**
      * If the launcher was just updated and this is it's first time loading after
      * the update. This is used to check for when there are possible issues in which
@@ -410,7 +412,7 @@ public class App {
         // Open the Launcher
         final boolean openLauncher = open;
         SwingUtilities.invokeLater(() -> {
-            new LauncherFrame(openLauncher);
+            launcherFrame = new LauncherFrame(openLauncher);
             ss.close();
         });
     }

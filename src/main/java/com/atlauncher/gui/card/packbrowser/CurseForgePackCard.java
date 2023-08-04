@@ -34,6 +34,7 @@ import org.mini2Dx.gettext.GetText;
 
 import com.atlauncher.App;
 import com.atlauncher.builders.HTMLBuilder;
+import com.atlauncher.constants.UIConstants;
 import com.atlauncher.data.curseforge.CurseForgeAttachment;
 import com.atlauncher.data.curseforge.CurseForgeProject;
 import com.atlauncher.evnt.listener.RelocalizationListener;
@@ -85,6 +86,10 @@ public class CurseForgePackCard extends JPanel implements RelocalizationListener
                 DialogManager.okDialog().setTitle(GetText.tr("No Account Selected"))
                         .setContent(GetText.tr("Cannot create instance as you have no account selected."))
                         .setType(DialogManager.ERROR).show();
+
+                if (AccountManager.getAccounts().size() == 0) {
+                    App.launcherFrame.tabbedPane.setSelectedIndex(UIConstants.LAUNCHER_ACCOUNTS_TAB);
+                }
             } else {
                 Analytics.trackEvent(AnalyticsEvent.forPackInstall(project));
                 new InstanceInstallerDialog(project);
@@ -110,6 +115,10 @@ public class CurseForgePackCard extends JPanel implements RelocalizationListener
                 DialogManager.okDialog().setTitle(GetText.tr("No Account Selected"))
                         .setContent(GetText.tr("Cannot create server as you have no account selected."))
                         .setType(DialogManager.ERROR).show();
+
+                if (AccountManager.getAccounts().size() == 0) {
+                    App.launcherFrame.tabbedPane.setSelectedIndex(UIConstants.LAUNCHER_ACCOUNTS_TAB);
+                }
             } else {
                 Analytics.trackEvent(AnalyticsEvent.forPackInstall(project, true));
                 new InstanceInstallerDialog(project, true);

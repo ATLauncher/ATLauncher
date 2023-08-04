@@ -33,6 +33,7 @@ import org.mini2Dx.gettext.GetText;
 
 import com.atlauncher.App;
 import com.atlauncher.builders.HTMLBuilder;
+import com.atlauncher.constants.UIConstants;
 import com.atlauncher.data.modrinth.ModrinthSearchHit;
 import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.RelocalizationManager;
@@ -79,6 +80,10 @@ public class ModrinthPackCard extends JPanel implements RelocalizationListener {
                 DialogManager.okDialog().setTitle(GetText.tr("No Account Selected"))
                         .setContent(GetText.tr("Cannot create instance as you have no account selected."))
                         .setType(DialogManager.ERROR).show();
+
+                if (AccountManager.getAccounts().size() == 0) {
+                    App.launcherFrame.tabbedPane.setSelectedIndex(UIConstants.LAUNCHER_ACCOUNTS_TAB);
+                }
             } else {
                 Analytics.trackEvent(AnalyticsEvent.forPackInstall(searchHit));
                 new InstanceInstallerDialog(searchHit, false);
@@ -104,6 +109,10 @@ public class ModrinthPackCard extends JPanel implements RelocalizationListener {
                 DialogManager.okDialog().setTitle(GetText.tr("No Account Selected"))
                         .setContent(GetText.tr("Cannot create server as you have no account selected."))
                         .setType(DialogManager.ERROR).show();
+
+                if (AccountManager.getAccounts().size() == 0) {
+                    App.launcherFrame.tabbedPane.setSelectedIndex(UIConstants.LAUNCHER_ACCOUNTS_TAB);
+                }
             } else {
                 Analytics.trackEvent(AnalyticsEvent.forPackInstall(searchHit, true));
                 new InstanceInstallerDialog(searchHit, true);

@@ -236,14 +236,15 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         gbc.insets = UIConstants.FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         selectedTabOnStartup = new JComboBox<>();
-        selectedTabOnStartup.addItem(new ComboItem<>(0, GetText.tr("News")));
-        selectedTabOnStartup.addItem(new ComboItem<>(1, GetText.tr("Vanilla Packs")));
-        selectedTabOnStartup.addItem(new ComboItem<>(2, GetText.tr("Packs")));
-        selectedTabOnStartup.addItem(new ComboItem<>(3, GetText.tr("Instances")));
-        selectedTabOnStartup.addItem(new ComboItem<>(4, GetText.tr("Servers")));
-        selectedTabOnStartup.addItem(new ComboItem<>(5, GetText.tr("Accounts")));
-        selectedTabOnStartup.addItem(new ComboItem<>(6, GetText.tr("Tools")));
-        selectedTabOnStartup.addItem(new ComboItem<>(7, GetText.tr("Settings")));
+        selectedTabOnStartup.addItem(new ComboItem<>(UIConstants.LAUNCHER_NEWS_TAB, GetText.tr("News")));
+        selectedTabOnStartup
+                .addItem(new ComboItem<>(UIConstants.LAUNCHER_VANILLA_PACKS_TAB, GetText.tr("Vanilla Packs")));
+        selectedTabOnStartup.addItem(new ComboItem<>(UIConstants.LAUNCHER_PACKS_TAB, GetText.tr("Packs")));
+        selectedTabOnStartup.addItem(new ComboItem<>(UIConstants.LAUNCHER_INSTANCES_TAB, GetText.tr("Instances")));
+        selectedTabOnStartup.addItem(new ComboItem<>(UIConstants.LAUNCHER_SERVERS_TAB, GetText.tr("Servers")));
+        selectedTabOnStartup.addItem(new ComboItem<>(UIConstants.LAUNCHER_ACCOUNTS_TAB, GetText.tr("Accounts")));
+        selectedTabOnStartup.addItem(new ComboItem<>(UIConstants.LAUNCHER_TOOLS_TAB, GetText.tr("Tools")));
+        selectedTabOnStartup.addItem(new ComboItem<>(UIConstants.LAUNCHER_SETTINGS_TAB, GetText.tr("Settings")));
         selectedTabOnStartup.setSelectedItem(App.settings.selectedTabOnStartup);
 
         for (int i = 0; i < selectedTabOnStartup.getItemCount(); i++) {

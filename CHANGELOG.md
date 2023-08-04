@@ -20,5 +20,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Importing MultiMC zips not importing settings [#792]
 - Issue with saveMods throwing NPE
 - Log headers of request when 429 response is returned from a download [#771]
+- Switch to Accounts tab when trying to create/play without an account [#753]
 
 ### Misc

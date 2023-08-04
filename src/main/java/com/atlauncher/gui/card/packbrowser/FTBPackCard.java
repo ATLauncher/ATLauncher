@@ -36,6 +36,7 @@ import javax.swing.event.HyperlinkEvent;
 import org.mini2Dx.gettext.GetText;
 
 import com.atlauncher.App;
+import com.atlauncher.constants.UIConstants;
 import com.atlauncher.data.modpacksch.ModpacksChPackArt;
 import com.atlauncher.data.modpacksch.ModpacksChPackArtType;
 import com.atlauncher.data.modpacksch.ModpacksChPackManifest;
@@ -91,6 +92,10 @@ public class FTBPackCard extends JPanel implements RelocalizationListener {
                 DialogManager.okDialog().setTitle(GetText.tr("No Account Selected"))
                         .setContent(GetText.tr("Cannot create instance as you have no account selected."))
                         .setType(DialogManager.ERROR).show();
+
+                if (AccountManager.getAccounts().size() == 0) {
+                    App.launcherFrame.tabbedPane.setSelectedIndex(UIConstants.LAUNCHER_ACCOUNTS_TAB);
+                }
             } else {
                 Analytics.trackEvent(AnalyticsEvent.forPackInstall(pack));
                 new InstanceInstallerDialog(pack);

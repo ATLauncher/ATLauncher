@@ -31,6 +31,7 @@ import javax.swing.JPanel;
 import org.apache.commons.text.WordUtils;
 import org.mini2Dx.gettext.GetText;
 
+import com.atlauncher.App;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.constants.UIConstants;
 import com.atlauncher.data.minecraft.VersionManifestVersion;
@@ -247,6 +248,10 @@ public class ModrinthPacksPanel extends PackBrowserPlatformPanel {
             DialogManager.okDialog().setTitle(GetText.tr("No Account Selected"))
                     .setContent(GetText.tr("Cannot create instance as you have no account selected."))
                     .setType(DialogManager.ERROR).show();
+
+            if (AccountManager.getAccounts().size() == 0) {
+                App.launcherFrame.tabbedPane.setSelectedIndex(UIConstants.LAUNCHER_ACCOUNTS_TAB);
+            }
         } else {
             Analytics.trackEvent(AnalyticsEvent.forPackInstall(project));
             new InstanceInstallerDialog(project);

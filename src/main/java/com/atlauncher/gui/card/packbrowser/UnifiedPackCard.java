@@ -34,6 +34,7 @@ import org.mini2Dx.gettext.GetText;
 
 import com.atlauncher.App;
 import com.atlauncher.builders.HTMLBuilder;
+import com.atlauncher.constants.UIConstants;
 import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.graphql.fragment.UnifiedModPackResultsFragment;
@@ -98,6 +99,10 @@ public class UnifiedPackCard extends JPanel implements RelocalizationListener {
                 DialogManager.okDialog().setTitle(GetText.tr("No Account Selected"))
                         .setContent(GetText.tr("Cannot create instance as you have no account selected."))
                         .setType(DialogManager.ERROR).show();
+
+                if (AccountManager.getAccounts().size() == 0) {
+                    App.launcherFrame.tabbedPane.setSelectedIndex(UIConstants.LAUNCHER_ACCOUNTS_TAB);
+                }
             } else {
                 Analytics.trackEvent(AnalyticsEvent.forPackInstall(result));
                 new InstanceInstallerDialog(result, false);
@@ -123,6 +128,10 @@ public class UnifiedPackCard extends JPanel implements RelocalizationListener {
                 DialogManager.okDialog().setTitle(GetText.tr("No Account Selected"))
                         .setContent(GetText.tr("Cannot create server as you have no account selected."))
                         .setType(DialogManager.ERROR).show();
+
+                if (AccountManager.getAccounts().size() == 0) {
+                    App.launcherFrame.tabbedPane.setSelectedIndex(UIConstants.LAUNCHER_ACCOUNTS_TAB);
+                }
             } else {
                 Analytics.trackEvent(AnalyticsEvent.forPackInstall(result, true));
                 new InstanceInstallerDialog(result, true);
