@@ -425,7 +425,7 @@ public class App {
                 dialogText = GetText.tr(
                         "You're running an out of date version of Java that was installed with the launcher.<br/><br/>In the future the launcher will no longer work without updating this.<br/><br/>This process is automatic and doesn't affect any Java installs outside of the launcher.<br/><br/>Do you want to do it now?");
             } else if (Java.getLauncherJavaVersionNumber() < ConfigManager.getConfigItem("bundledJre.majorVersion",
-                    17).intValue()) {
+                    17.0).intValue()) {
                 dialogTitle = GetText.tr("Using Out Of Date Java");
                 dialogText = GetText.tr(
                         "You're running an out of date version of Java.<br/><br/>In the future the launcher will no longer work without updating this.<br/><br/>This process is automatic and doesn't affect any Java installs outside of the launcher.<br/><br/>Do you want to do it now?");
@@ -441,29 +441,25 @@ public class App {
                             .build())
                     .setType(DialogManager.WARNING).show();
 
-            // mark as seeing this version of the prompt to avoid repetition (for now)
-            App.settings.seenBundledJrePromptVersion = 1;
-            App.settings.save();
-
             if (ret == 0) {
+                String bundledJreConfigNamespace = OS.is64Bit() ? "bundledJre.windowsx64" : "bundledJre.windowsx86";
                 Path newJreBundlePath = FileSystem.TEMP.resolve("updatedbundledjre");
 
                 ProgressDialog<Boolean> progressDialog = new ProgressDialog<>(
                         GetText.tr("Downloading Java Update"), 1,
                         GetText.tr("Downloading Java Update"));
                 progressDialog.addThread(new Thread(() -> {
-                    String bundledJreConfigNamespace = OS.is64Bit() ? "bundledJre.windowsx64" : "bundledJre.windowsx86";
-
                     Download jreDownload = new Download()
                             .withHttpClient(Network.createProgressClient(progressDialog))
                             .setUrl(
                                     ConfigManager.getConfigItem(bundledJreConfigNamespace + ".url", ""))
                             .hash(ConfigManager.getConfigItem(bundledJreConfigNamespace + ".hash", ""))
-                            .size(ConfigManager.getConfigItem(bundledJreConfigNamespace + ".size", 0))
+                            .size(ConfigManager.getConfigItem(bundledJreConfigNamespace + ".size", 0.0).longValue())
                             .downloadTo(FileSystem.TEMP.resolve("updatedbundledjre.zip"))
                             .unzipTo(newJreBundlePath).deleteAfterExtract();
 
-                    progressDialog.setTotalBytes(ConfigManager.getConfigItem(bundledJreConfigNamespace + ".size", 0));
+                    progressDialog.setTotalBytes(
+                            ConfigManager.getConfigItem(bundledJreConfigNamespace + ".size", 0.0).longValue());
 
                     try {
                         jreDownload.downloadFile();
@@ -481,7 +477,8 @@ public class App {
                 progressDialog.start();
 
                 if (progressDialog.getReturnValue()) {
-                    OS.restartToUpdateBundledJre(newJreBundlePath.resolve("jdk-17.0.3+7-jre"));
+                    String folder = ConfigManager.getConfigItem(bundledJreConfigNamespace + ".folder", null);
+                    OS.restartToUpdateBundledJre(folder == null ? newJreBundlePath : newJreBundlePath.resolve(folder));
                     System.exit(0);
                 } else {
                     DialogManager
@@ -494,6 +491,11 @@ public class App {
                             .setType(DialogManager.ERROR).show();
                 }
             }
+
+            // mark as seeing this version of the prompt to avoid repetition
+            App.settings.seenBundledJrePromptVersion = ConfigManager.getConfigItem("bundledJre.promptVersion", 1.0)
+                    .intValue();
+            App.settings.save();
         }
     }
 

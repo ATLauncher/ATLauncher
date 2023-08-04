@@ -327,15 +327,17 @@ public class Java {
             return false;
         }
 
+        if (App.settings.seenBundledJrePromptVersion == ConfigManager.getConfigItem("bundledJre.promptVersion", 1.0)
+                .intValue()) {
+            return false;
+        }
+
         if (Files.exists(FileSystem.JRE) && Java.bundledJreOutOfDate()) {
             return true;
         }
 
-        if (App.settings.seenBundledJrePromptVersion < ConfigManager.getConfigItem("bundledJre.promptVersion", 1)) {
-            return false;
-        }
-
-        return Java.getLauncherJavaVersionNumber() < 17 || !Files.exists(FileSystem.JRE);
+        return Java.getLauncherJavaVersionNumber() < ConfigManager.getConfigItem("bundledJre.majorVersion", 17.0)
+                .intValue() || !Files.exists(FileSystem.JRE);
     }
 
     public static boolean bundledJreOutOfDate() {
