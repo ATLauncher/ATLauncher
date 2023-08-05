@@ -23,6 +23,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.jar.JarFile;
 
@@ -31,7 +32,7 @@ import com.atlauncher.managers.LogManager;
 import me.cortex.jarscanner.Detector;
 
 public class SecurityUtils {
-    public static List<Path> scanForFractureiser(List<Path> paths) {
+    public static List<Path> scanForFractureiser(List<Path> paths) throws InterruptedException {
         Function<String, String> logOutput = outputString -> {
             LogManager.error(outputString);
             return outputString;
@@ -54,6 +55,9 @@ public class SecurityUtils {
                 }
             });
         }
+
+        executor.shutdown();
+        executor.awaitTermination(5, TimeUnit.MINUTES);
 
         return infectionsFound;
     }

@@ -852,7 +852,12 @@ public class Instance extends MinecraftVersion {
             PerformanceManager.start("Scanning mods for Fractureiser");
             progressDialog.setLabel(GetText.tr("Scanning mods for Fractureiser"));
 
-            List<Path> foundInfections = SecurityUtils.scanForFractureiser(this.getModPathsFromFilesystem());
+            List<Path> foundInfections = new ArrayList<>();
+            try {
+                foundInfections = SecurityUtils.scanForFractureiser(this.getModPathsFromFilesystem());
+            } catch (InterruptedException e) {
+                LogManager.logStackTrace("Failed to scan all mods for Fractureiser", e);
+            }
             PerformanceManager.end("Scanning mods for Fractureiser");
 
             if (foundInfections.size() != 0) {
