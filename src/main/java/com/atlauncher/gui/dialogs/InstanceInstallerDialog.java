@@ -205,7 +205,7 @@ public class InstanceInstallerDialog extends JDialog {
         this.autoInstallVersion = autoInstallVersion;
         this.extractedPath = extractedPathCon;
         this.preselectedModrinthVersion = preselectedModrinthVersion;
-        this.isServer = true;
+        this.isServer = isServer;
 
         Analytics.sendScreenView("Instance Installer Dialog");
 
@@ -450,6 +450,7 @@ public class InstanceInstallerDialog extends JDialog {
             List<CurseForgeFile> files = CurseForgeApi.getFilesForProject(curseForgeProject.id);
 
             if (isServer) {
+                System.out.println("adsdsfsdf");
                 int[] serverFileIds = files.stream().filter(file -> file.serverPackFileId != null)
                         .mapToInt(file -> file.serverPackFileId).toArray();
                 List<CurseForgeFile> serverFiles = CurseForgeApi.getFiles(serverFileIds);
