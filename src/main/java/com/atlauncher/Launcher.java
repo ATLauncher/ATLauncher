@@ -24,6 +24,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.lang.reflect.Type;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -137,6 +138,8 @@ public class Launcher {
 
         PackManager.removeUnusedImages(); // remove unused pack images
 
+        loadScannedFracturiserHashes();
+
         if (OS.isWindows() && !Java.is64Bit() && OS.is64Bit()) {
             LogManager.warn("You're using 32 bit Java on a 64 bit Windows install!");
 
@@ -158,6 +161,21 @@ public class Launcher {
             Analytics.startSession();
         }
         PerformanceManager.end();
+    }
+
+    private void loadScannedFracturiserHashes() {
+        if (Files.exists(FileSystem.FRACTURISER_SCANNED_HASHES)) {
+            try (InputStreamReader fileReader = new InputStreamReader(
+                    new FileInputStream(FileSystem.FRACTURISER_SCANNED_HASHES.toFile()), StandardCharsets.UTF_8)) {
+                Type stringListType = new TypeToken<List<String>>() {
+                }.getType();
+                List<String> scannedHashes = Gsons.DEFAULT.fromJson(fileReader, stringListType);
+
+                Data.FRACTURISER_SCANNED_HASHES.addAll(scannedHashes);
+            } catch (Exception e) {
+                LogManager.logStackTrace("Exception loading scanned Fracturiser hashes", e);
+            }
+        }
     }
 
     public boolean launcherHasUpdate() {

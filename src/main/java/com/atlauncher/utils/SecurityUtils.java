@@ -17,6 +17,11 @@
  */
 package com.atlauncher.utils;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.lang.reflect.Type;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -27,7 +32,13 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.jar.JarFile;
 
+import com.atlauncher.Data;
+import com.atlauncher.FileSystem;
+import com.atlauncher.Gsons;
 import com.atlauncher.managers.LogManager;
+import com.google.common.hash.HashCode;
+import com.google.gson.JsonIOException;
+import com.google.gson.reflect.TypeToken;
 
 import me.cortex.jarscanner.Detector;
 
@@ -43,11 +54,20 @@ public class SecurityUtils {
         ExecutorService executor = Executors.newFixedThreadPool(4);
         for (final Path path : paths) {
             executor.submit(() -> {
+                HashCode fileHash = Hashing.sha1(path);
+                if (Data.FRACTURISER_SCANNED_HASHES.contains(fileHash.toString())) {
+                    LogManager.debug(String.format("%s has already been scanned for Fractureiser",
+                            path.toAbsolutePath().toString()));
+                    return;
+                }
+
                 LogManager.debug(String.format("Scanning %s for Fractureiser", path.toAbsolutePath().toString()));
 
                 try (JarFile scannableJarFile = new JarFile(path.toFile())) {
                     if (Detector.scan(scannableJarFile, path, logOutput)) {
                         infectionsFound.add(path);
+                    } else {
+                        Data.FRACTURISER_SCANNED_HASHES.add(fileHash.toString());
                     }
                 } catch (Exception e) {
                     LogManager.error(
@@ -58,6 +78,15 @@ public class SecurityUtils {
 
         executor.shutdown();
         executor.awaitTermination(5, TimeUnit.MINUTES);
+
+        try (OutputStreamWriter fileWriter = new OutputStreamWriter(
+                new FileOutputStream(FileSystem.FRACTURISER_SCANNED_HASHES.toFile()), StandardCharsets.UTF_8)) {
+            Type stringListType = new TypeToken<List<String>>() {
+            }.getType();
+            Gsons.DEFAULT.toJson(Data.FRACTURISER_SCANNED_HASHES, stringListType, fileWriter);
+        } catch (JsonIOException | IOException e) {
+            LogManager.logStackTrace(e);
+        }
 
         return infectionsFound;
     }
