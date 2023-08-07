@@ -9,5 +9,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 
 ### Fixes
 - Add caching to Fracturiser scans on instance launch
+- Issue with some Modrinth packs not being installable
 
 ### Misc
