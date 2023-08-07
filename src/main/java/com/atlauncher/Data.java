@@ -17,7 +17,6 @@
  */
 package com.atlauncher;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -55,9 +54,6 @@ public final class Data {
     public static final Map<String, VersionManifestVersion> MINECRAFT = new HashMap<>();
     public static LWJGLVersions LWJGL_VERSIONS = null;
     public static JavaRuntimes JAVA_RUNTIMES = null;
-
-    // List of SHA1 hashes of files scanned as clean for Fractureiser
-    public static final List<String> FRACTURISER_SCANNED_HASHES = new ArrayList<>();
 
     // CurseForge instance update checking
     public static final Map<Instance, CurseForgeFile> CURSEFORGE_INSTANCE_LATEST_VERSION = new HashMap<>();
