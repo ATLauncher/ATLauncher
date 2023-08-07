@@ -3,12 +3,10 @@
 This changelog only contains the changes that are unreleased. For changes for individual releases, please visit the
 [releases](https://github.com/ATLauncher/ATLauncher/releases) page on GitHub.
 
-## 3.4.31.2
+## 3.4.31.3
 
 ### New Features
 
 ### Fixes
-- Add caching to Fracturiser scans on instance launch
-- Issue with some Modrinth packs not being installable
 
 ### Misc
