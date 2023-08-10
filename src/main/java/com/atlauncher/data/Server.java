@@ -29,6 +29,7 @@ import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -200,30 +201,33 @@ public class Server {
                             args));
                 } else if (Utils.executableInPath("kitty")) {
                     arguments.add("kitty");
-                    arguments.add(String.format(
-                            "./%s %s", serverScript, (isATLauncherLaunchScript && javaPath != null
+                    arguments.addAll(Arrays.asList(String.format(
+                            "./%s %s%s", serverScript, (isATLauncherLaunchScript && javaPath != null
                                     ? String.format(" ATLcustomjava %s",
                                             javaPath + "/bin/java ")
-                                    : ""))
-                            .replace(" ", ""));// the trailing space char leads to file not found
+                                    : ""),
+                            args)
+                            .split(" ")));
                 } else if (Utils.executableInPath("alacritty")) {
                     arguments.add("alacritty");
                     arguments.add("-e");
-                    arguments.add(String.format(
-                            "./%s %s", serverScript, (isATLauncherLaunchScript && javaPath != null
+                    arguments.addAll(Arrays.asList(String.format(
+                            "./%s %s%s", serverScript, (isATLauncherLaunchScript && javaPath != null
                                     ? String.format(" ATLcustomjava %s",
                                             javaPath + "/bin/java ")
-                                    : ""))
-                            .replace(" ", ""));// the trailing space char leads to file not found
+                                    : ""),
+                            args)
+                            .split(" ")));
                 } else if (Utils.executableInPath("gnome-terminal")) {
                     arguments.add("gnome-terminal");
                     arguments.add("--");
-                    arguments.add(String.format(
-                            "./%s %s", serverScript, (isATLauncherLaunchScript && javaPath != null
+                    arguments.addAll(Arrays.asList(String.format(
+                            "./%s %s%s", serverScript, (isATLauncherLaunchScript && javaPath != null
                                     ? String.format(" ATLcustomjava %s",
                                             javaPath + "/bin/java ")
-                                    : ""))
-                            .replace(" ", ""));// the trailing space char leads to file not found
+                                    : ""),
+                            args)
+                            .split(" ")));
                 } else {
                     DialogManager.okDialog().setTitle(GetText.tr("Failed To Launch Server"))
                             .setContent(new HTMLBuilder().center().text(GetText.tr(
