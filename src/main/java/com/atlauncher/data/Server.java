@@ -198,6 +198,32 @@ public class Server {
                                             javaPath + "/bin/java ")
                                     : ""),
                             args));
+                } else if (Utils.executableInPath("kitty")) {
+                    arguments.add("kitty");
+                    arguments.add(String.format(
+                            "./%s %s", serverScript, (isATLauncherLaunchScript && javaPath != null
+                                    ? String.format(" ATLcustomjava %s",
+                                            javaPath + "/bin/java ")
+                                    : ""))
+                            .replace(" ", ""));// the trailing space char leads to file not found
+                } else if (Utils.executableInPath("alacritty")) {
+                    arguments.add("alacritty");
+                    arguments.add("-e");
+                    arguments.add(String.format(
+                            "./%s %s", serverScript, (isATLauncherLaunchScript && javaPath != null
+                                    ? String.format(" ATLcustomjava %s",
+                                            javaPath + "/bin/java ")
+                                    : ""))
+                            .replace(" ", ""));// the trailing space char leads to file not found
+                } else if (Utils.executableInPath("gnome-terminal")) {
+                    arguments.add("gnome-terminal");
+                    arguments.add("--");
+                    arguments.add(String.format(
+                            "./%s %s", serverScript, (isATLauncherLaunchScript && javaPath != null
+                                    ? String.format(" ATLcustomjava %s",
+                                            javaPath + "/bin/java ")
+                                    : ""))
+                            .replace(" ", ""));// the trailing space char leads to file not found
                 } else {
                     DialogManager.okDialog().setTitle(GetText.tr("Failed To Launch Server"))
                             .setContent(new HTMLBuilder().center().text(GetText.tr(
