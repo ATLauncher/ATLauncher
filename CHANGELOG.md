@@ -7,7 +7,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 
 ### New Features
 
-Serves will now be started using kitty, allacritty or gnome-terminal, if x-terminal-emulator or exo-open aren't present
+Servers will now be started using kitty, allacritty or gnome-terminal, if x-terminal-emulator or exo-open aren't present
 
 ### Fixes
 
