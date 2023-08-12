@@ -36,9 +36,17 @@ import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.subjects.BehaviorSubject;
 
 public class ServerManager {
+    /**
+     * Data holder for Servers.
+     * <p>
+     * Automatically updates subscribed entities downstream.
+     */
     private static final BehaviorSubject<List<Server>> SERVERS =
         BehaviorSubject.createDefault(new LinkedList<>());
 
+    /**
+     * @return Observable list of servers.
+     */
     public static Observable<List<Server>> getServersObservable() {
         return SERVERS;
     }
