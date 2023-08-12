@@ -36,25 +36,24 @@ public interface IServersTabViewModel {
     Observable<List<Server>> getServersObservable();
 
     /**
+     * Get observable of text to subscribe to.
      *
-     * @return
+     * @return Observable query
      */
     Observable<Optional<String>> getSearchObservable();
 
     /**
      * Set what to search for.
      *
-     * @param searchSubject Query, else null.
+     * @param search Query, else null.
      */
     void setSearchSubject(@Nullable String search);
 
     /**
-     * Watch when the position is changed, this is used to restore the view.
+     * Watch when the position is changed,
+     * this is used to restore the view.
      * <p>
-     * Note, that the consumer is only called
-     * after a change to search or servers.
-     *
-     * @param consumer consumer to take new scroll position
+     * Note, that the observable is only updated after a change to search or servers.
      */
     Observable<Integer> getViewPosition();
 
