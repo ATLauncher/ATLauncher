@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.atlauncher.gui.tabs.accounts;
+package com.atlauncher.viewmodel.impl;
 
 import java.util.List;
 import java.util.UUID;
@@ -35,6 +35,7 @@ import com.atlauncher.managers.LogManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.network.analytics.AnalyticsEvent;
 import com.atlauncher.utils.Authentication;
+import com.atlauncher.viewmodel.base.IAccountsViewModel;
 
 /**
  * 12 / 06 / 2022
