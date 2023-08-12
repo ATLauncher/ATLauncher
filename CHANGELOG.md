@@ -8,6 +8,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 ### New Features
 
 Servers will now be started using kitty, allacritty or gnome-terminal, if x-terminal-emulator or exo-open aren't present
+New open resources Button to visit minecraft.jar for modding purposes 
 
 ### Fixes
 
