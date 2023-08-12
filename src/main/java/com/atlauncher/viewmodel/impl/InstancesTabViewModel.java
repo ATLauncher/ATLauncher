@@ -30,6 +30,8 @@ import org.jetbrains.annotations.Nullable;
 
 import com.atlauncher.App;
 import com.atlauncher.data.Instance;
+import com.atlauncher.evnt.listener.SettingsListener;
+import com.atlauncher.evnt.manager.SettingsManager;
 import com.atlauncher.managers.InstanceManager;
 import com.atlauncher.utils.sort.InstanceSortingStrategy;
 import com.atlauncher.viewmodel.base.IInstancesTabViewModel;
@@ -42,7 +44,10 @@ import io.reactivex.rxjava3.subjects.BehaviorSubject;
 /**
  * 20 / 11 / 2022
  */
-public class InstancesTabViewModel implements IInstancesTabViewModel {
+public class InstancesTabViewModel implements IInstancesTabViewModel, SettingsListener {
+
+    private final BehaviorSubject<String> instanceTitleFormat =
+        BehaviorSubject.createDefault(App.settings.instanceTitleFormat);
 
     private final BehaviorSubject<Optional<Pattern>> searchPattern =
         BehaviorSubject.createDefault(Optional.empty());
@@ -78,7 +83,11 @@ public class InstancesTabViewModel implements IInstancesTabViewModel {
                 return stream.collect(Collectors.toList());
             });
 
+    public Observable<InstancesList> instancesList =
+        Observable.combineLatest(instances, instanceTitleFormat, InstancesList::new);
+
     public InstancesTabViewModel() {
+        SettingsManager.addListener(this);
     }
 
     private static Predicate<Instance> createSearchFilter(final Pattern searchPattern) {
@@ -97,7 +106,12 @@ public class InstancesTabViewModel implements IInstancesTabViewModel {
 
     @NotNull
     @Override
-    public Observable<List<Instance>> getInstances() {
-        return instances;
+    public Observable<InstancesList> getInstancesList() {
+        return instancesList;
+    }
+
+    @Override
+    public void onSettingsSaved() {
+        instanceTitleFormat.onNext(App.settings.instanceTitleFormat);
     }
 }

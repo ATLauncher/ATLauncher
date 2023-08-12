@@ -56,17 +56,6 @@ public class InstanceManager {
     }
 
     /**
-     * @deprecated This function only exists for legacy non-reactive setting behavior.
-     * Please remove this once reactive settings are established.
-     */
-    @Deprecated
-    public static void reload() {
-        List<Instance> instances = INSTANCES.getValue();
-        INSTANCES.onNext(Collections.emptyList());
-        INSTANCES.onNext(instances);
-    }
-
-    /**
      * Loads the user installed Instances
      */
     public static void loadInstances() {

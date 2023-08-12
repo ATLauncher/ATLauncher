@@ -162,8 +162,8 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
     private final DropDownButton editInstanceButton = new DropDownButton(GetText.tr("Edit Instance"),
             editInstancePopupMenu);
 
-    public InstanceCard(Instance instance) {
-        super(instance);
+    public InstanceCard(Instance instance, String instanceTitleFormat) {
+        super(instance, instanceTitleFormat);
         this.instance = instance;
         this.image = new ImagePanel(instance.getImage().getImage());
         JSplitPane splitter = new JSplitPane();

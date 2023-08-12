@@ -39,5 +39,16 @@ public interface IInstancesTabViewModel {
     void setSearch(@Nullable Pattern search);
 
     @Nonnull
-    Observable<List<Instance>> getInstances();
+    Observable<InstancesList> getInstancesList();
+
+
+    class InstancesList {
+        public final List<Instance> instances;
+        public final String instanceTitleFormat;
+
+        public InstancesList(List<Instance> instances, String instanceTitleFormat) {
+            this.instances = instances;
+            this.instanceTitleFormat = instanceTitleFormat;
+        }
+    }
 }
