@@ -53,14 +53,8 @@ public class ServersTab extends JPanel implements Tab, RelocalizationListener {
     private NilCard nilCard = new NilCard(
         getNilMessage(),
         new NilCard.Action[]{
-            new NilCard.Action(
-                "Create Pack",
-                e -> App.navigate(UIConstants.LAUNCHER_CREATE_PACK_TAB)
-            ),
-            new NilCard.Action(
-                "Download Pack",
-                e -> App.navigate(UIConstants.LAUNCHER_PACKS_TAB)
-            )
+            NilCard.Action.createCreatePackAction(),
+            NilCard.Action.createDownloadPackAction()
         }
     );
 
@@ -152,5 +146,9 @@ public class ServersTab extends JPanel implements Tab, RelocalizationListener {
     public void onRelocalization() {
         searchBox.putClientProperty("JTextField.placeholderText", GetText.tr("Search"));
         nilCard.setMessage(getNilMessage());
+        nilCard.setActions(new NilCard.Action[]{
+            NilCard.Action.createCreatePackAction(),
+            NilCard.Action.createDownloadPackAction()
+        });
     }
 }

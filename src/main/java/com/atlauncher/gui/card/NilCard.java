@@ -35,6 +35,7 @@ import javax.swing.border.TitledBorder;
 import org.mini2Dx.gettext.GetText;
 
 import com.atlauncher.App;
+import com.atlauncher.constants.UIConstants;
 import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.gui.components.ImagePanel;
@@ -72,14 +73,7 @@ public class NilCard extends JPanel implements RelocalizationListener {
         column.add(errorMessage);
 
         row.setLayout(new FlowLayout());
-
-        if (actions != null)
-            for (Action action : actions) {
-                JButton button = new JButton(action.name);
-                button.addActionListener(action.onClicked);
-                row.add(button);
-            }
-
+        setActions(actions, false);
         column.add(row);
 
         JSplitPane splitter = new JSplitPane();
@@ -89,6 +83,24 @@ public class NilCard extends JPanel implements RelocalizationListener {
         splitter.setBorder(BorderFactory.createEmptyBorder());
 
         this.add(splitter, BorderLayout.CENTER);
+    }
+
+    public void setActions(@Nullable Action[] actions) {
+        setActions(actions, true);
+    }
+
+    private void setActions(@Nullable Action[] actions, boolean revalidate) {
+        if (actions != null)
+            for (Action action : actions) {
+                JButton button = new JButton(action.name);
+                button.addActionListener(action.onClicked);
+                row.add(button);
+            }
+
+        if (revalidate) {
+            revalidate();
+            repaint();
+        }
     }
 
     public void setMessage(String message) {
@@ -109,6 +121,20 @@ public class NilCard extends JPanel implements RelocalizationListener {
         public Action(String name, ActionListener onClicked) {
             this.name = name;
             this.onClicked = onClicked;
+        }
+
+        public static Action createCreatePackAction() {
+            return new NilCard.Action(
+                GetText.tr("Create Pack"),
+                e -> App.navigate(UIConstants.LAUNCHER_CREATE_PACK_TAB)
+            );
+        }
+
+        public static Action createDownloadPackAction() {
+            return new NilCard.Action(
+                GetText.tr("Download Pack"),
+                e -> App.navigate(UIConstants.LAUNCHER_PACKS_TAB)
+            );
         }
     }
 }
