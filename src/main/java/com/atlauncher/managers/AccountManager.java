@@ -246,7 +246,6 @@ public class AccountManager {
         }
         App.launcher.refreshPacksBrowserPanel();
         App.launcher.reloadInstancesPanel();
-        App.launcher.reloadServersPanel();
         com.atlauncher.evnt.manager.AccountManager.post();
         App.settings.save();
     }

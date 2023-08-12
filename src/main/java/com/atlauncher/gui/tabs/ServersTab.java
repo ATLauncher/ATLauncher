@@ -64,13 +64,13 @@ public class ServersTab extends JPanel implements Tab, RelocalizationListener {
         topPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
 
         searchBox = new JTextField(16);
-        viewModel.addOnSearchChangeListener(searchBox::setText);
+        viewModel.getSearchObservable().subscribe(it -> searchBox.setText(it.orElse(null)));
         searchBox.addKeyListener(new KeyAdapter() {
             public void keyReleased(KeyEvent e) {
                 if (e.getKeyChar() == KeyEvent.VK_ENTER) {
                     String text = searchBox.getText();
                     Analytics.trackEvent(AnalyticsEvent.forSearchEvent("servers", text));
-                    viewModel.setSearch(text);
+                    viewModel.setSearchSubject(text);
                 }
             }
         });
@@ -78,7 +78,7 @@ public class ServersTab extends JPanel implements Tab, RelocalizationListener {
         searchBox.putClientProperty("JTextField.leadingIcon", new FlatSearchIcon());
         searchBox.putClientProperty("JTextField.showClearButton", true);
         searchBox.putClientProperty("JTextField.clearCallback", (Runnable) () -> {
-            viewModel.setSearch("");
+            viewModel.setSearchSubject("");
         });
         topPanel.add(searchBox);
 
@@ -97,7 +97,7 @@ public class ServersTab extends JPanel implements Tab, RelocalizationListener {
         gbc.insets = UIConstants.FIELD_INSETS_SMALL;
         gbc.fill = GridBagConstraints.BOTH;
 
-        viewModel.addOnChangeViewListener(servers -> {
+        viewModel.getServersObservable().subscribe(servers -> {
             viewModel.setViewPosition(scrollPane.getVerticalScrollBar().getValue());
             panel.removeAll();
             gbc.gridy = 0;
@@ -119,7 +119,7 @@ public class ServersTab extends JPanel implements Tab, RelocalizationListener {
             searchBox.requestFocus();
         });
 
-        viewModel.addOnViewPositionChangedListener(scrollPane.getVerticalScrollBar()::setValue);
+        viewModel.getViewPosition().subscribe(scrollPane.getVerticalScrollBar()::setValue);
     }
 
     @Override
