@@ -86,6 +86,7 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
     private final JButton serversButton = new JButton(GetText.tr("Servers"));
     private final JButton openWebsite = new JButton(GetText.tr("Open Website"));
     private final JButton openButton = new JButton(GetText.tr("Open Folder"));
+    private final JButton openResourceButton = new JButton(GetText.tr("Open Resources"));
     private final JButton settingsButton = new JButton(GetText.tr("Settings"));
 
     private final JPopupMenu playPopupMenu = new JPopupMenu();
@@ -238,6 +239,7 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
         bottom.add(this.serversButton);
         bottom.add(this.openWebsite);
         bottom.add(this.openButton);
+        bottom.add(this.openResourceButton);
 
         rightPanel.setLayout(new BorderLayout());
         rightPanel.setPreferredSize(new Dimension(rightPanel.getPreferredSize().width, 155));
@@ -502,6 +504,12 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
                         Constants.SERVERS_LIST_PACK, instance.getSafePackName())));
         this.openWebsite.addActionListener(e -> OS.openWebBrowser(instance.getWebsiteUrl()));
         this.openButton.addActionListener(e -> OS.openFileExplorer(instance.getRoot()));
+        this.openResourceButton.addActionListener(e -> {
+            DialogManager.okDialog().setTitle("Reminder")
+                    .setContent("You may not distribute ANY resources.")
+                    .setType(DialogManager.OK_OPTION).show();
+            OS.openFileExplorer(instance.getMinecraftJarLibraryPath());
+        });
         this.settingsButton.addActionListener(e -> {
             Analytics.trackEvent(AnalyticsEvent.forInstanceEvent("instance_settings", instance));
             new InstanceSettingsDialog(instance);
