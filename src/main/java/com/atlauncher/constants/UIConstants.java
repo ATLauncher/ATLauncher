@@ -42,7 +42,7 @@ public class UIConstants {
     public static final Insets FLOW_FIELD_INSETS = new Insets(SPACING_LARGE, (-SPACING_LARGE) - 3, SPACING_LARGE, 0);
 
     public static final int LAUNCHER_NEWS_TAB = 0;
-    public static final int LAUNCHER_VANILLA_PACKS_TAB = 1;
+    public static final int LAUNCHER_CREATE_PACK_TAB = 1;
     public static final int LAUNCHER_PACKS_TAB = 2;
     public static final int LAUNCHER_INSTANCES_TAB = 3;
     public static final int LAUNCHER_SERVERS_TAB = 4;

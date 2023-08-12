@@ -59,10 +59,10 @@ import com.atlauncher.gui.components.PreservingCaretTextSetter;
 import com.atlauncher.listener.StatefulTextKeyAdapter;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.utils.ComboItem;
-import com.atlauncher.viewmodel.base.IVanillaPacksViewModel;
-import com.atlauncher.viewmodel.impl.VanillaPacksViewModel;
+import com.atlauncher.viewmodel.base.ICreatePackViewModel;
+import com.atlauncher.viewmodel.impl.CreatePackViewModel;
 
-public class VanillaPacksTab extends JPanel implements Tab, RelocalizationListener {
+public class CreatePackTab extends JPanel implements Tab, RelocalizationListener {
     private final JTextField nameField = new JTextField(32);
     private final JTextArea descriptionField = new JTextArea(2, 40);
     private final JCheckBox minecraftVersionReleasesFilterCheckbox = new JCheckBox(getReleasesText());
@@ -80,7 +80,7 @@ public class VanillaPacksTab extends JPanel implements Tab, RelocalizationListen
     private final JComboBox<ComboItem<LoaderVersion>> loaderVersionsDropDown = new JComboBox<>();
     private final JButton createServerButton = new JButton(getCreateServerText());
     private final JButton createInstanceButton = new JButton(getCreateInstanceText());
-    private final IVanillaPacksViewModel viewModel = new VanillaPacksViewModel();
+    private final ICreatePackViewModel viewModel = new CreatePackViewModel();
     /**
      * Last time the loaderVersion has been changed.
      * <p>
@@ -92,9 +92,9 @@ public class VanillaPacksTab extends JPanel implements Tab, RelocalizationListen
     @Nullable
     private DefaultTableModel minecraftVersionTableModel = null;
 
-    public VanillaPacksTab() {
+    public CreatePackTab() {
         super(new BorderLayout());
-        setName("vanillaPacksPanel");
+        setName("createPackPanel");
         setupMainPanel();
         setupBottomPanel();
         RelocalizationManager.addListener(this);
@@ -542,7 +542,7 @@ public class VanillaPacksTab extends JPanel implements Tab, RelocalizationListen
 
     @Override
     public String getTitle() {
-        return GetText.tr("Vanilla Packs");
+        return GetText.tr("Create Pack");
     }
 
     @Override
