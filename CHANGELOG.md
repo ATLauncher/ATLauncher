@@ -12,3 +12,4 @@ Servers will now be started using kitty, allacritty or gnome-terminal, if x-term
 ### Fixes
 
 ### Misc
+- Implement RxJava in ServerManager for IServersTabViewModel [#795]
