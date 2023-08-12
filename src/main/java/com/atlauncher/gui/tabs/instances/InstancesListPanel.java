@@ -22,9 +22,9 @@ import java.awt.GridBagLayout;
 
 import javax.swing.JPanel;
 
-import com.atlauncher.viewmodel.base.IInstancesTabViewModel;
 import org.mini2Dx.gettext.GetText;
 
+import com.atlauncher.App;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.constants.UIConstants;
 import com.atlauncher.evnt.listener.RelocalizationListener;
@@ -32,25 +32,40 @@ import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.gui.card.InstanceCard;
 import com.atlauncher.gui.card.NilCard;
 import com.atlauncher.gui.tabs.InstancesTab;
+import com.atlauncher.viewmodel.base.IInstancesTabViewModel;
 
 public final class InstancesListPanel extends JPanel
-        implements RelocalizationListener {
-    private static NilCard createNilCard() {
-        return new NilCard(new HTMLBuilder()
-                .text(GetText.tr("There are no instances to display.<br/><br/>Install one from the Packs tab."))
-                .build());
-    }
+    implements RelocalizationListener {
 
-    private final NilCard nilCard = createNilCard();
-    final InstancesTab parent;
-    final IInstancesTabViewModel viewModel;
+    private final IInstancesTabViewModel viewModel;
+    private final InstancesTab parent;
 
-    public InstancesListPanel(final InstancesTab parent,final IInstancesTabViewModel viewModel) {
+    private final NilCard nilCard = new NilCard(
+        getNilMessage(),
+        new NilCard.Action[]{
+            new NilCard.Action(
+                "Create Pack",
+                e -> App.navigate(UIConstants.LAUNCHER_CREATE_PACK_TAB)
+            ),
+            new NilCard.Action(
+                "Download Pack",
+                e -> App.navigate(UIConstants.LAUNCHER_PACKS_TAB)
+            )
+        }
+    );
+
+    public InstancesListPanel(final InstancesTab parent, final IInstancesTabViewModel viewModel) {
         super(new GridBagLayout());
         this.parent = parent;
         this.viewModel = viewModel;
         this.createView();
         RelocalizationManager.addListener(this);
+    }
+
+    private static String getNilMessage() {
+        return new HTMLBuilder()
+            .text(GetText.tr("There are no instances to display.<br/><br/>Install one from the Packs tab."))
+            .build();
     }
 
     public void createView() {
@@ -81,8 +96,6 @@ public final class InstancesListPanel extends JPanel
 
     @Override
     public void onRelocalization() {
-        this.nilCard.setMessage(new HTMLBuilder()
-                .text(GetText.tr("There are no instances to display.<br/><br/>Install one from the Packs tab."))
-                .build());
+        this.nilCard.setMessage(getNilMessage());
     }
 }

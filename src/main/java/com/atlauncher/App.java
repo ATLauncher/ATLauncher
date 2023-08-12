@@ -1143,4 +1143,13 @@ public class App {
             LogManager.warn("Config overridden: " + configOverride);
         }
     }
+
+    /**
+     * Navigate to a given tab.
+     *
+     * @param destination as defined in UIConstants
+     */
+    public static void navigate(int destination) {
+        App.launcherFrame.tabbedPane.setSelectedIndex(destination);
+    }
 }
