@@ -117,6 +117,10 @@ public class CollapsiblePanel extends JPanel implements ThemeListener, Relocaliz
         }
     }
 
+    /**
+     * @param instance            Given instance
+     * @param instanceTitleFormat Title format for said instance
+     */
     public CollapsiblePanel(Instance instance, String instanceTitleFormat) {
         this.instance = instance;
         String title;
