@@ -31,7 +31,7 @@ import com.atlauncher.data.minecraft.loaders.LoaderVersion;
 
 import io.reactivex.rxjava3.core.Observable;
 
-public interface IVanillaPacksViewModel {
+public interface ICreatePackViewModel {
     // UI settings
 
     /**
