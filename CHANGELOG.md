@@ -7,7 +7,8 @@ This changelog only contains the changes that are unreleased. For changes for in
 
 ### New Features
 
-Servers will now be started using kitty, allacritty or gnome-terminal, if x-terminal-emulator or exo-open aren't present
+- Servers will now be started using kitty, allacritty or gnome-terminal, if x-terminal-emulator or exo-open aren't present
+- Add easy navigation from ServersTab & InstancesTab to PacksTab & CreatePackTab
 
 ### Fixes
 
