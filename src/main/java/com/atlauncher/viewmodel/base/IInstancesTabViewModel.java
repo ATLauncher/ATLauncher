@@ -34,16 +34,40 @@ import io.reactivex.rxjava3.core.Observable;
  * 20 / 11 / 2022
  */
 public interface IInstancesTabViewModel {
+    /**
+     * Set how the instances should be sorted.
+     *
+     * @param strategy Provided strategy
+     */
     void setSort(@NotNull InstanceSortingStrategy strategy);
 
+    /**
+     * Pattern to filter the search by.
+     *
+     * @param search Query or null
+     */
     void setSearch(@Nullable Pattern search);
 
+    /**
+     * Get an observable view state that includes title format.
+     *
+     * @return The view state
+     */
     @Nonnull
     Observable<InstancesList> getInstancesList();
 
-
+    /**
+     * View state object.
+     */
     class InstancesList {
+        /**
+         * Instances to display.
+         */
         public final List<Instance> instances;
+
+        /**
+         * Title format for said instances.
+         */
         public final String instanceTitleFormat;
 
         public InstancesList(List<Instance> instances, String instanceTitleFormat) {
