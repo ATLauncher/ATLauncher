@@ -1297,7 +1297,6 @@ public class Instance extends MinecraftVersion {
                     backup();
                 }
                 if (App.settings.keepLauncherOpen) {
-                    App.launcher.reloadInstancesPanel();
                     App.launcher.updateData();
                 }
                 if (Files.isDirectory(nativesTempDir)) {
@@ -3081,7 +3080,6 @@ public class Instance extends MinecraftVersion {
         }
 
         if (success) {
-            App.launcher.reloadInstancesPanel();
 
             // #. {0} is the loader (Forge/Fabric/Quilt)
             DialogManager.okDialog().setTitle(GetText.tr("{0} Removed", loaderType))

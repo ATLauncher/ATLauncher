@@ -45,10 +45,8 @@ public class TechnicModpackUpdateManager {
         PerformanceManager.start();
         LogManager.info("Checking for updates to Technic Modpack instances");
 
-        boolean refreshInstancesPanel = InstanceManager.getInstances().parallelStream()
-                .filter(i -> i.isTechnicPack() && i.launcher.checkForUpdates).map(i -> {
-                    boolean wasUpdated = false;
-
+        InstanceManager.getInstances().parallelStream()
+                .filter(i -> i.isTechnicPack() && i.launcher.checkForUpdates).forEach(i -> {
                     TechnicModpack technicModpack = null;
 
                     try {
@@ -70,7 +68,7 @@ public class TechnicModpackUpdateManager {
                     }
 
                     if (technicModpack == null) {
-                        return false;
+                        return;
                     }
 
                     if (i.isTechnicSolderPack()) {
@@ -79,50 +77,14 @@ public class TechnicModpackUpdateManager {
                                 technicModpack.name);
 
                         if (technicSolderModpack == null) {
-                            return false;
-                        }
-
-                        // if there is a change to the latest key for an instance (but not a first time
-                        // write), then refresh instances panel
-                        if (Data.TECHNIC_SOLDER_INSTANCE_LATEST_VERSION.containsKey(i)
-                                && !Data.TECHNIC_SOLDER_INSTANCE_LATEST_VERSION.get(i).latest
-                                        .equals(technicSolderModpack.latest)) {
-                            wasUpdated = true;
-                        }
-
-                        // updated if there is no latest version stored yet but the instance has update
-                        if (!Data.TECHNIC_SOLDER_INSTANCE_LATEST_VERSION.containsKey(i)
-                                && !technicSolderModpack.latest.equals(i.launcher.version)) {
-                            wasUpdated = true;
+                            return;
                         }
 
                         Data.TECHNIC_SOLDER_INSTANCE_LATEST_VERSION.put(i, technicSolderModpack);
                     } else {
-                        // if there is a change to the latest key for an instance (but not a first time
-                        // write), then refresh instances panel
-                        if (Data.TECHNIC_INSTANCE_LATEST_VERSION.containsKey(i)
-                                && !Data.TECHNIC_INSTANCE_LATEST_VERSION.get(i).version
-                                        .equals(technicModpack.version)) {
-                            wasUpdated = true;
-                        }
-
-                        // updated if there is no latest version stored yet but the instance has update
-                        if (!Data.TECHNIC_INSTANCE_LATEST_VERSION.containsKey(i)
-                                && !technicModpack.version.equals(i.launcher.version)) {
-                            wasUpdated = true;
-                        }
-
                         Data.TECHNIC_INSTANCE_LATEST_VERSION.put(i, technicModpack);
-
-                        wasUpdated = !technicModpack.version.equalsIgnoreCase(i.launcher.technicModpack.version);
                     }
-
-                    return wasUpdated;
-                }).anyMatch(b -> b);
-
-        if (refreshInstancesPanel) {
-            App.launcher.reloadInstancesPanel();
-        }
+                });
 
         PerformanceManager.end();
     }

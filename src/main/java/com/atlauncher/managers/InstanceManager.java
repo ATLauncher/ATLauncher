@@ -22,6 +22,7 @@ import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
@@ -52,6 +53,17 @@ public class InstanceManager {
 
     public static List<Instance> getInstances() {
         return INSTANCES.getValue();
+    }
+
+    /**
+     * @deprecated This function only exists for legacy non-reactive setting behavior.
+     * Please remove this once reactive settings are established.
+     */
+    @Deprecated
+    public static void reload() {
+        List<Instance> instances = INSTANCES.getValue();
+        INSTANCES.onNext(Collections.emptyList());
+        INSTANCES.onNext(instances);
     }
 
     /**

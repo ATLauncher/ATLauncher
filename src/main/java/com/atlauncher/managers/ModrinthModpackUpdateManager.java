@@ -39,14 +39,12 @@ public class ModrinthModpackUpdateManager {
         PerformanceManager.start();
         LogManager.info("Checking for updates to Modrinth instances");
 
-        boolean refreshInstancesPanel = InstanceManager.getInstances().parallelStream()
-                .filter(i -> i.isModrinthPack()).map(i -> {
-                    boolean wasUpdated = false;
-
+        InstanceManager.getInstances().parallelStream()
+                .filter(i -> i.isModrinthPack()).forEach(i -> {
                     List<ModrinthVersion> packVersions = ModrinthApi.getVersions(i.launcher.modrinthProject.id);
 
                     if (packVersions == null) {
-                        return false;
+                        return;
                     }
 
                     ModrinthVersion latestVersion = packVersions.stream()
@@ -54,30 +52,11 @@ public class ModrinthModpackUpdateManager {
                             .findFirst().orElse(null);
 
                     if (latestVersion == null) {
-                        return false;
-                    }
-
-                    // if there is a change to the latestversion for an instance (but not a first
-                    // time write), then refresh instances panel
-                    if (Data.MODRINTH_INSTANCE_LATEST_VERSION.containsKey(i)
-                            && !Data.MODRINTH_INSTANCE_LATEST_VERSION.get(i).id.equals(latestVersion.id)) {
-                        wasUpdated = true;
-                    }
-
-                    // updated if there is no latest version stored yet but the instance has update
-                    if (!Data.MODRINTH_INSTANCE_LATEST_VERSION.containsKey(i)
-                            && !i.launcher.modrinthVersion.id.equals(latestVersion.id)) {
-                        wasUpdated = true;
+                        return;
                     }
 
                     Data.MODRINTH_INSTANCE_LATEST_VERSION.put(i, latestVersion);
-
-                    return wasUpdated;
-                }).anyMatch(b -> b);
-
-        if (refreshInstancesPanel) {
-            App.launcher.reloadInstancesPanel();
-        }
+                });
 
         PerformanceManager.end();
     }

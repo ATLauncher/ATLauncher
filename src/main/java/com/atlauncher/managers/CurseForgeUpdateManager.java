@@ -51,16 +51,14 @@ public class CurseForgeUpdateManager {
 
         if (foundProjects != null) {
 
-            boolean refreshInstancesPanel = InstanceManager.getInstances().parallelStream()
-                    .filter(i -> i.isCurseForgePack() && i.hasCurseForgeProjectId()).map(i -> {
-                        boolean wasUpdated = false;
-
+            InstanceManager.getInstances().parallelStream()
+                    .filter(i -> i.isCurseForgePack() && i.hasCurseForgeProjectId()).forEach(i -> {
                         CurseForgeProject curseForgeMod = foundProjects.get(i.launcher.curseForgeManifest != null
                                 ? i.launcher.curseForgeManifest.projectID
                                 : i.launcher.curseForgeProject.id);
 
                         if (curseForgeMod == null) {
-                            return false;
+                            return;
                         }
 
                         CurseForgeFile latestVersion = curseForgeMod.latestFiles.stream()
@@ -83,30 +81,11 @@ public class CurseForgeUpdateManager {
                                 .findFirst().orElse(null);
 
                         if (latestVersion == null) {
-                            return false;
-                        }
-
-                        // if there is a change to the latestversion for an instance (but not a first
-                        // time write), then refresh instances panel
-                        if (Data.CURSEFORGE_INSTANCE_LATEST_VERSION.containsKey(i)
-                                && Data.CURSEFORGE_INSTANCE_LATEST_VERSION.get(i).id != latestVersion.id) {
-                            wasUpdated = true;
-                        }
-
-                        // updated if there is no latest version stored yet but the instance has update
-                        if (!Data.CURSEFORGE_INSTANCE_LATEST_VERSION.containsKey(i)
-                                && latestVersion.id != i.launcher.curseForgeFile.id) {
-                            wasUpdated = true;
+                            return;
                         }
 
                         Data.CURSEFORGE_INSTANCE_LATEST_VERSION.put(i, latestVersion);
-
-                        return wasUpdated;
-                    }).anyMatch(b -> b);
-
-            if (refreshInstancesPanel) {
-                App.launcher.reloadInstancesPanel();
-            }
+                    });
         }
 
         PerformanceManager.end();

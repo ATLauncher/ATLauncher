@@ -2540,8 +2540,6 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         if (instance.isExternalPack()) {
             App.launcher.checkForExternalPackUpdates();
         }
-
-        App.launcher.reloadInstancesPanel();
     }
 
     private void initServerSettings() {

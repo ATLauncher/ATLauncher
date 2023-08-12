@@ -42,11 +42,9 @@ public class ModpacksChUpdateManager {
         PerformanceManager.start();
         LogManager.info("Checking for updates to modpacks.ch instances");
 
-        boolean refreshInstancesPanel = InstanceManager.getInstances().parallelStream().filter(
+        InstanceManager.getInstances().parallelStream().filter(
                 i -> i.launcher.modpacksChPackManifest != null && i.launcher.modpacksChPackVersionManifest != null)
-                .map(i -> {
-                    boolean wasUpdated = false;
-
+                .forEach(i -> {
                     ModpacksChPackManifest packManifest = com.atlauncher.network.Download.build()
                             .setUrl(String.format("%s/modpack/%d", Constants.MODPACKS_CH_API_URL,
                                     i.launcher.modpacksChPackManifest.id))
@@ -54,7 +52,7 @@ public class ModpacksChUpdateManager {
                             .asClass(ModpacksChPackManifest.class);
 
                     if (packManifest == null) {
-                        return false;
+                        return;
                     }
 
                     ModpacksChPackVersion latestVersion = packManifest.versions.stream().sorted(
@@ -62,30 +60,11 @@ public class ModpacksChUpdateManager {
                             .findFirst().orElse(null);
 
                     if (latestVersion == null) {
-                        return false;
-                    }
-
-                    // if there is a change to the latestversion for an instance (but not a first
-                    // time write), then refresh instances panel
-                    if (Data.MODPACKS_CH_INSTANCE_LATEST_VERSION.containsKey(i)
-                            && Data.MODPACKS_CH_INSTANCE_LATEST_VERSION.get(i).id != latestVersion.id) {
-                        wasUpdated = true;
-                    }
-
-                    // updated if there is no latest version stored yet but the instance has update
-                    if (!Data.MODPACKS_CH_INSTANCE_LATEST_VERSION.containsKey(i)
-                            && latestVersion.id != i.launcher.modpacksChPackVersionManifest.id) {
-                        wasUpdated = true;
+                        return;
                     }
 
                     Data.MODPACKS_CH_INSTANCE_LATEST_VERSION.put(i, latestVersion);
-
-                    return wasUpdated;
-                }).anyMatch(b -> b);
-
-        if (refreshInstancesPanel) {
-            App.launcher.reloadInstancesPanel();
-        }
+                });
 
         PerformanceManager.end();
     }

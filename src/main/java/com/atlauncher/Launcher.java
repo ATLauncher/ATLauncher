@@ -381,7 +381,6 @@ public class Launcher {
             reloadPacksBrowserPanel();// Reload packs browser panel
             PackManager.loadUsers(); // Load the Testers and Allowed Players for the packs
             InstanceManager.loadInstances(); // Load the users installed Instances
-            reloadInstancesPanel(); // Reload instances panel
             reloadServersPanel(); // Reload instances panel
             dialog.setVisible(false); // Remove the dialog
             dialog.dispose(); // Dispose the dialog
@@ -450,12 +449,6 @@ public class Launcher {
      */
     public Window getParent() {
         return this.parent;
-    }
-
-    /**
-     * Reloads the panel used for Instances
-     */
-    public void reloadInstancesPanel() {
     }
 
     public void reloadServersPanel() {
