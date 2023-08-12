@@ -35,6 +35,7 @@ import com.atlauncher.evnt.manager.SettingsManager;
 import com.atlauncher.managers.InstanceManager;
 import com.atlauncher.utils.sort.InstanceSortingStrategy;
 import com.atlauncher.viewmodel.base.IInstancesTabViewModel;
+import com.gitlab.doomsdayrs.lib.rxswing.schedulers.SwingSchedulers;
 
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.core.ObservableSource;
@@ -107,7 +108,7 @@ public class InstancesTabViewModel implements IInstancesTabViewModel, SettingsLi
     @NotNull
     @Override
     public Observable<InstancesList> getInstancesList() {
-        return instancesList;
+        return instancesList.observeOn(SwingSchedulers.edt());
     }
 
     @Override
