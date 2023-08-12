@@ -45,12 +45,25 @@ import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.subjects.BehaviorSubject;
 
 public class InstanceManager {
+    /**
+     * Data holder for Instances.
+     * <p>
+     * Automatically updates subscribed entities downstream.
+     */
     private static final BehaviorSubject<List<Instance>> INSTANCES = BehaviorSubject.createDefault(new LinkedList<>());
 
+    /**
+     * @return Observable list of instances.
+     */
     public static Observable<List<Instance>> getInstancesObservable() {
         return INSTANCES;
     }
 
+    /**
+     * Non-reactive function for legacy operations.
+     *
+     * @return List of instances.
+     */
     public static List<Instance> getInstances() {
         return INSTANCES.getValue();
     }
