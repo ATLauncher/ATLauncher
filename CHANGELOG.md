@@ -13,3 +13,4 @@ Servers will now be started using kitty, allacritty or gnome-terminal, if x-term
 
 ### Misc
 - Organize ViewModels
+- Implement RxJava in AccountManager
