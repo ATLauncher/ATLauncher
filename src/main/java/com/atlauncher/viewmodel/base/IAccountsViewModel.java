@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.atlauncher.gui.tabs.accounts;
+package com.atlauncher.viewmodel.base;
 
 import com.atlauncher.data.AbstractAccount;
 import com.atlauncher.data.MicrosoftAccount;
@@ -182,7 +182,7 @@ public interface IAccountsViewModel {
         /**
          * The account already exists
          */
-        static class Exists extends LoginPreCheckResult {
+        public static class Exists extends LoginPreCheckResult {
         }
     }
 
@@ -193,21 +193,21 @@ public interface IAccountsViewModel {
         /**
          * The account was added
          */
-        static class Added extends LoginPostResult {
+        public static class Added extends LoginPostResult {
         }
 
         /**
          * The account was edited
          */
-        static class Edited extends LoginPostResult {
+        public static class Edited extends LoginPostResult {
         }
 
         /**
          * An error occured adding the account
          */
-        static class Error extends LoginPostResult {
+        public static class Error extends LoginPostResult {
             @Nullable
-            String errorContent;
+            public final String errorContent;
 
             public Error(@Nullable String errorContent) {
                 this.errorContent = errorContent;
