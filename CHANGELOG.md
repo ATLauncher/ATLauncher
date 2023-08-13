@@ -6,11 +6,11 @@ This changelog only contains the changes that are unreleased. For changes for in
 ## 3.4.31.3
 
 ### New Features
-
 - Servers will now be started using kitty, allacritty or gnome-terminal, if x-terminal-emulator or exo-open aren't present
-- Rename "Vanilla Packs" to "Create Pack"
+- Support NeoForge loader for Modrinth and MultiMC import
 
 ### Fixes
 
 ### Misc
 - Organize ViewModels
+- Rename "Vanilla Packs" to "Create Pack"
