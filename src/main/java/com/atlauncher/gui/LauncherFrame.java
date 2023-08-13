@@ -49,7 +49,7 @@ import com.atlauncher.gui.tabs.PacksBrowserTab;
 import com.atlauncher.gui.tabs.ServersTab;
 import com.atlauncher.gui.tabs.SettingsTab;
 import com.atlauncher.gui.tabs.Tab;
-import com.atlauncher.gui.tabs.VanillaPacksTab;
+import com.atlauncher.gui.tabs.CreatePackTab;
 import com.atlauncher.gui.tabs.accounts.AccountsTab;
 import com.atlauncher.gui.tabs.news.NewsTab;
 import com.atlauncher.gui.tabs.tools.ToolsTab;
@@ -200,10 +200,10 @@ public final class LauncherFrame extends JFrame implements RelocalizationListene
         App.launcher.setNewsPanel(newsTab);
         PerformanceManager.end("newsTab");
 
-        PerformanceManager.start("vanillaPacksTab");
-        VanillaPacksTab vanillaPacksTab = new VanillaPacksTab();
-        this.tabs.put(UIConstants.LAUNCHER_VANILLA_PACKS_TAB, vanillaPacksTab);
-        PerformanceManager.end("vanillaPacksTab");
+        PerformanceManager.start("createPackTab");
+        CreatePackTab createPackTab = new CreatePackTab();
+        this.tabs.put(UIConstants.LAUNCHER_CREATE_PACK_TAB, createPackTab);
+        PerformanceManager.end("createPackTab");
 
         PerformanceManager.start("packsBrowserTab");
         PacksBrowserTab packsBrowserTab = new PacksBrowserTab();
