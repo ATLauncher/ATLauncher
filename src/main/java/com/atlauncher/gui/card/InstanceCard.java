@@ -85,9 +85,18 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
     private final JButton editButton = new JButton(GetText.tr("Edit Mods"));
     private final JButton serversButton = new JButton(GetText.tr("Servers"));
     private final JButton openWebsite = new JButton(GetText.tr("Open Website"));
-    private final JButton openButton = new JButton(GetText.tr("Open Folder"));
-    private final JButton openResourceButton = new JButton(GetText.tr("Open Resources"));
     private final JButton settingsButton = new JButton(GetText.tr("Settings"));
+
+    private final JPopupMenu openPopupMenu = new JPopupMenu();
+    private final JMenuItem openFolderMenuItem = new JMenuItem(GetText.tr("Open Folder"));
+    private final JMenuItem openResourceMenuItem = new JMenuItem(GetText.tr("Open Resources"));
+    private final DropDownButton openButton = new DropDownButton(GetText.tr("Open Files"), openPopupMenu, true,
+            new MouseAdapter() {
+                @Override
+                public void mousePressed(MouseEvent e) {
+                    OS.openFileExplorer(instance.getRoot());
+                }
+            });
 
     private final JPopupMenu playPopupMenu = new JPopupMenu();
     private final JMenuItem playOnlinePlayMenuItem = new JMenuItem(GetText.tr("Play Online"));
@@ -204,6 +213,7 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
         bottom.add(this.getHelpButton);
 
         setupPlayPopupMenus();
+        setupOpenPopupMenus();
         setupButtonPopupMenus();
 
         // check it can be exported
@@ -239,7 +249,6 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
         bottom.add(this.serversButton);
         bottom.add(this.openWebsite);
         bottom.add(this.openButton);
-        bottom.add(this.openResourceButton);
 
         rightPanel.setLayout(new BorderLayout());
         rightPanel.setPreferredSize(new Dimension(rightPanel.getPreferredSize().width, 155));
@@ -270,6 +279,21 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
             play(true);
         });
         playPopupMenu.add(playOfflinePlayMenuItem);
+    }
+
+    private void setupOpenPopupMenus() {
+        openFolderMenuItem.addActionListener(e -> {
+            OS.openFileExplorer(instance.getRoot());
+        });
+        openPopupMenu.add(openFolderMenuItem);
+
+        openResourceMenuItem.addActionListener(e -> {
+            DialogManager.okDialog().setTitle(GetText.tr("Reminder"))
+                    .setContent(GetText.tr("You may not distribute ANY resources."))
+                    .setType(DialogManager.WARNING).show();
+            OS.openFileExplorer(instance.getMinecraftJarLibraryPath());
+        });
+        openPopupMenu.add(openResourceMenuItem);
     }
 
     private void setupButtonPopupMenus() {
@@ -503,13 +527,6 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
                 String.format("%s/%s?utm_source=launcher&utm_medium=button&utm_campaign=instance_v2_button",
                         Constants.SERVERS_LIST_PACK, instance.getSafePackName())));
         this.openWebsite.addActionListener(e -> OS.openWebBrowser(instance.getWebsiteUrl()));
-        this.openButton.addActionListener(e -> OS.openFileExplorer(instance.getRoot()));
-        this.openResourceButton.addActionListener(e -> {
-            DialogManager.okDialog().setTitle("Reminder")
-                    .setContent("You may not distribute ANY resources.")
-                    .setType(DialogManager.OK_OPTION).show();
-            OS.openFileExplorer(instance.getMinecraftJarLibraryPath());
-        });
         this.settingsButton.addActionListener(e -> {
             Analytics.trackEvent(AnalyticsEvent.forInstanceEvent("instance_settings", instance));
             new InstanceSettingsDialog(instance);
@@ -723,7 +740,9 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
         this.editButton.setText(GetText.tr("Edit Mods"));
         this.serversButton.setText(GetText.tr("Servers"));
         this.openWebsite.setText(GetText.tr("Open Website"));
-        this.openButton.setText(GetText.tr("Open Folder"));
+        this.openButton.setText(GetText.tr("Open Files"));
+        this.openFolderMenuItem.setText(GetText.tr("Open Folder"));
+        this.openResourceMenuItem.setText(GetText.tr("Open Resources"));
         this.settingsButton.setText(GetText.tr("Settings"));
 
         this.normalBackupMenuItem.setText(GetText.tr("Normal Backup"));
