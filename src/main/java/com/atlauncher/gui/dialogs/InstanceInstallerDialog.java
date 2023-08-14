@@ -776,6 +776,7 @@ public class InstanceInstallerDialog extends JDialog {
 
         packVersion.hasLoader = modrinthManifest.dependencies.containsKey("fabric-loader")
                 || modrinthManifest.dependencies.containsKey("quilt-loader")
+                || modrinthManifest.dependencies.containsKey("neoforge")
                 || modrinthManifest.dependencies.containsKey("forge");
 
         pack.versions = Collections.singletonList(packVersion);
@@ -812,7 +813,8 @@ public class InstanceInstallerDialog extends JDialog {
         }
 
         packVersion.hasLoader = multiMCManifest.components.stream()
-                .anyMatch(c -> c.uid.equalsIgnoreCase("net.minecraftforge")
+                .anyMatch(c -> c.uid.equalsIgnoreCase("net.neoforged")
+                        || c.uid.equalsIgnoreCase("net.minecraftforge")
                         || c.uid.equalsIgnoreCase("net.fabricmc.hashed"));
 
         pack.versions = Collections.singletonList(packVersion);

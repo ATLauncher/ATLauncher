@@ -71,7 +71,7 @@ import com.atlauncher.managers.MinecraftManager;
 import com.atlauncher.network.GraphqlClient;
 import com.atlauncher.utils.Pair;
 import com.atlauncher.utils.Utils;
-import com.atlauncher.viewmodel.base.IVanillaPacksViewModel;
+import com.atlauncher.viewmodel.base.ICreatePackViewModel;
 import com.gitlab.doomsdayrs.lib.rxswing.schedulers.SwingSchedulers;
 
 import io.reactivex.rxjava3.core.Observable;
@@ -81,7 +81,7 @@ import io.reactivex.rxjava3.subjects.BehaviorSubject;
 /**
  * 25 / 06 / 2022
  */
-public class VanillaPacksViewModel implements SettingsListener, IVanillaPacksViewModel {
+public class CreatePackViewModel implements SettingsListener, ICreatePackViewModel {
     /**
      * Name to display
      */
@@ -351,7 +351,7 @@ public class VanillaPacksViewModel implements SettingsListener, IVanillaPacksVie
      */
     private boolean descriptionDirty = false;
 
-    public VanillaPacksViewModel() {
+    public CreatePackViewModel() {
         SettingsManager.addListener(this);
         setLoaderType(null); // Happen first to prevent race condition
         Map<VersionManifestVersionType, Boolean> map = new HashMap<>();

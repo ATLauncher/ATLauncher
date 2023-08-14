@@ -8,7 +8,11 @@ This changelog only contains the changes that are unreleased. For changes for in
 ### New Features
 
 - New open resources button to visit minecraft.jar for modding purposes
+- Servers will now be started using kitty, allacritty or gnome-terminal, if x-terminal-emulator or exo-open aren't present
+- Support NeoForge loader for Modrinth and MultiMC import
 
 ### Fixes
 
 ### Misc
+- Organize ViewModels
+- Rename "Vanilla Packs" to "Create Pack"
