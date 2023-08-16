@@ -195,6 +195,11 @@ public class InstanceManager {
         AccountManager.saveAccounts();
     }
 
+    /**
+     * Removes an instance and deletes its directory.
+     *
+     * @param instance Instance to remove
+     */
     public static void removeInstance(Instance instance) {
         List<Instance> instances = INSTANCES.getValue();
         if (instances.remove(instance)) {
@@ -273,6 +278,18 @@ public class InstanceManager {
 
     public static void addInstance(Instance instance) {
         List<Instance> instances = INSTANCES.getValue();
+        instances.add(instance);
+        INSTANCES.onNext(instances);
+    }
+
+    /**
+     * Update the Instance with new data
+     *
+     * @param instance Instance to update
+     */
+    public static void updateInstance(Instance instance) {
+        List<Instance> instances = INSTANCES.getValue();
+        instances.removeIf(it -> it.getUUID().equals(instance.getUUID()));
         instances.add(instance);
         INSTANCES.onNext(instances);
     }

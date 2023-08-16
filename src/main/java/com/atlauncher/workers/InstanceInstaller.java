@@ -2531,11 +2531,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
 
         instance.save();
 
-        if (this.instance != null) {
-            InstanceManager.removeInstance(this.instance);
-        }
-
-        InstanceManager.addInstance(instance);
+        InstanceManager.updateInstance(instance);
 
         // after adding, check for updates if an external pack
         if (instance.isExternalPack()) {
