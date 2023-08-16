@@ -25,7 +25,7 @@ import javax.annotation.Nullable;
 
 import org.jetbrains.annotations.NotNull;
 
-import com.atlauncher.data.Instance;
+import com.atlauncher.gui.models.InstanceUIModel;
 import com.atlauncher.utils.sort.InstanceSortingStrategy;
 
 import io.reactivex.rxjava3.core.Observable;
@@ -63,14 +63,14 @@ public interface IInstancesTabViewModel {
         /**
          * Instances to display.
          */
-        public final List<Instance> instances;
+        public final List<InstanceUIModel> instances;
 
         /**
          * Title format for said instances.
          */
         public final String instanceTitleFormat;
 
-        public InstancesList(List<Instance> instances, String instanceTitleFormat) {
+        public InstancesList(List<InstanceUIModel> instances, String instanceTitleFormat) {
             this.instances = instances;
             this.instanceTitleFormat = instanceTitleFormat;
         }
