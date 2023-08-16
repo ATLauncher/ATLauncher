@@ -177,6 +177,7 @@ import okhttp3.OkHttpClient;
 
 @Json
 public class Instance extends MinecraftVersion {
+    public UUID uuid;
     public String inheritsFrom;
     public InstanceLauncher launcher;
 
@@ -217,6 +218,14 @@ public class Instance extends MinecraftVersion {
         this.downloads = version.downloads;
         this.rules = version.rules;
         this.logging = version.logging;
+    }
+
+    public UUID getUUID(){
+        if (uuid == null) {
+            uuid = UUID.randomUUID();
+            save();
+        }
+        return  uuid;
     }
 
     public String getSafeName() {

@@ -2444,6 +2444,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
             instanceLauncher = new InstanceLauncher();
         } else {
             instanceLauncher = this.instance.launcher;
+            instance.uuid = this.instance.uuid;
         }
 
         instance.libraries = this.getLibraries();
