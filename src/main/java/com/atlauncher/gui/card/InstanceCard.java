@@ -88,9 +88,8 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
     private final JButton settingsButton = new JButton(GetText.tr("Settings"));
 
     private final JPopupMenu openPopupMenu = new JPopupMenu();
-    private final JMenuItem openFolderMenuItem = new JMenuItem(GetText.tr("Open Folder"));
     private final JMenuItem openResourceMenuItem = new JMenuItem(GetText.tr("Open Resources"));
-    private final DropDownButton openButton = new DropDownButton(GetText.tr("Open Files"), openPopupMenu, true,
+    private final DropDownButton openButton = new DropDownButton(GetText.tr("Open Folder"), openPopupMenu, true,
             new MouseAdapter() {
                 @Override
                 public void mousePressed(MouseEvent e) {
@@ -282,11 +281,6 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
     }
 
     private void setupOpenPopupMenus() {
-        openFolderMenuItem.addActionListener(e -> {
-            OS.openFileExplorer(instance.getRoot());
-        });
-        openPopupMenu.add(openFolderMenuItem);
-
         openResourceMenuItem.addActionListener(e -> {
             DialogManager.okDialog().setTitle(GetText.tr("Reminder"))
                     .setContent(GetText.tr("You may not distribute ANY resources."))
@@ -740,8 +734,7 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
         this.editButton.setText(GetText.tr("Edit Mods"));
         this.serversButton.setText(GetText.tr("Servers"));
         this.openWebsite.setText(GetText.tr("Open Website"));
-        this.openButton.setText(GetText.tr("Open Files"));
-        this.openFolderMenuItem.setText(GetText.tr("Open Folder"));
+        this.openButton.setText(GetText.tr("Open Folder"));
         this.openResourceMenuItem.setText(GetText.tr("Open Resources"));
         this.settingsButton.setText(GetText.tr("Settings"));
 
