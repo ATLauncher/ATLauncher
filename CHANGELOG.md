@@ -13,6 +13,8 @@ This changelog only contains the changes that are unreleased. For changes for in
 
 ### Fixes
 
+- Fixed white spaces in loading Animaion
+
 ### Misc
 - Organize ViewModels
 - Rename "Vanilla Packs" to "Create Pack"
