@@ -12,7 +12,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 
 ### Fixes
 - Mods showing no versions found when using NeoForge
-
 - Fixed white spaces in loading Animaion
 
 ### Misc
