@@ -52,6 +52,7 @@ import javax.swing.JTextField;
 import org.mini2Dx.gettext.GetText;
 
 import com.atlauncher.App;
+import com.atlauncher.Data;
 import com.atlauncher.Gsons;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.constants.Constants;
@@ -1058,6 +1059,18 @@ public class InstanceInstallerDialog extends JDialog {
             }
             versionsDropDown.addItem(version);
         }
+
+        if (isUpdate && instance != null && instance.isCurseForgePack()) {
+            CurseForgeFile latestVersion = Data.CURSEFORGE_INSTANCE_LATEST_VERSION.get(instance);
+            if (latestVersion != null) {
+                for (PackVersion version : versions) {
+                    if (version._curseForgeFile.id == latestVersion.id) {
+                        forUpdate = version;
+                    }
+                }
+            }
+        }
+
         if (isUpdate && forUpdate != null) {
             versionsDropDown.setSelectedItem(forUpdate);
         } else if (isReinstall) {

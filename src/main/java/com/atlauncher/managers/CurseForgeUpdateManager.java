@@ -66,7 +66,21 @@ public class CurseForgeUpdateManager {
                         CurseForgeFile latestVersion = curseForgeMod.latestFiles.stream()
                                 .sorted(Comparator.comparingInt((
                                         CurseForgeFile file) -> file.id).reversed())
+                                .filter(f -> {
+                                    if (i.launcher.curseForgeFile != null) {
+                                        if (i.launcher.curseForgeFile.isReleaseType()) {
+                                            return f.isReleaseType();
+                                        }
+
+                                        if (i.launcher.curseForgeFile.isBetaType()) {
+                                            return f.isReleaseType() || f.isBetaType();
+                                        }
+                                    }
+
+                                    return true;
+                                })
                                 .findFirst().orElse(null);
+                        System.out.println(latestVersion);
 
                         if (latestVersion == null) {
                             return false;
