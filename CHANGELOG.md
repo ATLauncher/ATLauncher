@@ -11,5 +11,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 ### Fixes
 - Auto select the recommended version of CurseForge packs when installing
 - Don't show updates for CurseForge packs for Alpha/Beta unless already on it
+- Remove .zip extension from CurseForge files when installing packs
 
 ### Misc

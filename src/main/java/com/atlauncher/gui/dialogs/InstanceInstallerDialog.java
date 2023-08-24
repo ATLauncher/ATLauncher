@@ -483,7 +483,7 @@ public class InstanceInstallerDialog extends JDialog {
         pack.versions = files.stream().sorted(Comparator.comparingInt((CurseForgeFile file) -> file.id).reversed())
                 .map(f -> {
                     PackVersion packVersion = new PackVersion();
-                    packVersion.version = f.displayName;
+                    packVersion.version = f.getDisplayName();
                     packVersion.hasLoader = true;
                     packVersion._curseForgeFile = f;
 
