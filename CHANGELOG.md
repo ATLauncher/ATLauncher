@@ -7,6 +7,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 
 ### New Features
 - Add option to always use Alpha/Beta versions from CurseForge
+- Show when a mod is already installed when browsing mods for an instance [#719]
 
 ### Fixes
 - Auto select the recommended version of CurseForge packs when installing
