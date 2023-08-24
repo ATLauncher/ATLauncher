@@ -395,7 +395,7 @@ public class EditModsDialog extends JDialog {
         mods.addAll(enabledMods);
         mods.addAll(disabledMods);
 
-        ProgressDialog progressDialog = new ProgressDialog(GetText.tr("Checking For Updates"), mods.size(),
+        ProgressDialog<Void> progressDialog = new ProgressDialog<>(GetText.tr("Checking For Updates"), mods.size(),
                 GetText.tr("Checking For Updates"), this);
         progressDialog.addThread(new Thread(() -> {
             for (ModsJCheckBox mod : mods) {
@@ -410,7 +410,7 @@ public class EditModsDialog extends JDialog {
         progressDialog.start();
 
         DialogManager.okDialog().setTitle(GetText.tr("Checking For Updates Complete"))
-                .setContent(GetText.tr("The selected mods have been updated (if available).")).show();
+                .setContent(GetText.tr("The selected mods have been checked for updates.")).show();
 
         reloadPanels();
     }
