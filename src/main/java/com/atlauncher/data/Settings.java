@@ -88,6 +88,7 @@ public class Settings {
     public ModPlatform defaultModPlatform = ModPlatform.CURSEFORGE;
     public AddModRestriction addModRestriction = AddModRestriction.STRICT;
     public boolean enableAddedModsByDefault = true;
+    public boolean allowCurseForgeAlphaBetaFiles = false;
     public boolean dontCheckModsOnCurseForge = false;
     public boolean dontCheckModsOnModrinth = false;
     public InstanceExportFormat defaultExportFormat = InstanceExportFormat.CURSEFORGE;

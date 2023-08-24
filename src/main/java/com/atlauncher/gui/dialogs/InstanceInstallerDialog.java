@@ -486,7 +486,10 @@ public class InstanceInstallerDialog extends JDialog {
                     packVersion.version = f.displayName;
                     packVersion.hasLoader = true;
                     packVersion._curseForgeFile = f;
-                    packVersion.isRecommended = f.isReleaseType();
+
+                    if (!App.settings.allowCurseForgeAlphaBetaFiles) {
+                        packVersion.isRecommended = f.isReleaseType();
+                    }
 
                     try {
                         packVersion.minecraftVersion = MinecraftManager.getMinecraftVersion(f.getGameVersion());

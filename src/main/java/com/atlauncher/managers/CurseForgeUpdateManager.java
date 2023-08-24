@@ -67,7 +67,8 @@ public class CurseForgeUpdateManager {
                                 .sorted(Comparator.comparingInt((
                                         CurseForgeFile file) -> file.id).reversed())
                                 .filter(f -> {
-                                    if (i.launcher.curseForgeFile != null) {
+                                    if (i.launcher.curseForgeFile != null
+                                            && !App.settings.allowCurseForgeAlphaBetaFiles) {
                                         if (i.launcher.curseForgeFile.isReleaseType()) {
                                             return f.isReleaseType();
                                         }
@@ -80,7 +81,6 @@ public class CurseForgeUpdateManager {
                                     return true;
                                 })
                                 .findFirst().orElse(null);
-                        System.out.println(latestVersion);
 
                         if (latestVersion == null) {
                             return false;
