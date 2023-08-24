@@ -450,7 +450,6 @@ public class InstanceInstallerDialog extends JDialog {
             List<CurseForgeFile> files = CurseForgeApi.getFilesForProject(curseForgeProject.id);
 
             if (isServer) {
-                System.out.println("adsdsfsdf");
                 int[] serverFileIds = files.stream().filter(file -> file.serverPackFileId != null)
                         .mapToInt(file -> file.serverPackFileId).toArray();
                 List<CurseForgeFile> serverFiles = CurseForgeApi.getFiles(serverFileIds);
@@ -486,6 +485,7 @@ public class InstanceInstallerDialog extends JDialog {
                     packVersion.version = f.displayName;
                     packVersion.hasLoader = true;
                     packVersion._curseForgeFile = f;
+                    packVersion.isRecommended = f.isReleaseType();
 
                     try {
                         packVersion.minecraftVersion = MinecraftManager.getMinecraftVersion(f.getGameVersion());

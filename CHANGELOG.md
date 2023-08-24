@@ -8,5 +8,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 ### New Features
 
 ### Fixes
+- Auto select the recommended version of CurseForge packs when installing
 
 ### Misc

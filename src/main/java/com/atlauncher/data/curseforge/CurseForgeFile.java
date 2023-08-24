@@ -73,6 +73,18 @@ public class CurseForgeFile {
         return this.displayName + releaseTypeString;
     }
 
+    public boolean isReleaseType() {
+        return this.releaseType == 1;
+    }
+
+    public boolean isBetaType() {
+        return this.releaseType == 2;
+    }
+
+    public boolean isAlphaType() {
+        return this.releaseType == 3;
+    }
+
     public Mod convertToMod(CurseForgeProject curseForgeProject) {
         Mod mod = new Mod();
 
