@@ -9,5 +9,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 
 ### Fixes
 - The scan mods on startup setting not saving
+- Issues with the GUI bugging out on Windows [#721]
 
 ### Misc

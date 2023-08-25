@@ -289,6 +289,12 @@ public class App {
         // Parse all the command line arguments
         parseCommandLineArguments(args);
 
+        // Workaround for Windows and GUI rendering funny
+        if (OS.isWindows()) {
+            LogManager.warn("Disabling D3D rendering!");
+            System.setProperty("sun.java2d.d3d", "false");
+        }
+
         // Initialize the error reporting unless disabled by command line
         if (!disableErrorReporting) {
             ErrorReporting.enable();
