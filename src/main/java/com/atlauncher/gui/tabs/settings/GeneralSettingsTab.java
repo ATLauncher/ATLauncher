@@ -628,6 +628,7 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         if (ConfigManager.getConfigItem("useLwjglReplacement", false) == true) {
             App.settings.enableArmSupport = enableArmSupport.isSelected();
         }
+        App.settings.scanModsOnLaunch = scanModsOnLaunch.isSelected();
     }
 
     @Override
