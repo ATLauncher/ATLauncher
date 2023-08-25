@@ -12,3 +12,4 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Issues with the GUI bugging out on Windows [#721]
 
 ### Misc
+- Make wording on Windows setup for Java clearer and show warning when not selected
