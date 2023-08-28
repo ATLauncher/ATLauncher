@@ -10,6 +10,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 ### Fixes
 - The scan mods on startup setting not saving
 - Issues with the GUI bugging out on Windows [#721]
+- Issue with Modrinth categories not working
 
 ### Misc
 - Make wording on Windows setup for Java clearer and show warning when not selected
