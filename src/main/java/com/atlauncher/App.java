@@ -291,8 +291,11 @@ public class App {
 
         // Workaround for Windows and GUI rendering funny
         if (OS.isWindows()) {
-            LogManager.warn("Disabling D3D rendering!");
-            System.setProperty("sun.java2d.d3d", "false");
+            try {
+                System.setProperty("sun.java2d.d3d", "false");
+            } catch (Throwable t) {
+                LogManager.logStackTrace("Failed to disable D3D rendering", t);
+            }
         }
 
         // Initialize the error reporting unless disabled by command line
