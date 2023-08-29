@@ -54,14 +54,16 @@ import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.gui.dialogs.LoginWithMicrosoftDialog;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.gui.tabs.Tab;
-import com.atlauncher.gui.tabs.accounts.IAccountsViewModel.LoginPostResult;
-import com.atlauncher.gui.tabs.accounts.IAccountsViewModel.LoginPreCheckResult;
+import com.atlauncher.viewmodel.base.IAccountsViewModel;
+import com.atlauncher.viewmodel.base.IAccountsViewModel.LoginPostResult;
+import com.atlauncher.viewmodel.base.IAccountsViewModel.LoginPreCheckResult;
 import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.utils.ComboItem;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.SkinUtils;
+import com.atlauncher.viewmodel.impl.AccountsViewModel;
 
 public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
     private static final long serialVersionUID = 2493791137600123223L;

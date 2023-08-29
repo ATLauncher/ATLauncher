@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.atlauncher.gui.tabs.news;
+package com.atlauncher.viewmodel.impl;
 
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
@@ -32,6 +32,7 @@ import com.atlauncher.managers.ConfigManager;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.managers.NewsManager;
 import com.atlauncher.network.GraphqlClient;
+import com.atlauncher.viewmodel.base.INewsViewModel;
 
 public class NewsViewModel implements INewsViewModel {
     private Consumer<String> _onReload;

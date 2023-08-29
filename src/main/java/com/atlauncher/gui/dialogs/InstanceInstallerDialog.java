@@ -52,6 +52,7 @@ import javax.swing.JTextField;
 import org.mini2Dx.gettext.GetText;
 
 import com.atlauncher.App;
+import com.atlauncher.Data;
 import com.atlauncher.Gsons;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.constants.Constants;
@@ -450,7 +451,6 @@ public class InstanceInstallerDialog extends JDialog {
             List<CurseForgeFile> files = CurseForgeApi.getFilesForProject(curseForgeProject.id);
 
             if (isServer) {
-                System.out.println("adsdsfsdf");
                 int[] serverFileIds = files.stream().filter(file -> file.serverPackFileId != null)
                         .mapToInt(file -> file.serverPackFileId).toArray();
                 List<CurseForgeFile> serverFiles = CurseForgeApi.getFiles(serverFileIds);
@@ -483,9 +483,13 @@ public class InstanceInstallerDialog extends JDialog {
         pack.versions = files.stream().sorted(Comparator.comparingInt((CurseForgeFile file) -> file.id).reversed())
                 .map(f -> {
                     PackVersion packVersion = new PackVersion();
-                    packVersion.version = f.displayName;
+                    packVersion.version = f.getDisplayName();
                     packVersion.hasLoader = true;
                     packVersion._curseForgeFile = f;
+
+                    if (!App.settings.allowCurseForgeAlphaBetaFiles) {
+                        packVersion.isRecommended = f.isReleaseType();
+                    }
 
                     try {
                         packVersion.minecraftVersion = MinecraftManager.getMinecraftVersion(f.getGameVersion());
@@ -776,6 +780,7 @@ public class InstanceInstallerDialog extends JDialog {
 
         packVersion.hasLoader = modrinthManifest.dependencies.containsKey("fabric-loader")
                 || modrinthManifest.dependencies.containsKey("quilt-loader")
+                || modrinthManifest.dependencies.containsKey("neoforge")
                 || modrinthManifest.dependencies.containsKey("forge");
 
         pack.versions = Collections.singletonList(packVersion);
@@ -812,7 +817,8 @@ public class InstanceInstallerDialog extends JDialog {
         }
 
         packVersion.hasLoader = multiMCManifest.components.stream()
-                .anyMatch(c -> c.uid.equalsIgnoreCase("net.minecraftforge")
+                .anyMatch(c -> c.uid.equalsIgnoreCase("net.neoforged")
+                        || c.uid.equalsIgnoreCase("net.minecraftforge")
                         || c.uid.equalsIgnoreCase("net.fabricmc.hashed"));
 
         pack.versions = Collections.singletonList(packVersion);
@@ -1056,6 +1062,18 @@ public class InstanceInstallerDialog extends JDialog {
             }
             versionsDropDown.addItem(version);
         }
+
+        if (isUpdate && instance != null && instance.isCurseForgePack()) {
+            CurseForgeFile latestVersion = Data.CURSEFORGE_INSTANCE_LATEST_VERSION.get(instance);
+            if (latestVersion != null) {
+                for (PackVersion version : versions) {
+                    if (version._curseForgeFile.id == latestVersion.id) {
+                        forUpdate = version;
+                    }
+                }
+            }
+        }
+
         if (isUpdate && forUpdate != null) {
             versionsDropDown.setSelectedItem(forUpdate);
         } else if (isReinstall) {

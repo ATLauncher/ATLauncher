@@ -128,6 +128,10 @@ public class LoaderVersion {
             return "quilt-loader";
         }
 
+        if (this.isNeoForge()) {
+            return "neoforge";
+        }
+
         return "forge";
     }
 

@@ -28,20 +28,30 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.border.EmptyBorder;
-import javax.swing.border.TitledBorder;
 
 import org.mini2Dx.gettext.GetText;
 
 import com.atlauncher.App;
+import com.atlauncher.data.Instance;
 import com.atlauncher.data.modrinth.ModrinthSearchHit;
+import com.atlauncher.gui.borders.IconTitledBorder;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
 import com.atlauncher.workers.BackgroundImageWorker;
 
 public final class ModrinthSearchHitCard extends JPanel {
-    public ModrinthSearchHitCard(final ModrinthSearchHit mod, ActionListener al) {
+    private final ModrinthSearchHit mod;
+    private final Instance instance;
+
+    private final JButton addButton = new JButton(GetText.tr("Add"));
+    private final JButton reinstallButton = new JButton(GetText.tr("Reinstall"));
+
+    public ModrinthSearchHitCard(final ModrinthSearchHit mod, final Instance instance, ActionListener al) {
         setLayout(new BorderLayout());
         setPreferredSize(new Dimension(250, 180));
+
+        this.mod = mod;
+        this.instance = instance;
 
         JPanel summaryPanel = new JPanel(new BorderLayout());
         JTextArea summary = new JTextArea();
@@ -62,13 +72,17 @@ public final class ModrinthSearchHitCard extends JPanel {
         summaryPanel.setBorder(new EmptyBorder(0, 0, 10, 0));
 
         JPanel buttonsPanel = new JPanel(new FlowLayout());
-        JButton addButton = new JButton(GetText.tr("Add"));
         JButton viewButton = new JButton(GetText.tr("View"));
+
         buttonsPanel.add(addButton);
+        buttonsPanel.add(reinstallButton);
         buttonsPanel.add(viewButton);
 
-        addButton.addActionListener(al);
-
+        addButton.addActionListener(e -> {
+            al.actionPerformed(e);
+            updateInstalledStatus();
+        });
+        reinstallButton.addActionListener(al);
         viewButton.addActionListener(e -> {
             OS.openWebBrowser(String.format("https://modrinth.com/mod/%s", mod.slug));
         });
@@ -76,12 +90,21 @@ public final class ModrinthSearchHitCard extends JPanel {
         add(summaryPanel, BorderLayout.CENTER);
         add(buttonsPanel, BorderLayout.SOUTH);
 
-        TitledBorder border = new TitledBorder(null, mod.title, TitledBorder.DEFAULT_JUSTIFICATION,
-                TitledBorder.DEFAULT_POSITION, App.THEME.getBoldFont().deriveFont(12f));
-        setBorder(border);
-
         if (mod.iconUrl != null && !mod.iconUrl.isEmpty()) {
             new BackgroundImageWorker(icon, mod.iconUrl, 60, 60).execute();
         }
+
+        updateInstalledStatus();
+    }
+
+    private void updateInstalledStatus() {
+        boolean alreadyInstalled = instance.launcher.mods.stream()
+                .anyMatch(m -> m.isFromModrinth() && m.modrinthProject.id.equals(mod.projectId));
+
+        addButton.setVisible(!alreadyInstalled);
+        reinstallButton.setVisible(alreadyInstalled);
+
+        setBorder(new IconTitledBorder(mod.title, App.THEME.getBoldFont().deriveFont(12f),
+                alreadyInstalled ? Utils.getIconImage(App.THEME.getResourcePath("image", "tick")) : null));
     }
 }

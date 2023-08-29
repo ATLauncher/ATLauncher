@@ -117,6 +117,7 @@ import com.atlauncher.data.technic.TechnicModpackAsset;
 import com.atlauncher.data.technic.TechnicSolderModpackManifest;
 import com.atlauncher.exceptions.LocalException;
 import com.atlauncher.graphql.GetForgeLoaderVersionQuery;
+import com.atlauncher.graphql.GetNeoForgeLoaderVersionQuery;
 import com.atlauncher.gui.dialogs.BrowserDownloadDialog;
 import com.atlauncher.interfaces.NetworkProgressable;
 import com.atlauncher.managers.ConfigManager;
@@ -1620,6 +1621,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
 
         if (modrinthManifest.dependencies.containsKey("fabric-loader")
                 || modrinthManifest.dependencies.containsKey("quilt-loader")
+                || modrinthManifest.dependencies.containsKey("neoforge")
                 || modrinthManifest.dependencies.containsKey("forge")) {
             packVersion.loader = new com.atlauncher.data.json.Loader();
 
@@ -1641,6 +1643,29 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                 loaderMeta.put("loader", modrinthManifest.dependencies.get("quilt-loader"));
                 packVersion.loader.metadata = loaderMeta;
                 packVersion.loader.className = "com.atlauncher.data.minecraft.loaders.quilt.QuiltLoader";
+            } else if (modrinthManifest.dependencies.containsKey("neoforge")) {
+                String neoForgeVersionString = modrinthManifest.dependencies.get("neoforge");
+
+                if (ConfigManager.getConfigItem("useGraphql.loaderVersions", false) == false) {
+                    throw new Exception(
+                            "Failed to find loader version for " + neoForgeVersionString + " as GraphQL is disabled");
+                }
+
+                GetNeoForgeLoaderVersionQuery.Data response = GraphqlClient
+                        .callAndWait(new GetNeoForgeLoaderVersionQuery(neoForgeVersionString));
+
+                if (response == null || response.neoForgeVersion() == null) {
+                    throw new Exception("Failed to find loader version for " + neoForgeVersionString);
+                }
+
+                Map<String, Object> loaderMeta = new HashMap<>();
+                loaderMeta.put("minecraft", packVersion.minecraft);
+
+                loaderMeta.put("version", response.neoForgeVersion().version());
+                loaderMeta.put("rawVersion", response.neoForgeVersion().rawVersion());
+
+                packVersion.loader.metadata = loaderMeta;
+                packVersion.loader.className = "com.atlauncher.data.minecraft.loaders.neoforge.NeoForgeLoader";
             } else if (modrinthManifest.dependencies.containsKey("forge")) {
                 String forgeVersionString = modrinthManifest.dependencies.get("forge");
 
@@ -1756,6 +1781,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
 
         packVersion.loader = new com.atlauncher.data.json.Loader();
 
+        MultiMCComponent neoForgedComponent = multiMCManifest.components.stream()
+                .filter(c -> c.uid.equalsIgnoreCase("net.neoforged")).findFirst().orElse(null);
         MultiMCComponent forgeComponent = multiMCManifest.components.stream()
                 .filter(c -> c.uid.equalsIgnoreCase("net.minecraftforge")).findFirst().orElse(null);
         MultiMCComponent fabricLoaderComponent = multiMCManifest.components.stream()
@@ -1763,7 +1790,30 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         MultiMCComponent quiltLoaderComponent = multiMCManifest.components.stream()
                 .filter(c -> c.uid.equalsIgnoreCase("org.quiltmc.quilt-loader")).findFirst().orElse(null);
 
-        if (forgeComponent != null) {
+        if (neoForgedComponent != null) {
+            String neoForgeVersionString = neoForgedComponent.version;
+
+            if (ConfigManager.getConfigItem("useGraphql.loaderVersions", false) == false) {
+                throw new Exception(
+                        "Failed to find loader version for " + neoForgeVersionString + " as GraphQL is disabled");
+            }
+
+            GetNeoForgeLoaderVersionQuery.Data response = GraphqlClient
+                    .callAndWait(new GetNeoForgeLoaderVersionQuery(neoForgeVersionString));
+
+            if (response == null || response.neoForgeVersion() == null) {
+                throw new Exception("Failed to find loader version for " + neoForgeVersionString);
+            }
+
+            Map<String, Object> loaderMeta = new HashMap<>();
+            loaderMeta.put("minecraft", minecraftVersion);
+
+            loaderMeta.put("version", response.neoForgeVersion().version());
+            loaderMeta.put("rawVersion", response.neoForgeVersion().rawVersion());
+
+            packVersion.loader.metadata = loaderMeta;
+            packVersion.loader.className = "com.atlauncher.data.minecraft.loaders.neoforge.NeoForgeLoader";
+        } else if (forgeComponent != null) {
             String forgeVersionString = forgeComponent.version;
 
             if (ConfigManager.getConfigItem("useGraphql.loaderVersions", false) == true) {
