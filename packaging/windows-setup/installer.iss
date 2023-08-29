@@ -1,6 +1,6 @@
 #define MyAppName "ATLauncher"
 #define MyAppURL "https://atlauncher.com"
-#define MyAppVersion "1.1.0.0"
+#define MyAppVersion "1.2.0.0"
 
 [Setup]
 AppId={{2F5FDA11-45A5-4CC3-8E51-5E11E2481697}
@@ -43,7 +43,7 @@ Source: "{tmp}\jre.zip"; DestDir: "{tmp}"; Flags: external deleteafterinstall; C
 
 [Components]
 Name: "atlauncher"; Description: "ATLauncher"; ExtraDiskSpaceRequired: 20000000; Types: full compact custom; Flags: fixed
-Name: "java"; Description: "Install Java"; ExtraDiskSpaceRequired: 129016602; Types: full
+Name: "java"; Description: "Install Java 17 (For ATLauncher Only)"; ExtraDiskSpaceRequired: 129016602; Types: full; Flags: disablenouninstallwarning
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
@@ -82,7 +82,10 @@ end;
 
 function NextButtonClick(CurPageID: Integer): Boolean;
 begin
-  if CurPageID = wpReady then begin
+  if (CurPageID = wpSelectComponents) and not WizardIsComponentSelected('java') then
+  begin
+    Result := SuppressibleMsgBox('The option to install Java was not selected. Letting the launcher install and use it''s own version of Java is highly recommended to avoid issues in the future when we update the application.' + #13#10 + #13#10 + 'Installing this will not install it globally on your system, only for ATLauncher to use.' + #13#10 + #13#10 + 'Are you sure you want to continue without installing Java?', mbConfirmation, MB_YESNO, IDNO) = IDYES;
+  end else if CurPageID = wpReady then begin
     DownloadPage.Clear;
 
     DownloadPage.Add('https://download.nodecdn.net/containers/atl/ATLauncher.exe', '{#MyAppName}.exe', '');

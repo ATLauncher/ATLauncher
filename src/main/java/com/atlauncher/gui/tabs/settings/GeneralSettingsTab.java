@@ -238,7 +238,7 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         selectedTabOnStartup = new JComboBox<>();
         selectedTabOnStartup.addItem(new ComboItem<>(UIConstants.LAUNCHER_NEWS_TAB, GetText.tr("News")));
         selectedTabOnStartup
-                .addItem(new ComboItem<>(UIConstants.LAUNCHER_VANILLA_PACKS_TAB, GetText.tr("Vanilla Packs")));
+                .addItem(new ComboItem<>(UIConstants.LAUNCHER_CREATE_PACK_TAB, GetText.tr("Create Pack")));
         selectedTabOnStartup.addItem(new ComboItem<>(UIConstants.LAUNCHER_PACKS_TAB, GetText.tr("Packs")));
         selectedTabOnStartup.addItem(new ComboItem<>(UIConstants.LAUNCHER_INSTANCES_TAB, GetText.tr("Instances")));
         selectedTabOnStartup.addItem(new ComboItem<>(UIConstants.LAUNCHER_SERVERS_TAB, GetText.tr("Servers")));
@@ -628,6 +628,7 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         if (ConfigManager.getConfigItem("useLwjglReplacement", false) == true) {
             App.settings.enableArmSupport = enableArmSupport.isSelected();
         }
+        App.settings.scanModsOnLaunch = scanModsOnLaunch.isSelected();
     }
 
     @Override

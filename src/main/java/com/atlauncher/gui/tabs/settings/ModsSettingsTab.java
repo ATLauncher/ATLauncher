@@ -38,6 +38,7 @@ public class ModsSettingsTab extends AbstractSettingsTab {
     private final JComboBox<ComboItem<ModPlatform>> defaultModPlatform;
     private final JComboBox<ComboItem<AddModRestriction>> addModRestriction;
     private final JCheckBox enableAddedModsByDefault;
+    private final JCheckBox allowCurseForgeAlphaBetaFiles;
     private final JCheckBox dontCheckModsOnCurseForge;
     private final JCheckBox dontCheckModsOnModrinth;
     private final JComboBox<ComboItem<InstanceExportFormat>> defaultExportFormat;
@@ -126,6 +127,27 @@ public class ModsSettingsTab extends AbstractSettingsTab {
         enableAddedModsByDefault.setSelected(App.settings.enableAddedModsByDefault);
         add(enableAddedModsByDefault, gbc);
 
+        // Allow CurseForge Alpha/Beta CurseForge files
+
+        gbc.gridx = 0;
+        gbc.gridy++;
+        gbc.insets = UIConstants.LABEL_INSETS;
+        gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
+        JLabelWithHover allowCurseForgeAlphaBetaFilesLabel = new JLabelWithHover(
+                GetText.tr("Allow CurseForge Alpha/Beta Files?"),
+                HELP_ICON, new HTMLBuilder().center().split(100)
+                        .text(GetText.tr(
+                                "This will enable using Alpha/Beta files from CurseForge by default when installing modpacks as well as updating to Alpha/Beta versions from stable release versions."))
+                        .build());
+        add(allowCurseForgeAlphaBetaFilesLabel, gbc);
+
+        gbc.gridx++;
+        gbc.insets = UIConstants.CHECKBOX_FIELD_INSETS;
+        gbc.anchor = GridBagConstraints.BASELINE_LEADING;
+        allowCurseForgeAlphaBetaFiles = new JCheckBox();
+        allowCurseForgeAlphaBetaFiles.setSelected(App.settings.allowCurseForgeAlphaBetaFiles);
+        add(allowCurseForgeAlphaBetaFiles, gbc);
+
         // Dont check mods on CurseForge
 
         gbc.gridx = 0;
@@ -207,12 +229,17 @@ public class ModsSettingsTab extends AbstractSettingsTab {
         add(defaultExportFormat, gbc);
     }
 
+    public boolean needToCheckForExternalPackUpdates() {
+        return App.settings.allowCurseForgeAlphaBetaFiles != allowCurseForgeAlphaBetaFiles.isSelected();
+    }
+
     @SuppressWarnings("unchecked")
     public void save() {
         App.settings.defaultModPlatform = ((ComboItem<ModPlatform>) defaultModPlatform.getSelectedItem()).getValue();
         App.settings.addModRestriction = ((ComboItem<AddModRestriction>) addModRestriction.getSelectedItem())
                 .getValue();
         App.settings.enableAddedModsByDefault = enableAddedModsByDefault.isSelected();
+        App.settings.allowCurseForgeAlphaBetaFiles = allowCurseForgeAlphaBetaFiles.isSelected();
         App.settings.dontCheckModsOnCurseForge = dontCheckModsOnCurseForge.isSelected();
         App.settings.dontCheckModsOnModrinth = dontCheckModsOnModrinth.isSelected();
         App.settings.defaultExportFormat = ((ComboItem<InstanceExportFormat>) defaultExportFormat.getSelectedItem())
