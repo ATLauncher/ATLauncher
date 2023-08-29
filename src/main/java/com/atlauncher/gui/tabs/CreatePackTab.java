@@ -547,7 +547,7 @@ public class CreatePackTab extends JPanel implements Tab, RelocalizationListener
 
     @Override
     public String getAnalyticsScreenViewName() {
-        return "Vanilla Packs";
+        return "Create Pack";
     }
 
     @Override

@@ -809,7 +809,7 @@ public final class AddModsDialog extends JDialog {
             mods.forEach(mod -> {
                 CurseForgeProject castMod = (CurseForgeProject) mod;
 
-                contentPanel.add(new CurseForgeProjectCard(castMod, e -> {
+                contentPanel.add(new CurseForgeProjectCard(castMod, instance, e -> {
                     Analytics.trackEvent(AnalyticsEvent.forAddMod(castMod));
                     new CurseForgeProjectFileSelectorDialog(this, castMod, instance);
                 }), gbc);
@@ -846,7 +846,7 @@ public final class AddModsDialog extends JDialog {
             searchResult.hits.forEach(mod -> {
                 ModrinthSearchHit castMod = (ModrinthSearchHit) mod;
 
-                contentPanel.add(new ModrinthSearchHitCard(castMod, e -> {
+                contentPanel.add(new ModrinthSearchHitCard(castMod, instance, e -> {
                     final ProgressDialog<ModrinthProject> modrinthProjectLookupDialog = new ProgressDialog<>(
                             GetText.tr("Getting Mod Information"), 0, GetText.tr("Getting Mod Information"),
                             "Aborting Getting Mod Information");

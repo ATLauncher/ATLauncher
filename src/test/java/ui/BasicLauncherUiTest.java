@@ -95,7 +95,7 @@ public class BasicLauncherUiTest extends AbstractUiTest {
         // account selector now showing
         JComboBoxFixture accountSelector = this.frame.comboBox("accountSelector");
         accountSelector.requireVisible();
-        mainTabsFixture.selectTab("Vanilla Packs");
+        mainTabsFixture.selectTab("Create Pack");
         Pause.pause(1, TimeUnit.SECONDS);
 
         MockHelper.mockJson(mockServer, "GET", "download.nodecdn.net",
@@ -114,10 +114,10 @@ public class BasicLauncherUiTest extends AbstractUiTest {
         MockHelper.mockJar(mockServer, "GET", "launcher.mojang.com",
                 "/v1/objects/4addb91039ae452c5612f288bfe6ce925dac92c5/client.jar", "client-1-16-4.jar");
 
-        JPanelFixture vanillaPacksPanel = this.frame.panel("vanillaPacksPanel");
-        vanillaPacksPanel.requireVisible();
+        JPanelFixture createPackPanel = this.frame.panel("createPackPanel");
+        createPackPanel.requireVisible();
 
-        JButtonFixture createInstanceButton = vanillaPacksPanel.button(JButtonMatcher.withText("Create Instance"));
+        JButtonFixture createInstanceButton = createPackPanel.button(JButtonMatcher.withText("Create Instance"));
         createInstanceButton.requireVisible();
         createInstanceButton.click();
 

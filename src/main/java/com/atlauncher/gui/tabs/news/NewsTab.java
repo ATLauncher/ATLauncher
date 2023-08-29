@@ -37,6 +37,8 @@ import org.mini2Dx.gettext.GetText;
 
 import com.atlauncher.gui.tabs.Tab;
 import com.atlauncher.utils.OS;
+import com.atlauncher.viewmodel.base.INewsViewModel;
+import com.atlauncher.viewmodel.impl.NewsViewModel;
 
 /**
  * This class extends {@link JPanel} and provides a Panel for displaying the

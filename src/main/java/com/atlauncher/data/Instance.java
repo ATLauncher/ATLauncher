@@ -1798,7 +1798,7 @@ public class Instance extends MinecraftVersion {
         manifest.components.add(minecraftComponent);
 
         // fabric loader
-        if (launcher.loaderVersion.type.equals("Fabric") || launcher.loaderVersion.type.equals("LegacyFabric")) {
+        if (launcher.loaderVersion.isFabric() || launcher.loaderVersion.isLegacyFabric()) {
             // mappings
             MultiMCComponent fabricMappingsComponent = new MultiMCComponent();
             fabricMappingsComponent.cachedName = "Intermediary Mappings";
@@ -1832,7 +1832,25 @@ public class Instance extends MinecraftVersion {
         }
 
         // forge loader
-        if (launcher.loaderVersion.type.equals("Forge")) {
+        if (launcher.loaderVersion.isNeoForge()) {
+            // loader
+            MultiMCComponent forgeMappingsComponent = new MultiMCComponent();
+            forgeMappingsComponent.cachedName = "Forge";
+
+            forgeMappingsComponent.cachedRequires = new ArrayList<>();
+            MultiMCRequire minecraftRequire = new MultiMCRequire();
+            minecraftRequire.equals = id;
+            minecraftRequire.uid = "net.minecraft";
+            forgeMappingsComponent.cachedRequires.add(minecraftRequire);
+
+            forgeMappingsComponent.cachedVersion = launcher.loaderVersion.version;
+            forgeMappingsComponent.uid = "net.neoforged";
+            forgeMappingsComponent.version = launcher.loaderVersion.version;
+            manifest.components.add(forgeMappingsComponent);
+        }
+
+        // forge loader
+        if (launcher.loaderVersion.isForge()) {
             // loader
             MultiMCComponent forgeMappingsComponent = new MultiMCComponent();
             forgeMappingsComponent.cachedName = "Forge";
@@ -1850,7 +1868,7 @@ public class Instance extends MinecraftVersion {
         }
 
         // quilt loader
-        if (launcher.loaderVersion.type.equals("Quilt")) {
+        if (launcher.loaderVersion.isQuilt()) {
             String hashedName = "org.quiltmc.hashed";
             String cachedName = "Hashed Mappings";
             if (ConfigManager.getConfigItem("loaders.quilt.switchHashedForIntermediary", true) == false) {
