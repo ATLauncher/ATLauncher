@@ -11,6 +11,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 - The scan mods on startup setting not saving
 - Issues with the GUI bugging out on Windows [#721]
 - Issue with Modrinth categories not working
+- Issue installing modpacks from CurseForge with short version numbers
 
 ### Misc
 - Make wording on Windows setup for Java clearer and show warning when not selected

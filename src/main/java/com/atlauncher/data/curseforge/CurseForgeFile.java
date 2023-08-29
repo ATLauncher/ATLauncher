@@ -65,7 +65,8 @@ public class CurseForgeFile {
     public int modId;
 
     public String getDisplayName() {
-        if (this.isModPack() && displayName.substring(displayName.length() - 4).equalsIgnoreCase(".zip")) {
+        if (this.isModPack() && displayName.length() >= 4
+                && displayName.substring(displayName.length() - 4).equalsIgnoreCase(".zip")) {
             return displayName.substring(0, displayName.length() - 4);
         }
 
