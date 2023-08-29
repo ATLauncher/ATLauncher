@@ -11,3 +11,4 @@ This changelog only contains the changes that are unreleased. For changes for in
 
 ### Misc
 - Implement HierarchyPanel for basic life cycle, first to NewsTab
+- Implement HierarchyPanel to CreatePackTab, adding RxJava clearing support
