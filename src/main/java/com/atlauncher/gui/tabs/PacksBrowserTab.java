@@ -48,11 +48,10 @@ import com.atlauncher.App;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.data.minecraft.VersionManifestVersion;
 import com.atlauncher.evnt.listener.RelocalizationListener;
-import com.atlauncher.evnt.listener.TabChangeListener;
 import com.atlauncher.evnt.listener.ThemeListener;
 import com.atlauncher.evnt.manager.RelocalizationManager;
-import com.atlauncher.evnt.manager.TabChangeManager;
 import com.atlauncher.evnt.manager.ThemeManager;
+import com.atlauncher.gui.panels.HierarchyPanel;
 import com.atlauncher.gui.panels.packbrowser.ATLauncherPacksPanel;
 import com.atlauncher.gui.panels.packbrowser.CurseForgePacksPanel;
 import com.atlauncher.gui.panels.packbrowser.FTBPacksPanel;
@@ -71,8 +70,8 @@ import com.atlauncher.utils.Utils;
 import com.formdev.flatlaf.icons.FlatSearchIcon;
 
 @SuppressWarnings("serial")
-public final class PacksBrowserTab extends JPanel
-        implements Tab, RelocalizationListener, ThemeListener, TabChangeListener {
+public final class PacksBrowserTab extends HierarchyPanel
+        implements Tab, RelocalizationListener, ThemeListener {
     private final JPanel actionsPanel = new JPanel();
 
     private final JPanel minecraftVersionPanel = new JPanel();
@@ -316,8 +315,6 @@ public final class PacksBrowserTab extends JPanel
 
             afterTabChange();
         });
-
-        TabChangeManager.addListener(this);
 
         add(platformTabbedPane, BorderLayout.CENTER);
     }
@@ -572,9 +569,17 @@ public final class PacksBrowserTab extends JPanel
     }
 
     @Override
-    public void onTabChange(int tabIndex) {
-        if (tabIndex == 2 && !loaded) {
+    protected void createViewModel() {
+    }
+
+    @Override
+    protected void onShow() {
+        if (!loaded){
             afterTabChange();
         }
+    }
+
+    @Override
+    protected void onDestroy() {
     }
 }

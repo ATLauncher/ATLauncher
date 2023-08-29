@@ -41,7 +41,6 @@ import com.atlauncher.data.Pack;
 import com.atlauncher.data.PackVersion;
 import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.RelocalizationManager;
-import com.atlauncher.evnt.manager.TabChangeManager;
 import com.atlauncher.gui.components.LauncherBottomBar;
 import com.atlauncher.gui.dialogs.InstanceInstallerDialog;
 import com.atlauncher.gui.tabs.InstancesTab;
@@ -242,11 +241,9 @@ public final class LauncherFrame extends JFrame implements RelocalizationListene
         }
         tabbedPane.setOpaque(true);
         tabbedPane.setSelectedIndex(App.settings.selectedTabOnStartup);
-        TabChangeManager.post(tabbedPane.getSelectedIndex());
 
         tabbedPane.addChangeListener(e -> {
             Analytics.sendScreenView(((Tab) tabbedPane.getSelectedComponent()).getAnalyticsScreenViewName());
-            TabChangeManager.post(tabbedPane.getSelectedIndex());
         });
 
         Analytics.sendScreenView(((Tab) tabbedPane.getSelectedComponent()).getAnalyticsScreenViewName());
