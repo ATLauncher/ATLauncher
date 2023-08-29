@@ -11,3 +11,5 @@ This changelog only contains the changes that are unreleased. For changes for in
 
 ### Misc
 - Implement RxJava in InstanceManager for IInstancesTabViewModel [#795]
+- Add UUID to Instances [#795]
+- Implement RxJava in all update managers [#795]
