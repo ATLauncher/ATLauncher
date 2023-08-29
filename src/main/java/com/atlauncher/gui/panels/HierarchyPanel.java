@@ -27,18 +27,25 @@ import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.managers.LogManager;
 
+import io.reactivex.rxjava3.disposables.CompositeDisposable;
+import io.reactivex.rxjava3.disposables.Disposable;
+
 /**
  * 24 / 06 / 2022
  * <p>
  * This panel uses {@link HierarchyListener} to react the visibility changes.
  * By implementing this panel instead of {@link JPanel} one can lower background
  * memory usage and increase application boot times by delegating resource intensive tasks to runtime.
+ * <p>
+ * If child class subscribes to Observables, use addDisposable to manage subscriptions.
  */
 public abstract class HierarchyPanel extends JPanel implements HierarchyListener {
     /**
      * Used to keep track of the view model lifecycle.
      */
     private boolean isViewModelCreated = false;
+
+    private final CompositeDisposable disposablePool = new CompositeDisposable();
 
     public HierarchyPanel(LayoutManager layout) {
         super(layout);
@@ -61,6 +68,13 @@ public abstract class HierarchyPanel extends JPanel implements HierarchyListener
         }
     }
 
+    /**
+     * Add a disposable to be automatically cleared upon view destruction.
+     */
+    public void addDisposable(Disposable disposable){
+        disposablePool.add(disposable);
+    }
+
     @Override
     public void hierarchyChanged(HierarchyEvent e) {
         if ((e.getChangeFlags() & HierarchyEvent.SHOWING_CHANGED) != 0) {
@@ -77,6 +91,8 @@ public abstract class HierarchyPanel extends JPanel implements HierarchyListener
                 // Thus, no need to destroy.
                 if (!isViewModelCreated) return;
                 LogManager.debug("Destroying UI for: " + getClass().getName());
+                // Stop processes
+                disposablePool.clear();
                 // Destroy layer so the UI can hurry on
                 onDestroy();
                 System.gc(); // Run GC to clear out any now stale data
