@@ -45,8 +45,10 @@ public final class ModrinthSearchHitCard extends JPanel {
 
     private final JButton addButton = new JButton(GetText.tr("Add"));
     private final JButton reinstallButton = new JButton(GetText.tr("Reinstall"));
+    private final JButton removeButton = new JButton(GetText.tr("Remove"));
 
-    public ModrinthSearchHitCard(final ModrinthSearchHit mod, final Instance instance, ActionListener al) {
+    public ModrinthSearchHitCard(final ModrinthSearchHit mod, final Instance instance, ActionListener installAl,
+            ActionListener removeAl) {
         setLayout(new BorderLayout());
         setPreferredSize(new Dimension(250, 180));
 
@@ -76,13 +78,18 @@ public final class ModrinthSearchHitCard extends JPanel {
 
         buttonsPanel.add(addButton);
         buttonsPanel.add(reinstallButton);
+        buttonsPanel.add(removeButton);
         buttonsPanel.add(viewButton);
 
         addButton.addActionListener(e -> {
-            al.actionPerformed(e);
+            installAl.actionPerformed(e);
             updateInstalledStatus();
         });
-        reinstallButton.addActionListener(al);
+        reinstallButton.addActionListener(installAl);
+        removeButton.addActionListener(e -> {
+            removeAl.actionPerformed(e);
+            updateInstalledStatus();
+        });
         viewButton.addActionListener(e -> {
             OS.openWebBrowser(String.format("https://modrinth.com/mod/%s", mod.slug));
         });
@@ -103,6 +110,7 @@ public final class ModrinthSearchHitCard extends JPanel {
 
         addButton.setVisible(!alreadyInstalled);
         reinstallButton.setVisible(alreadyInstalled);
+        removeButton.setVisible(alreadyInstalled);
 
         setBorder(new IconTitledBorder(mod.title, App.THEME.getBoldFont().deriveFont(12f),
                 alreadyInstalled ? Utils.getIconImage(App.THEME.getResourcePath("image", "tick")) : null));

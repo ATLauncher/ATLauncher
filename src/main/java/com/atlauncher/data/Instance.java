@@ -3509,4 +3509,17 @@ public class Instance extends MinecraftVersion {
 
         return null;
     }
+
+    public void removeMod(DisableableMod foundMod) {
+        launcher.mods.remove(foundMod);
+        FileUtils.delete(
+                (foundMod.isDisabled()
+                        ? foundMod.getDisabledFile(this)
+                        : foundMod.getFile(this)).toPath(),
+                true);
+        save();
+
+        // #. {0} is the name of a mod that was removed
+        App.TOASTER.pop(GetText.tr("{0} Removed", foundMod.name));
+    }
 }

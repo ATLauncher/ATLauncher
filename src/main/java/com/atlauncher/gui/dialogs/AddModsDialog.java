@@ -24,6 +24,7 @@ import java.awt.GridBagConstraints;
 import java.awt.Window;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.swing.BorderFactory;
@@ -48,6 +49,7 @@ import com.atlauncher.App;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.constants.Constants;
 import com.atlauncher.data.AddModRestriction;
+import com.atlauncher.data.DisableableMod;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.ModPlatform;
 import com.atlauncher.data.curseforge.CurseForgeCategoryForGame;
@@ -312,6 +314,12 @@ public final class AddModsDialog extends JDialog {
                     installFabricApiButton.setVisible(false);
                 }
             }
+
+            if (searchField.getText().isEmpty()) {
+                loadDefaultMods();
+            } else {
+                searchForMods();
+            }
         });
 
         this.installLegacyFabricApiButton.addActionListener(e -> {
@@ -403,6 +411,12 @@ public final class AddModsDialog extends JDialog {
                     legacyFabricApiWarningLabel.setVisible(false);
                     installLegacyFabricApiButton.setVisible(false);
                 }
+            }
+
+            if (searchField.getText().isEmpty()) {
+                loadDefaultMods();
+            } else {
+                searchForMods();
             }
         });
 
@@ -823,6 +837,26 @@ public final class AddModsDialog extends JDialog {
                 contentPanel.add(new CurseForgeProjectCard(castMod, instance, e -> {
                     Analytics.trackEvent(AnalyticsEvent.forAddMod(castMod));
                     new CurseForgeProjectFileSelectorDialog(this, castMod, instance);
+                }, e -> {
+                    Analytics.trackEvent(AnalyticsEvent.forRemoveMod(castMod));
+
+                    Optional<DisableableMod> foundMod = instance.launcher.mods.stream()
+                            .filter(dm -> dm.isFromCurseForge() && dm.curseForgeProjectId == castMod.id)
+                            .findFirst();
+
+                    if (foundMod.isPresent()) {
+                        instance.removeMod(foundMod.get());
+
+                        if (castMod.id == Constants.CURSEFORGE_FABRIC_MOD_ID) {
+                            fabricApiWarningLabel.setVisible(true);
+                            installFabricApiButton.setVisible(true);
+                        }
+
+                        if (castMod.id == Constants.CURSEFORGE_LEGACY_FABRIC_MOD_ID) {
+                            legacyFabricApiWarningLabel.setVisible(true);
+                            installLegacyFabricApiButton.setVisible(true);
+                        }
+                    }
                 }), gbc);
 
                 gbc.gridy++;
@@ -883,6 +917,31 @@ public final class AddModsDialog extends JDialog {
 
                     Analytics.trackEvent(AnalyticsEvent.forAddMod(castMod));
                     new ModrinthVersionSelectorDialog(this, modrinthMod, instance);
+                }, e -> {
+                    Analytics.trackEvent(AnalyticsEvent.forRemoveMod(castMod));
+
+                    Optional<DisableableMod> foundMod = instance.launcher.mods.stream()
+                            .filter(dm -> dm.isFromModrinth() && dm.modrinthProject.id.equals(castMod.projectId))
+                            .findFirst();
+
+                    if (foundMod.isPresent()) {
+                        instance.removeMod(foundMod.get());
+
+                        if (castMod.projectId.equals(Constants.MODRINTH_FABRIC_MOD_ID)) {
+                            fabricApiWarningLabel.setVisible(true);
+                            installFabricApiButton.setVisible(true);
+                        }
+
+                        if (castMod.projectId.equals(Constants.MODRINTH_LEGACY_FABRIC_MOD_ID)) {
+                            legacyFabricApiWarningLabel.setVisible(true);
+                            installLegacyFabricApiButton.setVisible(true);
+                        }
+
+                        if (castMod.projectId.equals(Constants.MODRINTH_QSL_MOD_ID)) {
+                            quiltStandardLibrariesWarningLabel.setVisible(true);
+                            installQuiltStandardLibrariesButton.setVisible(true);
+                        }
+                    }
                 }), gbc);
 
                 gbc.gridy++;

@@ -7,6 +7,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 
 ### New Features
 - Support installing Shaders from CurseForge with their new section
+- Add remove button to add mods dialog when mod is already installed
 
 ### Fixes
 - Issue with updating/reinstalling non solder Technic packs not showing correct version
