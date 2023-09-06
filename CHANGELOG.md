@@ -9,5 +9,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Support installing Shaders from CurseForge with their new section
 
 ### Fixes
+- Issue with updating/reinstalling non solder Technic packs not showing correct version
 
 ### Misc
