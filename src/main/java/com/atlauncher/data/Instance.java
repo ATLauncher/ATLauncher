@@ -84,6 +84,7 @@ import com.atlauncher.constants.UIConstants;
 import com.atlauncher.data.curseforge.CurseForgeFile;
 import com.atlauncher.data.curseforge.CurseForgeFileHash;
 import com.atlauncher.data.curseforge.CurseForgeFingerprint;
+import com.atlauncher.data.curseforge.CurseForgeFingerprintedMod;
 import com.atlauncher.data.curseforge.CurseForgeProject;
 import com.atlauncher.data.curseforge.pack.CurseForgeManifest;
 import com.atlauncher.data.curseforge.pack.CurseForgeManifestFile;
@@ -1569,12 +1570,26 @@ public class Instance extends MinecraftVersion {
                 .filter(installedMod -> !installedMod.isFromCurseForge() || installedMod.getCurseForgeModId() != mod.id)
                 .collect(Collectors.toList());
 
-        // add this mod
-        this.launcher.mods.add(new DisableableMod(mod.name, file.displayName, true, file.fileName,
+        DisableableMod dm = new DisableableMod(mod.name, file.displayName, true, file.fileName,
                 mod.getRootCategoryId() == Constants.CURSEFORGE_RESOURCE_PACKS_SECTION_ID ? Type.resourcepack
                         : (mod.getRootCategoryId() == Constants.CURSEFORGE_WORLDS_SECTION_ID ? Type.worlds : Type.mods),
-                null, mod.summary, false, true, true, false, mod, file));
+                null, mod.summary, false, true, true, false, mod, file);
 
+        // check for mod on Modrinth
+        if (!App.settings.dontCheckModsOnModrinth) {
+            ModrinthVersion version = ModrinthApi.getVersionFromSha1Hash(Hashing.sha1(finalLocation).toString());
+            if (version != null) {
+                ModrinthProject project = ModrinthApi.getProject(version.projectId);
+                if (project != null) {
+                    // add Modrinth information
+                    dm.modrinthProject = project;
+                    dm.modrinthVersion = version;
+                }
+            }
+        }
+
+        // add this mod
+        this.launcher.mods.add(dm);
         this.save();
 
         // #. {0} is the name of a mod that was installed
@@ -1642,10 +1657,34 @@ public class Instance extends MinecraftVersion {
         Type modType = mod.projectType == ModrinthProjectType.MOD ? Type.mods
                 : (mod.projectType == ModrinthProjectType.SHADER ? Type.shaderpack : Type.resourcepack);
 
-        // add this mod
-        this.launcher.mods.add(new DisableableMod(mod.title, version.name, true, fileToDownload.filename, modType,
-                null, mod.description, false, true, true, false, mod, version));
+        DisableableMod dm = new DisableableMod(mod.title, version.name, true, fileToDownload.filename, modType,
+                null, mod.description, false, true, true, false, mod, version);
 
+        // check for mod on CurseForge
+        if (!App.settings.dontCheckModsOnCurseForge) {
+            try {
+                CurseForgeFingerprint fingerprint = CurseForgeApi
+                        .checkFingerprints(new Long[] { Hashing.murmur(finalLocation) });
+
+                if (fingerprint.exactMatches != null && fingerprint.exactMatches.size() == 1) {
+                    CurseForgeFingerprintedMod foundMod = fingerprint.exactMatches.get(0);
+
+                    dm.curseForgeProjectId = foundMod.id;
+                    dm.curseForgeFile = foundMod.file;
+                    dm.curseForgeFileId = foundMod.file.id;
+
+                    CurseForgeProject curseForgeProject = CurseForgeApi.getProjectById(foundMod.id);
+                    if (curseForgeProject != null) {
+                        dm.curseForgeProject = curseForgeProject;
+                    }
+                }
+            } catch (IOException e) {
+                LogManager.logStackTrace(e);
+            }
+        }
+
+        // add this mod
+        this.launcher.mods.add(dm);
         this.save();
 
         // #. {0} is the name of a mod that was installed
