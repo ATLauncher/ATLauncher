@@ -16,5 +16,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 ### Fixes
 - Issue with updating/reinstalling non solder Technic packs not showing correct version
 - Image not downloading when creating servers
+- Switch server launched dialog to toaster
 
 ### Misc

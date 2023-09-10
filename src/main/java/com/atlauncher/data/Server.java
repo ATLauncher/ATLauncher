@@ -74,6 +74,8 @@ import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
 import com.google.gson.JsonIOException;
 
+import io.github.asyncronous.toast.Toaster;
+
 @Json
 public class Server {
     public String name;
@@ -299,11 +301,7 @@ public class Server {
             processBuilder.start();
 
             if (!close) {
-                DialogManager.okDialog().setTitle(GetText.tr("Server Launched"))
-                        .setContent(new HTMLBuilder().center().text(GetText.tr(
-                                "The server has been launched in an external window.<br/><br/>You can close ATLauncher which will not stop the server."))
-                                .build())
-                        .setType(DialogManager.INFO).show();
+                Toaster.instance().pop(GetText.tr("The server has been launched."));
             } else {
                 Analytics.endSession();
                 System.exit(0);
