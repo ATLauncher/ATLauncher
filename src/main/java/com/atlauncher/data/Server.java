@@ -40,6 +40,11 @@ import java.util.Map;
 import javax.imageio.IIOException;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import org.mini2Dx.gettext.GetText;
 
@@ -67,6 +72,7 @@ import com.google.gson.JsonIOException;
 @Json
 public class Server {
     public String name;
+    public String description;
     public String pack;
     public Integer packId;
     public String version;
@@ -433,6 +439,10 @@ public class Server {
         if (pack != null) {
             return pack.description;
         } else {
+            if (description != null) {
+                return description;
+            }
+
             return GetText.tr("No Description");
         }
     }
@@ -479,6 +489,44 @@ public class Server {
         }
 
         return Utils.getIconImage("/assets/image/default-image.png");
+    }
+
+    public void startChangeDescription() {
+        JTextArea textArea = new JTextArea(description);
+        textArea.setColumns(30);
+        textArea.setRows(10);
+        textArea.setLineWrap(true);
+        textArea.setWrapStyleWord(true);
+        textArea.setSize(300, 150);
+
+        int ret = JOptionPane.showConfirmDialog(App.launcher.getParent(), new JScrollPane(textArea),
+                GetText.tr("Changing Description"), JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE);
+
+        if (ret == 0) {
+            Analytics.trackEvent(AnalyticsEvent.forServerEvent("server_description_change", this));
+            description = textArea.getText();
+            save();
+        }
+    }
+
+    public void startChangeImage() {
+        JFileChooser chooser = new JFileChooser();
+        chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        chooser.setAcceptAllFileFilterUsed(false);
+        chooser.setFileFilter(new FileNameExtensionFilter("PNG Files", "png"));
+        int ret = chooser.showOpenDialog(App.launcher.getParent());
+        if (ret == JFileChooser.APPROVE_OPTION) {
+            File img = chooser.getSelectedFile();
+            if (img.getAbsolutePath().endsWith(".png")) {
+                Analytics.trackEvent(AnalyticsEvent.forServerEvent("server_image_change", this));
+                try {
+                    Utils.safeCopy(img, getRoot().resolve("server.png").toFile());
+                    save();
+                } catch (IOException ex) {
+                    LogManager.logStackTrace("Failed to set server image", ex);
+                }
+            }
+        }
     }
 
     public void save() {

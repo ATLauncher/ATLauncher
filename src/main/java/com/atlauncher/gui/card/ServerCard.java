@@ -23,19 +23,15 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.io.File;
-import java.io.IOException;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
-import javax.swing.JFileChooser;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTextArea;
-import javax.swing.filechooser.FileNameExtensionFilter;
 
 import org.mini2Dx.gettext.GetText;
 
@@ -47,12 +43,10 @@ import com.atlauncher.gui.components.CollapsiblePanel;
 import com.atlauncher.gui.components.ImagePanel;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.managers.DialogManager;
-import com.atlauncher.managers.LogManager;
 import com.atlauncher.managers.ServerManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.network.analytics.AnalyticsEvent;
 import com.atlauncher.utils.OS;
-import com.atlauncher.utils.Utils;
 
 @SuppressWarnings("serial")
 public class ServerCard extends CollapsiblePanel implements RelocalizationListener {
@@ -65,6 +59,7 @@ public class ServerCard extends CollapsiblePanel implements RelocalizationListen
     private final JButton backupButton = new JButton(GetText.tr("Backup"));
     private final JButton deleteButton = new JButton(GetText.tr("Delete"));
     private final JButton openButton = new JButton(GetText.tr("Open Folder"));
+    private final JTextArea descArea = new JTextArea();
 
     public ServerCard(Server server) {
         super(server);
@@ -76,7 +71,6 @@ public class ServerCard extends CollapsiblePanel implements RelocalizationListen
         splitter.setRightComponent(rightPanel);
         splitter.setEnabled(false);
 
-        JTextArea descArea = new JTextArea();
         descArea.setText(server.getPackDescription());
         descArea.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 5));
         descArea.setEditable(false);
@@ -84,6 +78,16 @@ public class ServerCard extends CollapsiblePanel implements RelocalizationListen
         descArea.setLineWrap(true);
         descArea.setWrapStyleWord(true);
         descArea.setEditable(false);
+
+        descArea.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (e.getClickCount() == 2) {
+                    server.startChangeDescription();
+                    descArea.setText(server.getPackDescription());
+                }
+            }
+        });
 
         JPanel top = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 2));
         JPanel bottom = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 2));
@@ -163,30 +167,22 @@ public class ServerCard extends CollapsiblePanel implements RelocalizationListen
                 } else if (e.getButton() == MouseEvent.BUTTON3) {
                     JPopupMenu rightClickMenu = new JPopupMenu();
 
+                    JMenuItem cahngeDescriptionItem = new JMenuItem(GetText.tr("Change Description"));
+                    rightClickMenu.add(cahngeDescriptionItem);
+
                     JMenuItem changeImageItem = new JMenuItem(GetText.tr("Change Image"));
                     rightClickMenu.add(changeImageItem);
 
                     rightClickMenu.show(image, e.getX(), e.getY());
 
+                    cahngeDescriptionItem.addActionListener(e14 -> {
+                        server.startChangeDescription();
+                        descArea.setText(server.getPackDescription());
+                    });
+
                     changeImageItem.addActionListener(e13 -> {
-                        JFileChooser chooser = new JFileChooser();
-                        chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-                        chooser.setAcceptAllFileFilterUsed(false);
-                        chooser.setFileFilter(new FileNameExtensionFilter("PNG Files", "png"));
-                        int ret = chooser.showOpenDialog(App.launcher.getParent());
-                        if (ret == JFileChooser.APPROVE_OPTION) {
-                            File img = chooser.getSelectedFile();
-                            if (img.getAbsolutePath().endsWith(".png")) {
-                                Analytics.trackEvent(AnalyticsEvent.forServerEvent("server_change_image", server));
-                                try {
-                                    Utils.safeCopy(img, server.getRoot().resolve("server.png").toFile());
-                                    image.setImage(server.getImage().getImage());
-                                    server.save();
-                                } catch (IOException ex) {
-                                    LogManager.logStackTrace("Failed to set server image", ex);
-                                }
-                            }
-                        }
+                        server.startChangeImage();
+                        image.setImage(server.getImage().getImage());
                     });
                 }
             }

@@ -2872,6 +2872,7 @@ public class Instance extends MinecraftVersion {
                 GetText.tr("Changing Description"), JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE);
 
         if (ret == 0) {
+            Analytics.trackEvent(AnalyticsEvent.forInstanceEvent("instance_description_change", this));
             launcher.description = textArea.getText();
             save();
         }
