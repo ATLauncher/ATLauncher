@@ -270,6 +270,11 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                     return success(false);
                 }
 
+                downloadImage();
+                if (isCancelled()) {
+                    return success(false);
+                }
+
                 saveServerJson();
 
                 return success(true);
@@ -2389,7 +2394,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
             return false;
         }
 
-        downloadInstanceImage();
+        downloadImage();
         if (isCancelled()) {
             return false;
         }
@@ -3478,26 +3483,28 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         }
     }
 
-    private void downloadInstanceImage() throws Exception {
+    private void downloadImage() throws Exception {
         addPercent(5);
 
         if (this.pack.curseForgeProject != null) {
-            fireTask(GetText.tr("Downloading Instance Image"));
+            fireTask(GetText.tr("Downloading Image"));
             CurseForgeAttachment attachment = this.pack.curseForgeProject.getLogo().orElse(null);
 
             if (attachment != null) {
                 com.atlauncher.network.Download imageDownload = com.atlauncher.network.Download.build()
-                        .setUrl(attachment.url).downloadTo(root.resolve("instance.png")).withInstanceInstaller(this)
+                        .setUrl(attachment.url).downloadTo(root.resolve(isServer ? "server.png" : "instance.png"))
+                        .withInstanceInstaller(this)
                         .withHttpClient(Network.createProgressClient(this));
 
                 this.setTotalBytes(imageDownload.getFilesize());
                 imageDownload.downloadFile();
             }
         } else if (this.pack.modrinthProject != null) {
-            fireTask(GetText.tr("Downloading Instance Image"));
+            fireTask(GetText.tr("Downloading Image"));
             if (this.pack.modrinthProject.iconUrl != null) {
                 com.atlauncher.network.Download imageDownload = com.atlauncher.network.Download.build()
-                        .setUrl(this.pack.modrinthProject.iconUrl).downloadTo(root.resolve("instance.png"))
+                        .setUrl(this.pack.modrinthProject.iconUrl)
+                        .downloadTo(root.resolve(isServer ? "server.png" : "instance.png"))
                         .withInstanceInstaller(this).ignoreFailures()
                         .withHttpClient(Network.createProgressClient(this));
 
@@ -3505,7 +3512,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                 imageDownload.downloadFile();
             }
         } else if (modpacksChPackManifest != null) {
-            fireTask(GetText.tr("Downloading Instance Image"));
+            fireTask(GetText.tr("Downloading Image"));
             ModpacksChPackArt art = this.modpacksChPackManifest.art.stream()
                     .filter(a -> a.type == ModpacksChPackArtType.SQUARE).findFirst().orElse(null);
 
@@ -3513,14 +3520,15 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                 // we can't check the provided hash and size here otherwise download fails as
                 // their api doesn't return the correct info
                 com.atlauncher.network.Download imageDownload = com.atlauncher.network.Download.build().setUrl(art.url)
-                        .size(art.size).hash(art.sha1).downloadTo(root.resolve("instance.png")).ignoreFailures()
+                        .size(art.size).hash(art.sha1)
+                        .downloadTo(root.resolve(isServer ? "server.png" : "instance.png")).ignoreFailures()
                         .withInstanceInstaller(this).withHttpClient(Network.createProgressClient(this));
 
                 this.setTotalBytes(art.size);
                 imageDownload.downloadFile();
             }
         } else if (technicModpack != null) {
-            fireTask(GetText.tr("Downloading Instance Image"));
+            fireTask(GetText.tr("Downloading Image"));
             TechnicModpackAsset logo = this.technicModpack.logo;
 
             if (logo != null && logo.url != null && !logo.url.isEmpty()) {

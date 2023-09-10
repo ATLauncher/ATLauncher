@@ -17,7 +17,9 @@
  */
 package com.atlauncher.data;
 
+import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -442,8 +444,20 @@ public class Server {
             try {
                 BufferedImage img = ImageIO.read(customImage);
                 if (img != null) {
-                    Image dimg = img.getScaledInstance(300, 150, Image.SCALE_SMOOTH);
-                    return new ImageIcon(dimg);
+                    // if a square image, then make it 300x150 (without stretching) centered
+                    if (img.getHeight(null) == img.getWidth(null)) {
+                        BufferedImage dimg = new BufferedImage(300, 150, BufferedImage.TYPE_INT_ARGB);
+
+                        Graphics2D g2d = dimg.createGraphics();
+                        g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
+                                RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+                        g2d.drawImage(img, 75, 0, 150, 150, null);
+                        g2d.dispose();
+
+                        return new ImageIcon(dimg);
+                    }
+
+                    return new ImageIcon(img.getScaledInstance(300, 150, Image.SCALE_SMOOTH));
                 }
             } catch (IIOException e) {
                 LogManager.warn("Error creating scaled image from the custom image of server " + this.name
@@ -458,6 +472,7 @@ public class Server {
         if (getPack() != null) {
             File instancesImage = FileSystem.IMAGES.resolve(this.getSafePackName().toLowerCase(Locale.ENGLISH) + ".png")
                     .toFile();
+
             if (instancesImage.exists()) {
                 return Utils.getIconImage(instancesImage);
             }

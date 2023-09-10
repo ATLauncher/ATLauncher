@@ -22,6 +22,7 @@ import java.awt.Dialog.ModalityType;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.RenderingHints;
 import java.awt.Window;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -354,6 +355,8 @@ public class Instance extends MinecraftVersion {
                         BufferedImage dimg = new BufferedImage(300, 150, BufferedImage.TYPE_INT_ARGB);
 
                         Graphics2D g2d = dimg.createGraphics();
+                        g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
+                                RenderingHints.VALUE_INTERPOLATION_BILINEAR);
                         g2d.drawImage(img, 75, 0, 150, 150, null);
                         g2d.dispose();
 
