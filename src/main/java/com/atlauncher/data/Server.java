@@ -54,9 +54,14 @@ import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
 import com.atlauncher.annot.Json;
 import com.atlauncher.builders.HTMLBuilder;
+import com.atlauncher.data.curseforge.CurseForgeFile;
+import com.atlauncher.data.curseforge.CurseForgeProject;
 import com.atlauncher.data.minecraft.JavaRuntime;
 import com.atlauncher.data.minecraft.JavaRuntimes;
 import com.atlauncher.data.minecraft.JavaVersion;
+import com.atlauncher.data.modrinth.ModrinthProject;
+import com.atlauncher.data.modrinth.ModrinthVersion;
+import com.atlauncher.data.modrinth.pack.ModrinthModpackManifest;
 import com.atlauncher.exceptions.InvalidPack;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.managers.DialogManager;
@@ -84,6 +89,12 @@ public class Server {
     public boolean isDev;
     public List<DisableableMod> mods = new ArrayList<>();
     public List<String> ignoredUpdates = new ArrayList<>();
+
+    public CurseForgeProject curseForgeProject;
+    public CurseForgeFile curseForgeFile;
+    public ModrinthProject modrinthProject;
+    public ModrinthVersion modrinthVersion;
+    public ModrinthModpackManifest modrinthManifest;
 
     public transient Path ROOT;
 
@@ -527,6 +538,100 @@ public class Server {
                 }
             }
         }
+    }
+
+    public boolean isCurseForgePack() {
+        return curseForgeProject != null && curseForgeFile != null;
+    }
+
+    public boolean isModrinthPack() {
+        return modrinthManifest != null && modrinthProject != null
+                && modrinthVersion != null;
+    }
+
+    public boolean showGetHelpButton() {
+        if (getPack() != null || isModrinthPack() || isCurseForgePack()) {
+            return getDiscordInviteUrl() != null || getSupportUrl() != null || getWikiUrl() != null
+                    || getSourceUrl() != null;
+        }
+
+        return false;
+    }
+
+    public String getDiscordInviteUrl() {
+        if (getPack() != null) {
+            return getPack().discordInviteURL;
+        }
+
+        if (isModrinthPack()) {
+            return modrinthProject.discordUrl;
+        }
+
+        return null;
+    }
+
+    public String getSupportUrl() {
+        if (getPack() != null) {
+            return getPack().supportURL;
+        }
+
+        if (isModrinthPack()) {
+            return modrinthProject.issuesUrl;
+        }
+
+        if (isCurseForgePack() && curseForgeProject.hasIssuesUrl()) {
+            return curseForgeProject.getIssuesUrl();
+        }
+
+        return null;
+    }
+
+    public boolean hasWebsite() {
+        if (getPack() != null) {
+            return getPack().websiteURL != null;
+        }
+
+        if (isCurseForgePack()) {
+            return curseForgeProject.hasWebsiteUrl();
+        }
+
+        return isModrinthPack();
+    }
+
+    public String getWebsiteUrl() {
+        if (getPack() != null) {
+            return getPack().websiteURL;
+        }
+
+        if (isCurseForgePack() && curseForgeProject.hasWebsiteUrl()) {
+            return curseForgeProject.getWebsiteUrl();
+        }
+
+        if (isModrinthPack()) {
+            return String.format("https://modrinth.com/modpack/%s", modrinthProject.slug);
+        }
+
+        return null;
+    }
+
+    public String getWikiUrl() {
+        if (isModrinthPack()) {
+            return modrinthProject.wikiUrl;
+        }
+
+        if (isCurseForgePack() && curseForgeProject.hasWikiUrl()) {
+            return curseForgeProject.getWikiUrl();
+        }
+
+        return null;
+    }
+
+    public String getSourceUrl() {
+        if (isModrinthPack()) {
+            return modrinthProject.sourceUrl;
+        }
+
+        return null;
     }
 
     public void save() {

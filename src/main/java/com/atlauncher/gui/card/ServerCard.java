@@ -40,6 +40,7 @@ import com.atlauncher.data.Server;
 import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.gui.components.CollapsiblePanel;
+import com.atlauncher.gui.components.DropDownButton;
 import com.atlauncher.gui.components.ImagePanel;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.managers.DialogManager;
@@ -60,6 +61,14 @@ public class ServerCard extends CollapsiblePanel implements RelocalizationListen
     private final JButton deleteButton = new JButton(GetText.tr("Delete"));
     private final JButton openButton = new JButton(GetText.tr("Open Folder"));
     private final JTextArea descArea = new JTextArea();
+
+    private final JPopupMenu getHelpPopupMenu = new JPopupMenu();
+    private final JMenuItem discordLinkMenuItem = new JMenuItem(GetText.tr("Discord"));
+    private final JMenuItem supportLinkMenuItem = new JMenuItem(GetText.tr("Support"));
+    private final JMenuItem websiteLinkMenuItem = new JMenuItem(GetText.tr("Website"));
+    private final JMenuItem wikiLinkMenuItem = new JMenuItem(GetText.tr("Wiki"));
+    private final JMenuItem sourceLinkMenuItem = new JMenuItem(GetText.tr("Source"));
+    private final DropDownButton getHelpButton = new DropDownButton(GetText.tr("Get Help"), getHelpPopupMenu);
 
     public ServerCard(Server server) {
         super(server);
@@ -104,7 +113,10 @@ public class ServerCard extends CollapsiblePanel implements RelocalizationListen
         top.add(this.launchWithGuiAndClose);
         bottom.add(this.backupButton);
         bottom.add(this.deleteButton);
+        bottom.add(this.getHelpButton);
         bottom.add(this.openButton);
+
+        this.getHelpButton.setVisible(server.showGetHelpButton());
 
         // unfortunately OSX doesn't allow us to pass arguments with open and Terminal
         if (OS.isMac()) {
@@ -120,6 +132,8 @@ public class ServerCard extends CollapsiblePanel implements RelocalizationListen
 
         this.getContentPane().setLayout(new BorderLayout());
         this.getContentPane().add(splitter, BorderLayout.CENTER);
+
+        setupButtonPopupMenus();
 
         RelocalizationManager.addListener(this);
 
@@ -199,6 +213,35 @@ public class ServerCard extends CollapsiblePanel implements RelocalizationListen
                 setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
             }
         });
+    }
+
+    private void setupButtonPopupMenus() {
+        if (server.showGetHelpButton()) {
+            if (server.getDiscordInviteUrl() != null) {
+                discordLinkMenuItem.addActionListener(e -> OS.openWebBrowser(server.getDiscordInviteUrl()));
+                getHelpPopupMenu.add(discordLinkMenuItem);
+            }
+
+            if (server.getSupportUrl() != null) {
+                supportLinkMenuItem.addActionListener(e -> OS.openWebBrowser(server.getSupportUrl()));
+                getHelpPopupMenu.add(supportLinkMenuItem);
+            }
+
+            if (server.getWebsiteUrl() != null) {
+                websiteLinkMenuItem.addActionListener(e -> OS.openWebBrowser(server.getWebsiteUrl()));
+                getHelpPopupMenu.add(websiteLinkMenuItem);
+            }
+
+            if (server.getWikiUrl() != null) {
+                wikiLinkMenuItem.addActionListener(e -> OS.openWebBrowser(server.getWikiUrl()));
+                getHelpPopupMenu.add(wikiLinkMenuItem);
+            }
+
+            if (server.getSourceUrl() != null) {
+                sourceLinkMenuItem.addActionListener(e -> OS.openWebBrowser(server.getSourceUrl()));
+                getHelpPopupMenu.add(sourceLinkMenuItem);
+            }
+        }
     }
 
     @Override

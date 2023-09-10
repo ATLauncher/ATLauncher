@@ -2587,6 +2587,12 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         server.isDev = this.version.isDev;
         server.isPatchedForLog4Shell = true;
 
+        server.curseForgeProject = this.pack.curseForgeProject;
+        server.curseForgeFile = this.version._curseForgeFile;
+        server.modrinthProject = this.pack.modrinthProject;
+        server.modrinthVersion = this.version._modrinthVersion;
+        server.modrinthManifest = modrinthManifest;
+
         if (pack.curseForgeProject == null) {
             server.mods = this.modsInstalled;
             server.javaVersion = this.minecraftVersion.javaVersion;

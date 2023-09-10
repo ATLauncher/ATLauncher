@@ -11,6 +11,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 - When adding mods to an instance, get metadata from all mod platforms
 - Add ability to change description for servers
 - Add more info when cannot run server script
+- Add Get Help button to servers where possible
 
 ### Fixes
 - Issue with updating/reinstalling non solder Technic packs not showing correct version
