@@ -129,7 +129,7 @@ public class Server {
         if (serverScript == null) {
             DialogManager.okDialog().setTitle(GetText.tr("Cannot Launch Server"))
                     .setContent(new HTMLBuilder().text(GetText.tr(
-                            "We cannot launch this server for you. Please \"Open Folder\" and run the server manually."))
+                            "We cannot launch this server for you. Please use \"Open Folder\" and run the server manually.<br/><br/>If unsure how to do so, please contact the packs support pages for more further help."))
                             .center().build())
                     .setType(DialogManager.ERROR)
                     .show();

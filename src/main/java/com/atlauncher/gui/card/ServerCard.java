@@ -167,15 +167,15 @@ public class ServerCard extends CollapsiblePanel implements RelocalizationListen
                 } else if (e.getButton() == MouseEvent.BUTTON3) {
                     JPopupMenu rightClickMenu = new JPopupMenu();
 
-                    JMenuItem cahngeDescriptionItem = new JMenuItem(GetText.tr("Change Description"));
-                    rightClickMenu.add(cahngeDescriptionItem);
+                    JMenuItem changeDescriptionItem = new JMenuItem(GetText.tr("Change Description"));
+                    rightClickMenu.add(changeDescriptionItem);
 
                     JMenuItem changeImageItem = new JMenuItem(GetText.tr("Change Image"));
                     rightClickMenu.add(changeImageItem);
 
                     rightClickMenu.show(image, e.getX(), e.getY());
 
-                    cahngeDescriptionItem.addActionListener(e14 -> {
+                    changeDescriptionItem.addActionListener(e14 -> {
                         server.startChangeDescription();
                         descArea.setText(server.getPackDescription());
                     });
