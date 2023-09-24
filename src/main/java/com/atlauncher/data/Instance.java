@@ -2198,14 +2198,18 @@ public class Instance extends MinecraftVersion {
         manifest.name = name;
         manifest.version = version;
         manifest.author = author;
-        manifest.files = this.launcher.mods.stream().filter(m -> !m.disabled && m.isFromCurseForge()).map(mod -> {
-            CurseForgeManifestFile file = new CurseForgeManifestFile();
-            file.projectID = mod.curseForgeProjectId;
-            file.fileID = mod.curseForgeFileId;
-            file.required = true;
+        manifest.files = this.launcher.mods.stream()
+                .filter(m -> !m.disabled && m.isFromCurseForge())
+                .filter(mod -> overrides.stream()
+                        .anyMatch(path -> getRoot().relativize(mod.getPath(this)).startsWith(path)))
+                .map(mod -> {
+                    CurseForgeManifestFile file = new CurseForgeManifestFile();
+                    file.projectID = mod.curseForgeProjectId;
+                    file.fileID = mod.curseForgeFileId;
+                    file.required = true;
 
-            return file;
-        }).collect(Collectors.toList());
+                    return file;
+                }).collect(Collectors.toList());
         manifest.overrides = "overrides";
 
         // create temp directory to put this in
@@ -2226,14 +2230,19 @@ public class Instance extends MinecraftVersion {
 
         // create modlist.html
         StringBuilder sb = new StringBuilder("<ul>");
-        this.launcher.mods.stream().filter(m -> !m.disabled && m.isFromCurseForge()).forEach(mod -> {
-            if (mod.hasFullCurseForgeInformation()) {
-                sb.append("<li><a href=\"").append(mod.curseForgeProject.getWebsiteUrl()).append("\">").append(mod.name)
-                        .append("</a></li>");
-            } else {
-                sb.append("<li>").append(mod.name).append("</li>");
-            }
-        });
+        this.launcher.mods.stream()
+                .filter(m -> !m.disabled && m.isFromCurseForge())
+                .filter(mod -> overrides.stream()
+                        .anyMatch(path -> getRoot().relativize(mod.getPath(this)).startsWith(path)))
+                .forEach(mod -> {
+                    if (mod.hasFullCurseForgeInformation()) {
+                        sb.append("<li><a href=\"").append(mod.curseForgeProject.getWebsiteUrl()).append("\">")
+                                .append(mod.name)
+                                .append("</a></li>");
+                    } else {
+                        sb.append("<li>").append(mod.name).append("</li>");
+                    }
+                });
         sb.append("</ul>");
 
         try (OutputStreamWriter fileWriter = new OutputStreamWriter(
@@ -2348,7 +2357,10 @@ public class Instance extends MinecraftVersion {
         manifest.name = name;
         manifest.summary = this.launcher.description;
         manifest.files = this.launcher.mods.parallelStream()
-                .filter(m -> !m.disabled && m.modrinthVersion != null && m.getFile(this).exists()).map(mod -> {
+                .filter(m -> !m.disabled && m.modrinthVersion != null && m.getFile(this).exists())
+                .filter(mod -> overrides.stream()
+                        .anyMatch(path -> getRoot().relativize(mod.getPath(this)).startsWith(path)))
+                .map(mod -> {
                     Path modPath = mod.getFile(this).toPath();
 
                     ModrinthModpackFile file = new ModrinthModpackFile();

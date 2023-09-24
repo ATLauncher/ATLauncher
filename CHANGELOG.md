@@ -18,5 +18,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Image not downloading when creating servers
 - Switch server launched dialog to toaster
 - Turn off HTTP/2 connections completely to fix 429 errors [#771]
+- Issue where deselected folders were still exported when found on CF/MR [#812]
 
 ### Misc
