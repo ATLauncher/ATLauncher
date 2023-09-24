@@ -3,21 +3,10 @@
 This changelog only contains the changes that are unreleased. For changes for individual releases, please visit the
 [releases](https://github.com/ATLauncher/ATLauncher/releases) page on GitHub.
 
-## 3.4.34.0
+## 3.4.34.1
 
 ### New Features
-- Support installing Shaders from CurseForge with their new section
-- Add remove button to add mods dialog when mod is already installed
-- When adding mods to an instance, get metadata from all mod platforms
-- Add ability to change description for servers
-- Add more info when cannot run server script
-- Add Get Help button to servers where possible
 
 ### Fixes
-- Issue with updating/reinstalling non solder Technic packs not showing correct version
-- Image not downloading when creating servers
-- Switch server launched dialog to toaster
-- Turn off HTTP/2 connections completely to fix 429 errors [#771]
-- Issue where deselected folders were still exported when found on CF/MR [#812]
 
 ### Misc
