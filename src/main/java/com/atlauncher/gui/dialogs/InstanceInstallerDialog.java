@@ -456,7 +456,18 @@ public class InstanceInstallerDialog extends JDialog {
                 List<CurseForgeFile> serverFiles = CurseForgeApi.getFiles(serverFileIds);
 
                 dialog.setReturnValue(
-                        serverFiles.stream().filter(f -> f.isAvailable && f.isServerPack && f.getGameVersion() != null)
+                        serverFiles.stream().map(f -> {
+                            if (f.getGameVersion() == null) {
+                                Optional<CurseForgeFile> matchingFile = files.stream()
+                                        .filter(sf -> sf.serverPackFileId == f.id).findFirst();
+
+                                if (matchingFile.isPresent()) {
+                                    f.gameVersions = matchingFile.get().gameVersions;
+                                }
+                            }
+
+                            return f;
+                        }).filter(f -> f.isAvailable && f.isServerPack && f.getGameVersion() != null)
                                 .collect(Collectors.toList()));
             } else {
                 dialog.setReturnValue(files);
