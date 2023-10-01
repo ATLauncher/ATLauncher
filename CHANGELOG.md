@@ -9,5 +9,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 
 ### Fixes
 - Issue where CurseForge servers without any game versions fail to show
+- Instances using NeoForge loader not able to be exported
 
 ### Misc
