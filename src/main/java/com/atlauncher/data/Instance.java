@@ -1407,7 +1407,10 @@ public class Instance extends MinecraftVersion {
                 ? this.getRoot().resolve("resourcepacks").resolve(file.fileName)
                 : (mod.getRootCategoryId() == Constants.CURSEFORGE_WORLDS_SECTION_ID
                         ? this.getRoot().resolve("saves").resolve(file.fileName)
-                        : this.getRoot().resolve("mods").resolve(file.fileName));
+                        : ((mod.getRootCategoryId() == Constants.CURSEFORGE_SHADER_PACKS_SECTION_ID
+                                || mod.classId == Constants.CURSEFORGE_SHADER_PACKS_SECTION_ID)
+                                        ? this.getRoot().resolve("shaderpacks").resolve(file.fileName)
+                                        : this.getRoot().resolve("mods").resolve(file.fileName)));
 
         // find mods with the same CurseForge project id
         List<DisableableMod> sameMods = this.launcher.mods.stream()

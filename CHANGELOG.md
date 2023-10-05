@@ -8,5 +8,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 ### New Features
 
 ### Fixes
+- Issue with shaderpacks from CurseForge not installing in the correct folder
 
 ### Misc

@@ -65,6 +65,11 @@ public class CurseForgeProject {
             return ModType.resourcepack;
         }
 
+        if (getRootCategoryId() == Constants.CURSEFORGE_SHADER_PACKS_SECTION_ID
+                || classId == Constants.CURSEFORGE_SHADER_PACKS_SECTION_ID) {
+            return ModType.shaderpack;
+        }
+
         return ModType.mods;
     }
 
