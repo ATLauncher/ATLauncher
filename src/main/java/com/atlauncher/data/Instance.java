@@ -1403,14 +1403,7 @@ public class Instance extends MinecraftVersion {
 
     public void addFileFromCurseForge(CurseForgeProject mod, CurseForgeFile file, ProgressDialog dialog) {
         Path downloadLocation = FileSystem.DOWNLOADS.resolve(file.fileName);
-        Path finalLocation = mod.getRootCategoryId() == Constants.CURSEFORGE_RESOURCE_PACKS_SECTION_ID
-                ? this.getRoot().resolve("resourcepacks").resolve(file.fileName)
-                : (mod.getRootCategoryId() == Constants.CURSEFORGE_WORLDS_SECTION_ID
-                        ? this.getRoot().resolve("saves").resolve(file.fileName)
-                        : ((mod.getRootCategoryId() == Constants.CURSEFORGE_SHADER_PACKS_SECTION_ID
-                                || mod.classId == Constants.CURSEFORGE_SHADER_PACKS_SECTION_ID)
-                                        ? this.getRoot().resolve("shaderpacks").resolve(file.fileName)
-                                        : this.getRoot().resolve("mods").resolve(file.fileName)));
+        Path finalLocation = mod.getInstanceDirectoryPath(this.getRoot()).resolve(file.fileName);
 
         // find mods with the same CurseForge project id
         List<DisableableMod> sameMods = this.launcher.mods.stream()

@@ -17,6 +17,7 @@
  */
 package com.atlauncher.data.curseforge;
 
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -133,5 +134,22 @@ public class CurseForgeProject {
 
         return String.format("https://www.curseforge.com/minecraft/%s/%s/download/%d", getClassUrlSlug(), slug,
                 file.id);
+    }
+
+    public Path getInstanceDirectoryPath(Path root) {
+        if (getRootCategoryId() == Constants.CURSEFORGE_RESOURCE_PACKS_SECTION_ID) {
+            return root.resolve("resourcepacks");
+        }
+
+        if (getRootCategoryId() == Constants.CURSEFORGE_WORLDS_SECTION_ID) {
+            return root.resolve("saves");
+        }
+
+        if (getRootCategoryId() == Constants.CURSEFORGE_SHADER_PACKS_SECTION_ID
+                || classId == Constants.CURSEFORGE_SHADER_PACKS_SECTION_ID) {
+            return root.resolve("shaderpacks");
+        }
+
+        return root.resolve("mods");
     }
 }
