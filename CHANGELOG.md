@@ -3,11 +3,10 @@
 This changelog only contains the changes that are unreleased. For changes for individual releases, please visit the
 [releases](https://github.com/ATLauncher/ATLauncher/releases) page on GitHub.
 
-## 3.4.34.2
+## 3.4.34.3
 
 ### New Features
 
 ### Fixes
-- Issue with shaderpacks from CurseForge not installing in the correct folder
 
 ### Misc
