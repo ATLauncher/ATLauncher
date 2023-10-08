@@ -27,7 +27,7 @@ Please see the [TESTING.md](TESTING.md) file for information on how we write tes
 ## Prerequisites
 
 In order to build ATLauncher, you will need any Java version 8 or above. Java 8 is recommended since we compile to Java
-8 compatability regardless.
+8 compatibility regardless.
 
 Everything else that's needed for the project is provided by Gradle, and accessed using the Gradle wrapper which can be
 invoked by using `./gradlew`.
@@ -46,7 +46,7 @@ This will build the application and output the resulting files for Windows, Linu
 
 If you want to run the launcher while developing with it, you can use your IDE (if you have one) to do that for you.
 
-Alternatively you can run:
+Alternatively, you can run:
 
 ```sh
 ./gradlew run --args="--debug --working-dir=testLauncher"
@@ -100,12 +100,12 @@ To check that they're all correct, you can run the below command:
 ./gradlew checkLicenses
 ```
 
-This is run during the CI process, and will fail if the license is missing or not up to date, so make sure that you add
+This is run during the CI process and will fail if the license is missing or not up to date, so make sure that you add
 this to all new files you create.
 
 ## Create Custom Themes
 
-ATLauncher supports custom themes. The process is fairly straight forward, but may require a lot of trial and error.
+ATLauncher supports custom themes. The process is fairly straight forward but may require a lot of trial and error.
 
 First you must create a `MyThemeName.java` in the `src/main/java/com/atlauncher/themes/` directory. Your theme should
 extend one of the base ATLauncher themes depending on what you need:
@@ -113,13 +113,13 @@ extend one of the base ATLauncher themes depending on what you need:
 -   `Dark` is the default theme and is a dark theme. It's a good place to start with some defaults for new dark themes.
 -   `Light` is a light theme. It's a good place to start with some defaults for new light themes.
 -   `ATLauncherLaf` is a base class which every theme MUST at some point extend. It provides some defaults including our
-    brand colours and some defaults. This shouldn't be extended from unless you need absolute power.
+    brand colors and some defaults. This shouldn't be extended from unless you need absolute power.
 
 Once you've created your class (look at other themes in the directory for an idea on what you can do), you'll need to
 create a properties file in the `src/main/resources/com/atlauncher/themes/` directory. This properties file is how you
 setup and change UI elements. You should use the existing examples in that directory as examples.
 
-Last step is to register the theme in the file `src/main/java/com/atlauncher/gui/tabs/settings/GeneralSettingsTab.java`.
+The last step is to register the theme in the file `src/main/java/com/atlauncher/gui/tabs/settings/GeneralSettingsTab.java`.
 
 Now you can open the launcher and then switch to your theme.
 
@@ -127,11 +127,11 @@ We use a library called [FlatLaf](https://github.com/JFormDesigner/FlatLaf) to p
 good references listed below to see the default values for the themes and see what you can overwrite:
 
 -   <https://github.com/JFormDesigner/FlatLaf/blob/master/flatlaf-core/src/main/resources/com/formdev/flatlaf/FlatLaf.properties>
-    -   This file contains all the base properties for all themes
+    -   This file contains all the base properties for all themes.
 -   <https://github.com/JFormDesigner/FlatLaf/blob/master/flatlaf-core/src/main/resources/com/formdev/flatlaf/FlatLightLaf.properties>
-    -   This file contains all the base properties for light themes
+    -   This file contains all the base properties for light themes.
 -   <https://github.com/JFormDesigner/FlatLaf/blob/master/flatlaf-core/src/main/resources/com/formdev/flatlaf/FlatDarkLaf.properties>
-    -   This file contains all the base properties for dark themes
+    -   This file contains all the base properties for dark themes.
 
 ### IntelliJ theme.json Support
 
@@ -157,10 +157,10 @@ in your `.properties` file.
 To get started with the code and plug in your own data, you need to edit the
 `/src/main/java/com/atlauncher/constants/Constants.java` file.
 
-By using this source code you don't get permissions to use our CDN/files/assets/modpacks. See the License section at the
+By using this source code you don't get permission to use our CDN/files/assets/modpacks. See the License section at the
 bottom for more.
 
-Most of of them should be self explanatory, if not please stop by our [Discord](https://atl.pw/discord) and ask in the
+Most of them should be self-explanatory, if not please stop by our [Discord](https://atl.pw/discord) and ask in the
 `#development` channel if you need help understanding any of the values.
 
 A couple values in the constants file are specific for ATLauncher and shouldn't be used in any forks. These are the
@@ -176,7 +176,7 @@ Starting with version 3.2.1.0 a new versioning system was put into place. It wor
 
 Reserved.Major.Minor.Revision.Stream
 
-So for 3.2.1.0 the major number is 2 and minor number is 1 and revision number is 0. Reserved is used as a base, only
+So, for 3.2.1.0 the major number is 2 and minor number is 1 and revision number is 0. Reserved is used as a base, only
 incremented on complete rewrites. The stream is optional.
 
 Major should be incremented when large changes/features are made.
@@ -264,5 +264,5 @@ license. We love free software, seeing people use our code and then not share th
 saddening. So please take a look at the license and respect what we're doing.
 
 Also, while we cannot enforce this under the license, you cannot use our CDN/files/assets/modpacks on your own launcher.
-Again we cannot enforce this under the license, but needless to say, we'd be very unhappy if you did that and really
+Again, we cannot enforce this under the license, but needless to say, we'd be very unhappy if you did that and really
 would like to leave cease and desist letters as a last resort.
