@@ -8,5 +8,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 ### New Features
 
 ### Fixes
+- Issue with servers button not disabling when cannot create servers on Create Pack tab
 
 ### Misc

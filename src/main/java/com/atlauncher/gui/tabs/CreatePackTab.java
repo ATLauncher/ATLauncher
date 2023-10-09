@@ -533,6 +533,7 @@ public class CreatePackTab extends JPanel implements Tab, RelocalizationListener
             }
             viewModel.createServer();
         });
+        viewModel.createServerEnabled().subscribe(createServerButton::setEnabled);
         bottomPanel.add(createInstanceButton);
         createInstanceButton.addActionListener((event) -> {
             viewModel.createInstance();
