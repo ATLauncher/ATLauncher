@@ -48,6 +48,9 @@ public class NetworkSettingsTab extends AbstractSettingsTab implements Relocaliz
     private final JLabelWithHover connectionTimeoutLabel;
     private final JSpinner connectionTimeout;
 
+    private final JLabelWithHover modrinthApiKeyLabel;
+    private JTextField modrinthApiKey;
+
     private final JLabelWithHover enableProxyLabel;
     private final JCheckBox enableProxy;
 
@@ -100,6 +103,28 @@ public class NetworkSettingsTab extends AbstractSettingsTab implements Relocaliz
         connectionTimeoutModel.setMaximum(600);
         connectionTimeout = new JSpinner(connectionTimeoutModel);
         add(connectionTimeout, gbc);
+
+        // Modrinth Api Key Settings
+        gbc.gridx = 0;
+        gbc.gridy++;
+        gbc.insets = UIConstants.LABEL_INSETS;
+        gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
+        modrinthApiKeyLabel = new JLabelWithHover(GetText.tr("Modrinth Api Key") + ":", HELP_ICON,
+                "<html>" + GetText.tr(
+                        "Api key to use when making requests to Modrinth. This is unecessary to set unless you want to access private data.")
+                        + "</html>");
+        add(modrinthApiKeyLabel, gbc);
+
+        gbc.gridx++;
+        gbc.insets = UIConstants.FIELD_INSETS;
+        gbc.anchor = GridBagConstraints.BASELINE_LEADING;
+        modrinthApiKey = new JTextField(40);
+        modrinthApiKey.setText(App.settings.modrinthApiKey);
+        modrinthApiKey.putClientProperty("JTextField.showClearButton", true);
+        modrinthApiKey.putClientProperty("JTextField.clearCallback", (Runnable) () -> {
+            modrinthApiKey.setText("");
+        });
+        add(modrinthApiKey, gbc);
 
         // Enable Proxy
         gbc.gridx = 0;
@@ -242,6 +267,7 @@ public class NetworkSettingsTab extends AbstractSettingsTab implements Relocaliz
 
         App.settings.concurrentConnections = (Integer) concurrentConnections.getValue();
         App.settings.connectionTimeout = (Integer) connectionTimeout.getValue();
+        App.settings.modrinthApiKey = modrinthApiKey.getText();
         App.settings.enableProxy = enableProxy.isSelected();
         if (enableProxy.isSelected()) {
             App.settings.proxyHost = proxyHost.getText();
@@ -273,6 +299,12 @@ public class NetworkSettingsTab extends AbstractSettingsTab implements Relocaliz
         this.connectionTimeoutLabel.setText(GetText.tr("Connection Timeout") + ":");
         this.connectionTimeoutLabel.setToolTipText(
                 "<html>" + GetText.tr("This determines how long connections will wait before timing out.") + "</html>");
+
+        this.modrinthApiKeyLabel.setText(GetText.tr("Modrinth Api Key") + ":");
+        this.modrinthApiKeyLabel.setToolTipText(
+                "<html>" + GetText.tr(
+                        "Api key to use when making requests to Modrinth. This is unecessary to set unless you want to access private data.")
+                        + "</html>");
 
         this.enableProxyLabel.setText(GetText.tr("Enable Proxy") + "?");
         this.enableProxyLabel.setToolTipText(GetText

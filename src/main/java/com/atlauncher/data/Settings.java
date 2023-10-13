@@ -112,6 +112,7 @@ public class Settings {
     // Network
     public int concurrentConnections = 8;
     public int connectionTimeout = 60;
+    public String modrinthApiKey = null;
     public boolean enableProxy = false;
     public String proxyHost = "";
     public int proxyPort = 8080;
