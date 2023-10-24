@@ -459,6 +459,7 @@ public class InstanceInstallerDialog extends JDialog {
                         serverFiles.stream().map(f -> {
                             if (f.getGameVersion() == null) {
                                 Optional<CurseForgeFile> matchingFile = files.stream()
+                                        .filter(sf -> sf.serverPackFileId != null)
                                         .filter(sf -> sf.serverPackFileId == f.id).findFirst();
 
                                 if (matchingFile.isPresent()) {
