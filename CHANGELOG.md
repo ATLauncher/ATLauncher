@@ -17,3 +17,4 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Instance name/description not resetting after a successful install
 
 ### Misc
+- Convert ConsoleOpenManager and ConsoleCloseManager into ConsoleStateManager [#814]

@@ -17,32 +17,28 @@
  */
 package com.atlauncher.evnt.manager;
 
-import java.util.LinkedList;
-import java.util.List;
+import javax.annotation.Nonnull;
 
-import javax.swing.SwingUtilities;
+import com.atlauncher.data.ConsoleState;
 
-import com.atlauncher.evnt.listener.ConsoleCloseListener;
+import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.subjects.BehaviorSubject;
 
-public final class ConsoleCloseManager {
-    private static final List<ConsoleCloseListener> listeners = new LinkedList<>();
+public final class ConsoleStateManager {
+    private static final BehaviorSubject<ConsoleState> state = BehaviorSubject.createDefault(ConsoleState.CLOSED);
 
-    private ConsoleCloseManager() {
+    private ConsoleStateManager() {
     }
 
-    public static synchronized void addListener(ConsoleCloseListener listener) {
-        listeners.add(listener);
+    public static void setState(@Nonnull ConsoleState newState) {
+        state.onNext(newState);
     }
 
-    public static synchronized void removeListener(ConsoleCloseListener listener) {
-        listeners.remove(listener);
+    public static @Nonnull ConsoleState getState() {
+        return state.getValue();
     }
 
-    public static synchronized void post() {
-        SwingUtilities.invokeLater(() -> {
-            for (ConsoleCloseListener listener : listeners) {
-                listener.onConsoleClose();
-            }
-        });
+    public static @Nonnull Observable<ConsoleState> getObservable(){
+        return state;
     }
 }
