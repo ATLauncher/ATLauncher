@@ -7,6 +7,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 
 ### New Features
 - Add api key setting for Modrinth to allow accessing private packs
+- Add easy navigation from ServersTab & InstancesTab to PacksTab & CreatePackTab
 
 ### Fixes
 - Issue with servers button not disabling when cannot create servers on Create Pack tab

@@ -891,7 +891,7 @@ public class Instance extends MinecraftVersion {
                     .setType(DialogManager.ERROR).show();
 
             if (AccountManager.getAccounts().size() == 0) {
-                App.launcherFrame.tabbedPane.setSelectedIndex(UIConstants.LAUNCHER_ACCOUNTS_TAB);
+                App.navigate(UIConstants.LAUNCHER_ACCOUNTS_TAB);
             }
 
             App.launcher.setMinecraftLaunched(false);

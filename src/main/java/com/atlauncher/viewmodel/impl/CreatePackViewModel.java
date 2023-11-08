@@ -723,7 +723,7 @@ public class CreatePackViewModel implements SettingsListener, ICreatePackViewMod
                         .setType(DialogManager.ERROR).show();
 
                 if (AccountManager.getAccounts().size() == 0) {
-                    App.launcherFrame.tabbedPane.setSelectedIndex(UIConstants.LAUNCHER_ACCOUNTS_TAB);
+                    App.navigate(UIConstants.LAUNCHER_ACCOUNTS_TAB);
                 }
             } else {
                 DialogManager.okDialog().setTitle(GetText.tr("No Account Selected"))
@@ -731,7 +731,7 @@ public class CreatePackViewModel implements SettingsListener, ICreatePackViewMod
                         .setType(DialogManager.ERROR).show();
 
                 if (AccountManager.getAccounts().size() == 0) {
-                    App.launcherFrame.tabbedPane.setSelectedIndex(UIConstants.LAUNCHER_ACCOUNTS_TAB);
+                    App.navigate(UIConstants.LAUNCHER_ACCOUNTS_TAB);
                 }
             }
             return;
