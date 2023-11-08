@@ -16,3 +16,4 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Migrate to the new Gradle version catalogs for libraries and plugins
 - Update the `application.yml` GitHub workflow [#889]
 - Migrate to Gradle KTS [#898]
+- Implement HierarchyPanel in AccountsTab [#838]
