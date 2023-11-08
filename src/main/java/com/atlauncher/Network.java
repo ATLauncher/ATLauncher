@@ -20,7 +20,6 @@ package com.atlauncher;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.Arrays;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -52,11 +51,7 @@ import okhttp3.tls.HandshakeCertificates;
 public final class Network {
     public static Cache CACHE = new Cache(FileSystem.CACHE.toFile(), 100 * 1024 * 1024); // 100MB cache
 
-    private static List<Protocol> protocols = (App.disableHttp2 || App.settings.dontUseHttp2)
-            ? Arrays.asList(Protocol.HTTP_1_1)
-            : Arrays.asList(Protocol.HTTP_2, Protocol.HTTP_1_1);
-
-    public static OkHttpClient CLIENT = new OkHttpClient.Builder().protocols(protocols)
+    public static OkHttpClient CLIENT = new OkHttpClient.Builder().protocols(Arrays.asList(Protocol.HTTP_1_1))
             .addNetworkInterceptor(new UserAgentInterceptor()).addInterceptor(new DebugLoggingInterceptor())
             .addNetworkInterceptor(new ErrorReportingInterceptor())
             .connectTimeout(App.settings.connectionTimeout, TimeUnit.SECONDS)
@@ -100,15 +95,6 @@ public final class Network {
         CACHED_CLIENT = CACHED_CLIENT.newBuilder().connectTimeout(App.settings.connectionTimeout, TimeUnit.SECONDS)
                 .readTimeout(App.settings.connectionTimeout, TimeUnit.SECONDS)
                 .writeTimeout(App.settings.connectionTimeout, TimeUnit.SECONDS).build();
-    }
-
-    public static void setProtocols() {
-        protocols = App.settings.dontUseHttp2 ? Arrays.asList(Protocol.HTTP_1_1)
-                : Arrays.asList(Protocol.HTTP_2, Protocol.HTTP_1_1);
-
-        CLIENT = CLIENT.newBuilder().protocols(protocols).build();
-        GRAPHQL_CLIENT = GRAPHQL_CLIENT.newBuilder().protocols(protocols).build();
-        CACHED_CLIENT = CACHED_CLIENT.newBuilder().protocols(protocols).build();
     }
 
     public static OkHttpClient createProgressClient(final NetworkProgressable progressable) {

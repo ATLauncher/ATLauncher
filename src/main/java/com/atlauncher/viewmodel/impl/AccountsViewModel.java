@@ -189,7 +189,6 @@ public class AccountsViewModel implements IAccountsViewModel {
             mojangAccount.store = response.getAuth().saveForStorage();
 
             AccountManager.saveAccounts();
-            com.atlauncher.evnt.manager.AccountManager.post();
         }
 
         Analytics.trackEvent(AnalyticsEvent.simpleEvent("account_edit"));

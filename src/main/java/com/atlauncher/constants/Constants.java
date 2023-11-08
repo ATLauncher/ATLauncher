@@ -92,6 +92,7 @@ public class Constants {
     public static final int CURSEFORGE_MODPACKS_SECTION_ID = 4471;
     public static final int CURSEFORGE_RESOURCE_PACKS_SECTION_ID = 12;
     public static final int CURSEFORGE_WORLDS_SECTION_ID = 17;
+    public static final int CURSEFORGE_SHADER_PACKS_SECTION_ID = 6552;
 
     // Modrinth domains, endpoints, config, etc
     public static final String MODRINTH_API_URL = "https://api.modrinth.com/v2";

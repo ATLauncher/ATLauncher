@@ -128,6 +128,13 @@ public class CurseForgeApi {
                 categoryIdParam);
     }
 
+    public static List<CurseForgeProject> searchShaderPacks(String query, int page, String sort, String categoryId) {
+        Integer categoryIdParam = categoryId == null ? null : Integer.parseInt(categoryId);
+
+        return searchCurseForge(Constants.CURSEFORGE_SHADER_PACKS_SECTION_ID, query, page, null, sort,
+                categoryIdParam);
+    }
+
     public static List<CurseForgeProject> searchMods(String gameVersion, String query, int page, String sort,
             String categoryId) {
         Integer categoryIdParam = categoryId == null ? null : Integer.parseInt(categoryId);
@@ -417,6 +424,18 @@ public class CurseForgeApi {
 
         return categories.stream()
                 .filter(c -> c.classId != null && c.classId == Constants.CURSEFORGE_RESOURCE_PACKS_SECTION_ID)
+                .sorted(Comparator.comparing(c -> c.name)).collect(Collectors.toList());
+    }
+
+    public static List<CurseForgeCategoryForGame> getCategoriesForShaderPacks() {
+        List<CurseForgeCategoryForGame> categories = getCategories();
+
+        if (categories == null) {
+            return new ArrayList<>();
+        }
+
+        return categories.stream()
+                .filter(c -> c.classId != null && c.classId == Constants.CURSEFORGE_SHADER_PACKS_SECTION_ID)
                 .sorted(Comparator.comparing(c -> c.name)).collect(Collectors.toList());
     }
 

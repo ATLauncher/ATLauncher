@@ -22,6 +22,7 @@ import java.awt.Dialog.ModalityType;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.RenderingHints;
 import java.awt.Window;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -84,6 +85,7 @@ import com.atlauncher.constants.UIConstants;
 import com.atlauncher.data.curseforge.CurseForgeFile;
 import com.atlauncher.data.curseforge.CurseForgeFileHash;
 import com.atlauncher.data.curseforge.CurseForgeFingerprint;
+import com.atlauncher.data.curseforge.CurseForgeFingerprintedMod;
 import com.atlauncher.data.curseforge.CurseForgeProject;
 import com.atlauncher.data.curseforge.pack.CurseForgeManifest;
 import com.atlauncher.data.curseforge.pack.CurseForgeManifestFile;
@@ -353,6 +355,8 @@ public class Instance extends MinecraftVersion {
                         BufferedImage dimg = new BufferedImage(300, 150, BufferedImage.TYPE_INT_ARGB);
 
                         Graphics2D g2d = dimg.createGraphics();
+                        g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
+                                RenderingHints.VALUE_INTERPOLATION_BILINEAR);
                         g2d.drawImage(img, 75, 0, 150, 150, null);
                         g2d.dispose();
 
@@ -887,7 +891,7 @@ public class Instance extends MinecraftVersion {
                     .setType(DialogManager.ERROR).show();
 
             if (AccountManager.getAccounts().size() == 0) {
-                App.launcherFrame.tabbedPane.setSelectedIndex(UIConstants.LAUNCHER_ACCOUNTS_TAB);
+                App.navigate(UIConstants.LAUNCHER_ACCOUNTS_TAB);
             }
 
             App.launcher.setMinecraftLaunched(false);
@@ -1399,11 +1403,7 @@ public class Instance extends MinecraftVersion {
 
     public void addFileFromCurseForge(CurseForgeProject mod, CurseForgeFile file, ProgressDialog dialog) {
         Path downloadLocation = FileSystem.DOWNLOADS.resolve(file.fileName);
-        Path finalLocation = mod.getRootCategoryId() == Constants.CURSEFORGE_RESOURCE_PACKS_SECTION_ID
-                ? this.getRoot().resolve("resourcepacks").resolve(file.fileName)
-                : (mod.getRootCategoryId() == Constants.CURSEFORGE_WORLDS_SECTION_ID
-                        ? this.getRoot().resolve("saves").resolve(file.fileName)
-                        : this.getRoot().resolve("mods").resolve(file.fileName));
+        Path finalLocation = mod.getInstanceDirectoryPath(this.getRoot()).resolve(file.fileName);
 
         // find mods with the same CurseForge project id
         List<DisableableMod> sameMods = this.launcher.mods.stream()
@@ -1569,12 +1569,26 @@ public class Instance extends MinecraftVersion {
                 .filter(installedMod -> !installedMod.isFromCurseForge() || installedMod.getCurseForgeModId() != mod.id)
                 .collect(Collectors.toList());
 
-        // add this mod
-        this.launcher.mods.add(new DisableableMod(mod.name, file.displayName, true, file.fileName,
+        DisableableMod dm = new DisableableMod(mod.name, file.displayName, true, file.fileName,
                 mod.getRootCategoryId() == Constants.CURSEFORGE_RESOURCE_PACKS_SECTION_ID ? Type.resourcepack
                         : (mod.getRootCategoryId() == Constants.CURSEFORGE_WORLDS_SECTION_ID ? Type.worlds : Type.mods),
-                null, mod.summary, false, true, true, false, mod, file));
+                null, mod.summary, false, true, true, false, mod, file);
 
+        // check for mod on Modrinth
+        if (!App.settings.dontCheckModsOnModrinth) {
+            ModrinthVersion version = ModrinthApi.getVersionFromSha1Hash(Hashing.sha1(finalLocation).toString());
+            if (version != null) {
+                ModrinthProject project = ModrinthApi.getProject(version.projectId);
+                if (project != null) {
+                    // add Modrinth information
+                    dm.modrinthProject = project;
+                    dm.modrinthVersion = version;
+                }
+            }
+        }
+
+        // add this mod
+        this.launcher.mods.add(dm);
         this.save();
 
         // #. {0} is the name of a mod that was installed
@@ -1642,10 +1656,34 @@ public class Instance extends MinecraftVersion {
         Type modType = mod.projectType == ModrinthProjectType.MOD ? Type.mods
                 : (mod.projectType == ModrinthProjectType.SHADER ? Type.shaderpack : Type.resourcepack);
 
-        // add this mod
-        this.launcher.mods.add(new DisableableMod(mod.title, version.name, true, fileToDownload.filename, modType,
-                null, mod.description, false, true, true, false, mod, version));
+        DisableableMod dm = new DisableableMod(mod.title, version.name, true, fileToDownload.filename, modType,
+                null, mod.description, false, true, true, false, mod, version);
 
+        // check for mod on CurseForge
+        if (!App.settings.dontCheckModsOnCurseForge) {
+            try {
+                CurseForgeFingerprint fingerprint = CurseForgeApi
+                        .checkFingerprints(new Long[] { Hashing.murmur(finalLocation) });
+
+                if (fingerprint.exactMatches != null && fingerprint.exactMatches.size() == 1) {
+                    CurseForgeFingerprintedMod foundMod = fingerprint.exactMatches.get(0);
+
+                    dm.curseForgeProjectId = foundMod.id;
+                    dm.curseForgeFile = foundMod.file;
+                    dm.curseForgeFileId = foundMod.file.id;
+
+                    CurseForgeProject curseForgeProject = CurseForgeApi.getProjectById(foundMod.id);
+                    if (curseForgeProject != null) {
+                        dm.curseForgeProject = curseForgeProject;
+                    }
+                }
+            } catch (IOException e) {
+                LogManager.logStackTrace(e);
+            }
+        }
+
+        // add this mod
+        this.launcher.mods.add(dm);
         this.save();
 
         // #. {0} is the name of a mod that was installed
@@ -1713,11 +1751,6 @@ public class Instance extends MinecraftVersion {
     public boolean canBeExported() {
         if (launcher.loaderVersion == null) {
             LogManager.debug("Instance " + launcher.name + " cannot be exported due to: No loader");
-            return false;
-        }
-
-        if (launcher.loaderVersion.isNeoForge()) {
-            LogManager.debug("Instance " + launcher.name + " cannot be exported due to: NeoForge is not supported");
             return false;
         }
 
@@ -2156,14 +2189,18 @@ public class Instance extends MinecraftVersion {
         manifest.name = name;
         manifest.version = version;
         manifest.author = author;
-        manifest.files = this.launcher.mods.stream().filter(m -> !m.disabled && m.isFromCurseForge()).map(mod -> {
-            CurseForgeManifestFile file = new CurseForgeManifestFile();
-            file.projectID = mod.curseForgeProjectId;
-            file.fileID = mod.curseForgeFileId;
-            file.required = true;
+        manifest.files = this.launcher.mods.stream()
+                .filter(m -> !m.disabled && m.isFromCurseForge())
+                .filter(mod -> overrides.stream()
+                        .anyMatch(path -> getRoot().relativize(mod.getPath(this)).startsWith(path)))
+                .map(mod -> {
+                    CurseForgeManifestFile file = new CurseForgeManifestFile();
+                    file.projectID = mod.curseForgeProjectId;
+                    file.fileID = mod.curseForgeFileId;
+                    file.required = true;
 
-            return file;
-        }).collect(Collectors.toList());
+                    return file;
+                }).collect(Collectors.toList());
         manifest.overrides = "overrides";
 
         // create temp directory to put this in
@@ -2184,14 +2221,19 @@ public class Instance extends MinecraftVersion {
 
         // create modlist.html
         StringBuilder sb = new StringBuilder("<ul>");
-        this.launcher.mods.stream().filter(m -> !m.disabled && m.isFromCurseForge()).forEach(mod -> {
-            if (mod.hasFullCurseForgeInformation()) {
-                sb.append("<li><a href=\"").append(mod.curseForgeProject.getWebsiteUrl()).append("\">").append(mod.name)
-                        .append("</a></li>");
-            } else {
-                sb.append("<li>").append(mod.name).append("</li>");
-            }
-        });
+        this.launcher.mods.stream()
+                .filter(m -> !m.disabled && m.isFromCurseForge())
+                .filter(mod -> overrides.stream()
+                        .anyMatch(path -> getRoot().relativize(mod.getPath(this)).startsWith(path)))
+                .forEach(mod -> {
+                    if (mod.hasFullCurseForgeInformation()) {
+                        sb.append("<li><a href=\"").append(mod.curseForgeProject.getWebsiteUrl()).append("\">")
+                                .append(mod.name)
+                                .append("</a></li>");
+                    } else {
+                        sb.append("<li>").append(mod.name).append("</li>");
+                    }
+                });
         sb.append("</ul>");
 
         try (OutputStreamWriter fileWriter = new OutputStreamWriter(
@@ -2306,7 +2348,10 @@ public class Instance extends MinecraftVersion {
         manifest.name = name;
         manifest.summary = this.launcher.description;
         manifest.files = this.launcher.mods.parallelStream()
-                .filter(m -> !m.disabled && m.modrinthVersion != null && m.getFile(this).exists()).map(mod -> {
+                .filter(m -> !m.disabled && m.modrinthVersion != null && m.getFile(this).exists())
+                .filter(mod -> overrides.stream()
+                        .anyMatch(path -> getRoot().relativize(mod.getPath(this)).startsWith(path)))
+                .map(mod -> {
                     Path modPath = mod.getFile(this).toPath();
 
                     ModrinthModpackFile file = new ModrinthModpackFile();
@@ -2830,6 +2875,7 @@ public class Instance extends MinecraftVersion {
                 GetText.tr("Changing Description"), JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE);
 
         if (ret == 0) {
+            Analytics.trackEvent(AnalyticsEvent.forInstanceEvent("instance_description_change", this));
             launcher.description = textArea.getText();
             save();
         }
@@ -3508,5 +3554,18 @@ public class Instance extends MinecraftVersion {
         }
 
         return null;
+    }
+
+    public void removeMod(DisableableMod foundMod) {
+        launcher.mods.remove(foundMod);
+        FileUtils.delete(
+                (foundMod.isDisabled()
+                        ? foundMod.getDisabledFile(this)
+                        : foundMod.getFile(this)).toPath(),
+                true);
+        save();
+
+        // #. {0} is the name of a mod that was removed
+        App.TOASTER.pop(GetText.tr("{0} Removed", foundMod.name));
     }
 }
