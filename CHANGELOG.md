@@ -10,3 +10,5 @@ This changelog only contains the changes that are unreleased. For changes for in
 ### Fixes
 
 ### Misc
+- Extract func from HierarchyPanel to HierarchyController/View
+- Rework Logging
