@@ -743,6 +743,29 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                 loaderMeta.put("loader", quiltVersionString);
                 packVersion.loader.metadata = loaderMeta;
                 packVersion.loader.className = "com.atlauncher.data.minecraft.loaders.quilt.QuiltLoader";
+            } else if (loaderVersion.id.startsWith("neoforge-")) {
+                String neoForgeVersionString = loaderVersion.id.replace("neoforge-", "");
+
+                if (ConfigManager.getConfigItem("useGraphql.loaderVersions", false) == false) {
+                    throw new Exception(
+                            "Failed to find loader version for " + neoForgeVersionString + " as GraphQL is disabled");
+                }
+
+                GetNeoForgeLoaderVersionQuery.Data response = GraphqlClient
+                        .callAndWait(new GetNeoForgeLoaderVersionQuery(neoForgeVersionString));
+
+                if (response == null || response.neoForgeVersion() == null) {
+                    throw new Exception("Failed to find loader version for " + neoForgeVersionString);
+                }
+
+                Map<String, Object> loaderMeta = new HashMap<>();
+                loaderMeta.put("minecraft", packVersion.minecraft);
+
+                loaderMeta.put("version", response.neoForgeVersion().version());
+                loaderMeta.put("rawVersion", response.neoForgeVersion().rawVersion());
+
+                packVersion.loader.metadata = loaderMeta;
+                packVersion.loader.className = "com.atlauncher.data.minecraft.loaders.neoforge.NeoForgeLoader";
             } else {
                 throw new Exception("Loader of id " + loaderVersion.id + " is unknown.");
             }
