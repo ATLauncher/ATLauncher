@@ -27,6 +27,7 @@ import java.nio.channels.ReadableByteChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import com.atlauncher.App;
@@ -542,7 +543,8 @@ public final class Download {
         // size and log a warning
         if (this.ignoreFailures && this.to.toFile().length() != 0) {
             LogManager
-                    .warn(String.format("%s (of size %d) hash didn't match, but we're ignoring failures, so continuing",
+                    .warn(String.format(Locale.ENGLISH,
+                            "%s (of size %d) hash didn't match, but we're ignoring failures, so continuing",
                             this.to.getFileName(), this.to.toFile().length()));
             return true;
         }

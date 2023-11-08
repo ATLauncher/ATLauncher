@@ -24,6 +24,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 
@@ -250,7 +251,6 @@ public abstract class Installable {
                                     pack.getName(), version.version);
                         }
 
-
                         if (pack.isLoggingEnabled() && App.settings.enableLogs && !version.isDev) {
                             if (isServer) {
                                 pack.addServerInstall(version.version);
@@ -360,7 +360,7 @@ public abstract class Installable {
                     }
                 }
                 if (paint == null && progress > 0.0) {
-                    subProgressBar.setString(String.format("%.2f%%", progress));
+                    subProgressBar.setString(String.format(Locale.ENGLISH, "%.2f%%", progress));
                 }
                 subProgressBar.setValue((int) Math.round(progress * 100.0));
             } else if ("subprogressint" == evt.getPropertyName()) {

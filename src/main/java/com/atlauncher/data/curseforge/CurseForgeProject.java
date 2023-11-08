@@ -20,6 +20,7 @@ package com.atlauncher.data.curseforge;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 
@@ -129,10 +130,11 @@ public class CurseForgeProject {
 
     public String getBrowserDownloadUrl(CurseForgeFile file) {
         if (hasWebsiteUrl()) {
-            return String.format("%s/download/%d", getWebsiteUrl(), file.id);
+            return String.format(Locale.ENGLISH, "%s/download/%d", getWebsiteUrl(), file.id);
         }
 
-        return String.format("https://www.curseforge.com/minecraft/%s/%s/download/%d", getClassUrlSlug(), slug,
+        return String.format(Locale.ENGLISH, "https://www.curseforge.com/minecraft/%s/%s/download/%d",
+                getClassUrlSlug(), slug,
                 file.id);
     }
 

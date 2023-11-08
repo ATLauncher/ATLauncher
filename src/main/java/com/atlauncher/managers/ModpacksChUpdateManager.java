@@ -19,6 +19,7 @@ package com.atlauncher.managers;
 
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
@@ -37,8 +38,7 @@ public class ModpacksChUpdateManager {
     /**
      * Modpacks.ch instance update checking
      */
-    private static final Map<UUID, BehaviorSubject<Optional<ModpacksChPackVersion>>>
-        MODPACKS_CH_INSTANCE_LATEST_VERSION = new HashMap<>();
+    private static final Map<UUID, BehaviorSubject<Optional<ModpacksChPackVersion>>> MODPACKS_CH_INSTANCE_LATEST_VERSION = new HashMap<>();
 
     /**
      * Get the update behavior subject for a given instance.
@@ -46,11 +46,10 @@ public class ModpacksChUpdateManager {
      * @param instance Instance to get behavior subject for
      * @return behavior subject for said instance updates.
      */
-    private static BehaviorSubject<Optional<ModpacksChPackVersion>> getSubject(Instance instance){
+    private static BehaviorSubject<Optional<ModpacksChPackVersion>> getSubject(Instance instance) {
         MODPACKS_CH_INSTANCE_LATEST_VERSION.putIfAbsent(
-            instance.getUUID(),
-            BehaviorSubject.createDefault(Optional.empty())
-        );
+                instance.getUUID(),
+                BehaviorSubject.createDefault(Optional.empty()));
         return MODPACKS_CH_INSTANCE_LATEST_VERSION.get(instance.getUUID());
     }
 
@@ -58,6 +57,7 @@ public class ModpacksChUpdateManager {
      * Get an observable for an instances update.
      * <p>
      * Please do not cast to a behavior subject.
+     * 
      * @param instance Instance to get an observable for
      * @return Update observable
      */
@@ -65,9 +65,9 @@ public class ModpacksChUpdateManager {
         return getSubject(instance);
     }
 
-
     /**
      * Get the latest version of an instance
+     * 
      * @param instance Instance to get version of
      * @return Latest version, or null if no newer version is found
      */
@@ -92,7 +92,7 @@ public class ModpacksChUpdateManager {
                 i -> i.launcher.modpacksChPackManifest != null && i.launcher.modpacksChPackVersionManifest != null)
                 .forEach(i -> {
                     ModpacksChPackManifest packManifest = com.atlauncher.network.Download.build()
-                            .setUrl(String.format("%s/modpack/%d", Constants.MODPACKS_CH_API_URL,
+                            .setUrl(String.format(Locale.ENGLISH, "%s/modpack/%d", Constants.MODPACKS_CH_API_URL,
                                     i.launcher.modpacksChPackManifest.id))
                             .cached(new CacheControl.Builder().maxStale(10, TimeUnit.MINUTES).build())
                             .asClass(ModpacksChPackManifest.class);

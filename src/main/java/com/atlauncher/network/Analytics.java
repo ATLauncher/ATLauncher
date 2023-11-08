@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
 import java.util.Timer;
@@ -106,7 +107,7 @@ public final class Analytics {
     }
 
     private static void sendEvents(List<AnalyticsEvent> events, boolean wait) {
-        LogManager.debug(String.format("Sending %d batched events", events.size()));
+        LogManager.debug(String.format(Locale.ENGLISH, "Sending %d batched events", events.size()));
 
         Map<String, Object> body = new HashMap<>();
         body.put("userId", App.settings.analyticsClientId);

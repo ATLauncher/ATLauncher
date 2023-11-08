@@ -167,7 +167,7 @@ public class Server {
 
                 if (Files.isDirectory(runtimeDirectory)) {
                     javaPath = runtimeDirectory.toAbsolutePath().toString();
-                    LogManager.info(String.format("Using Java runtime %s (major version %d) at path %s",
+                    LogManager.info(String.format(Locale.ENGLISH, "Using Java runtime %s (major version %d) at path %s",
                             javaVersion.component, javaVersion.majorVersion, javaPath));
                 }
             }

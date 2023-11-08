@@ -106,11 +106,11 @@ public class LauncherVersion {
     @Override
     public String toString() {
         if (this.isReleaseStream()) {
-            return String.format("%d.%d.%d.%d [%s]", this.reserved, this.major, this.minor, this.revision,
+            return String.format(Locale.ENGLISH, "%d.%d.%d.%d [%s]", this.reserved, this.major, this.minor, this.revision,
                     this.sha1Revision);
         }
 
-        return String.format("%d.%d.%d.%d %s [%s]", this.reserved, this.major, this.minor, this.revision, this.stream,
+        return String.format(Locale.ENGLISH, "%d.%d.%d.%d %s [%s]", this.reserved, this.major, this.minor, this.revision, this.stream,
                 this.sha1Revision);
     }
 

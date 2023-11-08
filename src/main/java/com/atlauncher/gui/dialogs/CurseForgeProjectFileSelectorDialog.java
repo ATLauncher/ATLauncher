@@ -200,7 +200,7 @@ public class CurseForgeProjectFileSelectorDialog extends JDialog {
         viewFileButton.addActionListener(e -> {
             CurseForgeFile file = (CurseForgeFile) filesDropdown.getSelectedItem();
 
-            OS.openWebBrowser(String.format("%s/files/%d", mod.getWebsiteUrl(), file.id));
+            OS.openWebBrowser(String.format(Locale.ENGLISH, "%s/files/%d", mod.getWebsiteUrl(), file.id));
         });
 
         filesDropdown.addActionListener(e -> {

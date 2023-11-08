@@ -818,7 +818,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                             .getFileForProject(file.projectID, file.fileID));
 
             if (curseForgeFile.downloadUrl == null) {
-                LogManager.debug(String.format(
+                LogManager.debug(String.format(Locale.ENGLISH,
                         "File %s (%d) for mod %s (%d) has no downloadUrl and allowModDistribution set to %s",
                         curseForgeFile.displayName, curseForgeFile.id, curseForgeProject.name, curseForgeProject.id,
                         curseForgeProject.allowModDistribution, curseForgeProject.allowModDistribution == null ? "null"
@@ -1339,7 +1339,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                                     .getFileForProject(curseProjectId, curseFileId));
 
                     if (curseForgeFile.downloadUrl == null) {
-                        LogManager.debug(String.format(
+                        LogManager.debug(String.format(Locale.ENGLISH,
                                 "File %s (%d) for mod %s (%d) has no downloadUrl and allowModDistribution set to %s",
                                 curseForgeFile.displayName, curseForgeFile.id, curseForgeProject.name,
                                 curseForgeProject.id,
@@ -3225,7 +3225,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                         browserDownloadModsDownloaded++;
 
                         fireSubProgress((browserDownloadModsDownloaded / browserDownloadMods.size()) * 100.0,
-                                String.format("%d/%d", browserDownloadModsDownloaded,
+                                String.format(Locale.ENGLISH, "%d/%d", browserDownloadModsDownloaded,
                                         browserDownloadMods.size()));
                     }
                 }
@@ -4294,9 +4294,9 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         double done = this.downloadedBytes / 1024.0 / 1024.0;
         double toDo = this.totalBytes / 1024.0 / 1024.0;
         if (done > toDo) {
-            fireSubProgress(100.0, String.format("%.2f MB", done));
+            fireSubProgress(100.0, String.format(Locale.ENGLISH, "%.2f MB", done));
         } else {
-            fireSubProgress(progress, String.format("%.2f MB / %.2f MB", done, toDo));
+            fireSubProgress(progress, String.format(Locale.ENGLISH, "%.2f MB / %.2f MB", done, toDo));
         }
     }
 

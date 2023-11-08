@@ -36,6 +36,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -52,7 +53,6 @@ import javax.swing.JTextField;
 import org.mini2Dx.gettext.GetText;
 
 import com.atlauncher.App;
-import com.atlauncher.Data;
 import com.atlauncher.Gsons;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.constants.Constants;
@@ -962,7 +962,7 @@ public class InstanceInstallerDialog extends JDialog {
                     "Cancelled downloading modpacks.ch pack manifest", this);
             dialog.addThread(new Thread(() -> {
                 ModpacksChPackManifest packManifest = com.atlauncher.network.Download.build()
-                        .setUrl(String.format("%s/modpack/%d", Constants.MODPACKS_CH_API_URL,
+                        .setUrl(String.format(Locale.ENGLISH, "%s/modpack/%d", Constants.MODPACKS_CH_API_URL,
                                 instance.launcher.modpacksChPackManifest.id))
                         .cached(new CacheControl.Builder().maxStale(10, TimeUnit.MINUTES).build())
                         .asClass(ModpacksChPackManifest.class);

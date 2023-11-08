@@ -532,7 +532,7 @@ public class App {
                 () -> Java.getInstalledJavas().forEach(version -> LogManager.debug(Gsons.DEFAULT.toJson(version))));
 
         LogManager.info("Java Version: "
-                + String.format("Java %d (%s)", Java.getLauncherJavaVersionNumber(), Java.getLauncherJavaVersion()));
+                + String.format(Locale.ENGLISH, "Java %d (%s)", Java.getLauncherJavaVersionNumber(), Java.getLauncherJavaVersion()));
 
         LogManager.info("Java Path: " + settings.javaPath);
 
@@ -568,7 +568,7 @@ public class App {
             }
 
             CentralProcessor cpu = hal.getProcessor();
-            LogManager.info(String.format("CPU: %s %d cores/%d threads", cpu.getProcessorIdentifier().getName().trim(),
+            LogManager.info(String.format(Locale.ENGLISH, "CPU: %s %d cores/%d threads", cpu.getProcessorIdentifier().getName().trim(),
                     cpu.getPhysicalProcessorCount(), cpu.getLogicalProcessorCount()));
 
             OperatingSystem os = systemInfo.getOperatingSystem();

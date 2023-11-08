@@ -16,6 +16,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Importing a CurseForge format pack using NeoForge not working [#826]
 - Issue installing 1.20.2 versions of NeoForge
 - Instance name/description not resetting after a successful install
+- Issues with non English regions and number formatting to api's/logs
 
 ### Misc
 - Convert ConsoleOpenManager and ConsoleCloseManager into ConsoleStateManager [#814]

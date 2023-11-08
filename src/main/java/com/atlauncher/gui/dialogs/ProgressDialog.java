@@ -21,6 +21,7 @@ import java.awt.BorderLayout;
 import java.awt.Window;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.Locale;
 
 import javax.swing.JDialog;
 import javax.swing.JLabel;
@@ -172,9 +173,9 @@ public class ProgressDialog<T> extends JDialog implements NetworkProgressable {
         double done = this.downloadedBytes / 1024.0 / 1024.0;
         double toDo = this.totalBytes / 1024.0 / 1024.0;
         if (done > toDo) {
-            setSubProgress(100.0, String.format("%.2f MB", done));
+            setSubProgress(100.0, String.format(Locale.ENGLISH, "%.2f MB", done));
         } else {
-            setSubProgress(progress, String.format("%.2f MB / %.2f MB", done, toDo));
+            setSubProgress(progress, String.format(Locale.ENGLISH, "%.2f MB / %.2f MB", done, toDo));
         }
     }
 
@@ -202,7 +203,7 @@ public class ProgressDialog<T> extends JDialog implements NetworkProgressable {
         }
 
         if (label == null && percent > 0.0) {
-            subProgressBar.setString(String.format("%.2f%%", percent));
+            subProgressBar.setString(String.format(Locale.ENGLISH, "%.2f%%", percent));
         }
 
         subProgressBar.setValue((int) Math.round(percent * 100.0));

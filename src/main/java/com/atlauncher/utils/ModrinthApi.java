@@ -69,7 +69,8 @@ public class ModrinthApi {
         try {
             List<List<String>> facets = new ArrayList<>();
 
-            String url = String.format("%s/search?limit=%d&offset=%d&query=%s&index=%s", Constants.MODRINTH_API_URL,
+            String url = String.format(Locale.ENGLISH, "%s/search?limit=%d&offset=%d&query=%s&index=%s",
+                    Constants.MODRINTH_API_URL,
                     Constants.MODRINTH_PAGINATION_SIZE, page * Constants.MODRINTH_PAGINATION_SIZE,
                     URLEncoder.encode(query, StandardCharsets.UTF_8.name()), index);
 

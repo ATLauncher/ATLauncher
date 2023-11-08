@@ -19,6 +19,7 @@ package com.atlauncher.network;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
+import java.util.Locale;
 
 import com.atlauncher.managers.LogManager;
 
@@ -47,11 +48,14 @@ public final class DebugLoggingInterceptor implements Interceptor {
 
         if (response.cacheResponse() != null && (response.networkResponse() == null
                 || response.networkResponse().code() == HttpURLConnection.HTTP_NOT_MODIFIED)) {
-            LogManager.debug(String.format("Received cached response code %d for %s in %.1fms", response.code(),
-                    response.request().url(), (t2 - t1) / 1e6d), 3);
+            LogManager.debug(
+                    String.format(Locale.ENGLISH, "Received cached response code %d for %s in %.1fms", response.code(),
+                            response.request().url(), (t2 - t1) / 1e6d),
+                    3);
         } else {
-            LogManager.debug(String.format("Received response code %d for %s in %.1fms", response.code(),
-                    response.request().url(), (t2 - t1) / 1e6d), 3);
+            LogManager
+                    .debug(String.format(Locale.ENGLISH, "Received response code %d for %s in %.1fms", response.code(),
+                            response.request().url(), (t2 - t1) / 1e6d), 3);
         }
 
         LogManager.debug(response.toString(), 5);
