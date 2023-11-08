@@ -32,10 +32,10 @@ import org.mini2Dx.gettext.GetText;
 import com.atlauncher.App;
 import com.atlauncher.FileSystem;
 import com.atlauncher.data.AbstractAccount;
+import com.atlauncher.data.ConsoleState;
 import com.atlauncher.evnt.listener.AccountListener;
 import com.atlauncher.evnt.listener.RelocalizationListener;
-import com.atlauncher.evnt.manager.ConsoleCloseManager;
-import com.atlauncher.evnt.manager.ConsoleOpenManager;
+import com.atlauncher.evnt.manager.ConsoleStateManager;
 import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.gui.AccountsDropDownRenderer;
 import com.atlauncher.gui.dialogs.ProgressDialog;
@@ -112,8 +112,14 @@ public class LauncherBottomBar extends BottomBar implements RelocalizationListen
                 }
             }
         });
-        ConsoleCloseManager.addListener(() -> toggleConsole.setText(GetText.tr("Show Console")));
-        ConsoleOpenManager.addListener(() -> toggleConsole.setText(GetText.tr("Hide Console")));
+        ConsoleStateManager.getObservable().subscribe(newState-> {
+                if (newState == ConsoleState.OPEN) {
+                    toggleConsole.setText(GetText.tr("Hide Console"));
+                } else {
+                    toggleConsole.setText(GetText.tr("Show Console"));
+                }
+            }
+        );
     }
 
     /**
