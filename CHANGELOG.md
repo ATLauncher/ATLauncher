@@ -11,5 +11,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 ### Fixes
 - Issue with servers button not disabling when cannot create servers on Create Pack tab
 - Issue with some CurseForge server packs breaking
+- Issues with UI elements sometimes not enabling/disabling correctly on Create Pack tab
 
 ### Misc
