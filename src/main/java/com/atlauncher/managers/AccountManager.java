@@ -27,14 +27,18 @@ import java.io.OutputStreamWriter;
 import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import org.mini2Dx.gettext.GetText;
 
 import com.atlauncher.App;
-import com.atlauncher.Data;
 import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
 import com.atlauncher.data.AbstractAccount;
@@ -47,17 +51,40 @@ import com.atlauncher.utils.Utils;
 import com.google.gson.JsonIOException;
 import com.google.gson.reflect.TypeToken;
 
+import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.subjects.BehaviorSubject;
+
 @SuppressWarnings("deprecation")
 public class AccountManager {
     private static final Type abstractAccountListType = new TypeToken<List<AbstractAccount>>() {
     }.getType();
 
-    public static List<AbstractAccount> getAccounts() {
-        return Data.ACCOUNTS;
+    public static final BehaviorSubject<List<AbstractAccount>> ACCOUNTS =
+        BehaviorSubject.createDefault(new LinkedList<>());
+
+    /**
+     * Account using the Launcher
+     */
+    public static final BehaviorSubject<Optional<AbstractAccount>> SELECTED_ACCOUNT =
+        BehaviorSubject.createDefault(Optional.empty());
+
+
+    public static Observable<List<AbstractAccount>> getAccountsObservable() {
+        return ACCOUNTS;
     }
 
+    public static Observable<Optional<AbstractAccount>> getSelectedAccountObservable(){
+        return SELECTED_ACCOUNT;
+    }
+
+    @Nonnull
+    public static List<AbstractAccount> getAccounts() {
+        return ACCOUNTS.getValue();
+    }
+
+    @Nullable
     public static AbstractAccount getSelectedAccount() {
-        return Data.SELECTED_ACCOUNT;
+        return SELECTED_ACCOUNT.getValue().orElse(null);
     }
 
     /**
@@ -72,12 +99,14 @@ public class AccountManager {
             convertAccounts();
         }
 
+        ArrayList<AbstractAccount> newAccounts = new ArrayList<>();
+
         if (Files.exists(FileSystem.ACCOUNTS)) {
             try (InputStreamReader fileReader = new InputStreamReader(
                     new FileInputStream(FileSystem.ACCOUNTS.toFile()), StandardCharsets.UTF_8)) {
                 List<AbstractAccount> accounts = Gsons.DEFAULT.fromJson(fileReader, abstractAccountListType);
 
-                Data.ACCOUNTS.addAll(accounts.stream().filter(account -> {
+                newAccounts.addAll(accounts.stream().filter(account -> {
                     if (account instanceof MicrosoftAccount) {
                         MicrosoftAccount microsoftAccount = (MicrosoftAccount) account;
                         return microsoftAccount.accessToken != null
@@ -97,9 +126,11 @@ public class AccountManager {
             }
         }
 
-        for (AbstractAccount account : Data.ACCOUNTS) {
+        ACCOUNTS.onNext(newAccounts);
+
+        for (AbstractAccount account : newAccounts) {
             if (account.username.equalsIgnoreCase(App.settings.lastAccount)) {
-                Data.SELECTED_ACCOUNT = account;
+                SELECTED_ACCOUNT.onNext(Optional.of(account));
             }
 
             if (account instanceof MojangAccount) {
@@ -119,8 +150,8 @@ public class AccountManager {
             }
         }
 
-        if (Data.SELECTED_ACCOUNT == null && Data.ACCOUNTS.size() >= 1) {
-            Data.SELECTED_ACCOUNT = Data.ACCOUNTS.get(0);
+        if (!SELECTED_ACCOUNT.getValue().isPresent() && !newAccounts.isEmpty()) {
+            SELECTED_ACCOUNT.onNext(Optional.of(newAccounts.get(0)));
         }
 
         LogManager.debug("Finished loading accounts");
@@ -174,7 +205,7 @@ public class AccountManager {
     }
 
     public static void saveAccounts() {
-        saveAccounts(Data.ACCOUNTS);
+        saveAccounts(ACCOUNTS.getValue());
     }
 
     private static void saveAccounts(List<AbstractAccount> accounts) {
@@ -192,11 +223,13 @@ public class AccountManager {
         Analytics.trackEvent(AnalyticsEvent.forAccountAdd(accountType));
         LogManager.info("Added " + accountType + " Account " + account);
 
-        Data.ACCOUNTS.add(account);
+        List<AbstractAccount> accounts = ACCOUNTS.getValue();
+        accounts.add(account);
+        ACCOUNTS.onNext(accounts);
 
         account.updateSkin();
 
-        if (Data.ACCOUNTS.size() > 1) {
+        if (accounts.size() > 1) {
             // not first account? ask if they want to switch to it
             int ret = DialogManager.optionDialog().setTitle(GetText.tr("Account Added"))
                     .setContent(GetText.tr("Account added successfully. Switch to it now?")).setType(DialogManager.INFO)
@@ -211,22 +244,22 @@ public class AccountManager {
         }
 
         saveAccounts();
-        com.atlauncher.evnt.manager.AccountManager.post();
     }
 
     public static void removeAccount(AbstractAccount account) {
-        if (Data.SELECTED_ACCOUNT == account) {
-            if (Data.ACCOUNTS.size() == 1) {
+        List<AbstractAccount> accounts = ACCOUNTS.getValue();
+        if (SELECTED_ACCOUNT.getValue().orElse(null) == account) {
+            if (accounts.size() == 1) {
                 // if this was the only account, don't set an account
                 switchAccount(null);
             } else {
                 // if they have more accounts, switch to the first one
-                switchAccount(Data.ACCOUNTS.get(0));
+                switchAccount(accounts.get(0));
             }
         }
-        Data.ACCOUNTS.remove(account);
+        accounts.remove(account);
+        ACCOUNTS.onNext(accounts);
         saveAccounts();
-        com.atlauncher.evnt.manager.AccountManager.post();
     }
 
     /**
@@ -234,18 +267,17 @@ public class AccountManager {
      *
      * @param account Account to switch to
      */
-    public static void switchAccount(AbstractAccount account) {
+    public static void switchAccount(@Nullable AbstractAccount account) {
         if (account == null) {
             LogManager.info("Logging out of account");
-            Data.SELECTED_ACCOUNT = null;
+            SELECTED_ACCOUNT.onNext(Optional.empty());
             App.settings.lastAccount = null;
         } else {
             LogManager.info("Changed account to " + account);
-            Data.SELECTED_ACCOUNT = account;
+            SELECTED_ACCOUNT.onNext(Optional.of(account));
             App.settings.lastAccount = account.username;
         }
         App.launcher.refreshPacksBrowserPanel();
-        App.launcher.reloadServersPanel();
         com.atlauncher.evnt.manager.AccountManager.post();
         App.settings.save();
     }
@@ -257,7 +289,7 @@ public class AccountManager {
      * @return Account if the Account is found from the username
      */
     public static AbstractAccount getAccountByName(String username) {
-        for (AbstractAccount account : Data.ACCOUNTS) {
+        for (AbstractAccount account : ACCOUNTS.getValue()) {
             if (account.username.equalsIgnoreCase(username)) {
                 return account;
             }
@@ -272,7 +304,7 @@ public class AccountManager {
      * @return true if found, false if not
      */
     public static boolean isAccountByName(String username) {
-        for (AbstractAccount account : Data.ACCOUNTS) {
+        for (AbstractAccount account : ACCOUNTS.getValue()) {
             if (account.username.equalsIgnoreCase(username)) {
                 return true;
             }

@@ -268,6 +268,14 @@ public class DisableableMod implements Serializable {
         return getFile(instance).exists();
     }
 
+    public Path getPath(Instance instance) {
+        if (isDisabled()) {
+            return getDisabledFile(instance).toPath();
+        }
+
+        return getFile(instance).toPath();
+    }
+
     public File getDisabledFile(Instance instance) {
         try {
             return instance.getRoot().resolve("disabledmods/" + this.file).toFile();
@@ -411,7 +419,8 @@ public class DisableableMod implements Serializable {
 
                     if (cf.gameVersions.contains("Forge") && instance.launcher.loaderVersion != null
                             && (instance.launcher.loaderVersion.isForge()
-                                    || (instance.launcher.loaderVersion.isNeoForge() && neoForgeForgeCompatabilityVersions.contains(instance.id)))) {
+                                    || (instance.launcher.loaderVersion.isNeoForge()
+                                            && neoForgeForgeCompatabilityVersions.contains(instance.id)))) {
                         return true;
                     }
 

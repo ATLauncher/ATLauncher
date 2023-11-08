@@ -22,6 +22,8 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ItemEvent;
+import java.util.List;
+import java.util.Optional;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -32,10 +34,9 @@ import org.mini2Dx.gettext.GetText;
 import com.atlauncher.App;
 import com.atlauncher.FileSystem;
 import com.atlauncher.data.AbstractAccount;
-import com.atlauncher.evnt.listener.AccountListener;
+import com.atlauncher.data.ConsoleState;
 import com.atlauncher.evnt.listener.RelocalizationListener;
-import com.atlauncher.evnt.manager.ConsoleCloseManager;
-import com.atlauncher.evnt.manager.ConsoleOpenManager;
+import com.atlauncher.evnt.manager.ConsoleStateManager;
 import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.gui.AccountsDropDownRenderer;
 import com.atlauncher.gui.dialogs.ProgressDialog;
@@ -43,9 +44,17 @@ import com.atlauncher.managers.AccountManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.network.analytics.AnalyticsEvent;
 import com.atlauncher.utils.OS;
+import com.atlauncher.utils.Pair;
+
+import io.reactivex.rxjava3.core.Observable;
 
 @SuppressWarnings("serial")
-public class LauncherBottomBar extends BottomBar implements RelocalizationListener, AccountListener {
+public class LauncherBottomBar extends BottomBar implements RelocalizationListener {
+    private final Observable<Pair<List<AbstractAccount>, Optional<AbstractAccount>>> accountState = Observable
+            .combineLatest(
+                    AccountManager.getAccountsObservable(),
+                    AccountManager.getSelectedAccountObservable(),
+                    Pair::new);
     private boolean dontSave = false;
     private JButton toggleConsole;
     private JButton openFolder;
@@ -80,12 +89,12 @@ public class LauncherBottomBar extends BottomBar implements RelocalizationListen
         gbc.insets = new Insets(0, 0, 0, 5);
         middle.add(username, gbc);
 
-        username.setVisible(AccountManager.getAccounts().size() != 0);
+        username.setVisible(!AccountManager.getAccounts().isEmpty());
 
         add(leftSide, BorderLayout.WEST);
         add(middle, BorderLayout.CENTER);
         RelocalizationManager.addListener(this);
-        com.atlauncher.evnt.manager.AccountManager.addListener(this);
+        accountState.subscribe(accountsState -> reloadAccounts(accountsState.left(), accountsState.right()));
     }
 
     /**
@@ -112,8 +121,13 @@ public class LauncherBottomBar extends BottomBar implements RelocalizationListen
                 }
             }
         });
-        ConsoleCloseManager.addListener(() -> toggleConsole.setText(GetText.tr("Show Console")));
-        ConsoleOpenManager.addListener(() -> toggleConsole.setText(GetText.tr("Hide Console")));
+        ConsoleStateManager.getObservable().subscribe(newState -> {
+            if (newState == ConsoleState.OPEN) {
+                toggleConsole.setText(GetText.tr("Hide Console"));
+            } else {
+                toggleConsole.setText(GetText.tr("Show Console"));
+            }
+        });
     }
 
     /**
@@ -146,19 +160,17 @@ public class LauncherBottomBar extends BottomBar implements RelocalizationListen
         }
     }
 
-    private void reloadAccounts() {
+    private void reloadAccounts(List<AbstractAccount> accounts, Optional<AbstractAccount> selectedAccount) {
         dontSave = true;
         username.removeAllItems();
 
-        for (AbstractAccount account : AccountManager.getAccounts()) {
+        for (AbstractAccount account : accounts) {
             username.addItem(account);
         }
 
-        if (AccountManager.getSelectedAccount() != null) {
-            username.setSelectedItem(AccountManager.getSelectedAccount());
-        }
+        selectedAccount.ifPresent(abstractAccount -> username.setSelectedItem(abstractAccount));
 
-        username.setVisible(AccountManager.getAccounts().size() != 0);
+        username.setVisible(accounts.size() != 0);
 
         dontSave = false;
     }
@@ -172,10 +184,5 @@ public class LauncherBottomBar extends BottomBar implements RelocalizationListen
         }
         this.checkForUpdates.setText(GetText.tr("Check For Updates"));
         this.openFolder.setText(GetText.tr("Open Folder"));
-    }
-
-    @Override
-    public void onAccountsChanged() {
-        reloadAccounts();
     }
 }

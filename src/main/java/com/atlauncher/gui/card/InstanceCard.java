@@ -190,7 +190,7 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
                 public void mouseClicked(MouseEvent e) {
                     if (e.getClickCount() == 2) {
                         instance.startChangeDescription();
-                        descArea.setText(instance.launcher.description);
+                        descArea.setText(instance.getPackDescription());
                     }
                 }
             });

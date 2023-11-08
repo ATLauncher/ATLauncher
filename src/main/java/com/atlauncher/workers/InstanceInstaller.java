@@ -270,6 +270,11 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                     return success(false);
                 }
 
+                downloadImage();
+                if (isCancelled()) {
+                    return success(false);
+                }
+
                 saveServerJson();
 
                 return success(true);
@@ -738,6 +743,29 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                 loaderMeta.put("loader", quiltVersionString);
                 packVersion.loader.metadata = loaderMeta;
                 packVersion.loader.className = "com.atlauncher.data.minecraft.loaders.quilt.QuiltLoader";
+            } else if (loaderVersion.id.startsWith("neoforge-")) {
+                String neoForgeVersionString = loaderVersion.id.replace("neoforge-", "");
+
+                if (ConfigManager.getConfigItem("useGraphql.loaderVersions", false) == false) {
+                    throw new Exception(
+                            "Failed to find loader version for " + neoForgeVersionString + " as GraphQL is disabled");
+                }
+
+                GetNeoForgeLoaderVersionQuery.Data response = GraphqlClient
+                        .callAndWait(new GetNeoForgeLoaderVersionQuery(neoForgeVersionString));
+
+                if (response == null || response.neoForgeVersion() == null) {
+                    throw new Exception("Failed to find loader version for " + neoForgeVersionString);
+                }
+
+                Map<String, Object> loaderMeta = new HashMap<>();
+                loaderMeta.put("minecraft", packVersion.minecraft);
+
+                loaderMeta.put("version", response.neoForgeVersion().version());
+                loaderMeta.put("rawVersion", response.neoForgeVersion().rawVersion());
+
+                packVersion.loader.metadata = loaderMeta;
+                packVersion.loader.className = "com.atlauncher.data.minecraft.loaders.neoforge.NeoForgeLoader";
             } else {
                 throw new Exception("Loader of id " + loaderVersion.id + " is unknown.");
             }
@@ -2389,7 +2417,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
             return false;
         }
 
-        downloadInstanceImage();
+        downloadImage();
         if (isCancelled()) {
             return false;
         }
@@ -2577,6 +2605,12 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         server.isDev = this.version.isDev;
         server.isPatchedForLog4Shell = true;
 
+        server.curseForgeProject = this.pack.curseForgeProject;
+        server.curseForgeFile = this.version._curseForgeFile;
+        server.modrinthProject = this.pack.modrinthProject;
+        server.modrinthVersion = this.version._modrinthVersion;
+        server.modrinthManifest = modrinthManifest;
+
         if (pack.curseForgeProject == null) {
             server.mods = this.modsInstalled;
             server.javaVersion = this.minecraftVersion.javaVersion;
@@ -2589,8 +2623,6 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         server.save();
 
         ServerManager.addServer(server);
-
-        App.launcher.reloadServersPanel();
     }
 
     private void determineMainClass() {
@@ -3473,26 +3505,28 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         }
     }
 
-    private void downloadInstanceImage() throws Exception {
+    private void downloadImage() throws Exception {
         addPercent(5);
 
         if (this.pack.curseForgeProject != null) {
-            fireTask(GetText.tr("Downloading Instance Image"));
+            fireTask(GetText.tr("Downloading Image"));
             CurseForgeAttachment attachment = this.pack.curseForgeProject.getLogo().orElse(null);
 
             if (attachment != null) {
                 com.atlauncher.network.Download imageDownload = com.atlauncher.network.Download.build()
-                        .setUrl(attachment.url).downloadTo(root.resolve("instance.png")).withInstanceInstaller(this)
+                        .setUrl(attachment.url).downloadTo(root.resolve(isServer ? "server.png" : "instance.png"))
+                        .withInstanceInstaller(this)
                         .withHttpClient(Network.createProgressClient(this));
 
                 this.setTotalBytes(imageDownload.getFilesize());
                 imageDownload.downloadFile();
             }
         } else if (this.pack.modrinthProject != null) {
-            fireTask(GetText.tr("Downloading Instance Image"));
+            fireTask(GetText.tr("Downloading Image"));
             if (this.pack.modrinthProject.iconUrl != null) {
                 com.atlauncher.network.Download imageDownload = com.atlauncher.network.Download.build()
-                        .setUrl(this.pack.modrinthProject.iconUrl).downloadTo(root.resolve("instance.png"))
+                        .setUrl(this.pack.modrinthProject.iconUrl)
+                        .downloadTo(root.resolve(isServer ? "server.png" : "instance.png"))
                         .withInstanceInstaller(this).ignoreFailures()
                         .withHttpClient(Network.createProgressClient(this));
 
@@ -3500,7 +3534,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                 imageDownload.downloadFile();
             }
         } else if (modpacksChPackManifest != null) {
-            fireTask(GetText.tr("Downloading Instance Image"));
+            fireTask(GetText.tr("Downloading Image"));
             ModpacksChPackArt art = this.modpacksChPackManifest.art.stream()
                     .filter(a -> a.type == ModpacksChPackArtType.SQUARE).findFirst().orElse(null);
 
@@ -3508,14 +3542,15 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                 // we can't check the provided hash and size here otherwise download fails as
                 // their api doesn't return the correct info
                 com.atlauncher.network.Download imageDownload = com.atlauncher.network.Download.build().setUrl(art.url)
-                        .size(art.size).hash(art.sha1).downloadTo(root.resolve("instance.png")).ignoreFailures()
+                        .size(art.size).hash(art.sha1)
+                        .downloadTo(root.resolve(isServer ? "server.png" : "instance.png")).ignoreFailures()
                         .withInstanceInstaller(this).withHttpClient(Network.createProgressClient(this));
 
                 this.setTotalBytes(art.size);
                 imageDownload.downloadFile();
             }
         } else if (technicModpack != null) {
-            fireTask(GetText.tr("Downloading Instance Image"));
+            fireTask(GetText.tr("Downloading Image"));
             TechnicModpackAsset logo = this.technicModpack.logo;
 
             if (logo != null && logo.url != null && !logo.url.isEmpty()) {

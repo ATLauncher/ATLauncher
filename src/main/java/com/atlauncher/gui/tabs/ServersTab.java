@@ -49,7 +49,12 @@ public class ServersTab extends JPanel implements Tab, RelocalizationListener {
     private JPanel panel;
     private JScrollPane scrollPane;
 
-    private NilCard nilCard;
+    private NilCard nilCard = new NilCard(
+            getNilMessage(),
+            new NilCard.Action[] {
+                    NilCard.Action.createCreatePackAction(),
+                    NilCard.Action.createDownloadPackAction()
+            });
 
     private final IServersTabViewModel viewModel = new ServersTabViewModel();
 
@@ -64,13 +69,13 @@ public class ServersTab extends JPanel implements Tab, RelocalizationListener {
         topPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
 
         searchBox = new JTextField(16);
-        viewModel.addOnSearchChangeListener(searchBox::setText);
+        viewModel.getSearchObservable().subscribe(it -> searchBox.setText(it.orElse(null)));
         searchBox.addKeyListener(new KeyAdapter() {
             public void keyReleased(KeyEvent e) {
                 if (e.getKeyChar() == KeyEvent.VK_ENTER) {
                     String text = searchBox.getText();
                     Analytics.trackEvent(AnalyticsEvent.forSearchEvent("servers", text));
-                    viewModel.setSearch(text);
+                    viewModel.setSearchSubject(text);
                 }
             }
         });
@@ -78,7 +83,7 @@ public class ServersTab extends JPanel implements Tab, RelocalizationListener {
         searchBox.putClientProperty("JTextField.leadingIcon", new FlatSearchIcon());
         searchBox.putClientProperty("JTextField.showClearButton", true);
         searchBox.putClientProperty("JTextField.clearCallback", (Runnable) () -> {
-            viewModel.setSearch("");
+            viewModel.setSearchSubject("");
         });
         topPanel.add(searchBox);
 
@@ -97,7 +102,7 @@ public class ServersTab extends JPanel implements Tab, RelocalizationListener {
         gbc.insets = UIConstants.FIELD_INSETS_SMALL;
         gbc.fill = GridBagConstraints.BOTH;
 
-        viewModel.addOnChangeViewListener(servers -> {
+        viewModel.getServersObservable().subscribe(servers -> {
             viewModel.setViewPosition(scrollPane.getVerticalScrollBar().getValue());
             panel.removeAll();
             gbc.gridy = 0;
@@ -108,9 +113,6 @@ public class ServersTab extends JPanel implements Tab, RelocalizationListener {
             });
 
             if (panel.getComponentCount() == 0) {
-                nilCard = new NilCard(new HTMLBuilder().text(
-                        GetText.tr("There are no servers to display.<br/><br/>Install one from the Packs tab."))
-                        .build());
                 panel.add(nilCard, gbc);
             }
 
@@ -119,7 +121,7 @@ public class ServersTab extends JPanel implements Tab, RelocalizationListener {
             searchBox.requestFocus();
         });
 
-        viewModel.addOnViewPositionChangedListener(scrollPane.getVerticalScrollBar()::setValue);
+        viewModel.getViewPosition().subscribe(scrollPane.getVerticalScrollBar()::setValue);
     }
 
     @Override
@@ -132,13 +134,19 @@ public class ServersTab extends JPanel implements Tab, RelocalizationListener {
         return "Servers";
     }
 
+    private static String getNilMessage() {
+        return new HTMLBuilder()
+                .text(GetText.tr("There are no servers to display.<br/><br/>Install one from the Packs tab."))
+                .build();
+    }
+
     @Override
     public void onRelocalization() {
         searchBox.putClientProperty("JTextField.placeholderText", GetText.tr("Search"));
-
-        if (nilCard != null) {
-            nilCard.setMessage(new HTMLBuilder().text(
-                    GetText.tr("There are no servers to display.<br/><br/>Install one from the Packs tab.")).build());
-        }
+        nilCard.setMessage(getNilMessage());
+        nilCard.setActions(new NilCard.Action[] {
+                NilCard.Action.createCreatePackAction(),
+                NilCard.Action.createDownloadPackAction()
+        });
     }
 }

@@ -28,10 +28,9 @@ import com.atlauncher.App;
 import com.atlauncher.Data;
 import com.atlauncher.FileSystem;
 import com.atlauncher.constants.Constants;
-import com.atlauncher.evnt.listener.AccountListener;
 import com.atlauncher.evnt.listener.SettingsListener;
-import com.atlauncher.evnt.manager.AccountManager;
 import com.atlauncher.evnt.manager.SettingsManager;
+import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.network.Download;
@@ -42,13 +41,12 @@ import com.atlauncher.utils.Utils;
 /**
  * 15 / 06 / 2022
  */
-public class ToolsViewModel implements IToolsViewModel, SettingsListener, AccountListener {
+public class ToolsViewModel implements IToolsViewModel, SettingsListener {
     private Consumer<Boolean> onCanRunNetworkCheckerChanged;
     private Consumer<Boolean> onSkinUpdaterEnabledChanged;
 
     public ToolsViewModel() {
         SettingsManager.addListener(this);
-        AccountManager.addListener(this);
     }
 
     @Override
@@ -56,13 +54,12 @@ public class ToolsViewModel implements IToolsViewModel, SettingsListener, Accoun
         onCanRunNetworkCheckerChanged.accept(canRunNetworkChecker());
     }
 
-    @Override
     public void onAccountsChanged() {
         onSkinUpdaterEnabledChanged.accept(skinUpdaterEnabled());
     }
 
     private boolean skinUpdaterEnabled() {
-        return Data.ACCOUNTS.size() != 0;
+        return !AccountManager.getAccounts().isEmpty();
     }
 
     @Override
@@ -323,14 +320,14 @@ public class ToolsViewModel implements IToolsViewModel, SettingsListener, Accoun
 
     @Override
     public int accountCount() {
-        return Data.ACCOUNTS.size();
+        return AccountManager.getAccounts().size();
     }
 
     @Override
     public void updateSkins(Consumer<Void> onTaskComplete) {
         Analytics.trackEvent(AnalyticsEvent.forToolRun("skin_updater"));
 
-        Data.ACCOUNTS.forEach(account -> {
+        AccountManager.getAccounts().forEach(account -> {
             account.updateSkin();
             onTaskComplete.accept(null);
         });

@@ -208,6 +208,22 @@ public class AnalyticsEvent {
         return new AnalyticsEvent("mod_add", payload);
     }
 
+    public static AnalyticsEvent forRemoveMod(CurseForgeProject mod) {
+        return AnalyticsEvent.forRemoveMod(mod.name, "CurseForge");
+    }
+
+    public static AnalyticsEvent forRemoveMod(ModrinthSearchHit mod) {
+        return AnalyticsEvent.forRemoveMod(mod.title, "Modrinth");
+    }
+
+    public static AnalyticsEvent forRemoveMod(String name, String platform) {
+        final Map<String, Object> payload = new HashMap<>();
+        payload.put("name", name);
+        payload.put("platform", platform);
+
+        return new AnalyticsEvent("mod_remove", payload);
+    }
+
     public static AnalyticsEvent forAddedMod(CurseForgeProject mod, CurseForgeFile file) {
         return AnalyticsEvent.forAddedMod(mod.name, file.displayName, "CurseForge");
     }

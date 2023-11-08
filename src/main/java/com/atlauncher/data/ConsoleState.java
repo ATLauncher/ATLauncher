@@ -15,8 +15,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.atlauncher.evnt.listener;
+package com.atlauncher.data;
 
-public interface ConsoleCloseListener {
-    void onConsoleClose();
+/**
+ * @since 2023 / 08 / 29
+ */
+public enum ConsoleState {
+    OPEN,
+    CLOSED
 }

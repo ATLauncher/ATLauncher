@@ -368,7 +368,7 @@ public class CreatePackViewModel implements SettingsListener, ICreatePackViewMod
         createServerEnabled.onNext(false);
         createInstanceEnabled.onNext(false);
 
-        loaderTypeNoneEnabled.onNext(false);
+        loaderTypeNoneEnabled.onNext(true);
         loaderTypeQuiltEnabled.onNext(true);
         loaderTypeFabricEnabled.onNext(true);
         loaderTypeForgeEnabled.onNext(true);
@@ -384,11 +384,14 @@ public class CreatePackViewModel implements SettingsListener, ICreatePackViewMod
                         try {
                             final VersionManifestVersion version = MinecraftManager
                                     .getMinecraftVersion(selectedVersion.get());
+                            createInstanceEnabled.onNext(true);
                             createServerEnabled.onNext(version.hasServer());
                         } catch (InvalidMinecraftVersion ignored) {
+                            createInstanceEnabled.onNext(false);
                             createServerEnabled.onNext(false);
                         }
                     } else {
+                        createInstanceEnabled.onNext(false);
                         createServerEnabled.onNext(false);
                     }
                 });
@@ -399,15 +402,16 @@ public class CreatePackViewModel implements SettingsListener, ICreatePackViewMod
                     Optional<LoaderType> loaderTypeOptional = optionalOptionalPair.left();
                     Optional<String> selectedMinecraftVersionOptional = optionalOptionalPair.right();
 
-                    if (!selectedMinecraftVersionOptional.isPresent())
+                    if (!selectedMinecraftVersionOptional.isPresent()) {
                         return;
-
-                    loaderVersionsDropDownEnabled.onNext(false);
+                    }
 
                     if (!loaderTypeOptional.isPresent()) {
                         // update the name and description fields if they're not dirty
                         updateNameAndDescription(selectedMinecraftVersionOptional.get(), null);
                         loaderVersions.onNext(Optional.empty());
+                        setLoaderGroupEnabled(true);
+                        loaderVersionsDropDownEnabled.onNext(false);
                         return;
                     }
                     LoaderType loaderType = loaderTypeOptional.get();
@@ -416,6 +420,13 @@ public class CreatePackViewModel implements SettingsListener, ICreatePackViewMod
                     updateNameAndDescription(selectedMinecraftVersion, loaderType);
 
                     loaderLoading.onNext(true);
+                    loaderTypeNoneEnabled.onNext(false);
+                    loaderTypeQuiltEnabled.onNext(false);
+                    loaderTypeFabricEnabled.onNext(false);
+                    loaderTypeForgeEnabled.onNext(false);
+                    loaderTypeLegacyFabricEnabled.onNext(false);
+                    loaderTypeNeoForgeEnabled.onNext(false);
+                    loaderVersionsDropDownEnabled.onNext(false);
 
                     setLoaderGroupEnabled(false);
 
@@ -445,7 +456,13 @@ public class CreatePackViewModel implements SettingsListener, ICreatePackViewMod
 
                     boolean hasLoaderVersions = !loaders.isEmpty() && loaders.get(0) != noLoaderVersions;
 
-                    setLoaderGroupEnabled(true, hasLoaderVersions, enableCreateServers);
+                    setLoaderGroupEnabled(hasLoaderVersions, hasLoaderVersions && enableCreateServers);
+                    loaderTypeNoneEnabled.onNext(true);
+                    loaderTypeQuiltEnabled.onNext(true);
+                    loaderTypeFabricEnabled.onNext(true);
+                    loaderTypeForgeEnabled.onNext(true);
+                    loaderTypeLegacyFabricEnabled.onNext(true);
+                    loaderTypeNeoForgeEnabled.onNext(true);
                 });
     }
 
@@ -706,7 +723,7 @@ public class CreatePackViewModel implements SettingsListener, ICreatePackViewMod
                         .setType(DialogManager.ERROR).show();
 
                 if (AccountManager.getAccounts().size() == 0) {
-                    App.launcherFrame.tabbedPane.setSelectedIndex(UIConstants.LAUNCHER_ACCOUNTS_TAB);
+                    App.navigate(UIConstants.LAUNCHER_ACCOUNTS_TAB);
                 }
             } else {
                 DialogManager.okDialog().setTitle(GetText.tr("No Account Selected"))
@@ -714,7 +731,7 @@ public class CreatePackViewModel implements SettingsListener, ICreatePackViewMod
                         .setType(DialogManager.ERROR).show();
 
                 if (AccountManager.getAccounts().size() == 0) {
-                    App.launcherFrame.tabbedPane.setSelectedIndex(UIConstants.LAUNCHER_ACCOUNTS_TAB);
+                    App.navigate(UIConstants.LAUNCHER_ACCOUNTS_TAB);
                 }
             }
             return;
@@ -725,8 +742,9 @@ public class CreatePackViewModel implements SettingsListener, ICreatePackViewMod
             final @Nullable LoaderVersion selectedLoaderVersion = this.selectedLoaderVersion.getValue().orElse(null);
             final Optional<String> selectedMinecraftVersionOptional = this.selectedMinecraftVersionFlow.getValue();
 
-            if (!selectedMinecraftVersionOptional.isPresent())
+            if (!selectedMinecraftVersionOptional.isPresent()) {
                 return;
+            }
 
             final @Nonnull String selectedMinecraftVersion = selectedMinecraftVersionOptional.get();
             final @Nullable String description = this.description.getValue().orElse(null);
@@ -741,14 +759,21 @@ public class CreatePackViewModel implements SettingsListener, ICreatePackViewMod
             installable.isServer = isServer;
             final boolean success = installable.startInstall();
 
-            // if (success) {
-            // - Reset the view, currently disabled
-            // nameFieldDirty = false
-            // descriptionFieldDirty = false
-            // loaderTypeNoneRadioButton.isSelected = true
-            // selectedLoaderTypeChanged(null)
-            // minecraftVersionTable!!.setRowSelectionInterfinal void(0, 0)
-            // }
+            if (success) {
+                final String defaultNameField;
+                if (selectedLoaderVersion == null) {
+                    defaultNameField = String.format("Minecraft %s", selectedMinecraftVersion);
+                } else {
+                    defaultNameField = String.format("Minecraft %s with %s", selectedMinecraftVersion,
+                            selectedLoaderVersion.type);
+                }
+
+                nameDirty = false;
+                this.name.onNext(Optional.of(defaultNameField));
+
+                descriptionDirty = false;
+                this.description.onNext(Optional.of(defaultNameField));
+            }
         } catch (InvalidMinecraftVersion e) {
             LogManager.logStackTrace(e);
         }
@@ -925,10 +950,14 @@ public class CreatePackViewModel implements SettingsListener, ICreatePackViewMod
                         loaderVersionsList.addAll(data.loaderVersions().neoforge()
                                 .stream()
                                 .filter(fv -> !disabledNeoForgeVersions.contains(fv.version()))
-                                .map(version -> new LoaderVersion(
-                                        version.version(),
-                                        false,
-                                        "NeoForge"))
+                                .map(version -> {
+                                    LoaderVersion lv = new LoaderVersion(
+                                            version.version(),
+                                            false,
+                                            "NeoForge");
+                                    lv.rawVersion = version.rawVersion();
+                                    return lv;
+                                })
                                 .collect(Collectors.toList()));
                         break;
 
@@ -940,31 +969,32 @@ public class CreatePackViewModel implements SettingsListener, ICreatePackViewMod
                         break;
                 }
             if (loaderVersionsList.size() == 0) {
-                setLoaderGroupEnabled(true, false, enableCreateServers);
+                setLoaderGroupEnabled(false);
                 return singletonList(noLoaderVersions);
             }
             return loaderVersionsList;
         } catch (RuntimeException e) {
             LogManager.logStackTrace("Error fetching loading versions", e);
-            setLoaderGroupEnabled(true, false, enableCreateServers);
+            setLoaderGroupEnabled(false);
             return singletonList(errorLoadingVersions);
         }
     }
 
     private void setLoaderGroupEnabled(Boolean enabled) {
-        setLoaderGroupEnabled(enabled, enabled, enabled);
+        setLoaderGroupEnabled(enabled, enabled);
     }
 
-    private void setLoaderGroupEnabled(Boolean enabled, Boolean loaderVersionsDropDown, Boolean enableCreateServers) {
-        loaderTypeNoneEnabled.onNext(enabled);
-        loaderTypeFabricEnabled.onNext(enabled);
-        loaderTypeForgeEnabled.onNext(enabled);
-        loaderTypeLegacyFabricEnabled.onNext(enabled);
-        loaderTypeNeoForgeEnabled.onNext(enabled);
-        loaderTypeQuiltEnabled.onNext(enabled);
+    private void setLoaderGroupEnabled(Boolean enabled, Boolean enableCreateServers) {
+        loaderTypeNoneEnabled.onNext(true);
+        loaderTypeFabricEnabled.onNext(true);
+        loaderTypeForgeEnabled.onNext(true);
+        loaderTypeLegacyFabricEnabled.onNext(true);
+        loaderTypeNeoForgeEnabled.onNext(true);
+        loaderTypeQuiltEnabled.onNext(true);
+
         createServerEnabled.onNext(enableCreateServers);
         createInstanceEnabled.onNext(enabled);
-        loaderVersionsDropDownEnabled.onNext(loaderVersionsDropDown);
+        loaderVersionsDropDownEnabled.onNext(enabled);
     }
 
     /**
@@ -992,7 +1022,7 @@ public class CreatePackViewModel implements SettingsListener, ICreatePackViewMod
         }
 
         if (loaderVersionsList.size() == 0) {
-            setLoaderGroupEnabled(true, false, enableCreateServers);
+            setLoaderGroupEnabled(false);
             return singletonList(noLoaderVersions);
         }
 

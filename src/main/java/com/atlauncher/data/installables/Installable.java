@@ -250,9 +250,6 @@ public abstract class Installable {
                                     pack.getName(), version.version);
                         }
 
-                        if (isServer) {
-                            App.launcher.reloadServersPanel();
-                        }
 
                         if (pack.isLoggingEnabled() && App.settings.enableLogs && !version.isDev) {
                             if (isServer) {
