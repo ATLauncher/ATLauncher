@@ -94,7 +94,7 @@ public class FTBPackCard extends JPanel implements RelocalizationListener {
                         .setType(DialogManager.ERROR).show();
 
                 if (AccountManager.getAccounts().size() == 0) {
-                    App.launcherFrame.tabbedPane.setSelectedIndex(UIConstants.LAUNCHER_ACCOUNTS_TAB);
+                    App.navigate(UIConstants.LAUNCHER_ACCOUNTS_TAB);
                 }
             } else {
                 Analytics.trackEvent(AnalyticsEvent.forPackInstall(pack));
