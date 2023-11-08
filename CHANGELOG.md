@@ -13,5 +13,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Issue with some CurseForge server packs breaking
 - Issues with UI elements sometimes not enabling/disabling correctly on Create Pack tab
 - Importing a CurseForge format pack using NeoForge not working [#826]
+- Issue installing 1.20.2 versions of NeoForge
 
 ### Misc

@@ -942,10 +942,14 @@ public class CreatePackViewModel implements SettingsListener, ICreatePackViewMod
                         loaderVersionsList.addAll(data.loaderVersions().neoforge()
                                 .stream()
                                 .filter(fv -> !disabledNeoForgeVersions.contains(fv.version()))
-                                .map(version -> new LoaderVersion(
-                                        version.version(),
-                                        false,
-                                        "NeoForge"))
+                                .map(version -> {
+                                    LoaderVersion lv = new LoaderVersion(
+                                            version.version(),
+                                            false,
+                                            "NeoForge");
+                                    lv.rawVersion = version.rawVersion();
+                                    return lv;
+                                })
                                 .collect(Collectors.toList()));
                         break;
 
