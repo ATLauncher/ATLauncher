@@ -43,6 +43,7 @@ import com.atlauncher.data.LauncherLibrary;
 import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.gui.components.BackgroundImageLabel;
+import com.atlauncher.gui.panels.HierarchyPanel;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.themes.ATLauncherLaf;
 import com.atlauncher.utils.OS;
@@ -56,21 +57,50 @@ import com.atlauncher.viewmodel.impl.AboutTabViewModel;
  * the current state of ATLauncher, and some other basic diagnostic information
  * to let users more easily report errors.
  */
-public class AboutTab extends JPanel implements Tab, RelocalizationListener {
+public class AboutTab extends HierarchyPanel implements Tab, RelocalizationListener {
 
     /**
      * Copies [textInfo] to the users clipboard
      */
-    private final JButton copyButton;
+    private JButton copyButton;
 
-    private final JLabel contributorLabel, acknowledgementsLabel, librariesLabel, licenseLabel;
+    private JLabel contributorLabel, acknowledgementsLabel, librariesLabel, licenseLabel;
 
-    private final IAboutTabViewModel viewModel;
+    private IAboutTabViewModel viewModel;
 
     public AboutTab() {
-        viewModel = new AboutTabViewModel();
+        super();
         setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
         setBorder(BorderFactory.createEmptyBorder(16, 16, 16, 16));
+        RelocalizationManager.addListener(this);
+    }
+
+    @Override
+    public void onRelocalization() {
+        acknowledgementsLabel.setText(GetText.tr("Acknowledgements:"));
+        copyButton.setText(GetText.tr("Copy"));
+        contributorLabel.setText(GetText.tr("Contributors:"));
+        librariesLabel.setText(GetText.tr("Libraries:"));
+        licenseLabel.setText(GetText.tr("License:"));
+    }
+
+    @Override
+    public String getTitle() {
+        return GetText.tr("About");
+    }
+
+    @Override
+    public String getAnalyticsScreenViewName() {
+        return "About";
+    }
+
+    @Override
+    protected void createViewModel() {
+        viewModel = new AboutTabViewModel();
+    }
+
+    @Override
+    protected void onShow() {
 
         // Top info panel
         {
@@ -273,27 +303,17 @@ public class AboutTab extends JPanel implements Tab, RelocalizationListener {
 
             add(panel);
         }
-
-        RelocalizationManager.addListener(this);
         onRelocalization();
     }
 
     @Override
-    public void onRelocalization() {
-        acknowledgementsLabel.setText(GetText.tr("Acknowledgements:"));
-        copyButton.setText(GetText.tr("Copy"));
-        contributorLabel.setText(GetText.tr("Contributors:"));
-        librariesLabel.setText(GetText.tr("Libraries:"));
-        licenseLabel.setText(GetText.tr("License:"));
-    }
+    protected void onDestroy() {
+        removeAll();
 
-    @Override
-    public String getTitle() {
-        return GetText.tr("About");
-    }
-
-    @Override
-    public String getAnalyticsScreenViewName() {
-        return "About";
+        copyButton = null;
+        contributorLabel = null;
+        acknowledgementsLabel = null;
+        librariesLabel = null;
+        licenseLabel = null;
     }
 }
