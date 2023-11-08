@@ -22,3 +22,4 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Implement HierarchyPanel for basic life cycle to NewsTab
 - Remove old nil card image in favour of the default image
 - Implement RxJava in AccountManager
+- Implement RxJava in ServerManager

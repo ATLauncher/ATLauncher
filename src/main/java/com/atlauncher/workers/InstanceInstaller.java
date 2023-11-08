@@ -2628,8 +2628,6 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         server.save();
 
         ServerManager.addServer(server);
-
-        App.launcher.reloadServersPanel();
     }
 
     private void determineMainClass() {

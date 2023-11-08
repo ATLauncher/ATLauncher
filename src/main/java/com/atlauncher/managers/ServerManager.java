@@ -22,41 +22,33 @@ import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
-import javax.swing.SwingUtilities;
-
-import com.atlauncher.Data;
 import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
 import com.atlauncher.data.Server;
 import com.atlauncher.utils.FileUtils;
 import com.atlauncher.utils.Utils;
 
+import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.subjects.BehaviorSubject;
+
 public class ServerManager {
-    private static final List<Listener> listeners = new LinkedList<>();
+    /**
+     * Data holder for Servers.
+     * <p>
+     * Automatically updates subscribed entities downstream.
+     */
+    private static final BehaviorSubject<List<Server>> SERVERS =
+        BehaviorSubject.createDefault(new LinkedList<>());
 
-    public static synchronized void addListener(Listener listener) {
-        listeners.add(listener);
-    }
-
-    public static synchronized void removeListener(Listener listener) {
-        listeners.remove(listener);
-    }
-
-    public static synchronized void post() {
-        SwingUtilities.invokeLater(() -> {
-            for (Listener listener : listeners) {
-                listener.onServersChanged();
-            }
-        });
-    }
-
-    public static List<Server> getServers() {
-        return Data.SERVERS;
+    /**
+     * @return Observable list of servers.
+     */
+    public static Observable<List<Server>> getServersObservable() {
+        return SERVERS;
     }
 
     /**
@@ -65,17 +57,17 @@ public class ServerManager {
     public static void loadServers() {
         PerformanceManager.start();
         LogManager.debug("Loading servers");
-        Data.SERVERS.clear();
+        ArrayList<Server> servers = new ArrayList<>();
 
         for (String folder : Optional.of(FileSystem.SERVERS.toFile().list(Utils.getServerFileFilter()))
-                .orElse(new String[0])) {
+            .orElse(new String[0])) {
             File serverDir = FileSystem.SERVERS.resolve(folder).toFile();
 
             Server server;
 
             try (InputStreamReader fileReader = new InputStreamReader(
-                    new FileInputStream(new File(serverDir, "server.json")),
-                    StandardCharsets.UTF_8)) {
+                new FileInputStream(new File(serverDir, "server.json")),
+                StandardCharsets.UTF_8)) {
                 server = Gsons.DEFAULT.fromJson(fileReader, Server.class);
                 server.ROOT = serverDir.toPath();
                 LogManager.debug("Loaded server from " + serverDir);
@@ -84,9 +76,10 @@ public class ServerManager {
                 continue;
             }
 
-            Data.SERVERS.add(server);
+            servers.add(server);
         }
 
+        SERVERS.onNext(servers);
         LogManager.debug("Finished loading servers");
         PerformanceManager.end();
     }
@@ -106,12 +99,6 @@ public class ServerManager {
         }
     }
 
-    public static ArrayList<Server> getServersSorted() {
-        ArrayList<Server> servers = new ArrayList<>(Data.SERVERS);
-        servers.sort(Comparator.comparing(s -> s.name));
-        return servers;
-    }
-
     /**
      * Note, this method ignores ConstantConditions warning, as it always has.
      *
@@ -120,26 +107,25 @@ public class ServerManager {
      */
     @SuppressWarnings("ConstantConditions")
     public static boolean addServer(Server server) {
-        boolean added = Data.SERVERS.add(server);
+        List<Server> servers = SERVERS.getValue();
+        boolean added = servers.add(server);
         if (added) {
-            post();
+            SERVERS.onNext(servers);
         }
         return added;
     }
 
     public static void removeServer(Server server) {
-        if (Data.SERVERS.remove(server)) {
+        List<Server> servers = SERVERS.getValue();
+
+        if (servers.remove(server)) {
             FileUtils.delete(server.getRoot(), true);
-            post();
+            SERVERS.onNext(servers);
         }
     }
 
     public static boolean isServer(String name) {
-        return Data.SERVERS.stream()
-                .anyMatch(s -> s.getSafeName().equalsIgnoreCase(name.replaceAll("[^A-Za-z0-9]", "")));
-    }
-
-    public interface Listener {
-        void onServersChanged();
+        return SERVERS.getValue().stream()
+            .anyMatch(s -> s.getSafeName().equalsIgnoreCase(name.replaceAll("[^A-Za-z0-9]", "")));
     }
 }

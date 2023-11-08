@@ -162,7 +162,6 @@ public class ServerCard extends CollapsiblePanel implements RelocalizationListen
                     App.TOASTER.pop(GetText.tr("Deleted Server Successfully"));
                 }));
                 dialog.start();
-                App.launcher.reloadServersPanel();
             }
         });
         this.openButton.addActionListener(e -> OS.openFileExplorer(server.getRoot()));

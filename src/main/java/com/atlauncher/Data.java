@@ -46,7 +46,6 @@ public final class Data {
 
     public static final List<Instance> INSTANCES = new LinkedList<>();
 
-    public static final List<Server> SERVERS = new LinkedList<>();
 
     public static final Map<String, VersionManifestVersion> MINECRAFT = new HashMap<>();
     public static LWJGLVersions LWJGL_VERSIONS = null;

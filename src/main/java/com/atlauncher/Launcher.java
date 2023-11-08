@@ -382,7 +382,6 @@ public class Launcher {
             PackManager.loadUsers(); // Load the Testers and Allowed Players for the packs
             InstanceManager.loadInstances(); // Load the users installed Instances
             reloadInstancesPanel(); // Reload instances panel
-            reloadServersPanel(); // Reload instances panel
             dialog.setVisible(false); // Remove the dialog
             dialog.dispose(); // Dispose the dialog
         });
@@ -457,10 +456,6 @@ public class Launcher {
      */
     public void reloadInstancesPanel() {
         InstanceManager.post();
-    }
-
-    public void reloadServersPanel() {
-        ServerManager.post();
     }
 
     /**

@@ -252,9 +252,7 @@ public abstract class Installable {
                                     pack.getName(), version.version);
                         }
 
-                        if (isServer) {
-                            App.launcher.reloadServersPanel();
-                        } else {
+                        if (!isServer) {
                             App.launcher.reloadInstancesPanel();
                         }
 
