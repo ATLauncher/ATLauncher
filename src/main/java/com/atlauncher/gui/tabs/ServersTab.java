@@ -30,7 +30,6 @@ import javax.swing.JTextField;
 
 import org.mini2Dx.gettext.GetText;
 
-import com.atlauncher.App;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.constants.UIConstants;
 import com.atlauncher.evnt.listener.RelocalizationListener;
@@ -51,12 +50,11 @@ public class ServersTab extends JPanel implements Tab, RelocalizationListener {
     private JScrollPane scrollPane;
 
     private NilCard nilCard = new NilCard(
-        getNilMessage(),
-        new NilCard.Action[]{
-            NilCard.Action.createCreatePackAction(),
-            NilCard.Action.createDownloadPackAction()
-        }
-    );
+            getNilMessage(),
+            new NilCard.Action[] {
+                    NilCard.Action.createCreatePackAction(),
+                    NilCard.Action.createDownloadPackAction()
+            });
 
     private final IServersTabViewModel viewModel = new ServersTabViewModel();
 
@@ -136,19 +134,19 @@ public class ServersTab extends JPanel implements Tab, RelocalizationListener {
         return "Servers";
     }
 
-    private static String getNilMessage(){
+    private static String getNilMessage() {
         return new HTMLBuilder()
-            .text(GetText.tr("There are no servers to display.<br/><br/>Install one from the Packs tab."))
-            .build();
+                .text(GetText.tr("There are no servers to display.<br/><br/>Install one from the Packs tab."))
+                .build();
     }
 
     @Override
     public void onRelocalization() {
         searchBox.putClientProperty("JTextField.placeholderText", GetText.tr("Search"));
         nilCard.setMessage(getNilMessage());
-        nilCard.setActions(new NilCard.Action[]{
-            NilCard.Action.createCreatePackAction(),
-            NilCard.Action.createDownloadPackAction()
+        nilCard.setActions(new NilCard.Action[] {
+                NilCard.Action.createCreatePackAction(),
+                NilCard.Action.createDownloadPackAction()
         });
     }
 }

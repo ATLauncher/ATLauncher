@@ -46,7 +46,7 @@ import com.atlauncher.utils.Utils;
  */
 @SuppressWarnings("serial")
 public class NilCard extends JPanel implements RelocalizationListener {
-    private static final Image defaultImage = Utils.getIconImage("/assets/image/nil-card-image.png").getImage();
+    private static final Image defaultImage = Utils.getIconImage("/assets/image/default-image.png").getImage();
 
     private final JPanel column = new JPanel();
     private final JPanel row = new JPanel();
@@ -61,7 +61,7 @@ public class NilCard extends JPanel implements RelocalizationListener {
         RelocalizationManager.addListener(this);
 
         this.setBorder(new TitledBorder(null, GetText.tr("Nothing To Show"), TitledBorder.DEFAULT_JUSTIFICATION,
-            TitledBorder.DEFAULT_POSITION, App.THEME.getBoldFont().deriveFont(15f)));
+                TitledBorder.DEFAULT_POSITION, App.THEME.getBoldFont().deriveFont(15f)));
 
         column.setLayout(new BoxLayout(column, BoxLayout.PAGE_AXIS));
 
@@ -125,16 +125,14 @@ public class NilCard extends JPanel implements RelocalizationListener {
 
         public static Action createCreatePackAction() {
             return new NilCard.Action(
-                GetText.tr("Create Pack"),
-                e -> App.navigate(UIConstants.LAUNCHER_CREATE_PACK_TAB)
-            );
+                    GetText.tr("Create Pack"),
+                    e -> App.navigate(UIConstants.LAUNCHER_CREATE_PACK_TAB));
         }
 
         public static Action createDownloadPackAction() {
             return new NilCard.Action(
-                GetText.tr("Download Pack"),
-                e -> App.navigate(UIConstants.LAUNCHER_PACKS_TAB)
-            );
+                    GetText.tr("Download Pack"),
+                    e -> App.navigate(UIConstants.LAUNCHER_PACKS_TAB));
         }
     }
 }

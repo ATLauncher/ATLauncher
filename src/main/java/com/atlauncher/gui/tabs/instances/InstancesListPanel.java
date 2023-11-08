@@ -24,7 +24,6 @@ import javax.swing.JPanel;
 
 import org.mini2Dx.gettext.GetText;
 
-import com.atlauncher.App;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.constants.UIConstants;
 import com.atlauncher.evnt.listener.RelocalizationListener;
@@ -35,18 +34,17 @@ import com.atlauncher.gui.tabs.InstancesTab;
 import com.atlauncher.viewmodel.base.IInstancesTabViewModel;
 
 public final class InstancesListPanel extends JPanel
-    implements RelocalizationListener {
+        implements RelocalizationListener {
 
     private final IInstancesTabViewModel viewModel;
     private final InstancesTab parent;
 
     private final NilCard nilCard = new NilCard(
-        getNilMessage(),
-        new NilCard.Action[]{
-            NilCard.Action.createCreatePackAction(),
-            NilCard.Action.createDownloadPackAction()
-        }
-    );
+            getNilMessage(),
+            new NilCard.Action[] {
+                    NilCard.Action.createCreatePackAction(),
+                    NilCard.Action.createDownloadPackAction()
+            });
 
     public InstancesListPanel(final InstancesTab parent, final IInstancesTabViewModel viewModel) {
         super(new GridBagLayout());
@@ -58,8 +56,8 @@ public final class InstancesListPanel extends JPanel
 
     private static String getNilMessage() {
         return new HTMLBuilder()
-            .text(GetText.tr("There are no instances to display.<br/><br/>Install one from the Packs tab."))
-            .build();
+                .text(GetText.tr("There are no instances to display.<br/><br/>Install one from the Packs tab."))
+                .build();
     }
 
     public void createView() {
@@ -91,9 +89,9 @@ public final class InstancesListPanel extends JPanel
     @Override
     public void onRelocalization() {
         this.nilCard.setMessage(getNilMessage());
-        nilCard.setActions(new NilCard.Action[]{
-            NilCard.Action.createCreatePackAction(),
-            NilCard.Action.createDownloadPackAction()
+        nilCard.setActions(new NilCard.Action[] {
+                NilCard.Action.createCreatePackAction(),
+                NilCard.Action.createDownloadPackAction()
         });
     }
 }

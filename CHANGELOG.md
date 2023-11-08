@@ -20,3 +20,4 @@ This changelog only contains the changes that are unreleased. For changes for in
 ### Misc
 - Convert ConsoleOpenManager and ConsoleCloseManager into ConsoleStateManager [#814]
 - Implement HierarchyPanel for basic life cycle to NewsTab
+- Remove old nil card image in favour of the default image
