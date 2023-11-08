@@ -34,6 +34,7 @@ import org.mini2Dx.gettext.GetText;
 import com.atlauncher.App;
 import com.atlauncher.FileSystem;
 import com.atlauncher.data.AbstractAccount;
+import com.atlauncher.data.ConsoleState;
 import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.ConsoleStateManager;
 import com.atlauncher.evnt.manager.RelocalizationManager;
@@ -49,12 +50,11 @@ import io.reactivex.rxjava3.core.Observable;
 
 @SuppressWarnings("serial")
 public class LauncherBottomBar extends BottomBar implements RelocalizationListener {
-    private final Observable<Pair<List<AbstractAccount>, Optional<AbstractAccount>>> accountState =
-        Observable.combineLatest(
-            AccountManager.getAccountsObservable(),
-            AccountManager.getSelectedAccountObservable(),
-            Pair::new
-        );
+    private final Observable<Pair<List<AbstractAccount>, Optional<AbstractAccount>>> accountState = Observable
+            .combineLatest(
+                    AccountManager.getAccountsObservable(),
+                    AccountManager.getSelectedAccountObservable(),
+                    Pair::new);
     private boolean dontSave = false;
     private JButton toggleConsole;
     private JButton openFolder;
@@ -105,7 +105,7 @@ public class LauncherBottomBar extends BottomBar implements RelocalizationListen
         openFolder.addActionListener(e -> OS.openFileExplorer(FileSystem.BASE_DIR));
         checkForUpdates.addActionListener(e -> {
             final ProgressDialog dialog = new ProgressDialog(GetText.tr("Checking For Updates"), 0,
-                GetText.tr("Checking For Updates"), "Aborting Update Check!");
+                    GetText.tr("Checking For Updates"), "Aborting Update Check!");
             dialog.addThread(new Thread(() -> {
                 Analytics.trackEvent(AnalyticsEvent.simpleEvent("update_data"));
                 App.launcher.updateData(true);
@@ -121,14 +121,13 @@ public class LauncherBottomBar extends BottomBar implements RelocalizationListen
                 }
             }
         });
-        ConsoleStateManager.getObservable().subscribe(newState-> {
-                if (newState == ConsoleState.OPEN) {
-                    toggleConsole.setText(GetText.tr("Hide Console"));
-                } else {
-                    toggleConsole.setText(GetText.tr("Show Console"));
-                }
+        ConsoleStateManager.getObservable().subscribe(newState -> {
+            if (newState == ConsoleState.OPEN) {
+                toggleConsole.setText(GetText.tr("Hide Console"));
+            } else {
+                toggleConsole.setText(GetText.tr("Show Console"));
             }
-        );
+        });
     }
 
     /**
