@@ -742,8 +742,9 @@ public class CreatePackViewModel implements SettingsListener, ICreatePackViewMod
             final @Nullable LoaderVersion selectedLoaderVersion = this.selectedLoaderVersion.getValue().orElse(null);
             final Optional<String> selectedMinecraftVersionOptional = this.selectedMinecraftVersionFlow.getValue();
 
-            if (!selectedMinecraftVersionOptional.isPresent())
+            if (!selectedMinecraftVersionOptional.isPresent()) {
                 return;
+            }
 
             final @Nonnull String selectedMinecraftVersion = selectedMinecraftVersionOptional.get();
             final @Nullable String description = this.description.getValue().orElse(null);
@@ -758,14 +759,21 @@ public class CreatePackViewModel implements SettingsListener, ICreatePackViewMod
             installable.isServer = isServer;
             final boolean success = installable.startInstall();
 
-            // if (success) {
-            // - Reset the view, currently disabled
-            // nameFieldDirty = false
-            // descriptionFieldDirty = false
-            // loaderTypeNoneRadioButton.isSelected = true
-            // selectedLoaderTypeChanged(null)
-            // minecraftVersionTable!!.setRowSelectionInterfinal void(0, 0)
-            // }
+            if (success) {
+                final String defaultNameField;
+                if (selectedLoaderVersion == null) {
+                    defaultNameField = String.format("Minecraft %s", selectedMinecraftVersion);
+                } else {
+                    defaultNameField = String.format("Minecraft %s with %s", selectedMinecraftVersion,
+                            selectedLoaderVersion.type);
+                }
+
+                nameDirty = false;
+                this.name.onNext(Optional.of(defaultNameField));
+
+                descriptionDirty = false;
+                this.description.onNext(Optional.of(defaultNameField));
+            }
         } catch (InvalidMinecraftVersion e) {
             LogManager.logStackTrace(e);
         }
