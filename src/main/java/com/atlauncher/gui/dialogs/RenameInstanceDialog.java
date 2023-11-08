@@ -124,9 +124,7 @@ public class RenameInstanceDialog extends JDialog {
                                         .build())
                         .setType(DialogManager.ERROR).show();
             } else {
-                if (instance.rename(instanceName.getText())) {
-                    App.launcher.reloadInstancesPanel();
-                } else {
+                if (!instance.rename(instanceName.getText())) {
                     LogManager.error("Unknown Error Occurred While Renaming Instance!");
                     DialogManager.okDialog().setParent(RenameInstanceDialog.this).setTitle(GetText.tr("Error"))
                             .setContent(new HTMLBuilder().center().text(GetText.tr(

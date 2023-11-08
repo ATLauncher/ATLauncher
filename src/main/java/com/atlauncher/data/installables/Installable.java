@@ -186,7 +186,6 @@ public abstract class Installable {
                             instance.launcher.isPlayable = false;
                             instance.save();
 
-                            App.launcher.reloadInstancesPanel();
                         }
                     } else if (isReinstall) {
                         // #. {0} is the pack name and {1} is the pack version
@@ -200,7 +199,6 @@ public abstract class Installable {
                             instance.launcher.isPlayable = false;
                             instance.save();
 
-                            App.launcher.reloadInstancesPanel();
                         }
                     } else {
                         // #. {0} is the pack name and {1} is the pack version
@@ -252,9 +250,6 @@ public abstract class Installable {
                                     pack.getName(), version.version);
                         }
 
-                        if (!isServer) {
-                            App.launcher.reloadInstancesPanel();
-                        }
 
                         if (pack.isLoggingEnabled() && App.settings.enableLogs && !version.isDev) {
                             if (isServer) {

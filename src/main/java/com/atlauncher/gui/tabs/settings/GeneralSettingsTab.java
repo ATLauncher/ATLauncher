@@ -576,11 +576,6 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         return !((String) language.getSelectedItem()).equalsIgnoreCase(App.settings.language);
     }
 
-    public boolean needToReloadInstancesPanel() {
-        return !(((ComboItem<String>) instanceTitleFormat.getSelectedItem()).getValue())
-                .equals(App.settings.instanceTitleFormat);
-    }
-
     public boolean needToReloadLanguage() {
         return !((String) language.getSelectedItem()).equalsIgnoreCase(Language.selected);
     }

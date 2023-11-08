@@ -278,7 +278,6 @@ public class AccountManager {
             App.settings.lastAccount = account.username;
         }
         App.launcher.refreshPacksBrowserPanel();
-        App.launcher.reloadInstancesPanel();
         com.atlauncher.evnt.manager.AccountManager.post();
         App.settings.save();
     }

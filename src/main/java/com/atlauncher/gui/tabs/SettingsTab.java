@@ -41,6 +41,7 @@ import com.atlauncher.gui.tabs.settings.LoggingSettingsTab;
 import com.atlauncher.gui.tabs.settings.ModsSettingsTab;
 import com.atlauncher.gui.tabs.settings.NetworkSettingsTab;
 import com.atlauncher.managers.DialogManager;
+import com.atlauncher.managers.InstanceManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.network.analytics.AnalyticsEvent;
 import com.atlauncher.utils.OS;
@@ -85,7 +86,6 @@ public class SettingsTab extends JPanel implements Tab, RelocalizationListener {
                 boolean reloadTheme = generalSettingsTab.needToReloadTheme();
                 boolean themeChanged = generalSettingsTab.themeChanged();
                 boolean languageChanged = generalSettingsTab.languageChanged();
-                boolean reloadInstancesPanel = generalSettingsTab.needToReloadInstancesPanel();
                 boolean checkForExternalPackUpdates = modsSettingsTab.needToCheckForExternalPackUpdates();
                 generalSettingsTab.save();
                 modsSettingsTab.save();
@@ -98,9 +98,6 @@ public class SettingsTab extends JPanel implements Tab, RelocalizationListener {
                 SettingsManager.post();
                 if (checkForExternalPackUpdates) {
                     App.launcher.checkForExternalPackUpdates();
-                }
-                if (reloadInstancesPanel) {
-                    App.launcher.reloadInstancesPanel();
                 }
                 if (themeChanged) {
                     Analytics.trackEvent(AnalyticsEvent.forThemeChange(App.THEME.getName()));

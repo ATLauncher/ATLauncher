@@ -162,10 +162,14 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
     private final DropDownButton editInstanceButton = new DropDownButton(GetText.tr("Edit Instance"),
             editInstancePopupMenu);
 
-    public InstanceCard(Instance instance) {
-        super(instance);
+    private final boolean hasUpdate;
+
+    public InstanceCard(Instance instance, boolean hasUpdate, String instanceTitleFormat) {
+        super(instance, instanceTitleFormat);
         this.instance = instance;
         this.image = new ImagePanel(instance.getImage().getImage());
+        this.hasUpdate = hasUpdate;
+
         JSplitPane splitter = new JSplitPane();
         splitter.setLeftComponent(this.image);
         JPanel rightPanel = new JPanel();
@@ -260,7 +264,7 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
 
         RelocalizationManager.addListener(this);
 
-        if (!instance.hasUpdate()) {
+        if (!hasUpdate) {
             this.updateButton.setVisible(false);
         }
 
@@ -567,7 +571,7 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
             return;
         }
 
-        if (instance.hasUpdate() && !instance.hasLatestUpdateBeenIgnored()) {
+        if (hasUpdate && !instance.hasLatestUpdateBeenIgnored()) {
             int ret = DialogManager.yesNoDialog().setTitle(GetText.tr("Update Available"))
                     .setContent(new HTMLBuilder().center()
                             .text(GetText.tr(
@@ -641,7 +645,7 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
                     JMenuItem updateItem = new JMenuItem(GetText.tr("Update"));
                     updateItem.addActionListener(l -> instance.update());
                     updateItem.setVisible(instance.isUpdatable());
-                    updateItem.setEnabled(instance.hasUpdate() && instance.launcher.isPlayable);
+                    updateItem.setEnabled(hasUpdate && instance.launcher.isPlayable);
                     rightClickMenu.add(updateItem);
 
                     rightClickMenu.addSeparator();

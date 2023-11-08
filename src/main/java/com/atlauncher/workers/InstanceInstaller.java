@@ -2472,6 +2472,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
             instanceLauncher = new InstanceLauncher();
         } else {
             instanceLauncher = this.instance.launcher;
+            instance.uuid = this.instance.uuid;
         }
 
         instance.libraries = this.getLibraries();
@@ -2558,18 +2559,12 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
 
         instance.save();
 
-        if (this.instance != null) {
-            InstanceManager.getInstances().remove(this.instance);
-        }
-
-        InstanceManager.getInstances().add(instance);
+        InstanceManager.updateInstance(instance);
 
         // after adding, check for updates if an external pack
         if (instance.isExternalPack()) {
             App.launcher.checkForExternalPackUpdates();
         }
-
-        App.launcher.reloadInstancesPanel();
     }
 
     private void initServerSettings() {

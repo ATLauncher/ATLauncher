@@ -99,6 +99,7 @@ import com.atlauncher.exceptions.InvalidPack;
 import com.atlauncher.graphql.fragment.UnifiedModPackResultsFragment;
 import com.atlauncher.gui.components.JLabelWithHover;
 import com.atlauncher.managers.ConfigManager;
+import com.atlauncher.managers.CurseForgeUpdateManager;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.managers.MinecraftManager;
@@ -1078,7 +1079,7 @@ public class InstanceInstallerDialog extends JDialog {
         }
 
         if (isUpdate && instance != null && instance.isCurseForgePack()) {
-            CurseForgeFile latestVersion = Data.CURSEFORGE_INSTANCE_LATEST_VERSION.get(instance);
+            CurseForgeFile latestVersion = CurseForgeUpdateManager.getLatestVersion(instance);
             if (latestVersion != null) {
                 for (PackVersion version : versions) {
                     if (version._curseForgeFile.id == latestVersion.id) {

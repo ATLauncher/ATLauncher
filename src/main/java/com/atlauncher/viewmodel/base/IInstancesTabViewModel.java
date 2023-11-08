@@ -17,22 +17,62 @@
  */
 package com.atlauncher.viewmodel.base;
 
-import com.atlauncher.data.Instance;
-import com.atlauncher.utils.sort.InstanceSortingStrategy;
+import java.util.List;
+import java.util.regex.Pattern;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nullable;
-import java.util.List;
-import java.util.function.Consumer;
-import java.util.regex.Pattern;
+import com.atlauncher.gui.models.InstanceUIModel;
+import com.atlauncher.utils.sort.InstanceSortingStrategy;
+
+import io.reactivex.rxjava3.core.Observable;
 
 /**
  * 20 / 11 / 2022
  */
 public interface IInstancesTabViewModel {
+    /**
+     * Set how the instances should be sorted.
+     *
+     * @param strategy Provided strategy
+     */
     void setSort(@NotNull InstanceSortingStrategy strategy);
 
+    /**
+     * Pattern to filter the search by.
+     *
+     * @param search Query or null
+     */
     void setSearch(@Nullable Pattern search);
 
-    void setOnViewChanged(@NotNull Consumer<List<Instance>> consumer);
+    /**
+     * Get an observable view state that includes title format.
+     *
+     * @return The view state
+     */
+    @Nonnull
+    Observable<InstancesList> getInstancesList();
+
+    /**
+     * View state object.
+     */
+    class InstancesList {
+        /**
+         * Instances to display.
+         */
+        public final List<InstanceUIModel> instances;
+
+        /**
+         * Title format for said instances.
+         */
+        public final String instanceTitleFormat;
+
+        public InstancesList(List<InstanceUIModel> instances, String instanceTitleFormat) {
+            this.instances = instances;
+            this.instanceTitleFormat = instanceTitleFormat;
+        }
+    }
 }

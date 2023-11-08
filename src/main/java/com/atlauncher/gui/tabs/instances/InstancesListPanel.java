@@ -67,15 +67,23 @@ public final class InstancesListPanel extends JPanel
         gbc.insets = UIConstants.FIELD_INSETS;
         gbc.fill = GridBagConstraints.BOTH;
 
-        viewModel.setOnViewChanged(instances -> {
+        viewModel.getInstancesList().subscribe(instancesList -> {
+
             gbc.gridy = 0;
             removeAll();
-            instances.forEach(instance -> {
-                this.add(new InstanceCard(instance), gbc);
+            instancesList.instances.forEach(instance -> {
+                this.add(
+                    new InstanceCard(
+                        instance.instance,
+                        instance.hasUpdate,
+                        instancesList.instanceTitleFormat
+                    ),
+                    gbc
+                );
                 gbc.gridy++;
             });
 
-            if (this.getComponentCount() == 0) {
+            if (instancesList.instances.isEmpty()) {
                 this.add(this.nilCard, gbc);
             }
 

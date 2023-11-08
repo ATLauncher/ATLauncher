@@ -18,22 +18,68 @@
 package com.atlauncher.managers;
 
 import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
-import com.atlauncher.App;
-import com.atlauncher.Data;
 import com.atlauncher.constants.Constants;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.modpacksch.ModpacksChPackManifest;
 import com.atlauncher.data.modpacksch.ModpacksChPackVersion;
 
+import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.subjects.BehaviorSubject;
 import okhttp3.CacheControl;
 
 public class ModpacksChUpdateManager {
-    public static ModpacksChPackVersion getLatestVersion(Instance instance) {
-        return Data.MODPACKS_CH_INSTANCE_LATEST_VERSION.get(instance);
+    /**
+     * Modpacks.ch instance update checking
+     */
+    private static final Map<UUID, BehaviorSubject<Optional<ModpacksChPackVersion>>>
+        MODPACKS_CH_INSTANCE_LATEST_VERSION = new HashMap<>();
+
+    /**
+     * Get the update behavior subject for a given instance.
+     *
+     * @param instance Instance to get behavior subject for
+     * @return behavior subject for said instance updates.
+     */
+    private static BehaviorSubject<Optional<ModpacksChPackVersion>> getSubject(Instance instance){
+        MODPACKS_CH_INSTANCE_LATEST_VERSION.putIfAbsent(
+            instance.getUUID(),
+            BehaviorSubject.createDefault(Optional.empty())
+        );
+        return MODPACKS_CH_INSTANCE_LATEST_VERSION.get(instance.getUUID());
     }
 
+    /**
+     * Get an observable for an instances update.
+     * <p>
+     * Please do not cast to a behavior subject.
+     * @param instance Instance to get an observable for
+     * @return Update observable
+     */
+    public static Observable<Optional<ModpacksChPackVersion>> getObservable(Instance instance) {
+        return getSubject(instance);
+    }
+
+
+    /**
+     * Get the latest version of an instance
+     * @param instance Instance to get version of
+     * @return Latest version, or null if no newer version is found
+     */
+    public static ModpacksChPackVersion getLatestVersion(Instance instance) {
+        return getSubject(instance).getValue().orElse(null);
+    }
+
+    /**
+     * Check for new updates.
+     * <p>
+     * Updates observables.
+     */
     public static void checkForUpdates() {
         if (ConfigManager.getConfigItem("platforms.modpacksch.modpacksEnabled", true) == false) {
             return;
@@ -42,11 +88,9 @@ public class ModpacksChUpdateManager {
         PerformanceManager.start();
         LogManager.info("Checking for updates to modpacks.ch instances");
 
-        boolean refreshInstancesPanel = Data.INSTANCES.parallelStream().filter(
+        InstanceManager.getInstances().parallelStream().filter(
                 i -> i.launcher.modpacksChPackManifest != null && i.launcher.modpacksChPackVersionManifest != null)
-                .map(i -> {
-                    boolean wasUpdated = false;
-
+                .forEach(i -> {
                     ModpacksChPackManifest packManifest = com.atlauncher.network.Download.build()
                             .setUrl(String.format("%s/modpack/%d", Constants.MODPACKS_CH_API_URL,
                                     i.launcher.modpacksChPackManifest.id))
@@ -54,38 +98,15 @@ public class ModpacksChUpdateManager {
                             .asClass(ModpacksChPackManifest.class);
 
                     if (packManifest == null) {
-                        return false;
+                        return;
                     }
 
                     ModpacksChPackVersion latestVersion = packManifest.versions.stream().sorted(
                             Comparator.comparingInt((ModpacksChPackVersion version) -> version.id).reversed())
                             .findFirst().orElse(null);
 
-                    if (latestVersion == null) {
-                        return false;
-                    }
-
-                    // if there is a change to the latestversion for an instance (but not a first
-                    // time write), then refresh instances panel
-                    if (Data.MODPACKS_CH_INSTANCE_LATEST_VERSION.containsKey(i)
-                            && Data.MODPACKS_CH_INSTANCE_LATEST_VERSION.get(i).id != latestVersion.id) {
-                        wasUpdated = true;
-                    }
-
-                    // updated if there is no latest version stored yet but the instance has update
-                    if (!Data.MODPACKS_CH_INSTANCE_LATEST_VERSION.containsKey(i)
-                            && latestVersion.id != i.launcher.modpacksChPackVersionManifest.id) {
-                        wasUpdated = true;
-                    }
-
-                    Data.MODPACKS_CH_INSTANCE_LATEST_VERSION.put(i, latestVersion);
-
-                    return wasUpdated;
-                }).anyMatch(b -> b);
-
-        if (refreshInstancesPanel) {
-            App.launcher.reloadInstancesPanel();
-        }
+                    getSubject(i).onNext(Optional.ofNullable(latestVersion));
+                });
 
         PerformanceManager.end();
     }

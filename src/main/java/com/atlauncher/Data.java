@@ -22,18 +22,12 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import com.atlauncher.data.Instance;
 import com.atlauncher.data.LWJGLVersions;
 import com.atlauncher.data.News;
 import com.atlauncher.data.Pack;
 import com.atlauncher.data.Server;
-import com.atlauncher.data.curseforge.CurseForgeFile;
 import com.atlauncher.data.minecraft.JavaRuntimes;
 import com.atlauncher.data.minecraft.VersionManifestVersion;
-import com.atlauncher.data.modpacksch.ModpacksChPackVersion;
-import com.atlauncher.data.modrinth.ModrinthVersion;
-import com.atlauncher.data.technic.TechnicModpack;
-import com.atlauncher.data.technic.TechnicSolderModpack;
 
 public final class Data {
 
@@ -44,25 +38,7 @@ public final class Data {
 
     public static final List<Pack> PACKS = new LinkedList<>();
 
-    public static final List<Instance> INSTANCES = new LinkedList<>();
-
-
     public static final Map<String, VersionManifestVersion> MINECRAFT = new HashMap<>();
     public static LWJGLVersions LWJGL_VERSIONS = null;
     public static JavaRuntimes JAVA_RUNTIMES = null;
-
-    // CurseForge instance update checking
-    public static final Map<Instance, CurseForgeFile> CURSEFORGE_INSTANCE_LATEST_VERSION = new HashMap<>();
-
-    // Modpacks.ch instance update checking
-    public static final Map<Instance, ModpacksChPackVersion> MODPACKS_CH_INSTANCE_LATEST_VERSION = new HashMap<>();
-
-    // Technic Non Solder instance update checking
-    public static final Map<Instance, TechnicModpack> TECHNIC_INSTANCE_LATEST_VERSION = new HashMap<>();
-
-    // Technic Solder instance update checking
-    public static final Map<Instance, TechnicSolderModpack> TECHNIC_SOLDER_INSTANCE_LATEST_VERSION = new HashMap<>();
-
-    // Modrinth instance update checking
-    public static final Map<Instance, ModrinthVersion> MODRINTH_INSTANCE_LATEST_VERSION = new HashMap<>();
 }

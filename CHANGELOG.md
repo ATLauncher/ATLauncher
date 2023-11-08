@@ -23,3 +23,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Remove old nil card image in favour of the default image
 - Implement RxJava in AccountManager
 - Implement RxJava in ServerManager
+- Implement RxJava in InstanceManager [#795]
+- Add UUID to Instances [#795]
+- Implement RxJava in all update managers [#795]
