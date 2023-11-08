@@ -28,3 +28,4 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Implement RxJava in InstanceManager [#795]
 - Add UUID to Instances [#795]
 - Implement RxJava in all update managers [#795]
+- Implement HierarchyPanel in ServersTab [#837]
