@@ -57,7 +57,7 @@ public class ModrinthApi {
     private static Download getDownloadBuilder() {
         Download downloadBuilder = Download.build();
 
-        if (App.settings.modrinthApiKey != null) {
+        if (App.settings.modrinthApiKey != null && !App.settings.modrinthApiKey.isEmpty()) {
             downloadBuilder.header("Authorization", App.settings.modrinthApiKey);
         }
 
