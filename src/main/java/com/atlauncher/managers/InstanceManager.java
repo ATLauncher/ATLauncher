@@ -22,13 +22,10 @@ import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
@@ -77,14 +74,14 @@ public class InstanceManager {
         List<Instance> newInstances = new LinkedList<>();
 
         for (String folder : Optional.of(FileSystem.INSTANCES.toFile().list(Utils.getInstanceFileFilter()))
-            .orElse(new String[0])) {
+                .orElse(new String[0])) {
             File instanceDir = FileSystem.INSTANCES.resolve(folder).toFile();
 
             Instance instance = null;
 
             try {
                 try (InputStreamReader fileReader = new InputStreamReader(
-                    new FileInputStream(new File(instanceDir, "instance.json")), StandardCharsets.UTF_8)) {
+                        new FileInputStream(new File(instanceDir, "instance.json")), StandardCharsets.UTF_8)) {
                     instance = Gsons.DEFAULT.fromJson(fileReader, Instance.class);
                     instance.ROOT = instanceDir.toPath();
                     LogManager.debug("Loaded instance from " + instanceDir);
@@ -99,15 +96,15 @@ public class InstanceManager {
                 }
 
                 if (instance.launcher.curseForgeManifest != null
-                    && instance.launcher.curseForgeManifest.projectID != null
-                    && instance.launcher.curseForgeManifest.fileID != null) {
+                        && instance.launcher.curseForgeManifest.projectID != null
+                        && instance.launcher.curseForgeManifest.fileID != null) {
                     LogManager.info(String.format("Converting instance \"%s\" CurseForge information",
-                        instance.launcher.name));
+                            instance.launcher.name));
                     instance.launcher.curseForgeProject = CurseForgeApi
-                        .getProjectById(instance.launcher.curseForgeManifest.projectID);
+                            .getProjectById(instance.launcher.curseForgeManifest.projectID);
                     instance.launcher.curseForgeFile = CurseForgeApi.getFileForProject(
-                        instance.launcher.curseForgeManifest.projectID,
-                        instance.launcher.curseForgeManifest.fileID);
+                            instance.launcher.curseForgeManifest.projectID,
+                            instance.launcher.curseForgeManifest.fileID);
                     instance.launcher.curseForgeManifest = null;
 
                     instance.save();
@@ -115,7 +112,7 @@ public class InstanceManager {
 
                 if (instance.launcher.numPlays == null) {
                     LogManager.info(String.format("Converting instance \"%s\" numPlays/lastPlayed",
-                        instance.launcher.name));
+                            instance.launcher.name));
                     instance.launcher.numPlays = instance.numPlays;
                     instance.launcher.lastPlayed = instance.lastPlayed;
 
@@ -123,10 +120,10 @@ public class InstanceManager {
                 }
 
                 if (instance.launcher.account != null
-                    && !AccountManager.isAccountByName(instance.launcher.account)) {
+                        && !AccountManager.isAccountByName(instance.launcher.account)) {
                     LogManager.warn(
-                        String.format("No account with name of %s, so setting instance account back to default",
-                            instance.launcher.account));
+                            String.format("No account with name of %s, so setting instance account back to default",
+                                    instance.launcher.account));
                     instance.launcher.account = null;
                     instance.save();
                 }
@@ -154,14 +151,14 @@ public class InstanceManager {
             try {
                 if (instance.getPack() != null) {
                     Optional<Map<String, String>> packMove = movedPacks.stream()
-                        .filter(mp -> Integer.parseInt(mp.get("fromPack")) == instance.launcher.packId).findFirst();
+                            .filter(mp -> Integer.parseInt(mp.get("fromPack")) == instance.launcher.packId).findFirst();
 
                     if (packMove.isPresent()) {
                         if (packMove.get().get("fromVersion").equals(instance.launcher.version)) {
                             Pack newPack = PackManager.getPackByID(Integer.parseInt(packMove.get().get("toPack")));
 
                             LogManager.info(String.format("Converting instance %s from pack %s to %s",
-                                instance.launcher.name, instance.launcher.pack, newPack.name));
+                                    instance.launcher.name, instance.launcher.pack, newPack.name));
 
                             instance.launcher.packId = newPack.id;
                             instance.launcher.pack = newPack.name;
@@ -216,7 +213,7 @@ public class InstanceManager {
      */
     public static boolean isInstance(String name) {
         return INSTANCES.getValue().stream()
-            .anyMatch(i -> i.getSafeName().equalsIgnoreCase(name.replaceAll("[^A-Za-z0-9]", "")));
+                .anyMatch(i -> i.getSafeName().equalsIgnoreCase(name.replaceAll("[^A-Za-z0-9]", "")));
     }
 
     /**
@@ -246,7 +243,8 @@ public class InstanceManager {
      * @return Instance if the instance is found from the name
      */
     public static Instance getInstanceByName(String name) {
-        return INSTANCES.getValue().stream().filter(i -> i.launcher.name.equalsIgnoreCase(name)).findFirst().orElse(null);
+        return INSTANCES.getValue().stream().filter(i -> i.launcher.name.equalsIgnoreCase(name)).findFirst()
+                .orElse(null);
     }
 
     /**
@@ -256,7 +254,8 @@ public class InstanceManager {
      * @return Instance if the instance is found from the name
      */
     public static Instance getInstanceBySafeName(String name) {
-        return INSTANCES.getValue().stream().filter(i -> i.getSafeName().equalsIgnoreCase(name)).findFirst().orElse(null);
+        return INSTANCES.getValue().stream().filter(i -> i.getSafeName().equalsIgnoreCase(name)).findFirst()
+                .orElse(null);
     }
 
     public static void cloneInstance(Instance instance, String clonedName) {

@@ -59,21 +59,20 @@ public class AccountManager {
     private static final Type abstractAccountListType = new TypeToken<List<AbstractAccount>>() {
     }.getType();
 
-    public static final BehaviorSubject<List<AbstractAccount>> ACCOUNTS =
-        BehaviorSubject.createDefault(new LinkedList<>());
+    public static final BehaviorSubject<List<AbstractAccount>> ACCOUNTS = BehaviorSubject
+            .createDefault(new LinkedList<>());
 
     /**
      * Account using the Launcher
      */
-    public static final BehaviorSubject<Optional<AbstractAccount>> SELECTED_ACCOUNT =
-        BehaviorSubject.createDefault(Optional.empty());
-
+    public static final BehaviorSubject<Optional<AbstractAccount>> SELECTED_ACCOUNT = BehaviorSubject
+            .createDefault(Optional.empty());
 
     public static Observable<List<AbstractAccount>> getAccountsObservable() {
         return ACCOUNTS;
     }
 
-    public static Observable<Optional<AbstractAccount>> getSelectedAccountObservable(){
+    public static Observable<Optional<AbstractAccount>> getSelectedAccountObservable() {
         return SELECTED_ACCOUNT;
     }
 
@@ -278,7 +277,6 @@ public class AccountManager {
             App.settings.lastAccount = account.username;
         }
         App.launcher.refreshPacksBrowserPanel();
-        com.atlauncher.evnt.manager.AccountManager.post();
         App.settings.save();
     }
 
