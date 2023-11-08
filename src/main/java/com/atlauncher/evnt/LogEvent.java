@@ -56,36 +56,6 @@ public final class LogEvent {
         this.meta = meta;
     }
 
-    public void post(Logger logger) {
-        if ((this.meta & CONSOLE) == CONSOLE) {
-            Console c = App.console.console;
-            c.setColor(this.type.color()).setBold(true).write("[" + Timestamper.now() + "] ");
-            c.setColor(UIManager.getColor("EditorPane.foreground")).setBold(false).write(this.body);
-        }
-
-        if ((this.meta & LOG4J) == LOG4J) {
-            switch (type) {
-                case WARN: {
-                    logger.warn(body);
-                    break;
-                }
-                case ERROR: {
-                    logger.error(body);
-                    break;
-                }
-                case DEBUG: {
-                    logger.debug(body);
-                    break;
-                }
-                case INFO:
-                default: {
-                    logger.info(body);
-                    break;
-                }
-            }
-        }
-    }
-
     @Override
     public String toString() {
         return "[" + Timestamper.now() + "] [" + this.type.name() + "]" + this.body;

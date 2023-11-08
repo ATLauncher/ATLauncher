@@ -32,27 +32,33 @@ import javax.swing.JFrame;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
+import javax.swing.UIManager;
 
 import org.mini2Dx.gettext.GetText;
 
 import com.atlauncher.App;
 import com.atlauncher.constants.Constants;
 import com.atlauncher.data.ConsoleState;
+import com.atlauncher.evnt.LogEvent;
 import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.ConsoleStateManager;
 import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.gui.components.Console;
 import com.atlauncher.gui.components.ConsoleBottomBar;
 import com.atlauncher.managers.LogManager;
+import com.atlauncher.utils.Timestamper;
 import com.atlauncher.utils.Utils;
+import com.gitlab.doomsdayrs.lib.rxswing.schedulers.SwingSchedulers;
 
-public class LauncherConsole extends JFrame implements RelocalizationListener {
+import io.reactivex.rxjava3.disposables.Disposable;
+
+public class LauncherConsole extends HierarchyFrame implements RelocalizationListener {
 
     private static final long serialVersionUID = -3538990021922025818L;
-    public Console console;
     private final ConsoleBottomBar bottomBar;
+    Disposable consoleLogCollector;
+    private Console console;
     private JPopupMenu contextMenu; // Right click menu
-
     private JMenuItem copy;
 
     public LauncherConsole() {
@@ -67,9 +73,9 @@ public class LauncherConsole extends JFrame implements RelocalizationListener {
 
         try {
             if (App.settings.rememberWindowSizePosition && App.settings.consoleSize != null
-                    && App.settings.consolePosition != null) {
+                && App.settings.consolePosition != null) {
                 setBounds(App.settings.consolePosition.x, App.settings.consolePosition.y,
-                        App.settings.consoleSize.width, App.settings.consoleSize.height);
+                    App.settings.consoleSize.width, App.settings.consoleSize.height);
             }
         } catch (Exception e) {
             LogManager.logStackTrace("Error setting custom remembered window size settings", e);
@@ -81,10 +87,6 @@ public class LauncherConsole extends JFrame implements RelocalizationListener {
 
         bottomBar = new ConsoleBottomBar();
 
-        JScrollPane scrollPane = new JScrollPane(console, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-                JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-        add(scrollPane, BorderLayout.CENTER);
-        add(bottomBar, BorderLayout.SOUTH);
         RelocalizationManager.addListener(this);
 
         addComponentListener(new ComponentAdapter() {
@@ -109,6 +111,32 @@ public class LauncherConsole extends JFrame implements RelocalizationListener {
                 }
             }
         });
+    }
+
+    @Override
+    public void createViewModel() {
+    }
+
+    @Override
+    public void onShow() {
+        JScrollPane scrollPane = new JScrollPane(console, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+            JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        add(scrollPane, BorderLayout.CENTER);
+        add(bottomBar, BorderLayout.SOUTH);
+
+        consoleLogCollector = LogManager.getLogEvents().observeOn(SwingSchedulers.edt()).subscribe(logEvent -> {
+            if ((logEvent.meta & LogEvent.CONSOLE) == LogEvent.CONSOLE) {
+                console.setColor(logEvent.type.color()).setBold(true).write("[" + Timestamper.now() + "] ");
+                console.setColor(UIManager.getColor("EditorPane.foreground")).setBold(false).write(logEvent.body);
+            }
+        });
+    }
+
+    @Override
+    public void onDestroy() {
+        removeAll();
+        consoleLogCollector.dispose();
+        consoleLogCollector = null;
     }
 
     @Override
