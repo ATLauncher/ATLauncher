@@ -77,10 +77,10 @@ public class AboutTab extends HierarchyPanel implements Tab, RelocalizationListe
 
     @Override
     public void onRelocalization() {
-        acknowledgementsLabel.setText(GetText.tr("Acknowledgements:"));
+        //acknowledgementsLabel.setText(GetText.tr("Acknowledgements:"));
         copyButton.setText(GetText.tr("Copy"));
         contributorLabel.setText(GetText.tr("Contributors:"));
-        librariesLabel.setText(GetText.tr("Libraries:"));
+        //librariesLabel.setText(GetText.tr("Libraries:"));
         licenseLabel.setText(GetText.tr("License:"));
     }
 
@@ -199,7 +199,7 @@ public class AboutTab extends HierarchyPanel implements Tab, RelocalizationListe
         // Acknowledgements
         {
             // Label
-            {
+            /*{
                 acknowledgementsLabel = new JLabel();
                 acknowledgementsLabel.setFont(ATLauncherLaf.getInstance().getTitleFont());
                 acknowledgementsLabel.setBorder(BorderFactory.createEmptyBorder(0, 4, 0, 0));
@@ -209,7 +209,7 @@ public class AboutTab extends HierarchyPanel implements Tab, RelocalizationListe
                 box.add(Box.createHorizontalGlue());
                 add(box);
                 add(new JSeparator());
-            }
+            }*/
 
             // Content
             {
@@ -220,7 +220,7 @@ public class AboutTab extends HierarchyPanel implements Tab, RelocalizationListe
                 }
 
                 // Libraries
-                JPanel librariesPanel = new JPanel();
+                /*JPanel librariesPanel = new JPanel();
                 {
                     librariesPanel.setLayout(new BoxLayout(librariesPanel, BoxLayout.PAGE_AXIS));
 
@@ -249,6 +249,7 @@ public class AboutTab extends HierarchyPanel implements Tab, RelocalizationListe
                     }
                     librariesPanel.add(librariesListPanel);
                 }
+                 */
                 // License
                 JPanel licensePanel = new JPanel();
                 {
@@ -282,7 +283,7 @@ public class AboutTab extends HierarchyPanel implements Tab, RelocalizationListe
                     licensePanel.add(scrollPane);
                 }
 
-                add(librariesPanel);
+                //add(librariesPanel);
                 add(licensePanel);
             }
         }
