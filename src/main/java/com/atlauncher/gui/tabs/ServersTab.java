@@ -30,6 +30,7 @@ import javax.swing.JTextField;
 
 import org.mini2Dx.gettext.GetText;
 
+import com.atlauncher.App;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.constants.UIConstants;
 import com.atlauncher.evnt.listener.RelocalizationListener;
@@ -49,7 +50,13 @@ public class ServersTab extends JPanel implements Tab, RelocalizationListener {
     private JPanel panel;
     private JScrollPane scrollPane;
 
-    private NilCard nilCard;
+    private NilCard nilCard = new NilCard(
+        getNilMessage(),
+        new NilCard.Action[]{
+            NilCard.Action.createCreatePackAction(),
+            NilCard.Action.createDownloadPackAction()
+        }
+    );
 
     private final IServersTabViewModel viewModel = new ServersTabViewModel();
 
@@ -108,9 +115,6 @@ public class ServersTab extends JPanel implements Tab, RelocalizationListener {
             });
 
             if (panel.getComponentCount() == 0) {
-                nilCard = new NilCard(new HTMLBuilder().text(
-                        GetText.tr("There are no servers to display.<br/><br/>Install one from the Packs tab."))
-                        .build());
                 panel.add(nilCard, gbc);
             }
 
@@ -132,13 +136,19 @@ public class ServersTab extends JPanel implements Tab, RelocalizationListener {
         return "Servers";
     }
 
+    private static String getNilMessage(){
+        return new HTMLBuilder()
+            .text(GetText.tr("There are no servers to display.<br/><br/>Install one from the Packs tab."))
+            .build();
+    }
+
     @Override
     public void onRelocalization() {
         searchBox.putClientProperty("JTextField.placeholderText", GetText.tr("Search"));
-
-        if (nilCard != null) {
-            nilCard.setMessage(new HTMLBuilder().text(
-                    GetText.tr("There are no servers to display.<br/><br/>Install one from the Packs tab.")).build());
-        }
+        nilCard.setMessage(getNilMessage());
+        nilCard.setActions(new NilCard.Action[]{
+            NilCard.Action.createCreatePackAction(),
+            NilCard.Action.createDownloadPackAction()
+        });
     }
 }

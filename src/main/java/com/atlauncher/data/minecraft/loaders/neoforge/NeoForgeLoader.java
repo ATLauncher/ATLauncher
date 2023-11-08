@@ -79,10 +79,14 @@ public class NeoForgeLoader implements Loader {
             }
         }
 
+        Boolean is1201Version = this.minecraft.equals("1.20.1");
+        String artifactName = is1201Version ? "forge" : "neoforge";
+        String versionName = is1201Version ? this.minecraft + "-" + this.version : this.rawVersion;
+
         this.installerPath = FileSystem.LOADERS
                 .resolve("forge-" + this.minecraft + "-" + this.version + "-installer.jar");
-        this.installerUrl = Constants.NEOFORGE_MAVEN + "/net/neoforged/forge/" + this.minecraft + "-"
-                + this.version + "/forge-" + this.minecraft + "-" + this.version + "-installer.jar";
+        this.installerUrl = Constants.NEOFORGE_MAVEN + "/net/neoforged/" + artifactName + "/" + versionName + "/"
+                + artifactName + "-" + versionName + "-installer.jar";
     }
 
     @Override

@@ -48,8 +48,8 @@ public class NetworkSettingsTab extends AbstractSettingsTab implements Relocaliz
     private final JLabelWithHover connectionTimeoutLabel;
     private final JSpinner connectionTimeout;
 
-    private final JLabelWithHover dontUseHttp2Label;
-    private final JCheckBox dontUseHttp2;
+    private final JLabelWithHover modrinthApiKeyLabel;
+    private JTextField modrinthApiKey;
 
     private final JLabelWithHover enableProxyLabel;
     private final JCheckBox enableProxy;
@@ -104,21 +104,27 @@ public class NetworkSettingsTab extends AbstractSettingsTab implements Relocaliz
         connectionTimeout = new JSpinner(connectionTimeoutModel);
         add(connectionTimeout, gbc);
 
-        // Don't use HTTP2
+        // Modrinth Api Key Settings
         gbc.gridx = 0;
         gbc.gridy++;
         gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        dontUseHttp2Label = new JLabelWithHover(GetText.tr("Don't Use HTTP/2") + "?", HELP_ICON, GetText
-                .tr("If HTTP/2 connections shouldn't be used. This should not be checked in a majority of cases."));
-        add(dontUseHttp2Label, gbc);
+        modrinthApiKeyLabel = new JLabelWithHover(GetText.tr("Modrinth Api Key") + ":", HELP_ICON,
+                "<html>" + GetText.tr(
+                        "Api key to use when making requests to Modrinth. This is unecessary to set unless you want to access private data.")
+                        + "</html>");
+        add(modrinthApiKeyLabel, gbc);
 
         gbc.gridx++;
-        gbc.insets = UIConstants.CHECKBOX_FIELD_INSETS;
+        gbc.insets = UIConstants.FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-        dontUseHttp2 = new JCheckBox();
-        dontUseHttp2.setSelected(App.settings.dontUseHttp2);
-        add(dontUseHttp2, gbc);
+        modrinthApiKey = new JTextField(40);
+        modrinthApiKey.setText(App.settings.modrinthApiKey);
+        modrinthApiKey.putClientProperty("JTextField.showClearButton", true);
+        modrinthApiKey.putClientProperty("JTextField.clearCallback", (Runnable) () -> {
+            modrinthApiKey.setText("");
+        });
+        add(modrinthApiKey, gbc);
 
         // Enable Proxy
         gbc.gridx = 0;
@@ -258,20 +264,15 @@ public class NetworkSettingsTab extends AbstractSettingsTab implements Relocaliz
 
     public void save() {
         boolean timeoutChanged = App.settings.connectionTimeout != (Integer) connectionTimeout.getValue();
-        boolean dontUseHttp2Changed = App.settings.dontUseHttp2 != dontUseHttp2.isSelected();
 
         App.settings.concurrentConnections = (Integer) concurrentConnections.getValue();
         App.settings.connectionTimeout = (Integer) connectionTimeout.getValue();
-        App.settings.dontUseHttp2 = dontUseHttp2.isSelected();
+        App.settings.modrinthApiKey = modrinthApiKey.getText();
         App.settings.enableProxy = enableProxy.isSelected();
         if (enableProxy.isSelected()) {
             App.settings.proxyHost = proxyHost.getText();
             App.settings.proxyPort = (Integer) proxyPort.getValue();
             App.settings.proxyType = ((String) proxyType.getSelectedItem());
-        }
-
-        if (dontUseHttp2Changed) {
-            Network.setProtocols();
         }
 
         if (timeoutChanged) {
@@ -299,13 +300,15 @@ public class NetworkSettingsTab extends AbstractSettingsTab implements Relocaliz
         this.connectionTimeoutLabel.setToolTipText(
                 "<html>" + GetText.tr("This determines how long connections will wait before timing out.") + "</html>");
 
-        this.dontUseHttp2Label.setText(GetText.tr("Don't Use HTTP/2") + "?");
-        this.dontUseHttp2Label.setToolTipText(GetText
-                .tr("If HTTP/2 connections shouldn't be used. This should not be checked in a majority of cases."));
+        this.modrinthApiKeyLabel.setText(GetText.tr("Modrinth Api Key") + ":");
+        this.modrinthApiKeyLabel.setToolTipText(
+                "<html>" + GetText.tr(
+                        "Api key to use when making requests to Modrinth. This is unecessary to set unless you want to access private data.")
+                        + "</html>");
 
-        this.enableProxyLabel.setText(GetText.tr("Don't Use HTTP/2") + "?");
+        this.enableProxyLabel.setText(GetText.tr("Enable Proxy") + "?");
         this.enableProxyLabel.setToolTipText(GetText
-                .tr("If HTTP/2 connections shouldn't be used. This should not be checked in a majority of cases."));
+                .tr("If you use a proxy to connect to the internet you can enable it here."));
 
         this.proxyHostLabel.setText(GetText.tr("Proxy Host") + ":");
         this.proxyHostLabel.setToolTipText(GetText.tr("This is the IP/hostname used to connect to the proxy."));

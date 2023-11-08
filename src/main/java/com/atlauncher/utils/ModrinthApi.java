@@ -31,6 +31,7 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+import com.atlauncher.App;
 import com.atlauncher.Gsons;
 import com.atlauncher.constants.Constants;
 import com.atlauncher.data.minecraft.loaders.LoaderVersion;
@@ -53,6 +54,16 @@ import okhttp3.RequestBody;
  * Various utility methods for interacting with the Modrinth API.
  */
 public class ModrinthApi {
+    private static Download getDownloadBuilder() {
+        Download downloadBuilder = Download.build();
+
+        if (App.settings.modrinthApiKey != null) {
+            downloadBuilder.header("Authorization", App.settings.modrinthApiKey);
+        }
+
+        return downloadBuilder;
+    }
+
     public static ModrinthSearchResult searchModrinth(List<String> gameVersions, String query, int page, String index,
             List<List<String>> categories, ModrinthProjectType projectType) {
         try {
@@ -85,7 +96,7 @@ public class ModrinthApi {
                 url += String.format("&facets=%s", Gsons.DEFAULT_SLIM.toJson(facets));
             }
 
-            return Download.build().cached(new CacheControl.Builder().maxStale(10, TimeUnit.MINUTES).build())
+            return getDownloadBuilder().cached(new CacheControl.Builder().maxStale(10, TimeUnit.MINUTES).build())
                     .setUrl(url).asClass(ModrinthSearchResult.class);
         } catch (UnsupportedEncodingException e) {
             LogManager.logStackTrace(e);
@@ -170,7 +181,7 @@ public class ModrinthApi {
     }
 
     public static ModrinthProject getProject(String projectId) {
-        return Download.build()
+        return getDownloadBuilder()
                 .setUrl(String.format("%s/project/%s", Constants.MODRINTH_API_URL, projectId.replace("local-", "")))
                 .cached(new CacheControl.Builder().maxStale(10, TimeUnit.MINUTES).build())
                 .asClass(ModrinthProject.class);
@@ -216,7 +227,7 @@ public class ModrinthApi {
             queryParamsString += String.format("loaders=%s", Gsons.DEFAULT_SLIM.toJson(loaders));
         }
 
-        return Download.build()
+        return getDownloadBuilder()
                 .setUrl(String.format("%s/project/%s/version%s", Constants.MODRINTH_API_URL, projectId,
                         queryParamsString))
                 .cached(new CacheControl.Builder().maxStale(10, TimeUnit.MINUTES).build()).asType(type);
@@ -226,7 +237,7 @@ public class ModrinthApi {
         java.lang.reflect.Type type = new TypeToken<List<ModrinthCategory>>() {
         }.getType();
 
-        return Download.build().setUrl(String.format("%s/tag/category", Constants.MODRINTH_API_URL))
+        return getDownloadBuilder().setUrl(String.format("%s/tag/category", Constants.MODRINTH_API_URL))
                 .cached(new CacheControl.Builder().maxStale(1, TimeUnit.HOURS).build()).asType(type);
     }
 
@@ -268,7 +279,7 @@ public class ModrinthApi {
 
     private static ModrinthVersion getVersionFromHash(String hash, String algorithm) {
         try {
-            return Download.build()
+            return getDownloadBuilder()
                     .setUrl(String.format("%s/version_file/%s?algorithm=%s", Constants.MODRINTH_API_URL, hash,
                             algorithm))
                     .cached(new CacheControl.Builder().maxStale(10, TimeUnit.MINUTES).build())
@@ -306,7 +317,7 @@ public class ModrinthApi {
             java.lang.reflect.Type type = new TypeToken<Map<String, ModrinthVersion>>() {
             }.getType();
 
-            return Download.build()
+            return getDownloadBuilder()
                     .setUrl(String.format("%s/version_files", Constants.MODRINTH_API_URL))
                     .post(RequestBody.create(Gsons.DEFAULT_SLIM.toJson(body),
                             MediaType.get("application/json; charset=utf-8")))
@@ -320,7 +331,7 @@ public class ModrinthApi {
         java.lang.reflect.Type type = new TypeToken<List<ModrinthProject>>() {
         }.getType();
 
-        return Download.build()
+        return getDownloadBuilder()
                 .setUrl(String.format("%s/projects?ids=%s", Constants.MODRINTH_API_URL,
                         Gsons.DEFAULT_SLIM.toJson(projectIds)))
                 .cached(new CacheControl.Builder().maxStale(10, TimeUnit.MINUTES).build())

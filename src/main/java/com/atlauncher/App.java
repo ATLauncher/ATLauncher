@@ -191,13 +191,6 @@ public class App {
     public static Path workingDir = null;
 
     /**
-     * This will tell the launcher to disable HTTP2 connections.
-     * <p/>
-     * --disable-http2
-     */
-    public static boolean disableHttp2 = false;
-
-    /**
      * This will tell the launcher to allow all SSL certs regardless of validity.
      * This is insecure and only intended for development purposes.
      * <p/>
@@ -993,9 +986,6 @@ public class App {
         parser.accepts("base-cdn-domain", "The base CDN domain.").withRequiredArg().ofType(String.class);
         parser.accepts("base-cdn-path", "The path on the CDN used for downloading files.").withRequiredArg()
                 .ofType(String.class);
-        parser.accepts("disable-http2",
-                "This will tell the launcher to disable HTTP2 connections.")
-                .withOptionalArg().ofType(Boolean.class);
         parser.accepts("allow-all-ssl-certs",
                 "This will tell the launcher to allow all SSL certs regardless of validity. This is insecure and only intended for development purposes.")
                 .withOptionalArg().ofType(Boolean.class);
@@ -1101,8 +1091,6 @@ public class App {
             LogManager.warn("Base cdn path set to " + baseCdnPath);
         }
 
-        disableHttp2 = options.has("disable-http2");
-
         allowAllSslCerts = options.has("allow-all-ssl-certs");
         if (allowAllSslCerts) {
             LogManager.warn("Allowing all ssl certs. This is insecure and should only be used for development.");
@@ -1151,5 +1139,14 @@ public class App {
 
             LogManager.warn("Config overridden: " + configOverride);
         }
+    }
+
+    /**
+     * Navigate to a given tab.
+     *
+     * @param destination as defined in UIConstants
+     */
+    public static void navigate(int destination) {
+        App.launcherFrame.tabbedPane.setSelectedIndex(destination);
     }
 }

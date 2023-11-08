@@ -48,8 +48,10 @@ public final class CurseForgeProjectCard extends JPanel {
 
     private final JButton addButton = new JButton(GetText.tr("Add"));
     private final JButton reinstallButton = new JButton(GetText.tr("Reinstall"));
+    private final JButton removeButton = new JButton(GetText.tr("Remove"));
 
-    public CurseForgeProjectCard(final CurseForgeProject mod, final Instance instance, ActionListener al) {
+    public CurseForgeProjectCard(final CurseForgeProject mod, final Instance instance, ActionListener installAl,
+            ActionListener removeAl) {
         setLayout(new BorderLayout());
         setPreferredSize(new Dimension(250, 180));
 
@@ -79,13 +81,18 @@ public final class CurseForgeProjectCard extends JPanel {
 
         buttonsPanel.add(addButton);
         buttonsPanel.add(reinstallButton);
+        buttonsPanel.add(removeButton);
         buttonsPanel.add(viewButton);
 
         addButton.addActionListener(e -> {
-            al.actionPerformed(e);
+            installAl.actionPerformed(e);
             updateInstalledStatus();
         });
-        reinstallButton.addActionListener(al);
+        reinstallButton.addActionListener(installAl);
+        removeButton.addActionListener(e -> {
+            removeAl.actionPerformed(e);
+            updateInstalledStatus();
+        });
         viewButton.addActionListener(e -> OS.openWebBrowser(mod.getWebsiteUrl()));
 
         add(summaryPanel, BorderLayout.CENTER);
@@ -105,6 +112,7 @@ public final class CurseForgeProjectCard extends JPanel {
 
         addButton.setVisible(!alreadyInstalled);
         reinstallButton.setVisible(alreadyInstalled);
+        removeButton.setVisible(alreadyInstalled);
 
         setBorder(new IconTitledBorder(mod.name, App.THEME.getBoldFont().deriveFont(12f),
                 alreadyInstalled ? Utils.getIconImage(App.THEME.getResourcePath("image", "tick")) : null));
