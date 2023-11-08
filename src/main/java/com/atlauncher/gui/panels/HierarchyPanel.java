@@ -55,6 +55,18 @@ public abstract class HierarchyPanel extends JPanel implements HierarchyListener
      */
     private boolean isViewCreated = false;
 
+    public HierarchyPanel() {
+        super();
+        addNotify();
+        addHierarchyListener(this);
+
+        // If the child is a child of RelocalizationListener
+        // We can handle relocalization for them
+        if (this instanceof RelocalizationListener) {
+            RelocalizationManager.addListener(this::tryReLocalization);
+        }
+    }
+
     public HierarchyPanel(LayoutManager layout) {
         super(layout);
         addNotify();
