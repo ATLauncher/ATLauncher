@@ -61,7 +61,7 @@ public final class InstancesListPanel extends HierarchyPanel
     }
 
     @Override
-    protected void onShow() {
+    public void onShow() {
         addDisposable(viewModel.getInstancesList()
             .map(instancesList -> {
                     viewModel.setIsLoading(true);
@@ -120,11 +120,11 @@ public final class InstancesListPanel extends HierarchyPanel
     }
 
     @Override
-    protected void createViewModel() {
+    public void createViewModel() {
     }
 
     @Override
-    protected void onDestroy() {
+    public void onDestroy() {
         removeAll();
     }
 }

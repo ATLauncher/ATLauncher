@@ -68,12 +68,12 @@ public class NewsTab extends HierarchyPanel implements Tab {
 
 
     @Override
-    protected void createViewModel() {
+    public void createViewModel() {
         viewModel = new NewsViewModel();
     }
 
     @Override
-    protected void onShow() {
+    public void onShow() {
         createNewsKit();
         NEWS_MENU = new ContextMenu();
         createNewsPane();
@@ -96,7 +96,7 @@ public class NewsTab extends HierarchyPanel implements Tab {
     }
 
     @Override
-    protected void onDestroy() {
+    public void onDestroy() {
         NEWS_KIT = null;
         NEWS_MENU = null;
         NEWS_PANE = null;

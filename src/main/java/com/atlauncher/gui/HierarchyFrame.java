@@ -15,30 +15,28 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.atlauncher.gui.panels;
+package com.atlauncher.gui;
 
-import java.awt.LayoutManager;
 import java.awt.event.HierarchyListener;
 
-import javax.swing.JPanel;
+import javax.swing.JFrame;
 
-import com.atlauncher.gui.HierarchyController;
-import com.atlauncher.gui.HierarchyView;
+import com.atlauncher.gui.panels.HierarchyPanel;
 
 import io.reactivex.rxjava3.disposables.Disposable;
 
 /**
  * This panel uses {@link HierarchyListener} to react the visibility changes.
- * By implementing this panel instead of {@link JPanel} one can lower background
+ * By implementing this panel instead of {@link JFrame} one can lower background
  * memory usage and increase application boot times by delegating resource intensive tasks to runtime.
  *
- * @since 24 / 06 / 2022
+ * @since 2023 / 11 / 08
  */
-public abstract class HierarchyPanel extends JPanel implements HierarchyView {
-    protected final HierarchyController<HierarchyPanel> controller;
+public abstract class HierarchyFrame extends JFrame implements HierarchyView {
+    protected final HierarchyController<HierarchyFrame> controller;
 
-    public HierarchyPanel(LayoutManager layout) {
-        super(layout);
+    public HierarchyFrame() {
+        super();
         addNotify();
         controller = new HierarchyController<>(this);
         addHierarchyListener(controller);
