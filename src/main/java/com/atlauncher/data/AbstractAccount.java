@@ -207,7 +207,6 @@ public abstract class AbstractAccount implements Serializable {
                 } catch (IOException e) {
                     LogManager.logStackTrace(e);
                 }
-                com.atlauncher.evnt.manager.AccountManager.post();
             }
             dialog.close();
         }));
