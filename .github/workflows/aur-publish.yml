@@ -8,7 +8,7 @@ jobs:
   aur-publish:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
       - name: Publish atlauncher AUR package
         uses: ./.github/actions/publish-to-aur
@@ -33,7 +33,7 @@ jobs:
           aurCommitMessage: Update to version ${{ github.event.client_payload.version }}
 
       - name: Commit changed files
-        uses: EndBug/add-and-commit@v7.0.0
+        uses: EndBug/add-and-commit@v9
         with:
           add: "packaging/aur/"
           message: "chore: update aur packages"

@@ -27,3 +27,4 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Implement RxJava in InstanceManager [#795]
 - Add UUID to Instances [#795]
 - Implement RxJava in all update managers [#795]
+- Update all github actions workflows and allow downloading translations to a branch

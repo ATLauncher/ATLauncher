@@ -4,7 +4,7 @@ on:
   push:
     branches: [master]
     paths:
-      - 'src/main/java/com/atlauncher/**'
+      - "src/main/java/com/atlauncher/**"
 
 jobs:
   synchronize-with-crowdin:
@@ -12,7 +12,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Install gettext
         run: sudo apt-get install -y gettext
@@ -20,9 +20,9 @@ jobs:
       - name: Set up JDK 1.8
         uses: actions/setup-java@v3
         with:
-          distribution: 'temurin'
+          distribution: "temurin"
           java-version: 8
-          cache: 'gradle'
+          cache: "gradle"
 
       - name: Generate translations.pot
         run: ./gradlew generatePots
@@ -31,13 +31,13 @@ jobs:
         run: msguniq -o build/gettext/launcher.pot build/gettext/translations.pot
 
       - name: Upload source to crowdin
-        uses: crowdin/github-action@1.4.10
+        uses: crowdin/github-action@v1.14.1
         with:
           upload_sources: true
           upload_translations: false
           download_translations: false
           push_translations: false
-          upload_sources_args: '--dest=launcher.pot'
+          upload_sources_args: "--dest=launcher.pot"
           source: build/gettext/launcher.pot
           translation: /src/main/resources/assets/lang/%locale%.po
           project_id: ${{ secrets.CROWDIN_PROJECT_ID }}
