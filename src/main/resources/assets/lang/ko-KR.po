@@ -1,0 +1,3572 @@
+msgid ""
+msgstr ""
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Crowdin-Project: atlauncher\n"
+"X-Crowdin-Project-ID: 239071\n"
+"X-Crowdin-Language: ko\n"
+"X-Crowdin-File: launcher.pot\n"
+"X-Crowdin-File-ID: 20\n"
+"Project-Id-Version: atlauncher\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language-Team: Korean\n"
+"Language: ko_KR\n"
+"PO-Revision-Date: 2023-11-09 09:55\n"
+
+#: src/main/java/com/atlauncher/viewmodel/impl/CreatePackViewModel.java:343
+#: src/main/java/com/atlauncher/gui/dialogs/InstanceInstallerDialog.java:1203
+msgid "No Versions Found"
+msgstr "사용할 수 있는 버전 없음"
+
+#: src/main/java/com/atlauncher/viewmodel/impl/CreatePackViewModel.java:344
+msgid "Error Getting Versions"
+msgstr "버전 목록 불러오기 오류"
+
+#: src/main/java/com/atlauncher/viewmodel/impl/CreatePackViewModel.java:721
+#: src/main/java/com/atlauncher/viewmodel/impl/CreatePackViewModel.java:729
+#: src/main/java/com/atlauncher/data/Instance.java:832
+#: src/main/java/com/atlauncher/gui/card/packbrowser/UnifiedPackCard.java:99
+#: src/main/java/com/atlauncher/gui/card/packbrowser/UnifiedPackCard.java:128
+#: src/main/java/com/atlauncher/gui/card/packbrowser/FTBPackCard.java:92
+#: src/main/java/com/atlauncher/gui/card/packbrowser/ModrinthPackCard.java:80
+#: src/main/java/com/atlauncher/gui/card/packbrowser/ModrinthPackCard.java:109
+#: src/main/java/com/atlauncher/gui/card/packbrowser/TechnicPackCard.java:75
+#: src/main/java/com/atlauncher/gui/card/packbrowser/CurseForgePackCard.java:86
+#: src/main/java/com/atlauncher/gui/card/packbrowser/CurseForgePackCard.java:115
+#: src/main/java/com/atlauncher/gui/card/packbrowser/ATLauncherPackCard.java:145
+#: src/main/java/com/atlauncher/gui/card/packbrowser/ATLauncherPackCard.java:173
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:505
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:586
+#: src/main/java/com/atlauncher/gui/dialogs/ImportInstanceDialog.java:205
+#: src/main/java/com/atlauncher/gui/panels/packbrowser/CurseForgePacksPanel.java:263
+#: src/main/java/com/atlauncher/gui/panels/packbrowser/ModrinthPacksPanel.java:248
+msgid "No Account Selected"
+msgstr "선택된 계정 없음"
+
+#: src/main/java/com/atlauncher/viewmodel/impl/CreatePackViewModel.java:722
+#: src/main/java/com/atlauncher/gui/card/packbrowser/UnifiedPackCard.java:129
+#: src/main/java/com/atlauncher/gui/card/packbrowser/ModrinthPackCard.java:110
+#: src/main/java/com/atlauncher/gui/card/packbrowser/CurseForgePackCard.java:116
+#: src/main/java/com/atlauncher/gui/card/packbrowser/ATLauncherPackCard.java:174
+msgid "Cannot create server as you have no account selected."
+msgstr "선택된 계정이 없어 서버를 생성할 수 없습니다."
+
+#: src/main/java/com/atlauncher/viewmodel/impl/CreatePackViewModel.java:730
+#: src/main/java/com/atlauncher/gui/card/packbrowser/UnifiedPackCard.java:100
+#: src/main/java/com/atlauncher/gui/card/packbrowser/FTBPackCard.java:93
+#: src/main/java/com/atlauncher/gui/card/packbrowser/ModrinthPackCard.java:81
+#: src/main/java/com/atlauncher/gui/card/packbrowser/TechnicPackCard.java:76
+#: src/main/java/com/atlauncher/gui/card/packbrowser/CurseForgePackCard.java:87
+#: src/main/java/com/atlauncher/gui/card/packbrowser/ATLauncherPackCard.java:146
+#: src/main/java/com/atlauncher/gui/dialogs/ImportInstanceDialog.java:206
+#: src/main/java/com/atlauncher/gui/panels/packbrowser/CurseForgePacksPanel.java:264
+#: src/main/java/com/atlauncher/gui/panels/packbrowser/ModrinthPacksPanel.java:249
+msgid "Cannot create instance as you have no account selected."
+msgstr "선택된 계정이 없어 인스턴스를 생성할 수 없습니다."
+
+#: src/main/java/com/atlauncher/App.java:428
+#: src/main/java/com/atlauncher/App.java:433
+msgid "Using Out Of Date Java"
+msgstr ""
+
+#: src/main/java/com/atlauncher/App.java:429
+msgid "You're running an out of date version of Java that was installed with the launcher.<br/><br/>In the future the launcher will no longer work without updating this.<br/><br/>This process is automatic and doesn't affect any Java installs outside of the launcher.<br/><br/>Do you want to do it now?"
+msgstr ""
+
+#: src/main/java/com/atlauncher/App.java:434
+msgid "You're running an out of date version of Java.<br/><br/>In the future the launcher will no longer work without updating this.<br/><br/>This process is automatic and doesn't affect any Java installs outside of the launcher.<br/><br/>Do you want to do it now?"
+msgstr ""
+
+#: src/main/java/com/atlauncher/App.java:437
+msgid "Let Launcher Manage Java"
+msgstr ""
+
+#: src/main/java/com/atlauncher/App.java:438
+msgid "You're currently using a version of Java not managed by the launcher.<br/><br/>Letting the launcher manage it's own version of Java is better for support and ease of use.<br/><br/>This process is automatic and doesn't affect any Java installs outside of the launcher.<br/><br/>Do you want to let the launcher manage it's own version of Java?"
+msgstr ""
+
+#: src/main/java/com/atlauncher/App.java:453
+#: src/main/java/com/atlauncher/App.java:454
+msgid "Downloading Java Update"
+msgstr ""
+
+#: src/main/java/com/atlauncher/App.java:489
+msgid "Failed To Update Bundled JRE"
+msgstr ""
+
+#: src/main/java/com/atlauncher/App.java:492
+msgid "There was an issue updating the bundled JRE. Please try again later and if the issue persists, please contact ATLauncher support via Discord."
+msgstr ""
+
+#: src/main/java/com/atlauncher/App.java:666
+#: src/main/java/com/atlauncher/App.java:691
+#: src/main/java/com/atlauncher/App.java:711
+msgid "Don't remind me again"
+msgstr "다시 보지 않기"
+
+#: src/main/java/com/atlauncher/App.java:692
+msgid "ATLauncher installed within OneDrive"
+msgstr "Onedrive 내부에 ATLauncher 설치됨"
+
+#: src/main/java/com/atlauncher/App.java:693
+msgid "We have detected that you're running ATLauncher from within OneDrive.<br/><br/>This can cause serious issues and you should move the folder outside of OneDrive.<br/><br/>Do you want to close the launcher and do this now?"
+msgstr "현재 ATLauncher가 OneDrive 안에 설치된 것이 감지되었습니다.<br/><br/>자칫 심각한 문제를 일으킬 수 있어 런처 폴더를 OneDrive 외부에 놓아야 합니다.<br/><br/>이동을 위해 런처를 바로 닫으시겠습니까?"
+
+#: src/main/java/com/atlauncher/App.java:712
+msgid "ATLauncher installed within Program Files"
+msgstr "Program Files 내부에 ATLauncher 설치됨"
+
+#: src/main/java/com/atlauncher/App.java:713
+msgid "We have detected that you're running ATLauncher from within Program Files.<br/><br/>This can cause serious issues and you should move the folder outside of Program Files.<br/><br/>Do you want to close the launcher and do this now?"
+msgstr "현재 ATLauncher가 Program Files 안에 설치된 것이 감지되었습니다.<br/><br/>자칫 심각한 문제를 일으킬 수 있어 런처 폴더를 Program Files 외부에 놓아야 합니다.<br/><br/>이동을 위해 런처를 바로 닫으시겠습니까?"
+
+#: src/main/java/com/atlauncher/App.java:734
+#: src/main/java/com/atlauncher/App.java:746
+msgid "ATLauncher cannot write files"
+msgstr "ATLauncher에서 파일 작성 불가"
+
+#: src/main/java/com/atlauncher/App.java:735
+#: src/main/java/com/atlauncher/App.java:747
+msgid "We have detected that ATLauncher cannot write files in it's current location.<br/><br/>We cannot continue to run, you must move this folder somewhere else with write access.<br/><br/>Try moving to a folder in your Desktop or another drive.<br/><br/>You can also try running ATLauncher as administrator, but this is not recommended."
+msgstr "ATLauncher가 현재 위치에서 파일을 새로 쓸 수 없는 현상이 감지되었습니다.<br/><br/>런처를 실행할 수 없는 상황이며, 권한이 있는 다른 위치로 폴더를 옯겨야 합니다.<br/><br/>폴더를 바탕 화면이나 다른 디스크로 옯겨 보십시오.<br/><br/>관리자 권한으로 ATLauncher를 실행하는 해결책도 있으나, 이는 권장하지 않습니다."
+
+#: src/main/java/com/atlauncher/managers/AccountManager.java:233
+msgid "Account Added"
+msgstr "계정 추가됨"
+
+#: src/main/java/com/atlauncher/managers/AccountManager.java:234
+msgid "Account added successfully. Switch to it now?"
+msgstr "계정이 성공적으로 추가되었습니다. 지금 바꾸시겠습니까?"
+
+#: src/main/java/com/atlauncher/managers/AccountManager.java:235
+#: src/main/java/com/atlauncher/managers/DialogManager.java:102
+#: src/main/java/com/atlauncher/managers/DialogManager.java:111
+#: src/main/java/com/atlauncher/gui/tabs/accounts/AccountsTab.java:224
+#: src/main/java/com/atlauncher/gui/dialogs/ModsChooser.java:283
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/GeneralInstanceSettingsTab.java:112
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/JavaInstanceSettingsTab.java:488
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/JavaInstanceSettingsTab.java:566
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/JavaInstanceSettingsTab.java:594
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/JavaInstanceSettingsTab.java:622
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/CommandsInstanceSettingsTab.java:79
+msgid "Yes"
+msgstr "예"
+
+#: src/main/java/com/atlauncher/managers/AccountManager.java:235
+#: src/main/java/com/atlauncher/managers/DialogManager.java:103
+#: src/main/java/com/atlauncher/managers/DialogManager.java:112
+#: src/main/java/com/atlauncher/gui/tabs/accounts/AccountsTab.java:225
+#: src/main/java/com/atlauncher/gui/dialogs/ModsChooser.java:284
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/GeneralInstanceSettingsTab.java:113
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/JavaInstanceSettingsTab.java:489
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/JavaInstanceSettingsTab.java:567
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/JavaInstanceSettingsTab.java:595
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/JavaInstanceSettingsTab.java:623
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/CommandsInstanceSettingsTab.java:80
+msgid "No"
+msgstr "아니오"
+
+#: src/main/java/com/atlauncher/managers/DialogManager.java:81
+#: src/main/java/com/atlauncher/managers/DialogManager.java:89
+#: src/main/java/com/atlauncher/data/json/Messages.java:52
+#: src/main/java/com/atlauncher/data/json/Messages.java:73
+msgid "Ok"
+msgstr "확인"
+
+#: src/main/java/com/atlauncher/managers/DialogManager.java:90
+#: src/main/java/com/atlauncher/managers/DialogManager.java:113
+#: src/main/java/com/atlauncher/data/json/Messages.java:52
+#: src/main/java/com/atlauncher/data/json/Messages.java:73
+#: src/main/java/com/atlauncher/gui/dialogs/ModrinthVersionSelectorDialog.java:346
+#: src/main/java/com/atlauncher/gui/dialogs/InstanceInstallerDialog.java:413
+#: src/main/java/com/atlauncher/gui/dialogs/CurseForgeProjectFileSelectorDialog.java:210
+#: src/main/java/com/atlauncher/gui/dialogs/ChangeSkinDialog.java:222
+#: src/main/java/com/atlauncher/gui/dialogs/InstanceExportDialog.java:346
+#: src/main/java/com/atlauncher/gui/dialogs/InstanceSettingsDialog.java:116
+msgid "Cancel"
+msgstr "취소"
+
+#: src/main/java/com/atlauncher/data/AbstractAccount.java:101
+msgid "Checking For Username Change"
+msgstr "사용자 이름 변경 확인"
+
+#: src/main/java/com/atlauncher/data/AbstractAccount.java:102
+msgid "Checking Username Change For {0}"
+msgstr "{0}의 닉네임 변경 확인 중"
+
+#: src/main/java/com/atlauncher/data/AbstractAccount.java:127
+msgid "No Changes"
+msgstr "변경 사항 없음"
+
+#: src/main/java/com/atlauncher/data/AbstractAccount.java:128
+msgid "Your username hasn't changed."
+msgstr "닉네임이 변경되지 않았습니다."
+
+#: src/main/java/com/atlauncher/data/AbstractAccount.java:131
+msgid "Username Updated"
+msgstr "닉네임 업데이트됨"
+
+#: src/main/java/com/atlauncher/data/AbstractAccount.java:132
+msgid "Your username has been updated."
+msgstr "닉네임이 업데이트 되었습니다."
+
+#: src/main/java/com/atlauncher/data/AbstractAccount.java:134
+#: src/main/java/com/atlauncher/data/AbstractAccount.java:215
+#: src/main/java/com/atlauncher/data/Instance.java:2777
+#: src/main/java/com/atlauncher/data/Instance.java:2784
+#: src/main/java/com/atlauncher/data/Instance.java:2793
+#: src/main/java/com/atlauncher/data/Instance.java:2801
+#: src/main/java/com/atlauncher/data/installables/Installable.java:90
+#: src/main/java/com/atlauncher/data/installables/Installable.java:95
+#: src/main/java/com/atlauncher/data/installables/Installable.java:102
+#: src/main/java/com/atlauncher/data/installables/Installable.java:107
+#: src/main/java/com/atlauncher/gui/dialogs/CreateMinecraftProfileDialog.java:116
+#: src/main/java/com/atlauncher/gui/dialogs/CreateMinecraftProfileDialog.java:127
+#: src/main/java/com/atlauncher/gui/dialogs/CreateMinecraftProfileDialog.java:139
+#: src/main/java/com/atlauncher/gui/dialogs/RenameInstanceDialog.java:112
+#: src/main/java/com/atlauncher/gui/dialogs/RenameInstanceDialog.java:118
+#: src/main/java/com/atlauncher/gui/dialogs/RenameInstanceDialog.java:121
+#: src/main/java/com/atlauncher/gui/dialogs/RenameInstanceDialog.java:129
+msgid "Error"
+msgstr "오류"
+
+#: src/main/java/com/atlauncher/data/AbstractAccount.java:136
+msgid "Error checking for username change. Check the error logs and try again later."
+msgstr "닉네임 변경을 확인하는 동안 오류가 발생했습니다. 오류 로그를 확인하고 나중에 다시 시도하십시오."
+
+#: src/main/java/com/atlauncher/data/AbstractAccount.java:148
+msgid "Downloading Skin"
+msgstr "스킨 다운로드 중"
+
+#: src/main/java/com/atlauncher/data/AbstractAccount.java:149
+msgid "Downloading Skin For {0}"
+msgstr "{0}의 스킨 다운로드 중"
+
+#: src/main/java/com/atlauncher/data/AbstractAccount.java:216
+msgid "Error downloading skin. Please try again later!"
+msgstr "스킨 다운로드 중 오류 발생. 나중에 다시 시도하십시오!"
+
+#: src/main/java/com/atlauncher/data/json/Messages.java:51
+#: src/main/java/com/atlauncher/gui/dialogs/InstanceInstallerDialog.java:247
+msgid "Installing"
+msgstr "설치 중"
+
+#: src/main/java/com/atlauncher/data/json/Messages.java:72
+#: src/main/java/com/atlauncher/gui/dialogs/InstanceInstallerDialog.java:246
+msgid "Reinstalling"
+msgstr "재설치 중"
+
+#: src/main/java/com/atlauncher/data/json/Mod.java:437
+#: src/main/java/com/atlauncher/data/json/Mod.java:593
+#: src/main/java/com/atlauncher/data/Instance.java:1405
+#: src/main/java/com/atlauncher/workers/InstanceInstaller.java:453
+#: src/main/java/com/atlauncher/workers/InstanceInstaller.java:915
+msgid "Downloading"
+msgstr "다운로드 중 -"
+
+#: src/main/java/com/atlauncher/data/json/Mod.java:440
+#: src/main/java/com/atlauncher/data/json/Mod.java:595
+#: src/main/java/com/atlauncher/data/Instance.java:1407
+#: src/main/java/com/atlauncher/workers/InstanceInstaller.java:455
+#: src/main/java/com/atlauncher/workers/InstanceInstaller.java:917
+msgid "Browser opened to download file {0}"
+msgstr "{0} 파일을 다운로드하기 위해 브라우저가 열렸습니다"
+
+#: src/main/java/com/atlauncher/data/json/Mod.java:444
+#: src/main/java/com/atlauncher/data/json/Mod.java:597
+#: src/main/java/com/atlauncher/data/Instance.java:1410
+#: src/main/java/com/atlauncher/workers/InstanceInstaller.java:458
+#: src/main/java/com/atlauncher/workers/InstanceInstaller.java:920
+msgid "Please save this file to the following location"
+msgstr "아래의 경로로 이 파일을 저장해 주세요."
+
+#: src/main/java/com/atlauncher/data/json/Mod.java:453
+#: src/main/java/com/atlauncher/data/json/Mod.java:604
+#: src/main/java/com/atlauncher/data/Instance.java:1418
+#: src/main/java/com/atlauncher/workers/InstanceInstaller.java:466
+#: src/main/java/com/atlauncher/workers/InstanceInstaller.java:928
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:92
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:741
+#: src/main/java/com/atlauncher/gui/card/ServerCard.java:62
+#: src/main/java/com/atlauncher/gui/card/ServerCard.java:254
+#: src/main/java/com/atlauncher/gui/dialogs/BrowserDownloadDialog.java:72
+#: src/main/java/com/atlauncher/gui/components/LauncherBottomBar.java:143
+#: src/main/java/com/atlauncher/gui/components/LauncherBottomBar.java:186
+msgid "Open Folder"
+msgstr "폴더 열기"
+
+#: src/main/java/com/atlauncher/data/json/Mod.java:454
+#: src/main/java/com/atlauncher/data/json/Mod.java:605
+#: src/main/java/com/atlauncher/data/Instance.java:1419
+#: src/main/java/com/atlauncher/workers/InstanceInstaller.java:467
+#: src/main/java/com/atlauncher/workers/InstanceInstaller.java:929
+msgid "I've Downloaded This File"
+msgstr "파일을 다운로드 했습니다"
+
+#: src/main/java/com/atlauncher/data/json/Mod.java:455
+msgid "Skip Mod (Pack May Break)"
+msgstr "이 모드 건너뛰기(모드팩이 깨질 수 있음)"
+
+#: src/main/java/com/atlauncher/data/MinecraftError.java:54
+#: src/main/java/com/atlauncher/data/MinecraftError.java:62
+#: src/main/java/com/atlauncher/data/MinecraftError.java:70
+#: src/main/java/com/atlauncher/data/MinecraftError.java:82
+#: src/main/java/com/atlauncher/data/MinecraftError.java:91
+msgid "About Your Crash"
+msgstr "크래쉬 정보"
+
+#: src/main/java/com/atlauncher/data/MinecraftError.java:55
+msgid "Minecraft has crashed due to insufficent memory being allocated.<br/><br/>Please go to the settings tab and increase the maximum memory option and then try launching the instance again."
+msgstr "메모리가 과하게 사용되어 마인크래프트가 충돌하였습니다.<br/><br/>설정 탭에 가서 최대 메모리를 증가시킨 후 인스턴스를 다시 실행해 주세요."
+
+#: src/main/java/com/atlauncher/data/MinecraftError.java:63
+msgid "Minecraft has crashed due to an incompatability with Forge and your version of Java.<br/><br/>Please reinstall the instance to automatically fix the problem, and then try launching the instance again."
+msgstr "호환되지 않는 포지 버전과 자바 버전으로 인해 마인크래프트가 크래시 되었습니다.<br/><br/>문제를 자동적으로 해결하려면 인스턴스를 재설치하고, 인스턴스를 다시 실행해 보십시오."
+
+#: src/main/java/com/atlauncher/data/MinecraftError.java:71
+msgid "Minecraft has crashed due to not being compatible with your Java version.<br/><br/>Most modded Minecraft is only compatible with Java 8, so you must install Java 8 on your computer."
+msgstr "자바 버전과 호환되지 않아 충돌했습니다.<br/><br/>대부분의 모드 마인크래프트는 자바 8만 호환되므로 컴퓨터에 자바 8을 설치해야 합니다."
+
+#: src/main/java/com/atlauncher/data/MinecraftError.java:74
+msgid "Download Java 8"
+msgstr "자바 8 다운로드"
+
+#: src/main/java/com/atlauncher/data/MinecraftError.java:83
+#: src/main/java/com/atlauncher/data/MinecraftError.java:92
+msgid "Minecraft has crashed due to not being compatible with your Java version.<br/><br/>This version of Minecraft requires Java {0} or newer.<br/><br/>Make sure you've selected the correct Java version in this instances<br/>settings or not disabled the \"Use Java Provided By Minecraft\" setting.<br/><br/>If it's still not working, you may be using a mod that requires Java {0},<br/>but Minecraft only requires Java 8, so you can go into the instances<br/>settings and in the \"Java\" tab, change the \"Runtime Overide\"<br/>option to one that is Java {0} or newer."
+msgstr "자바 버전과 호환되지 않아 충돌했습니다.<br/><br/>이 버전의 마인크래프트에서는 자바 {0} 이상이 필요합니다.<br/><br/>인스턴스 탭에서 올바른 자바 버전을 선택했는지 확인하세요. 또는 인스턴스<br/>설정을 변경하거나 \"마인크래프트에서 제공하는 자바 사용\"을 켜 주세요.<br/><br/>여전히 작동하지 않는 경우 자바 {0} 이 필요한 모드를 사용하고 있을 수 있지만<br/>마인크래프트에선 자바 8로도 충분한 경우가 있으므로 인스턴스 설정에서<br/>\"마인크래프트에서 제공하는 자바 사용\"을 끄고<br/>자바 {0} 경로를 수동으로 지정해야 합니다."
+
+#. {0} is the Minecraft username
+#: src/main/java/com/atlauncher/data/MojangAccount.java:230
+msgid "Enter password for {0}"
+msgstr "{0} 의 비밀번호를 입력하세요."
+
+#: src/main/java/com/atlauncher/data/MojangAccount.java:236
+msgid "Enter Password"
+msgstr "비밀번호를 입력하세요."
+
+#: src/main/java/com/atlauncher/data/MojangAccount.java:261
+#: src/main/java/com/atlauncher/data/Instance.java:1029
+msgid "Error Logging In"
+msgstr "로그인 오류"
+
+#: src/main/java/com/atlauncher/data/MojangAccount.java:262
+msgid "Couldn't login to Minecraft servers"
+msgstr "Minecraft 서버에 로그인할 수 없습니다."
+
+#: src/main/java/com/atlauncher/data/Instance.java:280
+#: src/main/java/com/atlauncher/data/Server.java:455
+msgid "No Description"
+msgstr "설명 없음"
+
+#: src/main/java/com/atlauncher/data/Instance.java:440
+msgid "Grabbing Latest Manifest"
+msgstr "최신 매니페스트 가져오는 중"
+
+#: src/main/java/com/atlauncher/data/Instance.java:464
+#: src/main/java/com/atlauncher/workers/InstanceInstaller.java:2794
+msgid "Downloading Minecraft"
+msgstr "마인크래프트 다운로드"
+
+#: src/main/java/com/atlauncher/data/Instance.java:486
+msgid "Downloading Logging Config"
+msgstr "로그 설정 다운로드 중"
+
+#: src/main/java/com/atlauncher/data/Instance.java:514
+#: src/main/java/com/atlauncher/workers/InstanceInstaller.java:2952
+msgid "Downloading Libraries"
+msgstr "라이브러리 다운로드"
+
+#. #-#-#-#-#  translations.pot  #-#-#-#-#
+#. {0} is the version of Java were downloading
+#: src/main/java/com/atlauncher/data/Instance.java:587
+#: src/main/java/com/atlauncher/workers/InstanceInstaller.java:3064
+msgid "Downloading Java Runtime {0}"
+msgstr "자바 런타임 {0} 다운로드 중"
+
+#: src/main/java/com/atlauncher/data/Instance.java:648
+#: src/main/java/com/atlauncher/data/Instance.java:682
+#: src/main/java/com/atlauncher/workers/InstanceInstaller.java:2734
+#: src/main/java/com/atlauncher/workers/InstanceInstaller.java:2773
+msgid "Organising Resources"
+msgstr "리소스 정리 중"
+
+#: src/main/java/com/atlauncher/data/Instance.java:671
+#: src/main/java/com/atlauncher/workers/InstanceInstaller.java:2765
+msgid "Downloading Resources"
+msgstr "리소스 다운로드 중"
+
+#: src/main/java/com/atlauncher/data/Instance.java:700
+#: src/main/java/com/atlauncher/workers/InstanceInstaller.java:3001
+msgid "Organising Libraries"
+msgstr "라이브러리를 조직 중"
+
+#: src/main/java/com/atlauncher/data/Instance.java:754
+msgid "Extracting Legacy LWJGL"
+msgstr "레거시 LWJGL 추출 중"
+
+#: src/main/java/com/atlauncher/data/Instance.java:782
+msgid "Creating custom minecraft.jar"
+msgstr "개조된 minecraft.jar 생성 중"
+
+#: src/main/java/com/atlauncher/data/Instance.java:801
+msgid "Scanning mods for Fractureiser"
+msgstr ""
+
+#: src/main/java/com/atlauncher/data/Instance.java:834
+msgid "Cannot play instance as you have no account selected."
+msgstr "선택된 계정이 없어, 인스턴스를 플레이 할 수 없습니다."
+
+#: src/main/java/com/atlauncher/data/Instance.java:856
+msgid "Offline Player Name"
+msgstr "오프라인 플레이어 이름"
+
+#: src/main/java/com/atlauncher/data/Instance.java:857
+msgid "Choose your offline player name:"
+msgstr "오프라인 플레이어 이름을 정하세요:"
+
+#: src/main/java/com/atlauncher/data/Instance.java:871
+msgid "Insufficient Ram"
+msgstr "램 용량 부족"
+
+#: src/main/java/com/atlauncher/data/Instance.java:872
+msgid "This pack has set a minimum amount of ram needed to <b>{0}</b> MB.<br/><br/>Do you want to continue loading the instance anyway?"
+msgstr "이 팩은 최소 <b>{0}</b>MB의 램 용량이 필요합니다.\n"
+"<br/><br/> 그래도 계속 인스턴스를 불러오시겠습니다?"
+
+#: src/main/java/com/atlauncher/data/Instance.java:885
+msgid "Insufficent Permgen"
+msgstr "PermGen 메모리 부족"
+
+#: src/main/java/com/atlauncher/data/Instance.java:886
+msgid "This pack has set a minimum amount of permgen to <b>{0}</b> MB.<br/><br/>Do you want to continue loading the instance anyway?"
+msgstr "이 팩은 최소 <b>{0}</b>MB의 메모리 용량이 필요합니다.\n"
+"<br/><br/> 그래도 계속 인스턴스를 불러오시겠습니다?"
+
+#: src/main/java/com/atlauncher/data/Instance.java:917
+#: src/main/java/com/atlauncher/data/Instance.java:919
+msgid "Preparing For Launch"
+msgstr "실행 준비 중"
+
+#: src/main/java/com/atlauncher/data/Instance.java:968
+#: src/main/java/com/atlauncher/data/Instance.java:1013
+#: src/main/java/com/atlauncher/data/Instance.java:1014
+#: src/main/java/com/atlauncher/gui/tabs/accounts/AccountsTab.java:478
+#: src/main/java/com/atlauncher/gui/tabs/accounts/AccountsTab.java:480
+msgid "Logging Into Minecraft"
+msgstr "마인크래프트에 로그인 중"
+
+#: src/main/java/com/atlauncher/data/Instance.java:1030
+msgid "Couldn't login with Microsoft account"
+msgstr "Microsoft 계정으로 로그인할 수 없습니다."
+
+#: src/main/java/com/atlauncher/data/Instance.java:1286
+#: src/main/java/com/atlauncher/data/Instance.java:1294
+msgid "Error executing command"
+msgstr "명령 실행 중 오류 발생"
+
+#: src/main/java/com/atlauncher/data/Instance.java:1292
+msgid "Check the console for details"
+msgstr "자세한 내용은 콘솔을 확인하세요."
+
+#: src/main/java/com/atlauncher/data/Instance.java:1371
+#: src/main/java/com/atlauncher/workers/InstanceInstaller.java:428
+#: src/main/java/com/atlauncher/workers/InstanceInstaller.java:890
+msgid "Mod Not Available"
+msgstr "모드 다운로드 불가"
+
+#: src/main/java/com/atlauncher/data/Instance.java:1372
+msgid "We were unable to download this mod.<br/>This is likely due to the author of the mod disabling third party clients from downloading it.<br/><br/>You'll be prompted shortly to download the mod manually through your browser to your downloads folder.<br/>Once you've downloaded the file that was opened in your browser to your downloads folder, we can continue with installing the mod.<br/><br/>This process is unfortunate, but we don't have any choice in this matter and has to be done this way."
+msgstr "이 모드를 다운로드 할 수 없습니다.<br/>외부 프로그램에서 파일을 직접 다운로드 하는 것을 모드 작성자가 차단했을 수도 있습니다.<br/><br/>곧 모드를 브라우저를 통해 수동으로 다운로드 폴더에 다운로드 하라는 메시지가 표시됩니다.<br/>브라우저에서 열린 파일을 다운로드 폴더로 다운로드하면 모드 설치를 계속할 수 있습니다.<br/><br/>번거롭겠지만 안타깝게도, 우리는 과정 중 생기는 이 문제에 대해 선택의 여지가 없으며 이렇게 해야만 합니다."
+
+#. #-#-#-#-#  translations.pot  #-#-#-#-#
+#. {0} is the name of a mod that was installed
+#. #-#-#-#-#  translations.pot  #-#-#-#-#
+#. {0} is the name of a mod that was installed
+#. #-#-#-#-#  translations.pot  #-#-#-#-#
+#. {0} is the loader (Forge/Fabric/Quilt)
+#. #-#-#-#-#  translations.pot  #-#-#-#-#
+#. {0} is the loader (Forge/Fabric/Quilt)
+#: src/main/java/com/atlauncher/data/Instance.java:1538
+#: src/main/java/com/atlauncher/data/Instance.java:1633
+#: src/main/java/com/atlauncher/data/Instance.java:2876
+#: src/main/java/com/atlauncher/data/Instance.java:2925
+msgid "{0} Installed"
+msgstr "{0} 설치됨"
+
+#. #-#-#-#-#  translations.pot  #-#-#-#-#
+#. {0} is the name of the instance
+#. #-#-#-#-#  translations.pot  #-#-#-#-#
+#. {0} is the name of the instance
+#. #-#-#-#-#  translations.pot  #-#-#-#-#
+#. {0} is the name of the server we're backing up
+#: src/main/java/com/atlauncher/data/Instance.java:2693
+#: src/main/java/com/atlauncher/data/Instance.java:2702
+#: src/main/java/com/atlauncher/data/Server.java:387
+msgid "Backing Up {0}"
+msgstr "{0} 백업 중"
+
+#: src/main/java/com/atlauncher/data/Instance.java:2727
+#: src/main/java/com/atlauncher/data/Server.java:397
+msgid "Backup is complete"
+msgstr "백업 완료"
+
+#: src/main/java/com/atlauncher/data/Instance.java:2755
+msgid "Enter a new name for this cloned instance."
+msgstr "이 복제된 인스턴스의 새로운 이름을 입력하십시오."
+
+#: src/main/java/com/atlauncher/data/Instance.java:2756
+#: src/main/java/com/atlauncher/data/Instance.java:2767
+msgid "Cloning Instance"
+msgstr "인스턴스 복제 중"
+
+#: src/main/java/com/atlauncher/data/Instance.java:2768
+msgid "Cloning Instance. Please wait..."
+msgstr "인스턴스 복제 중. 잠시 기다려 주세요..."
+
+#: src/main/java/com/atlauncher/data/Instance.java:2772
+msgid "Cloned Instance Successfully"
+msgstr "인스턴스를 성공적으로 복제했습니다"
+
+#: src/main/java/com/atlauncher/data/Instance.java:2778
+#: src/main/java/com/atlauncher/data/Instance.java:2785
+#: src/main/java/com/atlauncher/data/Instance.java:2794
+#: src/main/java/com/atlauncher/data/Instance.java:2802
+msgid "An error occurred while cloning the instance.<br/><br/>Please check the console and try again."
+msgstr "인스턴스를 복제하던 중 문제가 발생했습니다.<br/><br/>콘솔 창을 확인하고 다시 시도하십시오."
+
+#: src/main/java/com/atlauncher/data/Instance.java:2818
+#: src/main/java/com/atlauncher/data/Server.java:512
+msgid "Changing Description"
+msgstr "설명 변경중"
+
+#. {0} is the loader (Forge/Fabric/Quilt) {1} is the version
+#: src/main/java/com/atlauncher/data/Instance.java:2880
+#: src/main/java/com/atlauncher/data/Instance.java:2928
+msgid "{0} {1} has been installed."
+msgstr "{0} {1} 이 설치되었습니다."
+
+#. {0} is the loader (Forge/Fabric/Quilt)
+#: src/main/java/com/atlauncher/data/Instance.java:2886
+#: src/main/java/com/atlauncher/data/Instance.java:2932
+msgid "{0} Not Installed"
+msgstr "{0} 이 설치되지 않음"
+
+#. {0} is the loader (Forge/Fabric/Quilt)
+#: src/main/java/com/atlauncher/data/Instance.java:2889
+#: src/main/java/com/atlauncher/data/Instance.java:2934
+msgid "{0} has not been installed. Check the console for more information."
+msgstr "{0} 이(가) 설치되지 않았습니다. 자세한 내용은 콘솔을 확인하세요."
+
+#. {0} is the loader (Forge/Fabric/Quilt)
+#: src/main/java/com/atlauncher/data/Instance.java:2944
+#: src/main/java/com/atlauncher/data/Instance.java:2946
+msgid "Checking For {0} Versions"
+msgstr "{0} 버전 확인 중"
+
+#. {0} is the loader (Forge/Fabric/Quilt)
+#: src/main/java/com/atlauncher/data/Instance.java:2969
+msgid "No Versions Available For {0}"
+msgstr "사용 가능한 {0} 버전이 없음"
+
+#. {0} is the loader (Forge/Fabric/Quilt)
+#: src/main/java/com/atlauncher/data/Instance.java:2972
+msgid "{0} has not been installed/updated as there are no versions available."
+msgstr "사용 가능한 {0} 버전이 없어 설치/업데이트되지 않았습니다."
+
+#. {0} is the loader (Forge/Fabric/Quilt)
+#: src/main/java/com/atlauncher/data/Instance.java:3028
+msgid "Select {0} Version To Install"
+msgstr "설치할 {0}의 버전 선택"
+
+#. #-#-#-#-#  translations.pot  #-#-#-#-#
+#. {0} is the loader (Forge/Fabric/Quilt)
+#. #-#-#-#-#  translations.pot  #-#-#-#-#
+#. {0} is the name of the pack
+#. #-#-#-#-#  translations.pot  #-#-#-#-#
+#. {0} is the name of a mod we're installing
+#. #-#-#-#-#  translations.pot  #-#-#-#-#
+#. {0} is the name of the mod we're installing
+#. #-#-#-#-#  translations.pot  #-#-#-#-#
+#. {0} is the name of the mod we're installing
+#. #-#-#-#-#  translations.pot  #-#-#-#-#
+#. {0} is the name of the mod we're installing
+#. #-#-#-#-#  translations.pot  #-#-#-#-#
+#. {0} is the name of the pack the user is installing
+#. #-#-#-#-#  translations.pot  #-#-#-#-#
+#. {0} is the name of the pack the user is installing
+#. #-#-#-#-#  translations.pot  #-#-#-#-#
+#. {0} is the name of the pack the user is installing
+#. #-#-#-#-#  translations.pot  #-#-#-#-#
+#. {0} is the name of the pack the user is installing
+#. #-#-#-#-#  translations.pot  #-#-#-#-#
+#. {0} is the name of the pack the user is installing
+#. #-#-#-#-#  translations.pot  #-#-#-#-#
+#. {0} is the name of the pack the user is installing
+#. #-#-#-#-#  translations.pot  #-#-#-#-#
+#. {0} is the name of the pack the user is installing
+#. #-#-#-#-#  translations.pot  #-#-#-#-#
+#. {0} is the name of the pack the user is installing
+#. #-#-#-#-#  translations.pot  #-#-#-#-#
+#. {0} is the name of the mod we're installing
+#. #-#-#-#-#  translations.pot  #-#-#-#-#
+#. {0} is the name of the mod we're installing
+#. #-#-#-#-#  translations.pot  #-#-#-#-#
+#. {0} is the name of the mod we're installing
+#: src/main/java/com/atlauncher/data/Instance.java:3038
+#: src/main/java/com/atlauncher/data/installables/Installable.java:436
+#: src/main/java/com/atlauncher/workers/InstanceInstaller.java:3337
+#: src/main/java/com/atlauncher/gui/dialogs/ModrinthVersionSelectorDialog.java:212
+#: src/main/java/com/atlauncher/gui/dialogs/ModrinthVersionSelectorDialog.java:237
+#: src/main/java/com/atlauncher/gui/dialogs/ModrinthVersionSelectorDialog.java:293
+#: src/main/java/com/atlauncher/gui/dialogs/InstanceInstallerDialog.java:430
+#: src/main/java/com/atlauncher/gui/dialogs/InstanceInstallerDialog.java:519
+#: src/main/java/com/atlauncher/gui/dialogs/InstanceInstallerDialog.java:608
+#: src/main/java/com/atlauncher/gui/dialogs/InstanceInstallerDialog.java:673
+#: src/main/java/com/atlauncher/gui/dialogs/InstanceInstallerDialog.java:740
+#: src/main/java/com/atlauncher/gui/dialogs/InstanceInstallerDialog.java:776
+#: src/main/java/com/atlauncher/gui/dialogs/InstanceInstallerDialog.java:806
+#: src/main/java/com/atlauncher/gui/dialogs/InstanceInstallerDialog.java:844
+#: src/main/java/com/atlauncher/gui/dialogs/CurseForgeProjectFileSelectorDialog.java:119
+#: src/main/java/com/atlauncher/gui/dialogs/CurseForgeProjectFileSelectorDialog.java:144
+#: src/main/java/com/atlauncher/gui/dialogs/CurseForgeProjectFileSelectorDialog.java:185
+msgid "Installing {0}"
+msgstr "{0} 설치 중"
+
+#. {0} is the loader (Forge/Fabric/Quilt)
+#: src/main/java/com/atlauncher/data/Instance.java:3040
+msgid "Changing {0} Version"
+msgstr "{0} 버전 변경 중"
+
+#. #-#-#-#-#  translations.pot  #-#-#-#-#
+#. {0} is the loader (Forge/Fabric/Quilt)
+#. #-#-#-#-#  translations.pot  #-#-#-#-#
+#. {0} is the name of a mod that was removed
+#: src/main/java/com/atlauncher/data/Instance.java:3075
+#: src/main/java/com/atlauncher/data/Instance.java:3511
+msgid "{0} Removed"
+msgstr "{0} 제거됨"
+
+#. {0} is the loader (Forge/Fabric/Quilt)
+#: src/main/java/com/atlauncher/data/Instance.java:3078
+msgid "{0} has been removed from this instance."
+msgstr "{0} 이(가) 이 인스턴스에서 제거되었습니다."
+
+#. {0} is the loader (Forge/Fabric/Quilt)
+#: src/main/java/com/atlauncher/data/Instance.java:3082
+msgid "{0} Not Removed"
+msgstr "{0} 제거되지 않음"
+
+#. {0} is the loader (Forge/Fabric/Quilt)
+#: src/main/java/com/atlauncher/data/Instance.java:3085
+msgid "{0} has not been removed. Check the console for more information."
+msgstr "{0} 이(가) 제거되지 않았습니다. 자세한 내용은 콘솔을 확인하세요."
+
+#: src/main/java/com/atlauncher/data/Instance.java:3245
+#: src/main/java/com/atlauncher/data/Instance.java:3246
+msgid "Scanning New Mods"
+msgstr "새로운 모드 확인 중"
+
+#. {0} is the platform were checking for updates (e.g. CurseForge/Modrinth)
+#: src/main/java/com/atlauncher/data/DisableableMod.java:369
+#: src/main/java/com/atlauncher/data/DisableableMod.java:371
+#: src/main/java/com/atlauncher/data/DisableableMod.java:466
+#: src/main/java/com/atlauncher/data/DisableableMod.java:468
+msgid "Checking For Update On {0}"
+msgstr "{0}에서 업데이트 확인 중"
+
+#. {0} is the platform were getting files from (e.g. CurseForge/Modrinth)
+#: src/main/java/com/atlauncher/data/DisableableMod.java:524
+#: src/main/java/com/atlauncher/data/DisableableMod.java:526
+#: src/main/java/com/atlauncher/data/DisableableMod.java:539
+#: src/main/java/com/atlauncher/data/DisableableMod.java:541
+msgid "Getting Files From {0}"
+msgstr "{0}에서 파일 가져오는 중"
+
+#: src/main/java/com/atlauncher/data/MicrosoftAccount.java:288
+msgid "You Must Login Again"
+msgstr "재로그인이 필요합니다"
+
+#: src/main/java/com/atlauncher/data/MicrosoftAccount.java:289
+msgid "You must login again in order to continue."
+msgstr "계속하려면 다시 로그인해야 합니다."
+
+#: src/main/java/com/atlauncher/data/microsoft/XboxLiveAuthErrorResponse.java:40
+msgid "Account doesn't have an Xbox account.<br/><br/>Please create one by logging into minecraft.net before trying to login again."
+msgstr "Xbox 계정이 없습니다.<br/><br/>다시 로그인 하기전에 minecraft.net에서 로그인하세요."
+
+#: src/main/java/com/atlauncher/data/microsoft/XboxLiveAuthErrorResponse.java:45
+msgid "Child accounts cannot login without being part of a family."
+msgstr "미성년자 계정은 가족 구성원에 포함되지 않으면 로그인 할 수 없습니다."
+
+#: src/main/java/com/atlauncher/data/microsoft/XboxLiveAuthErrorResponse.java:49
+msgid "Account is from a country where Xbox Live is banned/not available."
+msgstr "Xbox Live가 금지되거나 사용할 수 없는 국가의 계정입니다."
+
+#: src/main/java/com/atlauncher/data/Server.java:129
+msgid "Server Is Vulnerable"
+msgstr "취약한 서버"
+
+#: src/main/java/com/atlauncher/data/Server.java:130
+msgid "This server is currently vulnerable to the Log4Shell exploit.<br/><br/>For your safety, and of those on your server, please delete and recreate this server.<br/><br/>Do you still want to launch the server (not recommended)?"
+msgstr "이 서버는 Log4Shell 악용에 취약합니다.<br/><br/>당신을 포함한 서버의 모든 것들을 위해 서버를 삭제하고, 다시 만드세요.<br/><br/>이 서버를 계속 실행할까요? (권장하지 않음)"
+
+#: src/main/java/com/atlauncher/data/Server.java:143
+msgid "Cannot Launch Server"
+msgstr ""
+
+#: src/main/java/com/atlauncher/data/Server.java:144
+msgid "We cannot launch this server for you. Please use \"Open Folder\" and run the server manually.<br/><br/>If unsure how to do so, please contact the packs support pages for more further help."
+msgstr ""
+
+#: src/main/java/com/atlauncher/data/Server.java:253
+msgid "Failed To Launch Server"
+msgstr "서버 실행 실패"
+
+#: src/main/java/com/atlauncher/data/Server.java:254
+msgid "The server couldn't be launched as we don't know how to launch it.<br/><br/>Please open the server folder and run the {0} file manually."
+msgstr "시작 방법을 알 수 없어 이 서버를 시작할 수 없습니다.<br/><br/>서버 폴더를 열고 {0} 파일을 수동으로 실행하세요."
+
+#: src/main/java/com/atlauncher/data/Server.java:304
+msgid "The server has been launched."
+msgstr ""
+
+#: src/main/java/com/atlauncher/data/Server.java:400
+msgid "Error making backup"
+msgstr "백업 중 오류 발생."
+
+#: src/main/java/com/atlauncher/data/installables/Installable.java:91
+msgid "An instance already exists with that name.<br/><br/>Rename it and try again."
+msgstr "이미 같은 이름을 가진 인스턴스가 있습니다.<br/><br/>이름을 변경하고 다시 시도해 주세요."
+
+#: src/main/java/com/atlauncher/data/installables/Installable.java:97
+msgid "Instance name is invalid. It must contain at least 1 letter or number."
+msgstr "인스턴스 이름이 잘못되었습니다. 최소 1개의 문자나 숫자가 들어가야 합니다."
+
+#: src/main/java/com/atlauncher/data/installables/Installable.java:103
+msgid "A server already exists with that name.<br/><br/>Rename it and try again."
+msgstr "이미 같은 이름을 가진 서버가 있습니다.<br/><br/>이름을 변경하고 다시 시도해 주세요."
+
+#: src/main/java/com/atlauncher/data/installables/Installable.java:109
+msgid "Server name is invalid. It must contain at least 1 letter or number."
+msgstr "서버 이름이 잘못되었습니다. 최소 1개의 문자나 숫자가 들어가야 합니다."
+
+#: src/main/java/com/atlauncher/data/installables/Installable.java:139
+msgid "Starting Update Process"
+msgstr "업데이트 과정 시작 중"
+
+#: src/main/java/com/atlauncher/data/installables/Installable.java:140
+msgid "Starting Reinstall Process"
+msgstr "재설치 과정 시작 중"
+
+#: src/main/java/com/atlauncher/data/installables/Installable.java:141
+msgid "Starting Install Process"
+msgstr "설치 과정 시작 중"
+
+#. {0} is the pack name and {1} is the pack version
+#: src/main/java/com/atlauncher/data/installables/Installable.java:180
+#: src/main/java/com/atlauncher/data/installables/Installable.java:274
+msgid "{0} {1} Not Updated"
+msgstr "{0} {1} 업데이트 실패"
+
+#. {0} is the pack name and {1} is the pack version
+#: src/main/java/com/atlauncher/data/installables/Installable.java:183
+#: src/main/java/com/atlauncher/data/installables/Installable.java:277
+msgid "{0} {1} wasn't updated.<br/><br/>Check error logs for more information."
+msgstr "{0} {1} 업데이트에 실패했습니다.<br/><br/>자세한 사항은 로그를 확인하십시오."
+
+#. {0} is the pack name and {1} is the pack version
+#: src/main/java/com/atlauncher/data/installables/Installable.java:193
+#: src/main/java/com/atlauncher/data/installables/Installable.java:266
+msgid "{0} {1} Not Reinstalled"
+msgstr "{0} {1} 이 재설치되지 않음"
+
+#. {0} is the pack name and {1} is the pack version
+#: src/main/java/com/atlauncher/data/installables/Installable.java:196
+#: src/main/java/com/atlauncher/data/installables/Installable.java:269
+msgid "{0} {1} wasn't reinstalled.<br/><br/>Check error logs for more information."
+msgstr "{0} {1} 이 재설치되지 않았습니다.<br/><br/>더 많은 정보를 위해서는 오류 로그를 확인하십시오."
+
+#. {0} is the pack name and {1} is the pack version
+#: src/main/java/com/atlauncher/data/installables/Installable.java:206
+#: src/main/java/com/atlauncher/data/installables/Installable.java:282
+msgid "{0} {1} Not Installed"
+msgstr "{0} {1} 이 설치되지 않음"
+
+#. {0} is the pack name and {1} is the pack version
+#: src/main/java/com/atlauncher/data/installables/Installable.java:209
+#: src/main/java/com/atlauncher/data/installables/Installable.java:285
+msgid "{0} {1} wasn't installed.<br/><br/>Check error logs for more information."
+msgstr "{0} {1} 이(가) 설치되지 않았습니다.<br/><br/>자세한 정보는 오류 로그를 확인하십시오."
+
+#. {0} is the pack name and {1} is the pack version
+#: src/main/java/com/atlauncher/data/installables/Installable.java:232
+msgid "{0} {1} Installed"
+msgstr "{0} {1} 설치됨"
+
+#. {0} is the instance name
+#: src/main/java/com/atlauncher/data/installables/Installable.java:236
+msgid "{0} Updated"
+msgstr "{0} 업데이트 됨"
+
+#. {0} is the instance name and {1} is the pack version
+#: src/main/java/com/atlauncher/data/installables/Installable.java:239
+msgid "Instance {0} has been updated to version {1}."
+msgstr "인스턴스 {0} 이(가) {1} 버전으로 업데이트 되었습니다."
+
+#. {0} is the pack name and {1} is the pack version
+#: src/main/java/com/atlauncher/data/installables/Installable.java:243
+msgid "{0} {1} has been reinstalled."
+msgstr "{0} {1} 이 재설치되었습니다."
+
+#. {0} is the pack name and {1} is the pack version
+#: src/main/java/com/atlauncher/data/installables/Installable.java:246
+msgid "{0} {1} server has been installed.<br/><br/>Find it in the servers tab."
+msgstr "{0} {1} 서버가 설치되었습니다.<br/><br/>서버 탭에서 찾을 수 있습니다."
+
+#. {0} is the pack name and {1} is the pack version
+#: src/main/java/com/atlauncher/data/installables/Installable.java:250
+msgid "{0} {1} has been installed.<br/><br/>Find it in the instances tab."
+msgstr "{0} {1} 가 설치되었습니다.<br/><br/>인스턴스(Instances) 탭에서 찾을 수 있습니다."
+
+#. {0} is the loader (Forge/Fabric/Quilt), {1} is the version
+#: src/main/java/com/atlauncher/data/installables/Installable.java:401
+msgid "Removing {0} {1}"
+msgstr "{0} {1} 제거 중"
+
+#. {0} is the loader (Forge/Fabric/Quilt), {1} is the version
+#: src/main/java/com/atlauncher/data/installables/Installable.java:407
+msgid "Adding {0} {1}"
+msgstr "{0} {1} 추가 중"
+
+#. {0} is the loader (Forge/Fabric/Quilt), {1} is the version
+#: src/main/java/com/atlauncher/data/installables/Installable.java:412
+msgid "Installing {0} {1}"
+msgstr "{0} {1} 설치 중"
+
+#. #-#-#-#-#  translations.pot  #-#-#-#-#
+#. {0} is the name of the instance
+#. #-#-#-#-#  translations.pot  #-#-#-#-#
+#. {0} is the name of the instance the user is updating
+#: src/main/java/com/atlauncher/data/installables/Installable.java:417
+#: src/main/java/com/atlauncher/gui/dialogs/InstanceInstallerDialog.java:997
+msgid "Updating {0}"
+msgstr "{0} 업데이트 중"
+
+#. {0} is the name of the pack
+#: src/main/java/com/atlauncher/data/installables/Installable.java:423
+msgid "Reinstalling {0} Server"
+msgstr "{0} 서버 재설치 중"
+
+#. #-#-#-#-#  translations.pot  #-#-#-#-#
+#. {0} is the name of the pack
+#. #-#-#-#-#  translations.pot  #-#-#-#-#
+#. {0} is the name of the instance the user is reinstalling
+#: src/main/java/com/atlauncher/data/installables/Installable.java:427
+#: src/main/java/com/atlauncher/gui/dialogs/InstanceInstallerDialog.java:1000
+msgid "Reinstalling {0}"
+msgstr "{0} 재설치 중"
+
+#. #-#-#-#-#  translations.pot  #-#-#-#-#
+#. {0} is the name of the pack
+#. #-#-#-#-#  translations.pot  #-#-#-#-#
+#. {0} is the name of the pack the user is installing
+#: src/main/java/com/atlauncher/data/installables/Installable.java:432
+#: src/main/java/com/atlauncher/gui/dialogs/InstanceInstallerDialog.java:433
+msgid "Installing {0} Server"
+msgstr "{0} 서버 설치 중"
+
+#: src/main/java/com/atlauncher/data/installables/Installable.java:440
+msgid "Save Mods?"
+msgstr "모드를 저장할까요?"
+
+#: src/main/java/com/atlauncher/data/installables/Installable.java:441
+msgid "Since this update changes the Minecraft version, your custom mods may no longer work.<br/><br/>The mods installed will be removed since you've not checked the \"Save Mods\" checkbox.<br/><br/>Do you want to save your mods?"
+msgstr "이 업데이트는 마인크래프트 버전을 변경하므로 수동으로 설치된 모드가 더 이상 작동하지 않을 수 있습니다.<br/><br/>\"모드 저장\"을 선택하지 않아 설치된 모드가 제거됩니다.<br/><br/>모드들을 저장할까요?"
+
+#. {0} is the platform the modpack is from (e.g. CurseForge/Modrinth)
+#: src/main/java/com/atlauncher/workers/InstanceInstaller.java:417
+msgid "Downloading Server Pack From {0}"
+msgstr ""
+
+#: src/main/java/com/atlauncher/workers/InstanceInstaller.java:429
+#: src/main/java/com/atlauncher/workers/InstanceInstaller.java:891
+msgid "We were unable to download this modpack.<br/>This is likely due to the author of the modpack disabling third party clients from downloading it.<br/><br/>You'll be prompted shortly to download the modpack manually through your browser to your downloads folder.<br/>Once you've downloaded the file that was opened in your browser to your downloads folder, we can continue with installing the modpack.<br/><br/>This process is unfortunate, but we don't have any choice in this matter and has to be done this way."
+msgstr "이 모드팩을 다운로드 할 수 없습니다.<br/>외부 프로그램에서 파일을 직접 다운로드 하는 것을 모드팩 작성자가 차단했을 수도 있습니다.<br/><br/>곧 모드를 브라우저를 통해 수동으로 다운로드 폴더에 다운로드 하라는 메시지가 표시됩니다.<br/>브라우저에서 열린 파일을 다운로드 폴더로 다운로드하면 모드팩 설치를 계속할 수 있습니다.<br/><br/>번거롭겠지만 안타깝게도, 우리는 과정 중 생기는 이 문제에 대해 선택의 여지가 없으며 이렇게 해야 합니다."
+
+#: src/main/java/com/atlauncher/workers/InstanceInstaller.java:514
+msgid "Extracting Server Pack"
+msgstr ""
+
+#. {0} is the platform the modpack is from
+#: src/main/java/com/atlauncher/workers/InstanceInstaller.java:569
+#: src/main/java/com/atlauncher/workers/InstanceInstaller.java:587
+#: src/main/java/com/atlauncher/workers/InstanceInstaller.java:1045
+#: src/main/java/com/atlauncher/workers/InstanceInstaller.java:1401
+#: src/main/java/com/atlauncher/workers/InstanceInstaller.java:1460
+#: src/main/java/com/atlauncher/workers/InstanceInstaller.java:1626
+#: src/main/java/com/atlauncher/workers/InstanceInstaller.java:1788
+#: src/main/java/com/atlauncher/workers/InstanceInstaller.java:1953
+msgid "Generating Pack Version From {0}"
+msgstr "{0}에서 모드팩 버전 생성 중"
+
+#: src/main/java/com/atlauncher/workers/InstanceInstaller.java:865
+#: src/main/java/com/atlauncher/workers/InstanceInstaller.java:1388
+msgid "Mods Not Available"
+msgstr "모드 다운로드 불가"
+
+#: src/main/java/com/atlauncher/workers/InstanceInstaller.java:866
+#: src/main/java/com/atlauncher/workers/InstanceInstaller.java:1389
+msgid "We were unable to download some of the mods from this pack.<br/>This is likely due to the author of that mod disabling third party clients from downloading it.<br/><br/>You'll be prompted shortly to start downloading these mods manually through your browser to your downloads folder.<br/>Once you've downloaded the file that was opened in your browser to your downloads folder, you can continue through all the mods that have disabled this toggle.<br/><br/>This process is unfortunate, but we don't have any choice in this matter and has to be done this way."
+msgstr "이 팩 중 일부 모드를 다운로드 할 수 없습니다.<br/>외부 프로그램에서 파일을 직접 다운로드 하는 것을 모드 작성자가 차단했을 수도 있습니다.<br/><br/>곧 모드를 브라우저를 통해 수동으로 다운로드 폴더에 다운로드 하라는 메시지가 표시됩니다.<br/>브라우저에서 열린 파일을 다운로드 폴더로 다운로드하면 모드 설치를 계속할 수 있습니다.<br/><br/>번거롭겠지만 안타깝게도, 우리는 과정 중 생기는 이 문제에 대해 선택의 여지가 없으며 이렇게 해야 합니다."
+
+#. {0} is the platform the modpack is from (e.g. CurseForge/Modrinth)
+#: src/main/java/com/atlauncher/workers/InstanceInstaller.java:879
+#: src/main/java/com/atlauncher/workers/InstanceInstaller.java:994
+msgid "Downloading Manifest From {0}"
+msgstr "{0} 에서 매니페스트 다운로드 중"
+
+#: src/main/java/com/atlauncher/workers/InstanceInstaller.java:975
+#: src/main/java/com/atlauncher/workers/InstanceInstaller.java:1018
+msgid "Extracting Manifest"
+msgstr "매니페스트 추출 중"
+
+#: src/main/java/com/atlauncher/workers/InstanceInstaller.java:1220
+msgid "{0} Mods Not Available"
+msgstr "{0} 해당모드를 사용할 수 없음"
+
+#: src/main/java/com/atlauncher/workers/InstanceInstaller.java:1221
+msgid "Some of the mods for this pack are not available to download.<br/><br/>At this time you can only install this pack via FTB launcher."
+msgstr "팩에 있는 일부 모드를 다운로드 할 방법이 없습니다.<br/><br/>이 상황에선 FTB 런처를 통해서만 이 모드팩을 설치 할 수 있습니다."
+
+#: src/main/java/com/atlauncher/workers/InstanceInstaller.java:1441
+msgid "Downloading modpack.zip"
+msgstr "모드팩 압축 파일 다운로드 중"
+
+#: src/main/java/com/atlauncher/workers/InstanceInstaller.java:2076
+msgid "Downloading Minecraft Definition"
+msgstr "정의된 마인크래프트 파일 다운로드 중"
+
+#: src/main/java/com/atlauncher/workers/InstanceInstaller.java:2099
+msgid "Downloading Loader"
+msgstr "로더 다운로드 중"
+
+#: src/main/java/com/atlauncher/workers/InstanceInstaller.java:2836
+msgid "Downloading Logging Client"
+msgstr "로그 클라이언트 다운로드 중"
+
+#: src/main/java/com/atlauncher/workers/InstanceInstaller.java:3132
+msgid "Installing Loader (May Take Some Time)"
+msgstr "모드로더 설치 중 (시간이 꽤 걸릴 수 있습니다)"
+
+#: src/main/java/com/atlauncher/workers/InstanceInstaller.java:3148
+#: src/main/java/com/atlauncher/workers/InstanceInstaller.java:3265
+msgid "Downloading Mods"
+msgstr "모드 다운로드 중"
+
+#: src/main/java/com/atlauncher/workers/InstanceInstaller.java:3189
+#: src/main/java/com/atlauncher/workers/InstanceInstaller.java:3214
+msgid "Downloading Browser Mods"
+msgstr "브라우저로 모드 다운로드 중"
+
+#: src/main/java/com/atlauncher/workers/InstanceInstaller.java:3245
+msgid "Installing Mods"
+msgstr "모드 설치 중"
+
+#: src/main/java/com/atlauncher/workers/InstanceInstaller.java:3404
+#: src/main/java/com/atlauncher/workers/InstanceInstaller.java:3410
+msgid "Copying Overrides"
+msgstr "Overrides 복사 중"
+
+#: src/main/java/com/atlauncher/workers/InstanceInstaller.java:3422
+msgid "Calculating Files To Download"
+msgstr "다운로드 할 파일 계산 중"
+
+#: src/main/java/com/atlauncher/workers/InstanceInstaller.java:3436
+msgid "Creating Config Directories"
+msgstr "설정 폴더 만드는 중"
+
+#: src/main/java/com/atlauncher/workers/InstanceInstaller.java:3452
+#: src/main/java/com/atlauncher/workers/InstanceInstaller.java:3478
+msgid "Downloading Configs"
+msgstr "Config 파일 다운로드 중"
+
+#: src/main/java/com/atlauncher/workers/InstanceInstaller.java:3468
+msgid "Copying minecraft folder"
+msgstr "마인크래프트 폴더 복사 중"
+
+#: src/main/java/com/atlauncher/workers/InstanceInstaller.java:3474
+msgid "Copying modpack.zip files"
+msgstr "모드팩 압축 파일들 복사 중"
+
+#: src/main/java/com/atlauncher/workers/InstanceInstaller.java:3501
+msgid "Extracting Configs"
+msgstr "Config 파일 압축 푸는 중"
+
+#: src/main/java/com/atlauncher/workers/InstanceInstaller.java:3512
+#: src/main/java/com/atlauncher/workers/InstanceInstaller.java:3525
+#: src/main/java/com/atlauncher/workers/InstanceInstaller.java:3537
+#: src/main/java/com/atlauncher/workers/InstanceInstaller.java:3553
+msgid "Downloading Image"
+msgstr ""
+
+#. {0} is the platform we're checking mods on (e.g. CurseForge/Modrinth)
+#: src/main/java/com/atlauncher/workers/InstanceInstaller.java:3576
+#: src/main/java/com/atlauncher/workers/InstanceInstaller.java:3634
+msgid "Checking Mods On {0}"
+msgstr "{0}에 있는 모드 확인 중"
+
+#: src/main/java/com/atlauncher/gui/SplashScreen.java:84
+msgid "Force quit"
+msgstr "강제 종료"
+
+#: src/main/java/com/atlauncher/gui/card/NilCard.java:63
+#: src/main/java/com/atlauncher/gui/card/NilCard.java:113
+msgid "Nothing To Show"
+msgstr "표시할 내용 없음"
+
+#: src/main/java/com/atlauncher/gui/card/NilCard.java:128
+#: src/main/java/com/atlauncher/gui/tabs/CreatePackTab.java:547
+#: src/main/java/com/atlauncher/gui/tabs/settings/GeneralSettingsTab.java:241
+msgid "Create Pack"
+msgstr ""
+
+#: src/main/java/com/atlauncher/gui/card/NilCard.java:134
+msgid "Download Pack"
+msgstr ""
+
+#: src/main/java/com/atlauncher/gui/card/packbrowser/UnifiedPackCard.java:58
+#: src/main/java/com/atlauncher/gui/card/packbrowser/UnifiedPackCard.java:174
+#: src/main/java/com/atlauncher/gui/card/packbrowser/FTBPackCard.java:56
+#: src/main/java/com/atlauncher/gui/card/packbrowser/FTBPackCard.java:132
+#: src/main/java/com/atlauncher/gui/card/packbrowser/ModrinthPackCard.java:51
+#: src/main/java/com/atlauncher/gui/card/packbrowser/ModrinthPackCard.java:144
+#: src/main/java/com/atlauncher/gui/card/packbrowser/TechnicPackCard.java:49
+#: src/main/java/com/atlauncher/gui/card/packbrowser/TechnicPackCard.java:109
+#: src/main/java/com/atlauncher/gui/card/packbrowser/CurseForgePackCard.java:53
+#: src/main/java/com/atlauncher/gui/card/packbrowser/CurseForgePackCard.java:150
+#: src/main/java/com/atlauncher/gui/card/packbrowser/ATLauncherPackCard.java:53
+#: src/main/java/com/atlauncher/gui/card/packbrowser/ATLauncherPackCard.java:204
+msgid "New Instance"
+msgstr "새 인스턴스 생성"
+
+#: src/main/java/com/atlauncher/gui/card/packbrowser/UnifiedPackCard.java:59
+#: src/main/java/com/atlauncher/gui/card/packbrowser/ModrinthPackCard.java:52
+#: src/main/java/com/atlauncher/gui/card/packbrowser/CurseForgePackCard.java:54
+#: src/main/java/com/atlauncher/gui/card/packbrowser/ATLauncherPackCard.java:54
+#: src/main/java/com/atlauncher/gui/card/packbrowser/ATLauncherPackCard.java:205
+#: src/main/java/com/atlauncher/gui/tabs/CreatePackTab.java:128
+msgid "Create Server"
+msgstr "서버 만들기"
+
+#: src/main/java/com/atlauncher/gui/card/packbrowser/UnifiedPackCard.java:60
+#: src/main/java/com/atlauncher/gui/card/packbrowser/UnifiedPackCard.java:175
+#: src/main/java/com/atlauncher/gui/card/packbrowser/FTBPackCard.java:57
+#: src/main/java/com/atlauncher/gui/card/packbrowser/FTBPackCard.java:133
+#: src/main/java/com/atlauncher/gui/card/packbrowser/ModrinthPackCard.java:53
+#: src/main/java/com/atlauncher/gui/card/packbrowser/ModrinthPackCard.java:145
+#: src/main/java/com/atlauncher/gui/card/packbrowser/TechnicPackCard.java:50
+#: src/main/java/com/atlauncher/gui/card/packbrowser/TechnicPackCard.java:110
+#: src/main/java/com/atlauncher/gui/card/packbrowser/CurseForgePackCard.java:55
+#: src/main/java/com/atlauncher/gui/card/packbrowser/CurseForgePackCard.java:151
+#: src/main/java/com/atlauncher/gui/card/packbrowser/ATLauncherPackCard.java:57
+#: src/main/java/com/atlauncher/gui/card/packbrowser/ATLauncherPackCard.java:207
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:120
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:752
+#: src/main/java/com/atlauncher/gui/card/ServerCard.java:68
+msgid "Website"
+msgstr "웹사이트"
+
+#: src/main/java/com/atlauncher/gui/card/packbrowser/UnifiedPackCard.java:116
+#: src/main/java/com/atlauncher/gui/card/packbrowser/ModrinthPackCard.java:97
+#: src/main/java/com/atlauncher/gui/card/packbrowser/CurseForgePackCard.java:103
+#: src/main/java/com/atlauncher/gui/card/packbrowser/ATLauncherPackCard.java:161
+#: src/main/java/com/atlauncher/gui/tabs/CreatePackTab.java:523
+msgid "Are you sure you want to create a server?"
+msgstr "정말 이 서버를 만드시겠습니까?"
+
+#: src/main/java/com/atlauncher/gui/card/packbrowser/UnifiedPackCard.java:117
+#: src/main/java/com/atlauncher/gui/card/packbrowser/ModrinthPackCard.java:98
+#: src/main/java/com/atlauncher/gui/card/packbrowser/CurseForgePackCard.java:104
+#: src/main/java/com/atlauncher/gui/card/packbrowser/ATLauncherPackCard.java:162
+#: src/main/java/com/atlauncher/gui/tabs/CreatePackTab.java:526
+msgid "Creating a server won't allow you play Minecraft, it's for letting others play together.<br/><br/>If you just want to play Minecraft, you don't want to create a server, and instead will want to create an instance.<br/><br/>Are you sure you want to create a server?"
+msgstr "서버를 만드는 것은 마인크래프트를 할 수 있는 것과 다르며, 여러명이서 함께 플레이 할 때 추가로 사용하는 것입니다.<br/><br/>단순이 마인크래프트를 즐길려고 한다면, 서버를 만들고 싶은게 아닌 인스턴스를 만들고 싶은 것입니다.<br/><br/>정말로 서버를 만드시겠습니까?"
+
+#: src/main/java/com/atlauncher/gui/card/packbrowser/ATLauncherPackCard.java:56
+#: src/main/java/com/atlauncher/gui/card/packbrowser/ATLauncherPackCard.java:206
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:119
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:751
+#: src/main/java/com/atlauncher/gui/card/ServerCard.java:67
+msgid "Support"
+msgstr "지원"
+
+#: src/main/java/com/atlauncher/gui/card/packbrowser/ATLauncherPackCard.java:58
+#: src/main/java/com/atlauncher/gui/card/packbrowser/ATLauncherPackCard.java:208
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:86
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:739
+#: src/main/java/com/atlauncher/gui/tabs/settings/GeneralSettingsTab.java:244
+#: src/main/java/com/atlauncher/gui/tabs/ServersTab.java:129
+msgid "Servers"
+msgstr "서버"
+
+#: src/main/java/com/atlauncher/gui/card/packbrowser/ATLauncherPackCard.java:59
+#: src/main/java/com/atlauncher/gui/card/packbrowser/ATLauncherPackCard.java:209
+msgid "View Mods"
+msgstr "모드 보기"
+
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:81
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:645
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:734
+#: src/main/java/com/atlauncher/gui/dialogs/InstanceInstallerDialog.java:242
+msgid "Update"
+msgstr "업데이트"
+
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:82
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:736
+#: src/main/java/com/atlauncher/gui/card/ServerCard.java:61
+#: src/main/java/com/atlauncher/gui/card/ServerCard.java:253
+#: src/main/java/com/atlauncher/gui/tabs/accounts/AccountsTab.java:252
+#: src/main/java/com/atlauncher/gui/tabs/accounts/AccountsTab.java:428
+#: src/main/java/com/atlauncher/gui/tabs/accounts/AccountsTab.java:540
+msgid "Delete"
+msgstr "삭제"
+
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:83
+#: src/main/java/com/atlauncher/gui/dialogs/InstanceExportDialog.java:301
+msgid "Export"
+msgstr "실행"
+
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:84
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:737
+msgid "Add Mods"
+msgstr "모드 추가"
+
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:85
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:738
+msgid "Edit Mods"
+msgstr "모드 변경"
+
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:87
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:740
+msgid "Open Website"
+msgstr "웹 사이트 열기"
+
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:88
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:743
+#: src/main/java/com/atlauncher/gui/tabs/settings/GeneralSettingsTab.java:247
+#: src/main/java/com/atlauncher/gui/tabs/SettingsTab.java:134
+msgid "Settings"
+msgstr "설정"
+
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:91
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:742
+msgid "Open Resources"
+msgstr ""
+
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:101
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:624
+msgid "Play Online"
+msgstr "온라인으로 즐기기"
+
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:102
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:630
+msgid "Play Offline"
+msgstr "오프라인으로 즐기기"
+
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:103
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:733
+msgid "Play"
+msgstr "플레이"
+
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:112
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:745
+msgid "Normal Backup"
+msgstr "기본 백업"
+
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:113
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:746
+msgid "Normal + Mods Backup"
+msgstr "기본+모드 백업"
+
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:114
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:747
+msgid "Full Backup"
+msgstr "전부 백업"
+
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:115
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:735
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:748
+#: src/main/java/com/atlauncher/gui/card/ServerCard.java:60
+#: src/main/java/com/atlauncher/gui/card/ServerCard.java:252
+msgid "Backup"
+msgstr "백업"
+
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:118
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:750
+#: src/main/java/com/atlauncher/gui/card/ServerCard.java:66
+msgid "Discord"
+msgstr "Discord"
+
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:121
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:753
+#: src/main/java/com/atlauncher/gui/card/ServerCard.java:69
+msgid "Wiki"
+msgstr "위키"
+
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:122
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:754
+#: src/main/java/com/atlauncher/gui/card/ServerCard.java:70
+msgid "Source"
+msgstr "출처"
+
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:123
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:755
+#: src/main/java/com/atlauncher/gui/card/ServerCard.java:71
+msgid "Get Help"
+msgstr "도움 받기"
+
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:126
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:640
+#: src/main/java/com/atlauncher/gui/card/CurseForgeProjectCard.java:50
+#: src/main/java/com/atlauncher/gui/card/ModrinthSearchHitCard.java:47
+#: src/main/java/com/atlauncher/gui/dialogs/InstanceInstallerDialog.java:242
+#: src/main/java/com/atlauncher/gui/dialogs/EditModsDialog.java:296
+#: src/main/java/com/atlauncher/gui/components/ModsJCheckBox.java:289
+msgid "Reinstall"
+msgstr "재설치"
+
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:127
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:672
+msgid "Clone"
+msgstr "복제"
+
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:128
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:653
+msgid "Rename"
+msgstr "이름 변경"
+
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:129
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:657
+#: src/main/java/com/atlauncher/gui/card/ServerCard.java:183
+msgid "Change Description"
+msgstr "설명 변경"
+
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:130
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:665
+#: src/main/java/com/atlauncher/gui/card/ServerCard.java:186
+msgid "Change Image"
+msgstr "이미지 변경"
+
+#. {0} is the loader (Forge/Fabric/Quilt)
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:132
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:138
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:144
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:151
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:157
+msgid "Add {0}"
+msgstr "{0} 을추가하기"
+
+#. #-#-#-#-#  translations.pot  #-#-#-#-#
+#. {0} is the loader (Forge/Fabric/Quilt)
+#. #-#-#-#-#  translations.pot  #-#-#-#-#
+#. {0} is the loader (Forge/Fabric/Quilt)
+#. #-#-#-#-#  translations.pot  #-#-#-#-#
+#. {0} is the loader (Forge/Fabric/Quilt)
+#. #-#-#-#-#  translations.pot  #-#-#-#-#
+#. {0} is the loader (Forge/Fabric/Quilt)
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:134
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:140
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:147
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:153
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:159
+msgid "Change {0} Version"
+msgstr "{0} 버전으로 바꾸기"
+
+#. #-#-#-#-#  translations.pot  #-#-#-#-#
+#. {0} is the loader (Forge/Fabric/Quilt)
+#. #-#-#-#-#  translations.pot  #-#-#-#-#
+#. {0} is the loader (Forge/Fabric/Quilt)
+#. #-#-#-#-#  translations.pot  #-#-#-#-#
+#. {0} is the loader (Forge/LegacyFabric/Quilt)
+#. #-#-#-#-#  translations.pot  #-#-#-#-#
+#. {0} is the loader (Forge/Fabric/Quilt)
+#. #-#-#-#-#  translations.pot  #-#-#-#-#
+#. {0} is the loader (Forge/Fabric/Quilt)
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:136
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:142
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:149
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:155
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:161
+msgid "Remove {0}"
+msgstr "{0} 없애기"
+
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:162
+msgid "Edit Instance"
+msgstr "인스턴스 편집"
+
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:289
+msgid "Reminder"
+msgstr ""
+
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:290
+msgid "You may not distribute ANY resources."
+msgstr ""
+
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:506
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:587
+msgid "Cannot update pack as you have no account selected."
+msgstr "선택된 계정이 없어, 모드팩을 업데이트 할 수 없습니다."
+
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:533
+msgid "Delete Instance"
+msgstr "인스턴스 삭제"
+
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:535
+msgid "Are you sure you want to delete the instance \"{0}\"?"
+msgstr "정말 {0} 를 삭제하시겠습니까?"
+
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:540
+msgid "Deleting Instance"
+msgstr "인스턴스 삭제 중"
+
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:541
+msgid "Deleting Instance. Please wait..."
+msgstr "인스턴스 삭제 중. 잠시 기다려 주세요..."
+
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:545
+msgid "Deleted Instance Successfully"
+msgstr "인스턴스를 성공적으로 삭제했습니다"
+
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:558
+msgid "Instance Corrupt"
+msgstr "인스턴스가 오염되었습니다"
+
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:559
+msgid "Cannot play instance as it's corrupted. Please reinstall, update or delete it."
+msgstr "인스턴스가 오염되어 플레이 할 수 없습니다. 재설치나 업데이트 또는 삭제하십시오."
+
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:566
+msgid "Cannot launch instance due to your Java version"
+msgstr "당신의 자바 버전으로 인해 인스턴스를 실행할 수 없습니다."
+
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:567
+msgid "There was an issue launching this instance.<br/><br/>This version of the pack requires a Java version which you are not using.<br/><br/>Please install that version of Java and try again.<br/><br/>Java version needed: {0}"
+msgstr "인스턴스를 실행하는 도중에 문제가 발생했습니다.<br/><br/>이 버전의 모드팩은 당신이 사용하고 있지 않은 버전의 자바를 필요로 합니다.<br/><br/>그 버전의 자바를 설치하고 다시 시도하십시오.<br/><br/>필요한 자바 버전: {0}"
+
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:575
+msgid "Update Available"
+msgstr "업데이트 가능"
+
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:577
+msgid "An update is available for this instance.<br/><br/>Do you want to update now?"
+msgstr "이 인스턴스에 대한 업데이트가 가능합니다.<br/><br/>지금 업데이트 하시겠습니까?"
+
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:580
+msgid "Ignore This Update"
+msgstr "이 업데이트 무시"
+
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:581
+msgid "Don't Remind Me Again"
+msgstr "다시 알리지 않기"
+
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:678
+#: src/main/java/com/atlauncher/gui/dialogs/ModsChooser.java:141
+msgid "Share Code"
+msgstr "공유 코드"
+
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:691
+msgid "Error getting share code."
+msgstr "공유 코드를 가져오는 중 문제가 발생했습니다."
+
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:697
+msgid "Share code copied to clipboard"
+msgstr "공유 코드가 클립보드에 복사되었습니다"
+
+#: src/main/java/com/atlauncher/gui/card/ModrinthProjectDependencyCard.java:86
+#: src/main/java/com/atlauncher/gui/card/CurseForgeProjectCard.java:49
+#: src/main/java/com/atlauncher/gui/card/CurseForgeFileDependencyCard.java:89
+#: src/main/java/com/atlauncher/gui/card/ModrinthSearchHitCard.java:46
+#: src/main/java/com/atlauncher/gui/tabs/accounts/AccountsTab.java:242
+#: src/main/java/com/atlauncher/gui/tabs/accounts/AccountsTab.java:387
+#: src/main/java/com/atlauncher/gui/tabs/accounts/AccountsTab.java:536
+#: src/main/java/com/atlauncher/gui/dialogs/ModrinthVersionSelectorDialog.java:221
+#: src/main/java/com/atlauncher/gui/dialogs/EditModsDialog.java:205
+#: src/main/java/com/atlauncher/gui/dialogs/CurseForgeProjectFileSelectorDialog.java:128
+#: src/main/java/com/atlauncher/gui/handlers/ModsJCheckBoxTransferHandler.java:88
+msgid "Add"
+msgstr "추가"
+
+#: src/main/java/com/atlauncher/gui/card/ModrinthProjectDependencyCard.java:87
+#: src/main/java/com/atlauncher/gui/card/CurseForgeProjectCard.java:80
+#: src/main/java/com/atlauncher/gui/card/CurseForgeFileDependencyCard.java:90
+#: src/main/java/com/atlauncher/gui/card/ModrinthSearchHitCard.java:77
+msgid "View"
+msgstr "보기"
+
+#: src/main/java/com/atlauncher/gui/card/CurseForgeProjectCard.java:51
+#: src/main/java/com/atlauncher/gui/card/ModrinthSearchHitCard.java:48
+#: src/main/java/com/atlauncher/gui/components/ModsJCheckBox.java:222
+msgid "Remove"
+msgstr "삭제"
+
+#: src/main/java/com/atlauncher/gui/card/ServerCard.java:56
+#: src/main/java/com/atlauncher/gui/card/ServerCard.java:248
+#: src/main/java/com/atlauncher/gui/tabs/tools/AbstractToolPanel.java:37
+msgid "Launch"
+msgstr "실행"
+
+#: src/main/java/com/atlauncher/gui/card/ServerCard.java:57
+#: src/main/java/com/atlauncher/gui/card/ServerCard.java:249
+msgid "Launch & Close"
+msgstr "실행 & 닫기"
+
+#: src/main/java/com/atlauncher/gui/card/ServerCard.java:58
+#: src/main/java/com/atlauncher/gui/card/ServerCard.java:250
+msgid "Launch With GUI"
+msgstr "GUI로 실행"
+
+#: src/main/java/com/atlauncher/gui/card/ServerCard.java:59
+#: src/main/java/com/atlauncher/gui/card/ServerCard.java:251
+msgid "Launch With GUI & Close"
+msgstr "GUI로 실행 & 닫기"
+
+#: src/main/java/com/atlauncher/gui/card/ServerCard.java:151
+msgid "Delete Server"
+msgstr "서버 삭제"
+
+#: src/main/java/com/atlauncher/gui/card/ServerCard.java:152
+msgid "Are you sure you want to delete this server?"
+msgstr "정말 이 서버를 지우시겠습니까?"
+
+#: src/main/java/com/atlauncher/gui/card/ServerCard.java:157
+msgid "Deleting Server"
+msgstr "서버 삭제 중"
+
+#: src/main/java/com/atlauncher/gui/card/ServerCard.java:158
+msgid "Deleting Server. Please wait..."
+msgstr "서버 삭제 중. 잠시 기다려 주세요..."
+
+#: src/main/java/com/atlauncher/gui/card/ServerCard.java:162
+msgid "Deleted Server Successfully"
+msgstr "성공적으로 서버가 삭제되었습니다"
+
+#. {0} is the name of the launcher (ATLauncher)
+#: src/main/java/com/atlauncher/gui/LauncherConsole.java:60
+msgid "{0} Console"
+msgstr "{0} 콘솔"
+
+#: src/main/java/com/atlauncher/gui/LauncherConsole.java:128
+#: src/main/java/com/atlauncher/gui/LauncherConsole.java:166
+#: src/main/java/com/atlauncher/gui/LauncherConsole.java:177
+#: src/main/java/com/atlauncher/gui/tabs/news/NewsTab.java:172
+#: src/main/java/com/atlauncher/gui/dialogs/ModrinthExportOverridesDialog.java:73
+msgid "Copy"
+msgstr "복사"
+
+#: src/main/java/com/atlauncher/gui/tabs/tools/ToolsTab.java:54
+#: src/main/java/com/atlauncher/gui/tabs/settings/GeneralSettingsTab.java:246
+msgid "Tools"
+msgstr "도구"
+
+#: src/main/java/com/atlauncher/gui/tabs/tools/SkinUpdaterToolPanel.java:37
+#: src/main/java/com/atlauncher/gui/tabs/tools/SkinUpdaterToolPanel.java:49
+msgid "Skin Updater"
+msgstr "스킨 업데이터"
+
+#: src/main/java/com/atlauncher/gui/tabs/tools/SkinUpdaterToolPanel.java:40
+msgid "This tool will update all your accounts skins on the launcher."
+msgstr "이 도구는 런처에 있는 모든 계정의 스킨들을 업데이트 합니다."
+
+#: src/main/java/com/atlauncher/gui/tabs/tools/SkinUpdaterToolPanel.java:50
+msgid "Updating Skins. Please Wait!"
+msgstr "스킨 업데이트 중. 잠시만 기다려 주세요!"
+
+#: src/main/java/com/atlauncher/gui/tabs/tools/SkinUpdaterToolPanel.java:60
+#: src/main/java/com/atlauncher/gui/tabs/tools/LibrariesDeleterToolPanel.java:42
+#: src/main/java/com/atlauncher/gui/tabs/tools/LogClearerToolPanel.java:42
+#: src/main/java/com/atlauncher/gui/tabs/tools/DownloadClearerToolPanel.java:42
+msgid "Success"
+msgstr "성공"
+
+#: src/main/java/com/atlauncher/gui/tabs/tools/SkinUpdaterToolPanel.java:61
+msgid "Successfully updated skins."
+msgstr "스킨 업데이트 성공."
+
+#: src/main/java/com/atlauncher/gui/tabs/tools/LibrariesDeleterToolPanel.java:31
+msgid "Libraries Deleter"
+msgstr "라이브러리 제거기"
+
+#: src/main/java/com/atlauncher/gui/tabs/tools/LibrariesDeleterToolPanel.java:33
+msgid "This tool clears out all the libraries used by Minecraft. Instances may need to be reinstalled if launching them once doesn't download all libraries."
+msgstr "이 도구는 마인크래프트에 사용되는 모든 라이브러리를 지웁니다. 이후 인스턴스를 처음 실행할 때 삭제된 라이브러리는 다시 다운로드를 해야 할 수도 있습니다."
+
+#: src/main/java/com/atlauncher/gui/tabs/tools/LibrariesDeleterToolPanel.java:43
+msgid "Successfully deleted libraries."
+msgstr "라이브러리를 삭제했습니다."
+
+#: src/main/java/com/atlauncher/gui/tabs/tools/NetworkCheckerToolPanel.java:37
+#: src/main/java/com/atlauncher/gui/tabs/tools/NetworkCheckerToolPanel.java:53
+#: src/main/java/com/atlauncher/gui/tabs/tools/NetworkCheckerToolPanel.java:60
+#: src/main/java/com/atlauncher/gui/tabs/tools/NetworkCheckerToolPanel.java:78
+msgid "Network Checker"
+msgstr "네트워크 검사기"
+
+#: src/main/java/com/atlauncher/gui/tabs/tools/NetworkCheckerToolPanel.java:41
+msgid "This tool does various tests on your network and determines any issues that may pop up with connecting to our file servers and to other servers."
+msgstr "이 도구는 네트워크에 여러가지 테스트를 수행하고 파일 서버와 다른 서버에 연결 할때 발생할 수 있는 문제들을 확인합니다."
+
+#: src/main/java/com/atlauncher/gui/tabs/tools/NetworkCheckerToolPanel.java:54
+msgid "Please note that the data from this tool is sent to ATLauncher so we can diagnose possible issues in your setup. This test may take up to 10 minutes or longer to complete and you will be unable to do anything while it's running. Please also keep in mind that this test will use some of your bandwidth, it will use approximately 100MB.<br/><br/>Do you wish to continue?"
+msgstr "이 도구는 ATLauncher로 데이터를 전송하여 설정 중 발생하는 문제들을 진단 할 수 있습니다. 이 테스트는 완료하는 데 최대 10분 이상 걸릴 수 있으며 실행 중에는 아무것도 할 수 없습니다. 또한 이 테스트는 인터넷을 사용하며 약 100MB의 통신이 이루어 집니다. <br/> <br/> 계속 하시겠습니까?"
+
+#: src/main/java/com/atlauncher/gui/tabs/tools/NetworkCheckerToolPanel.java:61
+msgid "Network Checker Running. Please Wait!"
+msgstr "네트워크 검사 중입니다. 잠시만 기다려 주세요."
+
+#: src/main/java/com/atlauncher/gui/tabs/tools/NetworkCheckerToolPanel.java:79
+msgid "The network checker tool has completed and the data sent off to ATLauncher.<br/><br/>Thanks for your input to help understand and fix network related issues."
+msgstr "네트워크 진단 도구가 완료되어 ATLauncher에 정보를 전송했습니다.<br/><br/>네트워크 문제 해결에 도움을 주셔서 감사합니다."
+
+#: src/main/java/com/atlauncher/gui/tabs/tools/LogClearerToolPanel.java:31
+msgid "Log Clearer"
+msgstr "로그 청소기"
+
+#: src/main/java/com/atlauncher/gui/tabs/tools/LogClearerToolPanel.java:33
+msgid "This tool clears out all logs created by the launcher (not included those made by instances) to free up space and old junk."
+msgstr "이 도구는 정크 파일을 지우고 공간을 확보하기 위해 런처에 의해 생성된 모든 로그를 지웁니다. (인스턴스에 의해 생성된 것은 포함되지 않습니다)"
+
+#: src/main/java/com/atlauncher/gui/tabs/tools/LogClearerToolPanel.java:43
+msgid "Successfully cleared the logs."
+msgstr "성공적으로 로그를 삭제했습니다."
+
+#: src/main/java/com/atlauncher/gui/tabs/tools/DebugModePanel.java:33
+msgid "Debug Mode"
+msgstr "디버그 모드"
+
+#: src/main/java/com/atlauncher/gui/tabs/tools/DebugModePanel.java:35
+msgid "Use this to relaunch ATLauncher in debug mode. This can be used to get more debug logs in order to help diagnose issues with ATLauncher."
+msgstr "ATLauncher를 디버그 모드로 다시 시작합니다. ATLauncher의 문제 해결을 위한 디버그 로그를 생성합니다."
+
+#: src/main/java/com/atlauncher/gui/tabs/tools/DownloadClearerToolPanel.java:31
+msgid "Download Clearer"
+msgstr "다운로드 청소기"
+
+#: src/main/java/com/atlauncher/gui/tabs/tools/DownloadClearerToolPanel.java:33
+msgid "This tool clears out all the downloads done by the launcher. This will not affect any instances, but means new pack installs may take longer as it needs to redownload mods."
+msgstr "이 도구는 런처가 다운로드했던 모든 것을 지워버립니다. 인스턴스에는 영향을 주지 않지만, 새로운 팩을 설치할 때 모드를 다시 다운로드 하기 위해 시간이 다소 걸릴 수 있습니다."
+
+#: src/main/java/com/atlauncher/gui/tabs/tools/DownloadClearerToolPanel.java:43
+msgid "Successfully cleared the downloads."
+msgstr "다운로드를 모두 삭제했습니다."
+
+#: src/main/java/com/atlauncher/gui/tabs/CreatePackTab.java:104
+msgid "Releases"
+msgstr "릴리즈"
+
+#: src/main/java/com/atlauncher/gui/tabs/CreatePackTab.java:108
+msgid "Experiments"
+msgstr "실험 버전"
+
+#: src/main/java/com/atlauncher/gui/tabs/CreatePackTab.java:112
+msgid "Snapshots"
+msgstr "스냅샷"
+
+#: src/main/java/com/atlauncher/gui/tabs/CreatePackTab.java:116
+msgid "Betas"
+msgstr "베타 버전"
+
+#: src/main/java/com/atlauncher/gui/tabs/CreatePackTab.java:120
+msgid "Alphas"
+msgstr "알파 버전"
+
+#: src/main/java/com/atlauncher/gui/tabs/CreatePackTab.java:124
+msgid "None"
+msgstr "없음"
+
+#: src/main/java/com/atlauncher/gui/tabs/CreatePackTab.java:132
+msgid "Create Instance"
+msgstr "인스턴스 생성"
+
+#: src/main/java/com/atlauncher/gui/tabs/CreatePackTab.java:144
+#: src/main/java/com/atlauncher/gui/tabs/settings/GeneralSettingsTab.java:208
+#: src/main/java/com/atlauncher/gui/dialogs/RenameInstanceDialog.java:96
+msgid "Instance Name"
+msgstr "인스턴스 이름"
+
+#: src/main/java/com/atlauncher/gui/tabs/CreatePackTab.java:159
+msgid "Description"
+msgstr "설명"
+
+#: src/main/java/com/atlauncher/gui/tabs/CreatePackTab.java:182
+#: src/main/java/com/atlauncher/gui/tabs/settings/GeneralSettingsTab.java:209
+msgid "Minecraft Version"
+msgstr "마인크래프트 버전"
+
+#: src/main/java/com/atlauncher/gui/tabs/CreatePackTab.java:187
+msgid "Filter"
+msgstr "필터"
+
+#: src/main/java/com/atlauncher/gui/tabs/CreatePackTab.java:223
+msgid "Loader"
+msgstr "모드 로더"
+
+#: src/main/java/com/atlauncher/gui/tabs/CreatePackTab.java:250
+#: src/main/java/com/atlauncher/gui/dialogs/InstanceInstallerDialog.java:1161
+msgid "Loader Version"
+msgstr "모드 로더 버전"
+
+#: src/main/java/com/atlauncher/gui/tabs/CreatePackTab.java:310
+#: src/main/java/com/atlauncher/gui/dialogs/InstanceInstallerDialog.java:1168
+msgid "Getting Loader Versions"
+msgstr "모드로더 버전을 가져오는 중"
+
+#: src/main/java/com/atlauncher/gui/tabs/CreatePackTab.java:320
+msgid "Select Loader First"
+msgstr "모드로더를 우선 선택해 주세요"
+
+#: src/main/java/com/atlauncher/gui/tabs/CreatePackTab.java:444
+#: src/main/java/com/atlauncher/gui/dialogs/InstanceExportDialog.java:121
+msgid "Version"
+msgstr "버전"
+
+#: src/main/java/com/atlauncher/gui/tabs/CreatePackTab.java:444
+msgid "Released"
+msgstr "출시일"
+
+#: src/main/java/com/atlauncher/gui/tabs/CreatePackTab.java:444
+#: src/main/java/com/atlauncher/gui/handlers/ModsJCheckBoxTransferHandler.java:89
+msgid "Type"
+msgstr "유형"
+
+#: src/main/java/com/atlauncher/gui/tabs/InstancesTab.java:50
+#: src/main/java/com/atlauncher/gui/tabs/settings/GeneralSettingsTab.java:243
+msgid "Instances"
+msgstr "인스턴스"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/NetworkSettingsTab.java:74
+#: src/main/java/com/atlauncher/gui/tabs/settings/NetworkSettingsTab.java:295
+msgid "Concurrent Connections"
+msgstr "동시 접속 횟수"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/NetworkSettingsTab.java:75
+#: src/main/java/com/atlauncher/gui/tabs/settings/NetworkSettingsTab.java:297
+msgid "This determines how many connections will be made when downloading files."
+msgstr "파일을 다운로드할때 몇개의 연결이 이루어질지를 결정합니다."
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/NetworkSettingsTab.java:93
+#: src/main/java/com/atlauncher/gui/tabs/settings/NetworkSettingsTab.java:299
+msgid "Connection Timeout"
+msgstr "연결 초과 시간"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/NetworkSettingsTab.java:94
+#: src/main/java/com/atlauncher/gui/tabs/settings/NetworkSettingsTab.java:301
+msgid "This determines how long connections will wait before timing out."
+msgstr "연결 시간이 초과된 것으로 간주하는 시간을 결정합니다."
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/NetworkSettingsTab.java:112
+#: src/main/java/com/atlauncher/gui/tabs/settings/NetworkSettingsTab.java:303
+msgid "Modrinth Api Key"
+msgstr ""
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/NetworkSettingsTab.java:113
+#: src/main/java/com/atlauncher/gui/tabs/settings/NetworkSettingsTab.java:305
+msgid "Api key to use when making requests to Modrinth. This is unecessary to set unless you want to access private data."
+msgstr ""
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/NetworkSettingsTab.java:134
+#: src/main/java/com/atlauncher/gui/tabs/settings/NetworkSettingsTab.java:309
+msgid "Enable Proxy"
+msgstr "프록시 활성화"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/NetworkSettingsTab.java:135
+#: src/main/java/com/atlauncher/gui/tabs/settings/NetworkSettingsTab.java:310
+msgid "If you use a proxy to connect to the internet you can enable it here."
+msgstr "만약 인터넷을 연결하는 데에 프록시를 사용한다면 여기서 그걸 활성화 할 수 있습니다."
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/NetworkSettingsTab.java:163
+#: src/main/java/com/atlauncher/gui/tabs/settings/NetworkSettingsTab.java:313
+msgid "Proxy Host"
+msgstr "프록시 주소"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/NetworkSettingsTab.java:164
+#: src/main/java/com/atlauncher/gui/tabs/settings/NetworkSettingsTab.java:314
+msgid "This is the IP/hostname used to connect to the proxy."
+msgstr "이것은 프록시에 연결하는 데에 사용되는 IP/주소 입니다."
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/NetworkSettingsTab.java:182
+#: src/main/java/com/atlauncher/gui/tabs/settings/NetworkSettingsTab.java:316
+msgid "Proxy Port"
+msgstr "프록시 포트"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/NetworkSettingsTab.java:183
+#: src/main/java/com/atlauncher/gui/tabs/settings/NetworkSettingsTab.java:317
+msgid "This is the port used to connect to the proxy."
+msgstr "이것은 프록시에 연결하는 데에 사용되는 포트 입니다."
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/NetworkSettingsTab.java:204
+#: src/main/java/com/atlauncher/gui/tabs/settings/NetworkSettingsTab.java:319
+msgid "Proxy Type"
+msgstr "프록시 종류"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/NetworkSettingsTab.java:205
+#: src/main/java/com/atlauncher/gui/tabs/settings/NetworkSettingsTab.java:321
+msgid "This is the type of connection the proxy uses. Either HTTP, SOCKS or DIRECT."
+msgstr "프록시의 연결 방식을 설정합니다."
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/NetworkSettingsTab.java:242
+msgid "Checking Proxy"
+msgstr "프록시 확인 중"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/NetworkSettingsTab.java:243
+msgid "Checking the proxy entered."
+msgstr "입력한 프록시 확인 중"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/NetworkSettingsTab.java:256
+#: src/main/java/com/atlauncher/gui/tabs/settings/JavaSettingsTab.java:649
+#: src/main/java/com/atlauncher/gui/tabs/settings/JavaSettingsTab.java:662
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/JavaInstanceSettingsTab.java:655
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/JavaInstanceSettingsTab.java:668
+msgid "Help"
+msgstr "도움말"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/NetworkSettingsTab.java:257
+msgid "Cannot connect to proxy. Please check the settings and try again."
+msgstr "프록시와 연결할 수 없습니다. 설정을 확인 후 다시 시도해 주세요."
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/NetworkSettingsTab.java:285
+msgid "Network"
+msgstr "네트워크"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/ModsSettingsTab.java:54
+msgid "Default Mod Platform"
+msgstr "기본 모드 플랫폼"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/ModsSettingsTab.java:55
+msgid "The default mod platform to use when adding mods to instances, as well as the platform to use when updating/reinstalling mods on multiple platforms."
+msgstr "인스턴스에 모드를 추가할 때 사용할 기본 모드 플랫폼과 여러 플랫폼에서 모드를 업데이트/재설치할 때 우선 사용할 플랫폼입니다."
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/ModsSettingsTab.java:85
+msgid "Add Mod Restrictions"
+msgstr "모드 표시 제한"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/ModsSettingsTab.java:86
+msgid "What restrictions should be in place when adding mods from a mod platform."
+msgstr "모드 플랫폼에서 모드를 검색 및 추가 할 때 표시될 모드를 제한할 방식을 지정합니다."
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/ModsSettingsTab.java:95
+msgid "Only show mods for current Minecraft version"
+msgstr "마인크래프트 버전과 일치하는 모드만 표시"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/ModsSettingsTab.java:97
+msgid "Show mods for the current major Minecraft version (eg: 1.16.x)"
+msgstr "중간 버전까지 일치하는 모드만 표시 (예: 1.16.x)"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/ModsSettingsTab.java:99
+msgid "Show mods for all Minecraft versions"
+msgstr "모든 마인크래프트 버전의 모드 표시"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/ModsSettingsTab.java:118
+msgid "Enable Added Mods By Default?"
+msgstr "수동 추가된 모드 자동 활성화"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/ModsSettingsTab.java:120
+msgid "When adding mods manually, should they be enabled automatically?"
+msgstr "수동으로 설치한 모드를 자동으로 활성화합니다."
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/ModsSettingsTab.java:137
+msgid "Allow CurseForge Alpha/Beta Files?"
+msgstr ""
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/ModsSettingsTab.java:139
+msgid "This will enable using Alpha/Beta files from CurseForge by default when installing modpacks as well as updating to Alpha/Beta versions from stable release versions."
+msgstr ""
+
+#. {0} is the platform (e.g. CurseForge/Modrinth)
+#: src/main/java/com/atlauncher/gui/tabs/settings/ModsSettingsTab.java:159
+#: src/main/java/com/atlauncher/gui/tabs/settings/ModsSettingsTab.java:182
+msgid "Don't Check Mods On {0}?"
+msgstr "{0}에서 모드 확인하지 않기"
+
+#. {0} is the platform (e.g. CurseForge/Modrinth)
+#: src/main/java/com/atlauncher/gui/tabs/settings/ModsSettingsTab.java:161
+#: src/main/java/com/atlauncher/gui/tabs/settings/ModsSettingsTab.java:184
+msgid "When installing packs or adding mods manually to instances, we check for the file on {0} to show more information about the mod as well as make updating easier. Disabling this will mean you won't be able to update manually added mods from within the launcher."
+msgstr "모드팩을 설치하거나 인스턴스에 모드를 수동으로 추가하려 할 때 {0}을 통해 모드 정보를 불러와 업데이트 편의성을 높이고 있습니다. 이걸 비활성화 할 경우 런처에서 수동으로 추가된 모드의 업데이트를 제공할 수 없습니다."
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/ModsSettingsTab.java:204
+msgid "Default Export Format"
+msgstr "기본 내보내기 형식"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/ModsSettingsTab.java:205
+msgid "The default format to export instances to. Can also be changed at time of export."
+msgstr "내보내기 형식 기본값 입니다. 내보내기 과정에서도 바꿀 수 있습니다."
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/ModsSettingsTab.java:251
+#: src/main/java/com/atlauncher/gui/dialogs/AddModsDialog.java:184
+#: src/main/java/com/atlauncher/gui/dialogs/AddModsDialog.java:556
+msgid "Mods"
+msgstr "모드"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/JavaSettingsTab.java:120
+#: src/main/java/com/atlauncher/gui/tabs/settings/JavaSettingsTab.java:188
+#: src/main/java/com/atlauncher/gui/tabs/settings/JavaSettingsTab.java:705
+msgid "You're running a 32 bit Java and therefore cannot use more than 1GB of Ram. Please see http://atl.pw/32bit for help."
+msgstr "32 비트 Java를 실행 중이므로 1GB 이상의 Ram을 사용할 수 없습니다. 도움말은 http://atl.pw/32bit를 참조하십시오."
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/JavaSettingsTab.java:125
+#: src/main/java/com/atlauncher/gui/tabs/settings/JavaSettingsTab.java:709
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/JavaInstanceSettingsTab.java:117
+msgid "Initial Memory/Ram"
+msgstr "초기 메모리/램"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/JavaSettingsTab.java:126
+#: src/main/java/com/atlauncher/gui/tabs/settings/JavaSettingsTab.java:710
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/JavaInstanceSettingsTab.java:118
+msgid "Initial memory/ram is the starting amount of memory/ram to use when starting Minecraft. This should be left at the default of 512 MB unless you know what your doing."
+msgstr "마인크래프트가 사용할 초기 메모리/램 용량입니다. 이 값에 대한 지식이 없는 경우 기본값인 512MB로 설정하십시오."
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/JavaSettingsTab.java:158
+#: src/main/java/com/atlauncher/gui/tabs/settings/JavaSettingsTab.java:217
+#: src/main/java/com/atlauncher/gui/tabs/settings/JavaSettingsTab.java:231
+#: src/main/java/com/atlauncher/gui/tabs/settings/JavaSettingsTab.java:266
+#: src/main/java/com/atlauncher/gui/tabs/settings/JavaSettingsTab.java:577
+#: src/main/java/com/atlauncher/gui/dialogs/ModsChooser.java:277
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/JavaInstanceSettingsTab.java:151
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/JavaInstanceSettingsTab.java:205
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/JavaInstanceSettingsTab.java:219
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/JavaInstanceSettingsTab.java:255
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/JavaInstanceSettingsTab.java:505
+msgid "Warning"
+msgstr "경고"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/JavaSettingsTab.java:160
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/JavaInstanceSettingsTab.java:153
+msgid "Setting initial memory above 512MB is not recommended and can cause issues. Are you sure you want to do this?"
+msgstr "시작 메모리를 512MB 이상 설정하는 것은 권장하지 않으며 문제를 야기할 수 있습니다. 계속하시겠습니까?"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/JavaSettingsTab.java:179
+#: src/main/java/com/atlauncher/gui/tabs/settings/JavaSettingsTab.java:715
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/JavaInstanceSettingsTab.java:171
+msgid "Maximum Memory/Ram"
+msgstr "최대 Ram 크기"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/JavaSettingsTab.java:181
+#: src/main/java/com/atlauncher/gui/tabs/settings/JavaSettingsTab.java:717
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/JavaInstanceSettingsTab.java:173
+msgid "The maximum amount of memory/ram to allocate when starting Minecraft."
+msgstr "마인크래프트가 점유할 수 있는 최대 메모리/램 용량입니다."
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/JavaSettingsTab.java:219
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/JavaInstanceSettingsTab.java:207
+msgid "Setting maximum memory above 8GB is not recommended for most modpacks and can cause issues."
+msgstr "최대 메모리를 8GB 이상으로 설정하는 것은 대부분의 모드팩에 문제를 일으킬 수 있어 권장하지 않습니다."
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/JavaSettingsTab.java:221
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/JavaInstanceSettingsTab.java:209
+msgid "More Explanation"
+msgstr "추가 설명"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/JavaSettingsTab.java:233
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/JavaInstanceSettingsTab.java:221
+msgid "Setting maximum memory to more than half of your systems total memory is not recommended and can cause issues in some cases. Are you sure you want to do this?"
+msgstr "최대 메모리를 시스템의 절반 이상으로 설정 하는 것은 권장되지 않으며 일부 상황에서 문제를 일으킬 수 있습니다. 계속하시겠습니까?"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/JavaSettingsTab.java:246
+#: src/main/java/com/atlauncher/gui/tabs/settings/JavaSettingsTab.java:719
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/JavaInstanceSettingsTab.java:234
+msgid "PermGen Size"
+msgstr "PermGen 크기"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/JavaSettingsTab.java:247
+#: src/main/java/com/atlauncher/gui/tabs/settings/JavaSettingsTab.java:721
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/JavaInstanceSettingsTab.java:235
+msgid "The PermGen Size for java to use when launching Minecraft in MB."
+msgstr "마인크래프트를 실행하는 동안 사용할 영속 세대(PermGen) 메모리의 용량(MB)입니다."
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/JavaSettingsTab.java:268
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/JavaInstanceSettingsTab.java:257
+msgid "Setting PermGen size above {0}MB is not recommended and can cause issues. Are you sure you want to do this?"
+msgstr "PermGen 크기를 {0}MB 이상 설정하는 것은 권장하지 않으며 문제를 야기할 수 있습니다. 계속하시겠습니까?"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/JavaSettingsTab.java:287
+#: src/main/java/com/atlauncher/gui/tabs/settings/JavaSettingsTab.java:723
+msgid "Window Size"
+msgstr "창 크기"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/JavaSettingsTab.java:288
+#: src/main/java/com/atlauncher/gui/tabs/settings/JavaSettingsTab.java:725
+msgid "The size that the Minecraft window should open as, Width x Height, in pixels."
+msgstr "Minecraft 창의 크기를 결정합니다. 가로 x 세로를 픽셀 단위로 입력해주세요."
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/JavaSettingsTab.java:346
+#: src/main/java/com/atlauncher/gui/tabs/settings/JavaSettingsTab.java:727
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/JavaInstanceSettingsTab.java:278
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/JavaInstanceSettingsTab.java:296
+msgid "Java Path"
+msgstr "Java 설치 경로"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/JavaSettingsTab.java:347
+msgid "This setting allows you to specify where your Java Path is. Where possible the launcher will use a version of Java provided by Minecraft to launch the instance, but in cases where one isn't available, this path will be used."
+msgstr "이 설정은 자바 위치를 특정 위치로 지정할 수 있도록 허용합니다. 가능한 마인크래프트에서 제공하는 자바를 사용하지만, 그렇지 못할 때 이 위치에 있는 자바가 사용됩니다."
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/JavaSettingsTab.java:368
+msgid "Select Java Path To Autofill"
+msgstr "자동으로 입력할 자바 위치 선택"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/JavaSettingsTab.java:389
+#: src/main/java/com/atlauncher/gui/tabs/settings/JavaSettingsTab.java:454
+#: src/main/java/com/atlauncher/gui/tabs/settings/JavaSettingsTab.java:489
+#: src/main/java/com/atlauncher/gui/tabs/settings/JavaSettingsTab.java:732
+#: src/main/java/com/atlauncher/gui/tabs/settings/JavaSettingsTab.java:739
+#: src/main/java/com/atlauncher/gui/tabs/settings/GeneralSettingsTab.java:305
+#: src/main/java/com/atlauncher/gui/dialogs/InstanceExportDialog.java:223
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/JavaInstanceSettingsTab.java:315
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/JavaInstanceSettingsTab.java:411
+msgid "Reset"
+msgstr "초기화"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/JavaSettingsTab.java:394
+#: src/main/java/com/atlauncher/gui/tabs/settings/JavaSettingsTab.java:493
+#: src/main/java/com/atlauncher/gui/tabs/settings/JavaSettingsTab.java:734
+#: src/main/java/com/atlauncher/gui/tabs/settings/GeneralSettingsTab.java:308
+#: src/main/java/com/atlauncher/gui/dialogs/ChangeSkinDialog.java:120
+#: src/main/java/com/atlauncher/gui/dialogs/InstanceExportDialog.java:204
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/JavaInstanceSettingsTab.java:317
+#: src/main/java/com/atlauncher/gui/dialogs/ImportInstanceDialog.java:139
+msgid "Browse"
+msgstr "찾아보기"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/JavaSettingsTab.java:398
+#: src/main/java/com/atlauncher/gui/tabs/settings/JavaSettingsTab.java:497
+#: src/main/java/com/atlauncher/gui/tabs/settings/GeneralSettingsTab.java:312
+#: src/main/java/com/atlauncher/gui/dialogs/FileChooserDialog.java:145
+#: src/main/java/com/atlauncher/gui/dialogs/InstanceExportDialog.java:209
+#: src/main/java/com/atlauncher/gui/dialogs/ImportInstanceDialog.java:169
+msgid "Select"
+msgstr "선택"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/JavaSettingsTab.java:437
+#: src/main/java/com/atlauncher/gui/tabs/settings/JavaSettingsTab.java:736
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/JavaInstanceSettingsTab.java:397
+msgid "Java Parameters"
+msgstr "자바 매개변수"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/JavaSettingsTab.java:438
+#: src/main/java/com/atlauncher/gui/tabs/settings/JavaSettingsTab.java:737
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/JavaInstanceSettingsTab.java:398
+msgid "Extra Java command line paramaters can be added here."
+msgstr "추가적인 자바 명령줄 인수는 이 곳에 추가할 수 있습니다."
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/JavaSettingsTab.java:474
+msgid "Java Install Location"
+msgstr "자바 위치"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/JavaSettingsTab.java:476
+msgid "This setting allows you to specify a common location that you install all your Java installs to. This helps find your installed Java installs easier if you install them all within 1 folder."
+msgstr "평상시 자바를 설치 해 놓는 위치를 지정합니다. 설정된 위치에 자바를 모여있는 경우 자동으로 찾기가 수월해 집니다."
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/JavaSettingsTab.java:520
+#: src/main/java/com/atlauncher/gui/tabs/settings/JavaSettingsTab.java:741
+msgid "Start Minecraft Maximised"
+msgstr "마인크래프트를 최대화된 상태로 시작하기"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/JavaSettingsTab.java:521
+#: src/main/java/com/atlauncher/gui/tabs/settings/JavaSettingsTab.java:742
+msgid "Enabling this will start Minecraft maximised so that it takes up the full size of your screen."
+msgstr "활성화하면 마인크래프트가 최대화된 상태, 즉 전체 화면 크기로 시작되게 합니다."
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/JavaSettingsTab.java:540
+#: src/main/java/com/atlauncher/gui/tabs/settings/JavaSettingsTab.java:745
+msgid "Ignore Java Checks On Launch"
+msgstr "실행 시 자바 버전 확인 무시"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/JavaSettingsTab.java:541
+#: src/main/java/com/atlauncher/gui/tabs/settings/JavaSettingsTab.java:746
+msgid "This enables ignoring errors when launching a pack that you don't have a compatible Java version for."
+msgstr "호환되지 않는 자바 버전 확인을 건너뛸지 결정합니다."
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/JavaSettingsTab.java:560
+#: src/main/java/com/atlauncher/gui/tabs/settings/JavaSettingsTab.java:749
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/JavaInstanceSettingsTab.java:477
+msgid "Use Java Provided By Minecraft"
+msgstr "마인크래프트에서 제공되는 자바 사용"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/JavaSettingsTab.java:562
+#: src/main/java/com/atlauncher/gui/tabs/settings/JavaSettingsTab.java:750
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/JavaInstanceSettingsTab.java:478
+msgid "This allows you to enable/disable using the version of Java provided by the version of Minecraft you're running.<br/><br/>It's highly recommended to not disable this, unless you know what you're doing."
+msgstr "마인크래프트에서 제공하는 자바를 사용할지를 결정합니다.<br/><br/>이게 무슨 의미인지 알 수 없다면, 이 기능을 끄지 않는 것을 권장합니다."
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/JavaSettingsTab.java:579
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/JavaInstanceSettingsTab.java:507
+msgid "Unchecking this is not recommended and may cause Minecraft to no longer run. Are you sure you want to do this?"
+msgstr "이걸 선택하지 않을 경우 마인크래프트를 더 이상 실행하지 못하게 될 수도 있습니다. 계속하시겠습니까?"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/JavaSettingsTab.java:598
+#: src/main/java/com/atlauncher/gui/tabs/settings/JavaSettingsTab.java:754
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/JavaInstanceSettingsTab.java:554
+msgid "Disable Legacy Launching"
+msgstr "레거시 실행 비활성화"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/JavaSettingsTab.java:599
+#: src/main/java/com/atlauncher/gui/tabs/settings/JavaSettingsTab.java:755
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/JavaInstanceSettingsTab.java:556
+msgid "This allows you to disable legacy launching for Minecraft < 1.6.<br/><br/>It's highly recommended to not disable this, unless you're having issues launching older Minecraft versions."
+msgstr "마인크래프트 1.6 미만의 버전에서 사용하는 구동 방식을 비활성화 합니다.<br/><br/> 구버전 실행에 문제가 발생하지 않는 한, 이걸 끄지 않는 것을 권장합니다."
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/JavaSettingsTab.java:617
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/JavaInstanceSettingsTab.java:584
+msgid "Use System GLFW"
+msgstr "시스템 GLFW 사용"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/JavaSettingsTab.java:618
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/JavaInstanceSettingsTab.java:585
+msgid "Use the systems install for GLFW native library."
+msgstr "시스템에 설치된 네이티브 GLFW 라이브러리를 사용합니다."
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/JavaSettingsTab.java:634
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/JavaInstanceSettingsTab.java:612
+msgid "Use System OpenAL"
+msgstr "시스템 OpenAL 사용"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/JavaSettingsTab.java:635
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/JavaInstanceSettingsTab.java:613
+msgid "Use the systems install for OpenAL native library."
+msgstr "시스템에 설치된 네이티브 OpenAL 라이브러리를 사용합니다."
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/JavaSettingsTab.java:649
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/JavaInstanceSettingsTab.java:655
+msgid "The Java Path you set is incorrect.<br/><br/>Please verify it points to the folder where the bin folder is and try again."
+msgstr "Java 경로가 올바르지 않습니다.<br/><br/>경로가 올바른지 확인하고 다시 시도해 주세요."
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/JavaSettingsTab.java:662
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/JavaInstanceSettingsTab.java:668
+msgid "The entered Java Parameters were incorrect.<br/><br/>Please remove any references to Xmx, Xms or XX:PermSize."
+msgstr "입력 한 Java 매개 변수가 올바르지 않습니다. <br/> <br/> Xmx, Xms 또는 XX: PermSize에 대한 참조를 제거하십시오."
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/JavaSettingsTab.java:694
+#: src/main/java/com/atlauncher/gui/dialogs/InstanceSettingsDialog.java:96
+msgid "Java/Minecraft"
+msgstr "Java/Minecraft"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/JavaSettingsTab.java:728
+msgid "This setting allows you to specify where your Java Path is. This should be left as default, but if you know what your doing just set this to the path where the bin folder is for the version of Java you want to use If you mess up, click the Reset button to go back to the default"
+msgstr "이 설정을 사용하면 Java 경로가있는 위치를 지정할 수 있습니다. 이것은 기본값으로 두어야하지만, 당신이 무엇을하고 있는지 알고 있다면 이것을 사용하려는 Java 버전의 bin 폴더가있는 경로로 설정하기 만하면됩니다. 엉망이 된 경우 재설정 버튼을 클릭하여 기본"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/BackupsSettingsTab.java:45
+msgid "Backup Mode"
+msgstr "백업 모드"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/BackupsSettingsTab.java:45
+msgid "When backing up an instance, what should get backed up? Mainly used for when doing automated backups."
+msgstr "인스턴스를 백업할 때, 무엇을 백업 할까요? 자동 백업에서 사용 할 방법을 지정합니다."
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/BackupsSettingsTab.java:54
+msgid "Backup saves, configs and options only"
+msgstr "월드, 모드 설정, 게임 설정만 백업"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/BackupsSettingsTab.java:56
+msgid "Backup saves, mods, configs and options only"
+msgstr "월드, 모드, 모드 설정, 게임 설정만 백업"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/BackupsSettingsTab.java:57
+msgid "Backup everything in the instance folder"
+msgstr "인스턴스 폴더 전체 백업"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/BackupsSettingsTab.java:77
+msgid "Enable Automatic Backup After Launch"
+msgstr "실행 후 자동 백업 활성화"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/BackupsSettingsTab.java:78
+msgid "If a backup should run after launching an instance."
+msgstr "인스턴스를 켤 때마다 자동으로 백업할 지 결정합니다."
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/BackupsSettingsTab.java:96
+msgid "Backups"
+msgstr "백업들"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/LoggingSettingsTab.java:46
+msgid "Forge Logging Level"
+msgstr "Forge 로깅 레벨"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/LoggingSettingsTab.java:47
+msgid "This determines the type of logging that Forge should report back to you."
+msgstr "Forge가 남기는 로그의 타입을 결정합니다."
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/LoggingSettingsTab.java:71
+msgid "Enable Logging"
+msgstr "로그 활성화"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/LoggingSettingsTab.java:72
+msgid "The Launcher sends back anonymous usage and error logs to our servers in order to make the Launcher and Packs better. If you don't want this to happen then simply disable this option."
+msgstr "런처는 런처와 모드팩의 개선 목적으로 익명 사용 정보와 오류 로그를 수집해 전송합니다. 원하지 않을 경우 설정에서 비활성화 하실수 있습니다."
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/LoggingSettingsTab.java:92
+#: src/main/java/com/atlauncher/gui/dialogs/SetupDialog.java:113
+#: src/main/java/com/atlauncher/gui/dialogs/SetupDialog.java:176
+msgid "Enable Anonymous Analytics"
+msgstr "익명 분석 자료 전송 활성화"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/LoggingSettingsTab.java:94
+#: src/main/java/com/atlauncher/gui/dialogs/SetupDialog.java:115
+#: src/main/java/com/atlauncher/gui/dialogs/SetupDialog.java:177
+msgid "The Launcher sends back anonymous analytics to our own servers in a non identifying way in order to track what people do and don't use in the launcher. This helps determine what new features we implement in the future. All analytics are anonymous and contain no user/instance information in it at all. If you don't want to send anonymous analytics, you can disable this option."
+msgstr ""
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/LoggingSettingsTab.java:117
+msgid "Logging"
+msgstr "로깅"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/CommandsSettingsTab.java:51
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/CommandsInstanceSettingsTab.java:70
+msgid "Enable commands"
+msgstr "명령 활성화"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/CommandsSettingsTab.java:52
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/CommandsInstanceSettingsTab.java:71
+msgid "This allows you to turn launch/exit commands on or off."
+msgstr "실행/종료 명령을 켜거나 끕니다."
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/CommandsSettingsTab.java:67
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/CommandsInstanceSettingsTab.java:97
+msgid "Pre-launch command"
+msgstr "사전 실행 명령"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/CommandsSettingsTab.java:68
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/CommandsInstanceSettingsTab.java:98
+msgid "This command will be run before the instance launches. The game will not run until the command has finished."
+msgstr "이 명령은 게임이 시작되기 전에 실행됩니다. 명령이 완료될 때까지 게임이 실행되지 않습니다."
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/CommandsSettingsTab.java:82
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/CommandsInstanceSettingsTab.java:119
+msgid "Post-exit command"
+msgstr "종료 후 명령"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/CommandsSettingsTab.java:83
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/CommandsInstanceSettingsTab.java:120
+msgid "This command will be run after the instance exits. It will run even if the instance is killed or if it crashes and exits."
+msgstr "이 명령은 게임이 종료된 후에 실행됩니다. 게임이 종료되거나 충돌하여도 실행됩니다."
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/CommandsSettingsTab.java:97
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/CommandsInstanceSettingsTab.java:141
+msgid "Wrapper command"
+msgstr "래퍼 명령"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/CommandsSettingsTab.java:98
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/CommandsInstanceSettingsTab.java:142
+msgid "Wrapper command allow launcher using an extra wrapper program (like 'prime-run' on Linux)\n"
+"Use %command% to substitute launch command\n"
+"%\"command\"% to substitute launch as a whole string (like 'bash -c' on Linux)"
+msgstr "래퍼 명령은 추가 래퍼 프로그램(예: Linux의 'prime-run') 을 런처에서 쓸 수 있도록 합니다.\n"
+"실행 구문을 대체하려면 %command%를 사용하세요.\n"
+"%\"command\"%는 전체 실행 구문을 의미합니다. (예: Linux의 'bash -c')."
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/CommandsSettingsTab.java:117
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/CommandsInstanceSettingsTab.java:166
+msgid "Commands will be run in the directory of the instance that is launched/exited."
+msgstr "명령은 시작/종료된 인스턴스의 폴더에서 실행됩니다."
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/CommandsSettingsTab.java:118
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/CommandsInstanceSettingsTab.java:167
+msgid "The following variables are available for each command"
+msgstr "각 명령에 대해 다음 변수를 사용할 수 있습니다."
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/CommandsSettingsTab.java:119
+#: src/main/java/com/atlauncher/gui/dialogs/InstanceExportDialog.java:105
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/CommandsInstanceSettingsTab.java:168
+msgid "The name of the instance"
+msgstr "인스턴스 이름"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/CommandsSettingsTab.java:121
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/CommandsInstanceSettingsTab.java:170
+msgid "The name of the instance's root directory"
+msgstr "인스턴스의 중심 폴더 이름"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/CommandsSettingsTab.java:122
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/CommandsInstanceSettingsTab.java:171
+msgid "The absolute path to the instance directory"
+msgstr "인스턴스 폴더의 절대 경로"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/CommandsSettingsTab.java:123
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/CommandsInstanceSettingsTab.java:172
+msgid "Alias for"
+msgstr "다음의 별칭 -"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/CommandsSettingsTab.java:125
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/CommandsInstanceSettingsTab.java:174
+msgid "The absolute path to the java executable used for launch"
+msgstr "시작에 사용되는 자바 실행 파일의 절대 경로"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/CommandsSettingsTab.java:127
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/CommandsInstanceSettingsTab.java:176
+msgid "The JVM parameters used for launch"
+msgstr "시작에 사용되는 JVM 매개변수"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/CommandsSettingsTab.java:166
+#: src/main/java/com/atlauncher/gui/dialogs/InstanceSettingsDialog.java:97
+msgid "Commands"
+msgstr "명령어"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/GeneralSettingsTab.java:87
+#: src/main/java/com/atlauncher/gui/dialogs/SetupDialog.java:91
+#: src/main/java/com/atlauncher/gui/dialogs/SetupDialog.java:175
+msgid "Language"
+msgstr "언어"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/GeneralSettingsTab.java:88
+msgid "This specifies the language used by the Launcher."
+msgstr "런처에서 사용할 언어를 결정합니다."
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/GeneralSettingsTab.java:106
+msgid "Help Translate"
+msgstr "번역 돕기"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/GeneralSettingsTab.java:119
+msgid "Theme"
+msgstr "테마"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/GeneralSettingsTab.java:120
+msgid "This sets the theme that the launcher will use."
+msgstr "런처가 사용할 테마를 선택합니다."
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/GeneralSettingsTab.java:159
+msgid "Date Format"
+msgstr "날짜 형식"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/GeneralSettingsTab.java:160
+msgid "This controls the format that dates are displayed in the launcher."
+msgstr "런처에 날짜가 표시되는 형식을 제어합니다."
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/GeneralSettingsTab.java:197
+msgid "Instance Title Format"
+msgstr "인스턴스 제목 형식"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/GeneralSettingsTab.java:198
+msgid "This controls the format that instances titles are shown as."
+msgstr "인스턴스 제목이 표시되는 형식을 지정합니다."
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/GeneralSettingsTab.java:209
+msgid "Pack Name"
+msgstr "팩 이름"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/GeneralSettingsTab.java:209
+msgid "Pack Version"
+msgstr "팩 버전"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/GeneralSettingsTab.java:230
+msgid "Default Tab"
+msgstr "기본 탭"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/GeneralSettingsTab.java:231
+msgid "Which tab to have selected by default when opening the launcher."
+msgstr "런처를 열 때 기본적으로 표시되는 탭입니다."
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/GeneralSettingsTab.java:239
+#: src/main/java/com/atlauncher/gui/tabs/news/NewsTab.java:160
+msgid "News"
+msgstr "소식"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/GeneralSettingsTab.java:242
+#: src/main/java/com/atlauncher/gui/tabs/PacksBrowserTab.java:548
+msgid "Packs"
+msgstr "모드팩"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/GeneralSettingsTab.java:245
+#: src/main/java/com/atlauncher/gui/tabs/accounts/AccountsTab.java:525
+msgid "Accounts"
+msgstr "계정"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/GeneralSettingsTab.java:268
+msgid "Default Instance Sort"
+msgstr "기본 인스턴스 정렬 방법"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/GeneralSettingsTab.java:270
+msgid "Default sorting of instances under the Instances tab."
+msgstr "인스턴스 탭에서 인스턴스의 기본 정렬을 정합니다."
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/GeneralSettingsTab.java:289
+msgid "Downloads Folder"
+msgstr "폴더 다운로드 중"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/GeneralSettingsTab.java:290
+msgid "This setting allows you to change the Downloads folder that the launcher looks in when downloading browser mods."
+msgstr "이 설정을 사용하면 브라우저에서 수동으로 모드를 다운로드할 때 런처가 파일을 찾는 다운로드 폴더를 변경할 수 있습니다."
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/GeneralSettingsTab.java:336
+msgid "Keep Launcher Open"
+msgstr "런처 계속 열어두기"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/GeneralSettingsTab.java:337
+msgid "This determines if ATLauncher should stay open or exit after Minecraft has exited"
+msgstr "Minecraft가 종료된 이후에 ATLauncher를 열어둘지를 결정합니다."
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/GeneralSettingsTab.java:355
+msgid "Enable Console"
+msgstr "콘솔 창 활성화"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/GeneralSettingsTab.java:356
+msgid "If you want the console to be visible when opening the Launcher."
+msgstr "런처 시작시 콘솔을 표시합니다."
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/GeneralSettingsTab.java:374
+msgid "Enable Tray Menu"
+msgstr "트레이 메뉴 활성화"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/GeneralSettingsTab.java:375
+msgid "The Tray Menu is a little icon that shows in your system taskbar which allows you to perform different functions to do various things with the launcher such as hiding or showing the console, killing Minecraft or closing ATLauncher."
+msgstr "트레이 메뉴는 시스템 작업 표시 줄에 표시되는 작은 아이콘으로, 콘솔을 숨기거나 표시하거나, Minecraft를 종료하거나, ATLauncher를 닫는 등 런처로 다양한 작업을 수행 할 수있는 다양한 기능을 수행 할 수 있습니다."
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/GeneralSettingsTab.java:396
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/GeneralInstanceSettingsTab.java:103
+msgid "Enable Discord Integration"
+msgstr "Discord 통합 활성화"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/GeneralSettingsTab.java:397
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/GeneralInstanceSettingsTab.java:104
+msgid "This will enable showing which pack you're playing in Discord."
+msgstr "Discord에 플레이 하고있는 모드팩을 보여줄지를 결정합니다."
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/GeneralSettingsTab.java:419
+msgid "Enable Feral Gamemode"
+msgstr "Feral Gamemode 활성화"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/GeneralSettingsTab.java:420
+msgid "This will enable Feral Gamemode for packs launched."
+msgstr "모드팩 실행시 Feral Gamemode를 활성화 합니다."
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/GeneralSettingsTab.java:432
+msgid "This will enable Feral Gamemode for packs launched (disabled because gamemoderun not found in PATH, please install Feral Gamemode or add it to your PATH)."
+msgstr "모드팩 실행시 Feral Gamemode를 활성화 합니다(PATH에서 gamemoderun을 찾을수 없어 비활성화됨, Feral Gamemode를 설치하거나 PATH에 추가해 주세요)."
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/GeneralSettingsTab.java:448
+msgid "Disable Custom Fonts?"
+msgstr "맞춤 글꼴 비활성화"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/GeneralSettingsTab.java:449
+msgid "This will disable custom fonts used by themes. If your system has issues with font display not looking right, you can disable this to switch to a default compatible font."
+msgstr "이렇게 하면 테마에서 사용하는 사용자 지정 글꼴이 비활성화됩니다. 시스템에 글꼴 표시가 제대로 표시되지 않는 문제가 있는 경우 이 기능을 비활성화하여 기본 호환 글꼴로 전환할 수 있습니다."
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/GeneralSettingsTab.java:468
+msgid "Remember Window Size & Positions?"
+msgstr "창 크기 및 위치 기억"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/GeneralSettingsTab.java:469
+msgid "This will remember the windows positions and size so they keep the same size and position when you restart the launcher."
+msgstr "창 위치와 크기를 기억하여 런처를 다시 시작할 때 동일한 크기와 위치를 유지합니다."
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/GeneralSettingsTab.java:487
+msgid "Use Native File Picker?"
+msgstr "기본 파일 선택기 사용"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/GeneralSettingsTab.java:489
+msgid "This will use your operating systems native file picker when selecting files."
+msgstr "파일을 선택할 때 운영체제에서 제공되는 기본 파일 선택기를 사용합니다."
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/GeneralSettingsTab.java:507
+msgid "Use Recycle Bin/Trash?"
+msgstr "휴지통 사용"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/GeneralSettingsTab.java:509
+msgid "This will use your operating systems recycle bin/trash where possible when deleting files/instances/servers instead of just deleting them entirely, allowing you to recover files if you make a mistake or want to get them back."
+msgstr "파일/인스턴스/서버를 완전히 삭제하는 대신 운영체제 휴지통을 사용하여 삭제함으로써 실수 또는 파일을 다시 가져오려는 경우 파일을 복구할 수 있습니다."
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/GeneralSettingsTab.java:528
+msgid "Enable ARM Support?"
+msgstr "ARM 지원 활성화"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/GeneralSettingsTab.java:530
+msgid "Support for ARM devices is still experimental. If you experience issues on an ARM based device, please turn this off."
+msgstr "ARM 장치에 대한 지원은 아직 실험 단계입니다. ARM 기반 장치에서 문제가 발생하면 이 기능을 끄십시오."
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/GeneralSettingsTab.java:548
+msgid "Scan Mods On Launch?"
+msgstr ""
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/GeneralSettingsTab.java:550
+msgid "This will scan the mods in instances before launching to ensure they do not contain malware or have been modified since installing."
+msgstr ""
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/GeneralSettingsTab.java:631
+#: src/main/java/com/atlauncher/gui/dialogs/InstanceSettingsDialog.java:95
+msgid "General"
+msgstr "일반"
+
+#: src/main/java/com/atlauncher/gui/tabs/PacksBrowserTab.java:79
+msgid "Minecraft:"
+msgstr "마인크래프트 버전:"
+
+#: src/main/java/com/atlauncher/gui/tabs/PacksBrowserTab.java:83
+#: src/main/java/com/atlauncher/gui/tabs/PacksBrowserTab.java:562
+msgid "Category:"
+msgstr "종류:"
+
+#: src/main/java/com/atlauncher/gui/tabs/PacksBrowserTab.java:87
+#: src/main/java/com/atlauncher/gui/tabs/PacksBrowserTab.java:563
+msgid "Sort:"
+msgstr "정렬 순서:"
+
+#: src/main/java/com/atlauncher/gui/tabs/PacksBrowserTab.java:95
+msgid "Add Manually"
+msgstr "수동 추가"
+
+#: src/main/java/com/atlauncher/gui/tabs/PacksBrowserTab.java:217
+#: src/main/java/com/atlauncher/gui/tabs/PacksBrowserTab.java:565
+#: src/main/java/com/atlauncher/gui/tabs/instances/InstancesSearchField.java:46
+#: src/main/java/com/atlauncher/gui/tabs/instances/InstancesNavigationPanel.java:86
+#: src/main/java/com/atlauncher/gui/tabs/ServersTab.java:82
+#: src/main/java/com/atlauncher/gui/tabs/ServersTab.java:145
+#: src/main/java/com/atlauncher/gui/dialogs/AddModsDialog.java:168
+#: src/main/java/com/atlauncher/gui/dialogs/ViewModsDialog.java:63
+msgid "Search"
+msgstr "검색"
+
+#: src/main/java/com/atlauncher/gui/tabs/PacksBrowserTab.java:230
+msgid "Add Pack By ID/Slug/URL"
+msgstr "ID/코드[링크 뒷부분]/링크로 모드팩 추가"
+
+#: src/main/java/com/atlauncher/gui/tabs/PacksBrowserTab.java:231
+msgid "Enter an ID/slug/url for a pack to add manually:"
+msgstr "설치할 모드팩의 ID/코드 [링크 뒷부분]/링크를 입력하세요:"
+
+#: src/main/java/com/atlauncher/gui/tabs/PacksBrowserTab.java:367
+msgid "All Versions"
+msgstr "모든 버전"
+
+#: src/main/java/com/atlauncher/gui/tabs/PacksBrowserTab.java:386
+#: src/main/java/com/atlauncher/gui/dialogs/AddModsDialog.java:961
+msgid "All Categories"
+msgstr "모든 종류"
+
+#: src/main/java/com/atlauncher/gui/tabs/SettingsTab.java:63
+#: src/main/java/com/atlauncher/gui/tabs/SettingsTab.java:148
+#: src/main/java/com/atlauncher/gui/tabs/accounts/AccountsTab.java:427
+#: src/main/java/com/atlauncher/gui/tabs/accounts/AccountsTab.java:539
+#: src/main/java/com/atlauncher/gui/dialogs/RenameInstanceDialog.java:109
+#: src/main/java/com/atlauncher/gui/dialogs/SetupDialog.java:140
+#: src/main/java/com/atlauncher/gui/dialogs/SetupDialog.java:180
+#: src/main/java/com/atlauncher/gui/dialogs/InstanceSettingsDialog.java:106
+msgid "Save"
+msgstr "저장"
+
+#: src/main/java/com/atlauncher/gui/tabs/SettingsTab.java:107
+msgid "Language Changed. Restart?"
+msgstr "언어가 변경되었습니다. 재시작 할까요?"
+
+#: src/main/java/com/atlauncher/gui/tabs/SettingsTab.java:108
+msgid "You've changed the language. For best results, a restart of the launcher is recommended.<br/><br/>Restart Now?"
+msgstr "언어를 변경했습니다. 최상의 결과를 위해, 런처를 재시작 하는것을 권장하고 있습니다.<br/><br/>재시작 할까요?"
+
+#: src/main/java/com/atlauncher/gui/tabs/accounts/AccountsTab.java:100
+msgid "In order to login and use ATLauncher modpacks, you must authenticate with your existing Minecraft/Mojang account. You must own and have paid for the Minecraft Java edition (not the Windows 10 edition) and use the same login here.<br><br>If you don't have an existing account, you can get one <a href=\"https://atl.pw/create-account\">by buying Minecraft here</a>. ATLauncher doesn't work with cracked accounts."
+msgstr "ATLauncher에서 제공하는 모드팩을 사용하기 위해선, 마인크래프트/마이크로소프트 계정을 통해 정품임을 인증해야 합니다. Minecraft: Java Edition (Windows 10 또는 Bedrock Edition 이 아님)을 가지고 있는 채로 런처에 로그인해야 합니다.<br><br>갖고 있는 계정이 없다면, <a href=\"https://atl.pw/create-account\">이곳</a>에서 마인크래프트를 구매할 수 있습니다. ATLauncher는 해킹된 계정으로 작동하지 않습니다."
+
+#: src/main/java/com/atlauncher/gui/tabs/accounts/AccountsTab.java:149
+#: src/main/java/com/atlauncher/gui/tabs/accounts/AccountsTab.java:543
+msgid "Username/Email"
+msgstr "닉네임 / 이메일"
+
+#: src/main/java/com/atlauncher/gui/tabs/accounts/AccountsTab.java:175
+#: src/main/java/com/atlauncher/gui/tabs/accounts/AccountsTab.java:544
+msgid "Password"
+msgstr "비밀번호"
+
+#: src/main/java/com/atlauncher/gui/tabs/accounts/AccountsTab.java:202
+#: src/main/java/com/atlauncher/gui/tabs/accounts/AccountsTab.java:545
+msgid "Remember Password"
+msgstr "비밀번호 기억하기"
+
+#: src/main/java/com/atlauncher/gui/tabs/accounts/AccountsTab.java:215
+msgid "Security Warning"
+msgstr "보안 경고"
+
+#: src/main/java/com/atlauncher/gui/tabs/accounts/AccountsTab.java:216
+msgid "Make sure you only do this on a computer you trust.<br/>If you do this on a shared computer, your password may be stolen.<br/>Do you still want to save your password?"
+msgstr "신뢰할 수 있는 컴퓨터에서만 이 기능을 사용하십시오.<br/>공용 컴퓨터에서 이 기능을 사용하는 경우, 당신의 비밀번호를 탈취당할 수 있습니다.<br/>비밀번호를 저장하시겠습니까?"
+
+#: src/main/java/com/atlauncher/gui/tabs/accounts/AccountsTab.java:245
+#: src/main/java/com/atlauncher/gui/tabs/accounts/AccountsTab.java:388
+#: src/main/java/com/atlauncher/gui/tabs/accounts/AccountsTab.java:537
+#: src/main/java/com/atlauncher/gui/components/ConsoleBottomBar.java:49
+#: src/main/java/com/atlauncher/gui/components/ConsoleBottomBar.java:165
+msgid "Clear"
+msgstr "지우기"
+
+#: src/main/java/com/atlauncher/gui/tabs/accounts/AccountsTab.java:253
+msgid "Are you sure you want to delete this account?"
+msgstr "이 계정을 삭제하시겠습니까?"
+
+#: src/main/java/com/atlauncher/gui/tabs/accounts/AccountsTab.java:261
+#: src/main/java/com/atlauncher/gui/dialogs/LoginWithMicrosoftDialog.java:72
+msgid "Login with Microsoft"
+msgstr "마이크로소프트 계정으로 로그인"
+
+#: src/main/java/com/atlauncher/gui/tabs/accounts/AccountsTab.java:281
+msgid "Change Skin"
+msgstr "스킨 변경"
+
+#: src/main/java/com/atlauncher/gui/tabs/accounts/AccountsTab.java:292
+#: src/main/java/com/atlauncher/gui/tabs/accounts/AccountsTab.java:546
+msgid "Reload Skin"
+msgstr "스킨 새로고침"
+
+#: src/main/java/com/atlauncher/gui/tabs/accounts/AccountsTab.java:303
+msgid "Update Username"
+msgstr "사용자 이름 업데이트"
+
+#: src/main/java/com/atlauncher/gui/tabs/accounts/AccountsTab.java:307
+msgid "Refresh Access Token"
+msgstr "엑세스 토큰 새로고침"
+
+#: src/main/java/com/atlauncher/gui/tabs/accounts/AccountsTab.java:344
+#: src/main/java/com/atlauncher/gui/tabs/accounts/AccountsTab.java:346
+msgid "Refreshing Access Token For {0}"
+msgstr "{0}의 엑세스 토큰 새로고침 중"
+
+#: src/main/java/com/atlauncher/gui/tabs/accounts/AccountsTab.java:361
+msgid "Access Token Refreshed"
+msgstr "엑세스 토큰 새로고침 됨"
+
+#: src/main/java/com/atlauncher/gui/tabs/accounts/AccountsTab.java:363
+msgid "Access token refreshed successfully"
+msgstr "엑세스 토큰이 새로고침 되었습니다."
+
+#: src/main/java/com/atlauncher/gui/tabs/accounts/AccountsTab.java:369
+msgid "Failed To Refresh Access Token"
+msgstr "엑세스 토큰 새로고침 실패"
+
+#: src/main/java/com/atlauncher/gui/tabs/accounts/AccountsTab.java:370
+msgid "Failed to refresh accessToken. Please login again."
+msgstr "엑세스 토큰 새로고침에 실패했습니다. 다시 로그인 해 주세요."
+
+#: src/main/java/com/atlauncher/gui/tabs/accounts/AccountsTab.java:437
+msgid "Add An Account"
+msgstr "새 계정 추가"
+
+#: src/main/java/com/atlauncher/gui/tabs/accounts/AccountsTab.java:469
+#: src/main/java/com/atlauncher/gui/tabs/accounts/AccountsTab.java:495
+msgid "Account Not Added"
+msgstr "계정 추가되지 않음"
+
+#: src/main/java/com/atlauncher/gui/tabs/accounts/AccountsTab.java:470
+msgid "This account already exists."
+msgstr "이 계정은 이미 존재합니다."
+
+#. {0} is the error message from Mojang as to why we couldn't login
+#: src/main/java/com/atlauncher/gui/tabs/accounts/AccountsTab.java:500
+msgid "Account not added as login details were incorrect.<br/><br/>{0}"
+msgstr "로그인 정보가 정확하지 않아 계정이 추가되지 않았습니다.<br/><br/>{0}"
+
+#: src/main/java/com/atlauncher/gui/tabs/accounts/AccountsTab.java:511
+msgid "Account Edited"
+msgstr "계정 수정됨"
+
+#: src/main/java/com/atlauncher/gui/tabs/accounts/AccountsTab.java:513
+msgid "Account edited successfully"
+msgstr "계정이 성공적으로 수정되었습니다"
+
+#: src/main/java/com/atlauncher/gui/tabs/instances/InstancesListPanel.java:59
+msgid "There are no instances to display.<br/><br/>Install one from the Packs tab."
+msgstr "표시할 인스턴스가 없습니다.<br/><br/>팩 탭에서 하나 이상을 설치하세요."
+
+#: src/main/java/com/atlauncher/gui/tabs/instances/InstancesNavigationPanel.java:45
+#: src/main/java/com/atlauncher/gui/tabs/instances/InstancesNavigationPanel.java:85
+#: src/main/java/com/atlauncher/gui/dialogs/ImportInstanceDialog.java:202
+msgid "Import"
+msgstr "가져오기"
+
+#: src/main/java/com/atlauncher/gui/tabs/ServersTab.java:139
+msgid "There are no servers to display.<br/><br/>Install one from the Packs tab."
+msgstr "표시할 서버가 없습니다.<br/><br/>팩 탭에서 하나 이상을 설치하세요."
+
+#: src/main/java/com/atlauncher/gui/dialogs/LoginWithMicrosoftDialog.java:79
+msgid "Browser opened to complete the login process"
+msgstr "로그인 과정을 위해 브라우저가 열렸습니다."
+
+#: src/main/java/com/atlauncher/gui/dialogs/LoginWithMicrosoftDialog.java:99
+msgid "If your browser hasn't opened, please manually open the below link in your browser"
+msgstr "브라우저가 열리지 않았다면, 아래 링크를 직접 접속해주세요."
+
+#: src/main/java/com/atlauncher/gui/dialogs/LoginWithMicrosoftDialog.java:135
+#: src/main/java/com/atlauncher/gui/dialogs/LoginWithMicrosoftDialog.java:154
+msgid "Error logging in. Check console for more information"
+msgstr "로그인 중 오류가 발생했습니다. 자세한 사항은 콘솔을 확인하세요."
+
+#: src/main/java/com/atlauncher/gui/dialogs/LoginWithMicrosoftDialog.java:144
+msgid "Code is missing"
+msgstr "코드 누락"
+
+#. {0} is the name of the launcher (ATLauncher)
+#: src/main/java/com/atlauncher/gui/dialogs/LoginWithMicrosoftDialog.java:161
+msgid "Login complete. You can now close this window and go back to {0}"
+msgstr "로그인이 완료되었습니다. 창을 닫고 {0}로 돌아가세요."
+
+#: src/main/java/com/atlauncher/gui/dialogs/LoginWithMicrosoftDialog.java:181
+msgid "Incorrect account"
+msgstr "잘못된 계정"
+
+#: src/main/java/com/atlauncher/gui/dialogs/LoginWithMicrosoftDialog.java:183
+msgid "Logged into incorrect account. Please login again on the Accounts tab."
+msgstr "잘못된 계정으로 로그인 했습니다. 계정 탭에서 다시 로그인 해 주세요."
+
+#: src/main/java/com/atlauncher/gui/dialogs/LoginWithMicrosoftDialog.java:225
+msgid "Error logging into Xbox Live"
+msgstr "Xbox Live 로그인 오류"
+
+#: src/main/java/com/atlauncher/gui/dialogs/LoginWithMicrosoftDialog.java:260
+msgid "Minecraft Has Not Been Purchased"
+msgstr "마인크래프트 구매 안함"
+
+#: src/main/java/com/atlauncher/gui/dialogs/LoginWithMicrosoftDialog.java:261
+msgid "This account doesn't have a valid purchase of Minecraft.<br/><br/>Please make sure you've bought the Java edition of Minecraft and then try again."
+msgstr "이 계정에서 마인크래프트 구매 내역이 확인되지 않습니다.<br/><br/>Minecraft: Java Edition을 구매했는지 확인 후 다시 시도 하십시오."
+
+#: src/main/java/com/atlauncher/gui/dialogs/FileChooserDialog.java:239
+#: src/main/java/com/atlauncher/gui/dialogs/ImportInstanceDialog.java:149
+msgid "Select file/s"
+msgstr "파일(들) 선택"
+
+#: src/main/java/com/atlauncher/gui/dialogs/ModrinthVersionSelectorDialog.java:224
+#: src/main/java/com/atlauncher/gui/dialogs/CurseForgeProjectFileSelectorDialog.java:131
+msgid "View Mod"
+msgstr "모드 보기"
+
+#: src/main/java/com/atlauncher/gui/dialogs/ModrinthVersionSelectorDialog.java:227
+#: src/main/java/com/atlauncher/gui/dialogs/CurseForgeProjectFileSelectorDialog.java:134
+msgid "View File"
+msgstr "파일 보기"
+
+#: src/main/java/com/atlauncher/gui/dialogs/ModrinthVersionSelectorDialog.java:232
+#: src/main/java/com/atlauncher/gui/dialogs/CurseForgeProjectFileSelectorDialog.java:139
+msgid "The below mods need to be installed"
+msgstr "아래의 모드들이 설치되어야 합니다"
+
+#: src/main/java/com/atlauncher/gui/dialogs/ModrinthVersionSelectorDialog.java:249
+#: src/main/java/com/atlauncher/gui/dialogs/InstanceInstallerDialog.java:1006
+#: src/main/java/com/atlauncher/gui/dialogs/CurseForgeProjectFileSelectorDialog.java:156
+msgid "Version To Install"
+msgstr "설치할 버전"
+
+#: src/main/java/com/atlauncher/gui/dialogs/ModrinthVersionSelectorDialog.java:254
+#: src/main/java/com/atlauncher/gui/dialogs/CurseForgeProjectFileSelectorDialog.java:161
+msgid "Loading"
+msgstr "로드 중"
+
+#: src/main/java/com/atlauncher/gui/dialogs/ModrinthVersionSelectorDialog.java:261
+msgid "File To Install"
+msgstr "설치할 파일"
+
+#. #-#-#-#-#  translations.pot  #-#-#-#-#
+#. {0} is the name of the mod that the user already has installed
+#. #-#-#-#-#  translations.pot  #-#-#-#-#
+#. {0} is the name of the file that the user already has installed
+#: src/main/java/com/atlauncher/gui/dialogs/ModrinthVersionSelectorDialog.java:443
+#: src/main/java/com/atlauncher/gui/dialogs/CurseForgeProjectFileSelectorDialog.java:411
+msgid "The version currently installed is {0}"
+msgstr "현재 설치된 버전은 {0}입니다."
+
+#: src/main/java/com/atlauncher/gui/dialogs/InstanceInstallerDialog.java:144
+msgid "Show All"
+msgstr "모두 표시"
+
+#: src/main/java/com/atlauncher/gui/dialogs/InstanceInstallerDialog.java:242
+#: src/main/java/com/atlauncher/gui/dialogs/ModsChooser.java:201
+msgid "Install"
+msgstr "설치"
+
+#: src/main/java/com/atlauncher/gui/dialogs/InstanceInstallerDialog.java:246
+msgid "Updating"
+msgstr "업데이트 중"
+
+#: src/main/java/com/atlauncher/gui/dialogs/InstanceInstallerDialog.java:248
+msgid " (Current Version: {0})"
+msgstr " (현재 버전: {0})"
+
+#: src/main/java/com/atlauncher/gui/dialogs/InstanceInstallerDialog.java:260
+#: src/main/java/com/atlauncher/gui/dialogs/InstanceExportDialog.java:104
+#: src/main/java/com/atlauncher/gui/panels/packbrowser/ATLauncherPacksPanel.java:148
+#: src/main/java/com/atlauncher/gui/panels/packbrowser/CurseForgePacksPanel.java:151
+msgid "Name"
+msgstr "이름"
+
+#: src/main/java/com/atlauncher/gui/dialogs/InstanceInstallerDialog.java:319
+msgid "Save Mods"
+msgstr "모드 저장"
+
+#: src/main/java/com/atlauncher/gui/dialogs/InstanceInstallerDialog.java:321
+msgid "Since this update changes the Minecraft version, your custom mods may no longer work.<br/><br/>Checking this box will keep your custom mods, otherwise they'll be removed."
+msgstr "이 업데이트 후 마인크래프트 버전이 변경되므로 모드가 더 이상 작동하지 않을 수 있습니다. <br/> <br/>이 확인란을 선택하면 모드가 유지되고 그렇지 않으면 제거됩니다."
+
+#: src/main/java/com/atlauncher/gui/dialogs/InstanceInstallerDialog.java:448
+#: src/main/java/com/atlauncher/gui/dialogs/InstanceInstallerDialog.java:449
+msgid "Getting Versions"
+msgstr "버전 불러오는 중"
+
+#: src/main/java/com/atlauncher/gui/dialogs/InstanceInstallerDialog.java:487
+msgid "No Server Files Available"
+msgstr ""
+
+#: src/main/java/com/atlauncher/gui/dialogs/InstanceInstallerDialog.java:488
+msgid "No server files are available for this pack, so a server cannot be created."
+msgstr ""
+
+#: src/main/java/com/atlauncher/gui/dialogs/InstanceInstallerDialog.java:616
+#: src/main/java/com/atlauncher/gui/dialogs/InstanceInstallerDialog.java:686
+#: src/main/java/com/atlauncher/gui/dialogs/InstanceInstallerDialog.java:864
+#: src/main/java/com/atlauncher/gui/dialogs/InstanceInstallerDialog.java:886
+#: src/main/java/com/atlauncher/gui/dialogs/InstanceInstallerDialog.java:909
+#: src/main/java/com/atlauncher/gui/dialogs/InstanceInstallerDialog.java:932
+msgid "Getting Modpack Details"
+msgstr "모드팩 세부정보 불러오는 중"
+
+#: src/main/java/com/atlauncher/gui/dialogs/InstanceInstallerDialog.java:641
+msgid "Getting Modpack Versions"
+msgstr "모드팩 버전 불러오는 중"
+
+#: src/main/java/com/atlauncher/gui/dialogs/InstanceInstallerDialog.java:708
+msgid "Getting Modpack Builds"
+msgstr "모드팩 빌드 불러오는 중"
+
+#: src/main/java/com/atlauncher/gui/dialogs/InstanceInstallerDialog.java:961
+msgid "Downloading Pack Manifest"
+msgstr "팩 메니페스트 다운로드 중"
+
+#. {0} is the loader (Fabric/Forge/Quilt)
+#: src/main/java/com/atlauncher/gui/dialogs/InstanceInstallerDialog.java:1138
+#: src/main/java/com/atlauncher/gui/dialogs/InstanceInstallerDialog.java:1145
+#: src/main/java/com/atlauncher/gui/dialogs/InstanceInstallerDialog.java:1152
+#: src/main/java/com/atlauncher/gui/dialogs/InstanceInstallerDialog.java:1159
+msgid "{0} Version"
+msgstr "{0} 버전"
+
+#: src/main/java/com/atlauncher/gui/dialogs/CreateMinecraftProfileDialog.java:59
+#: src/main/java/com/atlauncher/gui/dialogs/CreateMinecraftProfileDialog.java:86
+msgid "Create Minecraft Profile"
+msgstr "마인크래프트 프로필 만들기"
+
+#: src/main/java/com/atlauncher/gui/dialogs/CreateMinecraftProfileDialog.java:97
+msgid "Username"
+msgstr "닉네임"
+
+#: src/main/java/com/atlauncher/gui/dialogs/CreateMinecraftProfileDialog.java:110
+msgid "Create"
+msgstr "만들기"
+
+#: src/main/java/com/atlauncher/gui/dialogs/CreateMinecraftProfileDialog.java:112
+#: src/main/java/com/atlauncher/gui/dialogs/CreateMinecraftProfileDialog.java:113
+msgid "Creating Minecraft Profile"
+msgstr "마인크래프트 프로필 만드는 중"
+
+#: src/main/java/com/atlauncher/gui/dialogs/CreateMinecraftProfileDialog.java:118
+msgid "Invalid profile name, it must contain only alphanumeric characters and underscore, and be 3 to 16 characters long."
+msgstr "사용할 수 없는 닉네임입니다. 닉네임은 3~16자의 영어와 _로만 이루어져야 합니다."
+
+#: src/main/java/com/atlauncher/gui/dialogs/CreateMinecraftProfileDialog.java:129
+msgid "Username is not available, please try another one."
+msgstr "사용할 수 없는 닉네임입니다. 다른 닉네임을 사용해 주세요."
+
+#: src/main/java/com/atlauncher/gui/dialogs/CreateMinecraftProfileDialog.java:140
+msgid "An error occurred creating your profile.<br/><br/>Please check the console and try again."
+msgstr "프로필을 만드는 중 오류가 발생했습니다.<br/><br/>콘솔 창을 확인하고 다시 시도하십시오."
+
+#: src/main/java/com/atlauncher/gui/dialogs/RenameInstanceDialog.java:58
+#: src/main/java/com/atlauncher/gui/dialogs/RenameInstanceDialog.java:85
+msgid "Renaming Instance"
+msgstr "인스턴스 이름 바꾸는 중"
+
+#: src/main/java/com/atlauncher/gui/dialogs/RenameInstanceDialog.java:114
+msgid "There is already an instance called {0}.<br/><br/>Rename it and try again."
+msgstr "{0}라는 이름의 인스턴스가 이미 있습니다.<br/><br/>이름을 바꾸고 다시 시도하십시오."
+
+#: src/main/java/com/atlauncher/gui/dialogs/RenameInstanceDialog.java:121
+msgid "The name {0} is invalid. It must contain at least 1 letter or number."
+msgstr "이름 {0} 이(가) 잘못되었습니다. 최소 1개의 문자나 숫자가 들어가야 합니다."
+
+#: src/main/java/com/atlauncher/gui/dialogs/RenameInstanceDialog.java:130
+msgid "An error occurred renaming the instance.<br/><br/>Please check the console and try again."
+msgstr "인스턴스 이름을 바꾸는 중 오류가 발생했습니다.<br/><br/>콘솔 창을 확인하고 다시 시도하십시오."
+
+#. {0} is the name of the instance
+#: src/main/java/com/atlauncher/gui/dialogs/EditModsDialog.java:88
+msgid "Editing Mods For {0}"
+msgstr "{0} 의 모드 수정 중"
+
+#: src/main/java/com/atlauncher/gui/dialogs/EditModsDialog.java:136
+msgid "Enabled Mods"
+msgstr "활성화된 모드"
+
+#: src/main/java/com/atlauncher/gui/dialogs/EditModsDialog.java:152
+msgid "Disabled Mods"
+msgstr "비활성화된 모드"
+
+#: src/main/java/com/atlauncher/gui/dialogs/EditModsDialog.java:200
+#: src/main/java/com/atlauncher/gui/dialogs/EditModsDialog.java:204
+#: src/main/java/com/atlauncher/gui/handlers/ModsJCheckBoxTransferHandler.java:88
+msgid "Add Mod"
+msgstr "모드 추가"
+
+#: src/main/java/com/atlauncher/gui/dialogs/EditModsDialog.java:204
+msgid "Mod"
+msgstr "모드"
+
+#: src/main/java/com/atlauncher/gui/dialogs/EditModsDialog.java:205
+msgid "Type of Mod"
+msgstr "모드 유형"
+
+#: src/main/java/com/atlauncher/gui/dialogs/EditModsDialog.java:211
+#: src/main/java/com/atlauncher/gui/dialogs/EditModsDialog.java:212
+#: src/main/java/com/atlauncher/gui/handlers/ModsJCheckBoxTransferHandler.java:128
+#: src/main/java/com/atlauncher/gui/handlers/ModsJCheckBoxTransferHandler.java:129
+msgid "Copying Mods"
+msgstr "모드 복사 중"
+
+#: src/main/java/com/atlauncher/gui/dialogs/EditModsDialog.java:224
+#: src/main/java/com/atlauncher/gui/handlers/ModsJCheckBoxTransferHandler.java:98
+msgid "Add As Mod?"
+msgstr "모드로 추가할까요?"
+
+#: src/main/java/com/atlauncher/gui/dialogs/EditModsDialog.java:225
+#: src/main/java/com/atlauncher/gui/handlers/ModsJCheckBoxTransferHandler.java:99
+msgid "Adding as Inside Minecraft.jar is usually not what you want and will likely cause issues.<br/><br/>If you're adding mods this is usually not correct. Do you want to add this as a mod instead?"
+msgstr "Minecraft.jar에 바로 탑재하는 것은 원치 않은 문제를 야기할 수 있습니다.<br/><br/>일반적인 모드 설치로써 이 방법은 올바르지 않습니다. 대신 이것을 모드로 설치하시겠습니까?"
+
+#: src/main/java/com/atlauncher/gui/dialogs/EditModsDialog.java:280
+msgid "Browse Mods"
+msgstr "모드 탐색"
+
+#: src/main/java/com/atlauncher/gui/dialogs/EditModsDialog.java:291
+#: src/main/java/com/atlauncher/gui/components/ModsJCheckBox.java:297
+#: src/main/java/com/atlauncher/gui/components/LauncherBottomBar.java:145
+#: src/main/java/com/atlauncher/gui/components/LauncherBottomBar.java:185
+msgid "Check For Updates"
+msgstr "업데이트 확인"
+
+#: src/main/java/com/atlauncher/gui/dialogs/EditModsDialog.java:302
+msgid "Enable Selected"
+msgstr "선택 항목 활성화"
+
+#: src/main/java/com/atlauncher/gui/dialogs/EditModsDialog.java:307
+msgid "Disable Selected"
+msgstr "선택 항목 비활성화"
+
+#: src/main/java/com/atlauncher/gui/dialogs/EditModsDialog.java:312
+msgid "Remove Selected"
+msgstr "선택 항목 제거"
+
+#: src/main/java/com/atlauncher/gui/dialogs/EditModsDialog.java:317
+msgid "Refresh Metadata"
+msgstr "메타데이터 새로고침"
+
+#: src/main/java/com/atlauncher/gui/dialogs/EditModsDialog.java:398
+#: src/main/java/com/atlauncher/gui/dialogs/EditModsDialog.java:399
+#: src/main/java/com/atlauncher/gui/components/LauncherBottomBar.java:107
+#: src/main/java/com/atlauncher/gui/components/LauncherBottomBar.java:108
+msgid "Checking For Updates"
+msgstr "업데이트 확인 중"
+
+#: src/main/java/com/atlauncher/gui/dialogs/EditModsDialog.java:412
+msgid "Checking For Updates Complete"
+msgstr "업데이트 확인 완료"
+
+#: src/main/java/com/atlauncher/gui/dialogs/EditModsDialog.java:413
+msgid "The selected mods have been checked for updates."
+msgstr ""
+
+#: src/main/java/com/atlauncher/gui/dialogs/EditModsDialog.java:453
+msgid "Delete Selected Mods?"
+msgstr "선택된 모드들을 지우시겠습니까?"
+
+#: src/main/java/com/atlauncher/gui/dialogs/EditModsDialog.java:454
+msgid "This will delete the selected mods from the instance.<br/><br/>Are you sure you want to do this?"
+msgstr "이렇게 할 경우 인스턴스에서 선택된 모드들을 지우게 됩니다.<br/><br/>계속하시겠습니까?"
+
+#: src/main/java/com/atlauncher/gui/dialogs/EditModsDialog.java:489
+#: src/main/java/com/atlauncher/gui/dialogs/EditModsDialog.java:490
+msgid "Refreshing Metadata"
+msgstr "메타데이터 새로 고치는 중"
+
+#: src/main/java/com/atlauncher/gui/dialogs/ChangeSkinDialog.java:71
+#: src/main/java/com/atlauncher/gui/dialogs/ChangeSkinDialog.java:98
+msgid "Changing Skin"
+msgstr "스킨 변경 중"
+
+#: src/main/java/com/atlauncher/gui/dialogs/ChangeSkinDialog.java:110
+msgid "Skin File"
+msgstr "스킨 파일"
+
+#: src/main/java/com/atlauncher/gui/dialogs/ChangeSkinDialog.java:124
+msgid "Select skin file"
+msgstr "스킨 파일 선택"
+
+#: src/main/java/com/atlauncher/gui/dialogs/ChangeSkinDialog.java:149
+msgid "The skin you chose is invalid. Please make sure you selected the right file and try again.<br/><br/>All skins must be 64x64 or 64x32 pixels."
+msgstr "선택하신 스킨이 올바르지 않습니다. 올바른 파일을 선택했는지 확인 후 다시 시도 하십시오.<br/><br/>모든 스킨 파일은 반드시 64x64 또는 64x32 픽셀이어야 합니다."
+
+#: src/main/java/com/atlauncher/gui/dialogs/ChangeSkinDialog.java:177
+msgid "Skin Type"
+msgstr "스킨 유형"
+
+#: src/main/java/com/atlauncher/gui/dialogs/ChangeSkinDialog.java:192
+msgid "Upload"
+msgstr "올리기"
+
+#: src/main/java/com/atlauncher/gui/dialogs/ChangeSkinDialog.java:194
+#: src/main/java/com/atlauncher/gui/dialogs/ChangeSkinDialog.java:195
+msgid "Updating Skin"
+msgstr "스킨 업데이트 중"
+
+#: src/main/java/com/atlauncher/gui/dialogs/ChangeSkinDialog.java:207
+msgid "There was an error updating your skin.<br/><br/>Please check the logs and try again."
+msgstr "스킨 업데이트 중 문제가 발생했습니다.<br/><br/>로그를 확인 한 후 다시 시도해 주세요."
+
+#: src/main/java/com/atlauncher/gui/dialogs/ModrinthExportOverridesDialog.java:41
+msgid "Overrides Included"
+msgstr ""
+
+#: src/main/java/com/atlauncher/gui/dialogs/ModrinthExportOverridesDialog.java:54
+msgid "Your exported instance contains mods not on Modrinth and were included in the overrides folder. If you're uploading this to Modrinth, you will need to make sure you have permissions to distribute the below mods, else your modpack will get denied on Modrinth."
+msgstr ""
+
+#: src/main/java/com/atlauncher/gui/dialogs/ModrinthExportOverridesDialog.java:80
+msgid "Close"
+msgstr ""
+
+#. {0} is the loader api (Fabric API/QSL)
+#: src/main/java/com/atlauncher/gui/dialogs/AddModsDialog.java:96
+#: src/main/java/com/atlauncher/gui/dialogs/AddModsDialog.java:107
+#: src/main/java/com/atlauncher/gui/dialogs/AddModsDialog.java:127
+msgid "Install {0}"
+msgstr "{0} 설치"
+
+#. {0} is the loader (Fabric/Quilt), {1} is the loader api (Fabric API/QSL)
+#: src/main/java/com/atlauncher/gui/dialogs/AddModsDialog.java:102
+#: src/main/java/com/atlauncher/gui/dialogs/AddModsDialog.java:113
+#: src/main/java/com/atlauncher/gui/dialogs/AddModsDialog.java:134
+msgid "Before installing {0} mods, you should install {1} first!"
+msgstr "{0} 모드를 설치하기 전에, {1}을(를) 먼저 설치해야 합니다!"
+
+#: src/main/java/com/atlauncher/gui/dialogs/AddModsDialog.java:121
+msgid "Modrinth doesn't support filtering accurately for Legacy Fabric, so mods shown may not be installable. Consider using CurseForge or visit <a href=\"https://legacyfabric.net/mods.html\">https://legacyfabric.net/mods.html</a> for a list of compatable mods."
+msgstr "Modrinth는 레거시 패브릭에 대한 정확한 필터링을 지원하지 않으므로 표시된 모드를 설치하지 못할 수 있습니다. CurseForge 사용을 고려하거나 <a href=\"https://legacyfabric.net/mods.html\">https://legacyfabric.net/mods.html</a>을 방문하여 호환 가능한 모드 목록을 확인하세요."
+
+#. {0} is the name of the mod we're installing
+#: src/main/java/com/atlauncher/gui/dialogs/AddModsDialog.java:150
+msgid "Adding Mods For {0}"
+msgstr "{0} 의 모드 추가 중"
+
+#: src/main/java/com/atlauncher/gui/dialogs/AddModsDialog.java:186
+#: src/main/java/com/atlauncher/gui/dialogs/AddModsDialog.java:559
+msgid "Resource Packs"
+msgstr "리소스 팩"
+
+#: src/main/java/com/atlauncher/gui/dialogs/AddModsDialog.java:187
+#: src/main/java/com/atlauncher/gui/dialogs/AddModsDialog.java:564
+msgid "Shaders"
+msgstr "셰이더"
+
+#: src/main/java/com/atlauncher/gui/dialogs/AddModsDialog.java:190
+#: src/main/java/com/atlauncher/gui/dialogs/AddModsDialog.java:571
+msgid "Worlds"
+msgstr "세계"
+
+#: src/main/java/com/atlauncher/gui/dialogs/AddModsDialog.java:192
+#: src/main/java/com/atlauncher/gui/dialogs/AddModsDialog.java:572
+#: src/main/java/com/atlauncher/gui/panels/packbrowser/ATLauncherPacksPanel.java:147
+#: src/main/java/com/atlauncher/gui/panels/packbrowser/CurseForgePacksPanel.java:148
+msgid "Popularity"
+msgstr "인기도"
+
+#: src/main/java/com/atlauncher/gui/dialogs/AddModsDialog.java:193
+#: src/main/java/com/atlauncher/gui/dialogs/AddModsDialog.java:198
+#: src/main/java/com/atlauncher/gui/dialogs/AddModsDialog.java:573
+#: src/main/java/com/atlauncher/gui/dialogs/AddModsDialog.java:579
+#: src/main/java/com/atlauncher/gui/panels/packbrowser/CurseForgePacksPanel.java:149
+msgid "Last Updated"
+msgstr "마지막 업데이트"
+
+#: src/main/java/com/atlauncher/gui/dialogs/AddModsDialog.java:194
+#: src/main/java/com/atlauncher/gui/dialogs/AddModsDialog.java:199
+#: src/main/java/com/atlauncher/gui/dialogs/AddModsDialog.java:574
+#: src/main/java/com/atlauncher/gui/dialogs/AddModsDialog.java:580
+#: src/main/java/com/atlauncher/gui/panels/packbrowser/CurseForgePacksPanel.java:150
+msgid "Total Downloads"
+msgstr "총 다운로드"
+
+#: src/main/java/com/atlauncher/gui/dialogs/AddModsDialog.java:196
+#: src/main/java/com/atlauncher/gui/dialogs/AddModsDialog.java:577
+#: src/main/java/com/atlauncher/gui/panels/packbrowser/ModrinthPacksPanel.java:155
+msgid "Relevance"
+msgstr "관련성"
+
+#: src/main/java/com/atlauncher/gui/dialogs/AddModsDialog.java:197
+#: src/main/java/com/atlauncher/gui/dialogs/AddModsDialog.java:578
+#: src/main/java/com/atlauncher/gui/panels/packbrowser/ModrinthPacksPanel.java:158
+msgid "Newest"
+msgstr "최신 순"
+
+#. {0} is the loader api were getting info from (Fabric/Quilt)
+#: src/main/java/com/atlauncher/gui/dialogs/AddModsDialog.java:237
+#: src/main/java/com/atlauncher/gui/dialogs/AddModsDialog.java:239
+#: src/main/java/com/atlauncher/gui/dialogs/AddModsDialog.java:278
+#: src/main/java/com/atlauncher/gui/dialogs/AddModsDialog.java:280
+#: src/main/java/com/atlauncher/gui/dialogs/AddModsDialog.java:331
+#: src/main/java/com/atlauncher/gui/dialogs/AddModsDialog.java:333
+#: src/main/java/com/atlauncher/gui/dialogs/AddModsDialog.java:374
+#: src/main/java/com/atlauncher/gui/dialogs/AddModsDialog.java:376
+#: src/main/java/com/atlauncher/gui/dialogs/AddModsDialog.java:426
+#: src/main/java/com/atlauncher/gui/dialogs/AddModsDialog.java:428
+msgid "Getting {0} Information"
+msgstr "{0} 정보를 불러오는 중"
+
+#. {0} is the loader api were getting info from (Fabric/Quilt)
+#: src/main/java/com/atlauncher/gui/dialogs/AddModsDialog.java:255
+#: src/main/java/com/atlauncher/gui/dialogs/AddModsDialog.java:296
+#: src/main/java/com/atlauncher/gui/dialogs/AddModsDialog.java:349
+#: src/main/java/com/atlauncher/gui/dialogs/AddModsDialog.java:392
+#: src/main/java/com/atlauncher/gui/dialogs/AddModsDialog.java:445
+msgid "Error Getting {0} Information"
+msgstr "{0} 정보를 불러오던 중 오류 발생"
+
+#. {0} is the loader (Fabric/Quilt) {1} is the platform (CurseForge/Modrinth)
+#: src/main/java/com/atlauncher/gui/dialogs/AddModsDialog.java:257
+#: src/main/java/com/atlauncher/gui/dialogs/AddModsDialog.java:298
+#: src/main/java/com/atlauncher/gui/dialogs/AddModsDialog.java:351
+#: src/main/java/com/atlauncher/gui/dialogs/AddModsDialog.java:394
+#: src/main/java/com/atlauncher/gui/dialogs/AddModsDialog.java:447
+msgid "There was an error getting {0} information from {1}. Please try again later."
+msgstr "{1}에서 {0} 정보를 받던 중 오류가 발생했습니다. 다시 시도해 주세요."
+
+#: src/main/java/com/atlauncher/gui/dialogs/AddModsDialog.java:896
+msgid "Getting Mod Information"
+msgstr "모드 정보 불러오는 중"
+
+#: src/main/java/com/atlauncher/gui/dialogs/AddModsDialog.java:910
+msgid "Error Getting Mod Information"
+msgstr "모드 정보 불러오던 중 오류 발생"
+
+#: src/main/java/com/atlauncher/gui/dialogs/AddModsDialog.java:911
+msgid "There was an error getting mod information from Modrinth. Please try again later."
+msgstr "Modrinth에서 모드 정보를 받던 중 오류가 발생했습니다. 다시 시도해 주세요."
+
+#: src/main/java/com/atlauncher/gui/dialogs/ModsChooser.java:66
+msgid "Select Mods To Install"
+msgstr "설치할 모드 선택"
+
+#: src/main/java/com/atlauncher/gui/dialogs/ModsChooser.java:102
+msgid "Required Mods"
+msgstr "필수 모드"
+
+#: src/main/java/com/atlauncher/gui/dialogs/ModsChooser.java:106
+msgid "Optional Mods"
+msgstr "선택 모드"
+
+#: src/main/java/com/atlauncher/gui/dialogs/ModsChooser.java:139
+msgid "Use Share Code"
+msgstr "공유 코드 사용"
+
+#: src/main/java/com/atlauncher/gui/dialogs/ModsChooser.java:141
+msgid "Enter Share Code"
+msgstr "공유 코드 입력"
+
+#: src/main/java/com/atlauncher/gui/dialogs/ModsChooser.java:153
+msgid "Select Recommended"
+msgstr "권장사항 선택"
+
+#: src/main/java/com/atlauncher/gui/dialogs/ModsChooser.java:155
+msgid "Select All"
+msgstr "모두 선택"
+
+#: src/main/java/com/atlauncher/gui/dialogs/ModsChooser.java:183
+msgid "Clear All"
+msgstr "모두 지우기"
+
+#. {0} is a warning for a given mod
+#: src/main/java/com/atlauncher/gui/dialogs/ModsChooser.java:279
+msgid "{0}<br/><br/>Are you sure that you want to enable this mod?"
+msgstr "{0}<br/><br/>이 모드를 활성화하시겠습니까?"
+
+#: src/main/java/com/atlauncher/gui/dialogs/ModsChooser.java:375
+#: src/main/java/com/atlauncher/gui/dialogs/ModsChooser.java:385
+#: src/main/java/com/atlauncher/gui/dialogs/ModsChooser.java:392
+#: src/main/java/com/atlauncher/gui/dialogs/ModsChooser.java:416
+msgid "Invalid Share Code"
+msgstr "잘못된 공유 코드"
+
+#. {0} is the name of the launcher (ATLauncher)
+#: src/main/java/com/atlauncher/gui/dialogs/SetupDialog.java:66
+msgid "{0} Setup"
+msgstr "{0} 설정"
+
+#. #-#-#-#-#  translations.pot  #-#-#-#-#
+#. {0} is the name of the launcher (ATLauncher)
+#: src/main/java/com/atlauncher/gui/dialogs/SetupDialog.java:79
+#: src/main/java/com/atlauncher/gui/dialogs/SetupDialog.java:174
+msgid "Setting up {0}"
+msgstr "{0} 설정 중"
+
+#: src/main/java/com/atlauncher/gui/dialogs/SetupDialog.java:129
+msgid "Open Privacy Policy"
+msgstr "\"개인 정보 보호 정책\" 열기"
+
+#. {0} is the name of the instance we're exporting
+#: src/main/java/com/atlauncher/gui/dialogs/InstanceExportDialog.java:74
+msgid "Export {0}"
+msgstr "{0}을(를) 내보냅니다."
+
+#: src/main/java/com/atlauncher/gui/dialogs/InstanceExportDialog.java:122
+msgid "The version of this instance"
+msgstr "이 인스턴스의 버전"
+
+#: src/main/java/com/atlauncher/gui/dialogs/InstanceExportDialog.java:138
+msgid "Author"
+msgstr "제작자"
+
+#: src/main/java/com/atlauncher/gui/dialogs/InstanceExportDialog.java:139
+msgid "Your name"
+msgstr "사용자 이름(~Y)"
+
+#: src/main/java/com/atlauncher/gui/dialogs/InstanceExportDialog.java:157
+msgid "Format"
+msgstr "형식"
+
+#: src/main/java/com/atlauncher/gui/dialogs/InstanceExportDialog.java:158
+msgid "Which format to export this instance as"
+msgstr "이 인스턴스를 보낼 형식"
+
+#: src/main/java/com/atlauncher/gui/dialogs/InstanceExportDialog.java:186
+msgid "Save To"
+msgstr "저장"
+
+#: src/main/java/com/atlauncher/gui/dialogs/InstanceExportDialog.java:187
+msgid "Select the folder you wish to export the instance to"
+msgstr "인스턴스를 내보낼 폴더를 선택하십시오."
+
+#: src/main/java/com/atlauncher/gui/dialogs/InstanceExportDialog.java:207
+msgid "Select export directory"
+msgstr ""
+
+#: src/main/java/com/atlauncher/gui/dialogs/InstanceExportDialog.java:208
+msgid "Directory"
+msgstr ""
+
+#: src/main/java/com/atlauncher/gui/dialogs/InstanceExportDialog.java:241
+msgid "Folders To Export"
+msgstr "내보낼 폴더"
+
+#: src/main/java/com/atlauncher/gui/dialogs/InstanceExportDialog.java:242
+msgid "Select the folders you wish to include for this export"
+msgstr "이 내보내기에 포함 할 폴더를 선택하십시오."
+
+#: src/main/java/com/atlauncher/gui/dialogs/InstanceExportDialog.java:305
+msgid "Exporting Instance"
+msgstr "인스턴스 내보내기"
+
+#: src/main/java/com/atlauncher/gui/dialogs/InstanceExportDialog.java:306
+msgid "Exporting Instance. Please wait..."
+msgstr "인스턴스 내보내기. 잠시만 기다려주세요..."
+
+#: src/main/java/com/atlauncher/gui/dialogs/InstanceExportDialog.java:329
+msgid "Exported Instance Successfully"
+msgstr "인스턴스를 성공적으로 내보냈습니다."
+
+#: src/main/java/com/atlauncher/gui/dialogs/InstanceExportDialog.java:336
+msgid "Failed to export instance. Check the console for details"
+msgstr "인스턴스를 내 보내지 못했습니다. 자세한 내용은 콘솔을 확인하십시오."
+
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/GeneralInstanceSettingsTab.java:71
+msgid "Account Override"
+msgstr "계정 강제 적용"
+
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/GeneralInstanceSettingsTab.java:71
+msgid "Which account to use when launching this instance. Use Launcher Default will use whichever account is selected in the launcher."
+msgstr "이 인스턴스에서 사용할 계정을 강제 지정합니다. 기본값 사용 시 런처 하단에 선택된 계정을 사용합니다."
+
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/GeneralInstanceSettingsTab.java:80
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/GeneralInstanceSettingsTab.java:111
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/JavaInstanceSettingsTab.java:342
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/JavaInstanceSettingsTab.java:487
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/JavaInstanceSettingsTab.java:565
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/JavaInstanceSettingsTab.java:593
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/JavaInstanceSettingsTab.java:621
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/CommandsInstanceSettingsTab.java:78
+msgid "Use Launcher Default"
+msgstr "런처 기본값 사용"
+
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/JavaInstanceSettingsTab.java:112
+msgid "You are running a 32 bit Java and therefore cannot use more than 1GB of Ram. Please see http://atl.pw/32bit for help."
+msgstr "32비트 자바를 사용하고 있어 1GB 이상의 메모리를 사용할 수 없습니다. 자세한 내용은 http://atl.pw/32bit에서 확인하실 수 있습니다."
+
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/JavaInstanceSettingsTab.java:279
+msgid "This version of Minecraft provides a specific version of Java to be used with it, so you cannot set a custom Java path.<br/><br/>In order to manually set a path, you must disable this option (highly not recommended)."
+msgstr "이 버전의 마인크래프트는 구동 가능한 버전의 자바가 별도로 제공되고 있어, 수동 자바 경로 설정이 불가능 합니다.<br/><br/>수동으로 경로를 설정하기 위해서 이 옵션을 끌 수 있습니다. (극히 권장하지 않음)"
+
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/JavaInstanceSettingsTab.java:296
+msgid "This setting allows you to specify where your Java Path is.<br/><br/>This should be left as default, but if you know what you're doing, just set<br/>this to the path where the bin folder is for the version of Java you want to use.<br/><br/>If you mess up, click the Reset button to go back to the default"
+msgstr "이 설정에서는 특정 자바 경로를 지정할 수 있습니다.<br/><br/>이 값은 기본값으로 남아 있어야 하지만, 이 값의 의미를 안다면<br/>특정 버전의 자바 bin 경로를 지정하여 사용할 자바를 지정할 수 있습니다.<br/><br/>이 값을 잘못 지정한 경우, 초기화 버튼을 눌러 기본값으로 돌아갈 수 있습니다."
+
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/JavaInstanceSettingsTab.java:321
+msgid "Select path to Java install"
+msgstr "설치된 자바 위치 선택"
+
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/JavaInstanceSettingsTab.java:431
+msgid "Runtime Override"
+msgstr "런타임 강제적용"
+
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/JavaInstanceSettingsTab.java:433
+msgid "This allows you to override which runtime is used to launch this instance.<br/><br/>Runtimes are provided by Mojang and used to launch the game and generally correspond to a particular Java version.<br/><br/>Changing this is usually not required or recommended."
+msgstr "인스턴스에 사용할 런타임을 강제 지정할지를 결정합니다.<br/><br/>기본적으로 런타임은 모장에서 제공하며, 게임을 시작하기 위해 일반적으로 사용되는 특정 자바 버전을 의미합니다.<br/><br/>일반적인 상황에서 이 값의 변경은 필요하지도, 권장하지도 않습니다."
+
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/JavaInstanceSettingsTab.java:443
+msgid "Use Default (Recommended)"
+msgstr "기본값 사용 (권장)"
+
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/JavaInstanceSettingsTab.java:445
+msgid "Use System Java"
+msgstr ""
+
+#. {0} is the name of the pack
+#: src/main/java/com/atlauncher/gui/dialogs/ViewModsDialog.java:53
+msgid "Mods in {0}"
+msgstr "{0}의 모드 목록"
+
+#: src/main/java/com/atlauncher/gui/dialogs/ImportInstanceDialog.java:68
+#: src/main/java/com/atlauncher/gui/dialogs/ImportInstanceDialog.java:217
+#: src/main/java/com/atlauncher/gui/dialogs/ImportInstanceDialog.java:218
+msgid "Import Instance"
+msgstr "인스턴스 가져오기"
+
+#: src/main/java/com/atlauncher/gui/dialogs/ImportInstanceDialog.java:83
+msgid "Select a zip/mrpack file to import it.<br/>We currently support CurseForge, Modrinth and MultiMC exported files/urls, as well as CurseForge.com links."
+msgstr "불러올 zip 또는 mrpack 파일을 선택하세요.<br/>현재 CurseForge, Modrinth 그리고 MultiMC의 파일 또는 링크를 지원합니다."
+
+#: src/main/java/com/atlauncher/gui/dialogs/ImportInstanceDialog.java:95
+msgid "URL"
+msgstr "링크"
+
+#: src/main/java/com/atlauncher/gui/dialogs/ImportInstanceDialog.java:127
+msgid "File"
+msgstr "파일"
+
+#: src/main/java/com/atlauncher/gui/dialogs/ImportInstanceDialog.java:237
+msgid "Failed To Import Instance"
+msgstr "인스턴스 불러오기 실패"
+
+#: src/main/java/com/atlauncher/gui/dialogs/ImportInstanceDialog.java:238
+msgid "An error occured when trying to import an instance.<br/><br/>Check the console for more information."
+msgstr "인스턴스를 불러오는 중 오류가 발생했습니다.<br/><br/>자세한 사항은 콘솔을 확인하십시오."
+
+#. {0} is the name of the instance
+#: src/main/java/com/atlauncher/gui/dialogs/InstanceSettingsDialog.java:65
+msgid "{0} Settings"
+msgstr "{0} 설정"
+
+#: src/main/java/com/atlauncher/gui/dialogs/ProgressDialog.java:143
+msgid "Tasks Done"
+msgstr "작업 완료"
+
+#: src/main/java/com/atlauncher/gui/dialogs/BrowserDownloadDialog.java:73
+msgid "Open All In Browser"
+msgstr "브라우저로 모두 열기"
+
+#: src/main/java/com/atlauncher/gui/dialogs/BrowserDownloadDialog.java:74
+msgid "Skip Remaining"
+msgstr "남은 항목 건너뛰기"
+
+#: src/main/java/com/atlauncher/gui/dialogs/BrowserDownloadDialog.java:75
+msgid "Cancel Install"
+msgstr "설치 취소"
+
+#: src/main/java/com/atlauncher/gui/dialogs/BrowserDownloadDialog.java:82
+msgid "Browser Download Mods"
+msgstr "브라우저 모드 다운로드"
+
+#: src/main/java/com/atlauncher/gui/dialogs/BrowserDownloadDialog.java:201
+msgid "In order to continue downloading this modpack, you must manually download the following mods.<br/>Simply click the Open button to open them in your browser, or alternatively you can copy the url to your clipboard to open in another browser.<br/><br/>Please download all files to <b>{0}</b> in order for the launcher to detect them."
+msgstr "이 모드팩을 계속 설치하기 위해선, 다음 모드들을 수동으로 설치해야 합니다.<br/>단순히 열기 버튼을 누르거나 링크를 클립보드에 복사해서 브라우저로 여세요.<br/><br/>모든 파일을 <b>{0}</b>에 다운로드 해 런처가 자동으로 감지하게 하세요."
+
+#: src/main/java/com/atlauncher/gui/dialogs/BrowserDownloadDialog.java:234
+msgid "Are You Sure?"
+msgstr "확실한가요?"
+
+#: src/main/java/com/atlauncher/gui/dialogs/BrowserDownloadDialog.java:235
+msgid "Skipping the remaining downloads may cause issues launching the modpack.<br/><br/>Are you sure you want to do this?"
+msgstr "남은 다운로드를 건너뛸 경우 모드팩 실행에 문제가 될 수 있습니다.<br/><br/>정말로 계속할껀가요?"
+
+#: src/main/java/com/atlauncher/gui/dialogs/BrowserDownloadDialog.java:311
+msgid "Download Complete"
+msgstr "다운로드 완료"
+
+#: src/main/java/com/atlauncher/gui/dialogs/BrowserDownloadDialog.java:314
+#: src/main/java/com/atlauncher/gui/panels/BrowserDownloadMod.java:35
+msgid "Open"
+msgstr "열기"
+
+#: src/main/java/com/atlauncher/gui/dialogs/BrowserDownloadDialog.java:320
+#: src/main/java/com/atlauncher/gui/panels/BrowserDownloadMod.java:36
+msgid "Copy Link"
+msgstr "링크 복사"
+
+#: src/main/java/com/atlauncher/gui/TrayMenu.java:43
+#: src/main/java/com/atlauncher/gui/TrayMenu.java:77
+#: src/main/java/com/atlauncher/gui/components/ConsoleBottomBar.java:52
+#: src/main/java/com/atlauncher/gui/components/ConsoleBottomBar.java:135
+#: src/main/java/com/atlauncher/gui/components/ConsoleBottomBar.java:168
+msgid "Kill Minecraft"
+msgstr "Minecraft 강제 종료"
+
+#: src/main/java/com/atlauncher/gui/TrayMenu.java:44
+msgid "Toggle Console"
+msgstr "콘솔 켜기/끄기"
+
+#: src/main/java/com/atlauncher/gui/TrayMenu.java:45
+msgid "Kill Open Dialogs"
+msgstr "열린 추가 창 닫기"
+
+#: src/main/java/com/atlauncher/gui/TrayMenu.java:46
+msgid "Open Launcher Folder"
+msgstr "런처 폴더 열기"
+
+#: src/main/java/com/atlauncher/gui/TrayMenu.java:47
+msgid "Quit"
+msgstr "종료"
+
+#: src/main/java/com/atlauncher/gui/TrayMenu.java:78
+msgid "Are you sure you want to kill the Minecraft process?<br/>Doing so can cause corruption of your saves"
+msgstr "실행 중인 마인크래프트를 강제 종료하시겠습니까?<br/>세이브 파일 손상을 유발할 수도 있습니다."
+
+#: src/main/java/com/atlauncher/gui/TrayMenu.java:127
+#: src/main/java/com/atlauncher/gui/components/LauncherBottomBar.java:128
+#: src/main/java/com/atlauncher/gui/components/LauncherBottomBar.java:140
+#: src/main/java/com/atlauncher/gui/components/LauncherBottomBar.java:183
+msgid "Show Console"
+msgstr "콘솔 창 보이기"
+
+#: src/main/java/com/atlauncher/gui/TrayMenu.java:131
+#: src/main/java/com/atlauncher/gui/components/LauncherBottomBar.java:126
+#: src/main/java/com/atlauncher/gui/components/LauncherBottomBar.java:138
+#: src/main/java/com/atlauncher/gui/components/LauncherBottomBar.java:181
+msgid "Hide Console"
+msgstr "콘솔 창 숨기기"
+
+#. {0} is the platform to open the website for (e.g. CurseForge/Modrinth)
+#: src/main/java/com/atlauncher/gui/components/ModsJCheckBox.java:140
+#: src/main/java/com/atlauncher/gui/components/ModsJCheckBox.java:152
+msgid "Open On {0}"
+msgstr "{0}에서 열기"
+
+#: src/main/java/com/atlauncher/gui/components/ModsJCheckBox.java:158
+msgid "Open Discord"
+msgstr "Discord 열기"
+
+#: src/main/java/com/atlauncher/gui/components/ModsJCheckBox.java:164
+msgid "Open Issues"
+msgstr "이슈 열기"
+
+#: src/main/java/com/atlauncher/gui/components/ModsJCheckBox.java:170
+msgid "Open Source Url"
+msgstr "소스 주소 열기"
+
+#: src/main/java/com/atlauncher/gui/components/ModsJCheckBox.java:176
+msgid "Open Wiki"
+msgstr "위키 열기"
+
+#. {0} is the name of the platform used for donations (Patreon, paypal, etc)
+#: src/main/java/com/atlauncher/gui/components/ModsJCheckBox.java:186
+msgid "Donate ({0})"
+msgstr "기부하기 ({0})"
+
+#: src/main/java/com/atlauncher/gui/components/ModsJCheckBox.java:196
+msgid "Enable"
+msgstr "활성화"
+
+#: src/main/java/com/atlauncher/gui/components/ModsJCheckBox.java:196
+msgid "Disable"
+msgstr "비활성화"
+
+#: src/main/java/com/atlauncher/gui/components/ModsJCheckBox.java:210
+msgid "Show In File Explorer"
+msgstr "탐색기에 표시"
+
+#. {0} is the platform to reinstall the mod from (e.g. CurseForge/Modrinth)
+#: src/main/java/com/atlauncher/gui/components/ModsJCheckBox.java:236
+#: src/main/java/com/atlauncher/gui/components/ModsJCheckBox.java:245
+msgid "Reinstall From {0}"
+msgstr "{0}에서 재설치"
+
+#. {0} is the platform to check for updates from (e.g. CurseForge/Modrinth)
+#: src/main/java/com/atlauncher/gui/components/ModsJCheckBox.java:256
+#: src/main/java/com/atlauncher/gui/components/ModsJCheckBox.java:272
+msgid "Check For Updates On {0}"
+msgstr "{0}에서 업데이트 확인"
+
+#: src/main/java/com/atlauncher/gui/components/ModsJCheckBox.java:263
+#: src/main/java/com/atlauncher/gui/components/ModsJCheckBox.java:279
+#: src/main/java/com/atlauncher/gui/components/ModsJCheckBox.java:304
+msgid "No Updates Found"
+msgstr "새 업데이트 없음"
+
+#: src/main/java/com/atlauncher/gui/components/ModsJCheckBox.java:264
+#: src/main/java/com/atlauncher/gui/components/ModsJCheckBox.java:280
+#: src/main/java/com/atlauncher/gui/components/ModsJCheckBox.java:305
+msgid "No updates were found."
+msgstr "업데이트가 없습니다."
+
+#: src/main/java/com/atlauncher/gui/components/ConsoleBottomBar.java:50
+#: src/main/java/com/atlauncher/gui/components/ConsoleBottomBar.java:166
+msgid "Copy Log"
+msgstr "로그 복사하기"
+
+#: src/main/java/com/atlauncher/gui/components/ConsoleBottomBar.java:51
+#: src/main/java/com/atlauncher/gui/components/ConsoleBottomBar.java:167
+msgid "Upload Log"
+msgstr "로그 업로드하기"
+
+#: src/main/java/com/atlauncher/gui/components/ConsoleBottomBar.java:102
+#: src/main/java/com/atlauncher/gui/components/ConsoleBottomBar.java:103
+msgid "Uploading Logs"
+msgstr "로그 업로드 중"
+
+#: src/main/java/com/atlauncher/gui/components/ConsoleBottomBar.java:136
+msgid "Are you sure you want to kill the Minecraft process?<br/><br/>Doing so can cause corruption of your saves."
+msgstr "진행 중인 마인크래프트를 강제로 종료하시겠습니까?<br/><br/>당신의 세이브 파일이 오염되는 것을 유발할 수도 있습니다."
+
+#: src/main/java/com/atlauncher/gui/handlers/ModsJCheckBoxTransferHandler.java:88
+msgid "Adding Mods"
+msgstr "모드 추가 중"
+
+#: src/main/java/com/atlauncher/gui/handlers/ModsJCheckBoxTransferHandler.java:139
+msgid "Invalid File"
+msgstr "잘못된 파일"
+
+#: src/main/java/com/atlauncher/gui/handlers/ModsJCheckBoxTransferHandler.java:139
+msgid "Skipping file {0}. Only zip, jar and litemod files can be added."
+msgstr "{0} 파일 건너뛰는 중. zip, jar 그리고 litemod 파일만이 추가될 수 있습니다."
+
+#: src/main/java/com/atlauncher/gui/panels/packbrowser/ATLauncherPacksPanel.java:106
+#: src/main/java/com/atlauncher/gui/panels/packbrowser/FTBPacksPanel.java:63
+#: src/main/java/com/atlauncher/gui/panels/packbrowser/CurseForgePacksPanel.java:69
+#: src/main/java/com/atlauncher/gui/panels/packbrowser/TechnicPacksPanel.java:58
+#: src/main/java/com/atlauncher/gui/panels/packbrowser/ModrinthPacksPanel.java:71
+msgid "There are no packs to display.<br/><br/>Try removing your search query and try again."
+msgstr "표시할 모드팩이 없습니다.<br/><br/>검색란을 비우고 다시 시도해 주세요."
+
+#: src/main/java/com/atlauncher/gui/panels/packbrowser/UnifiedPacksPanel.java:51
+msgid "To find a pack, search for one at the top.<br/><br/>Alternatively choose a modpack platform on the left hand side."
+msgstr "모드팩을 찾기 위해, 상단에서 검색할 수 있습니다.<br/><br/>또는 모드팩 플랫폼을 좌측에서 선택할 수 있습니다."
+
+#: src/main/java/com/atlauncher/gui/panels/packbrowser/UnifiedPacksPanel.java:83
+msgid "There are no packs to display.<br/><br/>Try another search query or choose a platform on the left hand side."
+msgstr "표시할 모드팩이 없습니다.<br/><br/>다른 검색 조건이나 좌측의 모드팩 플랫폼을 선택해 주세요."
+
+#: src/main/java/com/atlauncher/gui/panels/packbrowser/FTBPacksPanel.java:146
+msgid "Most Popular"
+msgstr "유명도 순"
+
+#: src/main/java/com/atlauncher/gui/panels/packbrowser/FTBPacksPanel.java:147
+msgid "Most Installed"
+msgstr "다운로드 횟수 순"
+
+#: src/main/java/com/atlauncher/gui/panels/packbrowser/FTBPacksPanel.java:148
+msgid "Recently Updated"
+msgstr "최근 업데이트 순"
+
+#: src/main/java/com/atlauncher/gui/panels/packbrowser/FTBPacksPanel.java:149
+#: src/main/java/com/atlauncher/gui/panels/packbrowser/CurseForgePacksPanel.java:152
+msgid "Featured"
+msgstr "추천 순"
+
+#. #-#-#-#-#  translations.pot  #-#-#-#-#
+#. {0} is the platform were getting info from (e.g. CurseForge/Modrinth)
+#. #-#-#-#-#  translations.pot  #-#-#-#-#
+#. {0} is the platform were getting info from (e.g. CurseForge/Modrinth)
+#. #-#-#-#-#  translations.pot  #-#-#-#-#
+#. {0} is the platform were getting info from (e.g. CurseForge/Modrinth)
+#: src/main/java/com/atlauncher/gui/panels/packbrowser/CurseForgePacksPanel.java:214
+#: src/main/java/com/atlauncher/gui/panels/packbrowser/CurseForgePacksPanel.java:217
+#: src/main/java/com/atlauncher/gui/panels/packbrowser/ModrinthPacksPanel.java:223
+#: src/main/java/com/atlauncher/gui/panels/packbrowser/ModrinthPacksPanel.java:226
+msgid "Looking Up Pack On {0}"
+msgstr "{0}에서 모드팩 찾아보는 중"
+
+#. {0} is the platform were getting info from (e.g. CurseForge/Modrinth)
+#: src/main/java/com/atlauncher/gui/panels/packbrowser/CurseForgePacksPanel.java:219
+#: src/main/java/com/atlauncher/gui/panels/packbrowser/ModrinthPacksPanel.java:228
+msgid "Cancelling Looking Up Pack On {0}"
+msgstr "{0}에서 모드팩 찾아보기를 중단하는 중"
+
+#: src/main/java/com/atlauncher/gui/panels/packbrowser/CurseForgePacksPanel.java:254
+#: src/main/java/com/atlauncher/gui/panels/packbrowser/ModrinthPacksPanel.java:239
+msgid "Pack Not Found"
+msgstr "모드팩 발견 안됨"
+
+#: src/main/java/com/atlauncher/gui/panels/packbrowser/CurseForgePacksPanel.java:256
+#: src/main/java/com/atlauncher/gui/panels/packbrowser/ModrinthPacksPanel.java:241
+msgid "A pack with that id/slug was not found. Please check the id/slug/url and try again."
+msgstr "해당 ID/코드로 발견된 모드팩이 없습니다. 링크 또는 ID 및 코드 확인 후 다시 시도해 주세요."
+
+#: src/main/java/com/atlauncher/gui/panels/packbrowser/PackBrowserPlatformPanel.java:87
+msgid "Searching For Packs..."
+msgstr "모드팩 검색 중..."
+
+#. {0} is the platform name (ATLauncher, CurseForge, Technic, etc)
+#: src/main/java/com/atlauncher/gui/panels/packbrowser/PackBrowserPlatformPanel.java:90
+msgid "Loading {0} Packs..."
+msgstr "{0} 모드팩 로딩 중..."
+
+#: src/main/java/com/atlauncher/gui/panels/packbrowser/ModrinthPacksPanel.java:156
+msgid "Downloads"
+msgstr "다운로드 횟수 순"
+
+#: src/main/java/com/atlauncher/gui/panels/packbrowser/ModrinthPacksPanel.java:157
+msgid "Follows"
+msgstr "팔로우 횟수 순"
+
+#: src/main/java/com/atlauncher/gui/panels/packbrowser/ModrinthPacksPanel.java:159
+msgid "Updated"
+msgstr "최신 업데이트 순"
+
+#: src/main/java/com/atlauncher/gui/panels/LoadingPanel.java:34
+msgid "Loading..."
+msgstr "로딩 중..."
+
+#: src/main/java/com/atlauncher/gui/panels/NoCurseModsPanel.java:33
+msgid "No mods found. Remove your search query and try again."
+msgstr "모드 발견되지 않음. 검색 쿼리를 삭제하고 다시 시도하십시오."
+
+#: src/main/java/com/atlauncher/gui/panels/NoCurseModsPanel.java:34
+msgid "No mods found."
+msgstr "모드를 찾을 수 없습니다."
+
+#: src/main/java/com/atlauncher/Launcher.java:143
+msgid "Running 32 Bit Java on 64 Bit Windows"
+msgstr "64비트 윈도우에서 32비트 자바 실행 중"
+
+#: src/main/java/com/atlauncher/Launcher.java:144
+msgid "We have detected that you're running 64 bit Windows but not 64 bit Java.<br/><br/>This will cause severe issues playing all packs if not fixed.<br/><br/>Do you want to close the launcher and learn how to fix this issue now?"
+msgstr "64비트 윈도우를 사용 중이지만 64비트 자바를 사용 중이지 않습니다.<br/><br/>계속 할 경우 모든 팩들을 플레이하는 데에 심각한 문제가 발생할 것입니다.<br/><br/>런처를 닫고 이 문제를 어떻게 해결할지 알아보시겠습니까?"
+
+#: src/main/java/com/atlauncher/Launcher.java:190
+#: src/main/java/com/atlauncher/Launcher.java:191
+msgid "Downloading Launcher Update"
+msgstr "런처 업데이트 다운로드 중"
+
+#: src/main/java/com/atlauncher/Launcher.java:282
+#: src/main/java/com/atlauncher/Launcher.java:283
+msgid "Downloading Updates"
+msgstr "업데이트 다운로드 중"
+
+#: src/main/java/com/atlauncher/Launcher.java:369
+msgid "Updating Launcher. Please Wait"
+msgstr "런처 업데이트 중. 잠시만 기다려 주세요."
+
+#: src/main/java/com/atlauncher/Launcher.java:397
+msgid "An update to the launcher is available. Please update via your package manager or manually by visiting https://atlauncher.com/downloads to get the latest features and bug fixes."
+msgstr "런처 업데이트가 가능합니다. 패키지 매니저를 통하거나 https://atlauncher.com/downloads에 직접 방문하여 최신 기능과 버그 픽스를 받으세요."
+
+#: src/main/java/com/atlauncher/Launcher.java:400
+msgid "Visit Downloads Page"
+msgstr "다운로드 페이지 열기"
+
+#: src/main/java/com/atlauncher/Launcher.java:414
+msgid "Update failed. Please click Ok to close the launcher and open up the downloads page.<br/><br/>Download the update and replace the old exe/jar file."
+msgstr "업데이트 실패. 확인을 클릭해 런처를 닫고, 다운로드 페이지를 여십시오.<br/><br/>최신 버전을 다운로드 한 뒤 기존 exe 또는 jar 파일을 바꾸십시오."
+

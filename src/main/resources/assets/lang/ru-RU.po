@@ -1,0 +1,3570 @@
+msgid ""
+msgstr ""
+"Plural-Forms: nplurals=4; plural=((n%10==1 && n%100!=11) ? 0 : ((n%10 >= 2 && n%10 <=4 && (n%100 < 12 || n%100 > 14)) ? 1 : ((n%10 == 0 || (n%10 >= 5 && n%10 <=9)) || (n%100 >= 11 && n%100 <= 14)) ? 2 : 3));\n"
+"X-Crowdin-Project: atlauncher\n"
+"X-Crowdin-Project-ID: 239071\n"
+"X-Crowdin-Language: ru\n"
+"X-Crowdin-File: launcher.pot\n"
+"X-Crowdin-File-ID: 20\n"
+"Project-Id-Version: atlauncher\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language-Team: Russian\n"
+"Language: ru_RU\n"
+"PO-Revision-Date: 2023-11-09 09:55\n"
+
+#: src/main/java/com/atlauncher/viewmodel/impl/CreatePackViewModel.java:343
+#: src/main/java/com/atlauncher/gui/dialogs/InstanceInstallerDialog.java:1203
+msgid "No Versions Found"
+msgstr "Версии не найдены"
+
+#: src/main/java/com/atlauncher/viewmodel/impl/CreatePackViewModel.java:344
+msgid "Error Getting Versions"
+msgstr "Ошибка при получении версий"
+
+#: src/main/java/com/atlauncher/viewmodel/impl/CreatePackViewModel.java:721
+#: src/main/java/com/atlauncher/viewmodel/impl/CreatePackViewModel.java:729
+#: src/main/java/com/atlauncher/data/Instance.java:832
+#: src/main/java/com/atlauncher/gui/card/packbrowser/UnifiedPackCard.java:99
+#: src/main/java/com/atlauncher/gui/card/packbrowser/UnifiedPackCard.java:128
+#: src/main/java/com/atlauncher/gui/card/packbrowser/FTBPackCard.java:92
+#: src/main/java/com/atlauncher/gui/card/packbrowser/ModrinthPackCard.java:80
+#: src/main/java/com/atlauncher/gui/card/packbrowser/ModrinthPackCard.java:109
+#: src/main/java/com/atlauncher/gui/card/packbrowser/TechnicPackCard.java:75
+#: src/main/java/com/atlauncher/gui/card/packbrowser/CurseForgePackCard.java:86
+#: src/main/java/com/atlauncher/gui/card/packbrowser/CurseForgePackCard.java:115
+#: src/main/java/com/atlauncher/gui/card/packbrowser/ATLauncherPackCard.java:145
+#: src/main/java/com/atlauncher/gui/card/packbrowser/ATLauncherPackCard.java:173
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:505
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:586
+#: src/main/java/com/atlauncher/gui/dialogs/ImportInstanceDialog.java:205
+#: src/main/java/com/atlauncher/gui/panels/packbrowser/CurseForgePacksPanel.java:263
+#: src/main/java/com/atlauncher/gui/panels/packbrowser/ModrinthPacksPanel.java:248
+msgid "No Account Selected"
+msgstr "Аккаунт не выбран"
+
+#: src/main/java/com/atlauncher/viewmodel/impl/CreatePackViewModel.java:722
+#: src/main/java/com/atlauncher/gui/card/packbrowser/UnifiedPackCard.java:129
+#: src/main/java/com/atlauncher/gui/card/packbrowser/ModrinthPackCard.java:110
+#: src/main/java/com/atlauncher/gui/card/packbrowser/CurseForgePackCard.java:116
+#: src/main/java/com/atlauncher/gui/card/packbrowser/ATLauncherPackCard.java:174
+msgid "Cannot create server as you have no account selected."
+msgstr "Не удаётся создать сервер, пока не выбран аккаунт."
+
+#: src/main/java/com/atlauncher/viewmodel/impl/CreatePackViewModel.java:730
+#: src/main/java/com/atlauncher/gui/card/packbrowser/UnifiedPackCard.java:100
+#: src/main/java/com/atlauncher/gui/card/packbrowser/FTBPackCard.java:93
+#: src/main/java/com/atlauncher/gui/card/packbrowser/ModrinthPackCard.java:81
+#: src/main/java/com/atlauncher/gui/card/packbrowser/TechnicPackCard.java:76
+#: src/main/java/com/atlauncher/gui/card/packbrowser/CurseForgePackCard.java:87
+#: src/main/java/com/atlauncher/gui/card/packbrowser/ATLauncherPackCard.java:146
+#: src/main/java/com/atlauncher/gui/dialogs/ImportInstanceDialog.java:206
+#: src/main/java/com/atlauncher/gui/panels/packbrowser/CurseForgePacksPanel.java:264
+#: src/main/java/com/atlauncher/gui/panels/packbrowser/ModrinthPacksPanel.java:249
+msgid "Cannot create instance as you have no account selected."
+msgstr "Невозможно создать сборку, так как у вас нет выбранной учетной записи."
+
+#: src/main/java/com/atlauncher/App.java:428
+#: src/main/java/com/atlauncher/App.java:433
+msgid "Using Out Of Date Java"
+msgstr ""
+
+#: src/main/java/com/atlauncher/App.java:429
+msgid "You're running an out of date version of Java that was installed with the launcher.<br/><br/>In the future the launcher will no longer work without updating this.<br/><br/>This process is automatic and doesn't affect any Java installs outside of the launcher.<br/><br/>Do you want to do it now?"
+msgstr ""
+
+#: src/main/java/com/atlauncher/App.java:434
+msgid "You're running an out of date version of Java.<br/><br/>In the future the launcher will no longer work without updating this.<br/><br/>This process is automatic and doesn't affect any Java installs outside of the launcher.<br/><br/>Do you want to do it now?"
+msgstr ""
+
+#: src/main/java/com/atlauncher/App.java:437
+msgid "Let Launcher Manage Java"
+msgstr ""
+
+#: src/main/java/com/atlauncher/App.java:438
+msgid "You're currently using a version of Java not managed by the launcher.<br/><br/>Letting the launcher manage it's own version of Java is better for support and ease of use.<br/><br/>This process is automatic and doesn't affect any Java installs outside of the launcher.<br/><br/>Do you want to let the launcher manage it's own version of Java?"
+msgstr ""
+
+#: src/main/java/com/atlauncher/App.java:453
+#: src/main/java/com/atlauncher/App.java:454
+msgid "Downloading Java Update"
+msgstr ""
+
+#: src/main/java/com/atlauncher/App.java:489
+msgid "Failed To Update Bundled JRE"
+msgstr ""
+
+#: src/main/java/com/atlauncher/App.java:492
+msgid "There was an issue updating the bundled JRE. Please try again later and if the issue persists, please contact ATLauncher support via Discord."
+msgstr ""
+
+#: src/main/java/com/atlauncher/App.java:666
+#: src/main/java/com/atlauncher/App.java:691
+#: src/main/java/com/atlauncher/App.java:711
+msgid "Don't remind me again"
+msgstr "Больше не напоминать"
+
+#: src/main/java/com/atlauncher/App.java:692
+msgid "ATLauncher installed within OneDrive"
+msgstr "ATLauncher установлен внутри OneDrive"
+
+#: src/main/java/com/atlauncher/App.java:693
+msgid "We have detected that you're running ATLauncher from within OneDrive.<br/><br/>This can cause serious issues and you should move the folder outside of OneDrive.<br/><br/>Do you want to close the launcher and do this now?"
+msgstr "Мы обнаружили что вы запускаете ATLauncher изнутри OneDrive.<br/><br/>Это может вызвать ошибки и потому вы должны переместить папку из OneDrive.<br/><br/>Вы хотите закрыть лаунчер и сделать это прямо сейчас?"
+
+#: src/main/java/com/atlauncher/App.java:712
+msgid "ATLauncher installed within Program Files"
+msgstr "ATLauncher установлен внутри Program Files"
+
+#: src/main/java/com/atlauncher/App.java:713
+msgid "We have detected that you're running ATLauncher from within Program Files.<br/><br/>This can cause serious issues and you should move the folder outside of Program Files.<br/><br/>Do you want to close the launcher and do this now?"
+msgstr "Мы обнаружили что вы запускаете ATLauncher изнутри Program Files.<br/><br/>Это может вызвать ошибки и потому вы должны переместить папку из Program Files.<br/><br/>Вы хотите закрыть лаунчер и сделать это прямо сейчас?"
+
+#: src/main/java/com/atlauncher/App.java:734
+#: src/main/java/com/atlauncher/App.java:746
+msgid "ATLauncher cannot write files"
+msgstr "ATLauncher не может записать файлы"
+
+#: src/main/java/com/atlauncher/App.java:735
+#: src/main/java/com/atlauncher/App.java:747
+msgid "We have detected that ATLauncher cannot write files in it's current location.<br/><br/>We cannot continue to run, you must move this folder somewhere else with write access.<br/><br/>Try moving to a folder in your Desktop or another drive.<br/><br/>You can also try running ATLauncher as administrator, but this is not recommended."
+msgstr "Мы обнаружили, что ATLauncher не может записывать файлы в этом расположении.<br/><br/>Мы не можем продолжить запуск, вы должны переместить папку в место, где запись возможна.<br/><br/>Попробуйте переместить папку на ваш Рабочий Стол или на другой диск.<br/><br/>Также вы можете попробовать запустить ATLauncher с правами администратора, но это не рекомендуется."
+
+#: src/main/java/com/atlauncher/managers/AccountManager.java:233
+msgid "Account Added"
+msgstr "Аккаунт добавлен"
+
+#: src/main/java/com/atlauncher/managers/AccountManager.java:234
+msgid "Account added successfully. Switch to it now?"
+msgstr "Аккаунт успешно добавлен. Переключиться на него?"
+
+#: src/main/java/com/atlauncher/managers/AccountManager.java:235
+#: src/main/java/com/atlauncher/managers/DialogManager.java:102
+#: src/main/java/com/atlauncher/managers/DialogManager.java:111
+#: src/main/java/com/atlauncher/gui/tabs/accounts/AccountsTab.java:224
+#: src/main/java/com/atlauncher/gui/dialogs/ModsChooser.java:283
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/GeneralInstanceSettingsTab.java:112
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/JavaInstanceSettingsTab.java:488
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/JavaInstanceSettingsTab.java:566
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/JavaInstanceSettingsTab.java:594
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/JavaInstanceSettingsTab.java:622
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/CommandsInstanceSettingsTab.java:79
+msgid "Yes"
+msgstr "Да"
+
+#: src/main/java/com/atlauncher/managers/AccountManager.java:235
+#: src/main/java/com/atlauncher/managers/DialogManager.java:103
+#: src/main/java/com/atlauncher/managers/DialogManager.java:112
+#: src/main/java/com/atlauncher/gui/tabs/accounts/AccountsTab.java:225
+#: src/main/java/com/atlauncher/gui/dialogs/ModsChooser.java:284
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/GeneralInstanceSettingsTab.java:113
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/JavaInstanceSettingsTab.java:489
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/JavaInstanceSettingsTab.java:567
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/JavaInstanceSettingsTab.java:595
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/JavaInstanceSettingsTab.java:623
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/CommandsInstanceSettingsTab.java:80
+msgid "No"
+msgstr "Нет"
+
+#: src/main/java/com/atlauncher/managers/DialogManager.java:81
+#: src/main/java/com/atlauncher/managers/DialogManager.java:89
+#: src/main/java/com/atlauncher/data/json/Messages.java:52
+#: src/main/java/com/atlauncher/data/json/Messages.java:73
+msgid "Ok"
+msgstr "Ок"
+
+#: src/main/java/com/atlauncher/managers/DialogManager.java:90
+#: src/main/java/com/atlauncher/managers/DialogManager.java:113
+#: src/main/java/com/atlauncher/data/json/Messages.java:52
+#: src/main/java/com/atlauncher/data/json/Messages.java:73
+#: src/main/java/com/atlauncher/gui/dialogs/ModrinthVersionSelectorDialog.java:346
+#: src/main/java/com/atlauncher/gui/dialogs/InstanceInstallerDialog.java:413
+#: src/main/java/com/atlauncher/gui/dialogs/CurseForgeProjectFileSelectorDialog.java:210
+#: src/main/java/com/atlauncher/gui/dialogs/ChangeSkinDialog.java:222
+#: src/main/java/com/atlauncher/gui/dialogs/InstanceExportDialog.java:346
+#: src/main/java/com/atlauncher/gui/dialogs/InstanceSettingsDialog.java:116
+msgid "Cancel"
+msgstr "Отмена"
+
+#: src/main/java/com/atlauncher/data/AbstractAccount.java:101
+msgid "Checking For Username Change"
+msgstr "Проверка изменений имени пользователя"
+
+#: src/main/java/com/atlauncher/data/AbstractAccount.java:102
+msgid "Checking Username Change For {0}"
+msgstr "Проверка изменения имени пользователя для {0}"
+
+#: src/main/java/com/atlauncher/data/AbstractAccount.java:127
+msgid "No Changes"
+msgstr "Без изменений"
+
+#: src/main/java/com/atlauncher/data/AbstractAccount.java:128
+msgid "Your username hasn't changed."
+msgstr "Ваше имя пользователя не было изменено."
+
+#: src/main/java/com/atlauncher/data/AbstractAccount.java:131
+msgid "Username Updated"
+msgstr "Имя пользователя обновлено"
+
+#: src/main/java/com/atlauncher/data/AbstractAccount.java:132
+msgid "Your username has been updated."
+msgstr "Ваше имя пользователя было обновлено."
+
+#: src/main/java/com/atlauncher/data/AbstractAccount.java:134
+#: src/main/java/com/atlauncher/data/AbstractAccount.java:215
+#: src/main/java/com/atlauncher/data/Instance.java:2777
+#: src/main/java/com/atlauncher/data/Instance.java:2784
+#: src/main/java/com/atlauncher/data/Instance.java:2793
+#: src/main/java/com/atlauncher/data/Instance.java:2801
+#: src/main/java/com/atlauncher/data/installables/Installable.java:90
+#: src/main/java/com/atlauncher/data/installables/Installable.java:95
+#: src/main/java/com/atlauncher/data/installables/Installable.java:102
+#: src/main/java/com/atlauncher/data/installables/Installable.java:107
+#: src/main/java/com/atlauncher/gui/dialogs/CreateMinecraftProfileDialog.java:116
+#: src/main/java/com/atlauncher/gui/dialogs/CreateMinecraftProfileDialog.java:127
+#: src/main/java/com/atlauncher/gui/dialogs/CreateMinecraftProfileDialog.java:139
+#: src/main/java/com/atlauncher/gui/dialogs/RenameInstanceDialog.java:112
+#: src/main/java/com/atlauncher/gui/dialogs/RenameInstanceDialog.java:118
+#: src/main/java/com/atlauncher/gui/dialogs/RenameInstanceDialog.java:121
+#: src/main/java/com/atlauncher/gui/dialogs/RenameInstanceDialog.java:129
+msgid "Error"
+msgstr "Ошибка"
+
+#: src/main/java/com/atlauncher/data/AbstractAccount.java:136
+msgid "Error checking for username change. Check the error logs and try again later."
+msgstr "Возникла ошибка при проверке изменения имени пользователя. Проверьте журналы ошибки и попробуйте снова позже."
+
+#: src/main/java/com/atlauncher/data/AbstractAccount.java:148
+msgid "Downloading Skin"
+msgstr "Загрузка скина"
+
+#: src/main/java/com/atlauncher/data/AbstractAccount.java:149
+msgid "Downloading Skin For {0}"
+msgstr "Загрузка скина для {0}"
+
+#: src/main/java/com/atlauncher/data/AbstractAccount.java:216
+msgid "Error downloading skin. Please try again later!"
+msgstr "Ошибка при загрузке скина. Пожалуйста, повторите попытку позже!"
+
+#: src/main/java/com/atlauncher/data/json/Messages.java:51
+#: src/main/java/com/atlauncher/gui/dialogs/InstanceInstallerDialog.java:247
+msgid "Installing"
+msgstr "Установка"
+
+#: src/main/java/com/atlauncher/data/json/Messages.java:72
+#: src/main/java/com/atlauncher/gui/dialogs/InstanceInstallerDialog.java:246
+msgid "Reinstalling"
+msgstr "Переустановка"
+
+#: src/main/java/com/atlauncher/data/json/Mod.java:437
+#: src/main/java/com/atlauncher/data/json/Mod.java:593
+#: src/main/java/com/atlauncher/data/Instance.java:1405
+#: src/main/java/com/atlauncher/workers/InstanceInstaller.java:453
+#: src/main/java/com/atlauncher/workers/InstanceInstaller.java:915
+msgid "Downloading"
+msgstr "Загрузка"
+
+#: src/main/java/com/atlauncher/data/json/Mod.java:440
+#: src/main/java/com/atlauncher/data/json/Mod.java:595
+#: src/main/java/com/atlauncher/data/Instance.java:1407
+#: src/main/java/com/atlauncher/workers/InstanceInstaller.java:455
+#: src/main/java/com/atlauncher/workers/InstanceInstaller.java:917
+msgid "Browser opened to download file {0}"
+msgstr "Открыт браузер для загрузки файла {0}"
+
+#: src/main/java/com/atlauncher/data/json/Mod.java:444
+#: src/main/java/com/atlauncher/data/json/Mod.java:597
+#: src/main/java/com/atlauncher/data/Instance.java:1410
+#: src/main/java/com/atlauncher/workers/InstanceInstaller.java:458
+#: src/main/java/com/atlauncher/workers/InstanceInstaller.java:920
+msgid "Please save this file to the following location"
+msgstr "Пожалуйста, сохраните этот файл в следующем месте"
+
+#: src/main/java/com/atlauncher/data/json/Mod.java:453
+#: src/main/java/com/atlauncher/data/json/Mod.java:604
+#: src/main/java/com/atlauncher/data/Instance.java:1418
+#: src/main/java/com/atlauncher/workers/InstanceInstaller.java:466
+#: src/main/java/com/atlauncher/workers/InstanceInstaller.java:928
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:92
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:741
+#: src/main/java/com/atlauncher/gui/card/ServerCard.java:62
+#: src/main/java/com/atlauncher/gui/card/ServerCard.java:254
+#: src/main/java/com/atlauncher/gui/dialogs/BrowserDownloadDialog.java:72
+#: src/main/java/com/atlauncher/gui/components/LauncherBottomBar.java:143
+#: src/main/java/com/atlauncher/gui/components/LauncherBottomBar.java:186
+msgid "Open Folder"
+msgstr "Открыть папку"
+
+#: src/main/java/com/atlauncher/data/json/Mod.java:454
+#: src/main/java/com/atlauncher/data/json/Mod.java:605
+#: src/main/java/com/atlauncher/data/Instance.java:1419
+#: src/main/java/com/atlauncher/workers/InstanceInstaller.java:467
+#: src/main/java/com/atlauncher/workers/InstanceInstaller.java:929
+msgid "I've Downloaded This File"
+msgstr "Я скачал этот файл"
+
+#: src/main/java/com/atlauncher/data/json/Mod.java:455
+msgid "Skip Mod (Pack May Break)"
+msgstr "Пропустить мод (Пакет может сломаться)"
+
+#: src/main/java/com/atlauncher/data/MinecraftError.java:54
+#: src/main/java/com/atlauncher/data/MinecraftError.java:62
+#: src/main/java/com/atlauncher/data/MinecraftError.java:70
+#: src/main/java/com/atlauncher/data/MinecraftError.java:82
+#: src/main/java/com/atlauncher/data/MinecraftError.java:91
+msgid "About Your Crash"
+msgstr "О вашем сбое"
+
+#: src/main/java/com/atlauncher/data/MinecraftError.java:55
+msgid "Minecraft has crashed due to insufficent memory being allocated.<br/><br/>Please go to the settings tab and increase the maximum memory option and then try launching the instance again."
+msgstr "Minecraft аварийно завершился из-за недостатка выделенной оперативной памяти.<br/><br/>Перейдите во вкладку настроек и увеличьте максимальное кол-во оперативной памяти, затем попробуйте запустить сборку снова."
+
+#: src/main/java/com/atlauncher/data/MinecraftError.java:63
+msgid "Minecraft has crashed due to an incompatability with Forge and your version of Java.<br/><br/>Please reinstall the instance to automatically fix the problem, and then try launching the instance again."
+msgstr "Minecraft аварийно завершился из-за несовместимости с Force и вашей версией Java.<br/><br/>Пожалуйста, переустановите сборку для автоматического решения проблемы, затем попробуйте запустить ее снова."
+
+#: src/main/java/com/atlauncher/data/MinecraftError.java:71
+msgid "Minecraft has crashed due to not being compatible with your Java version.<br/><br/>Most modded Minecraft is only compatible with Java 8, so you must install Java 8 on your computer."
+msgstr "Minecraft аварийно завершил свою работу из-за того, что не совместим с версией Java, которая у вас установлена.<br/><br/>Большинство модифицированных сборок Minecraft совместимо только с Java 8, поэтому вы должны установить Java 8 на свой компьютер."
+
+#: src/main/java/com/atlauncher/data/MinecraftError.java:74
+msgid "Download Java 8"
+msgstr "Скачать Java 8"
+
+#: src/main/java/com/atlauncher/data/MinecraftError.java:83
+#: src/main/java/com/atlauncher/data/MinecraftError.java:92
+msgid "Minecraft has crashed due to not being compatible with your Java version.<br/><br/>This version of Minecraft requires Java {0} or newer.<br/><br/>Make sure you've selected the correct Java version in this instances<br/>settings or not disabled the \"Use Java Provided By Minecraft\" setting.<br/><br/>If it's still not working, you may be using a mod that requires Java {0},<br/>but Minecraft only requires Java 8, so you can go into the instances<br/>settings and in the \"Java\" tab, change the \"Runtime Overide\"<br/>option to one that is Java {0} or newer."
+msgstr "Сбой Minecraft произошел из-за несовместимости с вашей версией Java.<br/><br/>Для этой версии Minecraft требуется Java {0} или новее.<br/><br/>Убедитесь, что вы выбрали правильную версию Java в настройках<br/>сборки или случайно не отключили параметр «Использование Java, предоставляемую Minecraft».<br/><br/>Если она по-прежнему не работает, возможно, вы используете мод, для которого требуется Java {0},<br/>но для этой версии Minecraft требуется только Java 8, поэтому вам нужно снять флажок с параметра<br/>\"Использование Java, предоставляемую Minecraft\" для \"сборки\" и<br/>вручную указать путь к установленой Java {0} или новее."
+
+#. {0} is the Minecraft username
+#: src/main/java/com/atlauncher/data/MojangAccount.java:230
+msgid "Enter password for {0}"
+msgstr "Введите пароль для {0}"
+
+#: src/main/java/com/atlauncher/data/MojangAccount.java:236
+msgid "Enter Password"
+msgstr "Введите пароль"
+
+#: src/main/java/com/atlauncher/data/MojangAccount.java:261
+#: src/main/java/com/atlauncher/data/Instance.java:1029
+msgid "Error Logging In"
+msgstr "Ошибка авторизации"
+
+#: src/main/java/com/atlauncher/data/MojangAccount.java:262
+msgid "Couldn't login to Minecraft servers"
+msgstr "Не удалось войти в серверы Minecraft"
+
+#: src/main/java/com/atlauncher/data/Instance.java:280
+#: src/main/java/com/atlauncher/data/Server.java:455
+msgid "No Description"
+msgstr "Нет описания"
+
+#: src/main/java/com/atlauncher/data/Instance.java:440
+msgid "Grabbing Latest Manifest"
+msgstr "Получение последнего манифеста"
+
+#: src/main/java/com/atlauncher/data/Instance.java:464
+#: src/main/java/com/atlauncher/workers/InstanceInstaller.java:2794
+msgid "Downloading Minecraft"
+msgstr "Загрузка Minecraft"
+
+#: src/main/java/com/atlauncher/data/Instance.java:486
+msgid "Downloading Logging Config"
+msgstr "Загрузка конфигурации Логинов"
+
+#: src/main/java/com/atlauncher/data/Instance.java:514
+#: src/main/java/com/atlauncher/workers/InstanceInstaller.java:2952
+msgid "Downloading Libraries"
+msgstr "Загрузка библиотек"
+
+#. #-#-#-#-#  translations.pot  #-#-#-#-#
+#. {0} is the version of Java were downloading
+#: src/main/java/com/atlauncher/data/Instance.java:587
+#: src/main/java/com/atlauncher/workers/InstanceInstaller.java:3064
+msgid "Downloading Java Runtime {0}"
+msgstr "Скачиваем среду исполнения Java {0}"
+
+#: src/main/java/com/atlauncher/data/Instance.java:648
+#: src/main/java/com/atlauncher/data/Instance.java:682
+#: src/main/java/com/atlauncher/workers/InstanceInstaller.java:2734
+#: src/main/java/com/atlauncher/workers/InstanceInstaller.java:2773
+msgid "Organising Resources"
+msgstr "Организую Ресурсы"
+
+#: src/main/java/com/atlauncher/data/Instance.java:671
+#: src/main/java/com/atlauncher/workers/InstanceInstaller.java:2765
+msgid "Downloading Resources"
+msgstr "Загрузка ресурсов"
+
+#: src/main/java/com/atlauncher/data/Instance.java:700
+#: src/main/java/com/atlauncher/workers/InstanceInstaller.java:3001
+msgid "Organising Libraries"
+msgstr "Организация библиотек"
+
+#: src/main/java/com/atlauncher/data/Instance.java:754
+msgid "Extracting Legacy LWJGL"
+msgstr "Извлечение Legacy LWJGL"
+
+#: src/main/java/com/atlauncher/data/Instance.java:782
+msgid "Creating custom minecraft.jar"
+msgstr "Создание пользовательского файла minecraft.jar"
+
+#: src/main/java/com/atlauncher/data/Instance.java:801
+msgid "Scanning mods for Fractureiser"
+msgstr ""
+
+#: src/main/java/com/atlauncher/data/Instance.java:834
+msgid "Cannot play instance as you have no account selected."
+msgstr "Невозможно запустить Minecraft, так как у вас нет выбранного аккаунта."
+
+#: src/main/java/com/atlauncher/data/Instance.java:856
+msgid "Offline Player Name"
+msgstr "Офлайн Ник Игрока"
+
+#: src/main/java/com/atlauncher/data/Instance.java:857
+msgid "Choose your offline player name:"
+msgstr "Выберите свой офлайн Ник:"
+
+#: src/main/java/com/atlauncher/data/Instance.java:871
+msgid "Insufficient Ram"
+msgstr "Недостаточно оперативной памяти"
+
+#: src/main/java/com/atlauncher/data/Instance.java:872
+msgid "This pack has set a minimum amount of ram needed to <b>{0}</b> MB.<br/><br/>Do you want to continue loading the instance anyway?"
+msgstr "На данный пакет установлено минимальное количество оперативной памяти в кол-ве <b>{0}</b> МБ.<br/><br/>Вы хотите продолжить загрузку образца?"
+
+#: src/main/java/com/atlauncher/data/Instance.java:885
+msgid "Insufficent Permgen"
+msgstr "Недостаточно PermGen"
+
+#: src/main/java/com/atlauncher/data/Instance.java:886
+msgid "This pack has set a minimum amount of permgen to <b>{0}</b> MB.<br/><br/>Do you want to continue loading the instance anyway?"
+msgstr "Минимальное значение permgen для этого пакета - <b>{0}</b> MB.<br/><br/>Продолжить загрузку?"
+
+#: src/main/java/com/atlauncher/data/Instance.java:917
+#: src/main/java/com/atlauncher/data/Instance.java:919
+msgid "Preparing For Launch"
+msgstr "Подготовка к запуску"
+
+#: src/main/java/com/atlauncher/data/Instance.java:968
+#: src/main/java/com/atlauncher/data/Instance.java:1013
+#: src/main/java/com/atlauncher/data/Instance.java:1014
+#: src/main/java/com/atlauncher/gui/tabs/accounts/AccountsTab.java:478
+#: src/main/java/com/atlauncher/gui/tabs/accounts/AccountsTab.java:480
+msgid "Logging Into Minecraft"
+msgstr "Вход в Minecraft"
+
+#: src/main/java/com/atlauncher/data/Instance.java:1030
+msgid "Couldn't login with Microsoft account"
+msgstr "Не удалось войти с помощью учетной записи Microsoft"
+
+#: src/main/java/com/atlauncher/data/Instance.java:1286
+#: src/main/java/com/atlauncher/data/Instance.java:1294
+msgid "Error executing command"
+msgstr "Ошибка при выполнении команды"
+
+#: src/main/java/com/atlauncher/data/Instance.java:1292
+msgid "Check the console for details"
+msgstr "Проверьте Консоль для подробностей"
+
+#: src/main/java/com/atlauncher/data/Instance.java:1371
+#: src/main/java/com/atlauncher/workers/InstanceInstaller.java:428
+#: src/main/java/com/atlauncher/workers/InstanceInstaller.java:890
+msgid "Mod Not Available"
+msgstr "Мод недоступен"
+
+#: src/main/java/com/atlauncher/data/Instance.java:1372
+msgid "We were unable to download this mod.<br/>This is likely due to the author of the mod disabling third party clients from downloading it.<br/><br/>You'll be prompted shortly to download the mod manually through your browser to your downloads folder.<br/>Once you've downloaded the file that was opened in your browser to your downloads folder, we can continue with installing the mod.<br/><br/>This process is unfortunate, but we don't have any choice in this matter and has to be done this way."
+msgstr "Нам не удалось загрузить этот мод.<br/>Вероятно, это связано с тем, что автор мода запретил его загрузку сторонним клиентам.<br/><br/>Вскоре вам будет предложено загрузить мод вручную через ваш браузер в папку загрузок.<br/>После того, как вы загрузили файл, который был открыт в вашем браузере, в папку загрузок, мы можем продолжить установку мода.<br/><br/>Это неудачный процесс, но у нас нет никакого выбора в этом вопросе и иза этого это должно быть сделано таким образом."
+
+#. #-#-#-#-#  translations.pot  #-#-#-#-#
+#. {0} is the name of a mod that was installed
+#. #-#-#-#-#  translations.pot  #-#-#-#-#
+#. {0} is the name of a mod that was installed
+#. #-#-#-#-#  translations.pot  #-#-#-#-#
+#. {0} is the loader (Forge/Fabric/Quilt)
+#. #-#-#-#-#  translations.pot  #-#-#-#-#
+#. {0} is the loader (Forge/Fabric/Quilt)
+#: src/main/java/com/atlauncher/data/Instance.java:1538
+#: src/main/java/com/atlauncher/data/Instance.java:1633
+#: src/main/java/com/atlauncher/data/Instance.java:2876
+#: src/main/java/com/atlauncher/data/Instance.java:2925
+msgid "{0} Installed"
+msgstr "{0} установлен"
+
+#. #-#-#-#-#  translations.pot  #-#-#-#-#
+#. {0} is the name of the instance
+#. #-#-#-#-#  translations.pot  #-#-#-#-#
+#. {0} is the name of the instance
+#. #-#-#-#-#  translations.pot  #-#-#-#-#
+#. {0} is the name of the server we're backing up
+#: src/main/java/com/atlauncher/data/Instance.java:2693
+#: src/main/java/com/atlauncher/data/Instance.java:2702
+#: src/main/java/com/atlauncher/data/Server.java:387
+msgid "Backing Up {0}"
+msgstr "Резервное копирование {0}"
+
+#: src/main/java/com/atlauncher/data/Instance.java:2727
+#: src/main/java/com/atlauncher/data/Server.java:397
+msgid "Backup is complete"
+msgstr "Резервное копирование завершено"
+
+#: src/main/java/com/atlauncher/data/Instance.java:2755
+msgid "Enter a new name for this cloned instance."
+msgstr "Введите новое название для этой клонированной сборки."
+
+#: src/main/java/com/atlauncher/data/Instance.java:2756
+#: src/main/java/com/atlauncher/data/Instance.java:2767
+msgid "Cloning Instance"
+msgstr "Клонирование сборки"
+
+#: src/main/java/com/atlauncher/data/Instance.java:2768
+msgid "Cloning Instance. Please wait..."
+msgstr "Клонирование сборки. Пожалуйста, подождите..."
+
+#: src/main/java/com/atlauncher/data/Instance.java:2772
+msgid "Cloned Instance Successfully"
+msgstr "Сборка клонирована успешно"
+
+#: src/main/java/com/atlauncher/data/Instance.java:2778
+#: src/main/java/com/atlauncher/data/Instance.java:2785
+#: src/main/java/com/atlauncher/data/Instance.java:2794
+#: src/main/java/com/atlauncher/data/Instance.java:2802
+msgid "An error occurred while cloning the instance.<br/><br/>Please check the console and try again."
+msgstr "Произошла ошибка при клонировании сборки.<br/><br/>Пожалуйста, проверьте консоль и повторите попытку."
+
+#: src/main/java/com/atlauncher/data/Instance.java:2818
+#: src/main/java/com/atlauncher/data/Server.java:512
+msgid "Changing Description"
+msgstr "Изменение описания"
+
+#. {0} is the loader (Forge/Fabric/Quilt) {1} is the version
+#: src/main/java/com/atlauncher/data/Instance.java:2880
+#: src/main/java/com/atlauncher/data/Instance.java:2928
+msgid "{0} {1} has been installed."
+msgstr "{0} {1} было установлено."
+
+#. {0} is the loader (Forge/Fabric/Quilt)
+#: src/main/java/com/atlauncher/data/Instance.java:2886
+#: src/main/java/com/atlauncher/data/Instance.java:2932
+msgid "{0} Not Installed"
+msgstr "{0} Не установлено"
+
+#. {0} is the loader (Forge/Fabric/Quilt)
+#: src/main/java/com/atlauncher/data/Instance.java:2889
+#: src/main/java/com/atlauncher/data/Instance.java:2934
+msgid "{0} has not been installed. Check the console for more information."
+msgstr "{0} не было установлено. Проверьте консоль для получения дополнительной информации."
+
+#. {0} is the loader (Forge/Fabric/Quilt)
+#: src/main/java/com/atlauncher/data/Instance.java:2944
+#: src/main/java/com/atlauncher/data/Instance.java:2946
+msgid "Checking For {0} Versions"
+msgstr "Проверка для {0} Версий"
+
+#. {0} is the loader (Forge/Fabric/Quilt)
+#: src/main/java/com/atlauncher/data/Instance.java:2969
+msgid "No Versions Available For {0}"
+msgstr "Нет доступных версий для {0}"
+
+#. {0} is the loader (Forge/Fabric/Quilt)
+#: src/main/java/com/atlauncher/data/Instance.java:2972
+msgid "{0} has not been installed/updated as there are no versions available."
+msgstr "{0} не было установлено/обновлен, так как нет доступных версий."
+
+#. {0} is the loader (Forge/Fabric/Quilt)
+#: src/main/java/com/atlauncher/data/Instance.java:3028
+msgid "Select {0} Version To Install"
+msgstr "Выберите {0} версию для установки"
+
+#. #-#-#-#-#  translations.pot  #-#-#-#-#
+#. {0} is the loader (Forge/Fabric/Quilt)
+#. #-#-#-#-#  translations.pot  #-#-#-#-#
+#. {0} is the name of the pack
+#. #-#-#-#-#  translations.pot  #-#-#-#-#
+#. {0} is the name of a mod we're installing
+#. #-#-#-#-#  translations.pot  #-#-#-#-#
+#. {0} is the name of the mod we're installing
+#. #-#-#-#-#  translations.pot  #-#-#-#-#
+#. {0} is the name of the mod we're installing
+#. #-#-#-#-#  translations.pot  #-#-#-#-#
+#. {0} is the name of the mod we're installing
+#. #-#-#-#-#  translations.pot  #-#-#-#-#
+#. {0} is the name of the pack the user is installing
+#. #-#-#-#-#  translations.pot  #-#-#-#-#
+#. {0} is the name of the pack the user is installing
+#. #-#-#-#-#  translations.pot  #-#-#-#-#
+#. {0} is the name of the pack the user is installing
+#. #-#-#-#-#  translations.pot  #-#-#-#-#
+#. {0} is the name of the pack the user is installing
+#. #-#-#-#-#  translations.pot  #-#-#-#-#
+#. {0} is the name of the pack the user is installing
+#. #-#-#-#-#  translations.pot  #-#-#-#-#
+#. {0} is the name of the pack the user is installing
+#. #-#-#-#-#  translations.pot  #-#-#-#-#
+#. {0} is the name of the pack the user is installing
+#. #-#-#-#-#  translations.pot  #-#-#-#-#
+#. {0} is the name of the pack the user is installing
+#. #-#-#-#-#  translations.pot  #-#-#-#-#
+#. {0} is the name of the mod we're installing
+#. #-#-#-#-#  translations.pot  #-#-#-#-#
+#. {0} is the name of the mod we're installing
+#. #-#-#-#-#  translations.pot  #-#-#-#-#
+#. {0} is the name of the mod we're installing
+#: src/main/java/com/atlauncher/data/Instance.java:3038
+#: src/main/java/com/atlauncher/data/installables/Installable.java:436
+#: src/main/java/com/atlauncher/workers/InstanceInstaller.java:3337
+#: src/main/java/com/atlauncher/gui/dialogs/ModrinthVersionSelectorDialog.java:212
+#: src/main/java/com/atlauncher/gui/dialogs/ModrinthVersionSelectorDialog.java:237
+#: src/main/java/com/atlauncher/gui/dialogs/ModrinthVersionSelectorDialog.java:293
+#: src/main/java/com/atlauncher/gui/dialogs/InstanceInstallerDialog.java:430
+#: src/main/java/com/atlauncher/gui/dialogs/InstanceInstallerDialog.java:519
+#: src/main/java/com/atlauncher/gui/dialogs/InstanceInstallerDialog.java:608
+#: src/main/java/com/atlauncher/gui/dialogs/InstanceInstallerDialog.java:673
+#: src/main/java/com/atlauncher/gui/dialogs/InstanceInstallerDialog.java:740
+#: src/main/java/com/atlauncher/gui/dialogs/InstanceInstallerDialog.java:776
+#: src/main/java/com/atlauncher/gui/dialogs/InstanceInstallerDialog.java:806
+#: src/main/java/com/atlauncher/gui/dialogs/InstanceInstallerDialog.java:844
+#: src/main/java/com/atlauncher/gui/dialogs/CurseForgeProjectFileSelectorDialog.java:119
+#: src/main/java/com/atlauncher/gui/dialogs/CurseForgeProjectFileSelectorDialog.java:144
+#: src/main/java/com/atlauncher/gui/dialogs/CurseForgeProjectFileSelectorDialog.java:185
+msgid "Installing {0}"
+msgstr "Идёт установка {0}"
+
+#. {0} is the loader (Forge/Fabric/Quilt)
+#: src/main/java/com/atlauncher/data/Instance.java:3040
+msgid "Changing {0} Version"
+msgstr "Изменение {0} Версий"
+
+#. #-#-#-#-#  translations.pot  #-#-#-#-#
+#. {0} is the loader (Forge/Fabric/Quilt)
+#. #-#-#-#-#  translations.pot  #-#-#-#-#
+#. {0} is the name of a mod that was removed
+#: src/main/java/com/atlauncher/data/Instance.java:3075
+#: src/main/java/com/atlauncher/data/Instance.java:3511
+msgid "{0} Removed"
+msgstr "{0} Удалено"
+
+#. {0} is the loader (Forge/Fabric/Quilt)
+#: src/main/java/com/atlauncher/data/Instance.java:3078
+msgid "{0} has been removed from this instance."
+msgstr "{0} был удален из этой Версии."
+
+#. {0} is the loader (Forge/Fabric/Quilt)
+#: src/main/java/com/atlauncher/data/Instance.java:3082
+msgid "{0} Not Removed"
+msgstr "{0} Не Удалено"
+
+#. {0} is the loader (Forge/Fabric/Quilt)
+#: src/main/java/com/atlauncher/data/Instance.java:3085
+msgid "{0} has not been removed. Check the console for more information."
+msgstr "{0} не был удален. Проверьте консоль для получения дополнительной информации."
+
+#: src/main/java/com/atlauncher/data/Instance.java:3245
+#: src/main/java/com/atlauncher/data/Instance.java:3246
+msgid "Scanning New Mods"
+msgstr "Сканирование Новых Модов"
+
+#. {0} is the platform were checking for updates (e.g. CurseForge/Modrinth)
+#: src/main/java/com/atlauncher/data/DisableableMod.java:369
+#: src/main/java/com/atlauncher/data/DisableableMod.java:371
+#: src/main/java/com/atlauncher/data/DisableableMod.java:466
+#: src/main/java/com/atlauncher/data/DisableableMod.java:468
+msgid "Checking For Update On {0}"
+msgstr "Проверка обновлений на {0}"
+
+#. {0} is the platform were getting files from (e.g. CurseForge/Modrinth)
+#: src/main/java/com/atlauncher/data/DisableableMod.java:524
+#: src/main/java/com/atlauncher/data/DisableableMod.java:526
+#: src/main/java/com/atlauncher/data/DisableableMod.java:539
+#: src/main/java/com/atlauncher/data/DisableableMod.java:541
+msgid "Getting Files From {0}"
+msgstr "Получение файлов из {0}"
+
+#: src/main/java/com/atlauncher/data/MicrosoftAccount.java:288
+msgid "You Must Login Again"
+msgstr "Вы должны войти снова"
+
+#: src/main/java/com/atlauncher/data/MicrosoftAccount.java:289
+msgid "You must login again in order to continue."
+msgstr "Вы должны снова войти в систему, чтобы продолжить."
+
+#: src/main/java/com/atlauncher/data/microsoft/XboxLiveAuthErrorResponse.java:40
+msgid "Account doesn't have an Xbox account.<br/><br/>Please create one by logging into minecraft.net before trying to login again."
+msgstr "У этой учетной записи нет учетной записи Xbox.<br/><br/>Пожалуйста, создайте ее, войдя на Сайт minecraft.net, прежде чем попытаться войти снова."
+
+#: src/main/java/com/atlauncher/data/microsoft/XboxLiveAuthErrorResponse.java:45
+msgid "Child accounts cannot login without being part of a family."
+msgstr "Невозможен вход в Учетную Запись Ребенка потому что она не является частью Семьи."
+
+#: src/main/java/com/atlauncher/data/microsoft/XboxLiveAuthErrorResponse.java:49
+msgid "Account is from a country where Xbox Live is banned/not available."
+msgstr "Учетная запись из страны, в которой служба Xbox Live запрещена/недоступна."
+
+#: src/main/java/com/atlauncher/data/Server.java:129
+msgid "Server Is Vulnerable"
+msgstr "Сервер уязвим"
+
+#: src/main/java/com/atlauncher/data/Server.java:130
+msgid "This server is currently vulnerable to the Log4Shell exploit.<br/><br/>For your safety, and of those on your server, please delete and recreate this server.<br/><br/>Do you still want to launch the server (not recommended)?"
+msgstr "В настоящее время этот сервер уязвим к эксплойту Log4Shell.<br/><br/>Для вашей безопасности и безопасности тех, кто находится на вашем сервере, удалите и заново создайте этот сервер.<br/><br/>Вы все еще хотите запустить сервер (не рекомендуется)?"
+
+#: src/main/java/com/atlauncher/data/Server.java:143
+msgid "Cannot Launch Server"
+msgstr ""
+
+#: src/main/java/com/atlauncher/data/Server.java:144
+msgid "We cannot launch this server for you. Please use \"Open Folder\" and run the server manually.<br/><br/>If unsure how to do so, please contact the packs support pages for more further help."
+msgstr ""
+
+#: src/main/java/com/atlauncher/data/Server.java:253
+msgid "Failed To Launch Server"
+msgstr "Не удалось запустить сервер"
+
+#: src/main/java/com/atlauncher/data/Server.java:254
+msgid "The server couldn't be launched as we don't know how to launch it.<br/><br/>Please open the server folder and run the {0} file manually."
+msgstr "Не удалось запустить сервер, так как мы не знаем, как его запустить.<br/><br/>Пожалуйста, откройте папку сервера и запустите файл {0} вручную."
+
+#: src/main/java/com/atlauncher/data/Server.java:304
+msgid "The server has been launched."
+msgstr ""
+
+#: src/main/java/com/atlauncher/data/Server.java:400
+msgid "Error making backup"
+msgstr "Ошибка в создания резервной копии"
+
+#: src/main/java/com/atlauncher/data/installables/Installable.java:91
+msgid "An instance already exists with that name.<br/><br/>Rename it and try again."
+msgstr "Сборка с таким именем уже существует.<br/><br/>Переименуйте её и попробуйте еще раз."
+
+#: src/main/java/com/atlauncher/data/installables/Installable.java:97
+msgid "Instance name is invalid. It must contain at least 1 letter or number."
+msgstr "Недопустимое имя сборки. Оно должно содержать хотя бы одну букву или цифру."
+
+#: src/main/java/com/atlauncher/data/installables/Installable.java:103
+msgid "A server already exists with that name.<br/><br/>Rename it and try again."
+msgstr "Сервер с таким именем уже существует.<br/><br/>Переименуйте его и попробуйте еще раз."
+
+#: src/main/java/com/atlauncher/data/installables/Installable.java:109
+msgid "Server name is invalid. It must contain at least 1 letter or number."
+msgstr "Недопустимое имя сервера. Оно должно содержать не менее 1 буквы или цифры."
+
+#: src/main/java/com/atlauncher/data/installables/Installable.java:139
+msgid "Starting Update Process"
+msgstr "Запуск процесса обновления"
+
+#: src/main/java/com/atlauncher/data/installables/Installable.java:140
+msgid "Starting Reinstall Process"
+msgstr "Запускаем процесс переустановки"
+
+#: src/main/java/com/atlauncher/data/installables/Installable.java:141
+msgid "Starting Install Process"
+msgstr "Запускаем процесс установки"
+
+#. {0} is the pack name and {1} is the pack version
+#: src/main/java/com/atlauncher/data/installables/Installable.java:180
+#: src/main/java/com/atlauncher/data/installables/Installable.java:274
+msgid "{0} {1} Not Updated"
+msgstr "{0} {1} Не обновлён"
+
+#. {0} is the pack name and {1} is the pack version
+#: src/main/java/com/atlauncher/data/installables/Installable.java:183
+#: src/main/java/com/atlauncher/data/installables/Installable.java:277
+msgid "{0} {1} wasn't updated.<br/><br/>Check error logs for more information."
+msgstr "{0} {1} не был обновлён.<br/><br/>Проверьте журналы ошибок для получения дополнительной информации."
+
+#. {0} is the pack name and {1} is the pack version
+#: src/main/java/com/atlauncher/data/installables/Installable.java:193
+#: src/main/java/com/atlauncher/data/installables/Installable.java:266
+msgid "{0} {1} Not Reinstalled"
+msgstr "{0} {1} Не переустановлен"
+
+#. {0} is the pack name and {1} is the pack version
+#: src/main/java/com/atlauncher/data/installables/Installable.java:196
+#: src/main/java/com/atlauncher/data/installables/Installable.java:269
+msgid "{0} {1} wasn't reinstalled.<br/><br/>Check error logs for more information."
+msgstr "{0} {1} не переустановлен.<br/><br/>Проверьте журналы ошибок для получения дополнительной информации."
+
+#. {0} is the pack name and {1} is the pack version
+#: src/main/java/com/atlauncher/data/installables/Installable.java:206
+#: src/main/java/com/atlauncher/data/installables/Installable.java:282
+msgid "{0} {1} Not Installed"
+msgstr "Не установили {0} {1}"
+
+#. {0} is the pack name and {1} is the pack version
+#: src/main/java/com/atlauncher/data/installables/Installable.java:209
+#: src/main/java/com/atlauncher/data/installables/Installable.java:285
+msgid "{0} {1} wasn't installed.<br/><br/>Check error logs for more information."
+msgstr "{0} {1} не был установлен.<br/><br/>Проверьте журналы ошибок для получения дополнительной информации."
+
+#. {0} is the pack name and {1} is the pack version
+#: src/main/java/com/atlauncher/data/installables/Installable.java:232
+msgid "{0} {1} Installed"
+msgstr "{0} {1} установлен"
+
+#. {0} is the instance name
+#: src/main/java/com/atlauncher/data/installables/Installable.java:236
+msgid "{0} Updated"
+msgstr "{0} Обновлён"
+
+#. {0} is the instance name and {1} is the pack version
+#: src/main/java/com/atlauncher/data/installables/Installable.java:239
+msgid "Instance {0} has been updated to version {1}."
+msgstr "Экземпляр {0} был обновлён до версии {1}."
+
+#. {0} is the pack name and {1} is the pack version
+#: src/main/java/com/atlauncher/data/installables/Installable.java:243
+msgid "{0} {1} has been reinstalled."
+msgstr "{0} {1} был переустановлен."
+
+#. {0} is the pack name and {1} is the pack version
+#: src/main/java/com/atlauncher/data/installables/Installable.java:246
+msgid "{0} {1} server has been installed.<br/><br/>Find it in the servers tab."
+msgstr "{0} {1} сервер был установлен.<br/><br/>Он находится во вкладке серверов."
+
+#. {0} is the pack name and {1} is the pack version
+#: src/main/java/com/atlauncher/data/installables/Installable.java:250
+msgid "{0} {1} has been installed.<br/><br/>Find it in the instances tab."
+msgstr "{0} {1} был установлен.<br/><br/>Найди его во вкладке экземпляров."
+
+#. {0} is the loader (Forge/Fabric/Quilt), {1} is the version
+#: src/main/java/com/atlauncher/data/installables/Installable.java:401
+msgid "Removing {0} {1}"
+msgstr "Удаление {0} {1}"
+
+#. {0} is the loader (Forge/Fabric/Quilt), {1} is the version
+#: src/main/java/com/atlauncher/data/installables/Installable.java:407
+msgid "Adding {0} {1}"
+msgstr "Добавление {0} {1}"
+
+#. {0} is the loader (Forge/Fabric/Quilt), {1} is the version
+#: src/main/java/com/atlauncher/data/installables/Installable.java:412
+msgid "Installing {0} {1}"
+msgstr "Установка {0} {1}"
+
+#. #-#-#-#-#  translations.pot  #-#-#-#-#
+#. {0} is the name of the instance
+#. #-#-#-#-#  translations.pot  #-#-#-#-#
+#. {0} is the name of the instance the user is updating
+#: src/main/java/com/atlauncher/data/installables/Installable.java:417
+#: src/main/java/com/atlauncher/gui/dialogs/InstanceInstallerDialog.java:997
+msgid "Updating {0}"
+msgstr "Обновление {0}"
+
+#. {0} is the name of the pack
+#: src/main/java/com/atlauncher/data/installables/Installable.java:423
+msgid "Reinstalling {0} Server"
+msgstr "Переустановка {0} сервера"
+
+#. #-#-#-#-#  translations.pot  #-#-#-#-#
+#. {0} is the name of the pack
+#. #-#-#-#-#  translations.pot  #-#-#-#-#
+#. {0} is the name of the instance the user is reinstalling
+#: src/main/java/com/atlauncher/data/installables/Installable.java:427
+#: src/main/java/com/atlauncher/gui/dialogs/InstanceInstallerDialog.java:1000
+msgid "Reinstalling {0}"
+msgstr "Переустановка {0}"
+
+#. #-#-#-#-#  translations.pot  #-#-#-#-#
+#. {0} is the name of the pack
+#. #-#-#-#-#  translations.pot  #-#-#-#-#
+#. {0} is the name of the pack the user is installing
+#: src/main/java/com/atlauncher/data/installables/Installable.java:432
+#: src/main/java/com/atlauncher/gui/dialogs/InstanceInstallerDialog.java:433
+msgid "Installing {0} Server"
+msgstr "Установка {0} сервера"
+
+#: src/main/java/com/atlauncher/data/installables/Installable.java:440
+msgid "Save Mods?"
+msgstr "Сохранить Моды?"
+
+#: src/main/java/com/atlauncher/data/installables/Installable.java:441
+msgid "Since this update changes the Minecraft version, your custom mods may no longer work.<br/><br/>The mods installed will be removed since you've not checked the \"Save Mods\" checkbox.<br/><br/>Do you want to save your mods?"
+msgstr "Поскольку это обновление изменяет версию Minecraft, ваши пользовательские моды могут больше не работать.<br/><br/>Установленные моды будут удалены, поскольку вы не установили флажок «Сохранить моды».<br/><br/>Хотите сохранить свои моды?"
+
+#. {0} is the platform the modpack is from (e.g. CurseForge/Modrinth)
+#: src/main/java/com/atlauncher/workers/InstanceInstaller.java:417
+msgid "Downloading Server Pack From {0}"
+msgstr ""
+
+#: src/main/java/com/atlauncher/workers/InstanceInstaller.java:429
+#: src/main/java/com/atlauncher/workers/InstanceInstaller.java:891
+msgid "We were unable to download this modpack.<br/>This is likely due to the author of the modpack disabling third party clients from downloading it.<br/><br/>You'll be prompted shortly to download the modpack manually through your browser to your downloads folder.<br/>Once you've downloaded the file that was opened in your browser to your downloads folder, we can continue with installing the modpack.<br/><br/>This process is unfortunate, but we don't have any choice in this matter and has to be done this way."
+msgstr ""
+
+#: src/main/java/com/atlauncher/workers/InstanceInstaller.java:514
+msgid "Extracting Server Pack"
+msgstr ""
+
+#. {0} is the platform the modpack is from
+#: src/main/java/com/atlauncher/workers/InstanceInstaller.java:569
+#: src/main/java/com/atlauncher/workers/InstanceInstaller.java:587
+#: src/main/java/com/atlauncher/workers/InstanceInstaller.java:1045
+#: src/main/java/com/atlauncher/workers/InstanceInstaller.java:1401
+#: src/main/java/com/atlauncher/workers/InstanceInstaller.java:1460
+#: src/main/java/com/atlauncher/workers/InstanceInstaller.java:1626
+#: src/main/java/com/atlauncher/workers/InstanceInstaller.java:1788
+#: src/main/java/com/atlauncher/workers/InstanceInstaller.java:1953
+msgid "Generating Pack Version From {0}"
+msgstr "Генерация версии пакета из {0}"
+
+#: src/main/java/com/atlauncher/workers/InstanceInstaller.java:865
+#: src/main/java/com/atlauncher/workers/InstanceInstaller.java:1388
+msgid "Mods Not Available"
+msgstr ""
+
+#: src/main/java/com/atlauncher/workers/InstanceInstaller.java:866
+#: src/main/java/com/atlauncher/workers/InstanceInstaller.java:1389
+msgid "We were unable to download some of the mods from this pack.<br/>This is likely due to the author of that mod disabling third party clients from downloading it.<br/><br/>You'll be prompted shortly to start downloading these mods manually through your browser to your downloads folder.<br/>Once you've downloaded the file that was opened in your browser to your downloads folder, you can continue through all the mods that have disabled this toggle.<br/><br/>This process is unfortunate, but we don't have any choice in this matter and has to be done this way."
+msgstr "Нам не удалось загрузить некоторые моды для этой сборки.<br/>Скорее всего, автор этого мода запретил его загрузку сторонними клиентами.<br/><br/>Мы вам скоро скажем, когда надо будет загрузить эти моды через браузер вручную, в вашу папку загрузок.<br/>После того как файл из браузера сохранится в папке загрузок, вы сможете продолжить скачивание остальных модов, для которых отключена эта опция.<br/><br/>К сожалению, процесс неприятный, но у нас тут нет выбора и мы должны действовать именно так."
+
+#. {0} is the platform the modpack is from (e.g. CurseForge/Modrinth)
+#: src/main/java/com/atlauncher/workers/InstanceInstaller.java:879
+#: src/main/java/com/atlauncher/workers/InstanceInstaller.java:994
+msgid "Downloading Manifest From {0}"
+msgstr "Загружаем манифест от {0}"
+
+#: src/main/java/com/atlauncher/workers/InstanceInstaller.java:975
+#: src/main/java/com/atlauncher/workers/InstanceInstaller.java:1018
+msgid "Extracting Manifest"
+msgstr "Извлекаем манифест"
+
+#: src/main/java/com/atlauncher/workers/InstanceInstaller.java:1220
+msgid "{0} Mods Not Available"
+msgstr "{0} модов недоступно"
+
+#: src/main/java/com/atlauncher/workers/InstanceInstaller.java:1221
+msgid "Some of the mods for this pack are not available to download.<br/><br/>At this time you can only install this pack via FTB launcher."
+msgstr "Некоторые моды из этой сборки недоступны для скачивания.<br/><br/>На данный момент её можно установить только через лаунчер FTB."
+
+#: src/main/java/com/atlauncher/workers/InstanceInstaller.java:1441
+msgid "Downloading modpack.zip"
+msgstr "Скачиваю modpack.zip"
+
+#: src/main/java/com/atlauncher/workers/InstanceInstaller.java:2076
+msgid "Downloading Minecraft Definition"
+msgstr "Загружается описание Minecraft"
+
+#: src/main/java/com/atlauncher/workers/InstanceInstaller.java:2099
+msgid "Downloading Loader"
+msgstr "Скачивание загрузчика"
+
+#: src/main/java/com/atlauncher/workers/InstanceInstaller.java:2836
+msgid "Downloading Logging Client"
+msgstr "Загрузка клиента журнала"
+
+#: src/main/java/com/atlauncher/workers/InstanceInstaller.java:3132
+msgid "Installing Loader (May Take Some Time)"
+msgstr ""
+
+#: src/main/java/com/atlauncher/workers/InstanceInstaller.java:3148
+#: src/main/java/com/atlauncher/workers/InstanceInstaller.java:3265
+msgid "Downloading Mods"
+msgstr "Загрузка модов"
+
+#: src/main/java/com/atlauncher/workers/InstanceInstaller.java:3189
+#: src/main/java/com/atlauncher/workers/InstanceInstaller.java:3214
+msgid "Downloading Browser Mods"
+msgstr "Загрузка модов из браузера"
+
+#: src/main/java/com/atlauncher/workers/InstanceInstaller.java:3245
+msgid "Installing Mods"
+msgstr "Установка модов"
+
+#: src/main/java/com/atlauncher/workers/InstanceInstaller.java:3404
+#: src/main/java/com/atlauncher/workers/InstanceInstaller.java:3410
+msgid "Copying Overrides"
+msgstr "Копирование изменений"
+
+#: src/main/java/com/atlauncher/workers/InstanceInstaller.java:3422
+msgid "Calculating Files To Download"
+msgstr ""
+
+#: src/main/java/com/atlauncher/workers/InstanceInstaller.java:3436
+msgid "Creating Config Directories"
+msgstr ""
+
+#: src/main/java/com/atlauncher/workers/InstanceInstaller.java:3452
+#: src/main/java/com/atlauncher/workers/InstanceInstaller.java:3478
+msgid "Downloading Configs"
+msgstr "Загрузка опций"
+
+#: src/main/java/com/atlauncher/workers/InstanceInstaller.java:3468
+msgid "Copying minecraft folder"
+msgstr "Копируется папка майнкрафт"
+
+#: src/main/java/com/atlauncher/workers/InstanceInstaller.java:3474
+msgid "Copying modpack.zip files"
+msgstr ""
+
+#: src/main/java/com/atlauncher/workers/InstanceInstaller.java:3501
+msgid "Extracting Configs"
+msgstr "Извлечение опций"
+
+#: src/main/java/com/atlauncher/workers/InstanceInstaller.java:3512
+#: src/main/java/com/atlauncher/workers/InstanceInstaller.java:3525
+#: src/main/java/com/atlauncher/workers/InstanceInstaller.java:3537
+#: src/main/java/com/atlauncher/workers/InstanceInstaller.java:3553
+msgid "Downloading Image"
+msgstr ""
+
+#. {0} is the platform we're checking mods on (e.g. CurseForge/Modrinth)
+#: src/main/java/com/atlauncher/workers/InstanceInstaller.java:3576
+#: src/main/java/com/atlauncher/workers/InstanceInstaller.java:3634
+msgid "Checking Mods On {0}"
+msgstr ""
+
+#: src/main/java/com/atlauncher/gui/SplashScreen.java:84
+msgid "Force quit"
+msgstr "Принудительное закрытие"
+
+#: src/main/java/com/atlauncher/gui/card/NilCard.java:63
+#: src/main/java/com/atlauncher/gui/card/NilCard.java:113
+msgid "Nothing To Show"
+msgstr "Нет данных для отображения"
+
+#: src/main/java/com/atlauncher/gui/card/NilCard.java:128
+#: src/main/java/com/atlauncher/gui/tabs/CreatePackTab.java:547
+#: src/main/java/com/atlauncher/gui/tabs/settings/GeneralSettingsTab.java:241
+msgid "Create Pack"
+msgstr ""
+
+#: src/main/java/com/atlauncher/gui/card/NilCard.java:134
+msgid "Download Pack"
+msgstr ""
+
+#: src/main/java/com/atlauncher/gui/card/packbrowser/UnifiedPackCard.java:58
+#: src/main/java/com/atlauncher/gui/card/packbrowser/UnifiedPackCard.java:174
+#: src/main/java/com/atlauncher/gui/card/packbrowser/FTBPackCard.java:56
+#: src/main/java/com/atlauncher/gui/card/packbrowser/FTBPackCard.java:132
+#: src/main/java/com/atlauncher/gui/card/packbrowser/ModrinthPackCard.java:51
+#: src/main/java/com/atlauncher/gui/card/packbrowser/ModrinthPackCard.java:144
+#: src/main/java/com/atlauncher/gui/card/packbrowser/TechnicPackCard.java:49
+#: src/main/java/com/atlauncher/gui/card/packbrowser/TechnicPackCard.java:109
+#: src/main/java/com/atlauncher/gui/card/packbrowser/CurseForgePackCard.java:53
+#: src/main/java/com/atlauncher/gui/card/packbrowser/CurseForgePackCard.java:150
+#: src/main/java/com/atlauncher/gui/card/packbrowser/ATLauncherPackCard.java:53
+#: src/main/java/com/atlauncher/gui/card/packbrowser/ATLauncherPackCard.java:204
+msgid "New Instance"
+msgstr "Новая копия"
+
+#: src/main/java/com/atlauncher/gui/card/packbrowser/UnifiedPackCard.java:59
+#: src/main/java/com/atlauncher/gui/card/packbrowser/ModrinthPackCard.java:52
+#: src/main/java/com/atlauncher/gui/card/packbrowser/CurseForgePackCard.java:54
+#: src/main/java/com/atlauncher/gui/card/packbrowser/ATLauncherPackCard.java:54
+#: src/main/java/com/atlauncher/gui/card/packbrowser/ATLauncherPackCard.java:205
+#: src/main/java/com/atlauncher/gui/tabs/CreatePackTab.java:128
+msgid "Create Server"
+msgstr "Создать сервер"
+
+#: src/main/java/com/atlauncher/gui/card/packbrowser/UnifiedPackCard.java:60
+#: src/main/java/com/atlauncher/gui/card/packbrowser/UnifiedPackCard.java:175
+#: src/main/java/com/atlauncher/gui/card/packbrowser/FTBPackCard.java:57
+#: src/main/java/com/atlauncher/gui/card/packbrowser/FTBPackCard.java:133
+#: src/main/java/com/atlauncher/gui/card/packbrowser/ModrinthPackCard.java:53
+#: src/main/java/com/atlauncher/gui/card/packbrowser/ModrinthPackCard.java:145
+#: src/main/java/com/atlauncher/gui/card/packbrowser/TechnicPackCard.java:50
+#: src/main/java/com/atlauncher/gui/card/packbrowser/TechnicPackCard.java:110
+#: src/main/java/com/atlauncher/gui/card/packbrowser/CurseForgePackCard.java:55
+#: src/main/java/com/atlauncher/gui/card/packbrowser/CurseForgePackCard.java:151
+#: src/main/java/com/atlauncher/gui/card/packbrowser/ATLauncherPackCard.java:57
+#: src/main/java/com/atlauncher/gui/card/packbrowser/ATLauncherPackCard.java:207
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:120
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:752
+#: src/main/java/com/atlauncher/gui/card/ServerCard.java:68
+msgid "Website"
+msgstr "Веб-сайт"
+
+#: src/main/java/com/atlauncher/gui/card/packbrowser/UnifiedPackCard.java:116
+#: src/main/java/com/atlauncher/gui/card/packbrowser/ModrinthPackCard.java:97
+#: src/main/java/com/atlauncher/gui/card/packbrowser/CurseForgePackCard.java:103
+#: src/main/java/com/atlauncher/gui/card/packbrowser/ATLauncherPackCard.java:161
+#: src/main/java/com/atlauncher/gui/tabs/CreatePackTab.java:523
+msgid "Are you sure you want to create a server?"
+msgstr "Вы действительно хотите создать сервер?"
+
+#: src/main/java/com/atlauncher/gui/card/packbrowser/UnifiedPackCard.java:117
+#: src/main/java/com/atlauncher/gui/card/packbrowser/ModrinthPackCard.java:98
+#: src/main/java/com/atlauncher/gui/card/packbrowser/CurseForgePackCard.java:104
+#: src/main/java/com/atlauncher/gui/card/packbrowser/ATLauncherPackCard.java:162
+#: src/main/java/com/atlauncher/gui/tabs/CreatePackTab.java:526
+msgid "Creating a server won't allow you play Minecraft, it's for letting others play together.<br/><br/>If you just want to play Minecraft, you don't want to create a server, and instead will want to create an instance.<br/><br/>Are you sure you want to create a server?"
+msgstr "Создание сервера не позволит вам играть в Minecraft, оно даёт другим играть вместе.<br/><br/>Если вы просто хотите поиграть в Minecraft, вам не нужен сервер, вместо этого создайте сборку.<br/><br/>Вы уверены, что хотите создать сервер?"
+
+#: src/main/java/com/atlauncher/gui/card/packbrowser/ATLauncherPackCard.java:56
+#: src/main/java/com/atlauncher/gui/card/packbrowser/ATLauncherPackCard.java:206
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:119
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:751
+#: src/main/java/com/atlauncher/gui/card/ServerCard.java:67
+msgid "Support"
+msgstr "Поддержка"
+
+#: src/main/java/com/atlauncher/gui/card/packbrowser/ATLauncherPackCard.java:58
+#: src/main/java/com/atlauncher/gui/card/packbrowser/ATLauncherPackCard.java:208
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:86
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:739
+#: src/main/java/com/atlauncher/gui/tabs/settings/GeneralSettingsTab.java:244
+#: src/main/java/com/atlauncher/gui/tabs/ServersTab.java:129
+msgid "Servers"
+msgstr "Серверы"
+
+#: src/main/java/com/atlauncher/gui/card/packbrowser/ATLauncherPackCard.java:59
+#: src/main/java/com/atlauncher/gui/card/packbrowser/ATLauncherPackCard.java:209
+msgid "View Mods"
+msgstr "Просмотр модов"
+
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:81
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:645
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:734
+#: src/main/java/com/atlauncher/gui/dialogs/InstanceInstallerDialog.java:242
+msgid "Update"
+msgstr "Обновить"
+
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:82
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:736
+#: src/main/java/com/atlauncher/gui/card/ServerCard.java:61
+#: src/main/java/com/atlauncher/gui/card/ServerCard.java:253
+#: src/main/java/com/atlauncher/gui/tabs/accounts/AccountsTab.java:252
+#: src/main/java/com/atlauncher/gui/tabs/accounts/AccountsTab.java:428
+#: src/main/java/com/atlauncher/gui/tabs/accounts/AccountsTab.java:540
+msgid "Delete"
+msgstr "Удалить"
+
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:83
+#: src/main/java/com/atlauncher/gui/dialogs/InstanceExportDialog.java:301
+msgid "Export"
+msgstr "Экспортировать"
+
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:84
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:737
+msgid "Add Mods"
+msgstr "Добавить моды"
+
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:85
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:738
+msgid "Edit Mods"
+msgstr "Изменить моды"
+
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:87
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:740
+msgid "Open Website"
+msgstr "Открыть сайт"
+
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:88
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:743
+#: src/main/java/com/atlauncher/gui/tabs/settings/GeneralSettingsTab.java:247
+#: src/main/java/com/atlauncher/gui/tabs/SettingsTab.java:134
+msgid "Settings"
+msgstr "Настройки"
+
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:91
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:742
+msgid "Open Resources"
+msgstr ""
+
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:101
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:624
+msgid "Play Online"
+msgstr "Играть онлайн"
+
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:102
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:630
+msgid "Play Offline"
+msgstr "Играть оффлайн"
+
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:103
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:733
+msgid "Play"
+msgstr "Играть"
+
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:112
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:745
+msgid "Normal Backup"
+msgstr "Обычная резервная копия"
+
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:113
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:746
+msgid "Normal + Mods Backup"
+msgstr "Обычная резервная копия + моды"
+
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:114
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:747
+msgid "Full Backup"
+msgstr "Полная резервная копия"
+
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:115
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:735
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:748
+#: src/main/java/com/atlauncher/gui/card/ServerCard.java:60
+#: src/main/java/com/atlauncher/gui/card/ServerCard.java:252
+msgid "Backup"
+msgstr "Резервная копия"
+
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:118
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:750
+#: src/main/java/com/atlauncher/gui/card/ServerCard.java:66
+msgid "Discord"
+msgstr "Discord"
+
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:121
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:753
+#: src/main/java/com/atlauncher/gui/card/ServerCard.java:69
+msgid "Wiki"
+msgstr "Вики"
+
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:122
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:754
+#: src/main/java/com/atlauncher/gui/card/ServerCard.java:70
+msgid "Source"
+msgstr "Источник"
+
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:123
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:755
+#: src/main/java/com/atlauncher/gui/card/ServerCard.java:71
+msgid "Get Help"
+msgstr "Обратиться за помощью"
+
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:126
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:640
+#: src/main/java/com/atlauncher/gui/card/CurseForgeProjectCard.java:50
+#: src/main/java/com/atlauncher/gui/card/ModrinthSearchHitCard.java:47
+#: src/main/java/com/atlauncher/gui/dialogs/InstanceInstallerDialog.java:242
+#: src/main/java/com/atlauncher/gui/dialogs/EditModsDialog.java:296
+#: src/main/java/com/atlauncher/gui/components/ModsJCheckBox.java:289
+msgid "Reinstall"
+msgstr "Переустановить"
+
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:127
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:672
+msgid "Clone"
+msgstr "Клонировать"
+
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:128
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:653
+msgid "Rename"
+msgstr "Переименовать"
+
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:129
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:657
+#: src/main/java/com/atlauncher/gui/card/ServerCard.java:183
+msgid "Change Description"
+msgstr "Изменить описание"
+
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:130
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:665
+#: src/main/java/com/atlauncher/gui/card/ServerCard.java:186
+msgid "Change Image"
+msgstr "Изменить изображение"
+
+#. {0} is the loader (Forge/Fabric/Quilt)
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:132
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:138
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:144
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:151
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:157
+msgid "Add {0}"
+msgstr "Добавить {0}"
+
+#. #-#-#-#-#  translations.pot  #-#-#-#-#
+#. {0} is the loader (Forge/Fabric/Quilt)
+#. #-#-#-#-#  translations.pot  #-#-#-#-#
+#. {0} is the loader (Forge/Fabric/Quilt)
+#. #-#-#-#-#  translations.pot  #-#-#-#-#
+#. {0} is the loader (Forge/Fabric/Quilt)
+#. #-#-#-#-#  translations.pot  #-#-#-#-#
+#. {0} is the loader (Forge/Fabric/Quilt)
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:134
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:140
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:147
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:153
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:159
+msgid "Change {0} Version"
+msgstr "Поменять {0} версию"
+
+#. #-#-#-#-#  translations.pot  #-#-#-#-#
+#. {0} is the loader (Forge/Fabric/Quilt)
+#. #-#-#-#-#  translations.pot  #-#-#-#-#
+#. {0} is the loader (Forge/Fabric/Quilt)
+#. #-#-#-#-#  translations.pot  #-#-#-#-#
+#. {0} is the loader (Forge/LegacyFabric/Quilt)
+#. #-#-#-#-#  translations.pot  #-#-#-#-#
+#. {0} is the loader (Forge/Fabric/Quilt)
+#. #-#-#-#-#  translations.pot  #-#-#-#-#
+#. {0} is the loader (Forge/Fabric/Quilt)
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:136
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:142
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:149
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:155
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:161
+msgid "Remove {0}"
+msgstr "Удалить {0}"
+
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:162
+msgid "Edit Instance"
+msgstr "Изменить сборку"
+
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:289
+msgid "Reminder"
+msgstr ""
+
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:290
+msgid "You may not distribute ANY resources."
+msgstr ""
+
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:506
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:587
+msgid "Cannot update pack as you have no account selected."
+msgstr "Невозможно обновить сборку, так как у вас нет выбранного аккаунта."
+
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:533
+msgid "Delete Instance"
+msgstr "Удалить сборку"
+
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:535
+msgid "Are you sure you want to delete the instance \"{0}\"?"
+msgstr "Вы уверены, что хотите удалить сборку \"{0}\"?"
+
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:540
+msgid "Deleting Instance"
+msgstr "Удаление сборки"
+
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:541
+msgid "Deleting Instance. Please wait..."
+msgstr "Удаление сборки. Пожалуйста, подождите..."
+
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:545
+msgid "Deleted Instance Successfully"
+msgstr "Сборка успешно удалена"
+
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:558
+msgid "Instance Corrupt"
+msgstr "Сборка повреждена"
+
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:559
+msgid "Cannot play instance as it's corrupted. Please reinstall, update or delete it."
+msgstr "Невозможно запустить сборку, поскольку она повреждена. Пожалуйста, переустановите, обновите или удалите её."
+
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:566
+msgid "Cannot launch instance due to your Java version"
+msgstr "Невозможно запустить сборку из-за вашей версии Java"
+
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:567
+msgid "There was an issue launching this instance.<br/><br/>This version of the pack requires a Java version which you are not using.<br/><br/>Please install that version of Java and try again.<br/><br/>Java version needed: {0}"
+msgstr "Возникла проблема при запуске этой сборки.<br/><br/>Эта версия сборки требует версии Java, которую вы не используете.<br/><br/>Пожалуйста, установите эту версию Java и попробуйте снова.<br/><br/>Необходимая версия Java: {0}"
+
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:575
+msgid "Update Available"
+msgstr "Доступно обновление"
+
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:577
+msgid "An update is available for this instance.<br/><br/>Do you want to update now?"
+msgstr "Доступно обновление для этой сборки.<br/><br/>Хотите обновить сейчас?"
+
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:580
+msgid "Ignore This Update"
+msgstr "Игнорировать этот пост"
+
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:581
+msgid "Don't Remind Me Again"
+msgstr "Не напоминать мне снова"
+
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:678
+#: src/main/java/com/atlauncher/gui/dialogs/ModsChooser.java:141
+msgid "Share Code"
+msgstr "Поделиться"
+
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:691
+msgid "Error getting share code."
+msgstr "Ошибка получения кода общего доступа."
+
+#: src/main/java/com/atlauncher/gui/card/InstanceCard.java:697
+msgid "Share code copied to clipboard"
+msgstr "Поделиться кодом скопировано в буфер обмена"
+
+#: src/main/java/com/atlauncher/gui/card/ModrinthProjectDependencyCard.java:86
+#: src/main/java/com/atlauncher/gui/card/CurseForgeProjectCard.java:49
+#: src/main/java/com/atlauncher/gui/card/CurseForgeFileDependencyCard.java:89
+#: src/main/java/com/atlauncher/gui/card/ModrinthSearchHitCard.java:46
+#: src/main/java/com/atlauncher/gui/tabs/accounts/AccountsTab.java:242
+#: src/main/java/com/atlauncher/gui/tabs/accounts/AccountsTab.java:387
+#: src/main/java/com/atlauncher/gui/tabs/accounts/AccountsTab.java:536
+#: src/main/java/com/atlauncher/gui/dialogs/ModrinthVersionSelectorDialog.java:221
+#: src/main/java/com/atlauncher/gui/dialogs/EditModsDialog.java:205
+#: src/main/java/com/atlauncher/gui/dialogs/CurseForgeProjectFileSelectorDialog.java:128
+#: src/main/java/com/atlauncher/gui/handlers/ModsJCheckBoxTransferHandler.java:88
+msgid "Add"
+msgstr "Добавить"
+
+#: src/main/java/com/atlauncher/gui/card/ModrinthProjectDependencyCard.java:87
+#: src/main/java/com/atlauncher/gui/card/CurseForgeProjectCard.java:80
+#: src/main/java/com/atlauncher/gui/card/CurseForgeFileDependencyCard.java:90
+#: src/main/java/com/atlauncher/gui/card/ModrinthSearchHitCard.java:77
+msgid "View"
+msgstr "Вид"
+
+#: src/main/java/com/atlauncher/gui/card/CurseForgeProjectCard.java:51
+#: src/main/java/com/atlauncher/gui/card/ModrinthSearchHitCard.java:48
+#: src/main/java/com/atlauncher/gui/components/ModsJCheckBox.java:222
+msgid "Remove"
+msgstr "Удалить"
+
+#: src/main/java/com/atlauncher/gui/card/ServerCard.java:56
+#: src/main/java/com/atlauncher/gui/card/ServerCard.java:248
+#: src/main/java/com/atlauncher/gui/tabs/tools/AbstractToolPanel.java:37
+msgid "Launch"
+msgstr "Запустить"
+
+#: src/main/java/com/atlauncher/gui/card/ServerCard.java:57
+#: src/main/java/com/atlauncher/gui/card/ServerCard.java:249
+msgid "Launch & Close"
+msgstr "Запустить и закрыть"
+
+#: src/main/java/com/atlauncher/gui/card/ServerCard.java:58
+#: src/main/java/com/atlauncher/gui/card/ServerCard.java:250
+msgid "Launch With GUI"
+msgstr "Запустить с GUI"
+
+#: src/main/java/com/atlauncher/gui/card/ServerCard.java:59
+#: src/main/java/com/atlauncher/gui/card/ServerCard.java:251
+msgid "Launch With GUI & Close"
+msgstr "Запустить с GUI и закрыть"
+
+#: src/main/java/com/atlauncher/gui/card/ServerCard.java:151
+msgid "Delete Server"
+msgstr "Удалить сервер"
+
+#: src/main/java/com/atlauncher/gui/card/ServerCard.java:152
+msgid "Are you sure you want to delete this server?"
+msgstr "Вы точно хотите удалить этот сервер?"
+
+#: src/main/java/com/atlauncher/gui/card/ServerCard.java:157
+msgid "Deleting Server"
+msgstr "Удаление сервера"
+
+#: src/main/java/com/atlauncher/gui/card/ServerCard.java:158
+msgid "Deleting Server. Please wait..."
+msgstr "Удаление сервера. Пожалуйста, подождите..."
+
+#: src/main/java/com/atlauncher/gui/card/ServerCard.java:162
+msgid "Deleted Server Successfully"
+msgstr "Сервер успешно удалён"
+
+#. {0} is the name of the launcher (ATLauncher)
+#: src/main/java/com/atlauncher/gui/LauncherConsole.java:60
+msgid "{0} Console"
+msgstr "Консоль {0}"
+
+#: src/main/java/com/atlauncher/gui/LauncherConsole.java:128
+#: src/main/java/com/atlauncher/gui/LauncherConsole.java:166
+#: src/main/java/com/atlauncher/gui/LauncherConsole.java:177
+#: src/main/java/com/atlauncher/gui/tabs/news/NewsTab.java:172
+#: src/main/java/com/atlauncher/gui/dialogs/ModrinthExportOverridesDialog.java:73
+msgid "Copy"
+msgstr "Копировать"
+
+#: src/main/java/com/atlauncher/gui/tabs/tools/ToolsTab.java:54
+#: src/main/java/com/atlauncher/gui/tabs/settings/GeneralSettingsTab.java:246
+msgid "Tools"
+msgstr "Инструменты"
+
+#: src/main/java/com/atlauncher/gui/tabs/tools/SkinUpdaterToolPanel.java:37
+#: src/main/java/com/atlauncher/gui/tabs/tools/SkinUpdaterToolPanel.java:49
+msgid "Skin Updater"
+msgstr "Обновление Скина"
+
+#: src/main/java/com/atlauncher/gui/tabs/tools/SkinUpdaterToolPanel.java:40
+msgid "This tool will update all your accounts skins on the launcher."
+msgstr "Этот инструмент обновит скины всех ваших учетных записей на панели запуска."
+
+#: src/main/java/com/atlauncher/gui/tabs/tools/SkinUpdaterToolPanel.java:50
+msgid "Updating Skins. Please Wait!"
+msgstr "Обновление скинов. Пожалуйста подождите!"
+
+#: src/main/java/com/atlauncher/gui/tabs/tools/SkinUpdaterToolPanel.java:60
+#: src/main/java/com/atlauncher/gui/tabs/tools/LibrariesDeleterToolPanel.java:42
+#: src/main/java/com/atlauncher/gui/tabs/tools/LogClearerToolPanel.java:42
+#: src/main/java/com/atlauncher/gui/tabs/tools/DownloadClearerToolPanel.java:42
+msgid "Success"
+msgstr "Успешно"
+
+#: src/main/java/com/atlauncher/gui/tabs/tools/SkinUpdaterToolPanel.java:61
+msgid "Successfully updated skins."
+msgstr "Скины успешно обновлены."
+
+#: src/main/java/com/atlauncher/gui/tabs/tools/LibrariesDeleterToolPanel.java:31
+msgid "Libraries Deleter"
+msgstr "Уничтожитель Библиотек"
+
+#: src/main/java/com/atlauncher/gui/tabs/tools/LibrariesDeleterToolPanel.java:33
+msgid "This tool clears out all the libraries used by Minecraft. Instances may need to be reinstalled if launching them once doesn't download all libraries."
+msgstr "Этот инструмент очищает все библиотеки, используемые игрой. Возможно понадобится переустановить все сборки, если при их запуске не скачиваются все библиотеки."
+
+#: src/main/java/com/atlauncher/gui/tabs/tools/LibrariesDeleterToolPanel.java:43
+msgid "Successfully deleted libraries."
+msgstr "Библиотеки успешно удалены."
+
+#: src/main/java/com/atlauncher/gui/tabs/tools/NetworkCheckerToolPanel.java:37
+#: src/main/java/com/atlauncher/gui/tabs/tools/NetworkCheckerToolPanel.java:53
+#: src/main/java/com/atlauncher/gui/tabs/tools/NetworkCheckerToolPanel.java:60
+#: src/main/java/com/atlauncher/gui/tabs/tools/NetworkCheckerToolPanel.java:78
+msgid "Network Checker"
+msgstr "Проверщик сети"
+
+#: src/main/java/com/atlauncher/gui/tabs/tools/NetworkCheckerToolPanel.java:41
+msgid "This tool does various tests on your network and determines any issues that may pop up with connecting to our file servers and to other servers."
+msgstr "Этот инструмент проводит различные тесты над вашей сетью и определяет любые проблемы, которые могут возникнуть при подключении к нашим файловым и другим серверам."
+
+#: src/main/java/com/atlauncher/gui/tabs/tools/NetworkCheckerToolPanel.java:54
+msgid "Please note that the data from this tool is sent to ATLauncher so we can diagnose possible issues in your setup. This test may take up to 10 minutes or longer to complete and you will be unable to do anything while it's running. Please also keep in mind that this test will use some of your bandwidth, it will use approximately 100MB.<br/><br/>Do you wish to continue?"
+msgstr "Обратите внимание, что данные из этого инструмента отправляются в ATLauncher, чтобы мы могли диагностировать возможные проблемы в вашей настройке. Этот тест может занять до 10 минут и более, вы также не сможете ничего сделать во время его выполнения. Также имейте в виду, что этот тест будет использовать часть вашей пропускной способности, он будет использовать около 100 МБ. <br/> <br/> Хотите продолжить?"
+
+#: src/main/java/com/atlauncher/gui/tabs/tools/NetworkCheckerToolPanel.java:61
+msgid "Network Checker Running. Please Wait!"
+msgstr "Проверка сети запущена! Пожалуйста, ждите!"
+
+#: src/main/java/com/atlauncher/gui/tabs/tools/NetworkCheckerToolPanel.java:79
+msgid "The network checker tool has completed and the data sent off to ATLauncher.<br/><br/>Thanks for your input to help understand and fix network related issues."
+msgstr "Инструмент проверки сети завершил свою работу, и данные отправлены в ATLauncher. <br/> <br/> Спасибо за ваш вклад, помогающий разобраться и исправить проблемы, связанные с сетью."
+
+#: src/main/java/com/atlauncher/gui/tabs/tools/LogClearerToolPanel.java:31
+msgid "Log Clearer"
+msgstr "Очистель лога"
+
+#: src/main/java/com/atlauncher/gui/tabs/tools/LogClearerToolPanel.java:33
+msgid "This tool clears out all logs created by the launcher (not included those made by instances) to free up space and old junk."
+msgstr "Этот инструмент очищает все логи, созданные лаунчером (не включая созданные сборками), чтобы освободить место и очистить мусор."
+
+#: src/main/java/com/atlauncher/gui/tabs/tools/LogClearerToolPanel.java:43
+msgid "Successfully cleared the logs."
+msgstr "Логи успешно очищены."
+
+#: src/main/java/com/atlauncher/gui/tabs/tools/DebugModePanel.java:33
+msgid "Debug Mode"
+msgstr "Режим отладки"
+
+#: src/main/java/com/atlauncher/gui/tabs/tools/DebugModePanel.java:35
+msgid "Use this to relaunch ATLauncher in debug mode. This can be used to get more debug logs in order to help diagnose issues with ATLauncher."
+msgstr "Используйте это для перезапуска ATLauncher в режиме отладки. Это может использоваться для получения большего количества отладочных логов, чтобы помочь диагностировать проблемы с ATLauncher."
+
+#: src/main/java/com/atlauncher/gui/tabs/tools/DownloadClearerToolPanel.java:31
+msgid "Download Clearer"
+msgstr "Download утилиту для очистки"
+
+#: src/main/java/com/atlauncher/gui/tabs/tools/DownloadClearerToolPanel.java:33
+msgid "This tool clears out all the downloads done by the launcher. This will not affect any instances, but means new pack installs may take longer as it needs to redownload mods."
+msgstr "Этот инструмент очищает все загрузки лаунчера. Это не влияет на сборки, но это означает, что установка новых сборок может занять больше времени, так как для этого необходимо повторно загрузить моды."
+
+#: src/main/java/com/atlauncher/gui/tabs/tools/DownloadClearerToolPanel.java:43
+msgid "Successfully cleared the downloads."
+msgstr "Логи успешно очищены."
+
+#: src/main/java/com/atlauncher/gui/tabs/CreatePackTab.java:104
+msgid "Releases"
+msgstr "Релизы"
+
+#: src/main/java/com/atlauncher/gui/tabs/CreatePackTab.java:108
+msgid "Experiments"
+msgstr "Экспериментальные функции"
+
+#: src/main/java/com/atlauncher/gui/tabs/CreatePackTab.java:112
+msgid "Snapshots"
+msgstr "Снапшоты"
+
+#: src/main/java/com/atlauncher/gui/tabs/CreatePackTab.java:116
+msgid "Betas"
+msgstr "Бета-версии"
+
+#: src/main/java/com/atlauncher/gui/tabs/CreatePackTab.java:120
+msgid "Alphas"
+msgstr "Альфа-версии"
+
+#: src/main/java/com/atlauncher/gui/tabs/CreatePackTab.java:124
+msgid "None"
+msgstr "Отсутствует"
+
+#: src/main/java/com/atlauncher/gui/tabs/CreatePackTab.java:132
+msgid "Create Instance"
+msgstr "Создать сборку"
+
+#: src/main/java/com/atlauncher/gui/tabs/CreatePackTab.java:144
+#: src/main/java/com/atlauncher/gui/tabs/settings/GeneralSettingsTab.java:208
+#: src/main/java/com/atlauncher/gui/dialogs/RenameInstanceDialog.java:96
+msgid "Instance Name"
+msgstr "Название сборки"
+
+#: src/main/java/com/atlauncher/gui/tabs/CreatePackTab.java:159
+msgid "Description"
+msgstr "Описание"
+
+#: src/main/java/com/atlauncher/gui/tabs/CreatePackTab.java:182
+#: src/main/java/com/atlauncher/gui/tabs/settings/GeneralSettingsTab.java:209
+msgid "Minecraft Version"
+msgstr "Версия Майнкрафт"
+
+#: src/main/java/com/atlauncher/gui/tabs/CreatePackTab.java:187
+msgid "Filter"
+msgstr "Фильтр"
+
+#: src/main/java/com/atlauncher/gui/tabs/CreatePackTab.java:223
+msgid "Loader"
+msgstr "Загрузчик модов"
+
+#: src/main/java/com/atlauncher/gui/tabs/CreatePackTab.java:250
+#: src/main/java/com/atlauncher/gui/dialogs/InstanceInstallerDialog.java:1161
+msgid "Loader Version"
+msgstr "Версия Загрузчика"
+
+#: src/main/java/com/atlauncher/gui/tabs/CreatePackTab.java:310
+#: src/main/java/com/atlauncher/gui/dialogs/InstanceInstallerDialog.java:1168
+msgid "Getting Loader Versions"
+msgstr "Получение версий загрузчика"
+
+#: src/main/java/com/atlauncher/gui/tabs/CreatePackTab.java:320
+msgid "Select Loader First"
+msgstr "Сначала выберите загрузчик модов"
+
+#: src/main/java/com/atlauncher/gui/tabs/CreatePackTab.java:444
+#: src/main/java/com/atlauncher/gui/dialogs/InstanceExportDialog.java:121
+msgid "Version"
+msgstr "Версия"
+
+#: src/main/java/com/atlauncher/gui/tabs/CreatePackTab.java:444
+msgid "Released"
+msgstr "Выпущено"
+
+#: src/main/java/com/atlauncher/gui/tabs/CreatePackTab.java:444
+#: src/main/java/com/atlauncher/gui/handlers/ModsJCheckBoxTransferHandler.java:89
+msgid "Type"
+msgstr "Тип"
+
+#: src/main/java/com/atlauncher/gui/tabs/InstancesTab.java:50
+#: src/main/java/com/atlauncher/gui/tabs/settings/GeneralSettingsTab.java:243
+msgid "Instances"
+msgstr "Установленные сборки"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/NetworkSettingsTab.java:74
+#: src/main/java/com/atlauncher/gui/tabs/settings/NetworkSettingsTab.java:295
+msgid "Concurrent Connections"
+msgstr "Одновременные подключения"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/NetworkSettingsTab.java:75
+#: src/main/java/com/atlauncher/gui/tabs/settings/NetworkSettingsTab.java:297
+msgid "This determines how many connections will be made when downloading files."
+msgstr "Это определяет, сколько соединений будет сделано при загрузке файлов."
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/NetworkSettingsTab.java:93
+#: src/main/java/com/atlauncher/gui/tabs/settings/NetworkSettingsTab.java:299
+msgid "Connection Timeout"
+msgstr "Время подключения истекло"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/NetworkSettingsTab.java:94
+#: src/main/java/com/atlauncher/gui/tabs/settings/NetworkSettingsTab.java:301
+msgid "This determines how long connections will wait before timing out."
+msgstr "Это определяет, насколько долго соединения будут ждать перед тайм-аутом."
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/NetworkSettingsTab.java:112
+#: src/main/java/com/atlauncher/gui/tabs/settings/NetworkSettingsTab.java:303
+msgid "Modrinth Api Key"
+msgstr ""
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/NetworkSettingsTab.java:113
+#: src/main/java/com/atlauncher/gui/tabs/settings/NetworkSettingsTab.java:305
+msgid "Api key to use when making requests to Modrinth. This is unecessary to set unless you want to access private data."
+msgstr ""
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/NetworkSettingsTab.java:134
+#: src/main/java/com/atlauncher/gui/tabs/settings/NetworkSettingsTab.java:309
+msgid "Enable Proxy"
+msgstr "Включить прокси-сервер"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/NetworkSettingsTab.java:135
+#: src/main/java/com/atlauncher/gui/tabs/settings/NetworkSettingsTab.java:310
+msgid "If you use a proxy to connect to the internet you can enable it here."
+msgstr "Если вы используете прокси для подключения к Интернету, вы можете включить его здесь."
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/NetworkSettingsTab.java:163
+#: src/main/java/com/atlauncher/gui/tabs/settings/NetworkSettingsTab.java:313
+msgid "Proxy Host"
+msgstr "Прокси-сервер"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/NetworkSettingsTab.java:164
+#: src/main/java/com/atlauncher/gui/tabs/settings/NetworkSettingsTab.java:314
+msgid "This is the IP/hostname used to connect to the proxy."
+msgstr "Это IP/имя хоста используется для подключения к прокси."
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/NetworkSettingsTab.java:182
+#: src/main/java/com/atlauncher/gui/tabs/settings/NetworkSettingsTab.java:316
+msgid "Proxy Port"
+msgstr "Порт прокси-сервера"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/NetworkSettingsTab.java:183
+#: src/main/java/com/atlauncher/gui/tabs/settings/NetworkSettingsTab.java:317
+msgid "This is the port used to connect to the proxy."
+msgstr "Этот порт используется для подключения к прокси."
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/NetworkSettingsTab.java:204
+#: src/main/java/com/atlauncher/gui/tabs/settings/NetworkSettingsTab.java:319
+msgid "Proxy Type"
+msgstr "Тип прокси"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/NetworkSettingsTab.java:205
+#: src/main/java/com/atlauncher/gui/tabs/settings/NetworkSettingsTab.java:321
+msgid "This is the type of connection the proxy uses. Either HTTP, SOCKS or DIRECT."
+msgstr "Это тип соединения, который использует прокси. HTTP, SOCKS или DIRECT."
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/NetworkSettingsTab.java:242
+msgid "Checking Proxy"
+msgstr "Проверка прокси"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/NetworkSettingsTab.java:243
+msgid "Checking the proxy entered."
+msgstr "Проверка введённого прокси."
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/NetworkSettingsTab.java:256
+#: src/main/java/com/atlauncher/gui/tabs/settings/JavaSettingsTab.java:649
+#: src/main/java/com/atlauncher/gui/tabs/settings/JavaSettingsTab.java:662
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/JavaInstanceSettingsTab.java:655
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/JavaInstanceSettingsTab.java:668
+msgid "Help"
+msgstr "Помощь"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/NetworkSettingsTab.java:257
+msgid "Cannot connect to proxy. Please check the settings and try again."
+msgstr "Не удается подключиться к прокси. Проверьте настройки и повторите попытку."
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/NetworkSettingsTab.java:285
+msgid "Network"
+msgstr "Сеть"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/ModsSettingsTab.java:54
+msgid "Default Mod Platform"
+msgstr "Платформа модов по умолчанию"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/ModsSettingsTab.java:55
+msgid "The default mod platform to use when adding mods to instances, as well as the platform to use when updating/reinstalling mods on multiple platforms."
+msgstr "Платформа модов по умолчанию, используемая при добавлении модов в Версии, а также платформа, используемая при обновлении/переустановке модов на нескольких платформах."
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/ModsSettingsTab.java:85
+msgid "Add Mod Restrictions"
+msgstr "Добавить ограничения для модов"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/ModsSettingsTab.java:86
+msgid "What restrictions should be in place when adding mods from a mod platform."
+msgstr "Какие ограничения должны быть при добавлении модов с мод-платформы."
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/ModsSettingsTab.java:95
+msgid "Only show mods for current Minecraft version"
+msgstr "Показывать моды только для текущей версии Minecraft"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/ModsSettingsTab.java:97
+msgid "Show mods for the current major Minecraft version (eg: 1.16.x)"
+msgstr "Показать моды для текущей основной версии Minecraft (например: 1.16.x)"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/ModsSettingsTab.java:99
+msgid "Show mods for all Minecraft versions"
+msgstr "Показать моды для всех версий Minecraft"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/ModsSettingsTab.java:118
+msgid "Enable Added Mods By Default?"
+msgstr "Включить добавленные моды по умолчанию?"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/ModsSettingsTab.java:120
+msgid "When adding mods manually, should they be enabled automatically?"
+msgstr "При добавлении модов вручную они должны включаться автоматически?"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/ModsSettingsTab.java:137
+msgid "Allow CurseForge Alpha/Beta Files?"
+msgstr ""
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/ModsSettingsTab.java:139
+msgid "This will enable using Alpha/Beta files from CurseForge by default when installing modpacks as well as updating to Alpha/Beta versions from stable release versions."
+msgstr ""
+
+#. {0} is the platform (e.g. CurseForge/Modrinth)
+#: src/main/java/com/atlauncher/gui/tabs/settings/ModsSettingsTab.java:159
+#: src/main/java/com/atlauncher/gui/tabs/settings/ModsSettingsTab.java:182
+msgid "Don't Check Mods On {0}?"
+msgstr "Не проверять моды на {0}?"
+
+#. {0} is the platform (e.g. CurseForge/Modrinth)
+#: src/main/java/com/atlauncher/gui/tabs/settings/ModsSettingsTab.java:161
+#: src/main/java/com/atlauncher/gui/tabs/settings/ModsSettingsTab.java:184
+msgid "When installing packs or adding mods manually to instances, we check for the file on {0} to show more information about the mod as well as make updating easier. Disabling this will mean you won't be able to update manually added mods from within the launcher."
+msgstr "При установке пакетов или добавлении модов в Версий вручную мы проверяем файл на {0}, чтобы показать больше информации о моде, а также упростить обновление. Отключение этого означает, что вы не сможете обновлять добавленные вручную моды из лаунчера."
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/ModsSettingsTab.java:204
+msgid "Default Export Format"
+msgstr "Формат экспорта по умолчанию"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/ModsSettingsTab.java:205
+msgid "The default format to export instances to. Can also be changed at time of export."
+msgstr "Формат по умолчанию для экспорта Версий. Также может быть изменен во время экспорта."
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/ModsSettingsTab.java:251
+#: src/main/java/com/atlauncher/gui/dialogs/AddModsDialog.java:184
+#: src/main/java/com/atlauncher/gui/dialogs/AddModsDialog.java:556
+msgid "Mods"
+msgstr "Моды"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/JavaSettingsTab.java:120
+#: src/main/java/com/atlauncher/gui/tabs/settings/JavaSettingsTab.java:188
+#: src/main/java/com/atlauncher/gui/tabs/settings/JavaSettingsTab.java:705
+msgid "You're running a 32 bit Java and therefore cannot use more than 1GB of Ram. Please see http://atl.pw/32bit for help."
+msgstr "Вы используете 32-битную версию Java и поэтому не можете использовать более 1ГБ оперативной памяти. Пожалуйста, посетите http://atl.pw/32bit для получения помощи."
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/JavaSettingsTab.java:125
+#: src/main/java/com/atlauncher/gui/tabs/settings/JavaSettingsTab.java:709
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/JavaInstanceSettingsTab.java:117
+msgid "Initial Memory/Ram"
+msgstr "Начальная память/Озу"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/JavaSettingsTab.java:126
+#: src/main/java/com/atlauncher/gui/tabs/settings/JavaSettingsTab.java:710
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/JavaInstanceSettingsTab.java:118
+msgid "Initial memory/ram is the starting amount of memory/ram to use when starting Minecraft. This should be left at the default of 512 MB unless you know what your doing."
+msgstr "Первоначальное количество оперативной памяти для использования при запуске Minecraft. Это должно быть оставлено по умолчанию 512 МБ, если вы не знаете, для чего это."
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/JavaSettingsTab.java:158
+#: src/main/java/com/atlauncher/gui/tabs/settings/JavaSettingsTab.java:217
+#: src/main/java/com/atlauncher/gui/tabs/settings/JavaSettingsTab.java:231
+#: src/main/java/com/atlauncher/gui/tabs/settings/JavaSettingsTab.java:266
+#: src/main/java/com/atlauncher/gui/tabs/settings/JavaSettingsTab.java:577
+#: src/main/java/com/atlauncher/gui/dialogs/ModsChooser.java:277
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/JavaInstanceSettingsTab.java:151
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/JavaInstanceSettingsTab.java:205
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/JavaInstanceSettingsTab.java:219
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/JavaInstanceSettingsTab.java:255
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/JavaInstanceSettingsTab.java:505
+msgid "Warning"
+msgstr "Предупреждение"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/JavaSettingsTab.java:160
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/JavaInstanceSettingsTab.java:153
+msgid "Setting initial memory above 512MB is not recommended and can cause issues. Are you sure you want to do this?"
+msgstr "Установка начальной памяти выше 512 Мб не рекомендуется и может вызвать проблемы. Вы уверены, что хотите это сделать?"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/JavaSettingsTab.java:179
+#: src/main/java/com/atlauncher/gui/tabs/settings/JavaSettingsTab.java:715
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/JavaInstanceSettingsTab.java:171
+msgid "Maximum Memory/Ram"
+msgstr "Максимальная оперативная память"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/JavaSettingsTab.java:181
+#: src/main/java/com/atlauncher/gui/tabs/settings/JavaSettingsTab.java:717
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/JavaInstanceSettingsTab.java:173
+msgid "The maximum amount of memory/ram to allocate when starting Minecraft."
+msgstr "Максимальное количество оперативной памяти для распределения при запуске Minecraft."
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/JavaSettingsTab.java:219
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/JavaInstanceSettingsTab.java:207
+msgid "Setting maximum memory above 8GB is not recommended for most modpacks and can cause issues."
+msgstr "Установка максимальной памяти выше 8 Гб не рекомендуется для большинства мод паков и может вызвать проблемы."
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/JavaSettingsTab.java:221
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/JavaInstanceSettingsTab.java:209
+msgid "More Explanation"
+msgstr "Больше Информации"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/JavaSettingsTab.java:233
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/JavaInstanceSettingsTab.java:221
+msgid "Setting maximum memory to more than half of your systems total memory is not recommended and can cause issues in some cases. Are you sure you want to do this?"
+msgstr "Установка максимальной памяти больше, чем половина системной оперативной памяти не рекомендуется и может вызвать проблемы. Вы уверены, что хотите это сделать?"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/JavaSettingsTab.java:246
+#: src/main/java/com/atlauncher/gui/tabs/settings/JavaSettingsTab.java:719
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/JavaInstanceSettingsTab.java:234
+msgid "PermGen Size"
+msgstr "Размер PermGen"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/JavaSettingsTab.java:247
+#: src/main/java/com/atlauncher/gui/tabs/settings/JavaSettingsTab.java:721
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/JavaInstanceSettingsTab.java:235
+msgid "The PermGen Size for java to use when launching Minecraft in MB."
+msgstr "Размер PermGen для java, используемый при запуске Minecraft в MB."
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/JavaSettingsTab.java:268
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/JavaInstanceSettingsTab.java:257
+msgid "Setting PermGen size above {0}MB is not recommended and can cause issues. Are you sure you want to do this?"
+msgstr "Установка размера PermGen выше {0} Мб не рекомендуется и может вызвать проблемы. Вы уверены, что хотите это сделать?"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/JavaSettingsTab.java:287
+#: src/main/java/com/atlauncher/gui/tabs/settings/JavaSettingsTab.java:723
+msgid "Window Size"
+msgstr "Размер окна"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/JavaSettingsTab.java:288
+#: src/main/java/com/atlauncher/gui/tabs/settings/JavaSettingsTab.java:725
+msgid "The size that the Minecraft window should open as, Width x Height, in pixels."
+msgstr "Размер, который окно Minecraft должно открыть как ширина x Высота, в пикселях."
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/JavaSettingsTab.java:346
+#: src/main/java/com/atlauncher/gui/tabs/settings/JavaSettingsTab.java:727
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/JavaInstanceSettingsTab.java:278
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/JavaInstanceSettingsTab.java:296
+msgid "Java Path"
+msgstr "Путь Java"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/JavaSettingsTab.java:347
+msgid "This setting allows you to specify where your Java Path is. Where possible the launcher will use a version of Java provided by Minecraft to launch the instance, but in cases where one isn't available, this path will be used."
+msgstr "Этот параметр позволяет указать, где находится ваш Java-путь. Там, где это возможно, лаунчер будет использовать версию Java, предоставленную Minecraft, для запуска игры, но в тех случаях, когда она недоступна, будет использоваться путь по умолчанию."
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/JavaSettingsTab.java:368
+msgid "Select Java Path To Autofill"
+msgstr "Выберите путь Java для автозаполнения"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/JavaSettingsTab.java:389
+#: src/main/java/com/atlauncher/gui/tabs/settings/JavaSettingsTab.java:454
+#: src/main/java/com/atlauncher/gui/tabs/settings/JavaSettingsTab.java:489
+#: src/main/java/com/atlauncher/gui/tabs/settings/JavaSettingsTab.java:732
+#: src/main/java/com/atlauncher/gui/tabs/settings/JavaSettingsTab.java:739
+#: src/main/java/com/atlauncher/gui/tabs/settings/GeneralSettingsTab.java:305
+#: src/main/java/com/atlauncher/gui/dialogs/InstanceExportDialog.java:223
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/JavaInstanceSettingsTab.java:315
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/JavaInstanceSettingsTab.java:411
+msgid "Reset"
+msgstr "Сброс"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/JavaSettingsTab.java:394
+#: src/main/java/com/atlauncher/gui/tabs/settings/JavaSettingsTab.java:493
+#: src/main/java/com/atlauncher/gui/tabs/settings/JavaSettingsTab.java:734
+#: src/main/java/com/atlauncher/gui/tabs/settings/GeneralSettingsTab.java:308
+#: src/main/java/com/atlauncher/gui/dialogs/ChangeSkinDialog.java:120
+#: src/main/java/com/atlauncher/gui/dialogs/InstanceExportDialog.java:204
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/JavaInstanceSettingsTab.java:317
+#: src/main/java/com/atlauncher/gui/dialogs/ImportInstanceDialog.java:139
+msgid "Browse"
+msgstr "Просмотр"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/JavaSettingsTab.java:398
+#: src/main/java/com/atlauncher/gui/tabs/settings/JavaSettingsTab.java:497
+#: src/main/java/com/atlauncher/gui/tabs/settings/GeneralSettingsTab.java:312
+#: src/main/java/com/atlauncher/gui/dialogs/FileChooserDialog.java:145
+#: src/main/java/com/atlauncher/gui/dialogs/InstanceExportDialog.java:209
+#: src/main/java/com/atlauncher/gui/dialogs/ImportInstanceDialog.java:169
+msgid "Select"
+msgstr "Выбрать"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/JavaSettingsTab.java:437
+#: src/main/java/com/atlauncher/gui/tabs/settings/JavaSettingsTab.java:736
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/JavaInstanceSettingsTab.java:397
+msgid "Java Parameters"
+msgstr "Параметры Java"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/JavaSettingsTab.java:438
+#: src/main/java/com/atlauncher/gui/tabs/settings/JavaSettingsTab.java:737
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/JavaInstanceSettingsTab.java:398
+msgid "Extra Java command line paramaters can be added here."
+msgstr "Здесь можно добавить дополнительные параметры командной строки Java."
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/JavaSettingsTab.java:474
+msgid "Java Install Location"
+msgstr "Путь установки Java"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/JavaSettingsTab.java:476
+msgid "This setting allows you to specify a common location that you install all your Java installs to. This helps find your installed Java installs easier if you install them all within 1 folder."
+msgstr "Эта настройка позволяет вам указать общий путь, в который вы устанавливаете все свои установки Java. Это позволяет проще находить установки Java, если вы устанавливаете их все в 1 папку."
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/JavaSettingsTab.java:520
+#: src/main/java/com/atlauncher/gui/tabs/settings/JavaSettingsTab.java:741
+msgid "Start Minecraft Maximised"
+msgstr "Запуск Minecraft в полноэкранном режиме"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/JavaSettingsTab.java:521
+#: src/main/java/com/atlauncher/gui/tabs/settings/JavaSettingsTab.java:742
+msgid "Enabling this will start Minecraft maximised so that it takes up the full size of your screen."
+msgstr "Включение этого параметра позволит запустить Minecraft в максимизированном окне, чтобы он занял полный размер экрана."
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/JavaSettingsTab.java:540
+#: src/main/java/com/atlauncher/gui/tabs/settings/JavaSettingsTab.java:745
+msgid "Ignore Java Checks On Launch"
+msgstr "Игнорировать проверки Java при запуске"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/JavaSettingsTab.java:541
+#: src/main/java/com/atlauncher/gui/tabs/settings/JavaSettingsTab.java:746
+msgid "This enables ignoring errors when launching a pack that you don't have a compatible Java version for."
+msgstr "Это позволяет игнорировать ошибки при запуске пакета, для которого у вас нет совместимой версии Java."
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/JavaSettingsTab.java:560
+#: src/main/java/com/atlauncher/gui/tabs/settings/JavaSettingsTab.java:749
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/JavaInstanceSettingsTab.java:477
+msgid "Use Java Provided By Minecraft"
+msgstr "Используйте Java, предоставляемую Minecraft"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/JavaSettingsTab.java:562
+#: src/main/java/com/atlauncher/gui/tabs/settings/JavaSettingsTab.java:750
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/JavaInstanceSettingsTab.java:478
+msgid "This allows you to enable/disable using the version of Java provided by the version of Minecraft you're running.<br/><br/>It's highly recommended to not disable this, unless you know what you're doing."
+msgstr "Это позволяет включать/отключать использование версии Java, предоставляемой используемой версией Minecraft.<br/><br/>Настоятельно рекомендуется не отключать эту функцию, если только вы не знаете, что делаете."
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/JavaSettingsTab.java:579
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/JavaInstanceSettingsTab.java:507
+msgid "Unchecking this is not recommended and may cause Minecraft to no longer run. Are you sure you want to do this?"
+msgstr "Снимать данный флажок не рекомендуется и может привести к тому, что Minecraft больше не запуститься. Вы уверены, что хотите сделать это?"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/JavaSettingsTab.java:598
+#: src/main/java/com/atlauncher/gui/tabs/settings/JavaSettingsTab.java:754
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/JavaInstanceSettingsTab.java:554
+msgid "Disable Legacy Launching"
+msgstr "Выключить устаревший запуск"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/JavaSettingsTab.java:599
+#: src/main/java/com/atlauncher/gui/tabs/settings/JavaSettingsTab.java:755
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/JavaInstanceSettingsTab.java:556
+msgid "This allows you to disable legacy launching for Minecraft < 1.6.<br/><br/>It's highly recommended to not disable this, unless you're having issues launching older Minecraft versions."
+msgstr "Это позволит выключить устаревший запуск для Minecraft < 1.6.<br/><br/>Очень не рекомендуется выключать это, если у вас нет проблем с запуском старых версий Minecraft."
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/JavaSettingsTab.java:617
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/JavaInstanceSettingsTab.java:584
+msgid "Use System GLFW"
+msgstr "Использовать систему GLFW"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/JavaSettingsTab.java:618
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/JavaInstanceSettingsTab.java:585
+msgid "Use the systems install for GLFW native library."
+msgstr "Использовать системную установку для нативной библиотеки GLFW."
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/JavaSettingsTab.java:634
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/JavaInstanceSettingsTab.java:612
+msgid "Use System OpenAL"
+msgstr "Используйте систему OpenAL"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/JavaSettingsTab.java:635
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/JavaInstanceSettingsTab.java:613
+msgid "Use the systems install for OpenAL native library."
+msgstr "Использовать системную установку для нативной библиотеки OpenAL."
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/JavaSettingsTab.java:649
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/JavaInstanceSettingsTab.java:655
+msgid "The Java Path you set is incorrect.<br/><br/>Please verify it points to the folder where the bin folder is and try again."
+msgstr "Установленный вами путь Java неверен.<br/><br/>Пожалуйста, проверьте, что он указывает на папку, где находится папка bin и повторите попытку."
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/JavaSettingsTab.java:662
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/JavaInstanceSettingsTab.java:668
+msgid "The entered Java Parameters were incorrect.<br/><br/>Please remove any references to Xmx, Xms or XX:PermSize."
+msgstr "Введенные параметры Java были неверны.<br/><br/> Пожалуйста, удалите все ссылки на Xmx, Xms или XX:PermSize."
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/JavaSettingsTab.java:694
+#: src/main/java/com/atlauncher/gui/dialogs/InstanceSettingsDialog.java:96
+msgid "Java/Minecraft"
+msgstr "Java/Minecraft"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/JavaSettingsTab.java:728
+msgid "This setting allows you to specify where your Java Path is. This should be left as default, but if you know what your doing just set this to the path where the bin folder is for the version of Java you want to use If you mess up, click the Reset button to go back to the default"
+msgstr "Эта настройка позволяет вам указать путь к желаемой версии Java.<br/><br/>Мы настоятельно рекомендуем вам оставить значение по-умолчанию, но если вы знаете что делаете, установите путь <br/>к папке bin версии Java, которую вы хотите использовать<br/><br/>Если вы ошиблись, нажмите на кнопку \"Сбросить\", чтобы вернуться к значению по-умолчанию"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/BackupsSettingsTab.java:45
+msgid "Backup Mode"
+msgstr "Режим резервного сохранения"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/BackupsSettingsTab.java:45
+msgid "When backing up an instance, what should get backed up? Mainly used for when doing automated backups."
+msgstr "Что следует сохранять при резервном копировании модпака? В основном используется для автоматического резервного копирования."
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/BackupsSettingsTab.java:54
+msgid "Backup saves, configs and options only"
+msgstr "Резервная копия сохранений, конфигураций и настроек"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/BackupsSettingsTab.java:56
+msgid "Backup saves, mods, configs and options only"
+msgstr "Резервная копия сохранений, модов, конфигураций и настроек"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/BackupsSettingsTab.java:57
+msgid "Backup everything in the instance folder"
+msgstr "Создавать копию всей сборки"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/BackupsSettingsTab.java:77
+msgid "Enable Automatic Backup After Launch"
+msgstr "Включить автоматическое резервное копирование после запуска"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/BackupsSettingsTab.java:78
+msgid "If a backup should run after launching an instance."
+msgstr "Если резервное копирование должно выполняться после запуска Модпака."
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/BackupsSettingsTab.java:96
+msgid "Backups"
+msgstr "Резервные копии"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/LoggingSettingsTab.java:46
+msgid "Forge Logging Level"
+msgstr "Уровень журналирования Forge"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/LoggingSettingsTab.java:47
+msgid "This determines the type of logging that Forge should report back to you."
+msgstr "Это определяет тип журнала, который Forge должен сообщить вам."
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/LoggingSettingsTab.java:71
+msgid "Enable Logging"
+msgstr "Включить записывание ведение в журнал"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/LoggingSettingsTab.java:72
+msgid "The Launcher sends back anonymous usage and error logs to our servers in order to make the Launcher and Packs better. If you don't want this to happen then simply disable this option."
+msgstr "Лаунчер отправляет анонимные журналы использования и ошибок на наши серверы, чтобы сделать Лаунчер и пакеты лучше. Если вы не хотите, чтобы это произошло, просто отключите эту опцию."
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/LoggingSettingsTab.java:92
+#: src/main/java/com/atlauncher/gui/dialogs/SetupDialog.java:113
+#: src/main/java/com/atlauncher/gui/dialogs/SetupDialog.java:176
+msgid "Enable Anonymous Analytics"
+msgstr "Включить анонимную аналитику"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/LoggingSettingsTab.java:94
+#: src/main/java/com/atlauncher/gui/dialogs/SetupDialog.java:115
+#: src/main/java/com/atlauncher/gui/dialogs/SetupDialog.java:177
+msgid "The Launcher sends back anonymous analytics to our own servers in a non identifying way in order to track what people do and don't use in the launcher. This helps determine what new features we implement in the future. All analytics are anonymous and contain no user/instance information in it at all. If you don't want to send anonymous analytics, you can disable this option."
+msgstr ""
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/LoggingSettingsTab.java:117
+msgid "Logging"
+msgstr "Журналы (логи)"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/CommandsSettingsTab.java:51
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/CommandsInstanceSettingsTab.java:70
+msgid "Enable commands"
+msgstr "Включить команды"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/CommandsSettingsTab.java:52
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/CommandsInstanceSettingsTab.java:71
+msgid "This allows you to turn launch/exit commands on or off."
+msgstr "Это позволяет вам включать или выключать команды запуска/выхода."
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/CommandsSettingsTab.java:67
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/CommandsInstanceSettingsTab.java:97
+msgid "Pre-launch command"
+msgstr "Команда перед запуском"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/CommandsSettingsTab.java:68
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/CommandsInstanceSettingsTab.java:98
+msgid "This command will be run before the instance launches. The game will not run until the command has finished."
+msgstr "Эта команда будет запущена перед запуском сборки. Игра не запустится до тех пор, пока команда не будет выполнена."
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/CommandsSettingsTab.java:82
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/CommandsInstanceSettingsTab.java:119
+msgid "Post-exit command"
+msgstr "Команда после выхода"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/CommandsSettingsTab.java:83
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/CommandsInstanceSettingsTab.java:120
+msgid "This command will be run after the instance exits. It will run even if the instance is killed or if it crashes and exits."
+msgstr "Эта команда будет запущена после выхода из игры. Она будет запущена даже, если игра вылетит или будет принудительно закрыта."
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/CommandsSettingsTab.java:97
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/CommandsInstanceSettingsTab.java:141
+msgid "Wrapper command"
+msgstr "Команды оболочки"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/CommandsSettingsTab.java:98
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/CommandsInstanceSettingsTab.java:142
+msgid "Wrapper command allow launcher using an extra wrapper program (like 'prime-run' on Linux)\n"
+"Use %command% to substitute launch command\n"
+"%\"command\"% to substitute launch as a whole string (like 'bash -c' on Linux)"
+msgstr "Команды оболочки позволяют лаунчеру использовать дополнительные программы оболочки (например 'prime-run' в Linux)\n"
+"Используйте %command% для замены команды запуска\n"
+"%\"command\"% для замены запуска целой строки (например 'bash -c' в Linux)"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/CommandsSettingsTab.java:117
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/CommandsInstanceSettingsTab.java:166
+msgid "Commands will be run in the directory of the instance that is launched/exited."
+msgstr "Commands will be run in the directory of the instance that is launched/exited."
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/CommandsSettingsTab.java:118
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/CommandsInstanceSettingsTab.java:167
+msgid "The following variables are available for each command"
+msgstr "The following variables are available for each command"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/CommandsSettingsTab.java:119
+#: src/main/java/com/atlauncher/gui/dialogs/InstanceExportDialog.java:105
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/CommandsInstanceSettingsTab.java:168
+msgid "The name of the instance"
+msgstr "Название сборки"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/CommandsSettingsTab.java:121
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/CommandsInstanceSettingsTab.java:170
+msgid "The name of the instance's root directory"
+msgstr "Имя корневой директории сборки"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/CommandsSettingsTab.java:122
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/CommandsInstanceSettingsTab.java:171
+msgid "The absolute path to the instance directory"
+msgstr "Абсолютный путь к директории сборки"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/CommandsSettingsTab.java:123
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/CommandsInstanceSettingsTab.java:172
+msgid "Alias for"
+msgstr "Псевдоним для"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/CommandsSettingsTab.java:125
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/CommandsInstanceSettingsTab.java:174
+msgid "The absolute path to the java executable used for launch"
+msgstr "Абсолютный путь к запускаемому файлу Java используемый для запуска"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/CommandsSettingsTab.java:127
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/CommandsInstanceSettingsTab.java:176
+msgid "The JVM parameters used for launch"
+msgstr "Параметры JVM используемые для запуска"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/CommandsSettingsTab.java:166
+#: src/main/java/com/atlauncher/gui/dialogs/InstanceSettingsDialog.java:97
+msgid "Commands"
+msgstr "Команды"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/GeneralSettingsTab.java:87
+#: src/main/java/com/atlauncher/gui/dialogs/SetupDialog.java:91
+#: src/main/java/com/atlauncher/gui/dialogs/SetupDialog.java:175
+msgid "Language"
+msgstr "Язык"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/GeneralSettingsTab.java:88
+msgid "This specifies the language used by the Launcher."
+msgstr "Это определяет язык, используемый в ATLauncher."
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/GeneralSettingsTab.java:106
+msgid "Help Translate"
+msgstr "Помочь перевести"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/GeneralSettingsTab.java:119
+msgid "Theme"
+msgstr "Тема"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/GeneralSettingsTab.java:120
+msgid "This sets the theme that the launcher will use."
+msgstr "Это устанавливает тему, которую будет использовать лаунчер."
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/GeneralSettingsTab.java:159
+msgid "Date Format"
+msgstr "Формат даты"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/GeneralSettingsTab.java:160
+msgid "This controls the format that dates are displayed in the launcher."
+msgstr "Эта настройка позволяет настроить дату отображаемую в лаунчере"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/GeneralSettingsTab.java:197
+msgid "Instance Title Format"
+msgstr "Формат заголовка Версий"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/GeneralSettingsTab.java:198
+msgid "This controls the format that instances titles are shown as."
+msgstr "Это управляет форматом, в котором отображаются заголовки Версий."
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/GeneralSettingsTab.java:209
+msgid "Pack Name"
+msgstr "Название пакета"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/GeneralSettingsTab.java:209
+msgid "Pack Version"
+msgstr "Версия Пакета"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/GeneralSettingsTab.java:230
+msgid "Default Tab"
+msgstr "Вкладка по умолчанию"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/GeneralSettingsTab.java:231
+msgid "Which tab to have selected by default when opening the launcher."
+msgstr "Какую вкладку выбрать по умолчанию при открытии лаунчера."
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/GeneralSettingsTab.java:239
+#: src/main/java/com/atlauncher/gui/tabs/news/NewsTab.java:160
+msgid "News"
+msgstr "Новости"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/GeneralSettingsTab.java:242
+#: src/main/java/com/atlauncher/gui/tabs/PacksBrowserTab.java:548
+msgid "Packs"
+msgstr "Другие сборки"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/GeneralSettingsTab.java:245
+#: src/main/java/com/atlauncher/gui/tabs/accounts/AccountsTab.java:525
+msgid "Accounts"
+msgstr "Аккаунты"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/GeneralSettingsTab.java:268
+msgid "Default Instance Sort"
+msgstr "Сортировка Версий по умолчанию"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/GeneralSettingsTab.java:270
+msgid "Default sorting of instances under the Instances tab."
+msgstr "Сортировка Версий по умолчанию в вкладке Версии."
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/GeneralSettingsTab.java:289
+msgid "Downloads Folder"
+msgstr "Папка загрузок"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/GeneralSettingsTab.java:290
+msgid "This setting allows you to change the Downloads folder that the launcher looks in when downloading browser mods."
+msgstr "Этот параметр позволяет вам изменить папку «Загрузки», в которую заглядывает программа запуска при загрузке модов из браузера."
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/GeneralSettingsTab.java:336
+msgid "Keep Launcher Open"
+msgstr "Сохранить запуск"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/GeneralSettingsTab.java:337
+msgid "This determines if ATLauncher should stay open or exit after Minecraft has exited"
+msgstr "Это определяет, должен ли ATLauncher оставаться открытым или отключиться после закрытия Minecraft"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/GeneralSettingsTab.java:355
+msgid "Enable Console"
+msgstr "Включить консоль"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/GeneralSettingsTab.java:356
+msgid "If you want the console to be visible when opening the Launcher."
+msgstr "Если вы хотите, чтобы консоль была видна при открытии лаунчера."
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/GeneralSettingsTab.java:374
+msgid "Enable Tray Menu"
+msgstr "Меню в панели уведомлений"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/GeneralSettingsTab.java:375
+msgid "The Tray Menu is a little icon that shows in your system taskbar which allows you to perform different functions to do various things with the launcher such as hiding or showing the console, killing Minecraft or closing ATLauncher."
+msgstr "Меню в панели уведомлений - это небольшая иконка, она отображается в панели задач системы, которая <br/> позволяет вам выполнять различные функции. <br/> Например, скрытие/показ консоли, принудительное закрытие Minecraft или ATLauncher."
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/GeneralSettingsTab.java:396
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/GeneralInstanceSettingsTab.java:103
+msgid "Enable Discord Integration"
+msgstr "Включить интеграцию с Discord"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/GeneralSettingsTab.java:397
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/GeneralInstanceSettingsTab.java:104
+msgid "This will enable showing which pack you're playing in Discord."
+msgstr "Это позволит показать, на какой сборке вы играете в Discord."
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/GeneralSettingsTab.java:419
+msgid "Enable Feral Gamemode"
+msgstr "Включить дикий игровой режим"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/GeneralSettingsTab.java:420
+msgid "This will enable Feral Gamemode for packs launched."
+msgstr "Это активирует дикий игровой режим для запускаемых пакетов."
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/GeneralSettingsTab.java:432
+msgid "This will enable Feral Gamemode for packs launched (disabled because gamemoderun not found in PATH, please install Feral Gamemode or add it to your PATH)."
+msgstr "Это активирует оптимизатор Feral GameMode для запускаемых пакетов (отключено, потому что gamemoderun не был найден в PATH. Пожалуйста, установите оптимизатор Feral GameMode или добавьте его в ваш PATH)."
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/GeneralSettingsTab.java:448
+msgid "Disable Custom Fonts?"
+msgstr "Отключить пользовательские шрифты?"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/GeneralSettingsTab.java:449
+msgid "This will disable custom fonts used by themes. If your system has issues with font display not looking right, you can disable this to switch to a default compatible font."
+msgstr "Это отключит пользовательские шрифты, используемые темами. Если в вашей системе есть проблемы с отображением шрифта неправильно, вы можете отключить это, чтобы переключиться на совместимый шрифт по умолчанию."
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/GeneralSettingsTab.java:468
+msgid "Remember Window Size & Positions?"
+msgstr "Запомнить размер и положение окна?"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/GeneralSettingsTab.java:469
+msgid "This will remember the windows positions and size so they keep the same size and position when you restart the launcher."
+msgstr "Это запомнит положение и размер окна, поэтому оно сохранит тот же размер и положение при перезапуске Лаунчера."
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/GeneralSettingsTab.java:487
+msgid "Use Native File Picker?"
+msgstr "Использовать родное средство выбора файлов?"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/GeneralSettingsTab.java:489
+msgid "This will use your operating systems native file picker when selecting files."
+msgstr "При выборе файлов будет использоваться встроенный в вашу операционную систему инструмент выбора файлов."
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/GeneralSettingsTab.java:507
+msgid "Use Recycle Bin/Trash?"
+msgstr "Использовать корзину?"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/GeneralSettingsTab.java:509
+msgid "This will use your operating systems recycle bin/trash where possible when deleting files/instances/servers instead of just deleting them entirely, allowing you to recover files if you make a mistake or want to get them back."
+msgstr "Это будет использовать ваш Бин от операционной систему, где это возможно, при удалении файлов/экземпляров/серверов, а не просто удалять их полностью, что позволит вам восстановить файлы, если вы допустили ошибку или хотите вернуть их."
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/GeneralSettingsTab.java:528
+msgid "Enable ARM Support?"
+msgstr "Включить поддержку ARM?"
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/GeneralSettingsTab.java:530
+msgid "Support for ARM devices is still experimental. If you experience issues on an ARM based device, please turn this off."
+msgstr "Поддержка устройств ARM все еще находится на экспериментальной стадии. Если у вас возникли проблемы с устройством на базе ARM, отключите эту функцию."
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/GeneralSettingsTab.java:548
+msgid "Scan Mods On Launch?"
+msgstr ""
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/GeneralSettingsTab.java:550
+msgid "This will scan the mods in instances before launching to ensure they do not contain malware or have been modified since installing."
+msgstr ""
+
+#: src/main/java/com/atlauncher/gui/tabs/settings/GeneralSettingsTab.java:631
+#: src/main/java/com/atlauncher/gui/dialogs/InstanceSettingsDialog.java:95
+msgid "General"
+msgstr "Основные"
+
+#: src/main/java/com/atlauncher/gui/tabs/PacksBrowserTab.java:79
+msgid "Minecraft:"
+msgstr "Minecraft:"
+
+#: src/main/java/com/atlauncher/gui/tabs/PacksBrowserTab.java:83
+#: src/main/java/com/atlauncher/gui/tabs/PacksBrowserTab.java:562
+msgid "Category:"
+msgstr "Категория:"
+
+#: src/main/java/com/atlauncher/gui/tabs/PacksBrowserTab.java:87
+#: src/main/java/com/atlauncher/gui/tabs/PacksBrowserTab.java:563
+msgid "Sort:"
+msgstr "Сортировать:"
+
+#: src/main/java/com/atlauncher/gui/tabs/PacksBrowserTab.java:95
+msgid "Add Manually"
+msgstr "Добавить вручную"
+
+#: src/main/java/com/atlauncher/gui/tabs/PacksBrowserTab.java:217
+#: src/main/java/com/atlauncher/gui/tabs/PacksBrowserTab.java:565
+#: src/main/java/com/atlauncher/gui/tabs/instances/InstancesSearchField.java:46
+#: src/main/java/com/atlauncher/gui/tabs/instances/InstancesNavigationPanel.java:86
+#: src/main/java/com/atlauncher/gui/tabs/ServersTab.java:82
+#: src/main/java/com/atlauncher/gui/tabs/ServersTab.java:145
+#: src/main/java/com/atlauncher/gui/dialogs/AddModsDialog.java:168
+#: src/main/java/com/atlauncher/gui/dialogs/ViewModsDialog.java:63
+msgid "Search"
+msgstr "Поиск"
+
+#: src/main/java/com/atlauncher/gui/tabs/PacksBrowserTab.java:230
+msgid "Add Pack By ID/Slug/URL"
+msgstr "Добавить пакет по ID/Slug/URL"
+
+#: src/main/java/com/atlauncher/gui/tabs/PacksBrowserTab.java:231
+msgid "Enter an ID/slug/url for a pack to add manually:"
+msgstr "Введите ID/slug/url для пакета, чтобы добавить эго вручную:"
+
+#: src/main/java/com/atlauncher/gui/tabs/PacksBrowserTab.java:367
+msgid "All Versions"
+msgstr "Все Версий"
+
+#: src/main/java/com/atlauncher/gui/tabs/PacksBrowserTab.java:386
+#: src/main/java/com/atlauncher/gui/dialogs/AddModsDialog.java:961
+msgid "All Categories"
+msgstr "Все категории"
+
+#: src/main/java/com/atlauncher/gui/tabs/SettingsTab.java:63
+#: src/main/java/com/atlauncher/gui/tabs/SettingsTab.java:148
+#: src/main/java/com/atlauncher/gui/tabs/accounts/AccountsTab.java:427
+#: src/main/java/com/atlauncher/gui/tabs/accounts/AccountsTab.java:539
+#: src/main/java/com/atlauncher/gui/dialogs/RenameInstanceDialog.java:109
+#: src/main/java/com/atlauncher/gui/dialogs/SetupDialog.java:140
+#: src/main/java/com/atlauncher/gui/dialogs/SetupDialog.java:180
+#: src/main/java/com/atlauncher/gui/dialogs/InstanceSettingsDialog.java:106
+msgid "Save"
+msgstr "Сохранить"
+
+#: src/main/java/com/atlauncher/gui/tabs/SettingsTab.java:107
+msgid "Language Changed. Restart?"
+msgstr "Язык изменен. Перезапустить?"
+
+#: src/main/java/com/atlauncher/gui/tabs/SettingsTab.java:108
+msgid "You've changed the language. For best results, a restart of the launcher is recommended.<br/><br/>Restart Now?"
+msgstr "Вы изменили язык. Для достижения наилучших результатов рекомендуется перезапустить Лаунчер.<br/><br/>Перезапустить сейчас?"
+
+#: src/main/java/com/atlauncher/gui/tabs/accounts/AccountsTab.java:100
+msgid "In order to login and use ATLauncher modpacks, you must authenticate with your existing Minecraft/Mojang account. You must own and have paid for the Minecraft Java edition (not the Windows 10 edition) and use the same login here.<br><br>If you don't have an existing account, you can get one <a href=\"https://atl.pw/create-account\">by buying Minecraft here</a>. ATLauncher doesn't work with cracked accounts."
+msgstr "Чтобы войти в систему и использовать пакеты модов ATLauncher, вы должны пройти аутентификацию с помощью существующей учетной записи Minecraft/Mojang. Вы должны иметь и оплатить версию Minecraft Java (не версию для Windows 10) и использовать тот же логин здесь.<br><br>Если у вас нет существующей учетной записи, вы можете получить ее <a href=\" https://atl.pw/create-account\">покупая Minecraft здесь</a>. ATLauncher не работает со взломанными аккаунтами."
+
+#: src/main/java/com/atlauncher/gui/tabs/accounts/AccountsTab.java:149
+#: src/main/java/com/atlauncher/gui/tabs/accounts/AccountsTab.java:543
+msgid "Username/Email"
+msgstr "Имя пользователя/Email"
+
+#: src/main/java/com/atlauncher/gui/tabs/accounts/AccountsTab.java:175
+#: src/main/java/com/atlauncher/gui/tabs/accounts/AccountsTab.java:544
+msgid "Password"
+msgstr "Пароль"
+
+#: src/main/java/com/atlauncher/gui/tabs/accounts/AccountsTab.java:202
+#: src/main/java/com/atlauncher/gui/tabs/accounts/AccountsTab.java:545
+msgid "Remember Password"
+msgstr "Запомнить пароль"
+
+#: src/main/java/com/atlauncher/gui/tabs/accounts/AccountsTab.java:215
+msgid "Security Warning"
+msgstr "Предупреждение о безопасности"
+
+#: src/main/java/com/atlauncher/gui/tabs/accounts/AccountsTab.java:216
+msgid "Make sure you only do this on a computer you trust.<br/>If you do this on a shared computer, your password may be stolen.<br/>Do you still want to save your password?"
+msgstr "Убедитесь, что вы делаете это только на компьютере, которому доверяете. Если вы делаете это на чужом компьютере, ваш пароль может быть украден. Вы все еще хотите сохранить свой пароль?"
+
+#: src/main/java/com/atlauncher/gui/tabs/accounts/AccountsTab.java:245
+#: src/main/java/com/atlauncher/gui/tabs/accounts/AccountsTab.java:388
+#: src/main/java/com/atlauncher/gui/tabs/accounts/AccountsTab.java:537
+#: src/main/java/com/atlauncher/gui/components/ConsoleBottomBar.java:49
+#: src/main/java/com/atlauncher/gui/components/ConsoleBottomBar.java:165
+msgid "Clear"
+msgstr "Очистить лог"
+
+#: src/main/java/com/atlauncher/gui/tabs/accounts/AccountsTab.java:253
+msgid "Are you sure you want to delete this account?"
+msgstr "Вы уверены, что хотите удалить этот аккаунт?"
+
+#: src/main/java/com/atlauncher/gui/tabs/accounts/AccountsTab.java:261
+#: src/main/java/com/atlauncher/gui/dialogs/LoginWithMicrosoftDialog.java:72
+msgid "Login with Microsoft"
+msgstr "Войти с помощью Microsoft"
+
+#: src/main/java/com/atlauncher/gui/tabs/accounts/AccountsTab.java:281
+msgid "Change Skin"
+msgstr "Сменить скин"
+
+#: src/main/java/com/atlauncher/gui/tabs/accounts/AccountsTab.java:292
+#: src/main/java/com/atlauncher/gui/tabs/accounts/AccountsTab.java:546
+msgid "Reload Skin"
+msgstr "Обновить скин"
+
+#: src/main/java/com/atlauncher/gui/tabs/accounts/AccountsTab.java:303
+msgid "Update Username"
+msgstr "Обновить имя пользователя"
+
+#: src/main/java/com/atlauncher/gui/tabs/accounts/AccountsTab.java:307
+msgid "Refresh Access Token"
+msgstr "Перезагрузить ключ доступа"
+
+#: src/main/java/com/atlauncher/gui/tabs/accounts/AccountsTab.java:344
+#: src/main/java/com/atlauncher/gui/tabs/accounts/AccountsTab.java:346
+msgid "Refreshing Access Token For {0}"
+msgstr "Перезагрузить ключ доступа для {0}"
+
+#: src/main/java/com/atlauncher/gui/tabs/accounts/AccountsTab.java:361
+msgid "Access Token Refreshed"
+msgstr "Токен перезагружен"
+
+#: src/main/java/com/atlauncher/gui/tabs/accounts/AccountsTab.java:363
+msgid "Access token refreshed successfully"
+msgstr "Токен успешно перезагружен"
+
+#: src/main/java/com/atlauncher/gui/tabs/accounts/AccountsTab.java:369
+msgid "Failed To Refresh Access Token"
+msgstr "Не удалось обновить токен доступа"
+
+#: src/main/java/com/atlauncher/gui/tabs/accounts/AccountsTab.java:370
+msgid "Failed to refresh accessToken. Please login again."
+msgstr "Не удалось обновить accessToken. Пожалуйста, войдите снова."
+
+#: src/main/java/com/atlauncher/gui/tabs/accounts/AccountsTab.java:437
+msgid "Add An Account"
+msgstr "Добавить аккаунт"
+
+#: src/main/java/com/atlauncher/gui/tabs/accounts/AccountsTab.java:469
+#: src/main/java/com/atlauncher/gui/tabs/accounts/AccountsTab.java:495
+msgid "Account Not Added"
+msgstr "Аккаунт не добавлен"
+
+#: src/main/java/com/atlauncher/gui/tabs/accounts/AccountsTab.java:470
+msgid "This account already exists."
+msgstr "Этот аккаунт уже существует."
+
+#. {0} is the error message from Mojang as to why we couldn't login
+#: src/main/java/com/atlauncher/gui/tabs/accounts/AccountsTab.java:500
+msgid "Account not added as login details were incorrect.<br/><br/>{0}"
+msgstr "Учетная запись не добавлена, поскольку детали входа были неверны.<br/><br/>{0}"
+
+#: src/main/java/com/atlauncher/gui/tabs/accounts/AccountsTab.java:511
+msgid "Account Edited"
+msgstr "Аккаунт изменён"
+
+#: src/main/java/com/atlauncher/gui/tabs/accounts/AccountsTab.java:513
+msgid "Account edited successfully"
+msgstr "Аккаунт успешно отредактирован"
+
+#: src/main/java/com/atlauncher/gui/tabs/instances/InstancesListPanel.java:59
+msgid "There are no instances to display.<br/><br/>Install one from the Packs tab."
+msgstr "Здесь нет сборок для отображения.<br/><br/>Установите её из вкладки \"сборки\"."
+
+#: src/main/java/com/atlauncher/gui/tabs/instances/InstancesNavigationPanel.java:45
+#: src/main/java/com/atlauncher/gui/tabs/instances/InstancesNavigationPanel.java:85
+#: src/main/java/com/atlauncher/gui/dialogs/ImportInstanceDialog.java:202
+msgid "Import"
+msgstr "Импортировать"
+
+#: src/main/java/com/atlauncher/gui/tabs/ServersTab.java:139
+msgid "There are no servers to display.<br/><br/>Install one from the Packs tab."
+msgstr "Здесь нет сборок для отображения.<br/><br/>Установите её из вкладки \"сборки\"."
+
+#: src/main/java/com/atlauncher/gui/dialogs/LoginWithMicrosoftDialog.java:79
+msgid "Browser opened to complete the login process"
+msgstr "Открыт браузер для завершения процесса входа"
+
+#: src/main/java/com/atlauncher/gui/dialogs/LoginWithMicrosoftDialog.java:99
+msgid "If your browser hasn't opened, please manually open the below link in your browser"
+msgstr "Если ваш браузер не открылся, пожалуйста, откройте вручную ссылку ниже в вашем браузере"
+
+#: src/main/java/com/atlauncher/gui/dialogs/LoginWithMicrosoftDialog.java:135
+#: src/main/java/com/atlauncher/gui/dialogs/LoginWithMicrosoftDialog.java:154
+msgid "Error logging in. Check console for more information"
+msgstr "Ошибка входа. Проверьте консоль для большей информации"
+
+#: src/main/java/com/atlauncher/gui/dialogs/LoginWithMicrosoftDialog.java:144
+msgid "Code is missing"
+msgstr "Код отсутствует"
+
+#. {0} is the name of the launcher (ATLauncher)
+#: src/main/java/com/atlauncher/gui/dialogs/LoginWithMicrosoftDialog.java:161
+msgid "Login complete. You can now close this window and go back to {0}"
+msgstr "Вход выполнен. Теперь вы можете закрыть это окно и вернуться в {0}"
+
+#: src/main/java/com/atlauncher/gui/dialogs/LoginWithMicrosoftDialog.java:181
+msgid "Incorrect account"
+msgstr "Неправильный аккаунт"
+
+#: src/main/java/com/atlauncher/gui/dialogs/LoginWithMicrosoftDialog.java:183
+msgid "Logged into incorrect account. Please login again on the Accounts tab."
+msgstr "Выполнен вход в неправильный аккаунт. Пожалуйста, войдите снова на вкладке Аккаунты."
+
+#: src/main/java/com/atlauncher/gui/dialogs/LoginWithMicrosoftDialog.java:225
+msgid "Error logging into Xbox Live"
+msgstr "Ошибка входа в Xbox Live"
+
+#: src/main/java/com/atlauncher/gui/dialogs/LoginWithMicrosoftDialog.java:260
+msgid "Minecraft Has Not Been Purchased"
+msgstr "Minecraft не был куплен"
+
+#: src/main/java/com/atlauncher/gui/dialogs/LoginWithMicrosoftDialog.java:261
+msgid "This account doesn't have a valid purchase of Minecraft.<br/><br/>Please make sure you've bought the Java edition of Minecraft and then try again."
+msgstr "Этот аккаунт не имеет действительной покупки Minecraft.<br/><br/>Пожалуйста, убедитесь, что вы купили Minecraft Java edition и затем попробуйте еще раз."
+
+#: src/main/java/com/atlauncher/gui/dialogs/FileChooserDialog.java:239
+#: src/main/java/com/atlauncher/gui/dialogs/ImportInstanceDialog.java:149
+msgid "Select file/s"
+msgstr "Выберите файл(ы)"
+
+#: src/main/java/com/atlauncher/gui/dialogs/ModrinthVersionSelectorDialog.java:224
+#: src/main/java/com/atlauncher/gui/dialogs/CurseForgeProjectFileSelectorDialog.java:131
+msgid "View Mod"
+msgstr "Просмотреть мод"
+
+#: src/main/java/com/atlauncher/gui/dialogs/ModrinthVersionSelectorDialog.java:227
+#: src/main/java/com/atlauncher/gui/dialogs/CurseForgeProjectFileSelectorDialog.java:134
+msgid "View File"
+msgstr "Просмотреть файл"
+
+#: src/main/java/com/atlauncher/gui/dialogs/ModrinthVersionSelectorDialog.java:232
+#: src/main/java/com/atlauncher/gui/dialogs/CurseForgeProjectFileSelectorDialog.java:139
+msgid "The below mods need to be installed"
+msgstr "Следующие моды должны быть установлены"
+
+#: src/main/java/com/atlauncher/gui/dialogs/ModrinthVersionSelectorDialog.java:249
+#: src/main/java/com/atlauncher/gui/dialogs/InstanceInstallerDialog.java:1006
+#: src/main/java/com/atlauncher/gui/dialogs/CurseForgeProjectFileSelectorDialog.java:156
+msgid "Version To Install"
+msgstr "Установить версию"
+
+#: src/main/java/com/atlauncher/gui/dialogs/ModrinthVersionSelectorDialog.java:254
+#: src/main/java/com/atlauncher/gui/dialogs/CurseForgeProjectFileSelectorDialog.java:161
+msgid "Loading"
+msgstr "Загрузка"
+
+#: src/main/java/com/atlauncher/gui/dialogs/ModrinthVersionSelectorDialog.java:261
+msgid "File To Install"
+msgstr "Файл для установки"
+
+#. #-#-#-#-#  translations.pot  #-#-#-#-#
+#. {0} is the name of the mod that the user already has installed
+#. #-#-#-#-#  translations.pot  #-#-#-#-#
+#. {0} is the name of the file that the user already has installed
+#: src/main/java/com/atlauncher/gui/dialogs/ModrinthVersionSelectorDialog.java:443
+#: src/main/java/com/atlauncher/gui/dialogs/CurseForgeProjectFileSelectorDialog.java:411
+msgid "The version currently installed is {0}"
+msgstr "Версия, установленная сейчас — {0}"
+
+#: src/main/java/com/atlauncher/gui/dialogs/InstanceInstallerDialog.java:144
+msgid "Show All"
+msgstr "Показать всё"
+
+#: src/main/java/com/atlauncher/gui/dialogs/InstanceInstallerDialog.java:242
+#: src/main/java/com/atlauncher/gui/dialogs/ModsChooser.java:201
+msgid "Install"
+msgstr "Установить"
+
+#: src/main/java/com/atlauncher/gui/dialogs/InstanceInstallerDialog.java:246
+msgid "Updating"
+msgstr "Обновление"
+
+#: src/main/java/com/atlauncher/gui/dialogs/InstanceInstallerDialog.java:248
+msgid " (Current Version: {0})"
+msgstr " (Текущая версия: {0})"
+
+#: src/main/java/com/atlauncher/gui/dialogs/InstanceInstallerDialog.java:260
+#: src/main/java/com/atlauncher/gui/dialogs/InstanceExportDialog.java:104
+#: src/main/java/com/atlauncher/gui/panels/packbrowser/ATLauncherPacksPanel.java:148
+#: src/main/java/com/atlauncher/gui/panels/packbrowser/CurseForgePacksPanel.java:151
+msgid "Name"
+msgstr "Название"
+
+#: src/main/java/com/atlauncher/gui/dialogs/InstanceInstallerDialog.java:319
+msgid "Save Mods"
+msgstr "Сохранить моды"
+
+#: src/main/java/com/atlauncher/gui/dialogs/InstanceInstallerDialog.java:321
+msgid "Since this update changes the Minecraft version, your custom mods may no longer work.<br/><br/>Checking this box will keep your custom mods, otherwise they'll be removed."
+msgstr "Так как данное обновление изменяет текущую версию Minecraft, ваши пользовательские модификации могут перестать работать.<br/><br/>Данная функция позволит сохранить их, в противном случае они будут удалены."
+
+#: src/main/java/com/atlauncher/gui/dialogs/InstanceInstallerDialog.java:448
+#: src/main/java/com/atlauncher/gui/dialogs/InstanceInstallerDialog.java:449
+msgid "Getting Versions"
+msgstr "Получение версий"
+
+#: src/main/java/com/atlauncher/gui/dialogs/InstanceInstallerDialog.java:487
+msgid "No Server Files Available"
+msgstr ""
+
+#: src/main/java/com/atlauncher/gui/dialogs/InstanceInstallerDialog.java:488
+msgid "No server files are available for this pack, so a server cannot be created."
+msgstr ""
+
+#: src/main/java/com/atlauncher/gui/dialogs/InstanceInstallerDialog.java:616
+#: src/main/java/com/atlauncher/gui/dialogs/InstanceInstallerDialog.java:686
+#: src/main/java/com/atlauncher/gui/dialogs/InstanceInstallerDialog.java:864
+#: src/main/java/com/atlauncher/gui/dialogs/InstanceInstallerDialog.java:886
+#: src/main/java/com/atlauncher/gui/dialogs/InstanceInstallerDialog.java:909
+#: src/main/java/com/atlauncher/gui/dialogs/InstanceInstallerDialog.java:932
+msgid "Getting Modpack Details"
+msgstr "Получение деталей сборок"
+
+#: src/main/java/com/atlauncher/gui/dialogs/InstanceInstallerDialog.java:641
+msgid "Getting Modpack Versions"
+msgstr "Получение версий сборок"
+
+#: src/main/java/com/atlauncher/gui/dialogs/InstanceInstallerDialog.java:708
+msgid "Getting Modpack Builds"
+msgstr "Получение релизов сборок"
+
+#: src/main/java/com/atlauncher/gui/dialogs/InstanceInstallerDialog.java:961
+msgid "Downloading Pack Manifest"
+msgstr "Скачивание пакета Manifest"
+
+#. {0} is the loader (Fabric/Forge/Quilt)
+#: src/main/java/com/atlauncher/gui/dialogs/InstanceInstallerDialog.java:1138
+#: src/main/java/com/atlauncher/gui/dialogs/InstanceInstallerDialog.java:1145
+#: src/main/java/com/atlauncher/gui/dialogs/InstanceInstallerDialog.java:1152
+#: src/main/java/com/atlauncher/gui/dialogs/InstanceInstallerDialog.java:1159
+msgid "{0} Version"
+msgstr "{0} Версия"
+
+#: src/main/java/com/atlauncher/gui/dialogs/CreateMinecraftProfileDialog.java:59
+#: src/main/java/com/atlauncher/gui/dialogs/CreateMinecraftProfileDialog.java:86
+msgid "Create Minecraft Profile"
+msgstr ""
+
+#: src/main/java/com/atlauncher/gui/dialogs/CreateMinecraftProfileDialog.java:97
+msgid "Username"
+msgstr ""
+
+#: src/main/java/com/atlauncher/gui/dialogs/CreateMinecraftProfileDialog.java:110
+msgid "Create"
+msgstr ""
+
+#: src/main/java/com/atlauncher/gui/dialogs/CreateMinecraftProfileDialog.java:112
+#: src/main/java/com/atlauncher/gui/dialogs/CreateMinecraftProfileDialog.java:113
+msgid "Creating Minecraft Profile"
+msgstr ""
+
+#: src/main/java/com/atlauncher/gui/dialogs/CreateMinecraftProfileDialog.java:118
+msgid "Invalid profile name, it must contain only alphanumeric characters and underscore, and be 3 to 16 characters long."
+msgstr "Ошибка имени профиля. Оно должно содержать только буквы и цифры латинского алфавита, и быть от 3 до 16 символов."
+
+#: src/main/java/com/atlauncher/gui/dialogs/CreateMinecraftProfileDialog.java:129
+msgid "Username is not available, please try another one."
+msgstr "Имя пользователя не доступно, попробуйте другое."
+
+#: src/main/java/com/atlauncher/gui/dialogs/CreateMinecraftProfileDialog.java:140
+msgid "An error occurred creating your profile.<br/><br/>Please check the console and try again."
+msgstr "Произошла ошибка при создания профиля. <br/><br/> Пожалуйста, проверьте консоль и попробуйте ещё раз."
+
+#: src/main/java/com/atlauncher/gui/dialogs/RenameInstanceDialog.java:58
+#: src/main/java/com/atlauncher/gui/dialogs/RenameInstanceDialog.java:85
+msgid "Renaming Instance"
+msgstr "Переименование сборки"
+
+#: src/main/java/com/atlauncher/gui/dialogs/RenameInstanceDialog.java:114
+msgid "There is already an instance called {0}.<br/><br/>Rename it and try again."
+msgstr "Уже есть сборка под названием {0}.<br/><br/>Переименуйте ее и повторите попытку."
+
+#: src/main/java/com/atlauncher/gui/dialogs/RenameInstanceDialog.java:121
+msgid "The name {0} is invalid. It must contain at least 1 letter or number."
+msgstr "Имя {0} недопустимо. Оно должно содержать как минимум 1 букву или цифру."
+
+#: src/main/java/com/atlauncher/gui/dialogs/RenameInstanceDialog.java:130
+msgid "An error occurred renaming the instance.<br/><br/>Please check the console and try again."
+msgstr "Произошла ошибка при переименовании экземпляра.<br/><br/>Пожалуйста, проверьте консоль и повторите попытку."
+
+#. {0} is the name of the instance
+#: src/main/java/com/atlauncher/gui/dialogs/EditModsDialog.java:88
+msgid "Editing Mods For {0}"
+msgstr "Редактирование модов для {0}"
+
+#: src/main/java/com/atlauncher/gui/dialogs/EditModsDialog.java:136
+msgid "Enabled Mods"
+msgstr "Включённые моды"
+
+#: src/main/java/com/atlauncher/gui/dialogs/EditModsDialog.java:152
+msgid "Disabled Mods"
+msgstr "Отключённые моды"
+
+#: src/main/java/com/atlauncher/gui/dialogs/EditModsDialog.java:200
+#: src/main/java/com/atlauncher/gui/dialogs/EditModsDialog.java:204
+#: src/main/java/com/atlauncher/gui/handlers/ModsJCheckBoxTransferHandler.java:88
+msgid "Add Mod"
+msgstr "Добавить мод"
+
+#: src/main/java/com/atlauncher/gui/dialogs/EditModsDialog.java:204
+msgid "Mod"
+msgstr "Мод"
+
+#: src/main/java/com/atlauncher/gui/dialogs/EditModsDialog.java:205
+msgid "Type of Mod"
+msgstr "Тип мода"
+
+#: src/main/java/com/atlauncher/gui/dialogs/EditModsDialog.java:211
+#: src/main/java/com/atlauncher/gui/dialogs/EditModsDialog.java:212
+#: src/main/java/com/atlauncher/gui/handlers/ModsJCheckBoxTransferHandler.java:128
+#: src/main/java/com/atlauncher/gui/handlers/ModsJCheckBoxTransferHandler.java:129
+msgid "Copying Mods"
+msgstr "Копирование модов"
+
+#: src/main/java/com/atlauncher/gui/dialogs/EditModsDialog.java:224
+#: src/main/java/com/atlauncher/gui/handlers/ModsJCheckBoxTransferHandler.java:98
+msgid "Add As Mod?"
+msgstr "Добавить мод?"
+
+#: src/main/java/com/atlauncher/gui/dialogs/EditModsDialog.java:225
+#: src/main/java/com/atlauncher/gui/handlers/ModsJCheckBoxTransferHandler.java:99
+msgid "Adding as Inside Minecraft.jar is usually not what you want and will likely cause issues.<br/><br/>If you're adding mods this is usually not correct. Do you want to add this as a mod instead?"
+msgstr "Добавление как внутри Minecraft.jar обычно это не то, что вы хотите, и, скорее всего, вызовет проблемы.<br/><br/> Если вы добавляете моды, это обычно неверно. Вы хотите добавить это в качестве мода вместо этого?"
+
+#: src/main/java/com/atlauncher/gui/dialogs/EditModsDialog.java:280
+msgid "Browse Mods"
+msgstr "Просмотр модов"
+
+#: src/main/java/com/atlauncher/gui/dialogs/EditModsDialog.java:291
+#: src/main/java/com/atlauncher/gui/components/ModsJCheckBox.java:297
+#: src/main/java/com/atlauncher/gui/components/LauncherBottomBar.java:145
+#: src/main/java/com/atlauncher/gui/components/LauncherBottomBar.java:185
+msgid "Check For Updates"
+msgstr "Проверить наличие обновлений"
+
+#: src/main/java/com/atlauncher/gui/dialogs/EditModsDialog.java:302
+msgid "Enable Selected"
+msgstr "Включить выбранное"
+
+#: src/main/java/com/atlauncher/gui/dialogs/EditModsDialog.java:307
+msgid "Disable Selected"
+msgstr "Выключить выбранное"
+
+#: src/main/java/com/atlauncher/gui/dialogs/EditModsDialog.java:312
+msgid "Remove Selected"
+msgstr "Удалить выбранное"
+
+#: src/main/java/com/atlauncher/gui/dialogs/EditModsDialog.java:317
+msgid "Refresh Metadata"
+msgstr "Обновить метаданные"
+
+#: src/main/java/com/atlauncher/gui/dialogs/EditModsDialog.java:398
+#: src/main/java/com/atlauncher/gui/dialogs/EditModsDialog.java:399
+#: src/main/java/com/atlauncher/gui/components/LauncherBottomBar.java:107
+#: src/main/java/com/atlauncher/gui/components/LauncherBottomBar.java:108
+msgid "Checking For Updates"
+msgstr "Проверка на наличие обновлений"
+
+#: src/main/java/com/atlauncher/gui/dialogs/EditModsDialog.java:412
+msgid "Checking For Updates Complete"
+msgstr "Проверка Наличия Обновлений Завершена"
+
+#: src/main/java/com/atlauncher/gui/dialogs/EditModsDialog.java:413
+msgid "The selected mods have been checked for updates."
+msgstr ""
+
+#: src/main/java/com/atlauncher/gui/dialogs/EditModsDialog.java:453
+msgid "Delete Selected Mods?"
+msgstr "Удалить выбранные моды?"
+
+#: src/main/java/com/atlauncher/gui/dialogs/EditModsDialog.java:454
+msgid "This will delete the selected mods from the instance.<br/><br/>Are you sure you want to do this?"
+msgstr "Это действие удалит выбранные моды из сборки.<br/><br/>Вы уверены, что хотите сделать это?"
+
+#: src/main/java/com/atlauncher/gui/dialogs/EditModsDialog.java:489
+#: src/main/java/com/atlauncher/gui/dialogs/EditModsDialog.java:490
+msgid "Refreshing Metadata"
+msgstr "Обновление метаданных"
+
+#: src/main/java/com/atlauncher/gui/dialogs/ChangeSkinDialog.java:71
+#: src/main/java/com/atlauncher/gui/dialogs/ChangeSkinDialog.java:98
+msgid "Changing Skin"
+msgstr "Меняющаяся скин"
+
+#: src/main/java/com/atlauncher/gui/dialogs/ChangeSkinDialog.java:110
+msgid "Skin File"
+msgstr "Файл для скинов"
+
+#: src/main/java/com/atlauncher/gui/dialogs/ChangeSkinDialog.java:124
+msgid "Select skin file"
+msgstr "Выберите файл скина"
+
+#: src/main/java/com/atlauncher/gui/dialogs/ChangeSkinDialog.java:149
+msgid "The skin you chose is invalid. Please make sure you selected the right file and try again.<br/><br/>All skins must be 64x64 or 64x32 pixels."
+msgstr "Выбранный вами скин недействителен. Пожалуйста, убедитесь, что вы выбрали правильный файл и попробуйте еще раз.<br/><br/>Все скины должны быть размером 64x64 или 64x32 пикселей."
+
+#: src/main/java/com/atlauncher/gui/dialogs/ChangeSkinDialog.java:177
+msgid "Skin Type"
+msgstr "Тип Скина"
+
+#: src/main/java/com/atlauncher/gui/dialogs/ChangeSkinDialog.java:192
+msgid "Upload"
+msgstr "Загрузить"
+
+#: src/main/java/com/atlauncher/gui/dialogs/ChangeSkinDialog.java:194
+#: src/main/java/com/atlauncher/gui/dialogs/ChangeSkinDialog.java:195
+msgid "Updating Skin"
+msgstr "Обновление скина"
+
+#: src/main/java/com/atlauncher/gui/dialogs/ChangeSkinDialog.java:207
+msgid "There was an error updating your skin.<br/><br/>Please check the logs and try again."
+msgstr "Произошла ошибка при обновлении вашего скина.<br/><br/>Пожалуйста, проверьте журналы и повторите попытку."
+
+#: src/main/java/com/atlauncher/gui/dialogs/ModrinthExportOverridesDialog.java:41
+msgid "Overrides Included"
+msgstr ""
+
+#: src/main/java/com/atlauncher/gui/dialogs/ModrinthExportOverridesDialog.java:54
+msgid "Your exported instance contains mods not on Modrinth and were included in the overrides folder. If you're uploading this to Modrinth, you will need to make sure you have permissions to distribute the below mods, else your modpack will get denied on Modrinth."
+msgstr ""
+
+#: src/main/java/com/atlauncher/gui/dialogs/ModrinthExportOverridesDialog.java:80
+msgid "Close"
+msgstr ""
+
+#. {0} is the loader api (Fabric API/QSL)
+#: src/main/java/com/atlauncher/gui/dialogs/AddModsDialog.java:96
+#: src/main/java/com/atlauncher/gui/dialogs/AddModsDialog.java:107
+#: src/main/java/com/atlauncher/gui/dialogs/AddModsDialog.java:127
+msgid "Install {0}"
+msgstr "Установить {0}"
+
+#. {0} is the loader (Fabric/Quilt), {1} is the loader api (Fabric API/QSL)
+#: src/main/java/com/atlauncher/gui/dialogs/AddModsDialog.java:102
+#: src/main/java/com/atlauncher/gui/dialogs/AddModsDialog.java:113
+#: src/main/java/com/atlauncher/gui/dialogs/AddModsDialog.java:134
+msgid "Before installing {0} mods, you should install {1} first!"
+msgstr "Перед установкой {0} модов вы должны сначала установить {1}!"
+
+#: src/main/java/com/atlauncher/gui/dialogs/AddModsDialog.java:121
+msgid "Modrinth doesn't support filtering accurately for Legacy Fabric, so mods shown may not be installable. Consider using CurseForge or visit <a href=\"https://legacyfabric.net/mods.html\">https://legacyfabric.net/mods.html</a> for a list of compatable mods."
+msgstr "Modirinth не поддерживает точную фильтрацию модов Legacy Fabric, поэтому некоторые из них могут быть недоступны для скачивания. Воспользуйтесь CurseForge или посетите <a href=\"https://legacyfabric.net/mods.html\">https://legacyfabric.net/mods.html</a>, чтобы увидеть список поддерживаемых модов."
+
+#. {0} is the name of the mod we're installing
+#: src/main/java/com/atlauncher/gui/dialogs/AddModsDialog.java:150
+msgid "Adding Mods For {0}"
+msgstr "Добавление модов для {0}"
+
+#: src/main/java/com/atlauncher/gui/dialogs/AddModsDialog.java:186
+#: src/main/java/com/atlauncher/gui/dialogs/AddModsDialog.java:559
+msgid "Resource Packs"
+msgstr "Наборы текстур"
+
+#: src/main/java/com/atlauncher/gui/dialogs/AddModsDialog.java:187
+#: src/main/java/com/atlauncher/gui/dialogs/AddModsDialog.java:564
+msgid "Shaders"
+msgstr "Шейдеры"
+
+#: src/main/java/com/atlauncher/gui/dialogs/AddModsDialog.java:190
+#: src/main/java/com/atlauncher/gui/dialogs/AddModsDialog.java:571
+msgid "Worlds"
+msgstr "Миры"
+
+#: src/main/java/com/atlauncher/gui/dialogs/AddModsDialog.java:192
+#: src/main/java/com/atlauncher/gui/dialogs/AddModsDialog.java:572
+#: src/main/java/com/atlauncher/gui/panels/packbrowser/ATLauncherPacksPanel.java:147
+#: src/main/java/com/atlauncher/gui/panels/packbrowser/CurseForgePacksPanel.java:148
+msgid "Popularity"
+msgstr "Популярность"
+
+#: src/main/java/com/atlauncher/gui/dialogs/AddModsDialog.java:193
+#: src/main/java/com/atlauncher/gui/dialogs/AddModsDialog.java:198
+#: src/main/java/com/atlauncher/gui/dialogs/AddModsDialog.java:573
+#: src/main/java/com/atlauncher/gui/dialogs/AddModsDialog.java:579
+#: src/main/java/com/atlauncher/gui/panels/packbrowser/CurseForgePacksPanel.java:149
+msgid "Last Updated"
+msgstr "Последнее обновление"
+
+#: src/main/java/com/atlauncher/gui/dialogs/AddModsDialog.java:194
+#: src/main/java/com/atlauncher/gui/dialogs/AddModsDialog.java:199
+#: src/main/java/com/atlauncher/gui/dialogs/AddModsDialog.java:574
+#: src/main/java/com/atlauncher/gui/dialogs/AddModsDialog.java:580
+#: src/main/java/com/atlauncher/gui/panels/packbrowser/CurseForgePacksPanel.java:150
+msgid "Total Downloads"
+msgstr "Всего загрузок"
+
+#: src/main/java/com/atlauncher/gui/dialogs/AddModsDialog.java:196
+#: src/main/java/com/atlauncher/gui/dialogs/AddModsDialog.java:577
+#: src/main/java/com/atlauncher/gui/panels/packbrowser/ModrinthPacksPanel.java:155
+msgid "Relevance"
+msgstr "Актуальность"
+
+#: src/main/java/com/atlauncher/gui/dialogs/AddModsDialog.java:197
+#: src/main/java/com/atlauncher/gui/dialogs/AddModsDialog.java:578
+#: src/main/java/com/atlauncher/gui/panels/packbrowser/ModrinthPacksPanel.java:158
+msgid "Newest"
+msgstr "Новые"
+
+#. {0} is the loader api were getting info from (Fabric/Quilt)
+#: src/main/java/com/atlauncher/gui/dialogs/AddModsDialog.java:237
+#: src/main/java/com/atlauncher/gui/dialogs/AddModsDialog.java:239
+#: src/main/java/com/atlauncher/gui/dialogs/AddModsDialog.java:278
+#: src/main/java/com/atlauncher/gui/dialogs/AddModsDialog.java:280
+#: src/main/java/com/atlauncher/gui/dialogs/AddModsDialog.java:331
+#: src/main/java/com/atlauncher/gui/dialogs/AddModsDialog.java:333
+#: src/main/java/com/atlauncher/gui/dialogs/AddModsDialog.java:374
+#: src/main/java/com/atlauncher/gui/dialogs/AddModsDialog.java:376
+#: src/main/java/com/atlauncher/gui/dialogs/AddModsDialog.java:426
+#: src/main/java/com/atlauncher/gui/dialogs/AddModsDialog.java:428
+msgid "Getting {0} Information"
+msgstr "Получение {0} информации"
+
+#. {0} is the loader api were getting info from (Fabric/Quilt)
+#: src/main/java/com/atlauncher/gui/dialogs/AddModsDialog.java:255
+#: src/main/java/com/atlauncher/gui/dialogs/AddModsDialog.java:296
+#: src/main/java/com/atlauncher/gui/dialogs/AddModsDialog.java:349
+#: src/main/java/com/atlauncher/gui/dialogs/AddModsDialog.java:392
+#: src/main/java/com/atlauncher/gui/dialogs/AddModsDialog.java:445
+msgid "Error Getting {0} Information"
+msgstr "Ошибка При получении Информации {0}"
+
+#. {0} is the loader (Fabric/Quilt) {1} is the platform (CurseForge/Modrinth)
+#: src/main/java/com/atlauncher/gui/dialogs/AddModsDialog.java:257
+#: src/main/java/com/atlauncher/gui/dialogs/AddModsDialog.java:298
+#: src/main/java/com/atlauncher/gui/dialogs/AddModsDialog.java:351
+#: src/main/java/com/atlauncher/gui/dialogs/AddModsDialog.java:394
+#: src/main/java/com/atlauncher/gui/dialogs/AddModsDialog.java:447
+msgid "There was an error getting {0} information from {1}. Please try again later."
+msgstr "Произошла ошибка при получении информации {0} из {1}. Пожалуйста, попробуйте еще раз позже."
+
+#: src/main/java/com/atlauncher/gui/dialogs/AddModsDialog.java:896
+msgid "Getting Mod Information"
+msgstr "Получение Информации о Моде"
+
+#: src/main/java/com/atlauncher/gui/dialogs/AddModsDialog.java:910
+msgid "Error Getting Mod Information"
+msgstr "Ошибка При Получении Информации о Моде"
+
+#: src/main/java/com/atlauncher/gui/dialogs/AddModsDialog.java:911
+msgid "There was an error getting mod information from Modrinth. Please try again later."
+msgstr "Произошла ошибка при получении информации о моде из Modrinth. Пожалуйста, попробуйте еще раз позже."
+
+#: src/main/java/com/atlauncher/gui/dialogs/ModsChooser.java:66
+msgid "Select Mods To Install"
+msgstr "Выберите моды для установки"
+
+#: src/main/java/com/atlauncher/gui/dialogs/ModsChooser.java:102
+msgid "Required Mods"
+msgstr "Требуемые моды"
+
+#: src/main/java/com/atlauncher/gui/dialogs/ModsChooser.java:106
+msgid "Optional Mods"
+msgstr "Необязательные моды"
+
+#: src/main/java/com/atlauncher/gui/dialogs/ModsChooser.java:139
+msgid "Use Share Code"
+msgstr "Использовать код обмена"
+
+#: src/main/java/com/atlauncher/gui/dialogs/ModsChooser.java:141
+msgid "Enter Share Code"
+msgstr "Введите код для обмена"
+
+#: src/main/java/com/atlauncher/gui/dialogs/ModsChooser.java:153
+msgid "Select Recommended"
+msgstr "Выберать Рекомендуемые"
+
+#: src/main/java/com/atlauncher/gui/dialogs/ModsChooser.java:155
+msgid "Select All"
+msgstr "Выбрать все"
+
+#: src/main/java/com/atlauncher/gui/dialogs/ModsChooser.java:183
+msgid "Clear All"
+msgstr "Отменить выбор"
+
+#. {0} is a warning for a given mod
+#: src/main/java/com/atlauncher/gui/dialogs/ModsChooser.java:279
+msgid "{0}<br/><br/>Are you sure that you want to enable this mod?"
+msgstr "{0}<br/><br/>Вы уверены, что хотите включить этот мод?"
+
+#: src/main/java/com/atlauncher/gui/dialogs/ModsChooser.java:375
+#: src/main/java/com/atlauncher/gui/dialogs/ModsChooser.java:385
+#: src/main/java/com/atlauncher/gui/dialogs/ModsChooser.java:392
+#: src/main/java/com/atlauncher/gui/dialogs/ModsChooser.java:416
+msgid "Invalid Share Code"
+msgstr "Неверный код"
+
+#. {0} is the name of the launcher (ATLauncher)
+#: src/main/java/com/atlauncher/gui/dialogs/SetupDialog.java:66
+msgid "{0} Setup"
+msgstr "{0} Настройка"
+
+#. #-#-#-#-#  translations.pot  #-#-#-#-#
+#. {0} is the name of the launcher (ATLauncher)
+#: src/main/java/com/atlauncher/gui/dialogs/SetupDialog.java:79
+#: src/main/java/com/atlauncher/gui/dialogs/SetupDialog.java:174
+msgid "Setting up {0}"
+msgstr "Настройка {0}"
+
+#: src/main/java/com/atlauncher/gui/dialogs/SetupDialog.java:129
+msgid "Open Privacy Policy"
+msgstr "Открыть политику конфиденциальности"
+
+#. {0} is the name of the instance we're exporting
+#: src/main/java/com/atlauncher/gui/dialogs/InstanceExportDialog.java:74
+msgid "Export {0}"
+msgstr "Экспортировать {0}"
+
+#: src/main/java/com/atlauncher/gui/dialogs/InstanceExportDialog.java:122
+msgid "The version of this instance"
+msgstr "Версия этой сборки"
+
+#: src/main/java/com/atlauncher/gui/dialogs/InstanceExportDialog.java:138
+msgid "Author"
+msgstr "Автор"
+
+#: src/main/java/com/atlauncher/gui/dialogs/InstanceExportDialog.java:139
+msgid "Your name"
+msgstr "Ваше имя"
+
+#: src/main/java/com/atlauncher/gui/dialogs/InstanceExportDialog.java:157
+msgid "Format"
+msgstr "Формат"
+
+#: src/main/java/com/atlauncher/gui/dialogs/InstanceExportDialog.java:158
+msgid "Which format to export this instance as"
+msgstr "Выберите формат экспортирования сборки"
+
+#: src/main/java/com/atlauncher/gui/dialogs/InstanceExportDialog.java:186
+msgid "Save To"
+msgstr "Сохранить в"
+
+#: src/main/java/com/atlauncher/gui/dialogs/InstanceExportDialog.java:187
+msgid "Select the folder you wish to export the instance to"
+msgstr "Выберите папку, в которую вы хотите экспортировать сборку"
+
+#: src/main/java/com/atlauncher/gui/dialogs/InstanceExportDialog.java:207
+msgid "Select export directory"
+msgstr ""
+
+#: src/main/java/com/atlauncher/gui/dialogs/InstanceExportDialog.java:208
+msgid "Directory"
+msgstr ""
+
+#: src/main/java/com/atlauncher/gui/dialogs/InstanceExportDialog.java:241
+msgid "Folders To Export"
+msgstr "Папки, которые нужно экспортировать"
+
+#: src/main/java/com/atlauncher/gui/dialogs/InstanceExportDialog.java:242
+msgid "Select the folders you wish to include for this export"
+msgstr "Выберите папки, которые вы хотите включить для этого экспорта"
+
+#: src/main/java/com/atlauncher/gui/dialogs/InstanceExportDialog.java:305
+msgid "Exporting Instance"
+msgstr "Экспортирование сборки"
+
+#: src/main/java/com/atlauncher/gui/dialogs/InstanceExportDialog.java:306
+msgid "Exporting Instance. Please wait..."
+msgstr "Экспортирование сборки. Пожалуйста, подождите..."
+
+#: src/main/java/com/atlauncher/gui/dialogs/InstanceExportDialog.java:329
+msgid "Exported Instance Successfully"
+msgstr "Экспортирование сборки прошло успешно"
+
+#: src/main/java/com/atlauncher/gui/dialogs/InstanceExportDialog.java:336
+msgid "Failed to export instance. Check the console for details"
+msgstr "Не удалось экспортировать сборку. Смотрите консоль для уточнения деталей"
+
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/GeneralInstanceSettingsTab.java:71
+msgid "Account Override"
+msgstr "Отменять Учетную запись"
+
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/GeneralInstanceSettingsTab.java:71
+msgid "Which account to use when launching this instance. Use Launcher Default will use whichever account is selected in the launcher."
+msgstr "Какую учетную запись использовать при запуске этого экземпляра. Использовать лаунчер По умолчанию будет использоваться любая учетная запись, выбранная в лаунчере."
+
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/GeneralInstanceSettingsTab.java:80
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/GeneralInstanceSettingsTab.java:111
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/JavaInstanceSettingsTab.java:342
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/JavaInstanceSettingsTab.java:487
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/JavaInstanceSettingsTab.java:565
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/JavaInstanceSettingsTab.java:593
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/JavaInstanceSettingsTab.java:621
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/CommandsInstanceSettingsTab.java:78
+msgid "Use Launcher Default"
+msgstr "Использовать лаунчер по умолчанию"
+
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/JavaInstanceSettingsTab.java:112
+msgid "You are running a 32 bit Java and therefore cannot use more than 1GB of Ram. Please see http://atl.pw/32bit for help."
+msgstr "Вы используете 32-битную версию Java и поэтому не можете использовать более 1ГБ оперативной памяти. Пожалуйста, смотрите http://atl.pw/32bit для помощи."
+
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/JavaInstanceSettingsTab.java:279
+msgid "This version of Minecraft provides a specific version of Java to be used with it, so you cannot set a custom Java path.<br/><br/>In order to manually set a path, you must disable this option (highly not recommended)."
+msgstr "Эта версия Minecraft требует конкретную версию Java для работы, поэтому вы не можете установить собственный путь к Java.<br/><br/>Чтобы указать путь вручную, необходимо выключить эту опцию (крайне не рекомендоваться)."
+
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/JavaInstanceSettingsTab.java:296
+msgid "This setting allows you to specify where your Java Path is.<br/><br/>This should be left as default, but if you know what you're doing, just set<br/>this to the path where the bin folder is for the version of Java you want to use.<br/><br/>If you mess up, click the Reset button to go back to the default"
+msgstr "Эта настройка позволяет вам указать путь к Java.<br/><br/>Она должна оставаться по-умолчанию, но если вы знаете, что делаете, установите путь<br/>к папке bin версии Java, которую вы хотите использовать<br/><br/>Если вы ошиблись, нажмите на кнопку \"Сбросить\", чтобы вернуться к значению по-умолчанию"
+
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/JavaInstanceSettingsTab.java:321
+msgid "Select path to Java install"
+msgstr "Выберите путь к установке Java"
+
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/JavaInstanceSettingsTab.java:431
+msgid "Runtime Override"
+msgstr "Переопределение среды выполнения"
+
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/JavaInstanceSettingsTab.java:433
+msgid "This allows you to override which runtime is used to launch this instance.<br/><br/>Runtimes are provided by Mojang and used to launch the game and generally correspond to a particular Java version.<br/><br/>Changing this is usually not required or recommended."
+msgstr "Этот параметр позволяет вам переопределить, какая среда выполнения будет использоваться для запуска этой сборки.<br/><br/>Среды выполнения предоставляются Mojang и используются для запуска игры, обычно они соответствуют конкретной версии Java.<br/><br/>Изменение этого параметра обычно не требуется или не рекомендуется."
+
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/JavaInstanceSettingsTab.java:443
+msgid "Use Default (Recommended)"
+msgstr "Использовать значение по умолчанию (рекомендуется)"
+
+#: src/main/java/com/atlauncher/gui/dialogs/instancesettings/JavaInstanceSettingsTab.java:445
+msgid "Use System Java"
+msgstr ""
+
+#. {0} is the name of the pack
+#: src/main/java/com/atlauncher/gui/dialogs/ViewModsDialog.java:53
+msgid "Mods in {0}"
+msgstr "Моды в {0}"
+
+#: src/main/java/com/atlauncher/gui/dialogs/ImportInstanceDialog.java:68
+#: src/main/java/com/atlauncher/gui/dialogs/ImportInstanceDialog.java:217
+#: src/main/java/com/atlauncher/gui/dialogs/ImportInstanceDialog.java:218
+msgid "Import Instance"
+msgstr "Импортировать сборку"
+
+#: src/main/java/com/atlauncher/gui/dialogs/ImportInstanceDialog.java:83
+msgid "Select a zip/mrpack file to import it.<br/>We currently support CurseForge, Modrinth and MultiMC exported files/urls, as well as CurseForge.com links."
+msgstr "Выберите zip/mrpack файл для импорта.<br/>В настоящее время мы поддерживаем экспортированные файлы/ссылки CurseForge, Modrinth и MultiMC, а так же ссылки из CurseForge.com."
+
+#: src/main/java/com/atlauncher/gui/dialogs/ImportInstanceDialog.java:95
+msgid "URL"
+msgstr "Ссылка"
+
+#: src/main/java/com/atlauncher/gui/dialogs/ImportInstanceDialog.java:127
+msgid "File"
+msgstr "Файл"
+
+#: src/main/java/com/atlauncher/gui/dialogs/ImportInstanceDialog.java:237
+msgid "Failed To Import Instance"
+msgstr "Не удалось импортировать сборку"
+
+#: src/main/java/com/atlauncher/gui/dialogs/ImportInstanceDialog.java:238
+msgid "An error occured when trying to import an instance.<br/><br/>Check the console for more information."
+msgstr "При попытке импортировать сборку произошла ошибка.<br/><br/>Проверьте консоль для получения дополнительной информации информации."
+
+#. {0} is the name of the instance
+#: src/main/java/com/atlauncher/gui/dialogs/InstanceSettingsDialog.java:65
+msgid "{0} Settings"
+msgstr "Настройки {0}"
+
+#: src/main/java/com/atlauncher/gui/dialogs/ProgressDialog.java:143
+msgid "Tasks Done"
+msgstr "Задачи выполнены"
+
+#: src/main/java/com/atlauncher/gui/dialogs/BrowserDownloadDialog.java:73
+msgid "Open All In Browser"
+msgstr "Открыть все в браузере"
+
+#: src/main/java/com/atlauncher/gui/dialogs/BrowserDownloadDialog.java:74
+msgid "Skip Remaining"
+msgstr "Пропустить Остальное"
+
+#: src/main/java/com/atlauncher/gui/dialogs/BrowserDownloadDialog.java:75
+msgid "Cancel Install"
+msgstr "Отменить установку"
+
+#: src/main/java/com/atlauncher/gui/dialogs/BrowserDownloadDialog.java:82
+msgid "Browser Download Mods"
+msgstr "Браузер для скачивания Модов"
+
+#: src/main/java/com/atlauncher/gui/dialogs/BrowserDownloadDialog.java:201
+msgid "In order to continue downloading this modpack, you must manually download the following mods.<br/>Simply click the Open button to open them in your browser, or alternatively you can copy the url to your clipboard to open in another browser.<br/><br/>Please download all files to <b>{0}</b> in order for the launcher to detect them."
+msgstr "Чтобы продолжить загрузку этого модпака, вы должны вручную загрузить следующие моды.<br/>Просто нажмите кнопку Открыть, чтобы открыть их в вашем браузере, или в качестве альтернативы вы можете скопировать URL в буфер обмена, чтобы открыть в другом браузере.<br/><br/>Пожалуйста, загрузите все файлы к <b>{0}</b> для того, чтобы пусковая установка могла их обнаружить."
+
+#: src/main/java/com/atlauncher/gui/dialogs/BrowserDownloadDialog.java:234
+msgid "Are You Sure?"
+msgstr "Вы уверены?"
+
+#: src/main/java/com/atlauncher/gui/dialogs/BrowserDownloadDialog.java:235
+msgid "Skipping the remaining downloads may cause issues launching the modpack.<br/><br/>Are you sure you want to do this?"
+msgstr "Если Вы пропустите скачивание остальных файлов это может вызвать ошибку при запуске сборки. <br/><br/> Вы уверены, что хотите это сделать?"
+
+#: src/main/java/com/atlauncher/gui/dialogs/BrowserDownloadDialog.java:311
+msgid "Download Complete"
+msgstr "Загрузка завершена"
+
+#: src/main/java/com/atlauncher/gui/dialogs/BrowserDownloadDialog.java:314
+#: src/main/java/com/atlauncher/gui/panels/BrowserDownloadMod.java:35
+msgid "Open"
+msgstr "Открыть"
+
+#: src/main/java/com/atlauncher/gui/dialogs/BrowserDownloadDialog.java:320
+#: src/main/java/com/atlauncher/gui/panels/BrowserDownloadMod.java:36
+msgid "Copy Link"
+msgstr "Скопировать ссылку"
+
+#: src/main/java/com/atlauncher/gui/TrayMenu.java:43
+#: src/main/java/com/atlauncher/gui/TrayMenu.java:77
+#: src/main/java/com/atlauncher/gui/components/ConsoleBottomBar.java:52
+#: src/main/java/com/atlauncher/gui/components/ConsoleBottomBar.java:135
+#: src/main/java/com/atlauncher/gui/components/ConsoleBottomBar.java:168
+msgid "Kill Minecraft"
+msgstr "Принудительно закрыть Мinecraft"
+
+#: src/main/java/com/atlauncher/gui/TrayMenu.java:44
+msgid "Toggle Console"
+msgstr "Переключить консоль"
+
+#: src/main/java/com/atlauncher/gui/TrayMenu.java:45
+msgid "Kill Open Dialogs"
+msgstr "Завершить открытые диалоговые окна"
+
+#: src/main/java/com/atlauncher/gui/TrayMenu.java:46
+msgid "Open Launcher Folder"
+msgstr "Открыть папку Лаунчера"
+
+#: src/main/java/com/atlauncher/gui/TrayMenu.java:47
+msgid "Quit"
+msgstr "Выход"
+
+#: src/main/java/com/atlauncher/gui/TrayMenu.java:78
+msgid "Are you sure you want to kill the Minecraft process?<br/>Doing so can cause corruption of your saves"
+msgstr "Вы уверены, что хотите убить процесс Minecraft?<br/>Это может привести к повреждению ваших сохранений"
+
+#: src/main/java/com/atlauncher/gui/TrayMenu.java:127
+#: src/main/java/com/atlauncher/gui/components/LauncherBottomBar.java:128
+#: src/main/java/com/atlauncher/gui/components/LauncherBottomBar.java:140
+#: src/main/java/com/atlauncher/gui/components/LauncherBottomBar.java:183
+msgid "Show Console"
+msgstr "Показать консоль"
+
+#: src/main/java/com/atlauncher/gui/TrayMenu.java:131
+#: src/main/java/com/atlauncher/gui/components/LauncherBottomBar.java:126
+#: src/main/java/com/atlauncher/gui/components/LauncherBottomBar.java:138
+#: src/main/java/com/atlauncher/gui/components/LauncherBottomBar.java:181
+msgid "Hide Console"
+msgstr "Скрыть консоль"
+
+#. {0} is the platform to open the website for (e.g. CurseForge/Modrinth)
+#: src/main/java/com/atlauncher/gui/components/ModsJCheckBox.java:140
+#: src/main/java/com/atlauncher/gui/components/ModsJCheckBox.java:152
+msgid "Open On {0}"
+msgstr "Открыть {0}"
+
+#: src/main/java/com/atlauncher/gui/components/ModsJCheckBox.java:158
+msgid "Open Discord"
+msgstr "Открыть Discord"
+
+#: src/main/java/com/atlauncher/gui/components/ModsJCheckBox.java:164
+msgid "Open Issues"
+msgstr "Открытые вопросы"
+
+#: src/main/java/com/atlauncher/gui/components/ModsJCheckBox.java:170
+msgid "Open Source Url"
+msgstr "Открыть изходны Url"
+
+#: src/main/java/com/atlauncher/gui/components/ModsJCheckBox.java:176
+msgid "Open Wiki"
+msgstr "Открыть Wiki"
+
+#. {0} is the name of the platform used for donations (Patreon, paypal, etc)
+#: src/main/java/com/atlauncher/gui/components/ModsJCheckBox.java:186
+msgid "Donate ({0})"
+msgstr "Пожертвовать ({0})"
+
+#: src/main/java/com/atlauncher/gui/components/ModsJCheckBox.java:196
+msgid "Enable"
+msgstr "Включено"
+
+#: src/main/java/com/atlauncher/gui/components/ModsJCheckBox.java:196
+msgid "Disable"
+msgstr "Выключено"
+
+#: src/main/java/com/atlauncher/gui/components/ModsJCheckBox.java:210
+msgid "Show In File Explorer"
+msgstr "Показать в проводнике"
+
+#. {0} is the platform to reinstall the mod from (e.g. CurseForge/Modrinth)
+#: src/main/java/com/atlauncher/gui/components/ModsJCheckBox.java:236
+#: src/main/java/com/atlauncher/gui/components/ModsJCheckBox.java:245
+msgid "Reinstall From {0}"
+msgstr "Переустановить с {0}"
+
+#. {0} is the platform to check for updates from (e.g. CurseForge/Modrinth)
+#: src/main/java/com/atlauncher/gui/components/ModsJCheckBox.java:256
+#: src/main/java/com/atlauncher/gui/components/ModsJCheckBox.java:272
+msgid "Check For Updates On {0}"
+msgstr "Проверить наличие обновлений на {0}"
+
+#: src/main/java/com/atlauncher/gui/components/ModsJCheckBox.java:263
+#: src/main/java/com/atlauncher/gui/components/ModsJCheckBox.java:279
+#: src/main/java/com/atlauncher/gui/components/ModsJCheckBox.java:304
+msgid "No Updates Found"
+msgstr "Обновления не найдены"
+
+#: src/main/java/com/atlauncher/gui/components/ModsJCheckBox.java:264
+#: src/main/java/com/atlauncher/gui/components/ModsJCheckBox.java:280
+#: src/main/java/com/atlauncher/gui/components/ModsJCheckBox.java:305
+msgid "No updates were found."
+msgstr "Обновлений не обнаружено."
+
+#: src/main/java/com/atlauncher/gui/components/ConsoleBottomBar.java:50
+#: src/main/java/com/atlauncher/gui/components/ConsoleBottomBar.java:166
+msgid "Copy Log"
+msgstr "Копировать лог"
+
+#: src/main/java/com/atlauncher/gui/components/ConsoleBottomBar.java:51
+#: src/main/java/com/atlauncher/gui/components/ConsoleBottomBar.java:167
+msgid "Upload Log"
+msgstr "Отправить лог"
+
+#: src/main/java/com/atlauncher/gui/components/ConsoleBottomBar.java:102
+#: src/main/java/com/atlauncher/gui/components/ConsoleBottomBar.java:103
+msgid "Uploading Logs"
+msgstr "Загрузка журналов"
+
+#: src/main/java/com/atlauncher/gui/components/ConsoleBottomBar.java:136
+msgid "Are you sure you want to kill the Minecraft process?<br/><br/>Doing so can cause corruption of your saves."
+msgstr "Вы уверены, что хотите закрыть Майнкрафт?<br/><br/>Это может привести к повреждению ваших сохранений."
+
+#: src/main/java/com/atlauncher/gui/handlers/ModsJCheckBoxTransferHandler.java:88
+msgid "Adding Mods"
+msgstr "Добавление модов"
+
+#: src/main/java/com/atlauncher/gui/handlers/ModsJCheckBoxTransferHandler.java:139
+msgid "Invalid File"
+msgstr "Неверный файл"
+
+#: src/main/java/com/atlauncher/gui/handlers/ModsJCheckBoxTransferHandler.java:139
+msgid "Skipping file {0}. Only zip, jar and litemod files can be added."
+msgstr "Пропуск файла {0}. Только zip, jar и litemod файлы могут быть добавлены."
+
+#: src/main/java/com/atlauncher/gui/panels/packbrowser/ATLauncherPacksPanel.java:106
+#: src/main/java/com/atlauncher/gui/panels/packbrowser/FTBPacksPanel.java:63
+#: src/main/java/com/atlauncher/gui/panels/packbrowser/CurseForgePacksPanel.java:69
+#: src/main/java/com/atlauncher/gui/panels/packbrowser/TechnicPacksPanel.java:58
+#: src/main/java/com/atlauncher/gui/panels/packbrowser/ModrinthPacksPanel.java:71
+msgid "There are no packs to display.<br/><br/>Try removing your search query and try again."
+msgstr "Пакетов для отображения нет.<br/><br/>Попробуйте удалить свой поисковый запрос и повторите попытку."
+
+#: src/main/java/com/atlauncher/gui/panels/packbrowser/UnifiedPacksPanel.java:51
+msgid "To find a pack, search for one at the top.<br/><br/>Alternatively choose a modpack platform on the left hand side."
+msgstr "Чтобы найти сборку, выполните поиск в верхней части.<br/><br/>В качестве альтернативы выберите платформу сборок с левой стороны."
+
+#: src/main/java/com/atlauncher/gui/panels/packbrowser/UnifiedPacksPanel.java:83
+msgid "There are no packs to display.<br/><br/>Try another search query or choose a platform on the left hand side."
+msgstr "Нет сборок для отображения.<br/><br/>Попробуйте другой поисковый запрос или выберите платформу с левой стороны."
+
+#: src/main/java/com/atlauncher/gui/panels/packbrowser/FTBPacksPanel.java:146
+msgid "Most Popular"
+msgstr "Наиболее популярные"
+
+#: src/main/java/com/atlauncher/gui/panels/packbrowser/FTBPacksPanel.java:147
+msgid "Most Installed"
+msgstr "Наиболее установленные"
+
+#: src/main/java/com/atlauncher/gui/panels/packbrowser/FTBPacksPanel.java:148
+msgid "Recently Updated"
+msgstr "Недавно обновленные"
+
+#: src/main/java/com/atlauncher/gui/panels/packbrowser/FTBPacksPanel.java:149
+#: src/main/java/com/atlauncher/gui/panels/packbrowser/CurseForgePacksPanel.java:152
+msgid "Featured"
+msgstr "Отличия"
+
+#. #-#-#-#-#  translations.pot  #-#-#-#-#
+#. {0} is the platform were getting info from (e.g. CurseForge/Modrinth)
+#. #-#-#-#-#  translations.pot  #-#-#-#-#
+#. {0} is the platform were getting info from (e.g. CurseForge/Modrinth)
+#. #-#-#-#-#  translations.pot  #-#-#-#-#
+#. {0} is the platform were getting info from (e.g. CurseForge/Modrinth)
+#: src/main/java/com/atlauncher/gui/panels/packbrowser/CurseForgePacksPanel.java:214
+#: src/main/java/com/atlauncher/gui/panels/packbrowser/CurseForgePacksPanel.java:217
+#: src/main/java/com/atlauncher/gui/panels/packbrowser/ModrinthPacksPanel.java:223
+#: src/main/java/com/atlauncher/gui/panels/packbrowser/ModrinthPacksPanel.java:226
+msgid "Looking Up Pack On {0}"
+msgstr "Поиск пакета на {0}"
+
+#. {0} is the platform were getting info from (e.g. CurseForge/Modrinth)
+#: src/main/java/com/atlauncher/gui/panels/packbrowser/CurseForgePacksPanel.java:219
+#: src/main/java/com/atlauncher/gui/panels/packbrowser/ModrinthPacksPanel.java:228
+msgid "Cancelling Looking Up Pack On {0}"
+msgstr "Отмена пакета поиска на {0}"
+
+#: src/main/java/com/atlauncher/gui/panels/packbrowser/CurseForgePacksPanel.java:254
+#: src/main/java/com/atlauncher/gui/panels/packbrowser/ModrinthPacksPanel.java:239
+msgid "Pack Not Found"
+msgstr "Сборка не найдена"
+
+#: src/main/java/com/atlauncher/gui/panels/packbrowser/CurseForgePacksPanel.java:256
+#: src/main/java/com/atlauncher/gui/panels/packbrowser/ModrinthPacksPanel.java:241
+msgid "A pack with that id/slug was not found. Please check the id/slug/url and try again."
+msgstr "Пакет с таким идентификатором/слагом не найден. Пожалуйста, проверьте идентификатор/slug/url и повторите попытку."
+
+#: src/main/java/com/atlauncher/gui/panels/packbrowser/PackBrowserPlatformPanel.java:87
+msgid "Searching For Packs..."
+msgstr "Поиск пакетов..."
+
+#. {0} is the platform name (ATLauncher, CurseForge, Technic, etc)
+#: src/main/java/com/atlauncher/gui/panels/packbrowser/PackBrowserPlatformPanel.java:90
+msgid "Loading {0} Packs..."
+msgstr "Загруженно {0} сборок..."
+
+#: src/main/java/com/atlauncher/gui/panels/packbrowser/ModrinthPacksPanel.java:156
+msgid "Downloads"
+msgstr "Загрузки"
+
+#: src/main/java/com/atlauncher/gui/panels/packbrowser/ModrinthPacksPanel.java:157
+msgid "Follows"
+msgstr "Подписки"
+
+#: src/main/java/com/atlauncher/gui/panels/packbrowser/ModrinthPacksPanel.java:159
+msgid "Updated"
+msgstr "Обновленные"
+
+#: src/main/java/com/atlauncher/gui/panels/LoadingPanel.java:34
+msgid "Loading..."
+msgstr "Загрузка..."
+
+#: src/main/java/com/atlauncher/gui/panels/NoCurseModsPanel.java:33
+msgid "No mods found. Remove your search query and try again."
+msgstr "Не найдено модов. Очистите запрос и попробуйте еще раз."
+
+#: src/main/java/com/atlauncher/gui/panels/NoCurseModsPanel.java:34
+msgid "No mods found."
+msgstr "Моды не найдены."
+
+#: src/main/java/com/atlauncher/Launcher.java:143
+msgid "Running 32 Bit Java on 64 Bit Windows"
+msgstr "Запуск 32-битной Java на 64-битную Windows"
+
+#: src/main/java/com/atlauncher/Launcher.java:144
+msgid "We have detected that you're running 64 bit Windows but not 64 bit Java.<br/><br/>This will cause severe issues playing all packs if not fixed.<br/><br/>Do you want to close the launcher and learn how to fix this issue now?"
+msgstr "Мы обнаружили, что вы используете 64-битную Windows, но не 64-битную Java.<br/><br/>Это приведет к серьезным проблемам при игре в любую сборку, если не будет исправлено.<br/><br/>Хотите сейчас закрыть лаунчер и узнать, как исправить проблему?"
+
+#: src/main/java/com/atlauncher/Launcher.java:190
+#: src/main/java/com/atlauncher/Launcher.java:191
+msgid "Downloading Launcher Update"
+msgstr "Загрузка обновления лаунчера"
+
+#: src/main/java/com/atlauncher/Launcher.java:282
+#: src/main/java/com/atlauncher/Launcher.java:283
+msgid "Downloading Updates"
+msgstr "Скачиваем обновления"
+
+#: src/main/java/com/atlauncher/Launcher.java:369
+msgid "Updating Launcher. Please Wait"
+msgstr "Обновление лаунчера. Пожалуйста, подождите."
+
+#: src/main/java/com/atlauncher/Launcher.java:397
+msgid "An update to the launcher is available. Please update via your package manager or manually by visiting https://atlauncher.com/downloads to get the latest features and bug fixes."
+msgstr "Доступно обновление лаунчера. Пожалуйста, обновите его через менеджер пакетов или посетив https://atlauncher.com/downloads для получения свежих фишек и исправлений багов."
+
+#: src/main/java/com/atlauncher/Launcher.java:400
+msgid "Visit Downloads Page"
+msgstr "Перейти на страницу загрузки"
+
+#: src/main/java/com/atlauncher/Launcher.java:414
+msgid "Update failed. Please click Ok to close the launcher and open up the downloads page.<br/><br/>Download the update and replace the old exe/jar file."
+msgstr "Обновление не удалось. Пожалуйста, нажмите Ok, чтобы закрыть лаунчер и открыть страницу загрузок.<br/><br/>Скачайте обновление и замените старый exe/jar файл."
+
