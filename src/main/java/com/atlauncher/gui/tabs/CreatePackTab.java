@@ -65,21 +65,34 @@ import com.atlauncher.viewmodel.impl.CreatePackViewModel;
 public class CreatePackTab extends JPanel implements Tab, RelocalizationListener {
     private final JTextField nameField = new JTextField(32);
     private final JTextArea descriptionField = new JTextArea(2, 40);
-    private final JCheckBox minecraftVersionReleasesFilterCheckbox = new JCheckBox(getReleasesText());
-    private final JCheckBox minecraftVersionExperimentsFilterCheckbox = new JCheckBox(getExperimentsText());
-    private final JCheckBox minecraftVersionSnapshotsFilterCheckbox = new JCheckBox(getSnapshotsText());
-    private final JCheckBox minecraftVersionBetasFilterCheckbox = new JCheckBox(getBetasText());
-    private final JCheckBox minecraftVersionAlphasFilterCheckbox = new JCheckBox(getAlphasText());
+    private final JCheckBox minecraftVersionReleasesFilterCheckbox = new JCheckBox();
+    private final JCheckBox minecraftVersionExperimentsFilterCheckbox = new JCheckBox();
+    private final JCheckBox minecraftVersionSnapshotsFilterCheckbox = new JCheckBox();
+    private final JCheckBox minecraftVersionBetasFilterCheckbox = new JCheckBox();
+    private final JCheckBox minecraftVersionAlphasFilterCheckbox = new JCheckBox();
     private final ButtonGroup loaderTypeButtonGroup = new ButtonGroup();
-    private final JRadioButton loaderTypeNoneRadioButton = new JRadioButton(getNoneText());
+    private final JRadioButton loaderTypeNoneRadioButton = new JRadioButton();
     private final JRadioButton loaderTypeFabricRadioButton = new JRadioButton("Fabric");
     private final JRadioButton loaderTypeForgeRadioButton = new JRadioButton("Forge");
     private final JRadioButton loaderTypeLegacyFabricRadioButton = new JRadioButton("Legacy Fabric");
     private final JRadioButton loaderTypeNeoForgeRadioButton = new JRadioButton("NeoForge");
     private final JRadioButton loaderTypeQuiltRadioButton = new JRadioButton("Quilt");
     private final JComboBox<ComboItem<LoaderVersion>> loaderVersionsDropDown = new JComboBox<>();
-    private final JButton createServerButton = new JButton(getCreateServerText());
-    private final JButton createInstanceButton = new JButton(getCreateInstanceText());
+
+    private JLabel nameLabel;
+
+    private JLabel descriptionLabel;
+    private JLabel minecraftVersionLabel;
+
+    private JLabel minecraftVersionFilterLabel;
+
+    private JLabel loaderTypeLabel;
+
+    private JLabel loaderVersionLabel;
+
+
+    private final JButton createServerButton = new JButton();
+    private final JButton createInstanceButton = new JButton();
     private final ICreatePackViewModel viewModel = new CreatePackViewModel();
     /**
      * Last time the loaderVersion has been changed.
@@ -97,39 +110,8 @@ public class CreatePackTab extends JPanel implements Tab, RelocalizationListener
         setName("createPackPanel");
         setupMainPanel();
         setupBottomPanel();
+        onRelocalization();
         RelocalizationManager.addListener(this);
-    }
-
-    private String getReleasesText() {
-        return GetText.tr("Releases");
-    }
-
-    private String getExperimentsText() {
-        return GetText.tr("Experiments");
-    }
-
-    private String getSnapshotsText() {
-        return GetText.tr("Snapshots");
-    }
-
-    private String getBetasText() {
-        return GetText.tr("Betas");
-    }
-
-    private String getAlphasText() {
-        return GetText.tr("Alphas");
-    }
-
-    private String getNoneText() {
-        return GetText.tr("None");
-    }
-
-    private String getCreateServerText() {
-        return GetText.tr("Create Server");
-    }
-
-    private String getCreateInstanceText() {
-        return GetText.tr("Create Instance");
     }
 
     private void setupMainPanel() {
@@ -141,7 +123,7 @@ public class CreatePackTab extends JPanel implements Tab, RelocalizationListener
         gbc.gridy = 0;
         gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.EAST;
-        JLabel nameLabel = new JLabel(GetText.tr("Instance Name") + ":");
+        nameLabel = new JLabel();
         mainPanel.add(nameLabel, gbc);
         gbc.gridx++;
         gbc.insets = UIConstants.FIELD_INSETS;
@@ -156,20 +138,20 @@ public class CreatePackTab extends JPanel implements Tab, RelocalizationListener
         gbc.gridy++;
         gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        JLabel descriptionLabel = new JLabel(GetText.tr("Description") + ":");
+        descriptionLabel = new JLabel();
         mainPanel.add(descriptionLabel, gbc);
         gbc.gridx++;
         gbc.insets = UIConstants.FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         JScrollPane descriptionScrollPane = new JScrollPane(
-                JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+            JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         descriptionScrollPane.setPreferredSize(new Dimension(450, 80));
         descriptionScrollPane.setViewportView(descriptionField);
 
         PreservingCaretTextSetter descriptionFieldSetter = new PreservingCaretTextSetter(descriptionField);
         viewModel.description().subscribe((it) -> descriptionFieldSetter.setText(it.orElse(null)));
         descriptionField.addKeyListener(
-                new StatefulTextKeyAdapter((e) -> viewModel.setDescription(descriptionField.getText())));
+            new StatefulTextKeyAdapter((e) -> viewModel.setDescription(descriptionField.getText())));
         mainPanel.add(descriptionScrollPane, gbc);
 
         // Minecraft Version
@@ -179,12 +161,12 @@ public class CreatePackTab extends JPanel implements Tab, RelocalizationListener
         gbc.anchor = GridBagConstraints.NORTHEAST;
         JPanel minecraftVersionPanel = new JPanel();
         minecraftVersionPanel.setLayout(new BoxLayout(minecraftVersionPanel, BoxLayout.Y_AXIS));
-        JLabel minecraftVersionLabel = new JLabel(GetText.tr("Minecraft Version") + ":");
+        minecraftVersionLabel = new JLabel();
         minecraftVersionPanel.add(minecraftVersionLabel);
         minecraftVersionPanel.add(Box.createVerticalStrut(20));
         JPanel minecraftVersionFilterPanel = new JPanel();
         minecraftVersionFilterPanel.setLayout(new BoxLayout(minecraftVersionFilterPanel, BoxLayout.Y_AXIS));
-        JLabel minecraftVersionFilterLabel = new JLabel(GetText.tr("Filter"));
+        minecraftVersionFilterLabel = new JLabel();
         viewModel.font().subscribe(minecraftVersionFilterLabel::setFont);
         minecraftVersionFilterPanel.add(minecraftVersionFilterLabel);
 
@@ -209,7 +191,7 @@ public class CreatePackTab extends JPanel implements Tab, RelocalizationListener
         gbc.insets = UIConstants.FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         JScrollPane minecraftVersionScrollPane = new JScrollPane(
-                JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+            JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         minecraftVersionScrollPane.setPreferredSize(new Dimension(450, 300));
         setupMinecraftVersionsTable();
         minecraftVersionScrollPane.setViewportView(minecraftVersionTable);
@@ -220,7 +202,7 @@ public class CreatePackTab extends JPanel implements Tab, RelocalizationListener
         gbc.gridy++;
         gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.EAST;
-        JLabel loaderTypeLabel = new JLabel(GetText.tr("Loader") + "?");
+        loaderTypeLabel = new JLabel();
         mainPanel.add(loaderTypeLabel, gbc);
         gbc.gridx++;
         gbc.insets = UIConstants.FIELD_INSETS;
@@ -247,7 +229,7 @@ public class CreatePackTab extends JPanel implements Tab, RelocalizationListener
         gbc.gridy++;
         gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        JLabel loaderVersionLabel = new JLabel(GetText.tr("Loader Version") + ":");
+        loaderVersionLabel = new JLabel();
         mainPanel.add(loaderVersionLabel, gbc);
         gbc.gridx++;
         gbc.insets = UIConstants.FIELD_INSETS;
@@ -266,9 +248,9 @@ public class CreatePackTab extends JPanel implements Tab, RelocalizationListener
                 for (LoaderVersion version : loaderVersions) {
                     // ensures that font width is taken into account
                     loaderVersionLength = max(
-                            loaderVersionLength,
-                            getFontMetrics(App.THEME.getNormalFont())
-                                    .stringWidth(version.toString()) + 25);
+                        loaderVersionLength,
+                        getFontMetrics(App.THEME.getNormalFont())
+                            .stringWidth(version.toString()) + 25);
 
                     loaderVersionsDropDown.addItem(new ComboItem(version, version.toString()));
                 }
@@ -293,7 +275,7 @@ public class CreatePackTab extends JPanel implements Tab, RelocalizationListener
             // impossible.
             if (e.getWhen() > (loaderVersionLastChange + 100)) {
                 ComboItem<LoaderVersion> comboItem = (ComboItem<LoaderVersion>) loaderVersionsDropDown
-                        .getSelectedItem();
+                    .getSelectedItem();
 
                 if (comboItem != null) {
                     LoaderVersion version = comboItem.getValue();
@@ -347,8 +329,8 @@ public class CreatePackTab extends JPanel implements Tab, RelocalizationListener
         viewModel.loaderTypeLegacyFabricEnabled().subscribe(loaderTypeLegacyFabricRadioButton::setEnabled);
         viewModel.isLegacyFabricVisible().subscribe(loaderTypeLegacyFabricRadioButton::setVisible);
         loaderTypeLegacyFabricRadioButton.addActionListener(
-                e -> viewModel.setLoaderType(
-                        LoaderType.LEGACY_FABRIC));
+            e -> viewModel.setLoaderType(
+                LoaderType.LEGACY_FABRIC));
         if (viewModel.showLegacyFabricOption()) {
             loaderTypePanel.add(loaderTypeLegacyFabricRadioButton);
         }
@@ -359,8 +341,8 @@ public class CreatePackTab extends JPanel implements Tab, RelocalizationListener
         viewModel.loaderTypeNeoForgeEnabled().subscribe(loaderTypeNeoForgeRadioButton::setEnabled);
         viewModel.isNeoForgeVisible().subscribe(loaderTypeNeoForgeRadioButton::setVisible);
         loaderTypeNeoForgeRadioButton.addActionListener(
-                e -> viewModel.setLoaderType(
-                        LoaderType.NEOFORGE));
+            e -> viewModel.setLoaderType(
+                LoaderType.NEOFORGE));
         if (viewModel.showNeoForgeOption()) {
             loaderTypePanel.add(loaderTypeNeoForgeRadioButton);
         }
@@ -371,8 +353,8 @@ public class CreatePackTab extends JPanel implements Tab, RelocalizationListener
         viewModel.loaderTypeFabricEnabled().subscribe(loaderTypeFabricRadioButton::setEnabled);
         viewModel.isFabricVisible().subscribe(loaderTypeFabricRadioButton::setVisible);
         loaderTypeFabricRadioButton.addActionListener(
-                e -> viewModel.setLoaderType(
-                        LoaderType.FABRIC));
+            e -> viewModel.setLoaderType(
+                LoaderType.FABRIC));
         if (viewModel.showFabricOption()) {
             loaderTypePanel.add(loaderTypeFabricRadioButton);
         }
@@ -391,7 +373,7 @@ public class CreatePackTab extends JPanel implements Tab, RelocalizationListener
         viewModel.oldAlphaSelected().subscribe(minecraftVersionAlphasFilterCheckbox::setSelected);
         viewModel.oldAlphaEnabled().subscribe(minecraftVersionAlphasFilterCheckbox::setEnabled);
         minecraftVersionAlphasFilterCheckbox.addActionListener(
-                it -> viewModel.setOldAlphaSelected(minecraftVersionAlphasFilterCheckbox.isSelected()));
+            it -> viewModel.setOldAlphaSelected(minecraftVersionAlphasFilterCheckbox.isSelected()));
         if (viewModel.showOldAlphaOption()) {
             minecraftVersionFilterPanel.add(minecraftVersionAlphasFilterCheckbox);
         }
@@ -401,7 +383,7 @@ public class CreatePackTab extends JPanel implements Tab, RelocalizationListener
         viewModel.oldBetaSelected().subscribe(minecraftVersionBetasFilterCheckbox::setSelected);
         viewModel.oldBetaEnabled().subscribe(minecraftVersionBetasFilterCheckbox::setEnabled);
         minecraftVersionBetasFilterCheckbox.addActionListener(
-                it -> viewModel.setOldBetaSelected(minecraftVersionBetasFilterCheckbox.isSelected()));
+            it -> viewModel.setOldBetaSelected(minecraftVersionBetasFilterCheckbox.isSelected()));
         if (viewModel.showOldBetaOption()) {
             minecraftVersionFilterPanel.add(minecraftVersionBetasFilterCheckbox);
         }
@@ -411,7 +393,7 @@ public class CreatePackTab extends JPanel implements Tab, RelocalizationListener
         viewModel.snapshotSelected().subscribe(minecraftVersionSnapshotsFilterCheckbox::setSelected);
         viewModel.snapshotEnabled().subscribe(minecraftVersionSnapshotsFilterCheckbox::setEnabled);
         minecraftVersionSnapshotsFilterCheckbox.addActionListener(
-                it -> viewModel.setSnapshotSelected(minecraftVersionSnapshotsFilterCheckbox.isSelected()));
+            it -> viewModel.setSnapshotSelected(minecraftVersionSnapshotsFilterCheckbox.isSelected()));
         if (viewModel.showSnapshotOption()) {
             minecraftVersionFilterPanel.add(minecraftVersionSnapshotsFilterCheckbox);
         }
@@ -421,7 +403,7 @@ public class CreatePackTab extends JPanel implements Tab, RelocalizationListener
         viewModel.experimentSelected().subscribe(minecraftVersionExperimentsFilterCheckbox::setSelected);
         viewModel.experimentEnabled().subscribe(minecraftVersionExperimentsFilterCheckbox::setEnabled);
         minecraftVersionExperimentsFilterCheckbox.addActionListener(
-                it -> viewModel.setExperimentSelected(minecraftVersionExperimentsFilterCheckbox.isSelected()));
+            it -> viewModel.setExperimentSelected(minecraftVersionExperimentsFilterCheckbox.isSelected()));
         if (viewModel.showExperimentOption()) {
             minecraftVersionFilterPanel.add(minecraftVersionExperimentsFilterCheckbox);
         }
@@ -432,7 +414,7 @@ public class CreatePackTab extends JPanel implements Tab, RelocalizationListener
         viewModel.releaseEnabled().subscribe(minecraftVersionReleasesFilterCheckbox::setEnabled);
         minecraftVersionReleasesFilterCheckbox.setSelected(true);
         minecraftVersionReleasesFilterCheckbox.addActionListener(
-                it -> viewModel.setReleaseSelected(minecraftVersionReleasesFilterCheckbox.isSelected()));
+            it -> viewModel.setReleaseSelected(minecraftVersionReleasesFilterCheckbox.isSelected()));
         if (viewModel.showReleaseOption()) {
             minecraftVersionFilterPanel.add(minecraftVersionReleasesFilterCheckbox);
         }
@@ -440,8 +422,8 @@ public class CreatePackTab extends JPanel implements Tab, RelocalizationListener
 
     private void setupMinecraftVersionsTable() {
         minecraftVersionTableModel = new DefaultTableModel(
-                new String[][] {},
-                new String[] { GetText.tr("Version"), GetText.tr("Released"), GetText.tr("Type") }) {
+            new String[][]{},
+            new String[3]) {
             @Override
             public boolean isCellEditable(int rowIndex, int columnIndex) {
                 return false;
@@ -462,7 +444,7 @@ public class CreatePackTab extends JPanel implements Tab, RelocalizationListener
             for (int i = minIndex; i <= maxIndex; i++) {
                 if (lsm.isSelectedIndex(i)) {
                     viewModel.setSelectedMinecraftVersion(
-                            (String) minecraftVersionTableModel.getValueAt(i, 0));
+                        (String) minecraftVersionTableModel.getValueAt(i, 0));
                 }
             }
         });
@@ -482,11 +464,11 @@ public class CreatePackTab extends JPanel implements Tab, RelocalizationListener
             for (MCVersionRow row : minecraftVersions) {
                 if (minecraftVersionTableModel != null)
                     minecraftVersionTableModel.addRow(
-                            new Object[] {
-                                    row.id,
-                                    row.date,
-                                    row.type
-                            });
+                        new Object[]{
+                            row.id,
+                            row.date,
+                            row.type
+                        });
             }
 
             // refresh the table
@@ -518,15 +500,15 @@ public class CreatePackTab extends JPanel implements Tab, RelocalizationListener
         JPanel bottomPanel = new JPanel(new FlowLayout());
         bottomPanel.add(createServerButton);
         createServerButton.addActionListener((event) -> { // user has no instances, they may not be aware this is not
-                                                          // how to play
+            // how to play
             if (viewModel.warnUserAboutServer()) {
                 int ret = DialogManager.yesNoDialog().setTitle(GetText.tr("Are you sure you want to create a server?"))
-                        .setContent(
-                                new HTMLBuilder().center().text(
-                                        GetText.tr(
-                                                "Creating a server won't allow you play Minecraft, it's for letting others play together.<br/><br/>If you just want to play Minecraft, you don't want to create a server, and instead will want to create an instance.<br/><br/>Are you sure you want to create a server?"))
-                                        .build())
-                        .setType(DialogManager.QUESTION).show();
+                    .setContent(
+                        new HTMLBuilder().center().text(
+                                GetText.tr(
+                                    "Creating a server won't allow you play Minecraft, it's for letting others play together.<br/><br/>If you just want to play Minecraft, you don't want to create a server, and instead will want to create an instance.<br/><br/>Are you sure you want to create a server?"))
+                            .build())
+                    .setType(DialogManager.QUESTION).show();
                 if (ret != 0) {
                     return;
                 }
@@ -554,14 +536,24 @@ public class CreatePackTab extends JPanel implements Tab, RelocalizationListener
 
     @Override
     public void onRelocalization() {
-        minecraftVersionReleasesFilterCheckbox.setText(getReleasesText());
-        minecraftVersionExperimentsFilterCheckbox.setText(getExperimentsText());
-        minecraftVersionSnapshotsFilterCheckbox.setText(getSnapshotsText());
-        minecraftVersionBetasFilterCheckbox.setText(getBetasText());
-        minecraftVersionAlphasFilterCheckbox.setText(getAlphasText());
-        loaderTypeNoneRadioButton.setText(getNoneText());
-        createServerButton.setText(getCreateServerText());
-        createInstanceButton.setText(getCreateInstanceText());
+        minecraftVersionReleasesFilterCheckbox.setText(GetText.tr("Releases"));
+        minecraftVersionExperimentsFilterCheckbox.setText(GetText.tr("Experiments"));
+        minecraftVersionSnapshotsFilterCheckbox.setText(GetText.tr("Snapshots"));
+        minecraftVersionBetasFilterCheckbox.setText(GetText.tr("Betas"));
+        minecraftVersionAlphasFilterCheckbox.setText(GetText.tr("Alphas"));
+        loaderTypeNoneRadioButton.setText(GetText.tr("None"));
+        createServerButton.setText(GetText.tr("Create Server"));
+        createInstanceButton.setText(GetText.tr("Create Instance"));
+        nameLabel.setText(GetText.tr("Instance Name") + ":");
+        descriptionLabel.setText(GetText.tr("Description") + ":");
+        minecraftVersionLabel.setText(GetText.tr("Minecraft Version") + ":");
+        minecraftVersionFilterLabel.setText(GetText.tr("Filter"));
+        loaderTypeLabel.setText(GetText.tr("Loader") + "?");
+        loaderVersionLabel.setText(GetText.tr("Loader Version") + ":");
+        if (minecraftVersionTableModel != null)
+            minecraftVersionTableModel.setColumnIdentifiers(
+                new String[]{GetText.tr("Version"), GetText.tr("Released"), GetText.tr("Type")}
+            );
     }
 
 }
