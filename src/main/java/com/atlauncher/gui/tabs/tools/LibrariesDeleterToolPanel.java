@@ -17,8 +17,9 @@
  */
 package com.atlauncher.gui.tabs.tools;
 
-import javax.swing.JLabel;
+import javax.annotation.Nonnull;
 
+import org.jetbrains.annotations.NotNull;
 import org.mini2Dx.gettext.GetText;
 
 import com.atlauncher.builders.HTMLBuilder;
@@ -28,20 +29,32 @@ import com.atlauncher.managers.DialogManager;
 public class LibrariesDeleterToolPanel extends AbstractToolPanel {
 
     public LibrariesDeleterToolPanel(IToolsViewModel viewModel) {
-        super(GetText.tr("Libraries Deleter"));
+        super(viewModel);
+    }
 
-        JLabel INFO_LABEL = new JLabel(new HTMLBuilder().center().split(70).text(GetText.tr(
-                "This tool clears out all the libraries used by Minecraft. Instances may need to be reinstalled if launching them once doesn't download all libraries."))
-                .build());
-        MIDDLE_PANEL.add(INFO_LABEL);
-        BOTTOM_PANEL.add(LAUNCH_BUTTON);
-        LAUNCH_BUTTON.addActionListener(e -> {
-            if (e.getSource() == LAUNCH_BUTTON) {
-                viewModel.deleteLibraries();
+    @NotNull
+    @Override
+    protected String getLabel() {
+        return new HTMLBuilder()
+            .center()
+            .split(70)
+            .text(GetText.tr(
+                "This tool clears out all the libraries used by Minecraft. Instances may need to be reinstalled if launching them once doesn't download all libraries."
+            ))
+            .build();
+    }
 
-                DialogManager.okDialog().setType(DialogManager.INFO).setTitle(GetText.tr("Success"))
-                        .setContent(GetText.tr("Successfully deleted libraries.")).show();
-            }
-        });
+    @Override
+    protected void onLaunch() {
+        viewModel.deleteLibraries();
+
+        DialogManager.okDialog().setType(DialogManager.INFO).setTitle(GetText.tr("Success"))
+            .setContent(GetText.tr("Successfully deleted libraries.")).show();
+    }
+
+    @Nonnull
+    @Override
+    protected String getTitle() {
+        return GetText.tr("Libraries Deleter");
     }
 }

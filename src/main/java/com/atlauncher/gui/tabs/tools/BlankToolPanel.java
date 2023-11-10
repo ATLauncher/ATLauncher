@@ -17,10 +17,30 @@
  */
 package com.atlauncher.gui.tabs.tools;
 
+import javax.annotation.Nonnull;
+
+import org.jetbrains.annotations.NotNull;
+
 @SuppressWarnings("serial")
 public class BlankToolPanel extends AbstractToolPanel {
 
     public BlankToolPanel() {
         super(null);
+    }
+
+    @Override
+    protected void onLaunch() {
+    }
+
+    @Nonnull
+    @Override
+    protected String getTitle() {
+        return "";
+    }
+
+    @NotNull
+    @Override
+    protected String getLabel() {
+        return "";
     }
 }

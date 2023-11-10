@@ -17,11 +17,9 @@
  */
 package com.atlauncher.gui.tabs.tools;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import javax.annotation.Nonnull;
 
-import javax.swing.JLabel;
-
+import org.jetbrains.annotations.NotNull;
 import org.mini2Dx.gettext.GetText;
 
 import com.atlauncher.builders.HTMLBuilder;
@@ -29,23 +27,16 @@ import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.managers.DialogManager;
 
 @SuppressWarnings("serial")
-public class SkinUpdaterToolPanel extends AbstractToolPanel implements ActionListener {
-
-    private final IToolsViewModel viewModel;
+public class SkinUpdaterToolPanel extends AbstractToolPanel {
 
     public SkinUpdaterToolPanel(IToolsViewModel viewModel) {
-        super(GetText.tr("Skin Updater"));
-        this.viewModel = viewModel;
-        JLabel INFO_LABEL = new JLabel(new HTMLBuilder().center().split(70)
-            .text(GetText.tr("This tool will update all your accounts skins on the launcher.")).build());
-        MIDDLE_PANEL.add(INFO_LABEL);
-        BOTTOM_PANEL.add(LAUNCH_BUTTON);
-        LAUNCH_BUTTON.addActionListener(this);
+        super(viewModel);
+
         viewModel.onSkinUpdaterEnabledChanged(LAUNCH_BUTTON::setEnabled);
     }
 
     @Override
-    public void actionPerformed(ActionEvent e) {
+    protected void onLaunch() {
         final ProgressDialog<Boolean> dialog = new ProgressDialog<>(GetText.tr("Skin Updater"), viewModel.accountCount(),
             GetText.tr("Updating Skins. Please Wait!"), "Skin Updater Tool Cancelled!");
 
@@ -60,4 +51,18 @@ public class SkinUpdaterToolPanel extends AbstractToolPanel implements ActionLis
         DialogManager.okDialog().setType(DialogManager.INFO).setTitle(GetText.tr("Success"))
             .setContent(GetText.tr("Successfully updated skins.")).show();
     }
+
+    @NotNull
+    @Override
+    protected String getLabel() {
+        return new HTMLBuilder().center().split(70)
+            .text(GetText.tr("This tool will update all your accounts skins on the launcher.")).build();
+    }
+
+    @Nonnull
+    @Override
+    protected String getTitle() {
+        return GetText.tr("Skin Updater");
+    }
+
 }

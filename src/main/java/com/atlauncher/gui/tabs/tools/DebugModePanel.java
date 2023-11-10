@@ -17,38 +17,45 @@
  */
 package com.atlauncher.gui.tabs.tools;
 
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import javax.annotation.Nonnull;
 
-import javax.swing.JLabel;
-
+import org.jetbrains.annotations.NotNull;
 import org.mini2Dx.gettext.GetText;
 
 import com.atlauncher.builders.HTMLBuilder;
+import com.atlauncher.evnt.listener.RelocalizationListener;
 
 @SuppressWarnings("serial")
-public class DebugModePanel extends AbstractToolPanel {
+public class DebugModePanel extends AbstractToolPanel implements RelocalizationListener {
 
     public DebugModePanel(IToolsViewModel viewModel) {
-        super(GetText.tr("Debug Mode"));
+        super(viewModel);
 
-        JLabel INFO_LABEL = new JLabel(new HTMLBuilder().center().split(70).text(GetText.tr(
-                "Use this to relaunch ATLauncher in debug mode. This can be used to get more debug logs in order to help diagnose issues with ATLauncher."))
-                .build());
-        MIDDLE_PANEL.add(INFO_LABEL);
-        BOTTOM_PANEL.add(LAUNCH_BUTTON);
         LAUNCH_BUTTON.setEnabled(viewModel.isLaunchInDebugEnabled());
+    }
 
+    @Override
+    protected void onLaunch() {
         if (viewModel.isLaunchInDebugEnabled()) {
-            LAUNCH_BUTTON.addMouseListener(new MouseAdapter() {
-                @Override
-                public void mouseClicked(MouseEvent e) {
-                    if (e.getButton() == MouseEvent.BUTTON1) {
-                        // Handle left-click
-                        viewModel.launchInDebug();
-                    }
-                }
-            });
+            viewModel.launchInDebug();
         }
+    }
+
+    @NotNull
+    @Override
+    protected String getLabel() {
+        return new HTMLBuilder()
+            .center()
+            .split(70)
+            .text(GetText.tr(
+                "Use this to relaunch ATLauncher in debug mode. This can be used to get more debug logs in order to help diagnose issues with ATLauncher."
+            ))
+            .build();
+    }
+
+    @Nonnull
+    @Override
+    protected String getTitle() {
+        return GetText.tr("Debug Mode");
     }
 }
