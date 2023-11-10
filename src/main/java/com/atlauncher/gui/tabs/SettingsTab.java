@@ -30,9 +30,9 @@ import org.mini2Dx.gettext.GetText;
 import com.atlauncher.App;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.evnt.listener.RelocalizationListener;
-import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.evnt.manager.SettingsManager;
 import com.atlauncher.evnt.manager.ThemeManager;
+import com.atlauncher.gui.panels.HierarchyPanel;
 import com.atlauncher.gui.tabs.settings.BackupsSettingsTab;
 import com.atlauncher.gui.tabs.settings.CommandsSettingsTab;
 import com.atlauncher.gui.tabs.settings.GeneralSettingsTab;
@@ -41,30 +41,35 @@ import com.atlauncher.gui.tabs.settings.LoggingSettingsTab;
 import com.atlauncher.gui.tabs.settings.ModsSettingsTab;
 import com.atlauncher.gui.tabs.settings.NetworkSettingsTab;
 import com.atlauncher.managers.DialogManager;
-import com.atlauncher.managers.InstanceManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.network.analytics.AnalyticsEvent;
 import com.atlauncher.utils.OS;
 import com.formdev.flatlaf.FlatLaf;
 
-@SuppressWarnings("serial")
-public class SettingsTab extends JPanel implements Tab, RelocalizationListener {
-    private final GeneralSettingsTab generalSettingsTab = new GeneralSettingsTab();
-    private final ModsSettingsTab modsSettingsTab = new ModsSettingsTab();
-    private final JavaSettingsTab javaSettingsTab = new JavaSettingsTab();
-    private final NetworkSettingsTab networkSettingsTab = new NetworkSettingsTab();
-    private final LoggingSettingsTab loggingSettingsTab = new LoggingSettingsTab();
-    private final BackupsSettingsTab backupsSettingsTab = new BackupsSettingsTab();
-    private final CommandsSettingsTab commandSettingsTab = new CommandsSettingsTab();
-    private final List<Tab> tabs = Arrays.asList(
-            new Tab[] { this.generalSettingsTab, this.modsSettingsTab, this.javaSettingsTab, this.networkSettingsTab,
-                    this.loggingSettingsTab, this.backupsSettingsTab, this.commandSettingsTab });
-    private final JTabbedPane tabbedPane;
-    private final JButton saveButton = new JButton(GetText.tr("Save"));
+public class SettingsTab extends HierarchyPanel implements Tab, RelocalizationListener {
+
+    private List<Tab> tabs;
+    private JTabbedPane tabbedPane;
+    private JButton saveButton;
 
     public SettingsTab() {
-        RelocalizationManager.addListener(this);
-        setLayout(new BorderLayout());
+        super(new BorderLayout());
+    }
+
+    @Override
+    protected void onShow() {
+        GeneralSettingsTab generalSettingsTab = new GeneralSettingsTab();
+        ModsSettingsTab modsSettingsTab = new ModsSettingsTab();
+        JavaSettingsTab javaSettingsTab = new JavaSettingsTab();
+        NetworkSettingsTab networkSettingsTab = new NetworkSettingsTab();
+        LoggingSettingsTab loggingSettingsTab = new LoggingSettingsTab();
+        BackupsSettingsTab backupsSettingsTab = new BackupsSettingsTab();
+        CommandsSettingsTab commandSettingsTab = new CommandsSettingsTab();
+
+        tabs = Arrays.asList(
+            new Tab[]{generalSettingsTab, modsSettingsTab, javaSettingsTab, networkSettingsTab,
+                loggingSettingsTab, backupsSettingsTab, commandSettingsTab});
+        saveButton = new JButton(GetText.tr("Save"));
 
         tabbedPane = new JTabbedPane(JTabbedPane.TOP);
 
@@ -82,7 +87,7 @@ public class SettingsTab extends JPanel implements Tab, RelocalizationListener {
         add(bottomPanel, BorderLayout.SOUTH);
         saveButton.addActionListener(arg0 -> {
             if (javaSettingsTab.isValidJavaPath() && javaSettingsTab.isValidJavaParamaters()
-                    && networkSettingsTab.canConnectWithProxy()) {
+                && networkSettingsTab.canConnectWithProxy()) {
                 boolean reloadTheme = generalSettingsTab.needToReloadTheme();
                 boolean themeChanged = generalSettingsTab.themeChanged();
                 boolean languageChanged = generalSettingsTab.languageChanged();
@@ -104,11 +109,11 @@ public class SettingsTab extends JPanel implements Tab, RelocalizationListener {
                 }
                 if (languageChanged) {
                     int ret = DialogManager.yesNoDialog().setType(DialogManager.INFO)
-                            .setTitle(GetText.tr("Language Changed. Restart?"))
-                            .setContent(new HTMLBuilder().center().text(GetText.tr(
-                                    "You've changed the language. For best results, a restart of the launcher is recommended.<br/><br/>Restart Now?"))
-                                    .build())
-                            .show();
+                        .setTitle(GetText.tr("Language Changed. Restart?"))
+                        .setContent(new HTMLBuilder().center().text(GetText.tr(
+                                "You've changed the language. For best results, a restart of the launcher is recommended.<br/><br/>Restart Now?"))
+                            .build())
+                        .show();
 
                     if (ret == 0) {
                         OS.restartLauncher();
@@ -126,7 +131,7 @@ public class SettingsTab extends JPanel implements Tab, RelocalizationListener {
         });
 
         tabbedPane.addChangeListener(e -> Analytics
-                .sendScreenView(((Tab) tabbedPane.getSelectedComponent()).getAnalyticsScreenViewName() + " Settings"));
+            .sendScreenView(((Tab) tabbedPane.getSelectedComponent()).getAnalyticsScreenViewName() + " Settings"));
     }
 
     @Override
@@ -148,4 +153,17 @@ public class SettingsTab extends JPanel implements Tab, RelocalizationListener {
         this.saveButton.setText(GetText.tr("Save"));
     }
 
+    @Override
+    protected void createViewModel() {
+
+    }
+
+    @Override
+    protected void onDestroy() {
+        removeAll();
+
+        tabs = null;
+        tabbedPane = null;
+        saveButton = null;
+    }
 }
