@@ -17,7 +17,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Issue installing 1.20.2 versions of NeoForge
 - Instance name/description not resetting after a successful install
 - Issues with non English regions and number formatting to api's/logs
-- Make HierarchyPanel intercept Relocalization [#836]
 
 ### Misc
 - Convert ConsoleOpenManager and ConsoleCloseManager into ConsoleStateManager [#814]
@@ -28,3 +27,5 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Implement RxJava in InstanceManager [#795]
 - Add UUID to Instances [#795]
 - Implement RxJava in all update managers [#795]
+- Update all github actions workflows and allow downloading translations to a branch
+- Make HierarchyPanel intercept Relocalization [#836]
