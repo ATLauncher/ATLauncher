@@ -23,6 +23,8 @@ import java.awt.event.HierarchyListener;
 
 import javax.swing.JPanel;
 
+import com.atlauncher.evnt.listener.RelocalizationListener;
+import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.managers.LogManager;
 
 /**
@@ -42,6 +44,21 @@ public abstract class HierarchyPanel extends JPanel implements HierarchyListener
         super(layout);
         addNotify();
         addHierarchyListener(this);
+
+        // If the child is a child of RelocalizationListener
+        // We can handle relocalization for them
+        if (this instanceof RelocalizationListener) {
+            RelocalizationManager.addListener(this::tryReLocalization);
+        }
+    }
+
+    /**
+     * Will only re-localize the view if it is showing.
+     */
+    private void tryReLocalization() {
+        if (isShowing()) {
+            ((RelocalizationListener) this).onRelocalization();
+        }
     }
 
     @Override

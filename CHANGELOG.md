@@ -28,3 +28,4 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Add UUID to Instances [#795]
 - Implement RxJava in all update managers [#795]
 - Update all github actions workflows and allow downloading translations to a branch
+- Make HierarchyPanel intercept Relocalization [#836]
