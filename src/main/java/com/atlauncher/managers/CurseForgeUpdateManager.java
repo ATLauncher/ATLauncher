@@ -18,10 +18,10 @@
 package com.atlauncher.managers;
 
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 import com.atlauncher.App;
 import com.atlauncher.data.Instance;
@@ -37,7 +37,7 @@ public class CurseForgeUpdateManager {
      * CurseForge instance update checking
      */
     private static final Map<UUID, BehaviorSubject<Optional<CurseForgeFile>>>
-        CURSEFORGE_INSTANCE_LATEST_VERSION = new HashMap<>();
+        CURSEFORGE_INSTANCE_LATEST_VERSION = new ConcurrentHashMap<>();
 
     /**
      * Get the update behavior subject for a given instance.

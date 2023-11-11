@@ -18,10 +18,10 @@
 package com.atlauncher.managers;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 import com.atlauncher.Gsons;
 import com.atlauncher.data.Instance;
@@ -39,13 +39,13 @@ public class TechnicModpackUpdateManager {
      * Technic Non Solder instance update checking
      */
     private static final Map<UUID, BehaviorSubject<Optional<TechnicModpack>>>
-        TECHNIC_INSTANCE_LATEST_VERSION = new HashMap<>();
+        TECHNIC_INSTANCE_LATEST_VERSION = new ConcurrentHashMap<>();
 
     /**
      * Technic Solder instance update checking
      */
     private static final Map<UUID, BehaviorSubject<Optional<TechnicSolderModpack>>>
-        TECHNIC_SOLDER_INSTANCE_LATEST_VERSION = new HashMap<>();
+        TECHNIC_SOLDER_INSTANCE_LATEST_VERSION = new ConcurrentHashMap<>();
 
     /**
      * Get the update behavior subject for a given instance.
