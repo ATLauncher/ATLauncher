@@ -99,7 +99,7 @@ public class InstancesTabViewModel implements IInstancesTabViewModel, SettingsLi
                 }
 
                 return stream.collect(Collectors.toList());
-            }).subscribeOn(Schedulers.computation());
+            }).subscribeOn(Schedulers.io());
 
     /**
      * second operation is to derive if they have an update or not
