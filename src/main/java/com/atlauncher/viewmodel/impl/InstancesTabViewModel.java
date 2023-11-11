@@ -26,8 +26,8 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import com.atlauncher.App;
 import com.atlauncher.data.Instance;
@@ -58,10 +58,18 @@ public class InstancesTabViewModel implements IInstancesTabViewModel, SettingsLi
     private final BehaviorSubject<String> instanceTitleFormat = BehaviorSubject
             .createDefault(App.settings.instanceTitleFormat);
 
-    private final BehaviorSubject<Optional<Pattern>> searchPattern = BehaviorSubject.createDefault(Optional.empty());
+    private final BehaviorSubject<Optional<String>> searchQuery =
+        BehaviorSubject.createDefault(Optional.empty());
 
-    private final BehaviorSubject<InstanceSortingStrategy> sortingStrategy = BehaviorSubject
-            .createDefault(App.settings.defaultInstanceSorting);
+    private final Observable<Optional<Pattern>> searchPattern =
+        searchQuery.map(queryOptional ->
+            queryOptional.map(query ->
+                Pattern.compile(Pattern.quote(query), Pattern.CASE_INSENSITIVE)
+            )
+        );
+
+    private final BehaviorSubject<InstanceSortingStrategy> sortingStrategy =
+        BehaviorSubject.createDefault(App.settings.defaultInstanceSorting);
 
     /**
      * First filter out instances.
@@ -130,16 +138,22 @@ public class InstancesTabViewModel implements IInstancesTabViewModel, SettingsLi
     }
 
     @Override
-    public void setSort(@NotNull InstanceSortingStrategy strategy) {
+    public void setSort(@Nonnull InstanceSortingStrategy strategy) {
         sortingStrategy.onNext(strategy);
     }
 
     @Override
-    public void setSearch(@Nullable Pattern search) {
-        searchPattern.onNext(Optional.ofNullable(search));
+    public void setSearch(@Nullable String search) {
+        searchQuery.onNext(Optional.ofNullable(search));
     }
 
-    @NotNull
+    @Nullable
+    @Override
+    public String getSearch() {
+        return searchQuery.getValue().orElse(null);
+    }
+
+    @Nonnull
     @Override
     public Observable<InstancesList> getInstancesList() {
         return instancesList.observeOn(SwingSchedulers.edt());

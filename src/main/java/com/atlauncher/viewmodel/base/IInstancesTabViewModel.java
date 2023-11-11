@@ -42,11 +42,17 @@ public interface IInstancesTabViewModel {
     void setSort(@NotNull InstanceSortingStrategy strategy);
 
     /**
-     * Pattern to filter the search by.
+     * Query to filter the search by.
      *
      * @param search Query or null
      */
-    void setSearch(@Nullable Pattern search);
+    void setSearch(@Nullable String search);
+
+    /**
+     * @return Current query or Null
+     */
+    @Nullable
+    String getSearch();
 
     /**
      * Get an observable view state that includes title format.
