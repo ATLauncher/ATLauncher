@@ -20,25 +20,21 @@ package com.atlauncher.gui.tabs.instances;
 import java.awt.Dimension;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.util.regex.Pattern;
 
 import javax.swing.JTextField;
 
 import org.mini2Dx.gettext.GetText;
 
-import com.atlauncher.gui.tabs.InstancesTab;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.network.analytics.AnalyticsEvent;
 import com.atlauncher.viewmodel.base.IInstancesTabViewModel;
 import com.formdev.flatlaf.icons.FlatSearchIcon;
 
 public final class InstancesSearchField extends JTextField implements KeyListener {
-    private final InstancesTab parent;
     private final IInstancesTabViewModel viewModel;
 
-    public InstancesSearchField(final InstancesTab parent, final IInstancesTabViewModel viewModel) {
+    public InstancesSearchField(final IInstancesTabViewModel viewModel) {
         super(16);
-        this.parent = parent;
         this.viewModel = viewModel;
 
         this.setMaximumSize(new Dimension(190, 23));

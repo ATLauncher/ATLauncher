@@ -32,7 +32,6 @@ import org.mini2Dx.gettext.GetText;
 import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.gui.dialogs.ImportInstanceDialog;
-import com.atlauncher.gui.tabs.InstancesTab;
 import com.atlauncher.utils.sort.InstanceSortingStrategies;
 import com.atlauncher.utils.sort.InstanceSortingStrategy;
 import com.atlauncher.viewmodel.base.IInstancesTabViewModel;
@@ -44,9 +43,9 @@ public final class InstancesNavigationPanel extends JPanel implements Relocaliza
     private final InstancesSearchField searchField;
     private final JComboBox<InstanceSortingStrategy> sortingBox = new JComboBox<>(InstanceSortingStrategies.values());
 
-    public InstancesNavigationPanel(final InstancesTab parent, final IInstancesTabViewModel viewModel) {
+    public InstancesNavigationPanel(final IInstancesTabViewModel viewModel) {
         this.viewModel = viewModel;
-        this.searchField = new InstancesSearchField(parent, viewModel);
+        this.searchField = new InstancesSearchField(viewModel);
         this.sortingBox.setMaximumSize(new Dimension(190, 23));
 
         this.sortingBox.setSelectedItem(viewModel.getSort());

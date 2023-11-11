@@ -28,14 +28,12 @@ import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.gui.card.InstanceCard;
 import com.atlauncher.gui.card.NilCard;
 import com.atlauncher.gui.panels.HierarchyPanel;
-import com.atlauncher.gui.tabs.InstancesTab;
 import com.atlauncher.viewmodel.base.IInstancesTabViewModel;
 
 public final class InstancesListPanel extends HierarchyPanel
         implements RelocalizationListener {
 
     private final IInstancesTabViewModel viewModel;
-    private final InstancesTab parent;
 
     private final NilCard nilCard = new NilCard(
             getNilMessage(),
@@ -44,9 +42,8 @@ public final class InstancesListPanel extends HierarchyPanel
                     NilCard.Action.createDownloadPackAction()
             });
 
-    public InstancesListPanel(final InstancesTab parent, final IInstancesTabViewModel viewModel) {
+    public InstancesListPanel(final IInstancesTabViewModel viewModel) {
         super(new GridBagLayout());
-        this.parent = parent;
         this.viewModel = viewModel;
     }
 

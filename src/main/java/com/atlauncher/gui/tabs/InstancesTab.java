@@ -60,8 +60,8 @@ public class InstancesTab extends HierarchyPanel implements Tab {
 
     @Override
     protected void onShow() {
-        navigationPanel = new InstancesNavigationPanel(this, viewModel);
-        instancesListPanel = new InstancesListPanel(this, viewModel);
+        navigationPanel = new InstancesNavigationPanel(viewModel);
+        instancesListPanel = new InstancesListPanel(viewModel);
         scrollPane = Utils.wrapInVerticalScroller(this.instancesListPanel, 16);
         this.add(this.navigationPanel, BorderLayout.NORTH);
         this.add(scrollPane, BorderLayout.CENTER);
