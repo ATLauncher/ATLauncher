@@ -18,11 +18,11 @@
 package com.atlauncher.managers;
 
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 import com.atlauncher.constants.Constants;
@@ -38,7 +38,8 @@ public class ModpacksChUpdateManager {
     /**
      * Modpacks.ch instance update checking
      */
-    private static final Map<UUID, BehaviorSubject<Optional<ModpacksChPackVersion>>> MODPACKS_CH_INSTANCE_LATEST_VERSION = new HashMap<>();
+    private static final Map<UUID, BehaviorSubject<Optional<ModpacksChPackVersion>>>
+        MODPACKS_CH_INSTANCE_LATEST_VERSION = new ConcurrentHashMap<>();
 
     /**
      * Get the update behavior subject for a given instance.
@@ -57,7 +58,7 @@ public class ModpacksChUpdateManager {
      * Get an observable for an instances update.
      * <p>
      * Please do not cast to a behavior subject.
-     * 
+     *
      * @param instance Instance to get an observable for
      * @return Update observable
      */
@@ -67,7 +68,7 @@ public class ModpacksChUpdateManager {
 
     /**
      * Get the latest version of an instance
-     * 
+     *
      * @param instance Instance to get version of
      * @return Latest version, or null if no newer version is found
      */

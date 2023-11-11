@@ -18,11 +18,11 @@
 package com.atlauncher.managers;
 
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.modrinth.ModrinthVersion;
@@ -36,7 +36,7 @@ public class ModrinthModpackUpdateManager {
      * Modrinth instance update checking
      */
     private static final Map<UUID, BehaviorSubject<Optional<ModrinthVersion>>>
-        MODRINTH_INSTANCE_LATEST_VERSION = new HashMap<>();
+        MODRINTH_INSTANCE_LATEST_VERSION = new ConcurrentHashMap<>();
 
     /**
      * Get the update behavior subject for a given instance.
