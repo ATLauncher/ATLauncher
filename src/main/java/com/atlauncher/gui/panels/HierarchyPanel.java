@@ -26,6 +26,7 @@ import javax.swing.JPanel;
 import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.managers.LogManager;
+import com.atlauncher.managers.PerformanceManager;
 
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
 import io.reactivex.rxjava3.disposables.Disposable;
@@ -40,12 +41,11 @@ import io.reactivex.rxjava3.disposables.Disposable;
  * If child class subscribes to Observables, use addDisposable to manage subscriptions.
  */
 public abstract class HierarchyPanel extends JPanel implements HierarchyListener {
+    private final CompositeDisposable disposablePool = new CompositeDisposable();
     /**
      * Used to keep track of the view model lifecycle.
      */
     private boolean isViewModelCreated = false;
-
-    private final CompositeDisposable disposablePool = new CompositeDisposable();
 
     public HierarchyPanel(LayoutManager layout) {
         super(layout);
@@ -71,31 +71,39 @@ public abstract class HierarchyPanel extends JPanel implements HierarchyListener
     /**
      * Add a disposable to be automatically cleared upon view destruction.
      */
-    public void addDisposable(Disposable disposable){
+    public void addDisposable(Disposable disposable) {
         disposablePool.add(disposable);
     }
 
     @Override
     public void hierarchyChanged(HierarchyEvent e) {
+        final String className = getClass().getSimpleName();
+
         if ((e.getChangeFlags() & HierarchyEvent.SHOWING_CHANGED) != 0) {
             if (isShowing()) {
                 if (!isViewModelCreated) {
-                    LogManager.debug("Creating view-model for: " + getClass().getName());
+                    LogManager.debug("Creating view-model for: " + className);
+                    PerformanceManager.start(className + ":ViewModel:Create");
                     createViewModel();
                     isViewModelCreated = true;
+                    PerformanceManager.end(className + ":ViewModel:Create");
                 }
-                LogManager.debug("Showing UI for: " + getClass().getName());
+                LogManager.debug("Showing UI for: " + className);
+                PerformanceManager.start(className + ":View:Create");
                 onShow();
+                PerformanceManager.end(className + ":View:Create");
             } else {
                 // A little trick here. We can guess the UI has not been created yet if the view model hasn't.
                 // Thus, no need to destroy.
                 if (!isViewModelCreated) return;
-                LogManager.debug("Destroying UI for: " + getClass().getName());
+                LogManager.debug("Destroying UI for: " + className);
+                PerformanceManager.start(className + ":View:Destroy");
                 // Stop processes
                 disposablePool.clear();
                 // Destroy layer so the UI can hurry on
                 onDestroy();
                 System.gc(); // Run GC to clear out any now stale data
+                PerformanceManager.end(className + ":View:Destroy");
             }
         }
     }
