@@ -87,11 +87,6 @@ public final class InstancesListPanel extends JPanel
                     gbc.gridy++;
                 });
             }
-
-            validate();
-            repaint();
-            parent.validate();
-            parent.repaint();
         });
     }
 
