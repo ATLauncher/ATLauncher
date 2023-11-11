@@ -20,20 +20,18 @@ package com.atlauncher.gui.tabs.instances;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 
-import javax.swing.JPanel;
-
 import org.mini2Dx.gettext.GetText;
 
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.constants.UIConstants;
 import com.atlauncher.evnt.listener.RelocalizationListener;
-import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.gui.card.InstanceCard;
 import com.atlauncher.gui.card.NilCard;
+import com.atlauncher.gui.panels.HierarchyPanel;
 import com.atlauncher.gui.tabs.InstancesTab;
 import com.atlauncher.viewmodel.base.IInstancesTabViewModel;
 
-public final class InstancesListPanel extends JPanel
+public final class InstancesListPanel extends HierarchyPanel
         implements RelocalizationListener {
 
     private final IInstancesTabViewModel viewModel;
@@ -50,8 +48,6 @@ public final class InstancesListPanel extends JPanel
         super(new GridBagLayout());
         this.parent = parent;
         this.viewModel = viewModel;
-        this.createView();
-        RelocalizationManager.addListener(this);
     }
 
     private static String getNilMessage() {
@@ -67,8 +63,7 @@ public final class InstancesListPanel extends JPanel
         gbc.insets = UIConstants.FIELD_INSETS;
         gbc.fill = GridBagConstraints.BOTH;
 
-        viewModel.getInstancesList().subscribe(instancesList -> {
-
+        addDisposable(viewModel.getInstancesList().subscribe(instancesList -> {
             gbc.gridy = 0;
             removeAll();
 
@@ -87,7 +82,7 @@ public final class InstancesListPanel extends JPanel
                     gbc.gridy++;
                 });
             }
-        });
+        }));
     }
 
     @Override
@@ -97,5 +92,19 @@ public final class InstancesListPanel extends JPanel
                 NilCard.Action.createCreatePackAction(),
                 NilCard.Action.createDownloadPackAction()
         });
+    }
+
+    @Override
+    protected void createViewModel() {
+    }
+
+    @Override
+    protected void onShow() {
+        createView();
+    }
+
+    @Override
+    protected void onDestroy() {
+        removeAll();
     }
 }
