@@ -19,7 +19,6 @@ package com.atlauncher.viewmodel.impl;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
@@ -56,24 +55,23 @@ import io.reactivex.rxjava3.subjects.BehaviorSubject;
  */
 public class InstancesTabViewModel implements IInstancesTabViewModel, SettingsListener {
 
-    private final BehaviorSubject<String> instanceTitleFormat =
-        BehaviorSubject.createDefault(App.settings.instanceTitleFormat);
+    private final BehaviorSubject<String> instanceTitleFormat = BehaviorSubject
+            .createDefault(App.settings.instanceTitleFormat);
 
-    private final BehaviorSubject<Optional<Pattern>> searchPattern =
-        BehaviorSubject.createDefault(Optional.empty());
+    private final BehaviorSubject<Optional<Pattern>> searchPattern = BehaviorSubject.createDefault(Optional.empty());
 
-    private final BehaviorSubject<InstanceSortingStrategy> sortingStrategy =
-        BehaviorSubject.createDefault(App.settings.defaultInstanceSorting);
+    private final BehaviorSubject<InstanceSortingStrategy> sortingStrategy = BehaviorSubject
+            .createDefault(App.settings.defaultInstanceSorting);
 
     /**
      * First filter out instances.
      * <p>
-     * This is the first operation, as it lowers the computation time for further operations.
+     * This is the first operation, as it lowers the computation time for further
+     * operations.
      */
     @SuppressWarnings("unchecked") // it works trust me
-    public Observable<List<Instance>> filteredInstances =
-        Observable.combineLatestArray(
-            new ObservableSource[]{InstanceManager.getInstancesObservable(), searchPattern, sortingStrategy},
+    public Observable<List<Instance>> filteredInstances = Observable.combineLatestArray(
+            new ObservableSource[] { InstanceManager.getInstancesObservable(), searchPattern, sortingStrategy },
             it -> {
                 List<Instance> instancesSorted = (List<Instance>) it[0];
                 Optional<Pattern> searchPattern = (Optional<Pattern>) it[1];
@@ -93,26 +91,17 @@ public class InstancesTabViewModel implements IInstancesTabViewModel, SettingsLi
             }).subscribeOn(Schedulers.computation());
 
     /**
-     * Second operation to sort the instances
+     * second operation is to derive if they have an update or not
      */
-    private final Observable<List<Instance>> instancesSorted = filteredInstances
-        .map(it ->
-            it.stream()
-                .sorted(Comparator.comparing(i -> i.launcher.name))
-                .collect(Collectors.toList())
-        );
+    private final Observable<List<InstanceUIModel>> instanceModels = filteredInstances.flatMap(instances -> {
+        if (instances.isEmpty())
+            return Observable.just(Collections.emptyList());
 
-    /**
-     * Third operation is to derive if they have an update or not
-     */
-    private final Observable<List<InstanceUIModel>> instanceModels = instancesSorted.flatMap(instances -> {
-            if (instances.isEmpty())
-                return Observable.just(Collections.emptyList());
-
-            return Observable.combineLatest(
-                instances.stream().map(instance ->
-                    getHasUpdateObservable(instance).map(hasUpdate -> new InstanceUIModel(instance, hasUpdate))
-                ).collect(Collectors.toList()),
+        return Observable.combineLatest(
+                instances.stream()
+                        .map(instance -> getHasUpdateObservable(instance)
+                                .map(hasUpdate -> new InstanceUIModel(instance, hasUpdate)))
+                        .collect(Collectors.toList()),
                 objects -> {
                     ArrayList<InstanceUIModel> models = new ArrayList<>();
                     for (Object obj : objects) {
@@ -124,14 +113,13 @@ public class InstancesTabViewModel implements IInstancesTabViewModel, SettingsLi
                     }
                     return models;
                 });
-        }
-    );
+    });
 
     /**
-     * Fourth operation is to create a UI state object.
+     * Third operation is to create a UI state object.
      */
-    public Observable<InstancesList> instancesList =
-        Observable.combineLatest(instanceModels, instanceTitleFormat, InstancesList::new);
+    public Observable<InstancesList> instancesList = Observable.combineLatest(instanceModels, instanceTitleFormat,
+            InstancesList::new);
 
     public InstancesTabViewModel() {
         SettingsManager.addListener(this);
@@ -172,27 +160,25 @@ public class InstancesTabViewModel implements IInstancesTabViewModel, SettingsLi
             return BehaviorSubject.createDefault(false);
         } else if (instance.isExternalPack()) {
             if (instance.isModpacksChPack()) {
-                return ModpacksChUpdateManager.getObservable(instance).map(latestVersion ->
-                    latestVersion.isPresent() && latestVersion.get().id != instance.launcher.modpacksChPackVersionManifest.id
-                );
+                return ModpacksChUpdateManager.getObservable(instance).map(latestVersion -> latestVersion.isPresent()
+                        && latestVersion.get().id != instance.launcher.modpacksChPackVersionManifest.id);
             } else if (instance.isCurseForgePack()) {
-                return CurseForgeUpdateManager.getObservable(instance).map(latestVersion ->
-                    latestVersion.isPresent() && latestVersion.get().id != instance.launcher.curseForgeFile.id
-                );
+                return CurseForgeUpdateManager.getObservable(instance).map(latestVersion -> latestVersion.isPresent()
+                        && latestVersion.get().id != instance.launcher.curseForgeFile.id);
             } else if (instance.isTechnicPack()) {
                 if (instance.isTechnicSolderPack()) {
-                    return TechnicModpackUpdateManager.getSolderObservable(instance).map(latestVersion ->
-                        latestVersion.isPresent() && !latestVersion.get().latest.equals(instance.launcher.version)
-                    );
+                    return TechnicModpackUpdateManager.getSolderObservable(instance)
+                            .map(latestVersion -> latestVersion.isPresent()
+                                    && !latestVersion.get().latest.equals(instance.launcher.version));
                 } else {
-                    return TechnicModpackUpdateManager.getObservable(instance).map(latestVersion ->
-                        latestVersion.isPresent() && !latestVersion.get().version.equals(instance.launcher.version)
-                    );
+                    return TechnicModpackUpdateManager.getObservable(instance)
+                            .map(latestVersion -> latestVersion.isPresent()
+                                    && !latestVersion.get().version.equals(instance.launcher.version));
                 }
             } else if (instance.isModrinthPack()) {
-                return ModrinthModpackUpdateManager.getObservable(instance).map(latestVersion ->
-                    latestVersion.isPresent() && !latestVersion.get().id.equals(instance.launcher.modrinthVersion.id)
-                );
+                return ModrinthModpackUpdateManager.getObservable(instance)
+                        .map(latestVersion -> latestVersion.isPresent()
+                                && !latestVersion.get().id.equals(instance.launcher.modrinthVersion.id));
             }
         } else {
             Pack pack = instance.getPack();
@@ -203,7 +189,7 @@ public class InstancesTabViewModel implements IInstancesTabViewModel, SettingsLi
                     // version of the Pack and that the latest version of the Pack is not restricted
                     // to disallow updates.
                     if (!pack.getLatestVersion().version.equalsIgnoreCase(instance.launcher.version)
-                        && !pack.isLatestVersionNoUpdate()) {
+                            && !pack.isLatestVersionNoUpdate()) {
                         return BehaviorSubject.createDefault(true);
                     }
                 }
