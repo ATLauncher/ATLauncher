@@ -28,6 +28,7 @@ import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.gui.card.InstanceCard;
 import com.atlauncher.gui.card.NilCard;
 import com.atlauncher.gui.panels.HierarchyPanel;
+import com.atlauncher.managers.PerformanceManager;
 import com.atlauncher.viewmodel.base.IInstancesTabViewModel;
 
 public final class InstancesListPanel extends HierarchyPanel
@@ -45,6 +46,7 @@ public final class InstancesListPanel extends HierarchyPanel
     public InstancesListPanel(final IInstancesTabViewModel viewModel) {
         super(new GridBagLayout());
         this.viewModel = viewModel;
+        PerformanceManager.start("Displaying Instances");
     }
 
     private static String getNilMessage() {
@@ -82,6 +84,7 @@ public final class InstancesListPanel extends HierarchyPanel
 
             validate();
             repaint();
+            PerformanceManager.end("Displaying Instances");
         }));
     }
 

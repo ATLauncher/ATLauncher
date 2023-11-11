@@ -130,7 +130,10 @@ public class InstancesTabViewModel implements IInstancesTabViewModel, SettingsLi
      * Third operation is to create a UI state object.
      */
     public Observable<InstancesList> instancesList = Observable.combineLatest(instanceModels, instanceTitleFormat,
-            InstancesList::new);
+            InstancesList::new)
+        .replay(1)
+        .autoConnect()
+        .observeOn(SwingSchedulers.edt());
 
     public InstancesTabViewModel() {
         SettingsManager.addListener(this);
@@ -165,7 +168,7 @@ public class InstancesTabViewModel implements IInstancesTabViewModel, SettingsLi
     @Nonnull
     @Override
     public Observable<InstancesList> getInstancesList() {
-        return instancesList.observeOn(SwingSchedulers.edt());
+        return instancesList;
     }
 
     @Override
