@@ -79,6 +79,9 @@ public final class InstancesListPanel extends HierarchyPanel
                     gbc.gridy++;
                 });
             }
+
+            validate();
+            repaint();
         }));
     }
 
