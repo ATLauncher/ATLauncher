@@ -29,6 +29,8 @@ import java.util.stream.Stream;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import org.jetbrains.annotations.NotNull;
+
 import com.atlauncher.App;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.Pack;
@@ -41,6 +43,7 @@ import com.atlauncher.managers.InstanceManager;
 import com.atlauncher.managers.ModpacksChUpdateManager;
 import com.atlauncher.managers.ModrinthModpackUpdateManager;
 import com.atlauncher.managers.TechnicModpackUpdateManager;
+import com.atlauncher.utils.sort.InstanceSortingStrategies;
 import com.atlauncher.utils.sort.InstanceSortingStrategy;
 import com.atlauncher.viewmodel.base.IInstancesTabViewModel;
 import com.gitlab.doomsdayrs.lib.rxswing.schedulers.SwingSchedulers;
@@ -68,7 +71,7 @@ public class InstancesTabViewModel implements IInstancesTabViewModel, SettingsLi
             )
         );
 
-    private final BehaviorSubject<InstanceSortingStrategy> sortingStrategy =
+    private final BehaviorSubject<InstanceSortingStrategies> sortingStrategy =
         BehaviorSubject.createDefault(App.settings.defaultInstanceSorting);
 
     /**
@@ -138,8 +141,14 @@ public class InstancesTabViewModel implements IInstancesTabViewModel, SettingsLi
     }
 
     @Override
-    public void setSort(@Nonnull InstanceSortingStrategy strategy) {
+    public void setSort(@Nonnull InstanceSortingStrategies strategy) {
         sortingStrategy.onNext(strategy);
+    }
+
+    @NotNull
+    @Override
+    public InstanceSortingStrategies getSort() {
+        return sortingStrategy.getValue();
     }
 
     @Override

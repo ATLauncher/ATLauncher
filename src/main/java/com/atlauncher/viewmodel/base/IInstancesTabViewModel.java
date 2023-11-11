@@ -26,7 +26,7 @@ import javax.annotation.Nullable;
 import org.jetbrains.annotations.NotNull;
 
 import com.atlauncher.gui.models.InstanceUIModel;
-import com.atlauncher.utils.sort.InstanceSortingStrategy;
+import com.atlauncher.utils.sort.InstanceSortingStrategies;
 
 import io.reactivex.rxjava3.core.Observable;
 
@@ -39,7 +39,13 @@ public interface IInstancesTabViewModel {
      *
      * @param strategy Provided strategy
      */
-    void setSort(@NotNull InstanceSortingStrategy strategy);
+    void setSort(@NotNull InstanceSortingStrategies strategy);
+
+    /**
+     * @return Get current instance sorting strategy
+     */
+    @Nonnull
+    InstanceSortingStrategies getSort();
 
     /**
      * Query to filter the search by.
