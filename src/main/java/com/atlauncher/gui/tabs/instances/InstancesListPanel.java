@@ -71,20 +71,21 @@ public final class InstancesListPanel extends JPanel
 
             gbc.gridy = 0;
             removeAll();
-            instancesList.instances.forEach(instance -> {
-                this.add(
-                    new InstanceCard(
-                        instance.instance,
-                        instance.hasUpdate,
-                        instancesList.instanceTitleFormat
-                    ),
-                    gbc
-                );
-                gbc.gridy++;
-            });
 
             if (instancesList.instances.isEmpty()) {
                 this.add(this.nilCard, gbc);
+            } else {
+                instancesList.instances.forEach(instance -> {
+                    this.add(
+                        new InstanceCard(
+                            instance.instance,
+                            instance.hasUpdate,
+                            instancesList.instanceTitleFormat
+                        ),
+                        gbc
+                    );
+                    gbc.gridy++;
+                });
             }
 
             validate();
