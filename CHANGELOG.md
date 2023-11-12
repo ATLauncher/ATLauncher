@@ -12,3 +12,4 @@ This changelog only contains the changes that are unreleased. For changes for in
 
 ### Misc
 - Implement HierarchyPanel in InstancesTab [#841]
+- Defer Image loading for ImagePanel [#846]

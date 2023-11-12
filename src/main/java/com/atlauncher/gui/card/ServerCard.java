@@ -73,7 +73,7 @@ public class ServerCard extends CollapsiblePanel implements RelocalizationListen
     public ServerCard(Server server) {
         super(server);
         this.server = server;
-        this.image = new ImagePanel(server.getImage().getImage());
+        this.image = new ImagePanel(() -> server.getImage().getImage());
         JSplitPane splitter = new JSplitPane();
         splitter.setLeftComponent(this.image);
         JPanel rightPanel = new JPanel();

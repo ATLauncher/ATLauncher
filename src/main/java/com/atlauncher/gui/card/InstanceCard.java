@@ -167,7 +167,7 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
     public InstanceCard(Instance instance, boolean hasUpdate, String instanceTitleFormat) {
         super(instance, instanceTitleFormat);
         this.instance = instance;
-        this.image = new ImagePanel(instance.getImage().getImage());
+        this.image = new ImagePanel(()-> instance.getImage().getImage());
         this.hasUpdate = hasUpdate;
 
         JSplitPane splitter = new JSplitPane();

@@ -78,7 +78,7 @@ public class NilCard extends JPanel implements RelocalizationListener {
 
         JSplitPane splitter = new JSplitPane();
         splitter.setEnabled(false);
-        splitter.setLeftComponent(new ImagePanel(defaultImage));
+        splitter.setLeftComponent(new ImagePanel(() -> defaultImage));
         splitter.setRightComponent(this.column);
         splitter.setBorder(BorderFactory.createEmptyBorder());
 
