@@ -26,8 +26,10 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import com.atlauncher.App;
 import com.atlauncher.data.Instance;
@@ -41,6 +43,7 @@ import com.atlauncher.managers.InstanceManager;
 import com.atlauncher.managers.ModpacksChUpdateManager;
 import com.atlauncher.managers.ModrinthModpackUpdateManager;
 import com.atlauncher.managers.TechnicModpackUpdateManager;
+import com.atlauncher.utils.sort.InstanceSortingStrategies;
 import com.atlauncher.utils.sort.InstanceSortingStrategy;
 import com.atlauncher.viewmodel.base.IInstancesTabViewModel;
 import com.gitlab.doomsdayrs.lib.rxswing.schedulers.SwingSchedulers;
@@ -58,10 +61,18 @@ public class InstancesTabViewModel implements IInstancesTabViewModel, SettingsLi
     private final BehaviorSubject<String> instanceTitleFormat = BehaviorSubject
             .createDefault(App.settings.instanceTitleFormat);
 
-    private final BehaviorSubject<Optional<Pattern>> searchPattern = BehaviorSubject.createDefault(Optional.empty());
+    private final BehaviorSubject<Optional<String>> searchQuery =
+        BehaviorSubject.createDefault(Optional.empty());
 
-    private final BehaviorSubject<InstanceSortingStrategy> sortingStrategy = BehaviorSubject
-            .createDefault(App.settings.defaultInstanceSorting);
+    private final Observable<Optional<Pattern>> searchPattern =
+        searchQuery.map(queryOptional ->
+            queryOptional.map(query ->
+                Pattern.compile(Pattern.quote(query), Pattern.CASE_INSENSITIVE)
+            )
+        );
+
+    private final BehaviorSubject<InstanceSortingStrategies> sortingStrategy =
+        BehaviorSubject.createDefault(App.settings.defaultInstanceSorting);
 
     /**
      * First filter out instances.
@@ -88,7 +99,7 @@ public class InstancesTabViewModel implements IInstancesTabViewModel, SettingsLi
                 }
 
                 return stream.collect(Collectors.toList());
-            }).subscribeOn(Schedulers.computation());
+            }).subscribeOn(Schedulers.io());
 
     /**
      * second operation is to derive if they have an update or not
@@ -119,7 +130,10 @@ public class InstancesTabViewModel implements IInstancesTabViewModel, SettingsLi
      * Third operation is to create a UI state object.
      */
     public Observable<InstancesList> instancesList = Observable.combineLatest(instanceModels, instanceTitleFormat,
-            InstancesList::new);
+            InstancesList::new)
+        .replay(1)
+        .autoConnect()
+        .observeOn(SwingSchedulers.edt());
 
     public InstancesTabViewModel() {
         SettingsManager.addListener(this);
@@ -130,19 +144,43 @@ public class InstancesTabViewModel implements IInstancesTabViewModel, SettingsLi
     }
 
     @Override
-    public void setSort(@NotNull InstanceSortingStrategy strategy) {
+    public void setSort(@Nonnull InstanceSortingStrategies strategy) {
         sortingStrategy.onNext(strategy);
-    }
-
-    @Override
-    public void setSearch(@Nullable Pattern search) {
-        searchPattern.onNext(Optional.ofNullable(search));
     }
 
     @NotNull
     @Override
+    public InstanceSortingStrategies getSort() {
+        return sortingStrategy.getValue();
+    }
+
+    @Override
+    public void setSearch(@Nullable String search) {
+        searchQuery.onNext(Optional.ofNullable(search));
+    }
+
+    @Nullable
+    @Override
+    public String getSearch() {
+        return searchQuery.getValue().orElse(null);
+    }
+
+    @Nonnull
+    @Override
     public Observable<InstancesList> getInstancesList() {
-        return instancesList.observeOn(SwingSchedulers.edt());
+        return instancesList;
+    }
+
+    private int scrollValue = 0;
+
+    @Override
+    public void setScroll(int value) {
+        scrollValue = value;
+    }
+
+    @Override
+    public int getScroll() {
+        return scrollValue;
     }
 
     @Override

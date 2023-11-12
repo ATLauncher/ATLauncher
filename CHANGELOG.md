@@ -11,3 +11,4 @@ This changelog only contains the changes that are unreleased. For changes for in
 - NPE in Update Managers due to concurrency
 
 ### Misc
+- Implement HierarchyPanel in InstancesTab [#841]

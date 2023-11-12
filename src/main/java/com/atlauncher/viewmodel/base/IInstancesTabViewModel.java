@@ -26,7 +26,7 @@ import javax.annotation.Nullable;
 import org.jetbrains.annotations.NotNull;
 
 import com.atlauncher.gui.models.InstanceUIModel;
-import com.atlauncher.utils.sort.InstanceSortingStrategy;
+import com.atlauncher.utils.sort.InstanceSortingStrategies;
 
 import io.reactivex.rxjava3.core.Observable;
 
@@ -39,14 +39,26 @@ public interface IInstancesTabViewModel {
      *
      * @param strategy Provided strategy
      */
-    void setSort(@NotNull InstanceSortingStrategy strategy);
+    void setSort(@NotNull InstanceSortingStrategies strategy);
 
     /**
-     * Pattern to filter the search by.
+     * @return Get current instance sorting strategy
+     */
+    @Nonnull
+    InstanceSortingStrategies getSort();
+
+    /**
+     * Query to filter the search by.
      *
      * @param search Query or null
      */
-    void setSearch(@Nullable Pattern search);
+    void setSearch(@Nullable String search);
+
+    /**
+     * @return Current query or Null
+     */
+    @Nullable
+    String getSearch();
 
     /**
      * Get an observable view state that includes title format.
@@ -55,6 +67,17 @@ public interface IInstancesTabViewModel {
      */
     @Nonnull
     Observable<InstancesList> getInstancesList();
+
+    /**
+     * Save the current scroll state
+     * @param value currentScroll
+     */
+    void setScroll(int value);
+
+    /**
+     * @return Scroll to resume too.
+     */
+    int getScroll();
 
     /**
      * View state object.

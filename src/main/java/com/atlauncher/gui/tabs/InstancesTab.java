@@ -19,30 +19,28 @@ package com.atlauncher.gui.tabs;
 
 import java.awt.BorderLayout;
 
-import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
 import org.mini2Dx.gettext.GetText;
 
+import com.atlauncher.gui.panels.HierarchyPanel;
 import com.atlauncher.gui.tabs.instances.InstancesListPanel;
 import com.atlauncher.gui.tabs.instances.InstancesNavigationPanel;
 import com.atlauncher.utils.Utils;
 import com.atlauncher.viewmodel.base.IInstancesTabViewModel;
 import com.atlauncher.viewmodel.impl.InstancesTabViewModel;
 
-public class InstancesTab extends JPanel implements Tab {
+public class InstancesTab extends HierarchyPanel implements Tab {
     private static final long serialVersionUID = -969812552965390610L;
 
-    private final IInstancesTabViewModel viewModel = new InstancesTabViewModel();
-    private final InstancesNavigationPanel navigationPanel = new InstancesNavigationPanel(this, viewModel);
-    private final InstancesListPanel instancesListPanel = new InstancesListPanel(this, viewModel);
-    private final JScrollPane scrollPane = Utils.wrapInVerticalScroller(this.instancesListPanel, 16);
+    private IInstancesTabViewModel viewModel;
+    private InstancesNavigationPanel navigationPanel;
+    private InstancesListPanel instancesListPanel;
+    private JScrollPane scrollPane;
 
     public InstancesTab() {
+        super(new BorderLayout());
         this.setName("instancesPanel");
-        this.setLayout(new BorderLayout());
-        this.add(this.navigationPanel, BorderLayout.NORTH);
-        this.add(scrollPane, BorderLayout.CENTER);
     }
 
     @Override
@@ -53,5 +51,39 @@ public class InstancesTab extends JPanel implements Tab {
     @Override
     public String getAnalyticsScreenViewName() {
         return "Instances";
+    }
+
+    @Override
+    protected void createViewModel() {
+        viewModel = new InstancesTabViewModel();
+    }
+
+    @Override
+    protected void onShow() {
+        navigationPanel = new InstancesNavigationPanel(viewModel);
+        instancesListPanel = new InstancesListPanel(this, viewModel);
+        scrollPane = Utils.wrapInVerticalScroller(this.instancesListPanel, 16);
+        this.add(this.navigationPanel, BorderLayout.NORTH);
+        this.add(scrollPane, BorderLayout.CENTER);
+    }
+
+    @Override
+    protected void onDestroy() {
+        viewModel.setScroll(scrollPane.getVerticalScrollBar().getValue());
+        removeAll();
+        navigationPanel = null;
+        instancesListPanel = null;
+        scrollPane = null;
+    }
+
+    /**
+     * Set the current scroll.
+     * <p>
+     * Avoid using this as much as possible.
+     *
+     * @param scroll scroll value
+     */
+    public void setScroll(int scroll) {
+        scrollPane.getVerticalScrollBar().setValue(scroll);
     }
 }

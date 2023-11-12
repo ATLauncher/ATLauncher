@@ -20,24 +20,25 @@ package com.atlauncher.gui.tabs.instances;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 
-import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 
 import org.mini2Dx.gettext.GetText;
 
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.constants.UIConstants;
 import com.atlauncher.evnt.listener.RelocalizationListener;
-import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.gui.card.InstanceCard;
 import com.atlauncher.gui.card.NilCard;
+import com.atlauncher.gui.panels.HierarchyPanel;
 import com.atlauncher.gui.tabs.InstancesTab;
+import com.atlauncher.managers.PerformanceManager;
 import com.atlauncher.viewmodel.base.IInstancesTabViewModel;
 
-public final class InstancesListPanel extends JPanel
+public final class InstancesListPanel extends HierarchyPanel
         implements RelocalizationListener {
 
+    private final InstancesTab instancesTab;
     private final IInstancesTabViewModel viewModel;
-    private final InstancesTab parent;
 
     private final NilCard nilCard = new NilCard(
             getNilMessage(),
@@ -46,12 +47,11 @@ public final class InstancesListPanel extends JPanel
                     NilCard.Action.createDownloadPackAction()
             });
 
-    public InstancesListPanel(final InstancesTab parent, final IInstancesTabViewModel viewModel) {
+    public InstancesListPanel(InstancesTab instancesTab, final IInstancesTabViewModel viewModel) {
         super(new GridBagLayout());
-        this.parent = parent;
+        this.instancesTab = instancesTab;
         this.viewModel = viewModel;
-        this.createView();
-        RelocalizationManager.addListener(this);
+        PerformanceManager.start("Displaying Instances");
     }
 
     private static String getNilMessage() {
@@ -67,31 +67,33 @@ public final class InstancesListPanel extends JPanel
         gbc.insets = UIConstants.FIELD_INSETS;
         gbc.fill = GridBagConstraints.BOTH;
 
-        viewModel.getInstancesList().subscribe(instancesList -> {
-
+        addDisposable(viewModel.getInstancesList().subscribe(instancesList -> {
             gbc.gridy = 0;
             removeAll();
-            instancesList.instances.forEach(instance -> {
-                this.add(
-                    new InstanceCard(
-                        instance.instance,
-                        instance.hasUpdate,
-                        instancesList.instanceTitleFormat
-                    ),
-                    gbc
-                );
-                gbc.gridy++;
-            });
 
             if (instancesList.instances.isEmpty()) {
                 this.add(this.nilCard, gbc);
+            } else {
+                instancesList.instances.forEach(instance -> {
+                    this.add(
+                        new InstanceCard(
+                            instance.instance,
+                            instance.hasUpdate,
+                            instancesList.instanceTitleFormat
+                        ),
+                        gbc
+                    );
+                    gbc.gridy++;
+                });
             }
 
             validate();
             repaint();
-            parent.validate();
-            parent.repaint();
-        });
+
+            // After repainting is done, let scroll view resume
+            SwingUtilities.invokeLater(()-> instancesTab.setScroll(viewModel.getScroll()));
+            PerformanceManager.end("Displaying Instances");
+        }));
     }
 
     @Override
@@ -101,5 +103,19 @@ public final class InstancesListPanel extends JPanel
                 NilCard.Action.createCreatePackAction(),
                 NilCard.Action.createDownloadPackAction()
         });
+    }
+
+    @Override
+    protected void createViewModel() {
+    }
+
+    @Override
+    protected void onShow() {
+        createView();
+    }
+
+    @Override
+    protected void onDestroy() {
+        removeAll();
     }
 }
