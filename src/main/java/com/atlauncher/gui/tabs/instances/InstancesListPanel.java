@@ -20,6 +20,8 @@ package com.atlauncher.gui.tabs.instances;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 
+import javax.swing.SwingUtilities;
+
 import org.mini2Dx.gettext.GetText;
 
 import com.atlauncher.builders.HTMLBuilder;
@@ -28,12 +30,14 @@ import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.gui.card.InstanceCard;
 import com.atlauncher.gui.card.NilCard;
 import com.atlauncher.gui.panels.HierarchyPanel;
+import com.atlauncher.gui.tabs.InstancesTab;
 import com.atlauncher.managers.PerformanceManager;
 import com.atlauncher.viewmodel.base.IInstancesTabViewModel;
 
 public final class InstancesListPanel extends HierarchyPanel
         implements RelocalizationListener {
 
+    private final InstancesTab instancesTab;
     private final IInstancesTabViewModel viewModel;
 
     private final NilCard nilCard = new NilCard(
@@ -43,8 +47,9 @@ public final class InstancesListPanel extends HierarchyPanel
                     NilCard.Action.createDownloadPackAction()
             });
 
-    public InstancesListPanel(final IInstancesTabViewModel viewModel) {
+    public InstancesListPanel(InstancesTab instancesTab, final IInstancesTabViewModel viewModel) {
         super(new GridBagLayout());
+        this.instancesTab = instancesTab;
         this.viewModel = viewModel;
         PerformanceManager.start("Displaying Instances");
     }
@@ -84,6 +89,9 @@ public final class InstancesListPanel extends HierarchyPanel
 
             validate();
             repaint();
+
+            // After repainting is done, let scroll view resume
+            SwingUtilities.invokeLater(()-> instancesTab.setScroll(viewModel.getScroll()));
             PerformanceManager.end("Displaying Instances");
         }));
     }

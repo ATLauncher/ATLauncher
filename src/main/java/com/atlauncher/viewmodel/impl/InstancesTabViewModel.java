@@ -171,6 +171,18 @@ public class InstancesTabViewModel implements IInstancesTabViewModel, SettingsLi
         return instancesList;
     }
 
+    private int scrollValue = 0;
+
+    @Override
+    public void setScroll(int value) {
+        scrollValue = value;
+    }
+
+    @Override
+    public int getScroll() {
+        return scrollValue;
+    }
+
     @Override
     public void onSettingsSaved() {
         instanceTitleFormat.onNext(App.settings.instanceTitleFormat);

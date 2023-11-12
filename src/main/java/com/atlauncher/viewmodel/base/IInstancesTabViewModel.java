@@ -69,6 +69,17 @@ public interface IInstancesTabViewModel {
     Observable<InstancesList> getInstancesList();
 
     /**
+     * Save the current scroll state
+     * @param value currentScroll
+     */
+    void setScroll(int value);
+
+    /**
+     * @return Scroll to resume too.
+     */
+    int getScroll();
+
+    /**
      * View state object.
      */
     class InstancesList {

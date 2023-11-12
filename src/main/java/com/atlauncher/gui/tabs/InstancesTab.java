@@ -61,7 +61,7 @@ public class InstancesTab extends HierarchyPanel implements Tab {
     @Override
     protected void onShow() {
         navigationPanel = new InstancesNavigationPanel(viewModel);
-        instancesListPanel = new InstancesListPanel(viewModel);
+        instancesListPanel = new InstancesListPanel(this, viewModel);
         scrollPane = Utils.wrapInVerticalScroller(this.instancesListPanel, 16);
         this.add(this.navigationPanel, BorderLayout.NORTH);
         this.add(scrollPane, BorderLayout.CENTER);
@@ -69,9 +69,21 @@ public class InstancesTab extends HierarchyPanel implements Tab {
 
     @Override
     protected void onDestroy() {
+        viewModel.setScroll(scrollPane.getVerticalScrollBar().getValue());
         removeAll();
         navigationPanel = null;
         instancesListPanel = null;
         scrollPane = null;
+    }
+
+    /**
+     * Set the current scroll.
+     * <p>
+     * Avoid using this as much as possible.
+     *
+     * @param scroll scroll value
+     */
+    public void setScroll(int scroll) {
+        scrollPane.getVerticalScrollBar().setValue(scroll);
     }
 }
