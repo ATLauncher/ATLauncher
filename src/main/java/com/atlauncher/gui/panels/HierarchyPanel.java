@@ -22,6 +22,7 @@ import java.awt.event.HierarchyEvent;
 import java.awt.event.HierarchyListener;
 
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 
 import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.RelocalizationManager;
@@ -46,6 +47,13 @@ public abstract class HierarchyPanel extends JPanel implements HierarchyListener
      * Used to keep track of the view model lifecycle.
      */
     private boolean isViewModelCreated = false;
+
+    /**
+     * Used to keep track of view state.
+     * <p>
+     * We do not use isShowing because that returns true even if the view is not fully created yet.
+     */
+    private boolean isViewCreated = false;
 
     public HierarchyPanel(LayoutManager layout) {
         super(layout);
@@ -91,6 +99,8 @@ public abstract class HierarchyPanel extends JPanel implements HierarchyListener
                 LogManager.debug("Showing UI for: " + className);
                 PerformanceManager.start(className + ":View:Create");
                 onShow();
+                // Mark view as created for invokeLater to work properly
+                isViewCreated = true;
                 PerformanceManager.end(className + ":View:Create");
             } else {
                 // A little trick here. We can guess the UI has not been created yet if the view model hasn't.
@@ -102,6 +112,7 @@ public abstract class HierarchyPanel extends JPanel implements HierarchyListener
                 disposablePool.clear();
                 // Destroy layer so the UI can hurry on
                 onDestroy();
+                isViewCreated = false;
                 System.gc(); // Run GC to clear out any now stale data
                 PerformanceManager.end(className + ":View:Destroy");
             }
@@ -131,4 +142,18 @@ public abstract class HierarchyPanel extends JPanel implements HierarchyListener
      * This is invoked when this panel is no longer visible.
      */
     protected abstract void onDestroy();
+
+    /**
+     * Override to SwingUtilities.invokeLater, providing view state awareness.
+     *
+     * @param runnable Action to run the event cycle while the view is still present.
+     */
+    protected void invokeLater(Runnable runnable) {
+        SwingUtilities.invokeLater(() -> {
+            if (isViewCreated) {
+                runnable.run();
+            }
+        });
+        ;
+    }
 }

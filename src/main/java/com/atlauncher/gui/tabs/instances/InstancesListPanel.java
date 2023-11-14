@@ -100,7 +100,7 @@ public final class InstancesListPanel extends HierarchyPanel
             repaint();
 
             // After repainting is done, let scroll view resume
-            SwingUtilities.invokeLater(()-> instancesTab.setScroll(viewModel.getScroll()));
+            invokeLater(()-> instancesTab.setScroll(viewModel.getScroll()));
             PerformanceManager.end("Displaying Instances");
         }));
     }
