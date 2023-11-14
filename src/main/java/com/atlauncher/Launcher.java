@@ -157,6 +157,7 @@ public class Launcher {
         if (App.settings.enableAnalytics && Analytics.isEnabled()) {
             Analytics.startSession();
         }
+        System.gc();
         PerformanceManager.end();
     }
 
