@@ -70,6 +70,14 @@ public final class InstancesListPanel extends HierarchyPanel
         addDisposable(viewModel.getInstancesList().subscribe(instancesList -> {
             gbc.gridy = 0;
             removeAll();
+            // Broken, Issue is that because >this< is run on the event thread,
+            // The "true" is sent async to the loading view.
+            // Which occurs on the next event loop operation.
+            // But "false" is sent after, so by the time the next event loop occurs the UI already is reset.
+            // Doing a direct operation is also impossible it seems, as Swing requires >this< to finish before updating
+            // the UI.
+            // Truly a hell.
+            viewModel.setIsLoading(true);
 
             if (instancesList.instances.isEmpty()) {
                 this.add(this.nilCard, gbc);
@@ -87,6 +95,7 @@ public final class InstancesListPanel extends HierarchyPanel
                 });
             }
 
+            viewModel.setIsLoading(false); // Broken, reason above
             validate();
             repaint();
 

@@ -186,6 +186,18 @@ public class InstancesTabViewModel implements IInstancesTabViewModel, SettingsLi
         return scrollValue;
     }
 
+    private final BehaviorSubject<Boolean> isLoadingSubject = BehaviorSubject.createDefault(true);
+
+    @Override
+    public Observable<Boolean> getIsLoading() {
+        return isLoadingSubject.observeOn(SwingSchedulers.edt());
+    }
+
+    @Override
+    public void setIsLoading(boolean isLoading) {
+        isLoadingSubject.onNext(isLoading);
+    }
+
     @Override
     public void onSettingsSaved() {
         instanceTitleFormat.onNext(App.settings.instanceTitleFormat);

@@ -28,6 +28,7 @@ import com.atlauncher.gui.models.InstanceUIModel;
 import com.atlauncher.utils.sort.InstanceSortingStrategies;
 
 import io.reactivex.rxjava3.core.Flowable;
+import io.reactivex.rxjava3.core.Observable;
 
 /**
  * 20 / 11 / 2022
@@ -77,6 +78,18 @@ public interface IInstancesTabViewModel {
      * @return Scroll to resume too.
      */
     int getScroll();
+
+    /**
+     * @return Loading state
+     */
+    Observable<Boolean> getIsLoading();
+
+    /**
+     * Set if the UI is loading
+     *
+     * @param isLoading isLoading or not.
+     */
+    void setIsLoading(boolean isLoading);
 
     /**
      * View state object.
