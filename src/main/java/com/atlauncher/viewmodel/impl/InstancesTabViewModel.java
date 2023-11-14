@@ -48,6 +48,8 @@ import com.atlauncher.utils.sort.InstanceSortingStrategy;
 import com.atlauncher.viewmodel.base.IInstancesTabViewModel;
 import com.gitlab.doomsdayrs.lib.rxswing.schedulers.SwingSchedulers;
 
+import io.reactivex.rxjava3.core.BackpressureStrategy;
+import io.reactivex.rxjava3.core.Flowable;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.core.ObservableSource;
 import io.reactivex.rxjava3.schedulers.Schedulers;
@@ -129,10 +131,11 @@ public class InstancesTabViewModel implements IInstancesTabViewModel, SettingsLi
     /**
      * Third operation is to create a UI state object.
      */
-    public Observable<InstancesList> instancesList = Observable.combineLatest(instanceModels, instanceTitleFormat,
+    public Flowable<InstancesList> instancesList = Observable.combineLatest(instanceModels, instanceTitleFormat,
             InstancesList::new)
         .replay(1)
         .autoConnect()
+        .toFlowable(BackpressureStrategy.LATEST) // Backpressure first, as down stream is the edt thread
         .observeOn(SwingSchedulers.edt());
 
     public InstancesTabViewModel() {
@@ -167,7 +170,7 @@ public class InstancesTabViewModel implements IInstancesTabViewModel, SettingsLi
 
     @Nonnull
     @Override
-    public Observable<InstancesList> getInstancesList() {
+    public Flowable<InstancesList> getInstancesList() {
         return instancesList;
     }
 

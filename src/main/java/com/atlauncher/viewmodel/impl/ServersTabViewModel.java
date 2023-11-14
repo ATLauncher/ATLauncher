@@ -28,6 +28,8 @@ import com.atlauncher.managers.ServerManager;
 import com.atlauncher.viewmodel.base.IServersTabViewModel;
 import com.gitlab.doomsdayrs.lib.rxswing.schedulers.SwingSchedulers;
 
+import io.reactivex.rxjava3.core.BackpressureStrategy;
+import io.reactivex.rxjava3.core.Flowable;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 import io.reactivex.rxjava3.subjects.BehaviorSubject;
@@ -49,7 +51,7 @@ public class ServersTabViewModel implements IServersTabViewModel {
 
     private final BehaviorSubject<Integer> currentPositionSubject = BehaviorSubject.createDefault(0);
 
-    private final Observable<List<Server>> servers =
+    private final Flowable<List<Server>> servers =
         Observable.combineLatest(sourceServers, searchSubject, (servers, searchOptional) -> {
                 List<Server> mutatedServers = servers.stream().filter(server -> {
                     String search = searchOptional.orElse(null);
@@ -63,11 +65,15 @@ public class ServersTabViewModel implements IServersTabViewModel {
                 currentPositionSubject.onNext(currentPosition);
                 return mutatedServers;
             }
-        );
+        )
+            .replay(1)
+            .autoConnect()
+            .toFlowable(BackpressureStrategy.LATEST) // Backpressure first, as down stream is the edt thread
+            .observeOn(SwingSchedulers.edt());
 
     @Override
-    public Observable<List<Server>> getServersObservable() {
-        return servers.observeOn(SwingSchedulers.edt());
+    public Flowable<List<Server>> getServersObservable() {
+        return servers;
     }
 
     @Override

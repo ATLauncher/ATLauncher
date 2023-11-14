@@ -18,7 +18,6 @@
 package com.atlauncher.viewmodel.base;
 
 import java.util.List;
-import java.util.regex.Pattern;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -28,7 +27,7 @@ import org.jetbrains.annotations.NotNull;
 import com.atlauncher.gui.models.InstanceUIModel;
 import com.atlauncher.utils.sort.InstanceSortingStrategies;
 
-import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.core.Flowable;
 
 /**
  * 20 / 11 / 2022
@@ -66,7 +65,7 @@ public interface IInstancesTabViewModel {
      * @return The view state
      */
     @Nonnull
-    Observable<InstancesList> getInstancesList();
+    Flowable<InstancesList> getInstancesList();
 
     /**
      * Save the current scroll state
