@@ -85,6 +85,8 @@ public final class InstancesListPanel extends HierarchyPanel
                 if (instances.isEmpty()) {
                     this.add(this.nilCard, gbc);
                 } else {
+                    PerformanceManager.start("Render cards");
+                    // Portion up into chunks of 10, to make rendering easier
                     Lists.partition(instances, 10).forEach(subInstances -> {
                         instances.forEach(instance -> {
                             this.add(
@@ -97,6 +99,7 @@ public final class InstancesListPanel extends HierarchyPanel
                         validate();
                         repaint();
                     });
+                    PerformanceManager.end("Render cards");
                 }
 
                 viewModel.setIsLoading(false); // Broken, reason above
