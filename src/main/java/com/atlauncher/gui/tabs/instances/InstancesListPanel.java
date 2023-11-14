@@ -19,8 +19,7 @@ package com.atlauncher.gui.tabs.instances;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-
-import javax.swing.SwingUtilities;
+import java.util.stream.Collectors;
 
 import org.mini2Dx.gettext.GetText;
 
@@ -33,19 +32,20 @@ import com.atlauncher.gui.panels.HierarchyPanel;
 import com.atlauncher.gui.tabs.InstancesTab;
 import com.atlauncher.managers.PerformanceManager;
 import com.atlauncher.viewmodel.base.IInstancesTabViewModel;
+import com.google.common.collect.Lists;
 
 public final class InstancesListPanel extends HierarchyPanel
-        implements RelocalizationListener {
+    implements RelocalizationListener {
 
     private final InstancesTab instancesTab;
     private final IInstancesTabViewModel viewModel;
 
     private final NilCard nilCard = new NilCard(
-            getNilMessage(),
-            new NilCard.Action[] {
-                    NilCard.Action.createCreatePackAction(),
-                    NilCard.Action.createDownloadPackAction()
-            });
+        getNilMessage(),
+        new NilCard.Action[]{
+            NilCard.Action.createCreatePackAction(),
+            NilCard.Action.createDownloadPackAction()
+        });
 
     public InstancesListPanel(InstancesTab instancesTab, final IInstancesTabViewModel viewModel) {
         super(new GridBagLayout());
@@ -56,8 +56,8 @@ public final class InstancesListPanel extends HierarchyPanel
 
     private static String getNilMessage() {
         return new HTMLBuilder()
-                .text(GetText.tr("There are no instances to display.<br/><br/>Install one from the Packs tab."))
-                .build();
+            .text(GetText.tr("There are no instances to display.<br/><br/>Install one from the Packs tab."))
+            .build();
     }
 
     public void createView() {
@@ -67,50 +67,52 @@ public final class InstancesListPanel extends HierarchyPanel
         gbc.insets = UIConstants.FIELD_INSETS;
         gbc.fill = GridBagConstraints.BOTH;
 
-        addDisposable(viewModel.getInstancesList().subscribe(instancesList -> {
-            gbc.gridy = 0;
-            removeAll();
-            // Broken, Issue is that because >this< is run on the event thread,
-            // The "true" is sent async to the loading view.
-            // Which occurs on the next event loop operation.
-            // But "false" is sent after, so by the time the next event loop occurs the UI already is reset.
-            // Doing a direct operation is also impossible it seems, as Swing requires >this< to finish before updating
-            // the UI.
-            // Truly a hell.
-            viewModel.setIsLoading(true);
-
-            if (instancesList.instances.isEmpty()) {
-                this.add(this.nilCard, gbc);
-            } else {
-                instancesList.instances.forEach(instance -> {
-                    this.add(
+        addDisposable(viewModel.getInstancesList()
+            .map(instancesList -> {
+                    viewModel.setIsLoading(true);
+                    return instancesList.instances.stream().map(instance ->
                         new InstanceCard(
                             instance.instance,
                             instance.hasUpdate,
                             instancesList.instanceTitleFormat
-                        ),
-                        gbc
-                    );
-                    gbc.gridy++;
-                });
-            }
+                        )
+                    ).collect(Collectors.toList());
+                }
+            ).subscribe(instances -> {
+                gbc.gridy = 0;
+                removeAll();
 
-            viewModel.setIsLoading(false); // Broken, reason above
-            validate();
-            repaint();
+                if (instances.isEmpty()) {
+                    this.add(this.nilCard, gbc);
+                } else {
+                    Lists.partition(instances, 10).forEach(subInstances -> {
+                        instances.forEach(instance -> {
+                            this.add(
+                                instance,
+                                gbc
+                            );
+                            gbc.gridy++;
+                        });
 
-            // After repainting is done, let scroll view resume
-            invokeLater(()-> instancesTab.setScroll(viewModel.getScroll()));
-            PerformanceManager.end("Displaying Instances");
-        }));
+                        validate();
+                        repaint();
+                    });
+                }
+
+                viewModel.setIsLoading(false); // Broken, reason above
+
+                // After repainting is done, let scroll view resume
+                invokeLater(() -> instancesTab.setScroll(viewModel.getScroll()));
+                PerformanceManager.end("Displaying Instances");
+            }));
     }
 
     @Override
     public void onRelocalization() {
         this.nilCard.setMessage(getNilMessage());
-        nilCard.setActions(new NilCard.Action[] {
-                NilCard.Action.createCreatePackAction(),
-                NilCard.Action.createDownloadPackAction()
+        nilCard.setActions(new NilCard.Action[]{
+            NilCard.Action.createCreatePackAction(),
+            NilCard.Action.createDownloadPackAction()
         });
     }
 
