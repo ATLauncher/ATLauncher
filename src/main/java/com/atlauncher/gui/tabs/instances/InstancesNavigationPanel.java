@@ -25,6 +25,7 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import org.mini2Dx.gettext.GetText;
@@ -32,6 +33,8 @@ import org.mini2Dx.gettext.GetText;
 import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.gui.dialogs.ImportInstanceDialog;
+import com.atlauncher.gui.tabs.InstancesTab;
+import com.atlauncher.utils.Utils;
 import com.atlauncher.utils.sort.InstanceSortingStrategies;
 import com.atlauncher.utils.sort.InstanceSortingStrategy;
 import com.atlauncher.viewmodel.base.IInstancesTabViewModel;
@@ -43,10 +46,10 @@ public final class InstancesNavigationPanel extends JPanel implements Relocaliza
     private final InstancesSearchField searchField;
     private final JComboBox<InstanceSortingStrategy> sortingBox = new JComboBox<>(InstanceSortingStrategies.values());
 
-    public InstancesNavigationPanel(final IInstancesTabViewModel viewModel) {
+    public InstancesNavigationPanel(final InstancesTab tab, final IInstancesTabViewModel viewModel) {
         this.viewModel = viewModel;
         this.searchField = new InstancesSearchField(viewModel);
-        this.sortingBox.setMaximumSize(new Dimension(190, 23));
+        this.sortingBox.setMaximumSize(new Dimension(190, 26));
 
         this.sortingBox.setSelectedItem(viewModel.getSort());
 
@@ -54,6 +57,11 @@ public final class InstancesNavigationPanel extends JPanel implements Relocaliza
         this.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
         this.add(importButton);
         this.add(Box.createHorizontalGlue());
+        JLabel iconLabel = new JLabel(Utils.getIconImage("/assets/image/loading-bars-small.gif"));
+        iconLabel.setText(GetText.tr("Loading..."));
+        tab.addDisposable(viewModel.getIsLoading().subscribe(iconLabel::setVisible));
+        this.add(iconLabel);
+        this.add(Box.createHorizontalStrut(5));
         this.add(searchField);
         this.add(Box.createHorizontalStrut(5));
         this.add(this.sortingBox);

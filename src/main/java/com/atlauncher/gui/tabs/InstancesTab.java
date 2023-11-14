@@ -19,14 +19,11 @@ package com.atlauncher.gui.tabs;
 
 import java.awt.BorderLayout;
 
-import javax.swing.BoxLayout;
-import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
 import org.mini2Dx.gettext.GetText;
 
 import com.atlauncher.gui.panels.HierarchyPanel;
-import com.atlauncher.gui.panels.LoadingPanel;
 import com.atlauncher.gui.tabs.instances.InstancesListPanel;
 import com.atlauncher.gui.tabs.instances.InstancesNavigationPanel;
 import com.atlauncher.utils.Utils;
@@ -40,8 +37,6 @@ public class InstancesTab extends HierarchyPanel implements Tab {
     private InstancesNavigationPanel navigationPanel;
     private InstancesListPanel instancesListPanel;
     private JScrollPane scrollPane;
-    private JPanel loadingContainer;
-    private JPanel loadingPanel;
 
     public InstancesTab() {
         super(new BorderLayout());
@@ -65,21 +60,13 @@ public class InstancesTab extends HierarchyPanel implements Tab {
 
     @Override
     protected void onShow() {
-        navigationPanel = new InstancesNavigationPanel(viewModel);
+        navigationPanel = new InstancesNavigationPanel(this, viewModel);
         this.add(this.navigationPanel, BorderLayout.NORTH);
 
-        loadingContainer = new JPanel();
-        loadingContainer.setLayout(new BoxLayout(loadingContainer, BoxLayout.Y_AXIS));
-
-        loadingPanel = new LoadingPanel();
-        addDisposable(viewModel.getIsLoading().subscribe(aFlag ->
-            loadingPanel.setVisible(aFlag)));
-        loadingContainer.add(loadingPanel);
-
         instancesListPanel = new InstancesListPanel(this, viewModel);
-        loadingContainer.add(instancesListPanel);
 
-        scrollPane = Utils.wrapInVerticalScroller(this.loadingContainer, 16);
+        scrollPane = Utils.wrapInVerticalScroller(this.instancesListPanel, 16);
+
         this.add(scrollPane, BorderLayout.CENTER);
     }
 
@@ -90,8 +77,6 @@ public class InstancesTab extends HierarchyPanel implements Tab {
         navigationPanel = null;
         instancesListPanel = null;
         scrollPane = null;
-        loadingContainer = null;
-        loadingPanel = null;
     }
 
     /**

@@ -148,6 +148,7 @@ public class InstancesTabViewModel implements IInstancesTabViewModel, SettingsLi
 
     @Override
     public void setSort(@Nonnull InstanceSortingStrategies strategy) {
+        setIsLoading(true);
         sortingStrategy.onNext(strategy);
     }
 
@@ -159,6 +160,7 @@ public class InstancesTabViewModel implements IInstancesTabViewModel, SettingsLi
 
     @Override
     public void setSearch(@Nullable String search) {
+        setIsLoading(true);
         searchQuery.onNext(Optional.ofNullable(search));
     }
 
