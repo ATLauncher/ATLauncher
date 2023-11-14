@@ -134,9 +134,9 @@ public class InstancesTabViewModel implements IInstancesTabViewModel, SettingsLi
      */
     public Flowable<InstancesList> instancesList = Observable.combineLatest(instanceModels, instanceTitleFormat,
             InstancesList::new)
-        .sample(1,TimeUnit.SECONDS)
         .replay(1)
         .autoConnect()
+        .sample(1,TimeUnit.SECONDS)
         .toFlowable(BackpressureStrategy.LATEST) // Backpressure first, as down stream is the edt thread
         .observeOn(Schedulers.newThread());
 
