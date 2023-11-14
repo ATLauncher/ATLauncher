@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -133,6 +134,7 @@ public class InstancesTabViewModel implements IInstancesTabViewModel, SettingsLi
      */
     public Flowable<InstancesList> instancesList = Observable.combineLatest(instanceModels, instanceTitleFormat,
             InstancesList::new)
+        .sample(1,TimeUnit.SECONDS)
         .replay(1)
         .autoConnect()
         .toFlowable(BackpressureStrategy.LATEST) // Backpressure first, as down stream is the edt thread
