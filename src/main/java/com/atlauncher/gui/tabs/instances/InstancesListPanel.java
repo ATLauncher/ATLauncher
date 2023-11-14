@@ -61,11 +61,6 @@ public final class InstancesListPanel extends HierarchyPanel
     }
 
     public void createView() {
-        final GridBagConstraints gbc = new GridBagConstraints();
-        gbc.gridx = gbc.gridy = 0;
-        gbc.weightx = 1.0;
-        gbc.insets = UIConstants.FIELD_INSETS;
-        gbc.fill = GridBagConstraints.BOTH;
 
         addDisposable(viewModel.getInstancesList()
             .map(instancesList -> {
@@ -79,7 +74,12 @@ public final class InstancesListPanel extends HierarchyPanel
                     ).collect(Collectors.toList());
                 }
             ).subscribe(instances -> {
-                gbc.gridy = 0;
+                final GridBagConstraints gbc = new GridBagConstraints();
+                gbc.gridx = gbc.gridy = 0;
+                gbc.weightx = 1.0;
+                gbc.insets = UIConstants.FIELD_INSETS;
+                gbc.fill = GridBagConstraints.BOTH;
+
                 removeAll();
 
                 if (instances.isEmpty()) {
