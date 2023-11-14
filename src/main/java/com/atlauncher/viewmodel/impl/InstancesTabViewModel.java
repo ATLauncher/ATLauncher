@@ -136,7 +136,7 @@ public class InstancesTabViewModel implements IInstancesTabViewModel, SettingsLi
         .replay(1)
         .autoConnect()
         .toFlowable(BackpressureStrategy.LATEST) // Backpressure first, as down stream is the edt thread
-        .observeOn(SwingSchedulers.edt());
+        .observeOn(Schedulers.newThread());
 
     public InstancesTabViewModel() {
         SettingsManager.addListener(this);
