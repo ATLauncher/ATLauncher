@@ -18,7 +18,6 @@
 package com.atlauncher.viewmodel.base;
 
 import java.util.List;
-import java.util.regex.Pattern;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -28,6 +27,7 @@ import org.jetbrains.annotations.NotNull;
 import com.atlauncher.gui.models.InstanceUIModel;
 import com.atlauncher.utils.sort.InstanceSortingStrategies;
 
+import io.reactivex.rxjava3.core.Flowable;
 import io.reactivex.rxjava3.core.Observable;
 
 /**
@@ -66,7 +66,7 @@ public interface IInstancesTabViewModel {
      * @return The view state
      */
     @Nonnull
-    Observable<InstancesList> getInstancesList();
+    Flowable<InstancesList> getInstancesList();
 
     /**
      * Save the current scroll state
@@ -78,6 +78,18 @@ public interface IInstancesTabViewModel {
      * @return Scroll to resume too.
      */
     int getScroll();
+
+    /**
+     * @return Loading state
+     */
+    Observable<Boolean> getIsLoading();
+
+    /**
+     * Set if the UI is loading
+     *
+     * @param isLoading isLoading or not.
+     */
+    void setIsLoading(boolean isLoading);
 
     /**
      * View state object.

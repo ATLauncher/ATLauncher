@@ -24,6 +24,7 @@ import javax.annotation.Nullable;
 
 import com.atlauncher.data.Server;
 
+import io.reactivex.rxjava3.core.Flowable;
 import io.reactivex.rxjava3.core.Observable;
 
 /**
@@ -33,7 +34,7 @@ public interface IServersTabViewModel {
     /**
      * Get observable list to subscribe to.
      */
-    Observable<List<Server>> getServersObservable();
+    Flowable<List<Server>> getServersObservable();
 
     /**
      * Get observable of text to subscribe to.

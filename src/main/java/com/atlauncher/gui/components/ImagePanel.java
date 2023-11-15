@@ -22,31 +22,59 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.util.concurrent.Callable;
 
+import javax.annotation.Nonnull;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 
-@SuppressWarnings("serial")
+import com.atlauncher.managers.LogManager;
+import com.atlauncher.utils.Utils;
+
 public final class ImagePanel extends JPanel {
     private static final Cursor HAND = new Cursor(Cursor.HAND_CURSOR);
+    private static final int DEFAULT_WIDTH = 300, DEFAULT_HEIGHT = 150;
 
     private volatile Image image;
 
-    public ImagePanel(Image image) {
-        this.image = image;
+    /**
+     * @param imageToLoad Deferred image loading
+     */
+    public ImagePanel(@Nonnull Callable<Image> imageToLoad) {
         this.setCursor(HAND);
-        this.setPreferredSize(new Dimension(Math.min(image.getWidth(null), 300), Math.min(image.getWidth(null), 150)));
+        setPreferredSize(new Dimension(DEFAULT_WIDTH, DEFAULT_HEIGHT));
+
+        // Launch a separate thread to load the image
+        new Thread(() -> {
+            try {
+                setImage(imageToLoad.call());
+            } catch (Exception e) {
+                LogManager.error(e.getMessage());
+            }
+        }).start();
     }
 
-    public void setImage(Image img) {
+    public void setImage(@Nonnull Image img) {
         this.image = img;
-        this.repaint();
+
+        this.setPreferredSize(
+            new Dimension(
+                Math.min(image.getWidth(null), DEFAULT_WIDTH),
+                Math.min(image.getWidth(null), DEFAULT_HEIGHT)
+            )
+        );
+
+        // Repaint on the event thread
+        SwingUtilities.invokeLater(this::repaint);
     }
 
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
-
-        Graphics2D g2 = (Graphics2D) g;
-        g2.drawImage(this.image, 0, (this.getHeight() - 150) / 2, 300, 150, null);
+        if (image != null) {
+            Graphics2D g2 = (Graphics2D) g;
+            g2.drawImage(this.image, 0, (this.getHeight() - 150) / 2, 300, 150, null);
+        }
     }
 }

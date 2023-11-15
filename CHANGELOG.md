@@ -10,3 +10,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 ### Fixes
 
 ### Misc
+- Defer Image loading for ImagePanel
+- Load instances on a separate thread
+- Use Flowable to ensure UI only works on the latest result

@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -48,6 +49,8 @@ import com.atlauncher.utils.sort.InstanceSortingStrategy;
 import com.atlauncher.viewmodel.base.IInstancesTabViewModel;
 import com.gitlab.doomsdayrs.lib.rxswing.schedulers.SwingSchedulers;
 
+import io.reactivex.rxjava3.core.BackpressureStrategy;
+import io.reactivex.rxjava3.core.Flowable;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.core.ObservableSource;
 import io.reactivex.rxjava3.schedulers.Schedulers;
@@ -129,11 +132,11 @@ public class InstancesTabViewModel implements IInstancesTabViewModel, SettingsLi
     /**
      * Third operation is to create a UI state object.
      */
-    public Observable<InstancesList> instancesList = Observable.combineLatest(instanceModels, instanceTitleFormat,
+    public Flowable<InstancesList> instancesList = Observable.combineLatest(instanceModels, instanceTitleFormat,
             InstancesList::new)
-        .replay(1)
-        .autoConnect()
-        .observeOn(SwingSchedulers.edt());
+        .throttleLatest(100, TimeUnit.MILLISECONDS)
+        .toFlowable(BackpressureStrategy.LATEST) // Backpressure first, as down stream is the edt thread
+        .observeOn(Schedulers.newThread());
 
     public InstancesTabViewModel() {
         SettingsManager.addListener(this);
@@ -145,6 +148,7 @@ public class InstancesTabViewModel implements IInstancesTabViewModel, SettingsLi
 
     @Override
     public void setSort(@Nonnull InstanceSortingStrategies strategy) {
+        setIsLoading(true);
         sortingStrategy.onNext(strategy);
     }
 
@@ -156,6 +160,7 @@ public class InstancesTabViewModel implements IInstancesTabViewModel, SettingsLi
 
     @Override
     public void setSearch(@Nullable String search) {
+        setIsLoading(true);
         searchQuery.onNext(Optional.ofNullable(search));
     }
 
@@ -167,7 +172,7 @@ public class InstancesTabViewModel implements IInstancesTabViewModel, SettingsLi
 
     @Nonnull
     @Override
-    public Observable<InstancesList> getInstancesList() {
+    public Flowable<InstancesList> getInstancesList() {
         return instancesList;
     }
 
@@ -181,6 +186,18 @@ public class InstancesTabViewModel implements IInstancesTabViewModel, SettingsLi
     @Override
     public int getScroll() {
         return scrollValue;
+    }
+
+    private final BehaviorSubject<Boolean> isLoadingSubject = BehaviorSubject.createDefault(true);
+
+    @Override
+    public Observable<Boolean> getIsLoading() {
+        return isLoadingSubject.observeOn(SwingSchedulers.edt());
+    }
+
+    @Override
+    public void setIsLoading(boolean isLoading) {
+        isLoadingSubject.onNext(isLoading);
     }
 
     @Override

@@ -1693,7 +1693,7 @@ public class Instance extends MinecraftVersion {
 
     public boolean canBeExported() {
         if (launcher.loaderVersion == null) {
-            LogManager.debug("Instance " + launcher.name + " cannot be exported due to: No loader");
+            new Thread(()-> LogManager.debug("Instance " + launcher.name + " cannot be exported due to: No loader")).start();
             return false;
         }
 
