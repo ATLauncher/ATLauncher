@@ -97,14 +97,14 @@ public class ServersTab extends HierarchyPanel implements Tab, RelocalizationLis
         add(scrollPane, BorderLayout.CENTER);
 
         panel.setLayout(new GridBagLayout());
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.gridx = gbc.gridy = 0;
-        gbc.weightx = 1.0;
-        gbc.insets = UIConstants.FIELD_INSETS_SMALL;
-        gbc.fill = GridBagConstraints.BOTH;
 
         addDisposable(viewModel.getServersObservable().subscribe(servers -> {
-            viewModel.setViewPosition(scrollPane.getVerticalScrollBar().getValue());
+            GridBagConstraints gbc = new GridBagConstraints();
+            gbc.gridx = gbc.gridy = 0;
+            gbc.weightx = 1.0;
+            gbc.insets = UIConstants.FIELD_INSETS_SMALL;
+            gbc.fill = GridBagConstraints.BOTH;
+
             panel.removeAll();
             gbc.gridy = 0;
 
@@ -160,6 +160,7 @@ public class ServersTab extends HierarchyPanel implements Tab, RelocalizationLis
 
     @Override
     protected void onDestroy() {
+        viewModel.setViewPosition(scrollPane.getVerticalScrollBar().getValue());
         removeAll();
         searchBox = null;
         panel = null;
