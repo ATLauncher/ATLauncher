@@ -20,6 +20,7 @@ package com.atlauncher.viewmodel.impl;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -66,8 +67,7 @@ public class ServersTabViewModel implements IServersTabViewModel {
                 return mutatedServers;
             }
         )
-            .replay(1)
-            .autoConnect()
+            .throttleLatest(100, TimeUnit.MILLISECONDS)
             .toFlowable(BackpressureStrategy.LATEST) // Backpressure first, as down stream is the edt thread
             .observeOn(SwingSchedulers.edt());
 
