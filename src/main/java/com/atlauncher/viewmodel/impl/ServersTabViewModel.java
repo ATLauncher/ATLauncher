@@ -53,20 +53,17 @@ public class ServersTabViewModel implements IServersTabViewModel {
     private final BehaviorSubject<Integer> currentPositionSubject = BehaviorSubject.createDefault(0);
 
     private final Flowable<List<Server>> servers =
-        Observable.combineLatest(sourceServers, searchSubject, (servers, searchOptional) -> {
-                List<Server> mutatedServers = servers.stream().filter(server -> {
-                    String search = searchOptional.orElse(null);
-                    if (search != null)
-                        return Pattern.compile(Pattern.quote(search), Pattern.CASE_INSENSITIVE).matcher(server.name).find();
-                    else return true;
-                }).collect(Collectors.toList());
-
-                int currentPosition = currentPositionSubject.getValue();
-                currentPositionSubject.onNext(0);
-                currentPositionSubject.onNext(currentPosition);
-                return mutatedServers;
-            }
-        )
+        Observable.combineLatest(sourceServers, searchSubject, (servers, searchOptional) ->
+                servers
+                    .stream()
+                    .filter(server -> {
+                        String search = searchOptional.orElse(null);
+                        if (search != null)
+                            return Pattern.compile(Pattern.quote(search), Pattern.CASE_INSENSITIVE).matcher(server.name).find();
+                        else return true;
+                    })
+                    .collect(Collectors.toList())
+            )
             .throttleLatest(100, TimeUnit.MILLISECONDS)
             .toFlowable(BackpressureStrategy.LATEST) // Backpressure first, as down stream is the edt thread
             .observeOn(SwingSchedulers.edt());
@@ -88,7 +85,7 @@ public class ServersTabViewModel implements IServersTabViewModel {
 
     @Override
     public Observable<Integer> getViewPosition() {
-        return currentPositionSubject;
+        return currentPositionSubject.observeOn(SwingSchedulers.edt());
     }
 
     @Override
