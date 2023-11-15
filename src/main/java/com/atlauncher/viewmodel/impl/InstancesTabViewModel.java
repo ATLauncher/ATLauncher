@@ -136,7 +136,7 @@ public class InstancesTabViewModel implements IInstancesTabViewModel, SettingsLi
             InstancesList::new)
         .replay(1)
         .autoConnect()
-        .sample(1,TimeUnit.SECONDS)
+        .sample(100,TimeUnit.MILLISECONDS)
         .toFlowable(BackpressureStrategy.LATEST) // Backpressure first, as down stream is the edt thread
         .observeOn(Schedulers.newThread());
 
