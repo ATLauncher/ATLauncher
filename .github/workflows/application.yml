@@ -184,13 +184,6 @@ jobs:
           environment: production
           version: "${{ needs.package.outputs.clean-version }}"
 
-      - name: Package up AUR versions
-        uses: peter-evans/repository-dispatch@v2
-        with:
-          token: ${{ secrets.BOT_GITHUB_TOKEN }}
-          event-type: aur-publish
-          client-payload: '{"version": "${{ needs.package.outputs.clean-version }}"}'
-
       - name: Update version
         run: |
           NEW_VERSION=`echo ${{ needs.package.outputs.clean-version }} | perl -pe 's/^((\d+\.)*)(\d+)(.*)$/$1.($3+1).$4/e'`
@@ -222,3 +215,10 @@ jobs:
           label: "awaiting-release"
           comment: "This has been fixed with version ${{ needs.package.outputs.clean-version }}"
           token: ${{ secrets.BOT_GITHUB_TOKEN }}
+
+      - name: Package up AUR versions
+        uses: peter-evans/repository-dispatch@v2
+        with:
+          token: ${{ secrets.BOT_GITHUB_TOKEN }}
+          event-type: aur-publish
+          client-payload: '{"version": "${{ needs.package.outputs.clean-version }}"}'
