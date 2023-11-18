@@ -2823,28 +2823,20 @@ public class Instance extends MinecraftVersion {
         }
     }
 
+    /**
+     * @deprecated Use InstanceEditors instead.
+     */
+    @Deprecated
     public void startChangeDescription() {
         InstanceEditors.startChangeDescription(this);
     }
 
+    /**
+     * @deprecated Use InstanceEditors instead.
+     */
+    @Deprecated
     public void startChangeImage() {
-        JFileChooser chooser = new JFileChooser();
-        chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-        chooser.setAcceptAllFileFilterUsed(false);
-        chooser.setFileFilter(new FileNameExtensionFilter("PNG Files", "png"));
-        int ret = chooser.showOpenDialog(App.launcher.getParent());
-        if (ret == JFileChooser.APPROVE_OPTION) {
-            File img = chooser.getSelectedFile();
-            if (img.getAbsolutePath().endsWith(".png")) {
-                Analytics.trackEvent(AnalyticsEvent.forInstanceEvent("instance_image_change", this));
-                try {
-                    Utils.safeCopy(img, getRoot().resolve("instance.png").toFile());
-                    save();
-                } catch (IOException ex) {
-                    LogManager.logStackTrace("Failed to set instance image", ex);
-                }
-            }
-        }
+        InstanceEditors.startChangeImage(this);
     }
 
     public void changeLoaderVersion() {
