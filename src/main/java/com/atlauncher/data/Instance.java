@@ -106,6 +106,7 @@ import com.atlauncher.graphql.AddPackTimePlayedMutation;
 import com.atlauncher.graphql.type.AddPackActionInput;
 import com.atlauncher.graphql.type.AddPackTimePlayedInput;
 import com.atlauncher.graphql.type.PackLogAction;
+import com.atlauncher.gui.InstanceBackup;
 import com.atlauncher.gui.InstanceCloner;
 import com.atlauncher.gui.dialogs.InstanceInstallerDialog;
 import com.atlauncher.gui.dialogs.ProgressDialog;
@@ -1810,56 +1811,20 @@ public class Instance extends MinecraftVersion {
         return launcher.packId != 0 && getPack() != null;
     }
 
+    /**
+     * @deprecated Moved to InstanceBackup
+     */
+    @Deprecated
     public void backup() {
-        backup(App.settings.backupMode);
+        InstanceBackup.backup(this);
     }
 
+    /**
+     * @deprecated Moved to InstanceBackup
+     */
+    @Deprecated
     public void backup(BackupMode backupMode) {
-        // #. {0} is the name of the instance
-        final JDialog dialog = new JDialog(App.launcher.getParent(), GetText.tr("Backing Up {0}", launcher.name),
-                ModalityType.DOCUMENT_MODAL);
-        dialog.setSize(300, 100);
-        dialog.setLocationRelativeTo(App.launcher.getParent());
-        dialog.setResizable(false);
-
-        JPanel topPanel = new JPanel();
-        topPanel.setLayout(new BorderLayout());
-        // #. {0} is the name of the instance
-        JLabel doing = new JLabel(GetText.tr("Backing Up {0}", launcher.name));
-        doing.setHorizontalAlignment(JLabel.CENTER);
-        doing.setVerticalAlignment(JLabel.TOP);
-        topPanel.add(doing);
-
-        JPanel bottomPanel = new JPanel();
-        bottomPanel.setLayout(new BorderLayout());
-        JProgressBar progressBar = new JProgressBar();
-        bottomPanel.add(progressBar, BorderLayout.NORTH);
-        progressBar.setIndeterminate(true);
-
-        dialog.add(topPanel, BorderLayout.CENTER);
-        dialog.add(bottomPanel, BorderLayout.SOUTH);
-
-        Analytics.trackEvent(AnalyticsEvent.forInstanceEvent("instance_backup", this));
-
-        final Thread backupThread = new Thread(() -> {
-            Timestamp timestamp = new Timestamp(new Date().getTime());
-            String time = timestamp.toString().replaceAll("[^0-9]", "_");
-            String filename = getSafeName() + "-" + time.substring(0, time.lastIndexOf("_")) + ".zip";
-
-            ArchiveUtils.createZip(getRoot(), FileSystem.BACKUPS.resolve(filename),
-                    ZipNameMapper.getMapperForBackupMode(backupMode));
-
-            dialog.dispose();
-            App.TOASTER.pop(GetText.tr("Backup is complete"));
-        });
-        backupThread.start();
-        dialog.addWindowListener(new WindowAdapter() {
-            public void windowClosing(WindowEvent e) {
-                backupThread.interrupt();
-                dialog.dispose();
-            }
-        });
-        dialog.setVisible(true);
+        InstanceBackup.backup(this, backupMode);
     }
 
     public boolean canChangeDescription() {
