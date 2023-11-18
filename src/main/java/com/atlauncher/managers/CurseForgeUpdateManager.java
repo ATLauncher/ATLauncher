@@ -24,7 +24,6 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 import com.atlauncher.App;
-import com.atlauncher.data.Instance;
 import com.atlauncher.data.curseforge.CurseForgeFile;
 import com.atlauncher.data.curseforge.CurseForgeProject;
 import com.atlauncher.utils.CurseForgeApi;
@@ -45,12 +44,12 @@ public class CurseForgeUpdateManager {
      * @param instance Instance to get behavior subject for
      * @return behavior subject for said instance updates
      */
-    private static BehaviorSubject<Optional<CurseForgeFile>> getSubject(Instance instance) {
+    private static BehaviorSubject<Optional<CurseForgeFile>> getSubject(UUID instance) {
         CURSEFORGE_INSTANCE_LATEST_VERSION.putIfAbsent(
-            instance.getUUID(),
+            instance,
             BehaviorSubject.createDefault(Optional.empty())
         );
-        return CURSEFORGE_INSTANCE_LATEST_VERSION.get(instance.getUUID());
+        return CURSEFORGE_INSTANCE_LATEST_VERSION.get(instance);
     }
 
     /**
@@ -60,7 +59,7 @@ public class CurseForgeUpdateManager {
      * @param instance Instance to get an observable for
      * @return Update observable
      */
-    public static Observable<Optional<CurseForgeFile>> getObservable(Instance instance) {
+    public static Observable<Optional<CurseForgeFile>> getObservable(UUID instance) {
         return getSubject(instance);
     }
 
@@ -69,7 +68,7 @@ public class CurseForgeUpdateManager {
      * @param instance Instance to get version of
      * @return Latest version, or null if no newer version is found
      */
-    public static CurseForgeFile getLatestVersion(Instance instance) {
+    public static CurseForgeFile getLatestVersion(UUID instance) {
         return getSubject(instance).getValue().orElse(null);
     }
 
@@ -126,7 +125,7 @@ public class CurseForgeUpdateManager {
                                 })
                                 .findFirst().orElse(null);
 
-                    getSubject(i).onNext(Optional.ofNullable(latestVersion));
+                    getSubject(i.getUUID()).onNext(Optional.ofNullable(latestVersion));
                 });
         }
 

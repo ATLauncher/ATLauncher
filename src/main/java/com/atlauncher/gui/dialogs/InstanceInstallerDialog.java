@@ -1079,7 +1079,7 @@ public class InstanceInstallerDialog extends JDialog {
         }
 
         if (isUpdate && instance != null && instance.isCurseForgePack()) {
-            CurseForgeFile latestVersion = CurseForgeUpdateManager.getLatestVersion(instance);
+            CurseForgeFile latestVersion = CurseForgeUpdateManager.getLatestVersion(instance.getUUID());
             if (latestVersion != null) {
                 for (PackVersion version : versions) {
                     if (version._curseForgeFile.id == latestVersion.id) {
