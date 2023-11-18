@@ -348,7 +348,7 @@ public class Instance extends MinecraftVersion {
                     version = TechnicModpackUpdateManager.getUpToDateModpack(getUUID()).version;
                 }
             } else if (isModrinthPack()) {
-                version = ModrinthModpackUpdateManager.getLatestVersion(this).id;
+                version = ModrinthModpackUpdateManager.getLatestVersion(getUUID()).id;
             } else {
                 return;
             }
@@ -388,7 +388,7 @@ public class Instance extends MinecraftVersion {
                     return hasUpdateBeenIgnored(TechnicModpackUpdateManager.getUpToDateModpack(getUUID()).version);
                 }
             } else if (isModrinthPack()) {
-                return hasUpdateBeenIgnored(ModrinthModpackUpdateManager.getLatestVersion(this).id);
+                return hasUpdateBeenIgnored(ModrinthModpackUpdateManager.getLatestVersion(getUUID()).id);
             }
 
             return false;

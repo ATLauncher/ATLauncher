@@ -231,7 +231,7 @@ public class InstancesTabViewModel implements IInstancesTabViewModel, SettingsLi
                                     && !latestVersion.get().version.equals(instance.launcher.version));
                 }
             } else if (instance.isModrinthPack()) {
-                return ModrinthModpackUpdateManager.getObservable(instance)
+                return ModrinthModpackUpdateManager.getObservable(instance.getUUID())
                         .map(latestVersion -> latestVersion.isPresent()
                                 && !latestVersion.get().id.equals(instance.launcher.modrinthVersion.id));
             }

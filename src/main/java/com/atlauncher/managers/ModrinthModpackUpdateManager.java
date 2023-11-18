@@ -44,12 +44,12 @@ public class ModrinthModpackUpdateManager {
      * @param instance Instance to get behavior subject for
      * @return behavior subject for said instance updates.
      */
-    private static BehaviorSubject<Optional<ModrinthVersion>> getSubject(Instance instance){
+    private static BehaviorSubject<Optional<ModrinthVersion>> getSubject(UUID instance){
         MODRINTH_INSTANCE_LATEST_VERSION.putIfAbsent(
-            instance.getUUID(),
+            instance,
             BehaviorSubject.createDefault(Optional.empty())
         );
-        return MODRINTH_INSTANCE_LATEST_VERSION.get(instance.getUUID());
+        return MODRINTH_INSTANCE_LATEST_VERSION.get(instance);
     }
 
     /**
@@ -59,7 +59,7 @@ public class ModrinthModpackUpdateManager {
      * @param instance Instance to get an observable for
      * @return Update observable
      */
-    public static Observable<Optional<ModrinthVersion>> getObservable(Instance instance) {
+    public static Observable<Optional<ModrinthVersion>> getObservable(UUID instance) {
         return getSubject(instance);
     }
 
@@ -69,7 +69,7 @@ public class ModrinthModpackUpdateManager {
      * @param instance Instance to get version of
      * @return Latest version, or null if no newer version is found
      */
-    public static ModrinthVersion getLatestVersion(Instance instance) {
+    public static ModrinthVersion getLatestVersion(UUID instance) {
         return getSubject(instance).getValue().orElse(null);
     }
 
@@ -98,7 +98,7 @@ public class ModrinthModpackUpdateManager {
                             .sorted(Comparator.comparing((ModrinthVersion version) -> version.datePublished).reversed())
                             .findFirst().orElse(null);
 
-                    getSubject(i).onNext(Optional.ofNullable(latestVersion));
+                    getSubject(i.getUUID()).onNext(Optional.ofNullable(latestVersion));
                 });
 
         PerformanceManager.end();
