@@ -447,7 +447,11 @@ public class Instance extends MinecraftVersion {
         }
     }
 
-    public DisableableMod getDisableableModByCurseModId(int curseModId) {
+    /**
+     * TODO Remove?
+     */
+    @Deprecated
+   public DisableableMod getDisableableModByCurseModId(int curseModId) {
         return this.launcher.mods.stream().filter(
                 installedMod -> installedMod.isFromCurseForge() && installedMod.getCurseForgeModId() == curseModId)
                 .findFirst().orElse(null);
@@ -746,7 +750,11 @@ public class Instance extends MinecraftVersion {
         return this.launcher.mods.stream().anyMatch(DisableableMod::isUserAdded);
     }
 
-    public List<String> getCustomMods(Type type) {
+    /**
+     * TODO Remove?
+     */
+    @Deprecated
+   public List<String> getCustomMods(Type type) {
         return this.launcher.mods.stream().filter(DisableableMod::isUserAdded).filter(m -> m.getType() == type)
                 .map(DisableableMod::getFilename).collect(Collectors.toList());
     }
@@ -1573,6 +1581,10 @@ public class Instance extends MinecraftVersion {
         return getRoot().resolve("bin").toFile();
     }
 
+    /**
+     * TODO Remove?
+     */
+    @Deprecated
     public File getNativesDirectory() {
         return getRoot().resolve("bin/natives").toFile();
     }
@@ -1733,6 +1745,10 @@ public class Instance extends MinecraftVersion {
         return "ATLauncher";
     }
 
+    /**
+     * TODO Remove?
+     */
+    @Deprecated
     public String getAnalyticsCategory() {
         if (isCurseForgePack()) {
             return "CurseForgeInstance";
