@@ -1873,9 +1873,12 @@ public class Instance extends MinecraftVersion {
         InstanceInstallerDialog.launch(this);
     }
 
+    /**
+     * Moved to RenameInstanceDialog.launch
+     */
+    @Deprecated
     public void startRename() {
-        Analytics.trackEvent(AnalyticsEvent.forInstanceEvent("instance_rename", this));
-        new RenameInstanceDialog(this);
+        RenameInstanceDialog.launch(this);
     }
 
     public void startClone() {

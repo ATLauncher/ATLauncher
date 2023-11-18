@@ -41,6 +41,7 @@ import com.atlauncher.managers.DialogManager;
 import com.atlauncher.managers.InstanceManager;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.network.Analytics;
+import com.atlauncher.network.analytics.AnalyticsEvent;
 import com.atlauncher.utils.Utils;
 
 @SuppressWarnings("serial")
@@ -77,6 +78,11 @@ public class RenameInstanceDialog extends JDialog {
         });
 
         setVisible(true);
+    }
+
+    public static void launch(Instance instance) {
+        Analytics.trackEvent(AnalyticsEvent.forInstanceEvent("instance_rename", instance));
+        new RenameInstanceDialog(instance);
     }
 
     private void setupComponents() {
