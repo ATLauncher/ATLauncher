@@ -343,9 +343,9 @@ public class Instance extends MinecraftVersion {
                 version = Integer.toString(CurseForgeUpdateManager.getLatestVersion(this).id);
             } else if (isTechnicPack()) {
                 if (isTechnicSolderPack()) {
-                    version = TechnicModpackUpdateManager.getUpToDateSolderModpack(this).latest;
+                    version = TechnicModpackUpdateManager.getUpToDateSolderModpack(getUUID()).latest;
                 } else {
-                    version = TechnicModpackUpdateManager.getUpToDateModpack(this).version;
+                    version = TechnicModpackUpdateManager.getUpToDateModpack(getUUID()).version;
                 }
             } else if (isModrinthPack()) {
                 version = ModrinthModpackUpdateManager.getLatestVersion(this).id;
@@ -383,9 +383,9 @@ public class Instance extends MinecraftVersion {
                 return hasUpdateBeenIgnored(Integer.toString(CurseForgeUpdateManager.getLatestVersion(this).id));
             } else if (isTechnicPack()) {
                 if (isTechnicSolderPack()) {
-                    return hasUpdateBeenIgnored(TechnicModpackUpdateManager.getUpToDateSolderModpack(this).latest);
+                    return hasUpdateBeenIgnored(TechnicModpackUpdateManager.getUpToDateSolderModpack(getUUID()).latest);
                 } else {
-                    return hasUpdateBeenIgnored(TechnicModpackUpdateManager.getUpToDateModpack(this).version);
+                    return hasUpdateBeenIgnored(TechnicModpackUpdateManager.getUpToDateModpack(getUUID()).version);
                 }
             } else if (isModrinthPack()) {
                 return hasUpdateBeenIgnored(ModrinthModpackUpdateManager.getLatestVersion(this).id);

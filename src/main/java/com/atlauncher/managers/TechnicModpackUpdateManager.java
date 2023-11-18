@@ -24,7 +24,6 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 import com.atlauncher.Gsons;
-import com.atlauncher.data.Instance;
 import com.atlauncher.data.technic.TechnicModpack;
 import com.atlauncher.data.technic.TechnicSolderModpack;
 import com.atlauncher.network.DownloadException;
@@ -53,12 +52,12 @@ public class TechnicModpackUpdateManager {
      * @param instance Instance to get behavior subject for
      * @return behavior subject for said instance updates.
      */
-    private static BehaviorSubject<Optional<TechnicModpack>> getSubject(Instance instance){
+    private static BehaviorSubject<Optional<TechnicModpack>> getSubject(UUID instance){
         TECHNIC_INSTANCE_LATEST_VERSION.putIfAbsent(
-            instance.getUUID(),
+            instance,
             BehaviorSubject.createDefault(Optional.empty())
         );
-        return TECHNIC_INSTANCE_LATEST_VERSION.get(instance.getUUID());
+        return TECHNIC_INSTANCE_LATEST_VERSION.get(instance);
     }
 
     /**
@@ -67,12 +66,12 @@ public class TechnicModpackUpdateManager {
      * @param instance Instance to get behavior subject for
      * @return solder behavior subject for said instance updates.
      */
-    private static BehaviorSubject<Optional<TechnicSolderModpack>> getSolderSubject(Instance instance){
+    private static BehaviorSubject<Optional<TechnicSolderModpack>> getSolderSubject(UUID instance){
         TECHNIC_SOLDER_INSTANCE_LATEST_VERSION.putIfAbsent(
-            instance.getUUID(),
+            instance,
             BehaviorSubject.createDefault(Optional.empty())
         );
-        return TECHNIC_SOLDER_INSTANCE_LATEST_VERSION.get(instance.getUUID());
+        return TECHNIC_SOLDER_INSTANCE_LATEST_VERSION.get(instance);
     }
 
     /**
@@ -82,7 +81,7 @@ public class TechnicModpackUpdateManager {
      * @param instance Instance to get an observable for
      * @return Update observable
      */
-    public static Observable<Optional<TechnicModpack>> getObservable(Instance instance) {
+    public static Observable<Optional<TechnicModpack>> getObservable(UUID instance) {
         return getSubject(instance);
     }
 
@@ -93,7 +92,7 @@ public class TechnicModpackUpdateManager {
      * @param instance Instance to get an observable for
      * @return Solder update observable
      */
-    public static Observable<Optional<TechnicSolderModpack>> getSolderObservable(Instance instance) {
+    public static Observable<Optional<TechnicSolderModpack>> getSolderObservable(UUID instance) {
         return getSolderSubject(instance);
     }
 
@@ -102,7 +101,7 @@ public class TechnicModpackUpdateManager {
      * @param instance Instance to get version of
      * @return Latest version, or null if no newer version is found
      */
-    public static TechnicModpack getUpToDateModpack(Instance instance) {
+    public static TechnicModpack getUpToDateModpack(UUID instance) {
         return getSubject(instance).getValue().orElse(null);
     }
 
@@ -111,7 +110,7 @@ public class TechnicModpackUpdateManager {
      * @param instance Instance to get version of
      * @return Latest solder version, or null if no newer version is found
      */
-    public static TechnicSolderModpack getUpToDateSolderModpack(Instance instance) {
+    public static TechnicSolderModpack getUpToDateSolderModpack(UUID instance) {
         return getSolderSubject(instance).getValue().orElse(null);
     }
 
@@ -155,9 +154,9 @@ public class TechnicModpackUpdateManager {
                                 technicModpack.solder,
                                 technicModpack.name);
 
-                        getSolderSubject(i).onNext(Optional.ofNullable(technicSolderModpack));
+                        getSolderSubject(i.getUUID()).onNext(Optional.ofNullable(technicSolderModpack));
                     } else {
-                        getSubject(i).onNext(Optional.ofNullable(technicModpack));
+                        getSubject(i.getUUID()).onNext(Optional.ofNullable(technicModpack));
                     }
                 });
 

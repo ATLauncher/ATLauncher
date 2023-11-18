@@ -222,11 +222,11 @@ public class InstancesTabViewModel implements IInstancesTabViewModel, SettingsLi
                         && latestVersion.get().id != instance.launcher.curseForgeFile.id);
             } else if (instance.isTechnicPack()) {
                 if (instance.isTechnicSolderPack()) {
-                    return TechnicModpackUpdateManager.getSolderObservable(instance)
+                    return TechnicModpackUpdateManager.getSolderObservable(instance.getUUID())
                             .map(latestVersion -> latestVersion.isPresent()
                                     && !latestVersion.get().latest.equals(instance.launcher.version));
                 } else {
-                    return TechnicModpackUpdateManager.getObservable(instance)
+                    return TechnicModpackUpdateManager.getObservable(instance.getUUID())
                             .map(latestVersion -> latestVersion.isPresent()
                                     && !latestVersion.get().version.equals(instance.launcher.version));
                 }
