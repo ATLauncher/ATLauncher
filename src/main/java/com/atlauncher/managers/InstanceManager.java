@@ -19,8 +19,11 @@ package com.atlauncher.managers;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -293,5 +296,27 @@ public class InstanceManager {
         instances.removeIf(it -> it.getUUID().equals(instance.getUUID()));
         instances.add(instance);
         INSTANCES.onNext(instances);
+    }
+
+    /**
+     * Save an instance.
+     * <p>
+     * Also performs updateInstance.
+     *
+     * @param instance Instance to save.
+     */
+    public static void saveInstance(Instance instance) {
+        try (
+            OutputStreamWriter fileWriter =
+                new OutputStreamWriter(
+                    Files.newOutputStream(instance.getRoot().resolve("instance.json")),
+                    StandardCharsets.UTF_8
+                )
+        ) {
+            Gsons.DEFAULT.toJson(instance, fileWriter);
+            updateInstance(instance);
+        } catch (JsonIOException | IOException e) {
+            LogManager.logStackTrace(e);
+        }
     }
 }

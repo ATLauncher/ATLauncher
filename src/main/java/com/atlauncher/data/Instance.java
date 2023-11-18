@@ -2452,13 +2452,12 @@ public class Instance extends MinecraftVersion {
         }
     }
 
+    /**
+     * @deprecated InstanceManager shall handle this business code in the future.
+     */
+    @Deprecated()
     public void save() {
-        try (OutputStreamWriter fileWriter = new OutputStreamWriter(
-                new FileOutputStream(this.getRoot().resolve("instance.json").toFile()), StandardCharsets.UTF_8)) {
-            Gsons.DEFAULT.toJson(this, fileWriter);
-        } catch (JsonIOException | IOException e) {
-            LogManager.logStackTrace(e);
-        }
+        InstanceManager.saveInstance(this);
     }
 
     public File getAssetsDir() {
