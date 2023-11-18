@@ -134,6 +134,7 @@ import com.atlauncher.graphql.type.PackLogAction;
 import com.atlauncher.gui.dialogs.InstanceInstallerDialog;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.gui.dialogs.RenameInstanceDialog;
+import com.atlauncher.gui.dialogs.instancesettings.InstanceEditors;
 import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.ConfigManager;
 import com.atlauncher.managers.CurseForgeUpdateManager;
@@ -2823,21 +2824,7 @@ public class Instance extends MinecraftVersion {
     }
 
     public void startChangeDescription() {
-        JTextArea textArea = new JTextArea(launcher.description);
-        textArea.setColumns(30);
-        textArea.setRows(10);
-        textArea.setLineWrap(true);
-        textArea.setWrapStyleWord(true);
-        textArea.setSize(300, 150);
-
-        int ret = JOptionPane.showConfirmDialog(App.launcher.getParent(), new JScrollPane(textArea),
-                GetText.tr("Changing Description"), JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE);
-
-        if (ret == 0) {
-            Analytics.trackEvent(AnalyticsEvent.forInstanceEvent("instance_description_change", this));
-            launcher.description = textArea.getText();
-            save();
-        }
+        InstanceEditors.startChangeDescription(this);
     }
 
     public void startChangeImage() {
