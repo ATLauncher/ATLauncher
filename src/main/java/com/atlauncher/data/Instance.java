@@ -1865,9 +1865,12 @@ public class Instance extends MinecraftVersion {
         return isExternalPack() || launcher.vanillaInstance || (getPack() != null && getPack().system);
     }
 
+    /**
+     * Moved to InstanceInstallerDialog.launch
+     */
+    @Deprecated
     public void startReinstall() {
-        Analytics.trackEvent(AnalyticsEvent.forInstanceEvent("instance_reinstall", this));
-        new InstanceInstallerDialog(this);
+        InstanceInstallerDialog.launch(this);
     }
 
     public void startRename() {
