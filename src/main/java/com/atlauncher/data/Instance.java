@@ -338,7 +338,7 @@ public class Instance extends MinecraftVersion {
             return;
         } else if (isExternalPack()) {
             if (isModpacksChPack()) {
-                version = Integer.toString(ModpacksChUpdateManager.getLatestVersion(this).id);
+                version = Integer.toString(ModpacksChUpdateManager.getLatestVersion(getUUID()).id);
             } else if (isCurseForgePack()) {
                 version = Integer.toString(CurseForgeUpdateManager.getLatestVersion(getUUID()).id);
             } else if (isTechnicPack()) {
@@ -378,7 +378,7 @@ public class Instance extends MinecraftVersion {
 
         if (isExternalPack()) {
             if (isModpacksChPack()) {
-                return hasUpdateBeenIgnored(Integer.toString(ModpacksChUpdateManager.getLatestVersion(this).id));
+                return hasUpdateBeenIgnored(Integer.toString(ModpacksChUpdateManager.getLatestVersion(getUUID()).id));
             } else if (isCurseForgePack()) {
                 return hasUpdateBeenIgnored(Integer.toString(CurseForgeUpdateManager.getLatestVersion(getUUID()).id));
             } else if (isTechnicPack()) {

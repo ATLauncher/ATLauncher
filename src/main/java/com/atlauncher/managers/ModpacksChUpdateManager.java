@@ -26,7 +26,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 import com.atlauncher.constants.Constants;
-import com.atlauncher.data.Instance;
 import com.atlauncher.data.modpacksch.ModpacksChPackManifest;
 import com.atlauncher.data.modpacksch.ModpacksChPackVersion;
 
@@ -47,11 +46,11 @@ public class ModpacksChUpdateManager {
      * @param instance Instance to get behavior subject for
      * @return behavior subject for said instance updates.
      */
-    private static BehaviorSubject<Optional<ModpacksChPackVersion>> getSubject(Instance instance) {
+    private static BehaviorSubject<Optional<ModpacksChPackVersion>> getSubject(UUID instance) {
         MODPACKS_CH_INSTANCE_LATEST_VERSION.putIfAbsent(
-                instance.getUUID(),
+                instance,
                 BehaviorSubject.createDefault(Optional.empty()));
-        return MODPACKS_CH_INSTANCE_LATEST_VERSION.get(instance.getUUID());
+        return MODPACKS_CH_INSTANCE_LATEST_VERSION.get(instance);
     }
 
     /**
@@ -62,7 +61,7 @@ public class ModpacksChUpdateManager {
      * @param instance Instance to get an observable for
      * @return Update observable
      */
-    public static Observable<Optional<ModpacksChPackVersion>> getObservable(Instance instance) {
+    public static Observable<Optional<ModpacksChPackVersion>> getObservable(UUID instance) {
         return getSubject(instance);
     }
 
@@ -72,7 +71,7 @@ public class ModpacksChUpdateManager {
      * @param instance Instance to get version of
      * @return Latest version, or null if no newer version is found
      */
-    public static ModpacksChPackVersion getLatestVersion(Instance instance) {
+    public static ModpacksChPackVersion getLatestVersion(UUID instance) {
         return getSubject(instance).getValue().orElse(null);
     }
 
@@ -106,7 +105,7 @@ public class ModpacksChUpdateManager {
                             Comparator.comparingInt((ModpacksChPackVersion version) -> version.id).reversed())
                             .findFirst().orElse(null);
 
-                    getSubject(i).onNext(Optional.ofNullable(latestVersion));
+                    getSubject(i.getUUID()).onNext(Optional.ofNullable(latestVersion));
                 });
 
         PerformanceManager.end();

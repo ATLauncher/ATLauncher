@@ -215,7 +215,7 @@ public class InstancesTabViewModel implements IInstancesTabViewModel, SettingsLi
             return BehaviorSubject.createDefault(false);
         } else if (instance.isExternalPack()) {
             if (instance.isModpacksChPack()) {
-                return ModpacksChUpdateManager.getObservable(instance).map(latestVersion -> latestVersion.isPresent()
+                return ModpacksChUpdateManager.getObservable(instance.getUUID()).map(latestVersion -> latestVersion.isPresent()
                         && latestVersion.get().id != instance.launcher.modpacksChPackVersionManifest.id);
             } else if (instance.isCurseForgePack()) {
                 return CurseForgeUpdateManager.getObservable(instance.getUUID()).map(latestVersion -> latestVersion.isPresent()
