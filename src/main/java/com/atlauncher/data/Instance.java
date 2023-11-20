@@ -1131,49 +1131,12 @@ public class Instance extends MinecraftVersion {
         InstanceEditors.changeLoaderVersion(this);
     }
 
+    /**
+     * @deprecated Moved to InstanceEditors.addLoader
+     */
+    @Deprecated
     public void addLoader(LoaderType loaderType) {
-        Analytics
-                .trackEvent(AnalyticsEvent.forInstanceAddLoader(this, loaderType));
-
-        LoaderVersion loaderVersion = InstanceEditors.showLoaderVersionSelector(this);
-
-        if (loaderVersion == null) {
-            return;
-        }
-
-        boolean success = false;
-
-        try {
-            Installable installable = new VanillaInstallable(MinecraftManager.getMinecraftVersion(id), loaderVersion,
-                    launcher.description);
-            installable.instance = this;
-            installable.instanceName = launcher.name;
-            installable.isReinstall = true;
-            installable.addingLoader = true;
-            installable.isServer = false;
-            installable.saveMods = true;
-
-            success = installable.startInstall();
-        } catch (InvalidMinecraftVersion e) {
-            LogManager.logStackTrace(e);
-        }
-
-        if (success) {
-            // #. {0} is the loader (Forge/Fabric/Quilt)
-            DialogManager.okDialog().setTitle(GetText.tr("{0} Installed", loaderType))
-                    .setContent(new HTMLBuilder().center()
-                            // #. {0} is the loader (Forge/Fabric/Quilt) {1} is the version
-                            .text(GetText.tr("{0} {1} has been installed.", loaderType, loaderVersion.version)).build())
-                    .setType(DialogManager.INFO).show();
-        } else {
-            // #. {0} is the loader (Forge/Fabric/Quilt)
-            DialogManager.okDialog().setTitle(GetText.tr("{0} Not Installed", loaderType))
-                    // #. {0} is the loader (Forge/Fabric/Quilt)
-                    .setContent(new HTMLBuilder().center().text(GetText
-                            .tr("{0} has not been installed. Check the console for more information.", loaderType))
-                            .build())
-                    .setType(DialogManager.ERROR).show();
-        }
+        InstanceEditors.addLoader(this, loaderType);
     }
 
     public void removeLoader() {

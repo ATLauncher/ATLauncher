@@ -261,4 +261,49 @@ public class InstanceEditors {
                 .setType(DialogManager.ERROR).show();
         }
     }
+
+    public static void addLoader(Instance instance, LoaderType loaderType) {
+        Analytics
+            .trackEvent(AnalyticsEvent.forInstanceAddLoader(instance, loaderType));
+
+        LoaderVersion loaderVersion = InstanceEditors.showLoaderVersionSelector(instance);
+
+        if (loaderVersion == null) {
+            return;
+        }
+
+        boolean success = false;
+
+        try {
+            Installable installable = new VanillaInstallable(MinecraftManager.getMinecraftVersion(instance.id), loaderVersion,
+                instance.launcher.description);
+            installable.instance = instance;
+            installable.instanceName = instance.launcher.name;
+            installable.isReinstall = true;
+            installable.addingLoader = true;
+            installable.isServer = false;
+            installable.saveMods = true;
+
+            success = installable.startInstall();
+        } catch (InvalidMinecraftVersion e) {
+            LogManager.logStackTrace(e);
+        }
+
+        if (success) {
+            // #. {0} is the loader (Forge/Fabric/Quilt)
+            DialogManager.okDialog().setTitle(GetText.tr("{0} Installed", loaderType))
+                .setContent(new HTMLBuilder().center()
+                    // #. {0} is the loader (Forge/Fabric/Quilt) {1} is the version
+                    .text(GetText.tr("{0} {1} has been installed.", loaderType, loaderVersion.version)).build())
+                .setType(DialogManager.INFO).show();
+        } else {
+            // #. {0} is the loader (Forge/Fabric/Quilt)
+            DialogManager.okDialog().setTitle(GetText.tr("{0} Not Installed", loaderType))
+                // #. {0} is the loader (Forge/Fabric/Quilt)
+                .setContent(new HTMLBuilder().center().text(GetText
+                        .tr("{0} has not been installed. Check the console for more information.", loaderType))
+                    .build())
+                .setType(DialogManager.ERROR).show();
+        }
+    }
 }
