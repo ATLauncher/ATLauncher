@@ -1035,8 +1035,12 @@ public class Instance extends MinecraftVersion {
         return "Instance";
     }
 
+    /**
+     * @deprecated Moved to InstanceInstallerDialog
+     */
+    @Deprecated
     public void update() {
-        new InstanceInstallerDialog(this, true, false, null, null, true, null, App.launcher.getParent(), null);
+        InstanceInstallerDialog.launchUpdate(this);
     }
 
     public boolean hasCurseForgeProjectId() {

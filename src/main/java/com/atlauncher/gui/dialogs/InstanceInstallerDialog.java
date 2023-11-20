@@ -1272,4 +1272,18 @@ public class InstanceInstallerDialog extends JDialog {
         Analytics.trackEvent(AnalyticsEvent.forInstanceEvent("instance_reinstall", instance));
         new InstanceInstallerDialog(instance);
     }
+
+    public static void launchUpdate(Instance instance){
+        new InstanceInstallerDialog(
+            instance,
+            true,
+            false,
+            null,
+            null,
+            true,
+            null,
+            App.launcher.getParent(),
+            null
+        );
+    }
 }
