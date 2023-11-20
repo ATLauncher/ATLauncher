@@ -90,11 +90,6 @@ import com.atlauncher.data.multimc.MultiMCManifest;
 import com.atlauncher.data.multimc.MultiMCRequire;
 import com.atlauncher.exceptions.InvalidMinecraftVersion;
 import com.atlauncher.exceptions.InvalidPack;
-import com.atlauncher.graphql.AddPackActionMutation;
-import com.atlauncher.graphql.AddPackTimePlayedMutation;
-import com.atlauncher.graphql.type.AddPackActionInput;
-import com.atlauncher.graphql.type.AddPackTimePlayedInput;
-import com.atlauncher.graphql.type.PackLogAction;
 import com.atlauncher.gui.InstanceBackup;
 import com.atlauncher.gui.InstanceCloner;
 import com.atlauncher.gui.dialogs.InstanceInstallerDialog;
@@ -113,12 +108,12 @@ import com.atlauncher.managers.PackManager;
 import com.atlauncher.managers.PerformanceManager;
 import com.atlauncher.managers.TechnicModpackUpdateManager;
 import com.atlauncher.network.Analytics;
-import com.atlauncher.network.GraphqlClient;
 import com.atlauncher.network.analytics.AnalyticsEvent;
 import com.atlauncher.utils.ArchiveUtils;
 import com.atlauncher.utils.CurseForgeApi;
 import com.atlauncher.utils.FileUtils;
 import com.atlauncher.utils.Hashing;
+import com.atlauncher.utils.InstancePlayTimeUtils;
 import com.atlauncher.utils.Java;
 import com.atlauncher.utils.ModrinthApi;
 import com.atlauncher.utils.OS;
@@ -397,44 +392,20 @@ public class Instance extends MinecraftVersion {
         return InstanceLauncherUseCase.launch(this, offline);
     }
 
+    /**
+     * @deprecated Moved to InstancePlayTimeUtils
+     */
+    @Deprecated
     public void addPlay(String version) {
-        if (ConfigManager.getConfigItem("useGraphql.packActions", false) == true) {
-            GraphqlClient
-                    .mutateAndWait(
-                            new AddPackActionMutation(AddPackActionInput.builder().packId(Integer.toString(
-                                    this.getPack().id))
-                                    .version(version).action(PackLogAction.PLAY).build()));
-        } else {
-            Map<String, Object> request = new HashMap<>();
-
-            request.put("version", version);
-
-            try {
-                Utils.sendAPICall("pack/" + this.getPack().getSafeName() + "/play", request);
-            } catch (IOException e) {
-                LogManager.logStackTrace(e);
-            }
-        }
+        InstancePlayTimeUtils.addPlay(this, version);
     }
 
+    /**
+     * @deprecated Moved to InstancePlayTimeUtils
+     */
+    @Deprecated
     public void addTimePlayed(int time, String version) {
-        if (ConfigManager.getConfigItem("useGraphql.packActions", false) == true) {
-            GraphqlClient
-                    .mutateAndWait(
-                            new AddPackTimePlayedMutation(AddPackTimePlayedInput.builder().packId(Integer.toString(
-                                    this.getPack().id)).version(version).time(time).build()));
-        } else {
-            Map<String, Object> request = new HashMap<>();
-
-            request.put("version", version);
-            request.put("time", time);
-
-            try {
-                Utils.sendAPICall("pack/" + this.getPack().getSafeName() + "/timeplayed/", request);
-            } catch (IOException e) {
-                LogManager.logStackTrace(e);
-            }
-        }
+        InstancePlayTimeUtils.addTimePlayed(this, time, version);
     }
 
     /**
