@@ -64,7 +64,7 @@ import com.atlauncher.utils.Utils;
  */
 public class InstanceEditors {
 
-    public static void startChangeDescription(Instance instance){
+    public static void startChangeDescription(Instance instance) {
         JTextArea textArea = new JTextArea(instance.launcher.description);
         textArea.setColumns(30);
         textArea.setRows(10);
@@ -213,7 +213,7 @@ public class InstanceEditors {
         return ((ComboItem<LoaderVersion>) loaderVersionsDropDown.getSelectedItem()).getValue();
     }
 
-    public static void changeLoaderVersion(Instance instance){
+    public static void changeLoaderVersion(Instance instance) {
         Analytics.trackEvent(
             AnalyticsEvent.forInstanceLoaderEvent("instance_change_loader_version", instance, instance.launcher.loaderVersion));
 
@@ -302,6 +302,47 @@ public class InstanceEditors {
                 // #. {0} is the loader (Forge/Fabric/Quilt)
                 .setContent(new HTMLBuilder().center().text(GetText
                         .tr("{0} has not been installed. Check the console for more information.", loaderType))
+                    .build())
+                .setType(DialogManager.ERROR).show();
+        }
+    }
+
+    public static void removeLoader(Instance instance) {
+        Analytics.trackEvent(
+            AnalyticsEvent.forInstanceLoaderEvent("instance_remove_loader", instance, instance.launcher.loaderVersion));
+        String loaderType = instance.launcher.loaderVersion.type;
+
+        boolean success = false;
+
+        try {
+            Installable installable = new VanillaInstallable(MinecraftManager.getMinecraftVersion(instance.id), null,
+                instance.launcher.description);
+            installable.instance = instance;
+            installable.instanceName = instance.launcher.name;
+            installable.isReinstall = true;
+            installable.removingLoader = true;
+            installable.isServer = false;
+            installable.saveMods = true;
+
+            success = installable.startInstall();
+        } catch (InvalidMinecraftVersion e) {
+            LogManager.logStackTrace(e);
+        }
+
+        if (success) {
+
+            // #. {0} is the loader (Forge/Fabric/Quilt)
+            DialogManager.okDialog().setTitle(GetText.tr("{0} Removed", loaderType))
+                .setContent(new HTMLBuilder().center()
+                    // #. {0} is the loader (Forge/Fabric/Quilt)
+                    .text(GetText.tr("{0} has been removed from this instance.", loaderType)).build())
+                .setType(DialogManager.INFO).show();
+        } else {
+            // #. {0} is the loader (Forge/Fabric/Quilt)
+            DialogManager.okDialog().setTitle(GetText.tr("{0} Not Removed", loaderType))
+                .setContent(new HTMLBuilder().center().text(
+                        // #. {0} is the loader (Forge/Fabric/Quilt)
+                        GetText.tr("{0} has not been removed. Check the console for more information.", loaderType))
                     .build())
                 .setType(DialogManager.ERROR).show();
         }

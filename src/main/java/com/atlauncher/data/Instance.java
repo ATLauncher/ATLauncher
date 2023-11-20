@@ -1139,45 +1139,12 @@ public class Instance extends MinecraftVersion {
         InstanceEditors.addLoader(this, loaderType);
     }
 
+    /**
+     * @deprecated Moved to InstanceEditors.removeLoader
+     */
+    @Deprecated
     public void removeLoader() {
-        Analytics.trackEvent(
-                AnalyticsEvent.forInstanceLoaderEvent("instance_remove_loader", this, launcher.loaderVersion));
-        String loaderType = launcher.loaderVersion.type;
-
-        boolean success = false;
-
-        try {
-            Installable installable = new VanillaInstallable(MinecraftManager.getMinecraftVersion(id), null,
-                    launcher.description);
-            installable.instance = this;
-            installable.instanceName = launcher.name;
-            installable.isReinstall = true;
-            installable.removingLoader = true;
-            installable.isServer = false;
-            installable.saveMods = true;
-
-            success = installable.startInstall();
-        } catch (InvalidMinecraftVersion e) {
-            LogManager.logStackTrace(e);
-        }
-
-        if (success) {
-
-            // #. {0} is the loader (Forge/Fabric/Quilt)
-            DialogManager.okDialog().setTitle(GetText.tr("{0} Removed", loaderType))
-                    .setContent(new HTMLBuilder().center()
-                            // #. {0} is the loader (Forge/Fabric/Quilt)
-                            .text(GetText.tr("{0} has been removed from this instance.", loaderType)).build())
-                    .setType(DialogManager.INFO).show();
-        } else {
-            // #. {0} is the loader (Forge/Fabric/Quilt)
-            DialogManager.okDialog().setTitle(GetText.tr("{0} Not Removed", loaderType))
-                    .setContent(new HTMLBuilder().center().text(
-                            // #. {0} is the loader (Forge/Fabric/Quilt)
-                            GetText.tr("{0} has not been removed. Check the console for more information.", loaderType))
-                            .build())
-                    .setType(DialogManager.ERROR).show();
-        }
+        InstanceEditors.removeLoader(this);
     }
 
     public boolean usesCustomMinecraftJar() {
