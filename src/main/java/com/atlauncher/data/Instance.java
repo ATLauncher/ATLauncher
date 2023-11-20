@@ -381,16 +381,6 @@ public class Instance extends MinecraftVersion {
         InstancePlayTimeUtils.addTimePlayed(this, time, version);
     }
 
-    /**
-     * TODO Remove?
-     */
-    @Deprecated
-   public DisableableMod getDisableableModByCurseModId(int curseModId) {
-        return this.launcher.mods.stream().filter(
-                installedMod -> installedMod.isFromCurseForge() && installedMod.getCurseForgeModId() == curseModId)
-                .findFirst().orElse(null);
-    }
-
     public void addFileFromCurseForge(CurseForgeProject mod, CurseForgeFile file, ProgressDialog dialog) {
         Path downloadLocation = FileSystem.DOWNLOADS.resolve(file.fileName);
         Path finalLocation = mod.getInstanceDirectoryPath(this.getRoot()).resolve(file.fileName);
@@ -684,15 +674,6 @@ public class Instance extends MinecraftVersion {
         return this.launcher.mods.stream().anyMatch(DisableableMod::isUserAdded);
     }
 
-    /**
-     * TODO Remove?
-     */
-    @Deprecated
-   public List<String> getCustomMods(Type type) {
-        return this.launcher.mods.stream().filter(DisableableMod::isUserAdded).filter(m -> m.getType() == type)
-                .map(DisableableMod::getFilename).collect(Collectors.toList());
-    }
-
     public List<String> getPackMods(Type type) {
         return this.launcher.mods.stream().filter(dm -> !dm.userAdded && dm.type == type)
                 .map(DisableableMod::getFilename).collect(Collectors.toList());
@@ -830,14 +811,6 @@ public class Instance extends MinecraftVersion {
 
     public File getBinDirectory() {
         return getRoot().resolve("bin").toFile();
-    }
-
-    /**
-     * TODO Remove?
-     */
-    @Deprecated
-    public File getNativesDirectory() {
-        return getRoot().resolve("bin/natives").toFile();
     }
 
     public File getMinecraftJar() {
@@ -994,46 +967,6 @@ public class Instance extends MinecraftVersion {
         }
 
         return "ATLauncher";
-    }
-
-    /**
-     * TODO Remove?
-     */
-    @Deprecated
-    public String getAnalyticsCategory() {
-        if (isCurseForgePack()) {
-            return "CurseForgeInstance";
-        }
-
-        if (isModpacksChPack()) {
-            return "ModpacksChInstance";
-        }
-
-        if (isTechnicSolderPack()) {
-            return "TechnicSolderInstance";
-        }
-
-        if (isTechnicPack()) {
-            return "TechnicInstance";
-        }
-
-        if (isModrinthPack()) {
-            return "ModrinthPack";
-        }
-
-        if (isModrinthImport()) {
-            return "ModrinthImport";
-        }
-
-        if (isMultiMcImport()) {
-            return "MultiMcImport";
-        }
-
-        if (isVanillaInstance()) {
-            return "VanillaInstance";
-        }
-
-        return "Instance";
     }
 
     /**
