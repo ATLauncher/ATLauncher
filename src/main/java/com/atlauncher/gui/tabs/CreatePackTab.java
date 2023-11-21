@@ -531,8 +531,8 @@ public class CreatePackTab extends HierarchyPanel implements Tab, Relocalization
             }
             viewModel.createServer();
         });
-        viewModel.createInstanceEnabled().subscribe(createInstanceButton::setEnabled);
-        viewModel.createServerEnabled().subscribe(createServerButton::setEnabled);
+        addDisposable(viewModel.createInstanceEnabled().subscribe(createInstanceButton::setEnabled));
+        addDisposable(viewModel.createServerEnabled().subscribe(createServerButton::setEnabled));
         bottomPanel.add(createInstanceButton);
         createInstanceButton.addActionListener((event) -> {
             viewModel.createInstance();
