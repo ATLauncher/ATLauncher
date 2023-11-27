@@ -25,7 +25,7 @@ import org.freedesktop.dbus.interfaces.DBusInterface;
 import org.freedesktop.dbus.types.Variant;
 
 /**
- * @see <a href="https://flatpak.github.io/xdg-desktop-portal/#gdbus-org.freedesktop.portal.DynamicLauncher">DynamicLauncher</a>
+ * @see <a href="https://flatpak.github.io/xdg-desktop-portal/docs/doc-org.freedesktop.portal.DynamicLauncher.html">DynamicLauncher</a>
  */
 @DBusInterfaceName(value = "org.freedesktop.portal.DynamicLauncher")
 public interface DynamicLauncher extends DBusInterface {
@@ -34,7 +34,7 @@ public interface DynamicLauncher extends DBusInterface {
      * @param desktop_file_id The .desktop file name to be used
      * @param desktop_entry   The text of the Desktop Entry file to be installed, see below
      * @param options         Vardict with optional further information
-     * @see <a href="https://flatpak.github.io/xdg-desktop-portal/#gdbus-method-org-freedesktop-portal-DynamicLauncher.Install">
+     * @see <a href="https://flatpak.github.io/xdg-desktop-portal/docs/doc-org.freedesktop.portal.DynamicLauncher.html#org-freedesktop-portal-dynamiclauncher-install">
      * Install</a>
      */
     void Install(String token,
@@ -48,7 +48,7 @@ public interface DynamicLauncher extends DBusInterface {
      * @param icon_v
      * @param options
      * @return
-     * @see <a href="https://flatpak.github.io/xdg-desktop-portal/#gdbus-method-org-freedesktop-portal-DynamicLauncher.PrepareInstall">
+     * @see <a href="https://flatpak.github.io/xdg-desktop-portal/docs/doc-org.freedesktop.portal.DynamicLauncher.html#org-freedesktop-portal-dynamiclauncher-prepareinstall">
      * PrepareInstall</a>
      */
     DBusPath PrepareInstall(String parentWindow,
@@ -61,7 +61,7 @@ public interface DynamicLauncher extends DBusInterface {
      * @param icon_v
      * @param options
      * @return
-     * @see <a href="https://flatpak.github.io/xdg-desktop-portal/#gdbus-method-org-freedesktop-portal-DynamicLauncher.RequestInstallToken">
+     * @see <a href="https://flatpak.github.io/xdg-desktop-portal/docs/doc-org.freedesktop.portal.DynamicLauncher.html#org-freedesktop-portal-dynamiclauncher-requestinstalltoken">
      * RequestInstallToken</a>
      */
     String RequestInstallToken(String name,
@@ -71,7 +71,7 @@ public interface DynamicLauncher extends DBusInterface {
     /**
      * @param desktop_file_id
      * @param options
-     * @see <a href="https://flatpak.github.io/xdg-desktop-portal/#gdbus-method-org-freedesktop-portal-DynamicLauncher.Uninstall">
+     * @see <a href="https://flatpak.github.io/xdg-desktop-portal/docs/doc-org.freedesktop.portal.DynamicLauncher.html#org-freedesktop-portal-dynamiclauncher-uninstall">
      * Uninstall</a>
      */
     void Uninstall(String desktop_file_id,
@@ -80,7 +80,7 @@ public interface DynamicLauncher extends DBusInterface {
     /**
      * @param desktop_file_id
      * @return
-     * @see <a href="https://flatpak.github.io/xdg-desktop-portal/#gdbus-method-org-freedesktop-portal-DynamicLauncher.GetDesktopEntry">
+     * @see <a href="https://flatpak.github.io/xdg-desktop-portal/docs/doc-org.freedesktop.portal.DynamicLauncher.html#org-freedesktop-portal-dynamiclauncher-getdesktopentry">
      * GetDesktopEntry</a>
      */
     String GetDesktopEntry(String desktop_file_id);
@@ -88,7 +88,7 @@ public interface DynamicLauncher extends DBusInterface {
     /**
      * @param desktop_file_id
      * @return TODO FIGURE THIS OUT
-     * @see <a href="https://flatpak.github.io/xdg-desktop-portal/#gdbus-method-org-freedesktop-portal-DynamicLauncher.GetIcon">
+     * @see <a href="https://flatpak.github.io/xdg-desktop-portal/docs/doc-org.freedesktop.portal.DynamicLauncher.html#org-freedesktop-portal-dynamiclauncher-geticon">
      * GetIcon</a>
      */
     void GetIcon(String desktop_file_id);
@@ -96,7 +96,7 @@ public interface DynamicLauncher extends DBusInterface {
     /**
      * @param desktop_file_id
      * @param options
-     * @see <a href="https://flatpak.github.io/xdg-desktop-portal/#gdbus-method-org-freedesktop-portal-DynamicLauncher.Launch">
+     * @see <a href="https://flatpak.github.io/xdg-desktop-portal/docs/doc-org.freedesktop.portal.DynamicLauncher.html#org-freedesktop-portal-dynamiclauncher-launch">
      * Launch</a>
      */
     void Launch(String desktop_file_id,
