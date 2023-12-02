@@ -17,6 +17,8 @@
  */
 package com.atlauncher.viewmodel.impl;
 
+import java.text.SimpleDateFormat;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import org.jetbrains.annotations.NotNull;
@@ -26,6 +28,8 @@ import com.apollographql.apollo.api.Response;
 import com.apollographql.apollo.api.cache.http.HttpCachePolicy;
 import com.apollographql.apollo.api.cache.http.HttpCachePolicy.FetchStrategy;
 import com.apollographql.apollo.exception.ApolloException;
+import com.atlauncher.App;
+import com.atlauncher.data.News;
 import com.atlauncher.graphql.GetNewsQuery;
 import com.atlauncher.managers.ConfigManager;
 import com.atlauncher.managers.LogManager;
@@ -55,17 +59,57 @@ public class NewsViewModel implements INewsViewModel {
                 .enqueue(new ApolloCall.Callback<GetNewsQuery.Data>() {
                     @Override
                     public void onResponse(@NotNull Response<GetNewsQuery.Data> response) {
-                        newsHTML.onNext(NewsManager.getNewsHTML(response.getData().generalNews()));
+                        newsHTML.onNext(newsAsHTML(response.getData().generalNews()));
                     }
 
                     @Override
                     public void onFailure(@NotNull ApolloException e) {
                         LogManager.logStackTrace("Error fetching news", e);
-                        newsHTML.onNext(NewsManager.getNewsHTML());
+                        newsHTML.onNext(getNewsAsHTML());
                     }
                 });
         } else {
-            newsHTML.onNext(NewsManager.getNewsHTML());
+            newsHTML.onNext(getNewsAsHTML());
         }
+    }
+
+    /**
+     * Get the News for the Launcher in HTML for display on the news panel.
+     *
+     * @return The HTML for displaying on the News Panel
+     */
+    static String getNewsAsHTML() {
+        StringBuilder news = new StringBuilder("<html>");
+
+        for (News newsItem : NewsManager.getNews()) {
+            news.append(newsItem.getHTML()).append("<hr/>");
+        }
+
+        // remove the last <hr/>
+        news = new StringBuilder(news.substring(0, news.length() - 5));
+        news.append("</html>");
+
+        return news.toString();
+    }
+
+    /**
+     * Takes a list of news items from GraphQL query and transforms into HTML.
+     *
+     * @return The HTML for displaying on the News Panel
+     */
+    static String newsAsHTML(List<GetNewsQuery.GeneralNew> newsItems) {
+        StringBuilder news = new StringBuilder("<html>");
+        SimpleDateFormat formatter = new SimpleDateFormat(App.settings.dateFormat + " HH:mm:ss a");
+
+        for (GetNewsQuery.GeneralNew newsItem : newsItems) {
+            news.append("<h2>" + newsItem.title() + " (" + formatter.format(newsItem.createdAt()) + ")</h2>" + "<p>"
+                + newsItem.content() + "</p><hr/>");
+        }
+
+        // remove the last <hr/>
+        news = new StringBuilder(news.substring(0, news.length() - 5));
+        news.append("</html>");
+
+        return news.toString();
     }
 }
