@@ -33,12 +33,10 @@ import javax.swing.event.HyperlinkEvent;
 import javax.swing.text.html.HTMLEditorKit;
 import javax.swing.text.html.StyleSheet;
 
-import org.apache.logging.log4j.Logger;
 import org.mini2Dx.gettext.GetText;
 
 import com.atlauncher.gui.panels.HierarchyPanel;
 import com.atlauncher.gui.tabs.Tab;
-import com.atlauncher.managers.LogManager;
 import com.atlauncher.utils.OS;
 import com.atlauncher.viewmodel.base.INewsViewModel;
 import com.atlauncher.viewmodel.impl.NewsViewModel;
@@ -83,15 +81,11 @@ public class NewsTab extends HierarchyPanel implements Tab {
         scrollPane.getVerticalScrollBar().setUnitIncrement(16);
         this.add(scrollPane, BorderLayout.CENTER);
 
-        viewModel.addOnReloadListener(html -> {
-            // Because reload() is a public function, we need to ensure it
-            // does not trigger setting the UI when the UI is hidden
-            if (isShowing()) {
-                this.NEWS_PANE.setText("");
-                this.NEWS_PANE.setText(html);
-                this.NEWS_PANE.setCaretPosition(0);
-            }
-        });
+        addDisposable(viewModel.getNewsHTML().subscribe(html -> {
+            this.NEWS_PANE.setText("");
+            this.NEWS_PANE.setText(html);
+            this.NEWS_PANE.setCaretPosition(0);
+        }));
         reload();
     }
 
@@ -101,7 +95,6 @@ public class NewsTab extends HierarchyPanel implements Tab {
         NEWS_MENU = null;
         NEWS_PANE = null;
         removeAll();
-        viewModel.addOnReloadListener(null);
     }
 
     private void createNewsKit() {
