@@ -45,7 +45,6 @@ import com.atlauncher.viewmodel.impl.NewsViewModel;
  * This class extends {@link JPanel} and provides a Panel for displaying the
  * latest news.
  */
-@SuppressWarnings("serial")
 public class NewsTab extends HierarchyPanel implements Tab {
     private HTMLEditorKit NEWS_KIT;
     private ContextMenu NEWS_MENU;
@@ -86,7 +85,6 @@ public class NewsTab extends HierarchyPanel implements Tab {
             this.NEWS_PANE.setText(html);
             this.NEWS_PANE.setCaretPosition(0);
         }));
-        reload();
     }
 
     @Override
@@ -139,14 +137,6 @@ public class NewsTab extends HierarchyPanel implements Tab {
                 });
             }
         };
-    }
-
-    /**
-     * Reloads the panel with updated news.
-     */
-    public void reload() {
-        if (viewModel != null)
-            viewModel.reload();
     }
 
     @Override

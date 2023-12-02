@@ -30,9 +30,4 @@ public interface INewsViewModel {
      * Observable of news HTML to display
      */
     Observable<String> getNewsHTML();
-
-    /**
-     * Reload news
-     */
-    void reload();
 }

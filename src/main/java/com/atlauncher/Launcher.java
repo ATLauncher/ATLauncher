@@ -102,7 +102,7 @@ public class Launcher {
 
         ConfigManager.loadConfig(); // Load the config
 
-        NewsManager.loadNews(); // Load the news
+        NewsManager.loadFileNews(); // Load the news
 
         if (App.settings.enableAnalytics && ConfigManager.getConfigItem("useGraphql.launcherLaunch", false) == true) {
             App.TASKPOOL.execute(() -> {
@@ -372,8 +372,8 @@ public class Launcher {
             checkForExternalPackUpdates();
 
             ConfigManager.loadConfig(); // Load the config
-            NewsManager.loadNews(); // Load the news
-            reloadNewsPanel(); // Reload news panel
+            NewsManager.loadFileNews(); // Load the news
+            NewsManager.loadNetworkNews(); // Reload news panel
             PackManager.loadPacks(); // Load the Packs available in the Launcher
             reloadPacksBrowserPanel();// Reload packs browser panel
             PackManager.loadUsers(); // Load the Testers and Allowed Players for the packs
@@ -463,13 +463,6 @@ public class Launcher {
      */
     public void setNewsPanel(NewsTab newsPanel) {
         this.newsPanel = newsPanel;
-    }
-
-    /**
-     * Reloads the panel used for News
-     */
-    public void reloadNewsPanel() {
-        this.newsPanel.reload(); // Reload the news panel
     }
 
     /**
