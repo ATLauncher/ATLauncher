@@ -69,44 +69,4 @@ public class NewsManager {
         LogManager.debug("Finished loading news");
         PerformanceManager.end();
     }
-
-    /**
-     * Get the News for the Launcher in HTML for display on the news panel.
-     *
-     * @return The HTML for displaying on the News Panel
-     */
-    public static String getNewsHTML() {
-        StringBuilder news = new StringBuilder("<html>");
-
-        for (News newsItem : Data.NEWS) {
-            news.append(newsItem.getHTML()).append("<hr/>");
-        }
-
-        // remove the last <hr/>
-        news = new StringBuilder(news.substring(0, news.length() - 5));
-        news.append("</html>");
-
-        return news.toString();
-    }
-
-    /**
-     * Takes a list of news items from GraphQL query and transforms into HTML.
-     *
-     * @return The HTML for displaying on the News Panel
-     */
-    public static String getNewsHTML(List<GetNewsQuery.GeneralNew> newsItems) {
-        StringBuilder news = new StringBuilder("<html>");
-        SimpleDateFormat formatter = new SimpleDateFormat(App.settings.dateFormat + " HH:mm:ss a");
-
-        for (GetNewsQuery.GeneralNew newsItem : newsItems) {
-            news.append("<h2>" + newsItem.title() + " (" + formatter.format(newsItem.createdAt()) + ")</h2>" + "<p>"
-                    + newsItem.content() + "</p><hr/>");
-        }
-
-        // remove the last <hr/>
-        news = new StringBuilder(news.substring(0, news.length() - 5));
-        news.append("</html>");
-
-        return news.toString();
-    }
 }
