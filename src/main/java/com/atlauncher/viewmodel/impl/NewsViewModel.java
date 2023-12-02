@@ -18,7 +18,6 @@
 package com.atlauncher.viewmodel.impl;
 
 import java.util.concurrent.TimeUnit;
-import java.util.function.Consumer;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -33,20 +32,21 @@ import com.atlauncher.managers.LogManager;
 import com.atlauncher.managers.NewsManager;
 import com.atlauncher.network.GraphqlClient;
 import com.atlauncher.viewmodel.base.INewsViewModel;
+import com.gitlab.doomsdayrs.lib.rxswing.schedulers.SwingSchedulers;
+
+import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.subjects.BehaviorSubject;
 
 public class NewsViewModel implements INewsViewModel {
-    private Consumer<String> _onReload;
+    private BehaviorSubject<String> newsHTML = BehaviorSubject.create();
 
     @Override
-    public void addOnReloadListener(Consumer<String> onReload) {
-        _onReload = onReload;
+    public Observable<String> getNewsHTML() {
+        return newsHTML.observeOn(SwingSchedulers.edt());
     }
 
     @Override
     public void reload() {
-        // Ignore reloads if nothing is waiting for the content
-        if (_onReload == null) return;
-
         if (ConfigManager.getConfigItem("useGraphql.news", false)) {
             GraphqlClient.apolloClient.query(new GetNewsQuery(10))
                 .toBuilder()
@@ -55,17 +55,17 @@ public class NewsViewModel implements INewsViewModel {
                 .enqueue(new ApolloCall.Callback<GetNewsQuery.Data>() {
                     @Override
                     public void onResponse(@NotNull Response<GetNewsQuery.Data> response) {
-                        _onReload.accept(NewsManager.getNewsHTML(response.getData().generalNews()));
+                        newsHTML.onNext(NewsManager.getNewsHTML(response.getData().generalNews()));
                     }
 
                     @Override
                     public void onFailure(@NotNull ApolloException e) {
                         LogManager.logStackTrace("Error fetching news", e);
-                        _onReload.accept(NewsManager.getNewsHTML());
+                        newsHTML.onNext(NewsManager.getNewsHTML());
                     }
                 });
         } else {
-            _onReload.accept(NewsManager.getNewsHTML());
+            newsHTML.onNext(NewsManager.getNewsHTML());
         }
     }
 }
