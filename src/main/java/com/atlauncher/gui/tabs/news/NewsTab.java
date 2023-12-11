@@ -152,7 +152,8 @@ public class NewsTab extends HierarchyPanel implements Tab {
      * Reloads the panel with updated news.
      */
     public void reload() {
-        viewModel.reload();
+        if (viewModel != null)
+            viewModel.reload();
     }
 
     @Override
