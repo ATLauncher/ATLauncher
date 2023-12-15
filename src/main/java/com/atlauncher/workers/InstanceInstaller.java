@@ -37,6 +37,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -2470,6 +2471,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
 
         if (!this.isReinstall) {
             instanceLauncher = new InstanceLauncher();
+            instance.uuid = UUID.randomUUID();
         } else {
             instanceLauncher = this.instance.launcher;
             instance.uuid = this.instance.uuid;
