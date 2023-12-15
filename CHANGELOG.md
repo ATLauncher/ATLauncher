@@ -9,5 +9,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 
 ### Fixes
 - NPE by NewsTab.reload
+- Issues installing Forge 1.20.4
 
 ### Misc
