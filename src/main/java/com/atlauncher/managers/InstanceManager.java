@@ -26,6 +26,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 
 import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
@@ -266,6 +267,7 @@ public class InstanceManager {
         } else {
             clonedInstance.launcher.name = clonedName;
             clonedInstance.ROOT = FileSystem.INSTANCES.resolve(clonedInstance.getSafeName());
+            clonedInstance.uuid = UUID.randomUUID();
             FileUtils.createDirectory(clonedInstance.getRoot());
             Utils.copyDirectory(instance.getRoot().toFile(), clonedInstance.getRoot().toFile());
             clonedInstance.save();
