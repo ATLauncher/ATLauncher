@@ -219,12 +219,12 @@ public class Instance extends MinecraftVersion {
         this.logging = version.logging;
     }
 
-    public UUID getUUID(){
+    public UUID getUUID() {
         if (uuid == null) {
             uuid = UUID.randomUUID();
             save();
         }
-        return  uuid;
+        return uuid;
     }
 
     public String getSafeName() {
@@ -514,10 +514,26 @@ public class Instance extends MinecraftVersion {
         progressDialog.setLabel(GetText.tr("Downloading Libraries"));
         DownloadPool librariesPool = new DownloadPool();
 
+        List<Library> librariesMissingWithNoUrl = this.libraries.stream()
+                .filter(library -> library.shouldInstall() && library.downloads.artifact != null
+                        && library.downloads.artifact.url != null && library.downloads.artifact.url.isEmpty()
+                        && !Files.exists(FileSystem.LIBRARIES.resolve(library.downloads.artifact.path)))
+                .collect(Collectors.toList());
+        if (librariesMissingWithNoUrl.size() != 0) {
+            DialogManager.okDialog().setTitle(GetText.tr("Missing Libraries Found"))
+                    .setContent(new HTMLBuilder().center()
+                            .text(GetText.tr(
+                                    "This instance cannot be started due to missing libraries that cannot be downloaded.<br/><br/>Please reinstall the instance to create those libraries and be able to start this instance again."))
+                            .build())
+                    .setType(DialogManager.ERROR).show();
+            return false;
+        }
+
         // get non native libraries otherwise we double up
         this.libraries.stream()
                 .filter(library -> library.shouldInstall() && library.downloads.artifact != null
-                        && library.downloads.artifact.url != null && !library.hasNativeForOS())
+                        && library.downloads.artifact.url != null && !library.downloads.artifact.url.isEmpty()
+                        && !library.hasNativeForOS())
                 .distinct()
                 .map(l -> LWJGLManager.shouldReplaceLWJGL3(this)
                         ? LWJGLManager.getReplacementLWJGL3Library(this, l)
@@ -1693,7 +1709,8 @@ public class Instance extends MinecraftVersion {
 
     public boolean canBeExported() {
         if (launcher.loaderVersion == null) {
-            new Thread(()-> LogManager.debug("Instance " + launcher.name + " cannot be exported due to: No loader")).start();
+            new Thread(() -> LogManager.debug("Instance " + launcher.name + " cannot be exported due to: No loader"))
+                    .start();
             return false;
         }
 
