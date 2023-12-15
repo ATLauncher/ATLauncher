@@ -2971,11 +2971,15 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                 });
 
         if (this.loader != null && this.loader.getInstallLibraries() != null) {
-            this.loader.getInstallLibraries().stream().filter(library -> library.downloads.artifact != null).forEach(
-                    library -> pool.add(new com.atlauncher.network.Download().setUrl(library.downloads.artifact.url)
-                            .downloadTo(FileSystem.LIBRARIES.resolve(library.downloads.artifact.path))
-                            .hash(library.downloads.artifact.sha1).size(library.downloads.artifact.size)
-                            .withInstanceInstaller(this).withHttpClient(httpClient)));
+            this.loader.getInstallLibraries().stream()
+                    .filter(library -> library.downloads.artifact != null
+                            && library.downloads.artifact.url != null && !library.downloads.artifact.url.isEmpty())
+                    .forEach(
+                            library -> pool
+                                    .add(new com.atlauncher.network.Download().setUrl(library.downloads.artifact.url)
+                                            .downloadTo(FileSystem.LIBRARIES.resolve(library.downloads.artifact.path))
+                                            .hash(library.downloads.artifact.sha1).size(library.downloads.artifact.size)
+                                            .withInstanceInstaller(this).withHttpClient(httpClient)));
         }
 
         if (!this.isServer) {
