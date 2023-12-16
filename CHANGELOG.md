@@ -10,3 +10,4 @@ This changelog only contains the changes that are unreleased. For changes for in
 ### Fixes
 
 ### Misc
+- Move Business & UI code out of Instance.java

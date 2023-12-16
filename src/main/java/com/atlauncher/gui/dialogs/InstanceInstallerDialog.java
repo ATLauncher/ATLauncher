@@ -105,6 +105,7 @@ import com.atlauncher.managers.LogManager;
 import com.atlauncher.managers.MinecraftManager;
 import com.atlauncher.managers.PackManager;
 import com.atlauncher.network.Analytics;
+import com.atlauncher.network.analytics.AnalyticsEvent;
 import com.atlauncher.utils.ComboItem;
 import com.atlauncher.utils.CurseForgeApi;
 import com.atlauncher.utils.ModpacksChApi;
@@ -1079,7 +1080,7 @@ public class InstanceInstallerDialog extends JDialog {
         }
 
         if (isUpdate && instance != null && instance.isCurseForgePack()) {
-            CurseForgeFile latestVersion = CurseForgeUpdateManager.getLatestVersion(instance);
+            CurseForgeFile latestVersion = CurseForgeUpdateManager.getLatestVersion(instance.getUUID());
             if (latestVersion != null) {
                 for (PackVersion version : versions) {
                     if (version._curseForgeFile.id == latestVersion.id) {
@@ -1265,5 +1266,24 @@ public class InstanceInstallerDialog extends JDialog {
         middle.add(loaderVersionsDropDown, gbc);
 
         return gbc;
+    }
+
+    public static void launch(Instance instance) {
+        Analytics.trackEvent(AnalyticsEvent.forInstanceEvent("instance_reinstall", instance));
+        new InstanceInstallerDialog(instance);
+    }
+
+    public static void launchUpdate(Instance instance){
+        new InstanceInstallerDialog(
+            instance,
+            true,
+            false,
+            null,
+            null,
+            true,
+            null,
+            App.launcher.getParent(),
+            null
+        );
     }
 }

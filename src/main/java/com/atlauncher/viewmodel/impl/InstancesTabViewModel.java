@@ -215,23 +215,23 @@ public class InstancesTabViewModel implements IInstancesTabViewModel, SettingsLi
             return BehaviorSubject.createDefault(false);
         } else if (instance.isExternalPack()) {
             if (instance.isModpacksChPack()) {
-                return ModpacksChUpdateManager.getObservable(instance).map(latestVersion -> latestVersion.isPresent()
+                return ModpacksChUpdateManager.getObservable(instance.getUUID()).map(latestVersion -> latestVersion.isPresent()
                         && latestVersion.get().id != instance.launcher.modpacksChPackVersionManifest.id);
             } else if (instance.isCurseForgePack()) {
-                return CurseForgeUpdateManager.getObservable(instance).map(latestVersion -> latestVersion.isPresent()
+                return CurseForgeUpdateManager.getObservable(instance.getUUID()).map(latestVersion -> latestVersion.isPresent()
                         && latestVersion.get().id != instance.launcher.curseForgeFile.id);
             } else if (instance.isTechnicPack()) {
                 if (instance.isTechnicSolderPack()) {
-                    return TechnicModpackUpdateManager.getSolderObservable(instance)
+                    return TechnicModpackUpdateManager.getSolderObservable(instance.getUUID())
                             .map(latestVersion -> latestVersion.isPresent()
                                     && !latestVersion.get().latest.equals(instance.launcher.version));
                 } else {
-                    return TechnicModpackUpdateManager.getObservable(instance)
+                    return TechnicModpackUpdateManager.getObservable(instance.getUUID())
                             .map(latestVersion -> latestVersion.isPresent()
                                     && !latestVersion.get().version.equals(instance.launcher.version));
                 }
             } else if (instance.isModrinthPack()) {
-                return ModrinthModpackUpdateManager.getObservable(instance)
+                return ModrinthModpackUpdateManager.getObservable(instance.getUUID())
                         .map(latestVersion -> latestVersion.isPresent()
                                 && !latestVersion.get().id.equals(instance.launcher.modrinthVersion.id));
             }
