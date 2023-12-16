@@ -23,14 +23,9 @@ import java.awt.RenderingHints;
 import java.awt.Window;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -39,7 +34,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Properties;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -54,7 +48,6 @@ import org.mini2Dx.gettext.GetText;
 import com.atlauncher.App;
 import com.atlauncher.Data;
 import com.atlauncher.FileSystem;
-import com.atlauncher.Gsons;
 import com.atlauncher.InstanceLauncherUseCase;
 import com.atlauncher.Network;
 import com.atlauncher.annot.Json;
@@ -65,15 +58,10 @@ import com.atlauncher.data.curseforge.CurseForgeFileHash;
 import com.atlauncher.data.curseforge.CurseForgeFingerprint;
 import com.atlauncher.data.curseforge.CurseForgeFingerprintedMod;
 import com.atlauncher.data.curseforge.CurseForgeProject;
-import com.atlauncher.data.curseforge.pack.CurseForgeManifest;
-import com.atlauncher.data.curseforge.pack.CurseForgeManifestFile;
-import com.atlauncher.data.curseforge.pack.CurseForgeMinecraft;
-import com.atlauncher.data.curseforge.pack.CurseForgeModLoader;
 import com.atlauncher.data.installables.Installable;
 import com.atlauncher.data.installables.VanillaInstallable;
 import com.atlauncher.data.minecraft.JavaRuntime;
 import com.atlauncher.data.minecraft.JavaRuntimes;
-import com.atlauncher.data.minecraft.Library;
 import com.atlauncher.data.minecraft.MinecraftVersion;
 import com.atlauncher.data.minecraft.VersionManifestVersionType;
 import com.atlauncher.data.minecraft.loaders.LoaderType;
@@ -81,13 +69,7 @@ import com.atlauncher.data.minecraft.loaders.LoaderVersion;
 import com.atlauncher.data.modrinth.ModrinthFile;
 import com.atlauncher.data.modrinth.ModrinthProject;
 import com.atlauncher.data.modrinth.ModrinthProjectType;
-import com.atlauncher.data.modrinth.ModrinthSide;
 import com.atlauncher.data.modrinth.ModrinthVersion;
-import com.atlauncher.data.modrinth.pack.ModrinthModpackFile;
-import com.atlauncher.data.modrinth.pack.ModrinthModpackManifest;
-import com.atlauncher.data.multimc.MultiMCComponent;
-import com.atlauncher.data.multimc.MultiMCManifest;
-import com.atlauncher.data.multimc.MultiMCRequire;
 import com.atlauncher.exceptions.InvalidMinecraftVersion;
 import com.atlauncher.exceptions.InvalidPack;
 import com.atlauncher.gui.InstanceBackup;
@@ -113,17 +95,13 @@ import com.atlauncher.utils.ArchiveUtils;
 import com.atlauncher.utils.CurseForgeApi;
 import com.atlauncher.utils.FileUtils;
 import com.atlauncher.utils.Hashing;
+import com.atlauncher.utils.InstanceExport;
 import com.atlauncher.utils.InstancePlayTimeUtils;
 import com.atlauncher.utils.Java;
 import com.atlauncher.utils.ModrinthApi;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Pair;
 import com.atlauncher.utils.Utils;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonIOException;
-import com.google.gson.JsonObject;
-
-import okhttp3.HttpUrl;
 
 @Json
 public class Instance extends MinecraftVersion {
@@ -230,12 +208,6 @@ public class Instance extends MinecraftVersion {
 
             return GetText.tr("No Description");
         }
-    }
-
-    private boolean hasCustomImage() {
-        File customImage = this.getRoot().resolve("instance.png").toFile();
-
-        return customImage.exists();
     }
 
     public ImageIcon getImage() {
@@ -779,724 +751,41 @@ public class Instance extends MinecraftVersion {
         return true;
     }
 
+    /**
+     * @deprecated Moved to InstanceExport
+     */
+    @Deprecated
     public Pair<Path, String> export(String name, String version, String author, InstanceExportFormat format,
-            String saveTo,
-            List<String> overrides) {
-        try {
-            if (!Files.isDirectory(Paths.get(saveTo))) {
-                Files.createDirectories(Paths.get(saveTo));
-            }
-        } catch (IOException e) {
-            LogManager.logStackTrace("Failed to create export directory", e);
-            return new Pair<Path, String>(null, null);
-        }
-
-        if (format == InstanceExportFormat.CURSEFORGE) {
-            return exportAsCurseForgeZip(name, version, author, saveTo, overrides);
-        } else if (format == InstanceExportFormat.MODRINTH) {
-            return exportAsModrinthZip(name, version, author, saveTo, overrides);
-        } else if (format == InstanceExportFormat.CURSEFORGE_AND_MODRINTH) {
-            if (exportAsCurseForgeZip(name, version, author, saveTo, overrides).left() == null) {
-                return new Pair<Path, String>(null, null);
-            }
-
-            return exportAsModrinthZip(name, version, author, saveTo, overrides);
-        } else if (format == InstanceExportFormat.MULTIMC) {
-            return exportAsMultiMcZip(name, version, author, saveTo, overrides);
-        }
-
-        return new Pair<Path, String>(null, null);
+                                     String saveTo,
+                                     List<String> overrides) {
+        return InstanceExport.export(this, name, version, author, format, saveTo, overrides);
     }
 
+    /**
+     * @deprecated Moved to InstanceExport
+     */
+    @Deprecated
     public Pair<Path, String> exportAsMultiMcZip(String name, String version, String author, String saveTo,
-            List<String> overrides) {
-        String safePathName = name.replaceAll("[\\\"?:*<>|]", "");
-        Path to = Paths.get(saveTo).resolve(safePathName + ".zip");
-        MultiMCManifest manifest = new MultiMCManifest();
-
-        manifest.formatVersion = 1;
-
-        manifest.components = new ArrayList<>();
-
-        Optional<Library> lwjgl3Version = libraries.stream().filter(l -> l.name.contains("org.lwjgl:lwjgl:"))
-                .findFirst();
-
-        // minecraft
-        MultiMCComponent minecraftComponent = new MultiMCComponent();
-        minecraftComponent.cachedName = "Minecraft";
-        minecraftComponent.important = true;
-        minecraftComponent.cachedVersion = id;
-        minecraftComponent.uid = "net.minecraft";
-        minecraftComponent.version = id;
-
-        if (lwjgl3Version.isPresent()) {
-            String lwjgl3VersionString = lwjgl3Version.get().name.replace("org.lwjgl:lwjgl:", "");
-
-            // lwjgl 3
-            MultiMCComponent lwjgl3Component = new MultiMCComponent();
-            lwjgl3Component.cachedName = "LWJGL 3";
-            lwjgl3Component.cachedVersion = lwjgl3VersionString;
-            lwjgl3Component.cachedVolatile = true;
-            lwjgl3Component.dependencyOnly = true;
-            lwjgl3Component.uid = "org.lwjgl3";
-            lwjgl3Component.version = lwjgl3VersionString;
-            manifest.components.add(lwjgl3Component);
-
-            minecraftComponent.cachedRequires = new ArrayList<>();
-            MultiMCRequire lwjgl3Require = new MultiMCRequire();
-            lwjgl3Require.equals = lwjgl3VersionString;
-            lwjgl3Require.suggests = lwjgl3VersionString;
-            lwjgl3Require.uid = "org.lwjgl3";
-            minecraftComponent.cachedRequires.add(lwjgl3Require);
-        }
-
-        manifest.components.add(minecraftComponent);
-
-        // fabric loader
-        if (launcher.loaderVersion.isFabric() || launcher.loaderVersion.isLegacyFabric()) {
-            // mappings
-            MultiMCComponent fabricMappingsComponent = new MultiMCComponent();
-            fabricMappingsComponent.cachedName = "Intermediary Mappings";
-
-            fabricMappingsComponent.cachedRequires = new ArrayList<>();
-            MultiMCRequire minecraftRequire = new MultiMCRequire();
-            minecraftRequire.equals = id;
-            minecraftRequire.uid = "net.minecraft";
-            fabricMappingsComponent.cachedRequires.add(minecraftRequire);
-
-            fabricMappingsComponent.cachedVersion = id;
-            fabricMappingsComponent.cachedVolatile = true;
-            fabricMappingsComponent.dependencyOnly = true;
-            fabricMappingsComponent.uid = "net.fabricmc.intermediary";
-            fabricMappingsComponent.version = id;
-            manifest.components.add(fabricMappingsComponent);
-
-            // loader
-            MultiMCComponent fabricLoaderComponent = new MultiMCComponent();
-            fabricLoaderComponent.cachedName = "Fabric Loader";
-
-            fabricLoaderComponent.cachedRequires = new ArrayList<>();
-            MultiMCRequire intermediaryRequire = new MultiMCRequire();
-            intermediaryRequire.uid = "net.fabricmc.intermediary";
-            fabricLoaderComponent.cachedRequires.add(intermediaryRequire);
-
-            fabricLoaderComponent.cachedVersion = launcher.loaderVersion.version;
-            fabricLoaderComponent.uid = "net.fabricmc.fabric-loader";
-            fabricLoaderComponent.version = launcher.loaderVersion.version;
-            manifest.components.add(fabricLoaderComponent);
-        }
-
-        // forge loader
-        if (launcher.loaderVersion.isNeoForge()) {
-            // loader
-            MultiMCComponent forgeMappingsComponent = new MultiMCComponent();
-            forgeMappingsComponent.cachedName = "Forge";
-
-            forgeMappingsComponent.cachedRequires = new ArrayList<>();
-            MultiMCRequire minecraftRequire = new MultiMCRequire();
-            minecraftRequire.equals = id;
-            minecraftRequire.uid = "net.minecraft";
-            forgeMappingsComponent.cachedRequires.add(minecraftRequire);
-
-            forgeMappingsComponent.cachedVersion = launcher.loaderVersion.version;
-            forgeMappingsComponent.uid = "net.neoforged";
-            forgeMappingsComponent.version = launcher.loaderVersion.version;
-            manifest.components.add(forgeMappingsComponent);
-        }
-
-        // forge loader
-        if (launcher.loaderVersion.isForge()) {
-            // loader
-            MultiMCComponent forgeMappingsComponent = new MultiMCComponent();
-            forgeMappingsComponent.cachedName = "Forge";
-
-            forgeMappingsComponent.cachedRequires = new ArrayList<>();
-            MultiMCRequire minecraftRequire = new MultiMCRequire();
-            minecraftRequire.equals = id;
-            minecraftRequire.uid = "net.minecraft";
-            forgeMappingsComponent.cachedRequires.add(minecraftRequire);
-
-            forgeMappingsComponent.cachedVersion = launcher.loaderVersion.version;
-            forgeMappingsComponent.uid = "net.minecraftforge";
-            forgeMappingsComponent.version = launcher.loaderVersion.version;
-            manifest.components.add(forgeMappingsComponent);
-        }
-
-        // quilt loader
-        if (launcher.loaderVersion.isQuilt()) {
-            String hashedName = "org.quiltmc.hashed";
-            String cachedName = "Hashed Mappings";
-            if (ConfigManager.getConfigItem("loaders.quilt.switchHashedForIntermediary", true) == false) {
-                hashedName = "net.fabricmc.intermediary";
-                cachedName = "Intermediary Mappings";
-            }
-
-            // mappings
-            MultiMCComponent quiltMappingsComponent = new MultiMCComponent();
-            quiltMappingsComponent.cachedName = cachedName;
-
-            quiltMappingsComponent.cachedRequires = new ArrayList<>();
-            MultiMCRequire minecraftRequire = new MultiMCRequire();
-            minecraftRequire.equals = id;
-            minecraftRequire.uid = "net.minecraft";
-            quiltMappingsComponent.cachedRequires.add(minecraftRequire);
-
-            quiltMappingsComponent.cachedVersion = id;
-            quiltMappingsComponent.cachedVolatile = true;
-            quiltMappingsComponent.dependencyOnly = true;
-            quiltMappingsComponent.uid = hashedName;
-            quiltMappingsComponent.version = id;
-            manifest.components.add(quiltMappingsComponent);
-
-            // loader
-            MultiMCComponent quiltLoaderComponent = new MultiMCComponent();
-            quiltLoaderComponent.cachedName = "Quilt Loader";
-
-            quiltLoaderComponent.cachedRequires = new ArrayList<>();
-            MultiMCRequire hashedRequire = new MultiMCRequire();
-            hashedRequire.uid = hashedName;
-            quiltLoaderComponent.cachedRequires.add(hashedRequire);
-
-            quiltLoaderComponent.cachedVersion = launcher.loaderVersion.version;
-            quiltLoaderComponent.uid = "org.quiltmc.quilt-loader";
-            quiltLoaderComponent.version = launcher.loaderVersion.version;
-            manifest.components.add(quiltLoaderComponent);
-        }
-
-        // create temp directory to put this in
-        Path tempDir = FileSystem.TEMP.resolve(this.getSafeName() + "-export");
-        FileUtils.createDirectory(tempDir);
-
-        // create mmc-pack.json
-        try (OutputStreamWriter fileWriter = new OutputStreamWriter(
-                new FileOutputStream(tempDir.resolve("mmc-pack.json").toFile()), StandardCharsets.UTF_8)) {
-            Gsons.DEFAULT.toJson(manifest, fileWriter);
-        } catch (JsonIOException | IOException e) {
-            LogManager.logStackTrace("Failed to save mmc-pack.json", e);
-
-            FileUtils.deleteDirectory(tempDir);
-
-            return new Pair<Path, String>(null, null);
-        }
-
-        // if Legacy Fabric, add patch in
-        if (launcher.loaderVersion.type.equals("LegacyFabric")) {
-            FileUtils.createDirectory(tempDir.resolve("patches"));
-
-            JsonObject patch = new JsonObject();
-            patch.addProperty("formatVersion", 1);
-            patch.addProperty("name", "Intermediary Mappings");
-            patch.addProperty("uid", "net.fabricmc.intermediary");
-            patch.addProperty("version", id);
-
-            JsonArray plusLibraries = new JsonArray();
-            JsonObject intermediary = new JsonObject();
-            intermediary.addProperty("name", String.format("net.fabricmc:intermediary:%s", id));
-            intermediary.addProperty("url", Constants.LEGACY_FABRIC_MAVEN);
-            plusLibraries.add(intermediary);
-            patch.add("+libraries", plusLibraries);
-
-            // create net.fabricmc.intermediary.json
-            try (OutputStreamWriter fileWriter = new OutputStreamWriter(
-                    new FileOutputStream(tempDir.resolve("net.fabricmc.intermediary.json").toFile()),
-                    StandardCharsets.UTF_8)) {
-                Gsons.DEFAULT.toJson(patch, fileWriter);
-            } catch (JsonIOException | IOException e) {
-                LogManager.logStackTrace("Failed to save net.fabricmc.intermediary.json", e);
-
-                FileUtils.deleteDirectory(tempDir);
-
-                return new Pair<Path, String>(null, null);
-            }
-
-        }
-
-        // create instance.cfg
-        Path instanceCfgPath = tempDir.resolve("instance.cfg");
-        Properties instanceCfg = new Properties();
-
-        String iconKey = "default";
-        if (hasCustomImage()) {
-            String customIconFileName = "atlauncher_" + getSafeName().toLowerCase(Locale.ENGLISH);
-            Path customIconPath = tempDir.resolve(customIconFileName + ".png");
-
-            FileUtils.copyFile(this.getRoot().resolve("instance.png"), customIconPath, true);
-
-            iconKey = customIconFileName;
-        }
-
-        instanceCfg.setProperty("AutoCloseConsole", "false");
-        instanceCfg.setProperty("ForgeVersion", "false");
-        instanceCfg.setProperty("InstanceType", "OneSix");
-        instanceCfg.setProperty("IntendedVersion", "");
-        instanceCfg.setProperty("JavaPath", Optional.ofNullable(launcher.javaPath).orElse(App.settings.javaPath)
-                + File.separator + "bin" + File.separator + (OS.isWindows() ? "javaw.exe" : "java"));
-        instanceCfg.setProperty("JVMArgs", Optional.ofNullable(launcher.javaArguments).orElse(""));
-        instanceCfg.setProperty("LWJGLVersion", "");
-        instanceCfg.setProperty("LaunchMaximized", "false");
-        instanceCfg.setProperty("LiteloaderVersion", "");
-        instanceCfg.setProperty("LogPrePostOutput", "true");
-        instanceCfg.setProperty("MCLaunchMethod", "LauncherPart");
-        instanceCfg.setProperty("MaxMemAlloc",
-                Optional.ofNullable(launcher.maximumMemory).orElse(App.settings.maximumMemory) + "");
-
-        if (ConfigManager.getConfigItem("removeInitialMemoryOption", false) == false) {
-            instanceCfg.setProperty("MinMemAlloc",
-                    Optional.ofNullable(launcher.initialMemory).orElse(App.settings.initialMemory) + "");
-        }
-
-        instanceCfg.setProperty("MinecraftWinHeight", App.settings.windowHeight + "");
-        instanceCfg.setProperty("MinecraftWinWidth", App.settings.windowWidth + "");
-        instanceCfg.setProperty("OverrideCommands",
-                launcher.postExitCommand != null || launcher.preLaunchCommand != null || launcher.wrapperCommand != null
-                        ? "true"
-                        : "false");
-        instanceCfg.setProperty("OverrideConsole", "false");
-        instanceCfg.setProperty("OverrideJava", launcher.javaPath == null ? "false" : "true");
-        instanceCfg.setProperty("OverrideJavaArgs", launcher.javaArguments == null ? "false" : "true");
-        instanceCfg.setProperty("OverrideJavaLocation", "false");
-        instanceCfg.setProperty("OverrideMCLaunchMethod", "false");
-        instanceCfg.setProperty("OverrideMemory", launcher.maximumMemory == null ? "false" : "true");
-        instanceCfg.setProperty("OverrideNativeWorkarounds", "false");
-        instanceCfg.setProperty("OverrideWindow", "false");
-        instanceCfg.setProperty("PermGen", Optional.ofNullable(launcher.permGen).orElse(App.settings.metaspace) + "");
-        instanceCfg.setProperty("PostExitCommand",
-                Optional.ofNullable(launcher.postExitCommand).orElse(App.settings.postExitCommand) + "");
-        instanceCfg.setProperty("PreLaunchCommand",
-                Optional.ofNullable(launcher.preLaunchCommand).orElse(App.settings.preLaunchCommand) + "");
-        instanceCfg.setProperty("ShowConsole", "false");
-        instanceCfg.setProperty("ShowConsoleOnError", "true");
-        instanceCfg.setProperty("UseNativeGLFW", "false");
-        instanceCfg.setProperty("UseNativeOpenAL", "false");
-        instanceCfg.setProperty("WrapperCommand",
-                Optional.ofNullable(launcher.wrapperCommand).orElse(App.settings.wrapperCommand) + "");
-        instanceCfg.setProperty("iconKey", iconKey);
-        instanceCfg.setProperty("name", launcher.name);
-        instanceCfg.setProperty("lastLaunchTime", "");
-        instanceCfg.setProperty("notes", "");
-        instanceCfg.setProperty("totalTimePlayed", "0");
-
-        try (OutputStream outputStream = Files.newOutputStream(instanceCfgPath)) {
-            instanceCfg.store(outputStream, "Exported by ATLauncher");
-        } catch (JsonIOException | IOException e) {
-            LogManager.logStackTrace("Failed to save mmc-pack.json", e);
-
-            FileUtils.deleteDirectory(tempDir);
-
-            return new Pair<Path, String>(null, null);
-        }
-
-        // create an empty .packignore file
-        Path packignoreFile = tempDir.resolve(".packignore");
-        try {
-            packignoreFile.toFile().createNewFile();
-        } catch (IOException ignored) {
-            // this is okay to ignore, it's unused but seems to be there by default
-        }
-
-        // copy over the files into the .minecraft folder
-        Path dotMinecraftPath = tempDir.resolve(".minecraft");
-        FileUtils.createDirectory(dotMinecraftPath);
-
-        for (String path : overrides) {
-            if (!path.equalsIgnoreCase(safePathName + ".zip") && getRoot().resolve(path).toFile().exists()
-                    && (getRoot().resolve(path).toFile().isFile()
-                            || getRoot().resolve(path).toFile().list().length != 0)) {
-                if (getRoot().resolve(path).toFile().isDirectory()) {
-                    Utils.copyDirectory(getRoot().resolve(path).toFile(), dotMinecraftPath.resolve(path).toFile());
-                } else {
-                    Utils.copyFile(getRoot().resolve(path).toFile(), dotMinecraftPath.resolve(path).toFile(), true);
-                }
-            }
-        }
-
-        // remove any .DS_Store files
-        try (Stream<Path> walk = Files.walk(dotMinecraftPath)) {
-            walk.filter(Files::isRegularFile)
-                    .filter(path -> path.getFileName().toString().equals(".DS_Store"))
-                    .forEach(f -> {
-                        FileUtils.delete(f, false);
-                    });
-        } catch (IOException ignored) {
-        }
-
-        ArchiveUtils.createZip(tempDir, to);
-
-        FileUtils.deleteDirectory(tempDir);
-
-        return new Pair<Path, String>(to, null);
+                                                 List<String> overrides){
+        return InstanceExport.exportAsMultiMcZip(this, name, version, author, saveTo, overrides);
     }
 
+    /**
+     * @deprecated Moved to InstanceExport
+     */
+    @Deprecated
     public Pair<Path, String> exportAsCurseForgeZip(String name, String version, String author, String saveTo,
-            List<String> overrides) {
-        String safePathName = name.replaceAll("[\\\"?:*<>|]", "");
-        Path to = Paths.get(saveTo).resolve(String.format("%s %s.zip", safePathName, version));
-        CurseForgeManifest manifest = new CurseForgeManifest();
-
-        // for any mods not from CurseForge, scan for them on CurseForge
-        if (!App.settings.dontCheckModsOnCurseForge) {
-            Map<Long, DisableableMod> murmurHashes = new HashMap<>();
-
-            this.launcher.mods.stream()
-                    .filter(m -> !m.disabled && !m.isFromCurseForge())
-                    .forEach(dm -> {
-                        try {
-                            long hash = Hashing.murmur(dm.getFile(this.ROOT, this.id).toPath());
-                            murmurHashes.put(hash, dm);
-                        } catch (Throwable t) {
-                            LogManager.logStackTrace(t);
-                        }
-                    });
-
-            if (murmurHashes.size() != 0) {
-                CurseForgeFingerprint fingerprintResponse = CurseForgeApi
-                        .checkFingerprints(murmurHashes.keySet().stream().toArray(Long[]::new));
-
-                if (fingerprintResponse != null && fingerprintResponse.exactMatches != null) {
-                    int[] projectIdsFound = fingerprintResponse.exactMatches.stream().mapToInt(em -> em.id)
-                            .toArray();
-
-                    if (projectIdsFound.length != 0) {
-                        Map<Integer, CurseForgeProject> foundProjects = CurseForgeApi
-                                .getProjectsAsMap(projectIdsFound);
-
-                        if (foundProjects != null) {
-                            fingerprintResponse.exactMatches.stream()
-                                    .filter(em -> em != null && em.file != null
-                                            && murmurHashes.containsKey(em.file.packageFingerprint))
-                                    .forEach(foundMod -> {
-                                        DisableableMod dm = murmurHashes
-                                                .get(foundMod.file.packageFingerprint);
-
-                                        // add CurseForge information
-                                        dm.curseForgeProjectId = foundMod.id;
-                                        dm.curseForgeFile = foundMod.file;
-                                        dm.curseForgeFileId = foundMod.file.id;
-
-                                        CurseForgeProject curseForgeProject = foundProjects
-                                                .get(foundMod.id);
-
-                                        if (curseForgeProject != null) {
-                                            dm.curseForgeProject = curseForgeProject;
-                                        }
-
-                                        LogManager.debug("Found matching mod from CurseForge called "
-                                                + dm.curseForgeFile.displayName);
-                                    });
-                        }
-                    }
-                }
-            }
-        }
-        this.save();
-
-        CurseForgeMinecraft minecraft = new CurseForgeMinecraft();
-
-        List<CurseForgeModLoader> modLoaders = new ArrayList<>();
-        CurseForgeModLoader modLoader = new CurseForgeModLoader();
-
-        String loaderType = launcher.loaderVersion.type.toLowerCase(Locale.ENGLISH);
-        String loaderVersion = launcher.loaderVersion.version;
-
-        modLoader.id = loaderType + "-" + loaderVersion;
-        modLoader.primary = true;
-        modLoaders.add(modLoader);
-
-        minecraft.version = this.id;
-        minecraft.modLoaders = modLoaders;
-
-        manifest.minecraft = minecraft;
-        manifest.manifestType = "minecraftModpack";
-        manifest.manifestVersion = 1;
-        manifest.name = name;
-        manifest.version = version;
-        manifest.author = author;
-        manifest.files = this.launcher.mods.stream()
-                .filter(m -> !m.disabled && m.isFromCurseForge())
-                .filter(mod -> overrides.stream()
-                        .anyMatch(path -> getRoot().relativize(mod.getPath(this)).startsWith(path)))
-                .map(mod -> {
-                    CurseForgeManifestFile file = new CurseForgeManifestFile();
-                    file.projectID = mod.curseForgeProjectId;
-                    file.fileID = mod.curseForgeFileId;
-                    file.required = true;
-
-                    return file;
-                }).collect(Collectors.toList());
-        manifest.overrides = "overrides";
-
-        // create temp directory to put this in
-        Path tempDir = FileSystem.TEMP.resolve(this.getSafeName() + "-export");
-        FileUtils.createDirectory(tempDir);
-
-        // create manifest.json
-        try (OutputStreamWriter fileWriter = new OutputStreamWriter(
-                new FileOutputStream(tempDir.resolve("manifest.json").toFile()), StandardCharsets.UTF_8)) {
-            Gsons.DEFAULT.toJson(manifest, fileWriter);
-        } catch (JsonIOException | IOException e) {
-            LogManager.logStackTrace("Failed to save manifest.json", e);
-
-            FileUtils.deleteDirectory(tempDir);
-
-            return new Pair<Path, String>(null, null);
-        }
-
-        // create modlist.html
-        StringBuilder sb = new StringBuilder("<ul>");
-        this.launcher.mods.stream()
-                .filter(m -> !m.disabled && m.isFromCurseForge())
-                .filter(mod -> overrides.stream()
-                        .anyMatch(path -> getRoot().relativize(mod.getPath(this)).startsWith(path)))
-                .forEach(mod -> {
-                    if (mod.hasFullCurseForgeInformation()) {
-                        sb.append("<li><a href=\"").append(mod.curseForgeProject.getWebsiteUrl()).append("\">")
-                                .append(mod.name)
-                                .append("</a></li>");
-                    } else {
-                        sb.append("<li>").append(mod.name).append("</li>");
-                    }
-                });
-        sb.append("</ul>");
-
-        try (OutputStreamWriter fileWriter = new OutputStreamWriter(
-                new FileOutputStream(tempDir.resolve("modlist.html").toFile()), StandardCharsets.UTF_8)) {
-            fileWriter.write(sb.toString());
-        } catch (JsonIOException | IOException e) {
-            LogManager.logStackTrace("Failed to save modlist.html", e);
-
-            FileUtils.deleteDirectory(tempDir);
-
-            return new Pair<Path, String>(null, null);
-        }
-
-        // copy over the overrides folder
-        Path overridesPath = tempDir.resolve("overrides");
-        FileUtils.createDirectory(overridesPath);
-
-        for (String path : overrides) {
-            if (!path.equalsIgnoreCase(safePathName + ".zip") && getRoot().resolve(path).toFile().exists()
-                    && (getRoot().resolve(path).toFile().isFile()
-                            || getRoot().resolve(path).toFile().list().length != 0)) {
-                if (getRoot().resolve(path).toFile().isDirectory()) {
-                    Utils.copyDirectory(getRoot().resolve(path).toFile(), overridesPath.resolve(path).toFile());
-                } else {
-                    Utils.copyFile(getRoot().resolve(path).toFile(), overridesPath.resolve(path).toFile(), true);
-                }
-            }
-        }
-
-        // remove any .DS_Store files
-        try (Stream<Path> walk = Files.walk(overridesPath)) {
-            walk.filter(Files::isRegularFile)
-                    .filter(path -> path.getFileName().toString().equals(".DS_Store"))
-                    .forEach(f -> {
-                        FileUtils.delete(f, false);
-                    });
-        } catch (IOException ignored) {
-        }
-
-        // remove files that come from CurseForge or aren't disabled
-        launcher.mods.stream().filter(m -> !m.disabled && m.isFromCurseForge()).forEach(mod -> {
-            File file = mod.getFile(this, overridesPath);
-
-            if (file.exists()) {
-                FileUtils.delete(file.toPath());
-            }
-        });
-
-        for (String path : overrides) {
-            // if no files, remove the directory
-            if (overridesPath.resolve(path).toFile().isDirectory()
-                    && overridesPath.resolve(path).toFile().list().length == 0) {
-                FileUtils.deleteDirectory(overridesPath.resolve(path));
-            }
-        }
-
-        // if overrides folder itself is empty, then remove it
-        if (overridesPath.toFile().list().length == 0) {
-            FileUtils.deleteDirectory(overridesPath);
-        }
-
-        ArchiveUtils.createZip(tempDir, to);
-
-        FileUtils.deleteDirectory(tempDir);
-
-        return new Pair<Path, String>(to, null);
+                                                    List<String> overrides) {
+        return InstanceExport.exportAsCurseForgeZip(this, name, version, author, saveTo, overrides);
     }
 
+    /**
+     * @deprecated Moved to InstanceExport
+     */
+    @Deprecated
     public Pair<Path, String> exportAsModrinthZip(String name, String version, String author, String saveTo,
-            List<String> overrides) {
-        String safePathName = name.replaceAll("[\\\"?:*<>|]", "");
-        Path to = Paths.get(saveTo).resolve(String.format("%s %s.mrpack", safePathName, version));
-        ModrinthModpackManifest manifest = new ModrinthModpackManifest();
-
-        // for any mods not from Modrinth, scan for them on Modrinth
-        if (!App.settings.dontCheckModsOnModrinth) {
-            List<DisableableMod> nonModrinthMods = this.launcher.mods.parallelStream()
-                    .filter(m -> !m.disabled && !m.isFromModrinth() && m.getFile(this).exists())
-                    .collect(Collectors.toList());
-
-            String[] sha1Hashes = nonModrinthMods.parallelStream()
-                    .map(m -> Hashing.sha1(m.getFile(this).toPath()).toString()).toArray(String[]::new);
-
-            Map<String, ModrinthVersion> modrinthVersions = ModrinthApi.getVersionsFromSha1Hashes(sha1Hashes);
-
-            if (modrinthVersions.size() != 0) {
-                Map<String, ModrinthProject> modrinthProjects = ModrinthApi.getProjectsAsMap(
-                        modrinthVersions.values().parallelStream().map(mv -> mv.projectId).toArray(String[]::new));
-
-                nonModrinthMods.parallelStream().forEach(mod -> {
-                    String hash = Hashing.sha1(mod.getFile(this).toPath()).toString();
-
-                    if (modrinthVersions.containsKey(hash)) {
-                        ModrinthVersion modrinthVersion = modrinthVersions.get(hash);
-
-                        mod.modrinthVersion = modrinthVersion;
-
-                        LogManager.debug("Found matching version from Modrinth called " + mod.modrinthVersion.name);
-
-                        if (modrinthProjects.containsKey(modrinthVersions.get(hash).projectId)) {
-                            mod.modrinthProject = modrinthProjects.get(modrinthVersion.projectId);
-                        }
-                    }
-                });
-                this.save();
-            }
-        }
-
-        manifest.formatVersion = 1;
-        manifest.game = "minecraft";
-        manifest.versionId = version;
-        manifest.name = name;
-        manifest.summary = this.launcher.description;
-        manifest.files = this.launcher.mods.parallelStream()
-                .filter(m -> !m.disabled && m.modrinthVersion != null && m.getFile(this).exists())
-                .filter(mod -> overrides.stream()
-                        .anyMatch(path -> getRoot().relativize(mod.getPath(this)).startsWith(path)))
-                .map(mod -> {
-                    Path modPath = mod.getFile(this).toPath();
-
-                    ModrinthModpackFile file = new ModrinthModpackFile();
-                    file.path = this.ROOT.relativize(modPath).toString().replace("\\", "/");
-
-                    String sha1Hash = Hashing.sha1(modPath).toString();
-
-                    file.hashes = new HashMap<>();
-                    file.hashes.put("sha1", sha1Hash);
-                    file.hashes.put("sha512", Hashing.sha512(modPath).toString());
-
-                    file.env = new HashMap<>();
-
-                    if (mod.modrinthProject != null) {
-                        file.env.put("client",
-                                mod.modrinthProject.clientSide == ModrinthSide.UNSUPPORTED ? "unsupported"
-                                        : "required");
-                        file.env.put("server",
-                                mod.modrinthProject.serverSide == ModrinthSide.UNSUPPORTED ? "unsupported"
-                                        : "required");
-                    } else {
-                        file.env.put("client", "required");
-                        file.env.put("server", "required");
-                    }
-
-                    file.fileSize = modPath.toFile().length();
-
-                    file.downloads = new ArrayList<>();
-                    file.downloads.add(HttpUrl.get(mod.modrinthVersion.getFileBySha1(sha1Hash).url).toString());
-
-                    return file;
-                }).collect(Collectors.toList());
-        manifest.dependencies = new HashMap<>();
-
-        manifest.dependencies.put("minecraft", this.id);
-
-        if (this.launcher.loaderVersion != null) {
-            manifest.dependencies.put(this.launcher.loaderVersion.getTypeForModrinthExport(),
-                    this.launcher.loaderVersion.version);
-        }
-
-        // create temp directory to put this in
-        Path tempDir = FileSystem.TEMP.resolve(this.getSafeName() + "-export");
-        FileUtils.createDirectory(tempDir);
-
-        // create modrinth.index.json
-        try (FileOutputStream fos = new FileOutputStream(tempDir.resolve("modrinth.index.json").toFile());
-                OutputStreamWriter osw = new OutputStreamWriter(fos,
-                        StandardCharsets.UTF_8)) {
-            Gsons.DEFAULT.toJson(manifest, osw);
-        } catch (JsonIOException | IOException e) {
-            LogManager.logStackTrace("Failed to save modrinth.index.json", e);
-
-            FileUtils.deleteDirectory(tempDir);
-
-            return new Pair<Path, String>(null, null);
-        }
-
-        // copy over the overrides folder
-        Path overridesPath = tempDir.resolve("overrides");
-        FileUtils.createDirectory(overridesPath);
-
-        for (String path : overrides) {
-            if (!path.equalsIgnoreCase(safePathName + ".zip") && getRoot().resolve(path).toFile().exists()
-                    && (getRoot().resolve(path).toFile().isFile()
-                            || getRoot().resolve(path).toFile().list().length != 0)) {
-                if (getRoot().resolve(path).toFile().isDirectory()) {
-                    Utils.copyDirectory(getRoot().resolve(path).toFile(), overridesPath.resolve(path).toFile());
-                } else {
-                    Utils.copyFile(getRoot().resolve(path).toFile(), overridesPath.resolve(path).toFile(), true);
-                }
-            }
-        }
-
-        // remove any .DS_Store files
-        try (Stream<Path> walk = Files.walk(overridesPath)) {
-            walk.filter(Files::isRegularFile)
-                    .filter(path -> path.getFileName().toString().equals(".DS_Store"))
-                    .forEach(f -> {
-                        FileUtils.delete(f, false);
-                    });
-        } catch (IOException ignored) {
-        }
-
-        // remove files that come from Modrinth or aren't disabled
-        launcher.mods.stream().filter(m -> !m.disabled && m.modrinthVersion != null).forEach(mod -> {
-            File file = mod.getFile(this, overridesPath);
-
-            if (file.exists()) {
-                FileUtils.delete(file.toPath());
-            }
-        });
-
-        for (String path : overrides) {
-            // if no files, remove the directory
-            if (overridesPath.resolve(path).toFile().isDirectory()
-                    && overridesPath.resolve(path).toFile().list().length == 0) {
-                FileUtils.deleteDirectory(overridesPath.resolve(path));
-            }
-        }
-
-        // if overrides folder itself is empty, then remove it
-        if (overridesPath.toFile().list().length == 0) {
-            FileUtils.deleteDirectory(overridesPath);
-        }
-
-        // find any override jar/zip files
-        StringBuilder overridesForPermissions = new StringBuilder();
-        try (Stream<Path> walk = Files.walk(overridesPath)) {
-            walk.filter(Files::isRegularFile)
-                    .filter(path -> path.getFileName().toString().endsWith(".jar")
-                            || path.getFileName().toString().endsWith(".zip"))
-                    .forEach(f -> {
-                        overridesForPermissions.append(String.format("%s\n", tempDir.relativize(f)));
-                    });
-        } catch (IOException ignored) {
-        }
-
-        ArchiveUtils.createZip(tempDir, to);
-
-        FileUtils.deleteDirectory(tempDir);
-
-        return new Pair<Path, String>(to, overridesForPermissions.toString());
+                                                  List<String> overrides) {
+        return InstanceExport.exportAsModrinthZip(this, name, version, author, saveTo, overrides);
     }
 
     public boolean rename(String newName) {
