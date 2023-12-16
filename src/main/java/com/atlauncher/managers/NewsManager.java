@@ -19,7 +19,6 @@ package com.atlauncher.managers;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
@@ -62,9 +61,20 @@ public class NewsManager {
     }
 
     /**
+     * Load News into Launcher
+     */
+    public static void loadNews() {
+        if (ConfigManager.getConfigItem("useGraphql.news", false)) {
+            loadNetworkNews();
+        } else {
+            loadFileNews();
+        }
+    }
+
+    /**
      * Loads the languages for use in the Launcher
      */
-    public static void loadFileNews() {
+    private static void loadFileNews() {
         PerformanceManager.start();
         LogManager.debug("Loading news");
         try {
@@ -89,26 +99,24 @@ public class NewsManager {
     /**
      * Attempt to load news from the network
      */
-    public static void loadNetworkNews() {
-        if (ConfigManager.getConfigItem("useGraphql.news", false)) {
-            GraphqlClient.apolloClient.query(new GetNewsQuery(10))
-                .toBuilder()
-                .httpCachePolicy(new HttpCachePolicy.Policy(HttpCachePolicy.FetchStrategy.CACHE_FIRST, 30, TimeUnit.MINUTES, false))
-                .build()
-                .enqueue(new ApolloCall.Callback<GetNewsQuery.Data>() {
-                    @Override
-                    public void onResponse(@NotNull Response<GetNewsQuery.Data> response) {
-                        GetNewsQuery.Data data = response.getData();
-                        if (data == null) return;
-                        List<GetNewsQuery.GeneralNew> networkNews = data.generalNews();
-                        NEWS.onNext(networkNews.stream().map(AbstractNews::new).collect(Collectors.toList()));
-                    }
+    private static void loadNetworkNews() {
+        GraphqlClient.apolloClient.query(new GetNewsQuery(10))
+            .toBuilder()
+            .httpCachePolicy(new HttpCachePolicy.Policy(HttpCachePolicy.FetchStrategy.CACHE_FIRST, 30, TimeUnit.MINUTES, false))
+            .build()
+            .enqueue(new ApolloCall.Callback<GetNewsQuery.Data>() {
+                @Override
+                public void onResponse(@NotNull Response<GetNewsQuery.Data> response) {
+                    GetNewsQuery.Data data = response.getData();
+                    if (data == null) return;
+                    List<GetNewsQuery.GeneralNew> networkNews = data.generalNews();
+                    NEWS.onNext(networkNews.stream().map(AbstractNews::new).collect(Collectors.toList()));
+                }
 
-                    @Override
-                    public void onFailure(@NotNull ApolloException e) {
-                        LogManager.logStackTrace("Error fetching news", e);
-                    }
-                });
-        }
+                @Override
+                public void onFailure(@NotNull ApolloException e) {
+                    LogManager.logStackTrace("Error fetching news", e);
+                }
+            });
     }
 }
