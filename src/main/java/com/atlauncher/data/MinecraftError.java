@@ -24,13 +24,13 @@ import com.atlauncher.managers.DialogManager;
 import com.atlauncher.utils.OS;
 
 public class MinecraftError {
-    static final int OUT_OF_MEMORY = 1;
-    static final int CONCURRENT_MODIFICATION_ERROR_1_6 = 2;
-    static final int USING_NEWER_JAVA_THAN_8 = 3;
-    static final int NEED_TO_USE_JAVA_16_OR_NEWER = 4;
-    static final int NEED_TO_USE_JAVA_17_OR_NEWER = 5;
+    public static final int OUT_OF_MEMORY = 1;
+    public static final int CONCURRENT_MODIFICATION_ERROR_1_6 = 2;
+    public static final int USING_NEWER_JAVA_THAN_8 = 3;
+    public static final int NEED_TO_USE_JAVA_16_OR_NEWER = 4;
+    public static final int NEED_TO_USE_JAVA_17_OR_NEWER = 5;
 
-    static void showInformationPopup(int error) {
+    public static void showInformationPopup(int error) {
         switch (error) {
             case MinecraftError.OUT_OF_MEMORY:
                 MinecraftError.showOutOfMemoryPopup();

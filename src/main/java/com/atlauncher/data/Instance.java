@@ -19,7 +19,6 @@ package com.atlauncher.data;
 
 import java.awt.BorderLayout;
 import java.awt.Dialog.ModalityType;
-import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.RenderingHints;
@@ -27,12 +26,9 @@ import java.awt.Window;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
@@ -57,19 +53,12 @@ import java.util.stream.Stream;
 
 import javax.imageio.IIOException;
 import javax.imageio.ImageIO;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
-import javax.swing.JComboBox;
 import javax.swing.JDialog;
-import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.filechooser.FileNameExtensionFilter;
 
 import org.mini2Dx.gettext.GetText;
 
@@ -77,11 +66,11 @@ import com.atlauncher.App;
 import com.atlauncher.Data;
 import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
+import com.atlauncher.InstanceLauncherUseCase;
 import com.atlauncher.Network;
 import com.atlauncher.annot.Json;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.constants.Constants;
-import com.atlauncher.constants.UIConstants;
 import com.atlauncher.data.curseforge.CurseForgeFile;
 import com.atlauncher.data.curseforge.CurseForgeFileHash;
 import com.atlauncher.data.curseforge.CurseForgeFingerprint;
@@ -93,26 +82,13 @@ import com.atlauncher.data.curseforge.pack.CurseForgeMinecraft;
 import com.atlauncher.data.curseforge.pack.CurseForgeModLoader;
 import com.atlauncher.data.installables.Installable;
 import com.atlauncher.data.installables.VanillaInstallable;
-import com.atlauncher.data.minecraft.AssetIndex;
 import com.atlauncher.data.minecraft.JavaRuntime;
-import com.atlauncher.data.minecraft.JavaRuntimeManifest;
-import com.atlauncher.data.minecraft.JavaRuntimeManifestFileType;
 import com.atlauncher.data.minecraft.JavaRuntimes;
 import com.atlauncher.data.minecraft.Library;
-import com.atlauncher.data.minecraft.LoggingFile;
 import com.atlauncher.data.minecraft.MinecraftVersion;
-import com.atlauncher.data.minecraft.MojangAssetIndex;
-import com.atlauncher.data.minecraft.VersionManifestVersion;
 import com.atlauncher.data.minecraft.VersionManifestVersionType;
 import com.atlauncher.data.minecraft.loaders.LoaderType;
 import com.atlauncher.data.minecraft.loaders.LoaderVersion;
-import com.atlauncher.data.minecraft.loaders.fabric.FabricLoader;
-import com.atlauncher.data.minecraft.loaders.forge.FMLLibrariesConstants;
-import com.atlauncher.data.minecraft.loaders.forge.FMLLibrary;
-import com.atlauncher.data.minecraft.loaders.forge.ForgeLoader;
-import com.atlauncher.data.minecraft.loaders.legacyfabric.LegacyFabricLoader;
-import com.atlauncher.data.minecraft.loaders.neoforge.NeoForgeLoader;
-import com.atlauncher.data.minecraft.loaders.quilt.QuiltLoader;
 import com.atlauncher.data.modrinth.ModrinthFile;
 import com.atlauncher.data.modrinth.ModrinthProject;
 import com.atlauncher.data.modrinth.ModrinthProjectType;
@@ -123,7 +99,6 @@ import com.atlauncher.data.modrinth.pack.ModrinthModpackManifest;
 import com.atlauncher.data.multimc.MultiMCComponent;
 import com.atlauncher.data.multimc.MultiMCManifest;
 import com.atlauncher.data.multimc.MultiMCRequire;
-import com.atlauncher.exceptions.CommandException;
 import com.atlauncher.exceptions.InvalidMinecraftVersion;
 import com.atlauncher.exceptions.InvalidPack;
 import com.atlauncher.graphql.AddPackActionMutation;
@@ -135,12 +110,10 @@ import com.atlauncher.gui.dialogs.InstanceInstallerDialog;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.gui.dialogs.RenameInstanceDialog;
 import com.atlauncher.gui.dialogs.instancesettings.InstanceEditors;
-import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.ConfigManager;
 import com.atlauncher.managers.CurseForgeUpdateManager;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.managers.InstanceManager;
-import com.atlauncher.managers.LWJGLManager;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.managers.MinecraftManager;
 import com.atlauncher.managers.ModpacksChUpdateManager;
@@ -148,14 +121,10 @@ import com.atlauncher.managers.ModrinthModpackUpdateManager;
 import com.atlauncher.managers.PackManager;
 import com.atlauncher.managers.PerformanceManager;
 import com.atlauncher.managers.TechnicModpackUpdateManager;
-import com.atlauncher.mclauncher.MCLauncher;
 import com.atlauncher.network.Analytics;
-import com.atlauncher.network.DownloadPool;
 import com.atlauncher.network.GraphqlClient;
 import com.atlauncher.network.analytics.AnalyticsEvent;
 import com.atlauncher.utils.ArchiveUtils;
-import com.atlauncher.utils.ComboItem;
-import com.atlauncher.utils.CommandExecutor;
 import com.atlauncher.utils.CurseForgeApi;
 import com.atlauncher.utils.FileUtils;
 import com.atlauncher.utils.Hashing;
@@ -163,17 +132,13 @@ import com.atlauncher.utils.Java;
 import com.atlauncher.utils.ModrinthApi;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Pair;
-import com.atlauncher.utils.SecurityUtils;
 import com.atlauncher.utils.Utils;
 import com.atlauncher.utils.ZipNameMapper;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonObject;
 
-import net.arikia.dev.drpc.DiscordRPC;
-import net.arikia.dev.drpc.DiscordRichPresence;
 import okhttp3.HttpUrl;
-import okhttp3.OkHttpClient;
 
 @Json
 public class Instance extends MinecraftVersion {
@@ -427,892 +392,19 @@ public class Instance extends MinecraftVersion {
     }
 
     /**
-     * This will prepare the instance for launch. It will download the assets,
-     * Minecraft jar and libraries, as well as organise the libraries, ready to be
-     * played.
+     * @deprecated Moved to InstanceLauncherFunc
      */
-    public boolean prepareForLaunch(ProgressDialog progressDialog, Path nativesTempDir, Path lwjglNativesTempDir) {
-        PerformanceManager.start();
-        OkHttpClient httpClient = Network.createProgressClient(progressDialog);
-
-        // make sure latest manifest is being used
-        PerformanceManager.start("Grabbing Latest Manifest");
-        try {
-            progressDialog.setLabel(GetText.tr("Grabbing Latest Manifest"));
-            VersionManifestVersion minecraftVersionManifest = MinecraftManager
-                    .getMinecraftVersion(id);
-
-            com.atlauncher.network.Download download = com.atlauncher.network.Download.build()
-                    .setUrl(minecraftVersionManifest.url).hash(minecraftVersionManifest.sha1)
-                    .size(minecraftVersionManifest.size)
-                    .downloadTo(FileSystem.MINECRAFT_VERSIONS_JSON.resolve(minecraftVersionManifest.id + ".json"))
-                    .withHttpClient(httpClient);
-
-            MinecraftVersion minecraftVersion = download.asClass(MinecraftVersion.class);
-
-            if (minecraftVersion != null) {
-                setUpdatedValues(minecraftVersion);
-                save();
-            }
-        } catch (Exception e) {
-            // ignored
-        }
-        progressDialog.doneTask();
-        PerformanceManager.end("Grabbing Latest Manifest");
-
-        PerformanceManager.start("Downloading Minecraft");
-        try {
-            progressDialog.setLabel(GetText.tr("Downloading Minecraft"));
-            com.atlauncher.network.Download clientDownload = com.atlauncher.network.Download.build()
-                    .setUrl(this.downloads.client.url).hash(this.downloads.client.sha1).size(this.downloads.client.size)
-                    .withHttpClient(httpClient).downloadTo(this.getMinecraftJarLibraryPath());
-
-            if (clientDownload.needToDownload()) {
-                progressDialog.setTotalBytes(this.downloads.client.size);
-                clientDownload.downloadFile();
-            }
-
-            progressDialog.doneTask();
-        } catch (IOException e) {
-            LogManager.logStackTrace(e);
-            PerformanceManager.end("Downloading Minecraft");
-            PerformanceManager.end();
-            return false;
-        }
-        PerformanceManager.end("Downloading Minecraft");
-
-        if (logging != null) {
-            PerformanceManager.start("Downloading Logging Config");
-            try {
-                progressDialog.setLabel(GetText.tr("Downloading Logging Config"));
-
-                LoggingFile loggingFile = logging.client.file;
-
-                com.atlauncher.network.Download loggerDownload = com.atlauncher.network.Download.build()
-                        .setUrl(loggingFile.url).hash(loggingFile.sha1)
-                        .size(loggingFile.size).downloadTo(FileSystem.RESOURCES_LOG_CONFIGS.resolve(loggingFile.id))
-                        .withHttpClient(httpClient);
-
-                if (loggerDownload.needToDownload()) {
-                    progressDialog.setTotalBytes(loggingFile.size);
-                    loggerDownload.downloadFile();
-                }
-
-                progressDialog.doneTask();
-            } catch (IOException e) {
-                LogManager.logStackTrace(e);
-                PerformanceManager.end("Downloading Logging Config");
-                PerformanceManager.end();
-                return false;
-            }
-            PerformanceManager.end("Downloading Logging Config");
-        } else {
-            progressDialog.doneTask();
-        }
-
-        // download libraries
-        PerformanceManager.start("Downloading Libraries");
-        progressDialog.setLabel(GetText.tr("Downloading Libraries"));
-        DownloadPool librariesPool = new DownloadPool();
-
-        List<Library> librariesMissingWithNoUrl = this.libraries.stream()
-                .filter(library -> library.shouldInstall() && library.downloads.artifact != null
-                        && library.downloads.artifact.url != null && library.downloads.artifact.url.isEmpty()
-                        && !Files.exists(FileSystem.LIBRARIES.resolve(library.downloads.artifact.path)))
-                .collect(Collectors.toList());
-        if (librariesMissingWithNoUrl.size() != 0) {
-            DialogManager.okDialog().setTitle(GetText.tr("Missing Libraries Found"))
-                    .setContent(new HTMLBuilder().center()
-                            .text(GetText.tr(
-                                    "This instance cannot be started due to missing libraries that cannot be downloaded.<br/><br/>Please reinstall the instance to create those libraries and be able to start this instance again."))
-                            .build())
-                    .setType(DialogManager.ERROR).show();
-            return false;
-        }
-
-        // get non native libraries otherwise we double up
-        this.libraries.stream()
-                .filter(library -> library.shouldInstall() && library.downloads.artifact != null
-                        && library.downloads.artifact.url != null && !library.downloads.artifact.url.isEmpty()
-                        && !library.hasNativeForOS())
-                .distinct()
-                .map(l -> LWJGLManager.shouldReplaceLWJGL3(this)
-                        ? LWJGLManager.getReplacementLWJGL3Library(this, l)
-                        : l)
-                .forEach(library -> {
-                    com.atlauncher.network.Download download = new com.atlauncher.network.Download()
-                            .setUrl(library.downloads.artifact.url)
-                            .downloadTo(FileSystem.LIBRARIES.resolve(library.downloads.artifact.path))
-                            .hash(library.downloads.artifact.sha1).size(library.downloads.artifact.size)
-                            .withHttpClient(httpClient);
-
-                    librariesPool.add(download);
-                });
-
-        this.libraries.stream().filter(Library::hasNativeForOS)
-                .map(l -> LWJGLManager.shouldReplaceLWJGL3(this)
-                        ? LWJGLManager.getReplacementLWJGL3Library(this, l)
-                        : l)
-                .forEach(library -> {
-                    com.atlauncher.data.minecraft.Download download = library.getNativeDownloadForOS();
-
-                    librariesPool.add(new com.atlauncher.network.Download().setUrl(download.url)
-                            .downloadTo(FileSystem.LIBRARIES.resolve(download.path)).hash(download.sha1)
-                            .size(download.size)
-                            .withHttpClient(httpClient));
-                });
-
-        // legacy forge, so check the libs folder
-        if (launcher.loaderVersion != null && launcher.loaderVersion.isForge()
-                && Utils.matchVersion(id, "1.5", true, true)) {
-            List<FMLLibrary> fmlLibraries = FMLLibrariesConstants.fmlLibraries.get(id);
-
-            if (fmlLibraries != null) {
-                fmlLibraries.forEach((library) -> {
-                    com.atlauncher.network.Download download = new com.atlauncher.network.Download()
-                            .setUrl(String.format("%s/fmllibs/%s", Constants.DOWNLOAD_SERVER, library.name))
-                            .downloadTo(FileSystem.LIBRARIES.resolve("fmllib/" + library.name))
-                            .copyTo(ROOT.resolve("lib/" + library.name)).hash(library.sha1Hash)
-                            .size(library.size).withHttpClient(httpClient);
-
-                    librariesPool.add(download);
-                });
-            }
-        }
-
-        DownloadPool smallLibrariesPool = librariesPool.downsize();
-
-        progressDialog.setTotalBytes(smallLibrariesPool.totalSize());
-
-        smallLibrariesPool.downloadAll();
-
-        progressDialog.doneTask();
-        PerformanceManager.end("Downloading Libraries");
-
-        // download Java runtime
-        PerformanceManager.start("Java Runtime");
-        if (javaVersion != null && Data.JAVA_RUNTIMES != null && Optional
-                .ofNullable(launcher.useJavaProvidedByMinecraft).orElse(App.settings.useJavaProvidedByMinecraft)) {
-            Map<String, List<JavaRuntime>> runtimesForSystem = Data.JAVA_RUNTIMES.getForSystem();
-            String runtimeSystemString = JavaRuntimes.getSystem();
-
-            String runtimeToUse = Optional.ofNullable(launcher.javaRuntimeOverride).orElse(javaVersion.component);
-
-            if (runtimesForSystem.containsKey(runtimeToUse)
-                    && runtimesForSystem.get(runtimeToUse).size() != 0) {
-                // #. {0} is the version of Java were downloading
-                progressDialog.setLabel(GetText.tr("Downloading Java Runtime {0}",
-                        runtimesForSystem.get(runtimeToUse).get(0).version.name));
-
-                JavaRuntime runtimeToDownload = runtimesForSystem.get(runtimeToUse).get(0);
-
-                try {
-                    JavaRuntimeManifest javaRuntimeManifest = com.atlauncher.network.Download.build()
-                            .setUrl(runtimeToDownload.manifest.url).size(runtimeToDownload.manifest.size)
-                            .hash(runtimeToDownload.manifest.sha1).downloadTo(FileSystem.MINECRAFT_RUNTIMES
-                                    .resolve(runtimeToUse).resolve("manifest.json"))
-                            .asClassWithThrow(JavaRuntimeManifest.class);
-
-                    DownloadPool pool = new DownloadPool();
-
-                    // create root directory
-                    Path runtimeSystemDirectory = FileSystem.MINECRAFT_RUNTIMES.resolve(runtimeToUse)
-                            .resolve(runtimeSystemString);
-                    Path runtimeDirectory = runtimeSystemDirectory.resolve(runtimeToUse);
-                    FileUtils.createDirectory(runtimeDirectory);
-
-                    // create all the directories
-                    javaRuntimeManifest.files.forEach((key, file) -> {
-                        if (file.type == JavaRuntimeManifestFileType.DIRECTORY) {
-                            FileUtils.createDirectory(runtimeDirectory.resolve(key));
-                        }
-                    });
-
-                    // collect the files we need to download
-                    javaRuntimeManifest.files.forEach((key, file) -> {
-                        if (file.type == JavaRuntimeManifestFileType.FILE) {
-                            com.atlauncher.network.Download download = new com.atlauncher.network.Download()
-                                    .setUrl(file.downloads.raw.url).downloadTo(runtimeDirectory.resolve(key))
-                                    .hash(file.downloads.raw.sha1).size(file.downloads.raw.size)
-                                    .executable(file.executable).withHttpClient(httpClient);
-
-                            pool.add(download);
-                        }
-                    });
-
-                    DownloadPool smallPool = pool.downsize();
-
-                    progressDialog.setTotalBytes(smallPool.totalSize());
-
-                    smallPool.downloadAll();
-
-                    // write out the version file (theres also a .sha1 file created, but we're not
-                    // doing that)
-                    Files.write(runtimeSystemDirectory.resolve(".version"),
-                            runtimeToDownload.version.name.getBytes(StandardCharsets.UTF_8));
-                    // Files.write(runtimeSystemDirectory.resolve(runtimeToUse
-                    // + ".sha1"), runtimeToDownload.version.name.getBytes(StandardCharsets.UTF_8));
-                } catch (IOException e) {
-                    LogManager.logStackTrace("Failed to download Java runtime", e);
-                }
-            }
-        }
-        progressDialog.doneTask();
-        PerformanceManager.end("Java Runtime");
-
-        // organise assets
-        PerformanceManager.start("Organising Resources 1");
-        progressDialog.setLabel(GetText.tr("Organising Resources"));
-        MojangAssetIndex assetIndex = this.assetIndex;
-
-        AssetIndex index = com.atlauncher.network.Download.build().setUrl(assetIndex.url).hash(assetIndex.sha1)
-                .size(assetIndex.size).downloadTo(FileSystem.RESOURCES_INDEXES.resolve(assetIndex.id + ".json"))
-                .withHttpClient(httpClient).asClass(AssetIndex.class);
-
-        DownloadPool pool = new DownloadPool();
-
-        index.objects.forEach((key, object) -> {
-            String filename = object.hash.substring(0, 2) + "/" + object.hash;
-            String url = String.format("%s/%s", Constants.MINECRAFT_RESOURCES, filename);
-
-            com.atlauncher.network.Download download = new com.atlauncher.network.Download().setUrl(url)
-                    .downloadTo(FileSystem.RESOURCES_OBJECTS.resolve(filename)).hash(object.hash).size(object.size)
-                    .withHttpClient(httpClient);
-
-            pool.add(download);
-        });
-
-        DownloadPool smallPool = pool.downsize();
-
-        if (smallPool.size() != 0) {
-            progressDialog.setLabel(GetText.tr("Downloading Resources"));
-
-            progressDialog.setTotalBytes(smallPool.totalSize());
-
-            smallPool.downloadAll();
-        }
-        PerformanceManager.end("Organising Resources 1");
-
-        // copy resources to instance
-        if (index.mapToResources || assetIndex.id.equalsIgnoreCase("legacy")) {
-            PerformanceManager.start("Organising Resources 2");
-            progressDialog.setLabel(GetText.tr("Organising Resources"));
-
-            index.objects.forEach((key, object) -> {
-                String filename = object.hash.substring(0, 2) + "/" + object.hash;
-
-                Path downloadedFile = FileSystem.RESOURCES_OBJECTS.resolve(filename);
-                Path assetPath = index.mapToResources ? this.ROOT.resolve("resources/" + key)
-                        : FileSystem.RESOURCES_VIRTUAL_LEGACY.resolve(key);
-
-                if (!Files.exists(assetPath)) {
-                    FileUtils.copyFile(downloadedFile, assetPath, true);
-                }
-            });
-            PerformanceManager.end("Organising Resources 2");
-        }
-
-        progressDialog.doneTask();
-
-        progressDialog.setLabel(GetText.tr("Organising Libraries"));
-
-        // extract natives to a temp dir
-        PerformanceManager.start("Extracting Natives");
-        boolean useSystemGlfw = Optional.ofNullable(launcher.useSystemGlfw).orElse(App.settings.useSystemGlfw);
-        boolean useSystemOpenAl = Optional.ofNullable(launcher.useSystemOpenAl).orElse(App.settings.useSystemOpenAl);
-        this.libraries.stream().filter(Library::shouldInstall)
-                .map(l -> LWJGLManager.shouldReplaceLWJGL3(this)
-                        ? LWJGLManager.getReplacementLWJGL3Library(this, l)
-                        : l)
-                .forEach(library -> {
-                    if (library.hasNativeForOS()) {
-                        if (library.name.contains("glfw") && useSystemGlfw) {
-                            LogManager.warn("useSystemGlfw was enabled, not using glfw natives from Minecraft");
-                            return;
-                        }
-
-                        if (library.name.contains("openal") && useSystemOpenAl) {
-                            LogManager.warn("useSystemOpenAl was enabled, not using openal natives from Minecraft");
-                            return;
-                        }
-
-                        Path nativePath = FileSystem.LIBRARIES.resolve(library.getNativeDownloadForOS().path);
-
-                        ArchiveUtils.extract(nativePath, nativesTempDir, name -> {
-                            if (library.extract != null && library.extract.shouldExclude(name)) {
-                                return null;
-                            }
-
-                            // keep META-INF folder as per normal
-                            if (name.startsWith("META-INF")) {
-                                return name;
-                            }
-
-                            // don't extract folders
-                            if (name.endsWith("/")) {
-                                return null;
-                            }
-
-                            // if it has a / then extract just to root
-                            if (name.contains("/")) {
-                                return name.substring(name.lastIndexOf("/") + 1);
-                            }
-
-                            return name;
-                        });
-                    }
-                });
-
-        progressDialog.doneTask();
-        PerformanceManager.end("Extracting Natives");
-
-        if (LWJGLManager.shouldUseLegacyLWJGL(this)) {
-            PerformanceManager.start("Extracting Legacy LWJGL");
-            progressDialog.setLabel(GetText.tr("Extracting Legacy LWJGL"));
-
-            LWJGLLibrary library = LWJGLManager.getLegacyLWJGLLibrary();
-
-            if (library != null) {
-                com.atlauncher.network.Download download = new com.atlauncher.network.Download().setUrl(library.url)
-                        .downloadTo(FileSystem.LIBRARIES.resolve(library.path)).unzipTo(lwjglNativesTempDir)
-                        .hash(library.sha1).size(library.size).withHttpClient(httpClient);
-
-                if (download.needToDownload()) {
-                    progressDialog.setTotalBytes(library.size);
-
-                    try {
-                        download.downloadFile();
-                    } catch (IOException e) {
-                        LogManager.logStackTrace(e);
-                    }
-                } else {
-                    download.runPostProcessors();
-                }
-            }
-
-            progressDialog.doneTask();
-            PerformanceManager.end("Extracting Legacy LWJGL");
-        }
-
-        if (usesCustomMinecraftJar()) {
-            PerformanceManager.start("Creating custom minecraft.jar");
-            progressDialog.setLabel(GetText.tr("Creating custom minecraft.jar"));
-
-            if (Files.exists(getCustomMinecraftJarLibraryPath())) {
-                FileUtils.delete(getCustomMinecraftJarLibraryPath());
-            }
-
-            if (!Utils.combineJars(getMinecraftJar(), getRoot().resolve("bin/modpack.jar").toFile(),
-                    getCustomMinecraftJar())) {
-                LogManager.error("Failed to combine jars into custom minecraft.jar");
-                PerformanceManager.end("Creating custom minecraft.jar");
-                PerformanceManager.end();
-                return false;
-            }
-            PerformanceManager.end("Creating custom minecraft.jar");
-        }
-        progressDialog.doneTask();
-
-        if (App.settings.scanModsOnLaunch) {
-            PerformanceManager.start("Scanning mods for Fractureiser");
-            progressDialog.setLabel(GetText.tr("Scanning mods for Fractureiser"));
-
-            List<Path> foundInfections = new ArrayList<>();
-            try {
-                foundInfections = SecurityUtils.scanForFractureiser(this.getModPathsFromFilesystem());
-            } catch (InterruptedException e) {
-                LogManager.logStackTrace("Failed to scan all mods for Fractureiser", e);
-            }
-            PerformanceManager.end("Scanning mods for Fractureiser");
-
-            if (foundInfections.size() != 0) {
-                LogManager.error("Infections have been found in your mods. See the below list of paths");
-                foundInfections.forEach(p -> LogManager.error(p.toAbsolutePath().toString()));
-                return false;
-            }
-        }
-        progressDialog.doneTask();
-
-        PerformanceManager.end();
-        return true;
-    }
-
+    @Deprecated
     public boolean launch() {
         return launch(false);
     }
 
+    /**
+     * @deprecated Moved to InstanceLauncherUseCase
+     */
+    @Deprecated
     public boolean launch(boolean offline) {
-        final AbstractAccount account = launcher.account == null ? AccountManager.getSelectedAccount()
-                : AccountManager.getAccountByName(launcher.account);
-
-        if (account == null) {
-            DialogManager.okDialog().setTitle(GetText.tr("No Account Selected"))
-                    .setContent(new HTMLBuilder().center()
-                            .text(GetText.tr("Cannot play instance as you have no account selected.")).build())
-                    .setType(DialogManager.ERROR).show();
-
-            if (AccountManager.getAccounts().size() == 0) {
-                App.navigate(UIConstants.LAUNCHER_ACCOUNTS_TAB);
-            }
-
-            App.launcher.setMinecraftLaunched(false);
-            return false;
-        }
-
-        // if Microsoft account must login again, then make sure to do that
-        if (!offline && account instanceof MicrosoftAccount && ((MicrosoftAccount) account).mustLogin) {
-            if (!((MicrosoftAccount) account).ensureAccountIsLoggedIn()) {
-                LogManager.info("You must login to your account before continuing.");
-                return false;
-            }
-        }
-
-        String playerName = account.minecraftUsername;
-
-        if (offline) {
-            playerName = DialogManager.okDialog().setTitle(GetText.tr("Offline Player Name"))
-                    .setContent(GetText.tr("Choose your offline player name:")).showInput(playerName);
-
-            if (playerName == null || playerName.isEmpty()) {
-                LogManager.info("No player name provided for offline launch, so cancelling launch.");
-                return false;
-            }
-        }
-
-        final String username = offline ? playerName : account.minecraftUsername;
-
-        int maximumMemory = (this.launcher.maximumMemory == null) ? App.settings.maximumMemory
-                : this.launcher.maximumMemory;
-        if ((maximumMemory < this.launcher.requiredMemory)
-                && (this.launcher.requiredMemory <= OS.getSafeMaximumRam())) {
-            int ret = DialogManager.yesNoDialog().setTitle(GetText.tr("Insufficient Ram"))
-                    .setContent(new HTMLBuilder().center().text(GetText.tr(
-                            "This pack has set a minimum amount of ram needed to <b>{0}</b> MB.<br/><br/>Do you want to continue loading the instance anyway?",
-                            this.launcher.requiredMemory)).build())
-                    .setType(DialogManager.ERROR).show();
-
-            if (ret != 0) {
-                LogManager.warn("Launching of instance cancelled due to user cancelling memory warning!");
-                App.launcher.setMinecraftLaunched(false);
-                return false;
-            }
-        }
-        int permGen = (this.launcher.permGen == null) ? App.settings.metaspace : this.launcher.permGen;
-        if (permGen < this.launcher.requiredPermGen) {
-            int ret = DialogManager.yesNoDialog().setTitle(GetText.tr("Insufficent Permgen"))
-                    .setContent(new HTMLBuilder().center().text(GetText.tr(
-                            "This pack has set a minimum amount of permgen to <b>{0}</b> MB.<br/><br/>Do you want to continue loading the instance anyway?",
-                            this.launcher.requiredPermGen)).build())
-                    .setType(DialogManager.ERROR).show();
-            if (ret != 0) {
-                LogManager.warn("Launching of instance cancelled due to user cancelling permgen warning!");
-                App.launcher.setMinecraftLaunched(false);
-                return false;
-            }
-        }
-
-        Path nativesTempDir = FileSystem.TEMP.resolve("natives-" + UUID.randomUUID().toString().replace("-", ""));
-        Path lwjglNativesTempDir = FileSystem.TEMP
-                .resolve("lwjgl-natives-" + UUID.randomUUID().toString().replace("-", ""));
-
-        try {
-            Files.createDirectory(nativesTempDir);
-        } catch (IOException e2) {
-            LogManager.logStackTrace(e2, false);
-        }
-
-        if (LWJGLManager.shouldUseLegacyLWJGL(this)) {
-            try {
-                Files.createDirectory(lwjglNativesTempDir);
-            } catch (IOException e2) {
-                LogManager.logStackTrace(e2, false);
-            }
-        }
-
-        Analytics.trackEvent(AnalyticsEvent.forStartInstanceLaunch(this, offline));
-
-        ProgressDialog<Boolean> prepareDialog = new ProgressDialog<>(GetText.tr("Preparing For Launch"),
-                9,
-                GetText.tr("Preparing For Launch"));
-        prepareDialog.addThread(new Thread(() -> {
-            LogManager.info("Preparing for launch!");
-            prepareDialog.setReturnValue(prepareForLaunch(prepareDialog, nativesTempDir, lwjglNativesTempDir));
-            prepareDialog.close();
-        }));
-        prepareDialog.start();
-
-        if (prepareDialog.getReturnValue() == null || !prepareDialog.getReturnValue()) {
-            Analytics.trackEvent(AnalyticsEvent.forInstanceLaunchFailed(this, offline, "prepare_failure"));
-            LogManager.error(
-                    "Failed to prepare instance " + this.launcher.name + " for launch. Check the logs and try again.");
-            return false;
-        }
-
-        Thread launcher = new Thread(() -> {
-            try {
-                long start = System.currentTimeMillis();
-                if (App.launcher.getParent() != null) {
-                    App.launcher.getParent().setVisible(false);
-                }
-
-                LogManager.info(String.format("Launching pack %s %s (%s) for Minecraft %s", this.launcher.pack,
-                        this.launcher.version, getPlatformName(), this.id));
-
-                Process process = null;
-
-                boolean enableCommands = Optional.ofNullable(this.launcher.enableCommands)
-                        .orElse(App.settings.enableCommands);
-                String preLaunchCommand = Optional.ofNullable(this.launcher.preLaunchCommand)
-                        .orElse(App.settings.preLaunchCommand);
-                String postExitCommand = Optional.ofNullable(this.launcher.postExitCommand)
-                        .orElse(App.settings.postExitCommand);
-                String wrapperCommand = Optional.ofNullable(this.launcher.wrapperCommand)
-                        .orElse(App.settings.wrapperCommand);
-                if (!enableCommands) {
-                    wrapperCommand = null;
-                }
-
-                if (account instanceof MojangAccount) {
-                    MojangAccount mojangAccount = (MojangAccount) account;
-                    LoginResponse session;
-
-                    if (offline) {
-                        session = new LoginResponse(mojangAccount.username);
-                        session.setOffline();
-                    } else {
-                        LogManager.info("Logging into Minecraft!");
-                        ProgressDialog<LoginResponse> loginDialog = new ProgressDialog<>(
-                                GetText.tr("Logging Into Minecraft"), 0, GetText.tr("Logging Into Minecraft"),
-                                "Aborted login to Minecraft!");
-                        loginDialog.addThread(new Thread(() -> {
-                            loginDialog.setReturnValue(mojangAccount.login());
-                            loginDialog.close();
-                        }));
-                        loginDialog.start();
-
-                        session = loginDialog.getReturnValue();
-
-                        if (session == null) {
-                            Analytics.trackEvent(
-                                    AnalyticsEvent.forInstanceLaunchFailed(this, offline, "mojang_no_session"));
-                            App.launcher.setMinecraftLaunched(false);
-                            if (App.launcher.getParent() != null) {
-                                App.launcher.getParent().setVisible(true);
-                            }
-                            return;
-                        }
-                    }
-
-                    if (enableCommands && preLaunchCommand != null) {
-                        if (!executeCommand(preLaunchCommand)) {
-                            LogManager.error("Failed to execute pre-launch command");
-
-                            Analytics.trackEvent(
-                                    AnalyticsEvent.forInstanceLaunchFailed(this, offline, "pre_launch_failure"));
-                            App.launcher.setMinecraftLaunched(false);
-
-                            if (App.launcher.getParent() != null) {
-                                App.launcher.getParent().setVisible(true);
-                            }
-
-                            return;
-                        }
-                    }
-
-                    process = MCLauncher.launch(mojangAccount, this, session, nativesTempDir,
-                            LWJGLManager.shouldUseLegacyLWJGL(this) ? lwjglNativesTempDir : null,
-                            wrapperCommand, username);
-                } else if (account instanceof MicrosoftAccount) {
-                    MicrosoftAccount microsoftAccount = (MicrosoftAccount) account;
-
-                    if (!offline) {
-                        LogManager.info("Logging into Minecraft!");
-                        ProgressDialog<Boolean> loginDialog = new ProgressDialog<>(GetText.tr("Logging Into Minecraft"),
-                                0, GetText.tr("Logging Into Minecraft"), "Aborted login to Minecraft!");
-                        loginDialog.addThread(new Thread(() -> {
-                            loginDialog.setReturnValue(microsoftAccount.ensureAccessTokenValid());
-                            loginDialog.close();
-                        }));
-                        loginDialog.start();
-
-                        if (!(Boolean) loginDialog.getReturnValue()) {
-                            LogManager.error("Failed to login");
-                            Analytics.trackEvent(
-                                    AnalyticsEvent.forInstanceLaunchFailed(this, offline, "microsoft_login_failure"));
-                            App.launcher.setMinecraftLaunched(false);
-                            if (App.launcher.getParent() != null) {
-                                App.launcher.getParent().setVisible(true);
-                            }
-                            DialogManager.okDialog().setTitle(GetText.tr("Error Logging In"))
-                                    .setContent(GetText.tr("Couldn't login with Microsoft account"))
-                                    .setType(DialogManager.ERROR).show();
-                            return;
-                        }
-                    }
-
-                    if (enableCommands && preLaunchCommand != null) {
-                        if (!executeCommand(preLaunchCommand)) {
-                            LogManager.error("Failed to execute pre-launch command");
-
-                            Analytics.trackEvent(
-                                    AnalyticsEvent.forInstanceLaunchFailed(this, offline, "pre_launch_failure"));
-                            App.launcher.setMinecraftLaunched(false);
-
-                            if (App.launcher.getParent() != null) {
-                                App.launcher.getParent().setVisible(true);
-                            }
-
-                            return;
-                        }
-                    }
-
-                    process = MCLauncher.launch(microsoftAccount, this, nativesTempDir,
-                            LWJGLManager.shouldUseLegacyLWJGL(this) ? lwjglNativesTempDir : null,
-                            wrapperCommand, username);
-                }
-
-                if (process == null) {
-                    Analytics.trackEvent(AnalyticsEvent.forInstanceLaunchFailed(this, offline, "no_process"));
-                    LogManager.error("Failed to get process for Minecraft");
-                    App.launcher.setMinecraftLaunched(false);
-                    if (App.launcher.getParent() != null) {
-                        App.launcher.getParent().setVisible(true);
-                    }
-                    return;
-                }
-
-                Analytics.trackEvent(AnalyticsEvent.forInstanceLaunched(this, offline));
-
-                if (this.getPack() != null && this.getPack().isLoggingEnabled() && !this.launcher.isDev
-                        && App.settings.enableLogs) {
-                    App.TASKPOOL.execute(() -> {
-                        addPlay(this.launcher.version);
-                    });
-                }
-
-                if ((App.autoLaunch != null && App.closeLauncher)
-                        || (!App.settings.keepLauncherOpen && !App.settings.enableLogs)) {
-                    Analytics.endSession();
-                    System.exit(0);
-                }
-
-                try {
-                    if (!OS.isArm() && Optional.ofNullable(this.launcher.enableDiscordIntegration)
-                            .orElse(App.settings.enableDiscordIntegration)) {
-                        App.ensureDiscordIsInitialized();
-
-                        String playing = this.launcher.pack
-                                + (this.launcher.multiMCManifest != null ? " (" + this.launcher.version + ")" : "");
-
-                        DiscordRichPresence.Builder presence = new DiscordRichPresence.Builder("");
-                        presence.setDetails(playing);
-                        presence.setStartTimestamps(System.currentTimeMillis());
-
-                        if (this.getPack() != null && this.getPack().hasDiscordImage()) {
-                            presence.setBigImage(this.getPack().getSafeName().toLowerCase(Locale.ENGLISH), playing);
-                            presence.setSmallImage("atlauncher", "ATLauncher");
-                        } else {
-                            presence.setBigImage("atlauncher", playing);
-                        }
-
-                        DiscordRPC.discordUpdatePresence(presence.build());
-                    }
-                } catch (Throwable t) {
-                    // ignored
-                }
-
-                App.launcher.showKillMinecraft(process);
-                InputStream is = process.getInputStream();
-                InputStreamReader isr = new InputStreamReader(is);
-                StringBuilder sb = new StringBuilder();
-                BufferedReader br = new BufferedReader(isr);
-                String line;
-                int detectedError = 0;
-
-                String replaceUUID = account.uuid.replace("-", "");
-
-                while ((line = br.readLine()) != null) {
-                    if (line.contains("java.lang.OutOfMemoryError")
-                            || line.contains("There is insufficient memory for the Java Runtime Environment")) {
-                        detectedError = MinecraftError.OUT_OF_MEMORY;
-                    }
-
-                    if (line.contains("java.util.ConcurrentModificationException")
-                            && Utils.matchVersion(this.id, "1.6", true, true)) {
-                        detectedError = MinecraftError.CONCURRENT_MODIFICATION_ERROR_1_6;
-                    }
-
-                    if (line.contains(
-                            "has been compiled by a more recent version of the Java Runtime (class file version 60.0)")) {
-                        detectedError = MinecraftError.NEED_TO_USE_JAVA_16_OR_NEWER;
-                    }
-
-                    if (line.contains(
-                            "has been compiled by a more recent version of the Java Runtime (class file version 61.0)")) {
-                        detectedError = MinecraftError.NEED_TO_USE_JAVA_17_OR_NEWER;
-                    }
-
-                    if (line.contains(
-                            "class jdk.internal.loader.ClassLoaders$AppClassLoader cannot be cast to class")) {
-                        detectedError = MinecraftError.USING_NEWER_JAVA_THAN_8;
-                    }
-
-                    if (!LogManager.showDebug) {
-                        line = line.replace(account.minecraftUsername, "**MINECRAFTUSERNAME**");
-                        line = line.replace(account.username, "**MINECRAFTUSERNAME**");
-                        line = line.replace(account.uuid, "**UUID**");
-                        line = line.replace(replaceUUID, "**UUID**");
-                    }
-
-                    if (account.getAccessToken() != null) {
-                        line = line.replace(account.getAccessToken(), "**ACCESSTOKEN**");
-                    }
-
-                    if (line.contains("log4j:")) {
-                        try {
-                            // start of a new event so clear string builder
-                            if (line.contains("<log4j:Event>")) {
-                                sb.setLength(0);
-                            }
-
-                            sb.append(line);
-
-                            // end of the xml object so parse it
-                            if (line.contains("</log4j:Event>")) {
-                                LogManager.minecraftLog4j(sb.toString());
-                                sb.setLength(0);
-                            }
-
-                            continue;
-                        } catch (Exception e) {
-                            // ignored
-                        }
-                    }
-
-                    LogManager.minecraft(line);
-                }
-                App.launcher.hideKillMinecraft();
-                if (App.launcher.getParent() != null && App.settings.keepLauncherOpen) {
-                    App.launcher.getParent().setVisible(true);
-                }
-                long end = System.currentTimeMillis();
-                if (!OS.isArm() && App.discordInitialized) {
-                    try {
-                        DiscordRPC.discordClearPresence();
-                    } catch (Throwable t) {
-                        // ignored
-                    }
-                }
-                int exitValue = 0; // Assume we exited fine
-                try {
-                    exitValue = process.exitValue(); // Try to get the real exit value
-                } catch (IllegalThreadStateException e) {
-                    process.destroy(); // Kill the process
-                }
-                if (!App.settings.keepLauncherOpen) {
-                    App.console.setVisible(false); // Hide the console to pretend we've closed
-                }
-
-                if (exitValue != 0) {
-                    LogManager.error(
-                            "Oh no. Minecraft crashed. Please check the logs for any errors and provide these logs when asking for support.");
-
-                    if (this.getPack() != null && !this.getPack().system) {
-                        LogManager.info("Checking for modifications to the pack since installation.");
-                        this.launcher.mods.forEach(mod -> {
-                            if (!mod.userAdded && mod.wasSelected && mod.disabled) {
-                                LogManager.warn("The mod " + mod.name + " (" + mod.file + ") has been disabled.");
-                            }
-                        });
-
-                        Files.list(
-                                this.ROOT.resolve("mods")).filter(
-                                        file -> Files.isRegularFile(file)
-                                                && this.launcher.mods.stream()
-                                                        .noneMatch(m -> m.type == Type.mods && !m.userAdded
-                                                                && m.getFile(this).toPath().equals(file)))
-                                .forEach(newMod -> {
-                                    LogManager.warn("The mod " + newMod.getFileName().toString() + " has been added.");
-                                });
-                    }
-                }
-
-                if (detectedError != 0) {
-                    MinecraftError.showInformationPopup(detectedError);
-                }
-
-                if (enableCommands && postExitCommand != null) {
-                    if (!executeCommand(postExitCommand)) {
-                        LogManager.error("Failed to execute post-exit command");
-                    }
-                }
-
-                App.launcher.setMinecraftLaunched(false);
-                final int timePlayed = (int) (end - start) / 1000;
-                Analytics.trackEvent(AnalyticsEvent.forInstanceLaunchCompleted(this, offline, timePlayed));
-                if (this.getPack() != null && this.getPack().isLoggingEnabled() && !this.launcher.isDev
-                        && App.settings.enableLogs) {
-                    if (timePlayed > 0) {
-                        App.TASKPOOL.submit(() -> {
-                            addTimePlayed(timePlayed, this.launcher.version);
-                        });
-                    }
-                }
-                if (App.settings.enableAutomaticBackupAfterLaunch) {
-                    backup();
-                }
-                if (App.settings.keepLauncherOpen) {
-                    App.launcher.updateData();
-                }
-                if (Files.isDirectory(nativesTempDir)) {
-                    FileUtils.deleteDirectoryQuietly(nativesTempDir);
-                }
-                if (Files.isDirectory(lwjglNativesTempDir)) {
-                    FileUtils.deleteDirectoryQuietly(lwjglNativesTempDir);
-                }
-                if (usesCustomMinecraftJar() && Files.exists(getCustomMinecraftJarLibraryPath())) {
-                    FileUtils.delete(getCustomMinecraftJarLibraryPath());
-                }
-                if (!App.settings.keepLauncherOpen) {
-                    Analytics.endSession();
-                    System.exit(0);
-                }
-            } catch (Exception e1) {
-                LogManager.logStackTrace(e1);
-                Analytics.trackEvent(AnalyticsEvent.forInstanceLaunchFailed(this, offline, "exception"));
-                App.launcher.setMinecraftLaunched(false);
-                if (App.launcher.getParent() != null) {
-                    App.launcher.getParent().setVisible(true);
-                }
-            }
-        });
-
-        this.setLastPlayed(Instant.now());
-        this.incrementNumberOfPlays();
-        this.save();
-
-        launcher.start();
-        return true;
-    }
-
-    private boolean executeCommand(String command) {
-        try {
-            CommandExecutor.executeCommand(this, command);
-            return true;
-        } catch (CommandException e) {
-            String content = GetText.tr("Error executing command");
-
-            if (e.getMessage() != null) {
-                content += ":" + System.lineSeparator() + e.getLocalizedMessage();
-            }
-
-            content += System.lineSeparator() + GetText.tr("Check the console for details");
-
-            DialogManager.okDialog().setTitle(GetText.tr("Error executing command")).setContent(content)
-                    .setType(DialogManager.ERROR).show();
-
-            return false;
-        }
+        return InstanceLauncherUseCase.launch(this, offline);
     }
 
     public void addPlay(String version) {
@@ -3025,7 +2117,7 @@ public class Instance extends MinecraftVersion {
         return launcher.version;
     }
 
-    private List<Path> getModPathsFromFilesystem() {
+    public List<Path> getModPathsFromFilesystem() {
         return getModPathsFromFilesystem(Arrays.asList(ROOT.resolve("mods"),
                 ROOT.resolve("resourcepacks"),
                 ROOT.resolve("shaderpacks"),
