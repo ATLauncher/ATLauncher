@@ -102,6 +102,7 @@ import com.atlauncher.utils.ModrinthApi;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Pair;
 import com.atlauncher.utils.Utils;
+import com.atlauncher.workers.MissingModScanner;
 
 @Json
 public class Instance extends MinecraftVersion {
@@ -1266,206 +1267,20 @@ public class Instance extends MinecraftVersion {
         return files;
     }
 
+    /**
+     * @deprecated Moved to MissingModScanner.scanMissingMods
+     */
+    @Deprecated
     public void scanMissingMods() {
-        scanMissingMods(App.launcher.getParent());
+        MissingModScanner.scanMissingMods(this);
     }
 
-    public void scanMissingMods(Window parent) {
-        PerformanceManager.start("Instance::scanMissingMods - CheckForAddedMods");
-
-        // files to scan
-        List<Path> files = new ArrayList<>();
-
-        // find the mods that have been added by the user manually
-        for (Path path : Arrays.asList(ROOT.resolve("mods"), ROOT.resolve("disabledmods"),
-                ROOT.resolve("resourcepacks"), ROOT.resolve("jarmods"))) {
-            if (!Files.exists(path)) {
-                continue;
-            }
-
-            com.atlauncher.data.Type fileType = path.equals(ROOT.resolve("resourcepacks"))
-                    ? com.atlauncher.data.Type.resourcepack
-                    : (path.equals(ROOT.resolve("jarmods")) ? com.atlauncher.data.Type.jar
-                            : com.atlauncher.data.Type.mods);
-
-            try (Stream<Path> stream = Files.list(path)) {
-                files.addAll(stream
-                        .filter(file -> !Files.isDirectory(file) && Utils.isAcceptedModFile(file)).filter(
-                                file -> launcher.mods.stream()
-                                        .noneMatch(mod -> mod.type == fileType
-                                                && mod.file.equals(file.getFileName().toString())))
-                        .collect(Collectors.toList()));
-            } catch (IOException e) {
-                LogManager.logStackTrace("Error scanning missing mods", e);
-            }
-        }
-
-        if (files.size() != 0) {
-            final ProgressDialog progressDialog = new ProgressDialog(GetText.tr("Scanning New Mods"), 0,
-                    GetText.tr("Scanning New Mods"), parent);
-
-            progressDialog.addThread(new Thread(() -> {
-                List<DisableableMod> mods = files.parallelStream()
-                        .map(file -> {
-                            com.atlauncher.data.Type fileType = file.getParent().equals(ROOT.resolve("resourcepacks"))
-                                    ? com.atlauncher.data.Type.resourcepack
-                                    : (file.getParent().equals(ROOT.resolve("jarmods")) ? com.atlauncher.data.Type.jar
-                                            : com.atlauncher.data.Type.mods);
-
-                            return DisableableMod.generateMod(file.toFile(), fileType,
-                                    !file.getParent().equals(ROOT.resolve("disabledmods")));
-                        })
-                        .collect(Collectors.toList());
-
-                if (!App.settings.dontCheckModsOnCurseForge) {
-                    Map<Long, DisableableMod> murmurHashes = new HashMap<>();
-
-                    mods.stream()
-                            .filter(dm -> dm.curseForgeProject == null && dm.curseForgeFile == null)
-                            .filter(dm -> dm.getFile(ROOT, id) != null).forEach(dm -> {
-                                try {
-                                    long hash = Hashing
-                                            .murmur(dm.disabled ? dm.getDisabledFile(this).toPath()
-                                                    : dm
-                                                            .getFile(ROOT, id).toPath());
-                                    murmurHashes.put(hash, dm);
-                                } catch (Throwable t) {
-                                    LogManager.logStackTrace(t);
-                                }
-                            });
-
-                    if (murmurHashes.size() != 0) {
-                        CurseForgeFingerprint fingerprintResponse = CurseForgeApi
-                                .checkFingerprints(murmurHashes.keySet().stream().toArray(Long[]::new));
-
-                        if (fingerprintResponse != null && fingerprintResponse.exactMatches != null) {
-                            int[] projectIdsFound = fingerprintResponse.exactMatches.stream().mapToInt(em -> em.id)
-                                    .toArray();
-
-                            if (projectIdsFound.length != 0) {
-                                Map<Integer, CurseForgeProject> foundProjects = CurseForgeApi
-                                        .getProjectsAsMap(projectIdsFound);
-
-                                if (foundProjects != null) {
-                                    fingerprintResponse.exactMatches.stream()
-                                            .filter(em -> em != null && em.file != null
-                                                    && murmurHashes.containsKey(em.file.packageFingerprint))
-                                            .forEach(foundMod -> {
-                                                DisableableMod dm = murmurHashes
-                                                        .get(foundMod.file.packageFingerprint);
-
-                                                // add CurseForge information
-                                                dm.curseForgeProjectId = foundMod.id;
-                                                dm.curseForgeFile = foundMod.file;
-                                                dm.curseForgeFileId = foundMod.file.id;
-
-                                                CurseForgeProject curseForgeProject = foundProjects
-                                                        .get(foundMod.id);
-
-                                                if (curseForgeProject != null) {
-                                                    dm.curseForgeProject = curseForgeProject;
-                                                    dm.name = curseForgeProject.name;
-                                                    dm.description = curseForgeProject.summary;
-                                                }
-
-                                                LogManager.debug("Found matching mod from CurseForge called "
-                                                        + dm.curseForgeFile.displayName);
-                                            });
-                                }
-                            }
-                        }
-                    }
-                }
-
-                if (!App.settings.dontCheckModsOnModrinth) {
-                    Map<String, DisableableMod> sha1Hashes = new HashMap<>();
-
-                    mods.stream()
-                            .filter(dm -> dm.modrinthProject == null && dm.modrinthVersion == null)
-                            .filter(dm -> dm.getFile(ROOT, id) != null).forEach(dm -> {
-                                try {
-                                    sha1Hashes.put(Hashing
-                                            .sha1(dm.disabled ? dm.getDisabledFile(this).toPath()
-                                                    : dm
-                                                            .getFile(ROOT, id).toPath())
-                                            .toString(), dm);
-                                } catch (Throwable t) {
-                                    LogManager.logStackTrace(t);
-                                }
-                            });
-
-                    if (sha1Hashes.size() != 0) {
-                        Set<String> keys = sha1Hashes.keySet();
-                        Map<String, ModrinthVersion> modrinthVersions = ModrinthApi
-                                .getVersionsFromSha1Hashes(keys.toArray(new String[keys.size()]));
-
-                        if (modrinthVersions != null && modrinthVersions.size() != 0) {
-                            String[] projectIdsFound = modrinthVersions.values().stream().map(mv -> mv.projectId)
-                                    .toArray(String[]::new);
-
-                            if (projectIdsFound.length != 0) {
-                                Map<String, ModrinthProject> foundProjects = ModrinthApi
-                                        .getProjectsAsMap(projectIdsFound);
-
-                                if (foundProjects != null) {
-                                    for (Map.Entry<String, ModrinthVersion> entry : modrinthVersions.entrySet()) {
-                                        ModrinthVersion version = entry.getValue();
-                                        ModrinthProject project = foundProjects.get(version.projectId);
-
-                                        if (project != null) {
-                                            DisableableMod dm = sha1Hashes.get(entry.getKey());
-
-                                            // add Modrinth information
-                                            dm.modrinthProject = project;
-                                            dm.modrinthVersion = version;
-
-                                            if (!dm.isFromCurseForge()
-                                                    || App.settings.defaultModPlatform == ModPlatform.MODRINTH) {
-                                                dm.name = project.title;
-                                                dm.description = project.description;
-                                            }
-
-                                            LogManager.debug(String.format(
-                                                    "Found matching mod from Modrinth called %s with file %s",
-                                                    project.title, version.name));
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-
-                mods.forEach(mod -> LogManager.info("Found extra mod with name of " + mod.file));
-                launcher.mods.addAll(mods);
-                save();
-                progressDialog.close();
-            }));
-
-            progressDialog.start();
-        }
-        PerformanceManager.end("Instance::scanMissingMods - CheckForAddedMods");
-
-        PerformanceManager.start("Instance::scanMissingMods - CheckForRemovedMods");
-        // next remove any mods that the no longer exist in the filesystem
-        List<DisableableMod> removedMods = launcher.mods.parallelStream().filter(mod -> {
-            if (!mod.wasSelected || mod.skipped || mod.type != com.atlauncher.data.Type.mods) {
-                return false;
-            }
-
-            if (mod.disabled) {
-                return (mod.getDisabledFile(this) != null && !mod.getDisabledFile(this).exists());
-            } else {
-                return (mod.getFile(this) != null && !mod.getFile(this).exists());
-            }
-        }).collect(Collectors.toList());
-
-        if (removedMods.size() != 0) {
-            removedMods.forEach(mod -> LogManager.info("Mod no longer in filesystem: " + mod.file));
-            launcher.mods.removeAll(removedMods);
-            save();
-        }
-        PerformanceManager.end("Instance::scanMissingMods - CheckForRemovedMods");
+    /**
+     * @deprecated Moved to MissingModScanner.scanMissingMods
+     */
+    @Deprecated
+    public void scanMissingMods(Window parent){
+        MissingModScanner.scanMissingMods(this, parent);
     }
 
     public boolean showGetHelpButton() {
