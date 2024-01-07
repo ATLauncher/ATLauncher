@@ -41,7 +41,6 @@ import com.atlauncher.evnt.manager.SettingsManager;
 import com.atlauncher.gui.models.InstanceUIModel;
 import com.atlauncher.managers.CurseForgeUpdateManager;
 import com.atlauncher.managers.InstanceManager;
-import com.atlauncher.managers.ModpacksChUpdateManager;
 import com.atlauncher.managers.ModrinthModpackUpdateManager;
 import com.atlauncher.managers.TechnicModpackUpdateManager;
 import com.atlauncher.utils.sort.InstanceSortingStrategies;
@@ -214,10 +213,7 @@ public class InstancesTabViewModel implements IInstancesTabViewModel, SettingsLi
             // must be reinstalled
             return BehaviorSubject.createDefault(false);
         } else if (instance.isExternalPack()) {
-            if (instance.isModpacksChPack()) {
-                return ModpacksChUpdateManager.getObservable(instance).map(latestVersion -> latestVersion.isPresent()
-                        && latestVersion.get().id != instance.launcher.modpacksChPackVersionManifest.id);
-            } else if (instance.isCurseForgePack()) {
+            if (instance.isCurseForgePack()) {
                 return CurseForgeUpdateManager.getObservable(instance).map(latestVersion -> latestVersion.isPresent()
                         && latestVersion.get().id != instance.launcher.curseForgeFile.id);
             } else if (instance.isTechnicPack()) {

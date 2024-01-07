@@ -64,7 +64,7 @@ public class UnifiedPackCard extends JPanel implements RelocalizationListener {
         setLayout(new BorderLayout());
         setBorder(new IconTitledBorder(result.name(), App.THEME.getBoldFont().deriveFont(15f),
                 Utils.getIconImage(App.THEME.getResourcePath("image/modpack-platform",
-                        result.platform().toString().toLowerCase(Locale.ENGLISH).replace("modpacksch", "ftb")))));
+                        result.platform().toString().toLowerCase(Locale.ENGLISH)))));
 
         RelocalizationManager.addListener(this);
 

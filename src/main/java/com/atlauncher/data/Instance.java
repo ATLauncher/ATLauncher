@@ -142,7 +142,6 @@ import com.atlauncher.managers.InstanceManager;
 import com.atlauncher.managers.LWJGLManager;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.managers.MinecraftManager;
-import com.atlauncher.managers.ModpacksChUpdateManager;
 import com.atlauncher.managers.ModrinthModpackUpdateManager;
 import com.atlauncher.managers.PackManager;
 import com.atlauncher.managers.PerformanceManager;
@@ -337,9 +336,7 @@ public class Instance extends MinecraftVersion {
         if (launcher.vanillaInstance) {
             return;
         } else if (isExternalPack()) {
-            if (isModpacksChPack()) {
-                version = Integer.toString(ModpacksChUpdateManager.getLatestVersion(this).id);
-            } else if (isCurseForgePack()) {
+            if (isCurseForgePack()) {
                 version = Integer.toString(CurseForgeUpdateManager.getLatestVersion(this).id);
             } else if (isTechnicPack()) {
                 if (isTechnicSolderPack()) {
@@ -377,9 +374,7 @@ public class Instance extends MinecraftVersion {
         }
 
         if (isExternalPack()) {
-            if (isModpacksChPack()) {
-                return hasUpdateBeenIgnored(Integer.toString(ModpacksChUpdateManager.getLatestVersion(this).id));
-            } else if (isCurseForgePack()) {
+            if (isCurseForgePack()) {
                 return hasUpdateBeenIgnored(Integer.toString(CurseForgeUpdateManager.getLatestVersion(this).id));
             } else if (isTechnicPack()) {
                 if (isTechnicSolderPack()) {
@@ -2596,9 +2591,7 @@ public class Instance extends MinecraftVersion {
     }
 
     public boolean isUpdatableExternalPack() {
-        return isExternalPack() && ((isModpacksChPack()
-                && ConfigManager.getConfigItem("platforms.modpacksch.modpacksEnabled", true) == true)
-                || (isCurseForgePack()
+        return isExternalPack() && ((isCurseForgePack()
                         && ConfigManager.getConfigItem("platforms.curseforge.modpacksEnabled", true) == true)
                 || (isTechnicPack() && ConfigManager.getConfigItem("platforms.technic.modpacksEnabled", true) == true)
                 || (isModrinthPack()

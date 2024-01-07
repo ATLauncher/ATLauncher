@@ -56,7 +56,6 @@ import com.atlauncher.managers.InstanceManager;
 import com.atlauncher.managers.LWJGLManager;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.managers.MinecraftManager;
-import com.atlauncher.managers.ModpacksChUpdateManager;
 import com.atlauncher.managers.ModrinthModpackUpdateManager;
 import com.atlauncher.managers.NewsManager;
 import com.atlauncher.managers.PackManager;
@@ -331,9 +330,6 @@ public class Launcher {
         }
 
         updateThread = new Thread(() -> {
-            if (InstanceManager.getInstances().stream().anyMatch(i -> i.isModpacksChPack())) {
-                ModpacksChUpdateManager.checkForUpdates();
-            }
             if (InstanceManager.getInstances().stream().anyMatch(i -> i.isCurseForgePack())) {
                 CurseForgeUpdateManager.checkForUpdates();
             }
