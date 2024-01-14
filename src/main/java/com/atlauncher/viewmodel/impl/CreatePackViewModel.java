@@ -411,6 +411,7 @@ public class CreatePackViewModel implements SettingsListener, ICreatePackViewMod
                         updateNameAndDescription(selectedMinecraftVersionOptional.get(), null);
                         loaderVersions.onNext(Optional.empty());
                         setLoaderGroupEnabled(true);
+                        selectedLoaderVersion.onNext(Optional.empty());
                         loaderVersionsDropDownEnabled.onNext(false);
                         return;
                     }
@@ -445,10 +446,11 @@ public class CreatePackViewModel implements SettingsListener, ICreatePackViewMod
                     if (!loaders.isEmpty()) {
                         if (loaderType == LoaderType.FORGE) {
                             Optional<LoaderVersion> optionalLoaderType = first(loaders, it -> it.recommended);
-                            if (optionalLoaderType.isPresent())
+                            if (optionalLoaderType.isPresent()) {
                                 selectedLoaderVersion.onNext(optionalLoaderType);
-                            else
+                            } else {
                                 selectedLoaderVersion.onNext(loaders.stream().findFirst());
+                            }
                         } else {
                             selectedLoaderVersion.onNext(loaders.stream().findFirst());
                         }

@@ -8,6 +8,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 ### New Features
 
 ### Fixes
+- Creating pack not resetting modloader when switched back to none
 
 ### Misc
 - Remove old FTB pack installing code
