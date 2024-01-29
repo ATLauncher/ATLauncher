@@ -8,7 +8,10 @@ This changelog only contains the changes that are unreleased. For changes for in
 ### New Features
 
 ### Fixes
-- Creating pack not resetting modloader when switched back to none
+
+-   Creating pack not resetting modloader when switched back to none
+-   Fix Instance rename Message
 
 ### Misc
-- Remove old FTB pack installing code
+
+-   Remove old FTB pack installing code
