@@ -10,6 +10,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 ### Fixes
 - Creating pack not resetting modloader when switched back to none
 - Issue with file downloads for non third party enabled files on CurseForge not working
+- Issue adding a second account [#865]
 
 ### Misc
 - Remove old FTB pack installing code
