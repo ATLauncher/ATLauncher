@@ -126,17 +126,23 @@ public class ImportPackUtils {
                         .show();
             }
 
-            String filename = curseFile.fileName.replace(" ", "+");
+            String filename = curseFile.fileName;
+            String filename2 = curseFile.fileName.replace(" ", "+");
 
             File fileLocation = FileSystem.DOWNLOADS.resolve(filename).toFile();
-            if (!fileLocation.exists()) {
+            File fileLocation2 = FileSystem.DOWNLOADS.resolve(filename2).toFile();
+            if (!fileLocation.exists() && !fileLocation2.exists()) {
                 File downloadsFolderFile = new File(FileSystem.getUserDownloadsPath().toFile(),
                         filename);
+                File downloadsFolderFile2 = new File(FileSystem.getUserDownloadsPath().toFile(),
+                        filename2);
                 if (downloadsFolderFile.exists()) {
                     Utils.moveFile(downloadsFolderFile, fileLocation, true);
+                } else if (downloadsFolderFile2.exists()) {
+                    Utils.moveFile(downloadsFolderFile2, fileLocation, true);
                 }
 
-                while (!fileLocation.exists()) {
+                while (!fileLocation.exists() && !fileLocation2.exists()) {
                     int retValue = 1;
                     do {
                         if (retValue == 1) {
@@ -159,8 +165,8 @@ public class ImportPackUtils {
                                         .build())
                                 .addOption(GetText.tr("Open Folder"), true)
                                 .addOption(GetText.tr("I've Downloaded This File")).setType(DialogManager.INFO)
-                                .showWithFileMonitoring(fileLocation, downloadsFolderFile,
-                                        curseFile.fileLength, 1);
+                                .showWithFileMonitoring(curseFile.fileLength, 1, fileLocation, fileLocation2,
+                                        downloadsFolderFile, downloadsFolderFile2);
 
                         if (retValue == DialogManager.CLOSED_OPTION) {
                             return false;
@@ -169,16 +175,22 @@ public class ImportPackUtils {
                         }
                     } while (retValue != 1);
 
-                    if (!fileLocation.exists()) {
+                    if (!fileLocation.exists() && !fileLocation2.exists()) {
                         // Check users downloads folder to see if it's there
                         if (downloadsFolderFile.exists()) {
                             Utils.moveFile(downloadsFolderFile, fileLocation, true);
+                        } else if (downloadsFolderFile2.exists()) {
+                            Utils.moveFile(downloadsFolderFile2, fileLocation, true);
                         }
                     }
                 }
             }
 
-            FileUtils.moveFile(fileLocation.toPath(), tempZip, true);
+            if (fileLocation.exists()) {
+                FileUtils.moveFile(fileLocation.toPath(), tempZip, true);
+            } else if (fileLocation2.exists()) {
+                FileUtils.moveFile(fileLocation2.toPath(), tempZip, true);
+            }
 
             return loadCurseForgeFormat(tempZip.toFile(), projectId, fileId);
         } else {

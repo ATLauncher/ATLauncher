@@ -1387,8 +1387,10 @@ public class Instance extends MinecraftVersion {
             }
 
             dialog.setIndeterminate();
-            String filename = file.fileName.replace(" ", "+");
+            String filename = file.fileName;
+            String filename2 = file.fileName.replace(" ", "+");
             File fileLocation = downloadLocation.toFile();
+            File fileLocation2 = FileSystem.DOWNLOADS.resolve(filename2).toFile();
             // if file downloaded already, but hashes don't match, delete it
             if (fileLocation.exists()
                     && ((md5Hash.isPresent()
@@ -1397,15 +1399,25 @@ public class Instance extends MinecraftVersion {
                                     && !Hashing.sha1(fileLocation.toPath())
                                             .equals(Hashing.toHashCode(sha1Hash.get().value))))) {
                 FileUtils.delete(fileLocation.toPath());
+            } else if (fileLocation2.exists()
+                    && ((md5Hash.isPresent()
+                            && !Hashing.md5(fileLocation2.toPath()).equals(Hashing.toHashCode(md5Hash.get().value)))
+                            || (sha1Hash.isPresent()
+                                    && !Hashing.sha1(fileLocation2.toPath())
+                                            .equals(Hashing.toHashCode(sha1Hash.get().value))))) {
+                FileUtils.delete(fileLocation2.toPath());
             }
 
-            if (!fileLocation.exists()) {
+            if (!fileLocation.exists() && !fileLocation2.exists()) {
                 File downloadsFolderFile = new File(FileSystem.getUserDownloadsPath().toFile(), filename);
+                File downloadsFolderFile2 = new File(FileSystem.getUserDownloadsPath().toFile(), filename2);
                 if (downloadsFolderFile.exists()) {
                     Utils.moveFile(downloadsFolderFile, fileLocation, true);
+                } else if (downloadsFolderFile.exists()) {
+                    Utils.moveFile(downloadsFolderFile2, fileLocation, true);
                 }
 
-                while (!fileLocation.exists()) {
+                while (!fileLocation.exists() && !fileLocation2.exists()) {
                     int retValue = 1;
                     do {
                         if (retValue == 1) {
@@ -1428,7 +1440,8 @@ public class Instance extends MinecraftVersion {
                                         .build())
                                 .addOption(GetText.tr("Open Folder"), true)
                                 .addOption(GetText.tr("I've Downloaded This File")).setType(DialogManager.INFO)
-                                .showWithFileMonitoring(fileLocation, downloadsFolderFile, file.fileLength, 1);
+                                .showWithFileMonitoring(file.fileLength, 1, fileLocation, fileLocation2,
+                                        downloadsFolderFile, downloadsFolderFile2);
 
                         if (retValue == DialogManager.CLOSED_OPTION) {
                             return;
@@ -1437,10 +1450,12 @@ public class Instance extends MinecraftVersion {
                         }
                     } while (retValue != 1);
 
-                    if (!fileLocation.exists()) {
+                    if (!fileLocation.exists() && !fileLocation2.exists()) {
                         // Check users downloads folder to see if it's there
                         if (downloadsFolderFile.exists()) {
                             Utils.moveFile(downloadsFolderFile, fileLocation, true);
+                        } else if (downloadsFolderFile2.exists()) {
+                            Utils.moveFile(downloadsFolderFile2, fileLocation, true);
                         }
                         // Check to see if a browser has added a .zip to the end of the file
                         File zipAddedFile = FileSystem.DOWNLOADS.resolve(file.fileName + ".zip").toFile();
@@ -1462,6 +1477,13 @@ public class Instance extends MinecraftVersion {
                                             && !Hashing.sha1(fileLocation.toPath())
                                                     .equals(Hashing.toHashCode(sha1Hash.get().value))))) {
                         FileUtils.delete(fileLocation.toPath());
+                    } else if (fileLocation2.exists()
+                            && ((md5Hash.isPresent() && !Hashing.md5(fileLocation2.toPath())
+                                    .equals(Hashing.toHashCode(md5Hash.get().value)))
+                                    || (sha1Hash.isPresent()
+                                            && !Hashing.sha1(fileLocation2.toPath())
+                                                    .equals(Hashing.toHashCode(sha1Hash.get().value))))) {
+                        FileUtils.delete(fileLocation2.toPath());
                     }
                 }
             }
@@ -2592,7 +2614,7 @@ public class Instance extends MinecraftVersion {
 
     public boolean isUpdatableExternalPack() {
         return isExternalPack() && ((isCurseForgePack()
-                        && ConfigManager.getConfigItem("platforms.curseforge.modpacksEnabled", true) == true)
+                && ConfigManager.getConfigItem("platforms.curseforge.modpacksEnabled", true) == true)
                 || (isTechnicPack() && ConfigManager.getConfigItem("platforms.technic.modpacksEnabled", true) == true)
                 || (isModrinthPack()
                         && ConfigManager.getConfigItem("platforms.modrinth.modpacksEnabled", true) == true));
