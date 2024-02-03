@@ -30,7 +30,6 @@ import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -38,7 +37,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -136,7 +134,6 @@ import com.atlauncher.utils.Utils;
 import com.atlauncher.utils.walker.CaseFileVisitor;
 import com.google.gson.reflect.TypeToken;
 
-import okhttp3.CacheControl;
 import okhttp3.OkHttpClient;
 
 public class InstanceInstaller extends SwingWorker<Boolean, Void> implements NetworkProgressable {
@@ -418,17 +415,23 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                         .show();
             }
 
-            String filename = version._curseForgeFile.fileName.replace(" ", "+");
+            String filename = version._curseForgeFile.fileName;
+            String filename2 = version._curseForgeFile.fileName.replace(" ", "+");
 
             File fileLocation = FileSystem.DOWNLOADS.resolve(filename).toFile();
-            if (!fileLocation.exists()) {
+            File fileLocation2 = FileSystem.DOWNLOADS.resolve(filename2).toFile();
+            if (!fileLocation.exists() && !fileLocation2.exists()) {
                 File downloadsFolderFile = new File(FileSystem.getUserDownloadsPath().toFile(),
                         filename);
+                File downloadsFolderFile2 = new File(FileSystem.getUserDownloadsPath().toFile(),
+                        filename2);
                 if (downloadsFolderFile.exists()) {
                     Utils.moveFile(downloadsFolderFile, fileLocation, true);
+                } else if (downloadsFolderFile2.exists()) {
+                    Utils.moveFile(downloadsFolderFile2, fileLocation, true);
                 }
 
-                while (!fileLocation.exists()) {
+                while (!fileLocation.exists() && !fileLocation2.exists()) {
                     int retValue = 1;
                     do {
                         if (retValue == 1) {
@@ -451,8 +454,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                                         .build())
                                 .addOption(GetText.tr("Open Folder"), true)
                                 .addOption(GetText.tr("I've Downloaded This File")).setType(DialogManager.INFO)
-                                .showWithFileMonitoring(fileLocation, downloadsFolderFile,
-                                        version._curseForgeFile.fileLength, 1);
+                                .showWithFileMonitoring(version._curseForgeFile.fileLength, 1, fileLocation,
+                                        fileLocation2, downloadsFolderFile, downloadsFolderFile2);
 
                         if (retValue == DialogManager.CLOSED_OPTION) {
                             return;
@@ -461,16 +464,22 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                         }
                     } while (retValue != 1);
 
-                    if (!fileLocation.exists()) {
+                    if (!fileLocation.exists() && !fileLocation2.exists()) {
                         // Check users downloads folder to see if it's there
                         if (downloadsFolderFile.exists()) {
                             Utils.moveFile(downloadsFolderFile, fileLocation, true);
+                        } else if (downloadsFolderFile2.exists()) {
+                            Utils.moveFile(downloadsFolderFile2, fileLocation, true);
                         }
                     }
                 }
             }
 
-            FileUtils.moveFile(fileLocation.toPath(), serverPackFile, true);
+            if (fileLocation.exists()) {
+                FileUtils.moveFile(fileLocation.toPath(), serverPackFile, true);
+            } else if (fileLocation2.exists()) {
+                FileUtils.moveFile(fileLocation2.toPath(), serverPackFile, true);
+            }
         } else {
             com.atlauncher.network.Download serverPackDownload = com.atlauncher.network.Download.build()
                     .setUrl(version._curseForgeFile.downloadUrl).downloadTo(serverPackFile)
@@ -878,17 +887,23 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                         .show();
             }
 
-            String filename = version._curseForgeFile.fileName.replace(" ", "+");
+            String filename = version._curseForgeFile.fileName;
+            String filename2 = version._curseForgeFile.fileName.replace(" ", "+");
 
             File fileLocation = FileSystem.DOWNLOADS.resolve(filename).toFile();
-            if (!fileLocation.exists()) {
+            File fileLocation2 = FileSystem.DOWNLOADS.resolve(filename2).toFile();
+            if (!fileLocation.exists() && !fileLocation2.exists()) {
                 File downloadsFolderFile = new File(FileSystem.getUserDownloadsPath().toFile(),
                         filename);
+                File downloadsFolderFile2 = new File(FileSystem.getUserDownloadsPath().toFile(),
+                        filename2);
                 if (downloadsFolderFile.exists()) {
                     Utils.moveFile(downloadsFolderFile, fileLocation, true);
+                } else if (downloadsFolderFile2.exists()) {
+                    Utils.moveFile(downloadsFolderFile2, fileLocation, true);
                 }
 
-                while (!fileLocation.exists()) {
+                while (!fileLocation.exists() && !fileLocation2.exists()) {
                     int retValue = 1;
                     do {
                         if (retValue == 1) {
@@ -911,8 +926,9 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                                         .build())
                                 .addOption(GetText.tr("Open Folder"), true)
                                 .addOption(GetText.tr("I've Downloaded This File")).setType(DialogManager.INFO)
-                                .showWithFileMonitoring(fileLocation, downloadsFolderFile,
-                                        version._curseForgeFile.fileLength, 1);
+                                .showWithFileMonitoring(version._curseForgeFile.fileLength, 1, fileLocation,
+                                        fileLocation2,
+                                        downloadsFolderFile, downloadsFolderFile2);
 
                         if (retValue == DialogManager.CLOSED_OPTION) {
                             return;
@@ -921,16 +937,22 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                         }
                     } while (retValue != 1);
 
-                    if (!fileLocation.exists()) {
+                    if (!fileLocation.exists() && !fileLocation2.exists()) {
                         // Check users downloads folder to see if it's there
                         if (downloadsFolderFile.exists()) {
                             Utils.moveFile(downloadsFolderFile, fileLocation, true);
+                        } else if (downloadsFolderFile2.exists()) {
+                            Utils.moveFile(downloadsFolderFile2, fileLocation, true);
                         }
                     }
                 }
             }
 
-            FileUtils.moveFile(fileLocation.toPath(), manifestFile, true);
+            if (fileLocation.exists()) {
+                FileUtils.moveFile(fileLocation.toPath(), manifestFile, true);
+            } else if (fileLocation2.exists()) {
+                FileUtils.moveFile(fileLocation2.toPath(), manifestFile, true);
+            }
         } else {
             com.atlauncher.network.Download manifestDownload = com.atlauncher.network.Download.build()
                     .setUrl(version._curseForgeFile.downloadUrl).downloadTo(manifestFile)

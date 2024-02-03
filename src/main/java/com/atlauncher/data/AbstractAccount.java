@@ -228,10 +228,6 @@ public abstract class AbstractAccount implements Serializable {
         File file = FileSystem.SKINS.resolve((this.uuid == null ? "default" : this.getUUIDNoDashes()) + ".png")
                 .toFile();
 
-        if (!file.exists()) {
-            this.updateSkin(); // Download/update the users skin
-        }
-
         // If the file doesn't exist then use the default Minecraft skin.
         if (file == null || !file.exists()) {
             return SkinUtils.getDefaultHead();
@@ -247,10 +243,6 @@ public abstract class AbstractAccount implements Serializable {
      */
     public ImageIcon getMinecraftSkin() {
         File file = FileSystem.SKINS.resolve(this.getUUIDNoDashes() + ".png").toFile();
-
-        if (!file.exists()) {
-            this.updateSkin(); // Download/update the users skin
-        }
 
         // If the file doesn't exist then use the default Minecraft skin.
         if (file == null || !file.exists()) {

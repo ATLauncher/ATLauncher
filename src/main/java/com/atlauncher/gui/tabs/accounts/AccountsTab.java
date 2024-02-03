@@ -54,15 +54,15 @@ import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.gui.dialogs.LoginWithMicrosoftDialog;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.gui.tabs.Tab;
-import com.atlauncher.viewmodel.base.IAccountsViewModel;
-import com.atlauncher.viewmodel.base.IAccountsViewModel.LoginPostResult;
-import com.atlauncher.viewmodel.base.IAccountsViewModel.LoginPreCheckResult;
 import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.utils.ComboItem;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.SkinUtils;
+import com.atlauncher.viewmodel.base.IAccountsViewModel;
+import com.atlauncher.viewmodel.base.IAccountsViewModel.LoginPostResult;
+import com.atlauncher.viewmodel.base.IAccountsViewModel.LoginPreCheckResult;
 import com.atlauncher.viewmodel.impl.AccountsViewModel;
 
 public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
@@ -262,9 +262,14 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
         loginWithMicrosoftButton.addActionListener(e -> {
             // TODO This should be handled by some reaction via listener
             int numberOfAccountsBefore = viewModel.accountCount();
-            new LoginWithMicrosoftDialog();
+            LoginWithMicrosoftDialog dialog = new LoginWithMicrosoftDialog();
 
             if (numberOfAccountsBefore != viewModel.accountCount()) {
+                // account was added, so get the skin
+                if (dialog.account != null) {
+                    dialog.account.updateSkin();
+                }
+
                 viewModel.pushNewAccounts();
                 accountsComboBox.setSelectedItem(AccountManager.getSelectedAccount());
             }
