@@ -218,6 +218,14 @@ public class ModrinthApi {
 
             if (loaderVersion.isForge()) {
                 loaders.add("forge");
+            } else if (loaderVersion.isNeoForge()) {
+                List<String> neoForgeForgeCompatabilityVersions = ConfigManager
+                        .getConfigItem("loaders.neoforge.forgeCompatibleMinecraftVersions", new ArrayList<String>());
+                if (neoForgeForgeCompatabilityVersions.contains(minecraftVersion)) {
+                    loaders.add("forge");
+                }
+
+                loaders.add("neoforge");
             } else if (loaderVersion.isFabric()) {
                 loaders.add("fabric");
             } else if (loaderVersion.isQuilt()) {
