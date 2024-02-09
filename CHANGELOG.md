@@ -8,5 +8,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 ### New Features
 
 ### Fixes
+- Issue with browser download mods from CurseForge packs with spaces in the filename not being recognised
 
 ### Misc

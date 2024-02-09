@@ -124,12 +124,14 @@ public final class BrowserDownloadDialog extends JDialog {
     protected void checkForDownloadedMods(boolean allowReload) {
         boolean reloadMainPanel = false;
         for (Mod mod : browserDownloadMods) {
-            Path downloadsPath = downloadPath.resolve(mod.file);
-            Path finalLocation = FileSystem.DOWNLOADS.resolve(mod.file);
-
             if (modsDownloaded.contains(mod)) {
                 continue;
             }
+
+            Path downloadsPath = downloadPath.resolve(mod.file);
+            Path downloadsPath2 = downloadPath.resolve(mod.file.replace(" ", "+"));
+            Path finalLocation = FileSystem.DOWNLOADS.resolve(mod.file);
+            Path finalLocation2 = FileSystem.DOWNLOADS.resolve(mod.file.replace(" ", "+"));
 
             // first check the user downloads folder (if not the same as final)
             if (!downloadsPath.equals(finalLocation) && Files.exists(downloadsPath)
@@ -147,6 +149,43 @@ public final class BrowserDownloadDialog extends JDialog {
                 if (mod.sha512 != null
                         && Hashing.sha512(downloadsPath).equals(Hashing.toHashCode(mod.sha512))) {
                     FileUtils.moveFile(downloadsPath, finalLocation, true);
+                }
+            }
+
+            // first check the user downloads folder with spaces replaced (if not the same
+            // as final)
+            if (!downloadsPath2.equals(finalLocation2) && Files.exists(downloadsPath2)
+                    && downloadsPath2.toFile().length() == mod.filesize) {
+                if (mod.md5 != null
+                        && Hashing.md5(downloadsPath2).equals(Hashing.toHashCode(mod.md5))) {
+                    FileUtils.moveFile(downloadsPath2, finalLocation, true);
+                }
+
+                if (mod.sha1 != null
+                        && Hashing.sha1(downloadsPath2).equals(Hashing.toHashCode(mod.sha1))) {
+                    FileUtils.moveFile(downloadsPath2, finalLocation, true);
+                }
+
+                if (mod.sha512 != null
+                        && Hashing.sha512(downloadsPath2).equals(Hashing.toHashCode(mod.sha512))) {
+                    FileUtils.moveFile(downloadsPath2, finalLocation, true);
+                }
+            }
+
+            if (Files.exists(finalLocation2)) {
+                if (mod.md5 != null
+                        && Hashing.md5(finalLocation2).equals(Hashing.toHashCode(mod.md5))) {
+                    FileUtils.moveFile(finalLocation2, finalLocation, true);
+                }
+
+                if (mod.sha1 != null
+                        && Hashing.sha1(finalLocation2).equals(Hashing.toHashCode(mod.sha1))) {
+                    FileUtils.moveFile(finalLocation2, finalLocation, true);
+                }
+
+                if (mod.sha512 != null
+                        && Hashing.sha512(finalLocation2).equals(Hashing.toHashCode(mod.sha512))) {
+                    FileUtils.moveFile(finalLocation2, finalLocation, true);
                 }
             }
 
