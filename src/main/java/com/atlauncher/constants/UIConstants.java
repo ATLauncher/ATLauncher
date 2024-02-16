@@ -49,4 +49,5 @@ public class UIConstants {
     public static final int LAUNCHER_ACCOUNTS_TAB = 5;
     public static final int LAUNCHER_TOOLS_TAB = 6;
     public static final int LAUNCHER_SETTINGS_TAB = 7;
+    public static final int LAUNCHER_ABOUT_TAB = 8;
 }

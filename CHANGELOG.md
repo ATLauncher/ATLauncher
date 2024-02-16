@@ -6,6 +6,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 ## 3.4.35.8
 
 ### New Features
+- Add AboutTab [#568]
 
 ### Fixes
 
