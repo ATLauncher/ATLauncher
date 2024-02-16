@@ -82,8 +82,6 @@ public final class BrowserDownloadDialog extends JDialog {
         super(parent, GetText.tr("Browser Download Mods"), ModalityType.DOCUMENT_MODAL);
         this.browserDownloadMods = browserDownloadMods;
 
-        Analytics.sendScreenView("Browser Download Mods");
-
         this.setPreferredSize(new Dimension(680, 600));
         this.setMinimumSize(new Dimension(680, 600));
         this.setResizable(true);
@@ -94,6 +92,8 @@ public final class BrowserDownloadDialog extends JDialog {
         if (success) {
             return;
         }
+
+        Analytics.sendScreenView("Browser Download Mods");
 
         setupComponents();
 

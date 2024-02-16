@@ -74,6 +74,12 @@ public class Constants {
     public static String DOWNLOAD_SERVER = BASE_CDN_PROTOCOL + BASE_CDN_DOMAIN + BASE_CDN_PATH;
     public static String DOWNLOAD_HOST = BASE_CDN_DOMAIN;
 
+    // Mixpanel analytics
+    // if you fork or modify this launcher, you must not use this token and get your
+    // own
+    public static final String MIXPANEL_PROJECT_TOKEN = "3cb6581cb284c1a1b6e189fef3410495";
+    public static final String MIXPANEL_BASE_URL = "https://api.mixpanel.com";
+
     // CurseForge domains, endpoints, config, etc
     public static final String CURSEFORGE_CORE_API_URL = "https://api.curseforge.com/v1";
     // if you fork or modify this launcher, you must not use this API key and apply
