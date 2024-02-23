@@ -42,6 +42,7 @@ import com.atlauncher.network.analytics.AnalyticsApiResponse;
 import com.atlauncher.network.analytics.AnalyticsEvent;
 import com.atlauncher.utils.Java;
 import com.atlauncher.utils.OS;
+import com.atlauncher.utils.Utils;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -179,6 +180,10 @@ public final class Analytics {
     }
 
     public static boolean isEnabled() {
+        if (Utils.isDevelopment() || !Constants.VERSION.isReleaseStream()) {
+            return false;
+        }
+
         if (ConfigManager.getConfigItem("analytics.enabledForAll", false) == true) {
             return true;
         }
