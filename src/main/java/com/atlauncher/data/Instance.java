@@ -2172,21 +2172,20 @@ public class Instance extends MinecraftVersion {
                 .filter(mod -> overrides.stream()
                         .anyMatch(path -> getRoot().relativize(mod.getPath(this)).startsWith(path)))
                 .collect(Collectors.collectingAndThen(
-                    Collectors.toList(),
-                    list -> {
-                        Set<Integer> seenFileIds = new HashSet<>();
-                        return list.stream()
-                            .filter(mod -> seenFileIds.add(mod.curseForgeFileId))
-                            .map(mod -> {
-                                CurseForgeManifestFile file = new CurseForgeManifestFile();
-                                file.projectID = mod.curseForgeProjectId;
-                                file.fileID = mod.curseForgeFileId;
-                                file.required = true;
-                                return file;
-                            })
-                            .collect(Collectors.toList());
-                    }
-                ));
+                        Collectors.toList(),
+                        list -> {
+                            Set<Integer> seenFileIds = new HashSet<>();
+                            return list.stream()
+                                    .filter(mod -> seenFileIds.add(mod.curseForgeFileId))
+                                    .map(mod -> {
+                                        CurseForgeManifestFile file = new CurseForgeManifestFile();
+                                        file.projectID = mod.curseForgeProjectId;
+                                        file.fileID = mod.curseForgeFileId;
+                                        file.required = true;
+                                        return file;
+                                    })
+                                    .collect(Collectors.toList());
+                        }));
         manifest.overrides = "overrides";
 
         // create temp directory to put this in
@@ -2338,50 +2337,49 @@ public class Instance extends MinecraftVersion {
                 .filter(mod -> overrides.stream()
                         .anyMatch(path -> getRoot().relativize(mod.getPath(this)).startsWith(path)))
                 .collect(Collectors.collectingAndThen(
-                    Collectors.toList(),
-                    list -> {
-                        Set<String> seenFileIds = new HashSet<>();
-                        return list.stream()
-                            .filter(mod -> seenFileIds.add(mod.modrinthVersion.id))
-                            .map(mod -> {
-                                Path modPath = mod.getFile(this).toPath();
+                        Collectors.toList(),
+                        list -> {
+                            Set<String> seenFileIds = new HashSet<>();
+                            return list.stream()
+                                    .filter(mod -> seenFileIds.add(mod.modrinthVersion.id))
+                                    .map(mod -> {
+                                        Path modPath = mod.getFile(this).toPath();
 
-                                ModrinthModpackFile file = new ModrinthModpackFile();
-                                file.path = this.ROOT.relativize(modPath).toString().replace("\\", "/");
+                                        ModrinthModpackFile file = new ModrinthModpackFile();
+                                        file.path = this.ROOT.relativize(modPath).toString().replace("\\", "/");
 
-                                String sha1Hash = Hashing.sha1(modPath).toString();
+                                        String sha1Hash = Hashing.sha1(modPath).toString();
 
-                                file.hashes = new HashMap<>();
-                                file.hashes.put("sha1", sha1Hash);
-                                file.hashes.put("sha512", Hashing.sha512(modPath).toString());
+                                        file.hashes = new HashMap<>();
+                                        file.hashes.put("sha1", sha1Hash);
+                                        file.hashes.put("sha512", Hashing.sha512(modPath).toString());
 
-                                file.env = new HashMap<>();
+                                        file.env = new HashMap<>();
 
-                                if (mod.modrinthProject != null) {
-                                    file.env.put("client",
-                                            mod.modrinthProject.clientSide == ModrinthSide.UNSUPPORTED
-                                                    ? "unsupported"
-                                                    : "required");
-                                    file.env.put("server",
-                                            mod.modrinthProject.serverSide == ModrinthSide.UNSUPPORTED
-                                                    ? "unsupported"
-                                                    : "required");
-                                } else {
-                                    file.env.put("client", "required");
-                                    file.env.put("server", "required");
-                                }
+                                        if (mod.modrinthProject != null) {
+                                            file.env.put("client",
+                                                    mod.modrinthProject.clientSide == ModrinthSide.UNSUPPORTED
+                                                            ? "unsupported"
+                                                            : "required");
+                                            file.env.put("server",
+                                                    mod.modrinthProject.serverSide == ModrinthSide.UNSUPPORTED
+                                                            ? "unsupported"
+                                                            : "required");
+                                        } else {
+                                            file.env.put("client", "required");
+                                            file.env.put("server", "required");
+                                        }
 
-                                file.fileSize = modPath.toFile().length();
+                                        file.fileSize = modPath.toFile().length();
 
-                                file.downloads = new ArrayList<>();
-                                file.downloads.add(HttpUrl.get(mod.modrinthVersion.getFileBySha1(sha1Hash).url)
-                                        .toString());
+                                        file.downloads = new ArrayList<>();
+                                        file.downloads.add(HttpUrl.get(mod.modrinthVersion.getFileBySha1(sha1Hash).url)
+                                                .toString());
 
-                                return file;
-                            })
-                            .collect(Collectors.toList());
-                    }
-                ));
+                                        return file;
+                                    })
+                                    .collect(Collectors.toList());
+                        }));
         manifest.dependencies = new HashMap<>();
 
         manifest.dependencies.put("minecraft", this.id);
@@ -3460,6 +3458,37 @@ public class Instance extends MinecraftVersion {
             save();
         }
         PerformanceManager.end("Instance::scanMissingMods - CheckForRemovedMods");
+
+        PerformanceManager.start("Instance::scanMissingMods - CheckForDuplicateMods");
+
+        Set<File> seenModFiles = new HashSet<>();
+        List<DisableableMod> duplicateMods = launcher.mods.stream()
+                .filter(mod -> {
+                    if (!mod.wasSelected || mod.skipped || mod.type != com.atlauncher.data.Type.mods) {
+                        return false;
+                    }
+
+                    File file;
+                    if (mod.disabled) {
+                        file = mod.getDisabledFile(this);
+                    } else {
+                        file = mod.getFile(this);
+                    }
+
+                    if (file == null) {
+                        return false;
+                    }
+
+                    return !seenModFiles.add(file);
+                })
+                .collect(Collectors.toList());
+
+        if (duplicateMods.size() != 0) {
+            duplicateMods.forEach(mod -> LogManager.info("Mod is a duplicate: " + mod.file));
+            launcher.mods.removeAll(duplicateMods);
+            save();
+        }
+        PerformanceManager.end("Instance::scanMissingMods - CheckForDuplicateMods");
     }
 
     public boolean showGetHelpButton() {
