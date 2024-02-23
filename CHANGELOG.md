@@ -8,6 +8,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 ### New Features
 
 ### Fixes
+- Mods being duplicated when exporting instances [#875]
 
 ### Misc
 - Move tracking to use Mixpanel

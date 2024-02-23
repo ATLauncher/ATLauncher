@@ -45,6 +45,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -2170,14 +2171,22 @@ public class Instance extends MinecraftVersion {
                 .filter(m -> !m.disabled && m.isFromCurseForge())
                 .filter(mod -> overrides.stream()
                         .anyMatch(path -> getRoot().relativize(mod.getPath(this)).startsWith(path)))
-                .map(mod -> {
-                    CurseForgeManifestFile file = new CurseForgeManifestFile();
-                    file.projectID = mod.curseForgeProjectId;
-                    file.fileID = mod.curseForgeFileId;
-                    file.required = true;
-
-                    return file;
-                }).collect(Collectors.toList());
+                .collect(Collectors.collectingAndThen(
+                    Collectors.toList(),
+                    list -> {
+                        Set<Integer> seenFileIds = new HashSet<>();
+                        return list.stream()
+                            .filter(mod -> seenFileIds.add(mod.curseForgeFileId))
+                            .map(mod -> {
+                                CurseForgeManifestFile file = new CurseForgeManifestFile();
+                                file.projectID = mod.curseForgeProjectId;
+                                file.fileID = mod.curseForgeFileId;
+                                file.required = true;
+                                return file;
+                            })
+                            .collect(Collectors.toList());
+                    }
+                ));
         manifest.overrides = "overrides";
 
         // create temp directory to put this in
@@ -2328,39 +2337,51 @@ public class Instance extends MinecraftVersion {
                 .filter(m -> !m.disabled && m.modrinthVersion != null && m.getFile(this).exists())
                 .filter(mod -> overrides.stream()
                         .anyMatch(path -> getRoot().relativize(mod.getPath(this)).startsWith(path)))
-                .map(mod -> {
-                    Path modPath = mod.getFile(this).toPath();
+                .collect(Collectors.collectingAndThen(
+                    Collectors.toList(),
+                    list -> {
+                        Set<String> seenFileIds = new HashSet<>();
+                        return list.stream()
+                            .filter(mod -> seenFileIds.add(mod.modrinthVersion.id))
+                            .map(mod -> {
+                                Path modPath = mod.getFile(this).toPath();
 
-                    ModrinthModpackFile file = new ModrinthModpackFile();
-                    file.path = this.ROOT.relativize(modPath).toString().replace("\\", "/");
+                                ModrinthModpackFile file = new ModrinthModpackFile();
+                                file.path = this.ROOT.relativize(modPath).toString().replace("\\", "/");
 
-                    String sha1Hash = Hashing.sha1(modPath).toString();
+                                String sha1Hash = Hashing.sha1(modPath).toString();
 
-                    file.hashes = new HashMap<>();
-                    file.hashes.put("sha1", sha1Hash);
-                    file.hashes.put("sha512", Hashing.sha512(modPath).toString());
+                                file.hashes = new HashMap<>();
+                                file.hashes.put("sha1", sha1Hash);
+                                file.hashes.put("sha512", Hashing.sha512(modPath).toString());
 
-                    file.env = new HashMap<>();
+                                file.env = new HashMap<>();
 
-                    if (mod.modrinthProject != null) {
-                        file.env.put("client",
-                                mod.modrinthProject.clientSide == ModrinthSide.UNSUPPORTED ? "unsupported"
-                                        : "required");
-                        file.env.put("server",
-                                mod.modrinthProject.serverSide == ModrinthSide.UNSUPPORTED ? "unsupported"
-                                        : "required");
-                    } else {
-                        file.env.put("client", "required");
-                        file.env.put("server", "required");
+                                if (mod.modrinthProject != null) {
+                                    file.env.put("client",
+                                            mod.modrinthProject.clientSide == ModrinthSide.UNSUPPORTED
+                                                    ? "unsupported"
+                                                    : "required");
+                                    file.env.put("server",
+                                            mod.modrinthProject.serverSide == ModrinthSide.UNSUPPORTED
+                                                    ? "unsupported"
+                                                    : "required");
+                                } else {
+                                    file.env.put("client", "required");
+                                    file.env.put("server", "required");
+                                }
+
+                                file.fileSize = modPath.toFile().length();
+
+                                file.downloads = new ArrayList<>();
+                                file.downloads.add(HttpUrl.get(mod.modrinthVersion.getFileBySha1(sha1Hash).url)
+                                        .toString());
+
+                                return file;
+                            })
+                            .collect(Collectors.toList());
                     }
-
-                    file.fileSize = modPath.toFile().length();
-
-                    file.downloads = new ArrayList<>();
-                    file.downloads.add(HttpUrl.get(mod.modrinthVersion.getFileBySha1(sha1Hash).url).toString());
-
-                    return file;
-                }).collect(Collectors.toList());
+                ));
         manifest.dependencies = new HashMap<>();
 
         manifest.dependencies.put("minecraft", this.id);
