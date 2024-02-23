@@ -174,6 +174,8 @@ public class Server {
         }
 
         try {
+            getRoot().resolve(serverScript).toFile().setExecutable(true);
+
             if (OS.isWindows()) {
                 arguments.add("cmd");
                 arguments.add("/K");
@@ -306,7 +308,7 @@ public class Server {
                 Analytics.endSession();
                 System.exit(0);
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             LogManager.logStackTrace("Failed to launch server", e);
         }
     }
