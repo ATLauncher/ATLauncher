@@ -2685,15 +2685,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
             }
 
             if (this.loader != null && this.loaderVersion != null && this.loaderVersion.isForge()) {
-                Library forgeLibrary = this.loader.getLibraries().stream()
-                        .filter(library -> library.name.startsWith("net.minecraftforge:forge")).findFirst()
-                        .orElse(null);
-
-                if (forgeLibrary != null) {
-                    File extractedLibraryFile = FileSystem.LIBRARIES.resolve(forgeLibrary.downloads.artifact.path)
-                            .toFile();
-                    Utils.copyFile(extractedLibraryFile, new File(this.root.toFile(), this.loader.getServerJar()),
-                            true);
+                if (this.loader.getServerJarPath() != null && Files.exists(this.loader.getServerJarPath())) {
+                    FileUtils.copyFile(this.loader.getServerJarPath(), this.root, false);
                 }
             }
         }

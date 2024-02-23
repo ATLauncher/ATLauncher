@@ -244,6 +244,11 @@ public class NeoForgeLoader implements Loader {
     }
 
     @Override
+    public Path getServerJarPath() {
+        return null;
+    }
+
+    @Override
     public boolean useMinecraftLibraries() {
         return true;
     }

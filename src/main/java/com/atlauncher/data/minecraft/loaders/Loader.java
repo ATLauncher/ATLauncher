@@ -18,6 +18,7 @@
 package com.atlauncher.data.minecraft.loaders;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 
@@ -42,6 +43,8 @@ public interface Loader {
     String getMainClass();
 
     String getServerJar();
+
+    Path getServerJarPath();
 
     boolean useMinecraftLibraries();
 

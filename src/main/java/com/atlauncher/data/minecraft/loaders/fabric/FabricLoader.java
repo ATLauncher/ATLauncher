@@ -22,6 +22,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -156,6 +157,11 @@ public class FabricLoader implements Loader {
     @Override
     public String getServerJar() {
         return "fabric-server-launch.jar";
+    }
+
+    @Override
+    public Path getServerJarPath() {
+        return null;
     }
 
     @Override

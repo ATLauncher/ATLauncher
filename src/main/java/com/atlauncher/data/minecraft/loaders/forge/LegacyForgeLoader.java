@@ -235,6 +235,11 @@ public class LegacyForgeLoader implements Loader {
     }
 
     @Override
+    public Path getServerJarPath() {
+        return downloadPath;
+    }
+
+    @Override
     public boolean useMinecraftLibraries() {
         return !this.instanceInstaller.isServer;
     }
