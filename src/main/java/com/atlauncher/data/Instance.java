@@ -924,8 +924,6 @@ public class Instance extends MinecraftVersion {
             }
         }
 
-        Analytics.trackEvent(AnalyticsEvent.forStartInstanceLaunch(this, offline));
-
         ProgressDialog<Boolean> prepareDialog = new ProgressDialog<>(GetText.tr("Preparing For Launch"),
                 9,
                 GetText.tr("Preparing For Launch"));
