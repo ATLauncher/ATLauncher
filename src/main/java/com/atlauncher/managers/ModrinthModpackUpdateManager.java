@@ -35,8 +35,7 @@ public class ModrinthModpackUpdateManager {
     /**
      * Modrinth instance update checking
      */
-    private static final Map<UUID, BehaviorSubject<Optional<ModrinthVersion>>>
-        MODRINTH_INSTANCE_LATEST_VERSION = new ConcurrentHashMap<>();
+    private static final Map<UUID, BehaviorSubject<Optional<ModrinthVersion>>> MODRINTH_INSTANCE_LATEST_VERSION = new ConcurrentHashMap<>();
 
     /**
      * Get the update behavior subject for a given instance.
@@ -44,11 +43,10 @@ public class ModrinthModpackUpdateManager {
      * @param instance Instance to get behavior subject for
      * @return behavior subject for said instance updates.
      */
-    private static BehaviorSubject<Optional<ModrinthVersion>> getSubject(Instance instance){
+    private static BehaviorSubject<Optional<ModrinthVersion>> getSubject(Instance instance) {
         MODRINTH_INSTANCE_LATEST_VERSION.putIfAbsent(
-            instance.getUUID(),
-            BehaviorSubject.createDefault(Optional.empty())
-        );
+                instance.getUUID(),
+                BehaviorSubject.createDefault(Optional.empty()));
         return MODRINTH_INSTANCE_LATEST_VERSION.get(instance.getUUID());
     }
 
@@ -56,6 +54,7 @@ public class ModrinthModpackUpdateManager {
      * Get an observable for an instances update.
      * <p>
      * Please do not cast to a behavior subject.
+     *
      * @param instance Instance to get an observable for
      * @return Update observable
      */
@@ -63,9 +62,9 @@ public class ModrinthModpackUpdateManager {
         return getSubject(instance);
     }
 
-
     /**
      * Get the latest version of an instance
+     *
      * @param instance Instance to get version of
      * @return Latest version, or null if no newer version is found
      */
@@ -87,7 +86,9 @@ public class ModrinthModpackUpdateManager {
         LogManager.info("Checking for updates to Modrinth instances");
 
         InstanceManager.getInstances().parallelStream()
-                .filter(i -> i.isModrinthPack()).forEach(i -> {
+                .filter(i -> i.isModrinthPack() && i.launcher.modrinthProject.id != null
+                        && !i.launcher.modrinthProject.id.isEmpty())
+                .forEach(i -> {
                     List<ModrinthVersion> packVersions = ModrinthApi.getVersions(i.launcher.modrinthProject.id);
 
                     if (packVersions == null) {

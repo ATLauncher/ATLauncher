@@ -8,5 +8,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 ### New Features
 
 ### Fixes
+- Issue with Modrinth instance version checker causing error when project ID is not defined [#877]
 
 ### Misc
