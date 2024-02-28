@@ -44,12 +44,12 @@ import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.evnt.manager.TabChangeManager;
 import com.atlauncher.gui.components.LauncherBottomBar;
 import com.atlauncher.gui.dialogs.InstanceInstallerDialog;
+import com.atlauncher.gui.tabs.CreatePackTab;
 import com.atlauncher.gui.tabs.InstancesTab;
 import com.atlauncher.gui.tabs.PacksBrowserTab;
 import com.atlauncher.gui.tabs.ServersTab;
 import com.atlauncher.gui.tabs.SettingsTab;
 import com.atlauncher.gui.tabs.Tab;
-import com.atlauncher.gui.tabs.CreatePackTab;
 import com.atlauncher.gui.tabs.accounts.AccountsTab;
 import com.atlauncher.gui.tabs.news.NewsTab;
 import com.atlauncher.gui.tabs.tools.ToolsTab;
@@ -248,8 +248,6 @@ public final class LauncherFrame extends JFrame implements RelocalizationListene
             Analytics.sendScreenView(((Tab) tabbedPane.getSelectedComponent()).getAnalyticsScreenViewName());
             TabChangeManager.post(tabbedPane.getSelectedIndex());
         });
-
-        Analytics.sendScreenView(((Tab) tabbedPane.getSelectedComponent()).getAnalyticsScreenViewName());
     }
 
     @Override

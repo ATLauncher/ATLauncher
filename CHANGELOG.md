@@ -10,5 +10,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 ### Fixes
 - Issue with Modrinth instance version checker causing error when project ID is not defined [#877]
 - Issue with CurseForge export including non available files causing it to be rejected [#875]
+- Remove initial screen view and CurseForge/Modrinth selector dialogs from Analytics
 
 ### Misc

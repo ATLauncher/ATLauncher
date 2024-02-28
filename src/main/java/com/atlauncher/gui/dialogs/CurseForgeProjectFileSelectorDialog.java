@@ -113,8 +113,6 @@ public class CurseForgeProjectFileSelectorDialog extends JDialog {
     }
 
     private void setupComponents() {
-        Analytics.sendScreenView("CurseForge Project File Selector Dialog");
-
         // #. {0} is the name of the mod we're installing
         setTitle(GetText.tr("Installing {0}", mod.name));
 

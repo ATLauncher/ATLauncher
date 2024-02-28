@@ -154,7 +154,7 @@ public class Launcher {
         checkForExternalPackUpdates();
 
         if (App.settings.enableAnalytics && Analytics.isEnabled()) {
-            Analytics.startSession();
+            Analytics.startSession(App.settings.selectedTabOnStartup);
         }
         System.gc();
         PerformanceManager.end();

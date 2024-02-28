@@ -49,4 +49,27 @@ public class UIConstants {
     public static final int LAUNCHER_ACCOUNTS_TAB = 5;
     public static final int LAUNCHER_TOOLS_TAB = 6;
     public static final int LAUNCHER_SETTINGS_TAB = 7;
+
+    public static final String getInitialTabName(int initialTab) {
+        switch (initialTab) {
+            case UIConstants.LAUNCHER_NEWS_TAB:
+                return "News";
+            case UIConstants.LAUNCHER_CREATE_PACK_TAB:
+                return "Create Pack";
+            case UIConstants.LAUNCHER_PACKS_TAB:
+                return "Packs";
+            case UIConstants.LAUNCHER_INSTANCES_TAB:
+                return "Instances";
+            case UIConstants.LAUNCHER_SERVERS_TAB:
+                return "Servers";
+            case UIConstants.LAUNCHER_ACCOUNTS_TAB:
+                return "Accounts";
+            case UIConstants.LAUNCHER_TOOLS_TAB:
+                return "Tools";
+            case UIConstants.LAUNCHER_SETTINGS_TAB:
+                return "Settings";
+        }
+
+        return "Unknown";
+    }
 }

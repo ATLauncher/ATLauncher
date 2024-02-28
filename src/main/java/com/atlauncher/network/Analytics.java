@@ -36,6 +36,7 @@ import com.atlauncher.App;
 import com.atlauncher.Gsons;
 import com.atlauncher.Network;
 import com.atlauncher.constants.Constants;
+import com.atlauncher.constants.UIConstants;
 import com.atlauncher.managers.ConfigManager;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.network.analytics.AnalyticsApiResponse;
@@ -57,9 +58,9 @@ public final class Analytics {
     private static boolean sessionInitialised = false;
     private static Timer timer = new Timer();
 
-    public static void startSession() {
+    public static void startSession(int initialTab) {
         Map<String, Object> properties = new HashMap<>();
-        properties.put("java_version", Java.getLauncherJavaVersion());
+        properties.put("$browser_version", Java.getLauncherJavaVersion());
         properties.put("major_java_version", Java.getLauncherJavaVersionNumber());
         properties.put("$os", OS.getAnalyticsOSName());
         properties.put("os_arch", OS.getAnalyticsOSArch());
@@ -67,6 +68,7 @@ public final class Analytics {
         properties.put("$app_version_string", Constants.VERSION.toStringForLogging());
         properties.put("$app_build_number", Constants.VERSION.getSha1Revision().toString());
         properties.put("launcher_install_method", OS.getInstallMethodForAnalytics());
+        properties.put("initial_tab", UIConstants.getInitialTabName(initialTab));
 
         trackEvent(new AnalyticsEvent("$session_start", properties));
         sessionInitialised = true;

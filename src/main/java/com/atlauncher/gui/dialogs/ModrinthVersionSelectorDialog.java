@@ -206,8 +206,6 @@ public class ModrinthVersionSelectorDialog extends JDialog {
     }
 
     private void setupComponents() {
-        Analytics.sendScreenView("Modrinth Version Selector Dialog");
-
         // #. {0} is the name of the mod we're installing
         setTitle(GetText.tr("Installing {0}", mod.title));
 
