@@ -2094,7 +2094,7 @@ public class Instance extends MinecraftVersion {
             Map<Long, DisableableMod> murmurHashes = new HashMap<>();
 
             this.launcher.mods.stream()
-                    .filter(m -> !m.disabled && !m.isFromCurseForge())
+                    .filter(m -> !m.disabled)
                     .forEach(dm -> {
                         try {
                             long hash = Hashing.murmur(dm.getFile(this.ROOT, this.id).toPath());
@@ -2177,6 +2177,8 @@ public class Instance extends MinecraftVersion {
                             Set<Integer> seenFileIds = new HashSet<>();
                             return list.stream()
                                     .filter(mod -> seenFileIds.add(mod.curseForgeFileId))
+                                    // #875 - Non available mods/files will be rejected by CurseForge
+                                    .filter(mod -> mod.curseForgeFile.isAvailable)
                                     .map(mod -> {
                                         CurseForgeManifestFile file = new CurseForgeManifestFile();
                                         file.projectID = mod.curseForgeProjectId;
@@ -2208,6 +2210,8 @@ public class Instance extends MinecraftVersion {
         StringBuilder sb = new StringBuilder("<ul>");
         this.launcher.mods.stream()
                 .filter(m -> !m.disabled && m.isFromCurseForge())
+                // #875 - Non available mods/files will be rejected by CurseForge
+                .filter(mod -> mod.curseForgeFile.isAvailable)
                 .filter(mod -> overrides.stream()
                         .anyMatch(path -> getRoot().relativize(mod.getPath(this)).startsWith(path)))
                 .forEach(mod -> {
@@ -2258,14 +2262,28 @@ public class Instance extends MinecraftVersion {
         } catch (IOException ignored) {
         }
 
-        // remove files that come from CurseForge or aren't disabled
-        launcher.mods.stream().filter(m -> !m.disabled && m.isFromCurseForge()).forEach(mod -> {
-            File file = mod.getFile(this, overridesPath);
+        // log files that are not available on CurseForge anymore and put in overrides
+        launcher.mods.stream()
+                .filter(m -> !m.disabled && m.isFromCurseForge())
+                .filter(mod -> !mod.curseForgeFile.isAvailable)
+                .forEach(mod -> {
+                    LogManager.warn(String.format(
+                            "File %s is no longer available according to the CurseForge api, so putting it in overrides",
+                            mod.file));
+                });
 
-            if (file.exists()) {
-                FileUtils.delete(file.toPath());
-            }
-        });
+        // remove files that come from CurseForge or aren't disabled
+        launcher.mods.stream()
+                .filter(m -> !m.disabled && m.isFromCurseForge())
+                // #875 - Non available mods/files will be rejected by CurseForge
+                .filter(mod -> mod.curseForgeFile.isAvailable)
+                .forEach(mod -> {
+                    File file = mod.getFile(this, overridesPath);
+
+                    if (file.exists()) {
+                        FileUtils.delete(file.toPath());
+                    }
+                });
 
         for (String path : overrides) {
             // if no files, remove the directory
