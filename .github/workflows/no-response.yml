@@ -9,16 +9,13 @@ on:
     # Schedule for five minutes after the hour, every hour
     - cron: '5 * * * *'
 
-permissions:
-  issues: write
-
 jobs:
   noResponse:
     runs-on: ubuntu-latest
     steps:
       - uses: MBilalShafi/no-response-add-label@v0.0.6
         with:
-          token: ${{ github.token }}
+          token: ${{ secrets.BOT_GITHUB_TOKEN }}
           daysUntilClose: 14
           responseRequiredLabel: more-information-needed
           closeComment: >
