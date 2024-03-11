@@ -29,15 +29,21 @@ plugins {
     id 'com.github.johnrengelman.shadow' version '8.1.1'
     id 'com.github.ben-manes.versions' version '0.47.0'
     id 'com.apollographql.apollo' version '2.5.14'
+    id "org.openjfx.javafxplugin" version "0.0.13"
 }
 
 apply plugin: 'org.mini2Dx.gettext'
 
-sourceCompatibility = '1.8'
-targetCompatibility = '1.8'
+sourceCompatibility = JavaVersion.VERSION_17
+targetCompatibility = JavaVersion.VERSION_17
 
 group = 'com.atlauncher'
 version = rootProject.file('src/main/resources/version').text.trim().replace('.Beta', '')
+
+javafx {
+    version = "17"
+    modules = [ 'javafx.controls', 'javafx.fxml', 'javafx.swing' ]
+}
 
 repositories {
     mavenCentral()

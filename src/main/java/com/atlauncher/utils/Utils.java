@@ -167,7 +167,7 @@ public class Utils {
         return new ImageIcon(file.getAbsolutePath());
     }
 
-    public static BufferedImage getImage(String img) {
+    public static InputStream getImageStream(String img){
         String name;
         if (!img.startsWith("/assets/image/")) {
             name = "/assets/image/" + img;
@@ -184,6 +184,13 @@ public class Utils {
         if (stream == null) {
             throw new NullPointerException("Stream == null");
         }
+
+        return stream;
+    }
+
+    public static BufferedImage getImage(String img) {
+        InputStream stream = getImageStream(img);
+
 
         try {
             return ImageIO.read(stream);
