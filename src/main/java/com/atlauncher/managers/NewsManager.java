@@ -19,50 +19,76 @@ package com.atlauncher.managers;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
-import java.text.SimpleDateFormat;
+import java.nio.file.Files;
+import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
-import com.atlauncher.App;
-import com.atlauncher.Data;
+import org.jetbrains.annotations.NotNull;
+
+import com.apollographql.apollo.ApolloCall;
+import com.apollographql.apollo.api.Response;
+import com.apollographql.apollo.api.cache.http.HttpCachePolicy;
+import com.apollographql.apollo.exception.ApolloException;
 import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
+import com.atlauncher.data.AbstractNews;
 import com.atlauncher.data.News;
 import com.atlauncher.graphql.GetNewsQuery;
+import com.atlauncher.network.GraphqlClient;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 
+import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.subjects.BehaviorSubject;
+
 public class NewsManager {
+    static final BehaviorSubject<List<AbstractNews>> NEWS =
+        BehaviorSubject.createDefault(Collections.emptyList());
 
     /**
      * Get the News for the Launcher
      *
      * @return The News items
      */
-    public static List<News> getNews() {
-        return Data.NEWS;
+    public static Observable<List<AbstractNews>> getNews() {
+        return NEWS;
+    }
+
+    /**
+     * Load News into Launcher
+     */
+    public static void loadNews() {
+        if (ConfigManager.getConfigItem("useGraphql.news", false)) {
+            loadNetworkNews();
+        } else {
+            loadFileNews();
+        }
     }
 
     /**
      * Loads the languages for use in the Launcher
      */
-    public static void loadNews() {
+    private static void loadFileNews() {
         PerformanceManager.start();
         LogManager.debug("Loading news");
-        Data.NEWS.clear();
         try {
             java.lang.reflect.Type type = new TypeToken<List<News>>() {
             }.getType();
             File fileDir = FileSystem.JSON.resolve("newnews.json").toFile();
             BufferedReader in = new BufferedReader(
-                    new InputStreamReader(new FileInputStream(fileDir), StandardCharsets.UTF_8));
+                new InputStreamReader(Files.newInputStream(fileDir.toPath()), StandardCharsets.UTF_8));
 
-            Data.NEWS.addAll(Gsons.DEFAULT.fromJson(in, type));
+            List<News> fileNews = Gsons.DEFAULT.fromJson(in, type);
             in.close();
+
+            // Map the [News] to [AbstractNews]
+            NEWS.onNext(fileNews.stream().map(AbstractNews::new).collect(Collectors.toList()));
         } catch (JsonIOException | JsonSyntaxException | IOException e) {
             LogManager.logStackTrace(e);
         }
@@ -71,42 +97,26 @@ public class NewsManager {
     }
 
     /**
-     * Get the News for the Launcher in HTML for display on the news panel.
-     *
-     * @return The HTML for displaying on the News Panel
+     * Attempt to load news from the network
      */
-    public static String getNewsHTML() {
-        StringBuilder news = new StringBuilder("<html>");
+    private static void loadNetworkNews() {
+        GraphqlClient.apolloClient.query(new GetNewsQuery(10))
+            .toBuilder()
+            .httpCachePolicy(new HttpCachePolicy.Policy(HttpCachePolicy.FetchStrategy.CACHE_FIRST, 30, TimeUnit.MINUTES, false))
+            .build()
+            .enqueue(new ApolloCall.Callback<GetNewsQuery.Data>() {
+                @Override
+                public void onResponse(@NotNull Response<GetNewsQuery.Data> response) {
+                    GetNewsQuery.Data data = response.getData();
+                    if (data == null) return;
+                    List<GetNewsQuery.GeneralNew> networkNews = data.generalNews();
+                    NEWS.onNext(networkNews.stream().map(AbstractNews::new).collect(Collectors.toList()));
+                }
 
-        for (News newsItem : Data.NEWS) {
-            news.append(newsItem.getHTML()).append("<hr/>");
-        }
-
-        // remove the last <hr/>
-        news = new StringBuilder(news.substring(0, news.length() - 5));
-        news.append("</html>");
-
-        return news.toString();
-    }
-
-    /**
-     * Takes a list of news items from GraphQL query and transforms into HTML.
-     *
-     * @return The HTML for displaying on the News Panel
-     */
-    public static String getNewsHTML(List<GetNewsQuery.GeneralNew> newsItems) {
-        StringBuilder news = new StringBuilder("<html>");
-        SimpleDateFormat formatter = new SimpleDateFormat(App.settings.dateFormat + " HH:mm:ss a");
-
-        for (GetNewsQuery.GeneralNew newsItem : newsItems) {
-            news.append("<h2>" + newsItem.title() + " (" + formatter.format(newsItem.createdAt()) + ")</h2>" + "<p>"
-                    + newsItem.content() + "</p><hr/>");
-        }
-
-        // remove the last <hr/>
-        news = new StringBuilder(news.substring(0, news.length() - 5));
-        news.append("</html>");
-
-        return news.toString();
+                @Override
+                public void onFailure(@NotNull ApolloException e) {
+                    LogManager.logStackTrace("Error fetching news", e);
+                }
+            });
     }
 }
