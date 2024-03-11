@@ -17,8 +17,9 @@
  */
 package com.atlauncher.gui.tabs.tools;
 
-import javax.swing.JLabel;
+import javax.annotation.Nonnull;
 
+import org.jetbrains.annotations.NotNull;
 import org.mini2Dx.gettext.GetText;
 
 import com.atlauncher.builders.HTMLBuilder;
@@ -28,20 +29,32 @@ import com.atlauncher.managers.DialogManager;
 public class LogClearerToolPanel extends AbstractToolPanel {
 
     public LogClearerToolPanel(IToolsViewModel viewModel) {
-        super(GetText.tr("Log Clearer"));
+        super(viewModel);
+    }
 
-        JLabel INFO_LABEL = new JLabel(new HTMLBuilder().center().split(70).text(GetText.tr(
-                "This tool clears out all logs created by the launcher (not included those made by instances) to free up space and old junk."))
-                .build());
-        MIDDLE_PANEL.add(INFO_LABEL);
-        BOTTOM_PANEL.add(LAUNCH_BUTTON);
-        LAUNCH_BUTTON.addActionListener(e -> {
-            if (e.getSource() == LAUNCH_BUTTON) {
-                viewModel.clearLogs();
+    @NotNull
+    @Override
+    protected String getLabel() {
+        return new HTMLBuilder()
+            .center()
+            .split(70)
+            .text(GetText.tr(
+                "This tool clears out all logs created by the launcher (not included those made by instances) to free up space and old junk."
+            ))
+            .build();
+    }
 
-                DialogManager.okDialog().setType(DialogManager.INFO).setTitle(GetText.tr("Success"))
-                    .setContent(GetText.tr("Successfully cleared the logs.")).show();
-            }
-        });
+    @Override
+    protected void onLaunch() {
+        viewModel.clearLogs();
+
+        DialogManager.okDialog().setType(DialogManager.INFO).setTitle(GetText.tr("Success"))
+            .setContent(GetText.tr("Successfully cleared the logs.")).show();
+    }
+
+    @Nonnull
+    @Override
+    protected String getTitle() {
+        return GetText.tr("Log Clearer");
     }
 }
