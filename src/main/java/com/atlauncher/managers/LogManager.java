@@ -20,10 +20,10 @@ package com.atlauncher.managers;
 import java.io.CharArrayWriter;
 import java.io.PrintStream;
 import java.io.PrintWriter;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.BlockingQueue;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import org.apache.logging.log4j.Logger;
 
 import com.atlauncher.Gsons;
 import com.atlauncher.evnt.LogEvent;
@@ -31,22 +31,55 @@ import com.atlauncher.evnt.LogEvent.LogType;
 import com.atlauncher.exceptions.LocalException;
 import com.atlauncher.network.DownloadException;
 import com.atlauncher.network.ErrorReporting;
-import com.atlauncher.thread.LoggingThread;
 import com.atlauncher.utils.SystemOutInterceptor;
 
+import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.schedulers.Schedulers;
+import io.reactivex.rxjava3.subjects.BehaviorSubject;
+
 public final class LogManager {
-    private static final BlockingQueue<LogEvent> queue = new ArrayBlockingQueue<>(128);
     public static boolean showDebug = false;
 
     private static final Pattern LOG4J_THREAD_REGEX = Pattern.compile("<log4j:Event.*?thread=\"(.*?)\".*?>");
     private static final Pattern LOG4J_LEVEL_REGEX = Pattern.compile("<log4j:Event.*?level=\"(.*?)\".*?>");
     private static final Pattern LOG4J_MESSAGE_REGEX = Pattern
-            .compile("<log4j:Message><!\\[CDATA\\[(.*?)\\]\\]></log4j:Message>");
+        .compile("<log4j:Message><!\\[CDATA\\[(.*?)\\]\\]></log4j:Message>");
+
+    private static final Logger logger = org.apache.logging.log4j.LogManager.getLogger(LogManager.class);
+
+    private static final BehaviorSubject<LogEvent> logEventBehaviorSubject = BehaviorSubject.create();
 
     public static void start() {
-        new LoggingThread(queue).start();
-
         redirectSystemOutLogs();
+
+        //noinspection ResultOfMethodCallIgnored
+        getLogEvents().subscribe(logEvent -> {
+            if ((logEvent.meta & LogEvent.LOG4J) == LogEvent.LOG4J) {
+                switch (logEvent.type) {
+                    case WARN: {
+                        logger.warn(logEvent.body);
+                        break;
+                    }
+                    case ERROR: {
+                        logger.error(logEvent.body);
+                        break;
+                    }
+                    case DEBUG: {
+                        logger.debug(logEvent.body);
+                        break;
+                    }
+                    case INFO:
+                    default: {
+                        logger.info(logEvent.body);
+                        break;
+                    }
+                }
+            }
+        });
+    }
+
+    public static Observable<LogEvent> getLogEvents() {
+        return logEventBehaviorSubject.subscribeOn(Schedulers.io());
     }
 
     private static void redirectSystemOutLogs() {
@@ -64,21 +97,21 @@ public final class LogManager {
     public static int debugLevel = 0;
 
     public static void info(String message) {
-        queue.offer(new LogEvent(LogType.INFO, message));
+        logEventBehaviorSubject.onNext(new LogEvent(LogType.INFO, message));
     }
 
     public static void debug(String message) {
         if (showDebug) {
-            queue.offer(new LogEvent(LogType.DEBUG, message));
+            logEventBehaviorSubject.onNext(new LogEvent(LogType.DEBUG, message));
         }
     }
 
     public static void warn(String message) {
-        queue.offer(new LogEvent(LogType.WARN, message));
+        logEventBehaviorSubject.onNext(new LogEvent(LogType.WARN, message));
     }
 
     public static void error(String message) {
-        queue.offer(new LogEvent(LogType.ERROR, message));
+        logEventBehaviorSubject.onNext(new LogEvent(LogType.ERROR, message));
     }
 
     public static void debugObject(Object object) {
@@ -93,7 +126,7 @@ public final class LogManager {
 
     public static void minecraft(String message) {
         Object[] value = prepareMessageForMinecraftLog(message);
-        queue.offer(new LogEvent((LogType) value[0], (String) value[1], LogEvent.CONSOLE));
+        logEventBehaviorSubject.onNext(new LogEvent((LogType) value[0], (String) value[1], LogEvent.CONSOLE));
     }
 
     public static void logStackTrace(Throwable t) {
@@ -117,10 +150,10 @@ public final class LogManager {
 
             try {
                 if (exception.download.response != null && exception.response != null
-                        && (exception.download.response.header("Content-Type").equalsIgnoreCase("application/json")
-                                || exception.download.response.header("Content-Type")
-                                        .equalsIgnoreCase("application/xml")
-                                || exception.download.response.header("Content-Type").startsWith("text/"))) {
+                    && (exception.download.response.header("Content-Type").equalsIgnoreCase("application/json")
+                    || exception.download.response.header("Content-Type")
+                    .equalsIgnoreCase("application/xml")
+                    || exception.download.response.header("Content-Type").startsWith("text/"))) {
                     debug(exception.response, 5);
                 }
             } catch (Exception e) {
@@ -218,7 +251,7 @@ public final class LogManager {
             type = LogType.INFO;
         }
 
-        return new Object[] { type, message };
+        return new Object[]{type, message};
     }
 
     public static void minecraftLog4j(String string) {
@@ -250,7 +283,7 @@ public final class LogManager {
             message = messageMatcher.group(1);
         }
 
-        queue.offer(new LogEvent(level, String.format("[%s/%s] %s", thread, levelString, message),
-                LogEvent.CONSOLE));
+        logEventBehaviorSubject.onNext(new LogEvent(level, String.format("[%s/%s] %s", thread, levelString, message),
+            LogEvent.CONSOLE));
     }
 }
