@@ -107,6 +107,10 @@ public class MCLauncher {
                         instance.launcher.loaderVersion.version));
             }
 
+            if (instance.hasDisabledJavaRuntime()) {
+                LogManager.warn("The Use Java Provided By Minecraft option has been disabled. If you're experiencing crashes, please enable this option.");
+            }
+
             if (instance.ROOT.resolve("mods").toFile().listFiles().length != 0) {
                 LogManager.info("Mods:");
                 Files.walk(instance.ROOT.resolve("mods"))

@@ -1210,6 +1210,10 @@ public class Instance extends MinecraftVersion {
                     LogManager.error(
                             "Oh no. Minecraft crashed. Please check the logs for any errors and provide these logs when asking for support.");
 
+                    if (hasDisabledJavaRuntime()) {
+                        LogManager.warn("The Use Java Provided By Minecraft option has been disabled. Please enable this option again.");
+                    }
+
                     if (this.getPack() != null && !this.getPack().system) {
                         LogManager.info("Checking for modifications to the pack since installation.");
                         this.launcher.mods.forEach(mod -> {
@@ -3175,6 +3179,15 @@ public class Instance extends MinecraftVersion {
         }
 
         return shouldUseLegacyLaunch();
+    }
+
+    public boolean hasDisabledJavaRuntime() {
+        if (javaVersion == null) {
+            return false;
+        }
+
+        return !Optional.ofNullable(launcher.useJavaProvidedByMinecraft)
+                .orElse(App.settings.useJavaProvidedByMinecraft);
     }
 
     public boolean isUsingJavaRuntime() {

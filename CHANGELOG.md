@@ -7,6 +7,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 
 ### New Features
 - Add option when exporting to mark all mods as client side to fix Modrinth data issues
+- Log when launching Minecraft and the user has turned off the Use Java Provided By Minecraft option
 
 ### Fixes
 
