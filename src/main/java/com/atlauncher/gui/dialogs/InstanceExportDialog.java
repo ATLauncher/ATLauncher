@@ -46,6 +46,7 @@ import javax.swing.JTextField;
 import org.mini2Dx.gettext.GetText;
 
 import com.atlauncher.App;
+import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.constants.UIConstants;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.InstanceExportFormat;
@@ -232,6 +233,23 @@ public class InstanceExportDialog extends JDialog {
 
         topPanel.add(saveToPanel, gbc);
 
+        // Force Client Side
+        gbc.gridx = 0;
+        gbc.gridy++;
+        gbc.insets = UIConstants.LABEL_INSETS;
+        gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
+
+        JLabelWithHover markAllModsAsClientSideLabel = new JLabelWithHover(GetText.tr("Mark All Mods As Client Side") + "?", HELP_ICON,
+                new HTMLBuilder().text(GetText.tr("When exporting to Modrinth, each mod decides if their mod is compatible with clients and servers.<br/><br/>Some mod makers do not set this correctly, so checking this box will mark all mods as required for client side.")).center().build());
+        topPanel.add(markAllModsAsClientSideLabel, gbc);
+
+        gbc.gridx++;
+        gbc.insets = UIConstants.CHECKBOX_FIELD_INSETS;
+        gbc.anchor = GridBagConstraints.BASELINE_LEADING;
+        final JCheckBox markAllModsAsClientSide = new JCheckBox();
+        markAllModsAsClientSide.setSelected(Optional.ofNullable(instance.launcher.lastExportMarkAllModsAsClientSide).orElse(false));
+        topPanel.add(markAllModsAsClientSide, gbc);
+
         // Overrides
         gbc.gridx = 0;
         gbc.gridy++;
@@ -311,13 +329,14 @@ public class InstanceExportDialog extends JDialog {
 
                 Pair<Path, String> exportResult = instance.export(name.getText(), version.getText(),
                         author.getText(),
-                        exportFormat, saveTo.getText(), overrides);
+                        exportFormat, saveTo.getText(), overrides, markAllModsAsClientSide.isSelected());
 
                 if (exportResult.left() != null) {
                     instance.launcher.lastExportName = name.getText();
                     instance.launcher.lastExportVersion = version.getText();
                     instance.launcher.lastExportAuthor = author.getText();
                     instance.launcher.lastExportSaveTo = saveTo.getText();
+                    instance.launcher.lastExportMarkAllModsAsClientSide = markAllModsAsClientSide.isSelected();
                     instance.save();
 
                     if ((exportFormat == InstanceExportFormat.MODRINTH

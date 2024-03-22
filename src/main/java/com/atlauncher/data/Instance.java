@@ -1734,8 +1734,7 @@ public class Instance extends MinecraftVersion {
     }
 
     public Pair<Path, String> export(String name, String version, String author, InstanceExportFormat format,
-            String saveTo,
-            List<String> overrides) {
+            String saveTo, List<String> overrides, boolean forceClientSide) {
         try {
             if (!Files.isDirectory(Paths.get(saveTo))) {
                 Files.createDirectories(Paths.get(saveTo));
@@ -1748,13 +1747,13 @@ public class Instance extends MinecraftVersion {
         if (format == InstanceExportFormat.CURSEFORGE) {
             return exportAsCurseForgeZip(name, version, author, saveTo, overrides);
         } else if (format == InstanceExportFormat.MODRINTH) {
-            return exportAsModrinthZip(name, version, author, saveTo, overrides);
+            return exportAsModrinthZip(name, version, author, saveTo, overrides, forceClientSide);
         } else if (format == InstanceExportFormat.CURSEFORGE_AND_MODRINTH) {
             if (exportAsCurseForgeZip(name, version, author, saveTo, overrides).left() == null) {
                 return new Pair<Path, String>(null, null);
             }
 
-            return exportAsModrinthZip(name, version, author, saveTo, overrides);
+            return exportAsModrinthZip(name, version, author, saveTo, overrides, forceClientSide);
         } else if (format == InstanceExportFormat.MULTIMC) {
             return exportAsMultiMcZip(name, version, author, saveTo, overrides);
         }
@@ -2304,7 +2303,7 @@ public class Instance extends MinecraftVersion {
     }
 
     public Pair<Path, String> exportAsModrinthZip(String name, String version, String author, String saveTo,
-            List<String> overrides) {
+            List<String> overrides, boolean forceClientSide) {
         String safePathName = name.replaceAll("[\\\"?:*<>|]", "");
         Path to = Paths.get(saveTo).resolve(String.format("%s %s.mrpack", safePathName, version));
         ModrinthModpackManifest manifest = new ModrinthModpackManifest();
@@ -2374,7 +2373,7 @@ public class Instance extends MinecraftVersion {
 
                                         if (mod.modrinthProject != null) {
                                             file.env.put("client",
-                                                    mod.modrinthProject.clientSide == ModrinthSide.UNSUPPORTED
+                                                    !forceClientSide && mod.modrinthProject.clientSide == ModrinthSide.UNSUPPORTED
                                                             ? "unsupported"
                                                             : "required");
                                             file.env.put("server",
