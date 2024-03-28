@@ -21,12 +21,8 @@ import java.awt.BorderLayout;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.Toolkit;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.StringSelection;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.io.IOException;
 import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
@@ -41,10 +37,8 @@ import javax.swing.JTextArea;
 import org.mini2Dx.gettext.GetText;
 
 import com.atlauncher.App;
-import com.atlauncher.Gsons;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.constants.Constants;
-import com.atlauncher.data.APIResponse;
 import com.atlauncher.data.BackupMode;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.minecraft.loaders.LoaderType;
@@ -62,12 +56,9 @@ import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.ConfigManager;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.managers.InstanceManager;
-import com.atlauncher.managers.LogManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.network.analytics.AnalyticsEvent;
 import com.atlauncher.utils.OS;
-import com.atlauncher.utils.Utils;
-import com.google.gson.reflect.TypeToken;
 
 /**
  * <p/>
@@ -674,38 +665,6 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
                         instance.startClone();
                     });
                     rightClickMenu.add(cloneItem);
-
-                    JMenuItem shareCodeItem = new JMenuItem(GetText.tr("Share Code"));
-                    shareCodeItem.addActionListener(e1 -> {
-                        Analytics.trackEvent(AnalyticsEvent.forInstanceEvent("instance_make_share_code", instance));
-                        try {
-                            java.lang.reflect.Type type = new TypeToken<APIResponse<String>>() {
-                            }.getType();
-
-                            APIResponse<String> response = Gsons.DEFAULT.fromJson(
-                                    Utils.sendAPICall("pack/" + instance.getSafePackName() + "/"
-                                            + instance.launcher.version + "/share-code", instance.getShareCodeData()),
-                                    type);
-
-                            if (response.wasError()) {
-                                App.TOASTER.pop(GetText.tr("Error getting share code."));
-                            } else {
-                                StringSelection text = new StringSelection(response.getData());
-                                Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-                                clipboard.setContents(text, null);
-
-                                App.TOASTER.pop(GetText.tr("Share code copied to clipboard"));
-                                LogManager.info("Share code copied to clipboard");
-                            }
-                        } catch (IOException ex) {
-                            LogManager.logStackTrace("API call failed", ex);
-                        }
-                    });
-                    shareCodeItem.setVisible((instance.getPack() != null && !instance.getPack().system)
-                            && !instance.isExternalPack() && !instance.launcher.vanillaInstance
-                            && instance.launcher.mods.stream().anyMatch(mod -> mod.optional));
-                    rightClickMenu.add(shareCodeItem);
-
                     rightClickMenu.show(image, e.getX(), e.getY());
                 }
             }

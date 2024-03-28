@@ -36,9 +36,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Locale;
 import java.util.Optional;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import javax.swing.BorderFactory;
@@ -55,7 +53,6 @@ import org.mini2Dx.gettext.GetText;
 import com.atlauncher.App;
 import com.atlauncher.Gsons;
 import com.atlauncher.builders.HTMLBuilder;
-import com.atlauncher.constants.Constants;
 import com.atlauncher.constants.UIConstants;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.Pack;
@@ -142,54 +139,53 @@ public class InstanceInstallerDialog extends JDialog {
     private final Path extractedPath;
 
     public InstanceInstallerDialog(CurseForgeManifest manifest, Path curseExtractedPath) {
-        this(manifest, false, false, null, null, false, curseExtractedPath, App.launcher.getParent(), null);
+        this(manifest, false, false, null, false, curseExtractedPath, App.launcher.getParent(), null);
     }
 
     public InstanceInstallerDialog(ModrinthModpackManifest manifest, Path modrinthExtractedPath) {
-        this(manifest, false, false, null, null, false, modrinthExtractedPath, App.launcher.getParent(), null);
+        this(manifest, false, false, null, false, modrinthExtractedPath, App.launcher.getParent(), null);
     }
 
     public InstanceInstallerDialog(MultiMCManifest manifest, Path multiMCExtractedPath) {
-        this(manifest, false, false, null, null, false, multiMCExtractedPath, App.launcher.getParent(), null);
+        this(manifest, false, false, null, false, multiMCExtractedPath, App.launcher.getParent(), null);
     }
 
     public InstanceInstallerDialog(Object object) {
-        this(object, false, false, null, null, true, null, App.launcher.getParent(), null);
+        this(object, false, false, null, true, null, App.launcher.getParent(), null);
     }
 
     public InstanceInstallerDialog(ModrinthProject modrinthProject, ModrinthVersion preselectedModrinthVersion) {
-        this(modrinthProject, false, false, null, null, true, null, App.launcher.getParent(),
+        this(modrinthProject, false, false, null, true, null, App.launcher.getParent(),
                 preselectedModrinthVersion);
     }
 
     public InstanceInstallerDialog(Object object, boolean isServer) {
-        this(object, false, isServer, null, null, true, null, App.launcher.getParent(), null);
+        this(object, false, isServer, null, true, null, App.launcher.getParent(), null);
     }
 
     public InstanceInstallerDialog(UnifiedModPackResultsFragment resultsFragment, boolean isServer) {
-        this(resultsFragment, false, isServer, null, null, true, null, App.launcher.getParent(), null);
+        this(resultsFragment, false, isServer, null, true, null, App.launcher.getParent(), null);
     }
 
     public InstanceInstallerDialog(Window parent, Object object) {
-        this(object, false, false, null, null, true, null, parent, null);
+        this(object, false, false, null, true, null, parent, null);
     }
 
-    public InstanceInstallerDialog(Pack pack, PackVersion version, String shareCode, boolean showModsChooser) {
-        this(pack, false, false, version, shareCode, showModsChooser, null, App.launcher.getParent(), null);
+    public InstanceInstallerDialog(Pack pack, PackVersion version, boolean showModsChooser) {
+        this(pack, false, false, version, showModsChooser, null, App.launcher.getParent(), null);
     }
 
     public InstanceInstallerDialog(Pack pack, boolean isServer) {
-        this(pack, false, true, null, null, true, null, App.launcher.getParent(), null);
+        this(pack, false, true, null, true, null, App.launcher.getParent(), null);
     }
 
-    public InstanceInstallerDialog(Object object, boolean isUpdate, boolean isServer, PackVersion autoInstallVersion,
-            String shareCode, boolean showModsChooser, Path extractedPath) {
-        this(object, isUpdate, isServer, autoInstallVersion, shareCode, showModsChooser, extractedPath,
+    public InstanceInstallerDialog(Object object, boolean isUpdate, boolean isServer, PackVersion autoInstallVersion, boolean showModsChooser, Path extractedPath) {
+        this(object, isUpdate, isServer, autoInstallVersion, showModsChooser, extractedPath,
                 App.launcher.getParent(), null);
     }
 
     public InstanceInstallerDialog(Object object, final boolean isUpdate, final boolean isServer,
-            final PackVersion autoInstallVersion, final String shareCode, final boolean showModsChooser,
+            final PackVersion autoInstallVersion, final boolean showModsChooser,
             Path extractedPathCon, Window parent, ModrinthVersion preselectedModrinthVersion) {
         super(parent, ModalityType.DOCUMENT_MODAL);
 

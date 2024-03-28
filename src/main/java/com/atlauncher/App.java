@@ -228,14 +228,9 @@ public class App {
     public static String packCodeToAdd = null;
 
     /**
-     * This sets a pack to install on startup (no share code so just prompt).
+     * This sets a pack to install on startup.
      */
     public static String packToInstall = null;
-
-    /**
-     * This sets a pack to install on startup (with share code).
-     */
-    public static String packShareCodeToInstall = null;
 
     /**
      * Config overrides.

@@ -161,7 +161,7 @@ public abstract class Installable {
         boolean saveMods = !isServer && isReinstall && this.saveMods;
 
         final InstanceInstaller instanceInstaller = new InstanceInstaller(instanceName, pack, version, isReinstall,
-                isServer, changingLoader, saveMods, null, showModsChooser, loaderVersion, curseForgeManifest,
+                isServer, changingLoader, saveMods, showModsChooser, loaderVersion, curseForgeManifest,
                 curseExtractedPath, modrinthManifest, modrinthExtractedPath, multiMCManifest,
                 multiMCExtractedPath, technicModpack, dialog) {
 

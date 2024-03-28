@@ -146,7 +146,6 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
     public final String name;
     public final com.atlauncher.data.Pack pack;
     public final com.atlauncher.data.PackVersion version;
-    public final String shareCode;
     public final boolean showModsChooser;
     public LoaderVersion loaderVersion;
     public CurseForgeManifest curseForgeManifest;
@@ -194,7 +193,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
     private JDialog dialog;
 
     public InstanceInstaller(String name, com.atlauncher.data.Pack pack, com.atlauncher.data.PackVersion version,
-            boolean isReinstall, boolean isServer, boolean changingLoader, boolean saveMods, String shareCode,
+            boolean isReinstall, boolean isServer, boolean changingLoader, boolean saveMods,
             boolean showModsChooser, LoaderVersion loaderVersion, CurseForgeManifest curseForgeManifest,
             Path curseForgeExtractedPath,
             ModrinthModpackManifest modrinthManifest, Path modrinthExtractedPath, MultiMCManifest multiMCManifest,
@@ -206,7 +205,6 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         this.isServer = isServer;
         this.changingLoader = changingLoader;
         this.saveMods = saveMods;
-        this.shareCode = shareCode;
         this.showModsChooser = showModsChooser;
         this.dialog = dialog;
 
@@ -1776,10 +1774,6 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
 
         if (this.allMods.size() != 0 && hasOptional) {
             com.atlauncher.gui.dialogs.ModsChooser modsChooser = new com.atlauncher.gui.dialogs.ModsChooser(this);
-
-            if (this.shareCode != null) {
-                modsChooser.applyShareCode(shareCode);
-            }
 
             if (this.showModsChooser) {
                 modsChooser.setVisible(true);
@@ -3737,25 +3731,6 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
 
     public boolean wasModSelected(String mod) {
         return instance.wasModSelected(mod);
-    }
-
-    public String getShareCodeData(String code) {
-        String shareCodeData = null;
-
-        try {
-            java.lang.reflect.Type type = new TypeToken<APIResponse<String>>() {
-            }.getType();
-            APIResponse<String> response = Gsons.DEFAULT.fromJson(Utils.sendGetAPICall(
-                    "pack/" + this.pack.getSafeName() + "/" + version.version + "/share-code/" + code), type);
-
-            if (!response.wasError()) {
-                shareCodeData = response.getData();
-            }
-        } catch (IOException e) {
-            LogManager.logStackTrace("API call failed", e);
-        }
-
-        return shareCodeData;
     }
 
     public void fireTask(String name) {

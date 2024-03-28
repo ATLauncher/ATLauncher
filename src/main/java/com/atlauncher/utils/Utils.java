@@ -841,6 +841,8 @@ public class Utils {
     public static String sendAPICall(String path, Object data) throws IOException {
         StringBuilder response;
 
+        System.out.println(Gsons.DEFAULT.toJson(data));
+
         byte[] contents = Gsons.DEFAULT.toJson(data).getBytes();
 
         URL url = new URL(Constants.API_BASE_URL + path);

@@ -12,3 +12,4 @@ This changelog only contains the changes that are unreleased. For changes for in
 ### Fixes
 
 ### Misc
+- Remove share code support. This has been broken for 5 years and it's time to go

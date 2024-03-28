@@ -1709,24 +1709,6 @@ public class Instance extends MinecraftVersion {
         return false;
     }
 
-    public Map<String, Object> getShareCodeData() {
-        Map<String, Object> data = new HashMap<>();
-        Map<String, Object> mods = new HashMap<>();
-        List<Map<String, Object>> optional = new ArrayList<>();
-
-        this.launcher.mods.stream().filter(mod -> mod.optional && !mod.userAdded).forEach(mod -> {
-            Map<String, Object> modInfo = new HashMap<>();
-            modInfo.put("name", mod.name);
-            modInfo.put("selected", true);
-            optional.add(modInfo);
-        });
-
-        mods.put("optional", optional);
-        data.put("mods", mods);
-
-        return data;
-    }
-
     public boolean canBeExported() {
         if (launcher.loaderVersion == null) {
             new Thread(() -> LogManager.debug("Instance " + launcher.name + " cannot be exported due to: No loader"))
@@ -2731,7 +2713,7 @@ public class Instance extends MinecraftVersion {
     }
 
     public void update() {
-        new InstanceInstallerDialog(this, true, false, null, null, true, null, App.launcher.getParent(), null);
+        new InstanceInstallerDialog(this, true, false, null, true, null, App.launcher.getParent(), null);
     }
 
     public boolean hasCurseForgeProjectId() {

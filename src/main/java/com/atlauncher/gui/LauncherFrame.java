@@ -38,7 +38,6 @@ import com.atlauncher.App;
 import com.atlauncher.constants.Constants;
 import com.atlauncher.constants.UIConstants;
 import com.atlauncher.data.Pack;
-import com.atlauncher.data.PackVersion;
 import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.evnt.manager.TabChangeManager;
@@ -136,32 +135,6 @@ public final class LauncherFrame extends JFrame implements RelocalizationListene
                 } else {
                     new InstanceInstallerDialog(pack);
                 }
-            }
-        } else if (App.packShareCodeToInstall != null) {
-            String[] parts = App.packShareCodeToInstall.split("\\|\\|\\|");
-
-            if (parts.length != 4) {
-                LogManager.error("Error automatically installing pack from share code!");
-            } else {
-                Pack pack = PackManager.getPackBySafeName(parts[0]);
-
-                if (pack != null && pack.isSemiPublic() && !PackManager.canViewSemiPublicPackByCode(pack.getCode())) {
-                    LogManager.error("Error automatically installing " + pack.getName() + " as you don't have the "
-                            + "pack added to the launcher!");
-                } else {
-                    if (pack == null) {
-                        LogManager.error("Error automatically installing pack from share code!");
-                    } else {
-                        PackVersion version = pack.getVersionByName(parts[1]);
-
-                        if (version == null) {
-                            LogManager.error("Error automatically installing " + pack.getName() + " from share code!");
-                        } else {
-                            new InstanceInstallerDialog(pack, version, parts[2], Boolean.parseBoolean(parts[3]));
-                        }
-                    }
-                }
-
             }
         }
 
