@@ -12,6 +12,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 
 ### Fixes
 - Issue with installing CurseForge server packs when a version has no MC version set
+- Issue with installing packs from CurseForge/Modrinth and imported files when no overrides folder exists
 
 ### Misc
 - Remove share code support. This has been broken for 5 years and it's time to go

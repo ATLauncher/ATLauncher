@@ -3040,22 +3040,30 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         }
 
         if (curseForgeManifest != null) {
-            fireSubProgressUnknown();
-            fireTask(GetText.tr("Copying Overrides"));
-            Utils.copyDirectory(this.curseForgeExtractedPath
-                    .resolve(Optional.ofNullable(curseForgeManifest.overrides).orElse("overrides")).toFile(),
-                    this.root.toFile(), false);
+            if (Files.exists(this.curseForgeExtractedPath
+                    .resolve(Optional.ofNullable(curseForgeManifest.overrides).orElse("overrides")))) {
+                fireSubProgressUnknown();
+                fireTask(GetText.tr("Copying Overrides"));
+                Utils.copyDirectory(this.curseForgeExtractedPath
+                        .resolve(Optional.ofNullable(curseForgeManifest.overrides).orElse("overrides")).toFile(),
+                        this.root.toFile(), false);
+            }
         } else if (modrinthManifest != null) {
-            fireSubProgressUnknown();
-            fireTask(GetText.tr("Copying Overrides"));
-            Utils.copyDirectory(this.modrinthExtractedPath.resolve("overrides").toFile(), this.root.toFile(), false);
+            if (Files.exists(this.modrinthExtractedPath.resolve("overrides"))) {
+                fireSubProgressUnknown();
+                fireTask(GetText.tr("Copying Overrides"));
+                Utils.copyDirectory(this.modrinthExtractedPath.resolve("overrides").toFile(), this.root.toFile(),
+                        false);
 
-            if (isServer && Files.isDirectory(this.modrinthExtractedPath.resolve("server-overrides"))) {
-                Utils.copyDirectory(this.modrinthExtractedPath.resolve("server-overrides").toFile(), this.root.toFile(),
-                        false);
-            } else if (!isServer && Files.isDirectory(this.modrinthExtractedPath.resolve("client-overrides"))) {
-                Utils.copyDirectory(this.modrinthExtractedPath.resolve("client-overrides").toFile(), this.root.toFile(),
-                        false);
+                if (isServer && Files.isDirectory(this.modrinthExtractedPath.resolve("server-overrides"))) {
+                    Utils.copyDirectory(this.modrinthExtractedPath.resolve("server-overrides").toFile(),
+                            this.root.toFile(),
+                            false);
+                } else if (!isServer && Files.isDirectory(this.modrinthExtractedPath.resolve("client-overrides"))) {
+                    Utils.copyDirectory(this.modrinthExtractedPath.resolve("client-overrides").toFile(),
+                            this.root.toFile(),
+                            false);
+                }
             }
         } else if (multiMCManifest != null) {
             fireSubProgressUnknown();
