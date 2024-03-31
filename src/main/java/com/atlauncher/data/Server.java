@@ -154,6 +154,10 @@ public class Server {
         Analytics.trackEvent(AnalyticsEvent.forServerEvent("server_run", this));
 
         LogManager.info("Starting server " + name);
+
+        if (curseForgeFile != null) {
+            LogManager.info("Server was created from a CurseForge server file with file ID " + curseForgeFile.id + ". It has been downloaded and unzipped without any modifications.");
+        }
         List<String> arguments = new ArrayList<>();
 
         String javaPath = null;
@@ -303,6 +307,7 @@ public class Server {
             processBuilder.start();
 
             if (!close) {
+                LogManager.info("Server has started. No further logs will be shown in this console. Please check for a separate window or tab for the server logs and provide those logs (not these ones) if asking for help.");
                 Toaster.instance().pop(GetText.tr("The server has been launched."));
             } else {
                 Analytics.endSession();
