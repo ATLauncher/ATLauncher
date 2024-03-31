@@ -960,13 +960,13 @@ public class InstanceInstallerDialog extends JDialog {
 
         if (pack.isTester()) {
             for (PackVersion pv : pack.getDevVersions()) {
-                if (!isServer || (isServer && pv.minecraftVersion.hasServer())) {
+                if (!isServer || (isServer && pv.minecraftVersion != null && pv.minecraftVersion.hasServer())) {
                     versions.add(pv);
                 }
             }
         }
         for (PackVersion pv : pack.getVersions()) {
-            if (!isServer || (isServer && pv.minecraftVersion.hasServer())) {
+            if (!isServer || (isServer && pv.minecraftVersion != null && pv.minecraftVersion.hasServer())) {
                 versions.add(pv);
             }
         }

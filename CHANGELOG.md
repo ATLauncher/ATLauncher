@@ -10,6 +10,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Log when launching Minecraft and the user has turned off the Use Java Provided By Minecraft option
 
 ### Fixes
+- Issue with installing CurseForge server packs when a version has no MC version set
 
 ### Misc
 - Remove share code support. This has been broken for 5 years and it's time to go
