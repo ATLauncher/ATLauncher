@@ -8,5 +8,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 ### New Features
 
 ### Fixes
+- Client sidedness of mrpack exports not being handled correctly
 
 ### Misc

@@ -108,7 +108,6 @@ public class InstanceLauncher {
     public String lastExportVersion = null;
     public String lastExportAuthor = null;
     public String lastExportSaveTo = null;
-    public Boolean lastExportMarkAllModsAsClientSide = false;
 
     public InstanceLauncher() {
         this.numPlays = 0l;

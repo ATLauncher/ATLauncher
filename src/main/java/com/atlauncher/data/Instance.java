@@ -1720,7 +1720,7 @@ public class Instance extends MinecraftVersion {
     }
 
     public Pair<Path, String> export(String name, String version, String author, InstanceExportFormat format,
-            String saveTo, List<String> overrides, boolean forceClientSide) {
+            String saveTo, List<String> overrides) {
         try {
             if (!Files.isDirectory(Paths.get(saveTo))) {
                 Files.createDirectories(Paths.get(saveTo));
@@ -1733,13 +1733,13 @@ public class Instance extends MinecraftVersion {
         if (format == InstanceExportFormat.CURSEFORGE) {
             return exportAsCurseForgeZip(name, version, author, saveTo, overrides);
         } else if (format == InstanceExportFormat.MODRINTH) {
-            return exportAsModrinthZip(name, version, author, saveTo, overrides, forceClientSide);
+            return exportAsModrinthZip(name, version, author, saveTo, overrides);
         } else if (format == InstanceExportFormat.CURSEFORGE_AND_MODRINTH) {
             if (exportAsCurseForgeZip(name, version, author, saveTo, overrides).left() == null) {
                 return new Pair<Path, String>(null, null);
             }
 
-            return exportAsModrinthZip(name, version, author, saveTo, overrides, forceClientSide);
+            return exportAsModrinthZip(name, version, author, saveTo, overrides);
         } else if (format == InstanceExportFormat.MULTIMC) {
             return exportAsMultiMcZip(name, version, author, saveTo, overrides);
         }
@@ -2289,7 +2289,7 @@ public class Instance extends MinecraftVersion {
     }
 
     public Pair<Path, String> exportAsModrinthZip(String name, String version, String author, String saveTo,
-            List<String> overrides, boolean forceClientSide) {
+            List<String> overrides) {
         String safePathName = name.replaceAll("[\\\"?:*<>|]", "");
         Path to = Paths.get(saveTo).resolve(String.format("%s %s.mrpack", safePathName, version));
         ModrinthModpackManifest manifest = new ModrinthModpackManifest();
@@ -2356,19 +2356,19 @@ public class Instance extends MinecraftVersion {
                                         file.hashes.put("sha512", Hashing.sha512(modPath).toString());
 
                                         file.env = new HashMap<>();
+                                        // mods are always required on the client ALWAYS ALWAYS ALWAYS (for now)
+                                        file.env.put("client", "required");
+                                        file.env.put("server", "required");
 
                                         if (mod.modrinthProject != null) {
-                                            file.env.put("client",
-                                                    !forceClientSide && mod.modrinthProject.clientSide == ModrinthSide.UNSUPPORTED
-                                                            ? "unsupported"
-                                                            : "required");
-                                            file.env.put("server",
-                                                    mod.modrinthProject.serverSide == ModrinthSide.UNSUPPORTED
-                                                            ? "unsupported"
-                                                            : "required");
-                                        } else {
-                                            file.env.put("client", "required");
-                                            file.env.put("server", "required");
+                                            // even though it's required, we can still mark it as optional
+                                            if (mod.modrinthProject.clientSide == ModrinthSide.OPTIONAL) {
+                                                file.env.put("client", "optional");
+                                            }
+
+                                            if (mod.modrinthProject.serverSide != null) {
+                                                file.env.put("server", mod.modrinthProject.serverSide.toString());
+                                            }
                                         }
 
                                         file.fileSize = modPath.toFile().length();
