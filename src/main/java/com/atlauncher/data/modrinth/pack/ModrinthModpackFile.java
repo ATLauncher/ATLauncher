@@ -32,6 +32,22 @@ public class ModrinthModpackFile {
     public Long fileSize = null;
 
     public ModType getType() {
+        if (path.startsWith("resourcepacks/")) {
+            return ModType.resourcepack;
+        }
+
+        if (path.startsWith("texturepacks/")) {
+            return ModType.texturepack;
+        }
+
+        if (path.startsWith("shaderpacks/")) {
+            return ModType.shaderpack;
+        }
+
+        if (path.startsWith("coremods/")) {
+            return ModType.coremods;
+        }
+
         return ModType.mods;
     }
 
