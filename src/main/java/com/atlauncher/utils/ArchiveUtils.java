@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
@@ -101,7 +102,7 @@ public class ArchiveUtils {
             byte[] contents = ZipUtil.unpackEntry(createInputStream(archivePath), file);
 
             if (contents != null) {
-                return new String(contents);
+                return new String(contents, StandardCharsets.UTF_8);
             }
         } catch (Throwable t) {
             LogManager.logStackTrace(t);
@@ -123,7 +124,7 @@ public class ArchiveUtils {
                     }
 
                     if (entry.getName().equals(file)) {
-                        contents = new String(IOUtils.toByteArray(ais));
+                        contents = new String(IOUtils.toByteArray(ais), StandardCharsets.UTF_8);
                         break;
                     }
                 }

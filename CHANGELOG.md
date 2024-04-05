@@ -9,5 +9,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 
 ### Fixes
 - Client sidedness of mrpack exports not being handled correctly
+- Installing files with special characters in the name from mrpack files not saving with correct names [#884]
 
 ### Misc
