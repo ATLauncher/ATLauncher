@@ -17,6 +17,9 @@ main() {
     # give write access to notroot user
     setfacl -R -m 'u:notroot:rwx' ${BASEDIR}
 
+    # replace pkgrel in PKGBUILD with new release
+    sed -i "s/pkgrel=.*/pkgrel=$INPUT_RELEASE/g" PKGBUILD
+
     # replace pkgver in PKGBUILD with new version
     sed -i "s/pkgver=.*/pkgver=$INPUT_VERSION/g" PKGBUILD
 
@@ -95,9 +98,14 @@ build() {
     # copy over changed PKGBUILD
     cp PKGBUILD /aur_repo
 
-    # install dependencies
-    yay -Sy --noconfirm \
-        $(pacman --deptest $(source ./PKGBUILD && echo ${depends[@]} ${makedepends[@]}))
+    # install dependencies from $INPUT_PACKAGESTOINSTALL if set else use PKGBUILD
+    if [ -z "${INPUT_PACKAGESTOINSTALL}" ]; then
+        echo "Installing dependencies from PKGBUILD"
+        yay -Sy --noconfirm $(pacman --deptest $(source ./PKGBUILD && echo ${depends[@]} ${makedepends[@]}))
+    else
+        echo "Installing passed in dependencies from INPUT_PACKAGESTOINSTALL"
+        yay -Sy --noconfirm ${INPUT_PACKAGESTOINSTALL}
+    fi
 
     # do the actual building
     su notroot -c "makepkg -f"

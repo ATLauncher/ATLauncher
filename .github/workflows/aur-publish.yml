@@ -14,23 +14,27 @@ jobs:
         uses: ./.github/actions/publish-to-aur
         with:
           version: ${{ github.event.client_payload.version }}
+          release: 2
           workingDir: ./packaging/aur/atlauncher
           packageName: atlauncher
           aurUsername: ${{ secrets.AUR_USERNAME }}
           aurEmail: ${{ secrets.AUR_EMAIL }}
           aurSshPrivateKey: ${{ secrets.AUR_SSH_PRIVATE_KEY }}
           aurCommitMessage: Update to version ${{ github.event.client_payload.version }}
+          packagesToInstall: jdk17-openjdk openal
 
       - name: Publish atlauncher-bin AUR package
         uses: ./.github/actions/publish-to-aur
         with:
           version: ${{ github.event.client_payload.version }}
+          release: 1
           workingDir: ./packaging/aur/atlauncher-bin
           packageName: atlauncher-bin
           aurUsername: ${{ secrets.AUR_USERNAME }}
           aurEmail: ${{ secrets.AUR_EMAIL }}
           aurSshPrivateKey: ${{ secrets.AUR_SSH_PRIVATE_KEY }}
           aurCommitMessage: Update to version ${{ github.event.client_payload.version }}
+          packagesToInstall: jdk17-openjdk openal unzip
 
       - name: Commit changed files
         uses: EndBug/add-and-commit@v9
