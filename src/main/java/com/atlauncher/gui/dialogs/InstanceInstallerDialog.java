@@ -691,7 +691,7 @@ public class InstanceInstallerDialog extends JDialog {
         pack = new Pack();
         pack.name = curseForgeManifest.name;
 
-        if (curseForgeManifest.projectID != null) {
+        if (curseForgeManifest.projectID != null && curseForgeManifest.projectID != 0) {
             CurseForgeProject curseForgeProject = CurseForgeApi.getProjectById(curseForgeManifest.projectID);
 
             curseForgeManifest.websiteUrl = curseForgeProject.getWebsiteUrl();

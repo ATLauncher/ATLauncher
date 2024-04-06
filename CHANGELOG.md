@@ -11,5 +11,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Client sidedness of mrpack exports not being handled correctly
 - Installing files with special characters in the name from mrpack files not saving with correct names [#884]
 - Installing non mods from mrpack files causing the mods to not be classified correctly and then duplicate in edit mods
+- Importing of CurseForge packs not working when the manifest incorrectly contains projectID=0
 
 ### Misc
