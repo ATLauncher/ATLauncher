@@ -14,7 +14,7 @@ jobs:
         uses: ./.github/actions/publish-to-aur
         with:
           version: ${{ github.event.client_payload.version }}
-          release: 2
+          release: ${{ github.event.client_payload.release || '1' }}
           workingDir: ./packaging/aur/atlauncher
           packageName: atlauncher
           aurUsername: ${{ secrets.AUR_USERNAME }}
@@ -27,7 +27,7 @@ jobs:
         uses: ./.github/actions/publish-to-aur
         with:
           version: ${{ github.event.client_payload.version }}
-          release: 1
+          release: ${{ github.event.client_payload.release || '1' }}
           workingDir: ./packaging/aur/atlauncher-bin
           packageName: atlauncher-bin
           aurUsername: ${{ secrets.AUR_USERNAME }}
@@ -40,4 +40,4 @@ jobs:
         uses: EndBug/add-and-commit@v9
         with:
           add: "packaging/aur/"
-          message: "chore: update aur packages"
+          message: "chore: update aur packages [skip ci]"
