@@ -2360,15 +2360,8 @@ public class Instance extends MinecraftVersion {
                                         file.env.put("client", "required");
                                         file.env.put("server", "required");
 
-                                        if (mod.modrinthProject != null) {
-                                            // even though it's required, we can still mark it as optional
-                                            if (mod.modrinthProject.clientSide == ModrinthSide.OPTIONAL) {
-                                                file.env.put("client", "optional");
-                                            }
-
-                                            if (mod.modrinthProject.serverSide != null) {
-                                                file.env.put("server", mod.modrinthProject.serverSide.toString());
-                                            }
+                                        if (mod.modrinthProject != null && mod.modrinthProject.serverSide == ModrinthSide.UNSUPPORTED) {
+                                            file.env.put("server", "unsupported");
                                         }
 
                                         file.fileSize = modPath.toFile().length();
