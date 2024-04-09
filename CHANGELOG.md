@@ -9,5 +9,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 
 ### Fixes
 - Exporting Modrinth packs marking mods as optional by accident
+- Issue with LaunchServer.bat script not applying jvm args [#885]
 
 ### Misc

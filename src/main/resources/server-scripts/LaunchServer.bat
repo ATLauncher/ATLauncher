@@ -40,8 +40,8 @@ echo.
 
 echo Launching below command
 echo -----------------------
-echo %javapath% -Xmx%maxmemory% %jvm_args% %%ARGUMENTS%% %%LOG4SHELLARGUMENTS%% -jar %%SERVERJAR%% %launchargs%
+echo %javapath% -Xmx%maxmemory% %jvmargs% %%ARGUMENTS%% %%LOG4SHELLARGUMENTS%% -jar %%SERVERJAR%% %launchargs%
 echo.
-%javapath% -Xmx%maxmemory% %jvm_args% %%ARGUMENTS%% %%LOG4SHELLARGUMENTS%% -jar %%SERVERJAR%% %launchargs%
+%javapath% -Xmx%maxmemory% %jvmargs% %%ARGUMENTS%% %%LOG4SHELLARGUMENTS%% -jar %%SERVERJAR%% %launchargs%
 PAUSE
 
