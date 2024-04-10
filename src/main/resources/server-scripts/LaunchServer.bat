@@ -25,6 +25,9 @@ IF "%1"=="ATLcustomjava" (
     SET javapath="%2"
 )
 
+:: Remove all double quotes from jvmargs
+set "jvmargs=!jvmargs:"=!"
+
 :: Remove all existing double quotes from javapath
 set "javapath=!javapath:"=!"
 
