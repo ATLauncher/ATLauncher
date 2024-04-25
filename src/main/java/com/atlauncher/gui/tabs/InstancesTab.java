@@ -54,12 +54,12 @@ public class InstancesTab extends HierarchyPanel implements Tab {
     }
 
     @Override
-    protected void createViewModel() {
+    public void createViewModel() {
         viewModel = new InstancesTabViewModel();
     }
 
     @Override
-    protected void onShow() {
+    public void onShow() {
         navigationPanel = new InstancesNavigationPanel(this, viewModel);
         this.add(this.navigationPanel, BorderLayout.NORTH);
 
@@ -71,7 +71,7 @@ public class InstancesTab extends HierarchyPanel implements Tab {
     }
 
     @Override
-    protected void onDestroy() {
+    public void onDestroy() {
         viewModel.setScroll(scrollPane.getVerticalScrollBar().getValue());
         removeAll();
         navigationPanel = null;
