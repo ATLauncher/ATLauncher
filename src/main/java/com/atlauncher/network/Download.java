@@ -674,14 +674,14 @@ public final class Download {
                 FileUtils.copyFile(this.to, FileSystem.FAILED_DOWNLOADS);
                 if (fingerprint != null) {
                     LogManager.error("Error downloading " + this.to.getFileName() + " from " + this.url + ". Expected"
-                            + " fingerprint of " + fingerprint.toString() + " (with size of " + this.size + ") but got "
+                            + " fingerprint of " + fingerprint.toString() + " (" + (this.size == 0 ? "with unknown size": "with size of" + this.size) + ") but got "
                             + Hashing.murmur(this.to) + " (with size of "
                             + (Files.exists(this.to) ? Files.size(this.to) : 0)
                             + ") instead. Copied to FailedDownloads folder & cancelling install! ("
                             + App.settings.connectionTimeout + "/" + App.settings.concurrentConnections + ")");
                 } else {
                     LogManager.error("Error downloading " + this.to.getFileName() + " from " + this.url + ". Expected"
-                            + " hash of " + expected.toString() + " (with size of " + this.size + ") but got "
+                            + " hash of " + expected.toString() + " (" + (this.size == 0 ? "with unknown size": "with size of" + this.size) + ") but got "
                             + (this.md5() ? Hashing.md5(this.to)
                                     : (this.sha256() ? Hashing.sha256(this.to)
                                             : (this.sha512() ? Hashing.sha512(this.to) : Hashing.sha1(this.to))))

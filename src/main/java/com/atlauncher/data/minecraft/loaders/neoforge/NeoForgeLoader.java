@@ -103,6 +103,10 @@ public class NeoForgeLoader implements Loader {
 
         if (installerSha1 != null) {
             download = download.hash(this.installerSha1);
+
+            if (ConfigManager.getConfigItem("loaders.neoforge.disableInstallerHashChecking", false) == true) {
+                download = download.ignoreFailures();
+            }
         }
 
         if (download.needToDownload()) {
