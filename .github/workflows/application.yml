@@ -36,7 +36,8 @@ jobs:
       - name: Set up JDK ${{ matrix.java-version }}
         uses: actions/setup-java@v3
         with:
-          distribution: "temurin"
+          # MacOS (aarch64) Java 8 doesn't exist for temurin, so use zulu instead
+          distribution: ${{ matrix.os =='macos-latest' && matrix.java-version == '8' && 'zulu' || 'temurin' }}
           java-version: ${{ matrix.java-version }}
           cache: "gradle"
 
@@ -63,7 +64,8 @@ jobs:
       - name: Set up JDK ${{ matrix.java-version }}
         uses: actions/setup-java@v3
         with:
-          distribution: "temurin"
+          # MacOS (aarch64) Java 8 doesn't exist for temurin, so use zulu instead
+          distribution: ${{ matrix.os =='macos-latest' && matrix.java-version == '8' && 'zulu' || 'temurin' }}
           java-version: ${{ matrix.java-version }}
           cache: "gradle"
 
