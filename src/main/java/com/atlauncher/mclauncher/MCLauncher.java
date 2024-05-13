@@ -409,6 +409,28 @@ public class MCLauncher {
             }
         }
 
+        // Joining a server on launch
+        if (instance.launcher.joinInitialServerAddress != null && !instance.launcher.joinInitialServerAddress.isEmpty()) {
+            String enteredServerAddress = instance.launcher.joinInitialServerAddress;
+            boolean hasQuickMultiplayer = instance.arguments.game.stream().anyMatch(
+                argumentRule -> argumentRule.value instanceof List &&
+                    ((List<?>) argumentRule.value).contains("--quickPlayMultiplayer")
+            );
+            if (hasQuickMultiplayer) {
+                // Minecraft 23w14a and newer versions
+                arguments.add("--quickPlayMultiplayer");
+                arguments.add(enteredServerAddress);
+            } else {
+                // Minecraft version 23w13a and older versions
+                String[] parts = enteredServerAddress.contains(":") ? enteredServerAddress.split(":")
+                    : new String[]{enteredServerAddress};
+                String address = parts[0];
+                String port = parts.length > 1 ? parts[1] : String.valueOf(Constants.MINECRAFT_DEFAULT_SERVER_PORT);
+                arguments.addAll(Arrays.asList("--server", address));
+                arguments.addAll(Arrays.asList("--port", port));
+            }
+        }
+
         return arguments;
     }
 

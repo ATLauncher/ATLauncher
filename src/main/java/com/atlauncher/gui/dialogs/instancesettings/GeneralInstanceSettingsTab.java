@@ -24,6 +24,7 @@ import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
 import javax.swing.border.Border;
 
 import org.mini2Dx.gettext.GetText;
@@ -43,6 +44,7 @@ public class GeneralInstanceSettingsTab extends JPanel {
 
     private JComboBox<ComboItem<String>> account;
     private JComboBox<ComboItem<Boolean>> enableDiscordIntegration;
+    private JTextField joinInitialServerAddress;
 
     final ImageIcon HELP_ICON = Utils.getIconImage(App.THEME.getIconPath("question"));
     final ImageIcon ERROR_ICON = Utils.getIconImage(App.THEME.getIconPath("error"));
@@ -123,12 +125,38 @@ public class GeneralInstanceSettingsTab extends JPanel {
         }
 
         add(enableDiscordIntegration, gbc);
+
+        // Join server on launch
+
+        gbc.gridx = 0;
+        gbc.gridy++;
+        gbc.insets = UIConstants.LABEL_INSETS;
+        gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
+
+        JLabelWithHover joinInitialServerAddressLabel = new JLabelWithHover(
+            GetText.tr("Join Server On Launch") + ":", HELP_ICON,
+            GetText.tr(
+                "Enter the server address if you want to join a Minecraft server when you launch the game, " +
+                    "leave it empty if you don't want to join a server after launching the game."
+            )
+        );
+
+        add(joinInitialServerAddressLabel, gbc);
+
+        gbc.gridx++;
+        gbc.insets = UIConstants.FIELD_INSETS;
+        gbc.anchor = GridBagConstraints.BASELINE_LEADING;
+        joinInitialServerAddress = new JTextField(13);
+        joinInitialServerAddress.setText(instance.launcher.joinInitialServerAddress);
+
+        add(joinInitialServerAddress, gbc);
     }
 
     public void saveSettings() {
         this.instance.launcher.account = ((ComboItem<String>) account.getSelectedItem()).getValue();
         this.instance.launcher.enableDiscordIntegration = ((ComboItem<Boolean>) enableDiscordIntegration
                 .getSelectedItem()).getValue();
+        this.instance.launcher.joinInitialServerAddress = joinInitialServerAddress.getText();
     }
 
 }
