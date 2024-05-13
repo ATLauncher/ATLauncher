@@ -421,7 +421,7 @@ public class MCLauncher {
                 arguments.add("--quickPlayMultiplayer");
                 arguments.add(enteredServerAddress);
             } else {
-                // Minecraft version 23w13a and older versions
+                // Minecraft 23w13a and older versions
                 String[] parts = enteredServerAddress.contains(":") ? enteredServerAddress.split(":")
                     : new String[]{enteredServerAddress};
                 String address = parts[0];
