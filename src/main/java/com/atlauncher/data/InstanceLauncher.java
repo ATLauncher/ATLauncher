@@ -68,7 +68,7 @@ public class InstanceLauncher {
     public String javaRuntimeOverride = null;
     public String account;
     public Boolean enableDiscordIntegration = null;
-    public String joinInitialServerAddress = null;
+    public String initialJoinServerAddress = null;
     public Boolean useJavaProvidedByMinecraft = null;
     public Boolean disableLegacyLaunching = null;
     public Boolean enableCommands = null;

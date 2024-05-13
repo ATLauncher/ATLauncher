@@ -44,7 +44,7 @@ public class GeneralInstanceSettingsTab extends JPanel {
 
     private JComboBox<ComboItem<String>> account;
     private JComboBox<ComboItem<Boolean>> enableDiscordIntegration;
-    private JTextField joinInitialServerAddress;
+    private JTextField initialJoinServerAddress;
 
     final ImageIcon HELP_ICON = Utils.getIconImage(App.THEME.getIconPath("question"));
     final ImageIcon ERROR_ICON = Utils.getIconImage(App.THEME.getIconPath("error"));
@@ -133,7 +133,7 @@ public class GeneralInstanceSettingsTab extends JPanel {
         gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
 
-        JLabelWithHover joinInitialServerAddressLabel = new JLabelWithHover(
+        JLabelWithHover initialJoinServerAddressLabel = new JLabelWithHover(
             GetText.tr("Join Server On Launch") + ":", HELP_ICON,
             GetText.tr(
                 "Enter the server address if you want to join a Minecraft server when you launch the game, " +
@@ -141,22 +141,22 @@ public class GeneralInstanceSettingsTab extends JPanel {
             )
         );
 
-        add(joinInitialServerAddressLabel, gbc);
+        add(initialJoinServerAddressLabel, gbc);
 
         gbc.gridx++;
         gbc.insets = UIConstants.FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-        joinInitialServerAddress = new JTextField(13);
-        joinInitialServerAddress.setText(instance.launcher.joinInitialServerAddress);
+        initialJoinServerAddress = new JTextField(13);
+        initialJoinServerAddress.setText(instance.launcher.initialJoinServerAddress);
 
-        add(joinInitialServerAddress, gbc);
+        add(initialJoinServerAddress, gbc);
     }
 
     public void saveSettings() {
         this.instance.launcher.account = ((ComboItem<String>) account.getSelectedItem()).getValue();
         this.instance.launcher.enableDiscordIntegration = ((ComboItem<Boolean>) enableDiscordIntegration
                 .getSelectedItem()).getValue();
-        this.instance.launcher.joinInitialServerAddress = joinInitialServerAddress.getText();
+        this.instance.launcher.initialJoinServerAddress = initialJoinServerAddress.getText();
     }
 
 }

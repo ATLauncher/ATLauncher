@@ -410,8 +410,8 @@ public class MCLauncher {
         }
 
         // Joining a server on launch
-        if (instance.launcher.joinInitialServerAddress != null && !instance.launcher.joinInitialServerAddress.isEmpty()) {
-            String enteredServerAddress = instance.launcher.joinInitialServerAddress;
+        if (instance.launcher.initialJoinServerAddress != null && !instance.launcher.initialJoinServerAddress.isEmpty()) {
+            String enteredServerAddress = instance.launcher.initialJoinServerAddress;
             boolean hasQuickMultiplayer = instance.arguments.game.stream().anyMatch(
                 argumentRule -> argumentRule.value instanceof List &&
                     ((List<?>) argumentRule.value).contains("--quickPlayMultiplayer")
