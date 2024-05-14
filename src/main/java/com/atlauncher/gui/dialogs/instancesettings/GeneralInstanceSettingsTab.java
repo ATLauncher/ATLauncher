@@ -147,6 +147,10 @@ public class GeneralInstanceSettingsTab extends JPanel {
         gbc.insets = UIConstants.FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         initialJoinServerAddress = new JTextField(13);
+        initialJoinServerAddress.putClientProperty("JTextField.showClearButton", true);
+        initialJoinServerAddress.putClientProperty("JTextField.clearCallback", (Runnable) () -> {
+            initialJoinServerAddress.setText("");
+        });
         initialJoinServerAddress.setText(instance.launcher.initialJoinServerAddress);
 
         add(initialJoinServerAddress, gbc);
