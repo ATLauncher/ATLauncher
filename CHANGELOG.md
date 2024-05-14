@@ -7,7 +7,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 
 ### New Features
 
-1. Add the option to join a minecraft server when launching a instance [#893](https://github.com/ATLauncher/ATLauncher/pull/893)
+- Add the option to join a minecraft server when launching a instance [#748]
 
 ### Fixes
 
