@@ -105,7 +105,8 @@ public class InstanceSettingsDialog extends JDialog {
 
         JButton saveButton = new JButton(GetText.tr("Save"));
         saveButton.addActionListener(arg0 -> {
-            if (javaInstanceSettingsTab.isValidJavaPath() && javaInstanceSettingsTab.isValidJavaParamaters()) {
+            if (javaInstanceSettingsTab.isValidJavaPath() && javaInstanceSettingsTab.isValidJavaParamaters()
+                && generalInstanceSettingsTab.isValidServerAddress()) {
                 saveSettings();
                 App.TOASTER.pop("Instance Settings Saved");
                 close();

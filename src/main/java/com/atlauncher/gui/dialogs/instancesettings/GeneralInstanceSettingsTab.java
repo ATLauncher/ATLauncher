@@ -30,13 +30,16 @@ import javax.swing.border.Border;
 import org.mini2Dx.gettext.GetText;
 
 import com.atlauncher.App;
+import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.constants.UIConstants;
 import com.atlauncher.data.Instance;
 import com.atlauncher.gui.components.JLabelWithHover;
 import com.atlauncher.managers.AccountManager;
+import com.atlauncher.managers.DialogManager;
 import com.atlauncher.utils.ComboItem;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
+import com.atlauncher.utils.ValidationUtils;
 
 @SuppressWarnings("serial")
 public class GeneralInstanceSettingsTab extends JPanel {
@@ -137,7 +140,7 @@ public class GeneralInstanceSettingsTab extends JPanel {
             GetText.tr("Join Server On Launch") + ":", HELP_ICON,
             GetText.tr(
                 "Enter the server address if you want to join a Minecraft server when you launch the game, " +
-                    "leave it empty if you don't want to join a server after launching the game."
+                    "leave it empty if you don't want to."
             )
         );
 
@@ -154,6 +157,20 @@ public class GeneralInstanceSettingsTab extends JPanel {
         initialJoinServerAddress.setText(instance.launcher.initialJoinServerAddress);
 
         add(initialJoinServerAddress, gbc);
+    }
+
+    // TODO: Rename this method when we decide the name of [initialJoinServerAddress]
+    public boolean isValidServerAddress() {
+        if (!initialJoinServerAddress.getText().isEmpty() &&
+            !ValidationUtils.isValidMinecraftServerAddress(initialJoinServerAddress.getText())) {
+            DialogManager.okDialog().setTitle(GetText.tr("Error"))
+                .setContent(new HTMLBuilder().center()
+                    .text(GetText.tr("The entered server address is invalid."))
+                    .build())
+                .setType(DialogManager.ERROR).show();
+            return false;
+        }
+        return true;
     }
 
     public void saveSettings() {
