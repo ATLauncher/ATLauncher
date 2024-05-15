@@ -19,6 +19,8 @@ package com.atlauncher.gui.dialogs.instancesettings;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.util.Arrays;
+import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
@@ -33,6 +35,7 @@ import com.atlauncher.App;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.constants.UIConstants;
 import com.atlauncher.data.Instance;
+import com.atlauncher.data.QuickPlayOption;
 import com.atlauncher.data.json.QuickPlay;
 import com.atlauncher.gui.components.JLabelWithHover;
 import com.atlauncher.managers.AccountManager;
@@ -48,7 +51,19 @@ public class GeneralInstanceSettingsTab extends JPanel {
 
     private JComboBox<ComboItem<String>> account;
     private JComboBox<ComboItem<Boolean>> enableDiscordIntegration;
-    private JTextField initialJoinServerAddress;
+
+    // TODO: We might want to add a Swing component that hold both the label and the input (text field or dropdown etc...)
+
+    private JComboBox<ComboItem<QuickPlayOption>> quickPlayType;
+
+    private JLabelWithHover quickPlayServerAddressLabel;
+    private JTextField quickPlayServerAddress;
+
+    private JLabelWithHover quickPlaySinglePlayerWorldLabel;
+    private JComboBox<ComboItem<String>> quickPlaySinglePlayerWorld;
+
+    private JLabelWithHover quickPlayRealmIdLabel;
+    private JTextField quickPlayRealmId;
 
     final ImageIcon HELP_ICON = Utils.getIconImage(App.THEME.getIconPath("question"));
     final ImageIcon ERROR_ICON = Utils.getIconImage(App.THEME.getIconPath("error"));
@@ -64,24 +79,40 @@ public class GeneralInstanceSettingsTab extends JPanel {
         setupComponents();
     }
 
+    /**
+     * Prepares [GridBagConstraints] for adding a new label component.
+     * it should be called before adding the label to the panel
+     * */
+    void prepareLabelConstraints() {
+        gbc.gridx = 0;
+        gbc.gridy++;
+        gbc.insets = UIConstants.LABEL_INSETS;
+        gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
+    }
+
+    /**
+     * Prepares [GridBagConstraints] for adding a component after a label.
+     * it should be called before adding the component to the panel
+     * */
+    void prepareAfterLabelComponentConstraints() {
+        gbc.gridx++;
+        gbc.insets = UIConstants.FIELD_INSETS;
+        gbc.anchor = GridBagConstraints.BASELINE_LEADING;
+    }
+
     private void setupComponents() {
         setLayout(new GridBagLayout());
 
         // Account
 
-        gbc.gridx = 0;
-        gbc.gridy++;
-        gbc.insets = UIConstants.LABEL_INSETS;
-        gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
+        prepareLabelConstraints();
 
         JLabelWithHover accountLabel = new JLabelWithHover(GetText.tr("Account Override") + ":", HELP_ICON, GetText.tr(
                 "Which account to use when launching this instance. Use Launcher Default will use whichever account is selected in the launcher."));
 
         add(accountLabel, gbc);
 
-        gbc.gridx++;
-        gbc.insets = UIConstants.FIELD_INSETS;
-        gbc.anchor = GridBagConstraints.BASELINE_LEADING;
+        prepareAfterLabelComponentConstraints();
         account = new JComboBox<>();
         account.addItem(new ComboItem<>(null, GetText.tr("Use Launcher Default")));
         AccountManager.getAccounts().stream()
@@ -101,18 +132,13 @@ public class GeneralInstanceSettingsTab extends JPanel {
 
         // Enable Discord Integration
 
-        gbc.gridx = 0;
-        gbc.gridy++;
-        gbc.insets = UIConstants.LABEL_INSETS;
-        gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
+        prepareLabelConstraints();
         JLabelWithHover enableDiscordIntegrationLabel = new JLabelWithHover(
                 GetText.tr("Enable Discord Integration") + "?", HELP_ICON,
                 GetText.tr("This will enable showing which pack you're playing in Discord."));
         add(enableDiscordIntegrationLabel, gbc);
 
-        gbc.gridx++;
-        gbc.insets = UIConstants.FIELD_INSETS;
-        gbc.anchor = GridBagConstraints.BASELINE_LEADING;
+        prepareAfterLabelComponentConstraints();
         enableDiscordIntegration = new JComboBox<>();
         enableDiscordIntegration.addItem(new ComboItem<>(null, GetText.tr("Use Launcher Default")));
         enableDiscordIntegration.addItem(new ComboItem<>(true, GetText.tr("Yes")));
@@ -132,46 +158,195 @@ public class GeneralInstanceSettingsTab extends JPanel {
 
         // Quick play section
 
-        // TODO: Add support for quick play for single player and realms later
+        QuickPlay quickPlay = instance.launcher.quickPlay;
 
-        gbc.gridx = 0;
-        gbc.gridy++;
-        gbc.insets = UIConstants.LABEL_INSETS;
-        gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
+        // Quick Play options
 
-        JLabelWithHover initialJoinServerAddressLabel = new JLabelWithHover(
-            GetText.tr("Join Server On Launch") + ":", HELP_ICON,
+        prepareLabelConstraints();
+
+        // Quick Play Feature components
+        JLabelWithHover quickPlayTypeLabel = new JLabelWithHover(
+            GetText.tr("Quick Play Type") + ":", HELP_ICON,
             GetText.tr(
-                "Enter the server address if you want to join a Minecraft server when you launch the game, " +
-                    "leave it empty if you don't want to."
+                "Select the type of the Quick Play feature, default to disabled."
             )
         );
 
-        add(initialJoinServerAddressLabel, gbc);
+        add(quickPlayTypeLabel, gbc);
 
-        gbc.gridx++;
-        gbc.insets = UIConstants.FIELD_INSETS;
-        gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-        initialJoinServerAddress = new JTextField(13);
-        initialJoinServerAddress.putClientProperty("JTextField.showClearButton", true);
-        initialJoinServerAddress.putClientProperty("JTextField.clearCallback", (Runnable) () -> {
-            initialJoinServerAddress.setText("");
-        });
-        initialJoinServerAddress.setText(instance.launcher.quickPlay.getServerAddress());
+        prepareAfterLabelComponentConstraints();
 
-        add(initialJoinServerAddress, gbc);
+        quickPlayType = new JComboBox<>();
+        Arrays.stream(QuickPlayOption.values()).forEach(option ->
+            quickPlayType.addItem(new ComboItem<>(option, GetText.tr(option.getLabel())))
+        );
+        quickPlayType.setSelectedIndex(
+            Arrays.asList(QuickPlayOption.values()).indexOf(quickPlay.getQuickPlayOption())
+        );
+
+        // Code that is responsible for changing the input
+        quickPlayType.addActionListener(e -> showInputForTheSelectedQuickPlayOption());
+
+        add(quickPlayType, gbc);
+
+        // Quick play server address
+
+        // TODO: Allow to select the list of the servers in the game using dropdown as a value for this text input
+
+        prepareLabelConstraints();
+
+        quickPlayServerAddressLabel = new JLabelWithHover(
+            GetText.tr("Server address") + ":", HELP_ICON,
+            GetText.tr(
+                "The server address that is used to connect to Minecraft server in multiplayer after" +
+                    " launching the game."
+            )
+        );
+
+        add(quickPlayServerAddressLabel, gbc);
+
+        prepareAfterLabelComponentConstraints();
+        quickPlayServerAddress = new JTextField(13);
+        quickPlayServerAddress.putClientProperty("JTextField.showClearButton", true);
+        quickPlayServerAddress.putClientProperty("JTextField.clearCallback", (Runnable) () -> quickPlayServerAddress.setText(""));
+        quickPlayServerAddress.setText(quickPlay.getServerAddress());
+
+        add(quickPlayServerAddress, gbc);
+
+        // Quick play select single player world dropdown
+
+        prepareLabelConstraints();
+        quickPlaySinglePlayerWorldLabel = new JLabelWithHover(
+            GetText.tr("Single Player World") + ":", HELP_ICON,
+            GetText.tr(
+                "Select the single player world to load after launching the game (only work for newer" +
+                    " versions of minecraft)."
+            )
+        );
+        add(quickPlaySinglePlayerWorldLabel, gbc);
+
+        prepareAfterLabelComponentConstraints();
+        quickPlaySinglePlayerWorld = new JComboBox<>();
+        List<String> worldNames = instance.getSinglePlayerWorldNamesFromFilesystem();
+        worldNames.forEach(saveName ->
+            quickPlaySinglePlayerWorld.addItem(new ComboItem<>(saveName, saveName)
+        ));
+
+        if (!worldNames.isEmpty()) {
+            final int selectedWorldFolderNameIndex = worldNames.indexOf(quickPlay.getWorldName());
+            quickPlaySinglePlayerWorld.setSelectedIndex(
+                selectedWorldFolderNameIndex != -1 ? selectedWorldFolderNameIndex : 0
+            );
+        }
+
+        add(quickPlaySinglePlayerWorld, gbc);
+
+        prepareLabelConstraints();
+        quickPlayRealmIdLabel = new JLabelWithHover(
+            GetText.tr("Minecraft Realm") + ":", HELP_ICON,
+            GetText.tr(
+                "Type the name of the realm to join after launching the game (only work for newer " +
+                    "versions of minecraft)."
+            )
+        );
+        add(quickPlayRealmIdLabel, gbc);
+
+        // TODO: We might want to make this as dropdown to all the realms
+        prepareAfterLabelComponentConstraints();
+        quickPlayRealmId = new JTextField(13);
+        quickPlayRealmId.putClientProperty("JTextField.showClearButton", true);
+        quickPlayRealmId.putClientProperty("JTextField.clearCallback", (Runnable) () -> quickPlayRealmId.setText(""));
+        quickPlayRealmId.setText(quickPlay.getRealmId());
+
+        add(quickPlayRealmId, gbc);
+
+        // Show only the input for the selected quick play type
+        showInputForTheSelectedQuickPlayOption();
     }
 
-    // TODO: Rename this method when we decide the name of [initialJoinServerAddress]
-    public boolean isValidServerAddress() {
-        if (!initialJoinServerAddress.getText().isEmpty() &&
-            !ValidationUtils.isValidMinecraftServerAddress(initialJoinServerAddress.getText())) {
-            DialogManager.okDialog().setTitle(GetText.tr("Error"))
-                .setContent(new HTMLBuilder().center()
-                    .text(GetText.tr("The entered server address is invalid."))
-                    .build())
-                .setType(DialogManager.ERROR).show();
-            return false;
+    /**
+     * A helper method to set the correct visibility for all the quick play inputs
+     * */
+    public void showInputForTheSelectedQuickPlayOption() {
+        QuickPlayOption quickPlayOption = ((ComboItem<QuickPlayOption>) quickPlayType.getSelectedItem()).getValue();
+        switch (quickPlayOption) {
+            case disabled:
+                // Hide all
+                setQuickPlayInputsVisibility(false, false, false);
+                break;
+            case multiPlayer:
+                // Only show the server address input field
+                setQuickPlayInputsVisibility(true, false, false);
+                break;
+            case singlePlayer:
+                // Only show the select world dropdown
+                setQuickPlayInputsVisibility(false, true, false);
+                break;
+            case realm:
+                setQuickPlayInputsVisibility(false, false, true);
+                break;
+        }
+    }
+
+    /**
+     * A helper method to set the visibility for different quick play inputs (multiplayer, single player, realms)
+     * */
+    public void setQuickPlayInputsVisibility(
+        boolean serverAddress,
+        boolean singlePlayerWorld,
+        boolean realmId
+    ) {
+        quickPlayServerAddressLabel.setVisible(serverAddress);
+        quickPlayServerAddress.setVisible(serverAddress);
+        quickPlaySinglePlayerWorldLabel.setVisible(singlePlayerWorld);
+        quickPlaySinglePlayerWorld.setVisible(singlePlayerWorld);
+        quickPlayRealmIdLabel.setVisible(realmId);
+        quickPlayRealmId.setVisible(realmId);
+    }
+
+    public boolean isValidQuickPlayOptionValue() {
+        QuickPlayOption quickPlayOption = ((ComboItem<QuickPlayOption>) quickPlayType.getSelectedItem()).getValue();
+        switch(quickPlayOption) {
+            case disabled:
+                return true;
+            case singlePlayer:
+                if (quickPlaySinglePlayerWorld.getSelectedItem() == null) {
+                    DialogManager.okDialog().setTitle(GetText.tr("Invalid Input"))
+                        .setContent(new HTMLBuilder().center()
+                            .text(GetText.tr("You don't have any single player worlds yet on this instance."))
+                            .build())
+                        .setType(DialogManager.ERROR).show();
+                    return false;
+                }
+                return true;
+            case multiPlayer:
+                if (quickPlayServerAddress.getText().isEmpty()) {
+                    DialogManager.okDialog().setTitle(GetText.tr("Invalid Input"))
+                        .setContent(new HTMLBuilder().center()
+                            .text(GetText.tr("The server address is empty."))
+                            .build())
+                        .setType(DialogManager.ERROR).show();
+                    return false;
+                }
+                if (!ValidationUtils.isValidMinecraftServerAddress(quickPlayServerAddress.getText())) {
+                    DialogManager.okDialog().setTitle(GetText.tr("Invalid Input"))
+                        .setContent(new HTMLBuilder().center()
+                            .text(GetText.tr("The entered server address is invalid."))
+                            .build())
+                        .setType(DialogManager.ERROR).show();
+                    return false;
+                }
+                return true;
+            case realm:
+                if (quickPlayRealmId.getText().isEmpty()) {
+                    DialogManager.okDialog().setTitle(GetText.tr("Invalid Input"))
+                        .setContent(new HTMLBuilder().center()
+                            .text(GetText.tr("The realm id is empty."))
+                            .build())
+                        .setType(DialogManager.ERROR).show();
+                    return false;
+                }
+                return true;
         }
         return true;
     }
@@ -179,10 +354,13 @@ public class GeneralInstanceSettingsTab extends JPanel {
     public void saveSettings() {
         this.instance.launcher.account = ((ComboItem<String>) account.getSelectedItem()).getValue();
         this.instance.launcher.enableDiscordIntegration = ((ComboItem<Boolean>) enableDiscordIntegration
-                .getSelectedItem()).getValue();
+            .getSelectedItem()).getValue();
+        QuickPlayOption quickPlayOption = ((ComboItem<QuickPlayOption>) quickPlayType.getSelectedItem()).getValue();
         this.instance.launcher.quickPlay = new QuickPlay(
-            initialJoinServerAddress.getText(),
-            null
+            quickPlayOption == QuickPlayOption.multiPlayer ? quickPlayServerAddress.getText() : null,
+            quickPlayOption == QuickPlayOption.singlePlayer ?
+                ((ComboItem<String>) quickPlaySinglePlayerWorld.getSelectedItem()).getValue() : null,
+            quickPlayOption == QuickPlayOption.realm ? quickPlayRealmId.getText() : null
         );
     }
 

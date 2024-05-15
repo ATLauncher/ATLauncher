@@ -411,17 +411,18 @@ public class MCLauncher {
         }
 
         // Quick Play feature (with backward compatibility for older versions of Minecraft)
-        // TODO: Add support for realms and single player world later
-        QuickPlay quickPlay = instance.launcher.quickPlay;;
+        QuickPlay quickPlay = instance.launcher.quickPlay;
+
+        // Quick Play Multiplayer
         if (quickPlay.getServerAddress() != null && !quickPlay.getServerAddress().isEmpty()) {
             String enteredServerAddress = quickPlay.getServerAddress();
-            boolean hasQuickMultiplayer = instance.arguments.game.stream().anyMatch(
+            boolean hasQuickPlayMultiplayer = instance.arguments.game.stream().anyMatch(
                 argumentRule -> argumentRule.value instanceof List &&
                     ((List<?>) argumentRule.value).contains("--quickPlayMultiplayer")
             );
-            if (hasQuickMultiplayer) {
+            if (hasQuickPlayMultiplayer) {
                 // Minecraft 23w14a and newer versions
-                arguments.add("--quickPlayMultiplayer");
+                arguments.addAll(Arrays.asList("--quickPlayMultiplayer", enteredServerAddress));
                 arguments.add(enteredServerAddress);
             } else {
                 // Minecraft 23w13a and older versions
@@ -431,6 +432,38 @@ public class MCLauncher {
                 String port = parts.length > 1 ? parts[1] : String.valueOf(Constants.MINECRAFT_DEFAULT_SERVER_PORT);
                 arguments.addAll(Arrays.asList("--server", address));
                 arguments.addAll(Arrays.asList("--port", port));
+            }
+        }
+
+        // Quick Play Single Player
+        if (quickPlay.getWorldName() != null && !quickPlay.getWorldName().isEmpty()) {
+            String selectedWorldSaveName = quickPlay.getWorldName();
+            boolean hasQuickPlaySinglePlayer = instance.arguments.game.stream().anyMatch(
+                argumentRule -> argumentRule.value instanceof List &&
+                    ((List<?>) argumentRule.value).contains("--quickPlaySingleplayer")
+            );
+            if (hasQuickPlaySinglePlayer) {
+                // Minecraft 23w14a and newer versions
+                arguments.addAll(Arrays.asList("--quickPlaySingleplayer", selectedWorldSaveName));
+            } else {
+                // Minecraft 23w13a and older versions
+                // TODO: Add support for older minecraft versions (make sure to update the helper label when you do)
+            }
+        }
+
+        // Quick Play Realm
+        if (quickPlay.getRealmId() != null && !quickPlay.getRealmId().isEmpty()) {
+            String realmId = quickPlay.getRealmId();
+            boolean hasQuickPlayRealms = instance.arguments.game.stream().anyMatch(
+                argumentRule -> argumentRule.value instanceof List &&
+                    ((List<?>) argumentRule.value).contains("--quickPlayRealms")
+            );
+            if (hasQuickPlayRealms) {
+                // Minecraft 23w14a and newer versions
+                arguments.addAll(Arrays.asList("--quickPlayRealms", realmId));
+            } else {
+                // Minecraft 23w13a and older versions
+                // TODO: Add support for older minecraft versions (make sure to update the helper label when you do)
             }
         }
 

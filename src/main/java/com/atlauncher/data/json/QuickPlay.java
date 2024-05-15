@@ -18,6 +18,7 @@
 package com.atlauncher.data.json;
 
 import com.atlauncher.annot.Json;
+import com.atlauncher.data.QuickPlayOption;
 
 /**
  * A data class that contains information about the quick play feature
@@ -32,16 +33,18 @@ public class QuickPlay {
      * The default value is null to all the properties
      * */
     public static QuickPlay getDefault() {
-        return new QuickPlay(null, null);
+        return new QuickPlay(null, null, null);
     }
 
     private final String serverAddress;
     private final String worldName;
-    // TODO: Add support for realms quick play later
+    // TODO: Should we rename the realmId?
+    private final String realmId;
 
-    public QuickPlay(String serverAddress, String worldName) {
+    public QuickPlay(String serverAddress, String worldName, String realmId) {
         this.serverAddress = serverAddress;
         this.worldName = worldName;
+        this.realmId = realmId;
     }
 
     public String getServerAddress() {
@@ -50,5 +53,25 @@ public class QuickPlay {
 
     public String getWorldName() {
         return worldName;
+    }
+
+    public String getRealmId() {
+        return realmId;
+    }
+
+    /**
+     * @return The current/selected quick play option based on the data in this data class
+     * */
+    public QuickPlayOption getQuickPlayOption() {
+        if (serverAddress != null) {
+            return QuickPlayOption.multiPlayer;
+        }
+        if (worldName != null) {
+            return QuickPlayOption.singlePlayer;
+        }
+        if (realmId != null) {
+            return QuickPlayOption.realm;
+        }
+        return QuickPlayOption.disabled;
     }
 }
