@@ -26,6 +26,7 @@ import com.atlauncher.data.curseforge.CurseForgeFile;
 import com.atlauncher.data.curseforge.CurseForgeProject;
 import com.atlauncher.data.curseforge.pack.CurseForgeManifest;
 import com.atlauncher.data.json.Java;
+import com.atlauncher.data.json.QuickPlay;
 import com.atlauncher.data.minecraft.loaders.LoaderVersion;
 import com.atlauncher.data.modpacksch.ModpacksChPackManifest;
 import com.atlauncher.data.modpacksch.ModpacksChPackVersionManifest;
@@ -68,7 +69,7 @@ public class InstanceLauncher {
     public String javaRuntimeOverride = null;
     public String account;
     public Boolean enableDiscordIntegration = null;
-    public String initialJoinServerAddress = null;
+    public QuickPlay quickPlay = QuickPlay.getDefault();
     public Boolean useJavaProvidedByMinecraft = null;
     public Boolean disableLegacyLaunching = null;
     public Boolean enableCommands = null;

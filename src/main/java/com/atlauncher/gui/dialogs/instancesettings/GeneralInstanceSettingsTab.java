@@ -33,6 +33,7 @@ import com.atlauncher.App;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.constants.UIConstants;
 import com.atlauncher.data.Instance;
+import com.atlauncher.data.json.QuickPlay;
 import com.atlauncher.gui.components.JLabelWithHover;
 import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.DialogManager;
@@ -129,7 +130,9 @@ public class GeneralInstanceSettingsTab extends JPanel {
 
         add(enableDiscordIntegration, gbc);
 
-        // Join server on launch
+        // Quick play section
+
+        // TODO: Add support for quick play for single player and realms later
 
         gbc.gridx = 0;
         gbc.gridy++;
@@ -154,7 +157,7 @@ public class GeneralInstanceSettingsTab extends JPanel {
         initialJoinServerAddress.putClientProperty("JTextField.clearCallback", (Runnable) () -> {
             initialJoinServerAddress.setText("");
         });
-        initialJoinServerAddress.setText(instance.launcher.initialJoinServerAddress);
+        initialJoinServerAddress.setText(instance.launcher.quickPlay.getServerAddress());
 
         add(initialJoinServerAddress, gbc);
     }
@@ -177,7 +180,10 @@ public class GeneralInstanceSettingsTab extends JPanel {
         this.instance.launcher.account = ((ComboItem<String>) account.getSelectedItem()).getValue();
         this.instance.launcher.enableDiscordIntegration = ((ComboItem<Boolean>) enableDiscordIntegration
                 .getSelectedItem()).getValue();
-        this.instance.launcher.initialJoinServerAddress = initialJoinServerAddress.getText();
+        this.instance.launcher.quickPlay = new QuickPlay(
+            initialJoinServerAddress.getText(),
+            null
+        );
     }
 
 }

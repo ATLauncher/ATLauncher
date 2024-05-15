@@ -37,6 +37,7 @@ import com.atlauncher.data.Instance;
 import com.atlauncher.data.LoginResponse;
 import com.atlauncher.data.MicrosoftAccount;
 import com.atlauncher.data.MojangAccount;
+import com.atlauncher.data.json.QuickPlay;
 import com.atlauncher.data.minecraft.Library;
 import com.atlauncher.data.minecraft.LoggingClient;
 import com.atlauncher.data.minecraft.PropertyMapSerializer;
@@ -409,9 +410,11 @@ public class MCLauncher {
             }
         }
 
-        // Joining a server on launch
-        if (instance.launcher.initialJoinServerAddress != null && !instance.launcher.initialJoinServerAddress.isEmpty()) {
-            String enteredServerAddress = instance.launcher.initialJoinServerAddress;
+        // Quick Play feature (with backward compatibility for older versions of Minecraft)
+        // TODO: Add support for realms and single player world later
+        QuickPlay quickPlay = instance.launcher.quickPlay;;
+        if (quickPlay.getServerAddress() != null && !quickPlay.getServerAddress().isEmpty()) {
+            String enteredServerAddress = quickPlay.getServerAddress();
             boolean hasQuickMultiplayer = instance.arguments.game.stream().anyMatch(
                 argumentRule -> argumentRule.value instanceof List &&
                     ((List<?>) argumentRule.value).contains("--quickPlayMultiplayer")
