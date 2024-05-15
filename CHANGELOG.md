@@ -10,3 +10,5 @@ This changelog only contains the changes that are unreleased. For changes for in
 ### Fixes
 
 ### Misc
+
+- Update the `application.yml` GitHub workflow [#889](https://github.com/ATLauncher/ATLauncher/pull/889)
