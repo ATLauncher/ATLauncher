@@ -245,7 +245,7 @@ public class GeneralInstanceSettingsTab extends JPanel {
         quickPlayRealmIdLabel = new JLabelWithHover(
             GetText.tr("Minecraft Realm") + ":", HELP_ICON,
             GetText.tr(
-                "Type the name of the realm to join after launching the game (only work for newer " +
+                "Type the id of the realm to join after launching the game (only work for newer " +
                     "versions of minecraft)."
             )
         );

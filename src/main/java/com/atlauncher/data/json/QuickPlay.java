@@ -38,7 +38,7 @@ public class QuickPlay {
 
     private final String serverAddress;
     private final String worldName;
-    // TODO: Should we rename the realmId?
+    // TODO: Should we rename the realmId (--quickPlayRealms "1234")? if yes then make sure to rename it from all places
     private final String realmId;
 
     public QuickPlay(String serverAddress, String worldName, String realmId) {
