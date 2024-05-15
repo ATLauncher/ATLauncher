@@ -76,7 +76,6 @@ dependencies {
     implementation(libs.sentry)
     implementation(libs.gettext.lib)
     implementation(libs.log4j.api)
-    implementation(libs.log4j.api)
     implementation(libs.log4j.core)
     implementation(libs.murmur)
     implementation(libs.commons.lang3)
