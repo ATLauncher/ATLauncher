@@ -10,5 +10,5 @@ This changelog only contains the changes that are unreleased. For changes for in
 ### Fixes
 
 ### Misc
-
 - Migrate to the new Gradle version catalogs for libraries and plugins
+- Update the `application.yml` GitHub workflow [#889]
