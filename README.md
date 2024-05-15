@@ -225,7 +225,7 @@ This file can then be uploaded to Crowdin by ATLauncher staff to give access to 
 ### Adding new languages from Crowdin
 
 Running [this action](https://github.com/ATLauncher/ATLauncher/actions/workflows/download-translations.yml) will
-download all approved translation strings and make a commit to master with then changed language files.
+download all approved translations strings and make a commit to master with then changed language files.
 
 #### Manual Steps
 
