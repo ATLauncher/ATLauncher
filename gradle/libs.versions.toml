@@ -39,7 +39,6 @@ junit = "5.9.3"
 
 cadixdev-licenser = "0.6.1"
 test-logger = "3.2.0"
-mac-app-bundle = "2.3.0"
 launch4j = "3.0.3"
 undercouch-download = "5.4.0"
 shadow = "8.1.1"
@@ -90,7 +89,6 @@ junit-vintage-engine = { module = "org.junit.jupiter:junit-jupiter-engine", vers
 [plugins]
 cadixdev-licenser = { id = "org.cadixdev.licenser", version.ref = "cadixdev-licenser" }
 test-logger = { id = "com.adarshr.test-logger", version.ref = "test-logger" }
-mac-app-bundle = { id = "edu.sc.seis.macAppBundle", version.ref = "mac-app-bundle" }
 launch4j = { id = "edu.sc.seis.launch4j", version.ref = "launch4j" }
 undercouch-download = { id = "de.undercouch.download", version.ref = "undercouch-download" }
 shadow = { id = "com.github.johnrengelman.shadow", version.ref = "shadow" }
