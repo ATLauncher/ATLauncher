@@ -295,8 +295,9 @@ val printCopyArtifactsFinished = tasks.register("printCopyArtifactsFinished") {
 }
 copyArtifacts.get().finalizedBy(printCopyArtifactsFinished)
 
-tasks.clean.configure {
+tasks.clean {
     doFirst {
+        println("Deleting `$projectDir/dist`")
         delete("$projectDir/dist")
     }
 }
@@ -307,10 +308,8 @@ tasks.clean.configure {
 //   > Removing a task dependency from a task instance is not supported.
 
 //project.afterEvaluate {
-//    tasks.check.configure {
-//        dependsOn -= tasks.find {
-//            it.name == "checkLicenses"
-//        }
+//    tasks.check {
+//        dependsOn -= tasks.find { it.name == tasks.checkLicenses.name }
 //    }
 //}
 
