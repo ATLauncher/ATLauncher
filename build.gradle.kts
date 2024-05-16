@@ -153,7 +153,9 @@ license {
     exclude("com/atlauncher/gui/layouts/WrapLayout.java")
     newLine = false
 
-    ext.set("year", currentYear())
+    properties {
+        set("year", currentYear())
+    }
 }
 
 tasks.withType(com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar::class) {
