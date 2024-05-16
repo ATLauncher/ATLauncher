@@ -97,7 +97,7 @@ application {
     )
 }
 
-tasks.named<Test>("test") {
+tasks.test {
     // Use JUnit Platform for unit tests.
     useJUnitPlatform()
 
@@ -106,7 +106,7 @@ tasks.named<Test>("test") {
     }
 }
 
-tasks.withType(Jar::class) {
+tasks.jar {
     manifest {
         attributes(
             "SplashScreen-Image" to "/assets/image/splash-screen.png",
@@ -159,7 +159,7 @@ license {
     }
 }
 
-tasks.withType(com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar::class) {
+tasks.shadowJar {
     archiveClassifier.set(null as String?)
     minimize {
         exclude(dependency("org.apache.logging.log4j:.*:.*"))
@@ -250,7 +250,7 @@ artifacts {
     )
 }
 
-tasks.withType<Test> {
+tasks.test {
     if (JavaVersion.current().isJava9Compatible) {
         jvmArgs = listOf("--add-opens", "java.base/sun.security.x509=ALL-UNNAMED")
     }
