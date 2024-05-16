@@ -33,6 +33,7 @@ repositories {
     maven {
         setUrl("https://jitpack.io")
         content {
+            includeGroup("com.github.RyanTheAllmighty.gettext")
             includeGroup("com.github.Vatuu")
             includeGroup("com.gitlab.doomsdayrs")
             includeGroup("com.github.MCRcortex")
