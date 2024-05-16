@@ -7,14 +7,12 @@ buildscript {
         maven {
             setUrl("https://jitpack.io")
             content {
-//                includeGroup("com.github.RyanTheAllmighty.gettext")
                 includeGroup("com.github.ATLauncher.gradle-macappbundle")
             }
         }
     }
     dependencies {
         classpath("com.github.ATLauncher.gradle-macappbundle:edu.sc.seis.macAppBundle.gradle.plugin:d22f8cdb94")
-        classpath("org.mini2Dx:gettext-gradle-plugin:1.7.1")
     }
 }
 
@@ -30,10 +28,8 @@ plugins {
     alias(libs.plugins.shadow)
     alias(libs.plugins.ben.manes)
     alias(libs.plugins.apollo)
+    id("org.mini2Dx.gettext")
 }
-
-// TODO: Restore gettext plugin
-//apply(plugin = "org.mini2Dx.gettext")
 
 java {
     sourceCompatibility = JavaVersion.VERSION_1_8
@@ -147,27 +143,22 @@ configure<com.apollographql.apollo.gradle.api.ApolloExtension> {
     packageName = "com.atlauncher.graphql"
 }
 
-// TODO: Restore GetText plugin configurations
-
-//gettext {
-//    translations {
-//        srcDir = 'src'
-//        include = 'main/java/com/atlauncher/**/*.java'
-//        excludes = [
-//            'main/java/com/atlauncher/adapter/**/*.java',
-//            'main/java/com/atlauncher/annot/**/*.java',
-//            'main/java/com/atlauncher/collection/**/*.java',
-//            'main/java/com/atlauncher/evnt/**/*.java',
-//            'main/java/com/atlauncher/exceptions/**/*.java',
-//            'main/java/com/atlauncher/interfaces/**/*.java',
-//            'main/java/com/atlauncher/listener/**/*.java',
-//            'main/java/com/atlauncher/utils/**/*.java'
-//        ]
-//        commentFormat = ' #. '
-//        outputFilename = 'translations.pot'
-//    }
-//}
-//
+val translations by gettext.registering {
+    srcDir = "src"
+    include = "main/java/com/atlauncher/**/*.java"
+    excludes = arrayOf(
+        "main/java/com/atlauncher/adapter/**/*.java",
+        "main/java/com/atlauncher/annot/**/*.java",
+        "main/java/com/atlauncher/collection/**/*.java",
+        "main/java/com/atlauncher/evnt/**/*.java",
+        "main/java/com/atlauncher/exceptions/**/*.java",
+        "main/java/com/atlauncher/interfaces/**/*.java",
+        "main/java/com/atlauncher/listener/**/*.java",
+        "main/java/com/atlauncher/utils/**/*.java"
+    )
+    commentFormat = " #. "
+    outputFilename = "translations.pot"
+}
 
 configure<org.cadixdev.gradle.licenser.LicenseExtension> {
     setHeader(project.file("LICENSEHEADER"))
