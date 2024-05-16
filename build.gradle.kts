@@ -146,7 +146,7 @@ val translations by gettext.registering {
 
 license {
     setHeader(project.file("LICENSEHEADER"))
-    include("'**/*.java'")
+    include("**/*.java")
     exclude("io/github/**/*.java")
     exclude("net/minecraft/**/*.java")
     exclude("com/atlauncher/graphql/**/*.java")
