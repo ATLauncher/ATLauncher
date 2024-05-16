@@ -118,7 +118,7 @@ tasks.withType(Jar::class) {
     }
 }
 
-configure<com.apollographql.apollo.gradle.api.ApolloExtension> {
+apollo {
     customTypeMapping = mapOf(
         "ID" to "java.lang.String",
         "DateTime" to "java.util.Date"
@@ -144,7 +144,7 @@ val translations by gettext.registering {
     outputFilename = "translations.pot"
 }
 
-configure<org.cadixdev.gradle.licenser.LicenseExtension> {
+license {
     setHeader(project.file("LICENSEHEADER"))
     include("'**/*.java'")
     exclude("io/github/**/*.java")
@@ -155,7 +155,6 @@ configure<org.cadixdev.gradle.licenser.LicenseExtension> {
 
     ext.set("year", currentYear())
 }
-
 
 tasks.withType(com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar::class) {
     archiveClassifier.set(null as String?)
@@ -183,7 +182,7 @@ tasks.withType(com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar::class
     archiveClassifier.set("")
 }
 
-configure<edu.sc.seis.macAppBundle.MacAppBundlePluginExtension> {
+macAppBundle {
     mainClassName = "com.atlauncher.App"
     appName = "ATLauncher"
     appStyle = "universalJavaApplicationStub"
