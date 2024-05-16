@@ -1,28 +1,13 @@
 import java.text.SimpleDateFormat
 import java.util.*
 
-buildscript {
-    repositories {
-        mavenCentral()
-        maven {
-            setUrl("https://jitpack.io")
-            content {
-                includeGroup("com.github.ATLauncher.gradle-macappbundle")
-            }
-        }
-    }
-    dependencies {
-        classpath("com.github.ATLauncher.gradle-macappbundle:edu.sc.seis.macAppBundle.gradle.plugin:d22f8cdb94")
-    }
-}
-
 plugins {
     id("java")
     application
 
     alias(libs.plugins.cadixdev.licenser)
     alias(libs.plugins.test.logger)
-    alias(libs.plugins.mac.app.bundle)
+    id("edu.sc.seis.macAppBundle")
     alias(libs.plugins.launch4j)
     alias(libs.plugins.undercouch.download)
     alias(libs.plugins.shadow)
