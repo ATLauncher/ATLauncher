@@ -188,7 +188,7 @@ Revision should be incremented when there are no new features and only contains 
 The build is used for beta releases allowing you to have higher version numbers but forcing users to update when the real
 release comes.
 
-Stream is used to defining if it's a "Release" or a "Beta". When not provided, it defaults to "Release".
+Stream is used to define if it's a "Release" or a "Beta". When not provided, it defaults to "Release".
 
 ### Updating The Version
 
