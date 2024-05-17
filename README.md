@@ -5,7 +5,7 @@
 
 ## What is it
 
-ATLauncher is a launcher for Minecraft which integrates multiple different mod-packs to allow you to download and install
+ATLauncher is a launcher for Minecraft which integrates multiple different modpacks to allow you to download and install
 mod-packs easily and quickly.
 
 ## Links
