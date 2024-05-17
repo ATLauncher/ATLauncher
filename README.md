@@ -40,7 +40,7 @@ To build this project, simply run:
 ./gradlew build
 ```
 
-This will build the application and output the resulting files for Windows, Linux, and OSX in the `dist` directory.
+This will build the application and output the resulting files for Windows, Linux and OSX in the `dist` directory.
 
 ## Running in test
 
