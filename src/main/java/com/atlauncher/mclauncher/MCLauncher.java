@@ -37,6 +37,7 @@ import com.atlauncher.data.Instance;
 import com.atlauncher.data.LoginResponse;
 import com.atlauncher.data.MicrosoftAccount;
 import com.atlauncher.data.MojangAccount;
+import com.atlauncher.data.QuickPlayOption;
 import com.atlauncher.data.json.QuickPlay;
 import com.atlauncher.data.minecraft.Library;
 import com.atlauncher.data.minecraft.LoggingClient;
@@ -416,9 +417,9 @@ public class MCLauncher {
         // Quick Play Multiplayer
         if (quickPlay.serverAddress != null && !quickPlay.serverAddress.isEmpty()) {
             String enteredServerAddress = quickPlay.serverAddress;
-            if (instance.isQuickPlayMultiplayerSupported()) {
+            if (instance.isQuickPlaySupported(QuickPlayOption.multiPlayer)) {
                 // Minecraft 23w14a and newer versions
-                arguments.addAll(Arrays.asList("--quickPlayMultiplayer", enteredServerAddress));
+                arguments.addAll(Arrays.asList(quickPlay.getSelectedQuickPlayOption().argumentRuleValue, enteredServerAddress));
                 arguments.add(enteredServerAddress);
             } else {
                 // Minecraft 23w13a and older versions
@@ -434,18 +435,18 @@ public class MCLauncher {
         // Quick Play Single Player
         if (quickPlay.worldName != null && !quickPlay.worldName.isEmpty()) {
             String selectedWorldSaveName = quickPlay.worldName;
-            if (instance.isQuickPlaySinglePlayerSupported()) {
+            if (instance.isQuickPlaySupported(QuickPlayOption.singlePlayer)) {
                 // Only work for Minecraft 23w14a and newer versions
-                arguments.addAll(Arrays.asList("--quickPlaySingleplayer", selectedWorldSaveName));
+                arguments.addAll(Arrays.asList(quickPlay.getSelectedQuickPlayOption().argumentRuleValue, selectedWorldSaveName));
             }
         }
 
         // Quick Play Realm
         if (quickPlay.realmId != null && !quickPlay.realmId.isEmpty()) {
             String realmId = quickPlay.realmId;
-            if (instance.isQuickPlayRealmsSupported()) {
+            if (instance.isQuickPlaySupported(QuickPlayOption.realm)) {
                 // Only work for Minecraft 23w14a and newer versions
-                arguments.addAll(Arrays.asList("--quickPlayRealms", realmId));
+                arguments.addAll(Arrays.asList(quickPlay.getSelectedQuickPlayOption().argumentRuleValue, realmId));
             }
         }
 

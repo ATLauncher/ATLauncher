@@ -22,18 +22,16 @@ package com.atlauncher.data;
  * The values are from <a href="https://www.minecraft.net/en-us/article/minecraft-snapshot-23w14a">Minecraft QuickPlay</a>
  */
 public enum QuickPlayOption {
-    disabled("Disabled"),
-    singlePlayer("Single Player"),
-    multiPlayer("Multiplayer"),
-    realm("Minecraft Realm");
+    disabled("Disabled", null),
+    singlePlayer("Single Player", "--quickPlaySingleplayer"),
+    multiPlayer("Multiplayer", "--quickPlayMultiplayer"),
+    realm("Minecraft Realm", "--quickPlayRealms");
 
-    private final String label;
+    public final String label;
+    public final String argumentRuleValue;
 
-    QuickPlayOption(String label) {
+    QuickPlayOption(String label, String argumentRuleValue) {
         this.label = label;
-    }
-
-    public String getLabel() {
-        return label;
+        this.argumentRuleValue = argumentRuleValue;
     }
 }

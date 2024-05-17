@@ -178,10 +178,10 @@ public class GeneralInstanceSettingsTab extends JPanel {
 
         quickPlayType = new JComboBox<>();
         Arrays.stream(QuickPlayOption.values()).forEach(option ->
-            quickPlayType.addItem(new ComboItem<>(option, GetText.tr(option.getLabel())))
+            quickPlayType.addItem(new ComboItem<>(option, GetText.tr(option.label)))
         );
         quickPlayType.setSelectedIndex(
-            Arrays.asList(QuickPlayOption.values()).indexOf(quickPlay.getQuickPlayOption())
+            Arrays.asList(QuickPlayOption.values()).indexOf(quickPlay.getSelectedQuickPlayOption())
         );
 
         // Code that is responsible for changing the input

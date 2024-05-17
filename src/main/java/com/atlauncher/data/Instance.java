@@ -149,6 +149,7 @@ import com.atlauncher.managers.PerformanceManager;
 import com.atlauncher.managers.TechnicModpackUpdateManager;
 import com.atlauncher.mclauncher.MCLauncher;
 import com.atlauncher.network.Analytics;
+import com.atlauncher.network.Download;
 import com.atlauncher.network.DownloadPool;
 import com.atlauncher.network.GraphqlClient;
 import com.atlauncher.network.analytics.AnalyticsEvent;
@@ -437,7 +438,7 @@ public class Instance extends MinecraftVersion {
             VersionManifestVersion minecraftVersionManifest = MinecraftManager
                     .getMinecraftVersion(id);
 
-            com.atlauncher.network.Download download = com.atlauncher.network.Download.build()
+            Download download = Download.build()
                     .setUrl(minecraftVersionManifest.url).hash(minecraftVersionManifest.sha1)
                     .size(minecraftVersionManifest.size)
                     .downloadTo(FileSystem.MINECRAFT_VERSIONS_JSON.resolve(minecraftVersionManifest.id + ".json"))
@@ -458,7 +459,7 @@ public class Instance extends MinecraftVersion {
         PerformanceManager.start("Downloading Minecraft");
         try {
             progressDialog.setLabel(GetText.tr("Downloading Minecraft"));
-            com.atlauncher.network.Download clientDownload = com.atlauncher.network.Download.build()
+            Download clientDownload = Download.build()
                     .setUrl(this.downloads.client.url).hash(this.downloads.client.sha1).size(this.downloads.client.size)
                     .withHttpClient(httpClient).downloadTo(this.getMinecraftJarLibraryPath());
 
@@ -483,7 +484,7 @@ public class Instance extends MinecraftVersion {
 
                 LoggingFile loggingFile = logging.client.file;
 
-                com.atlauncher.network.Download loggerDownload = com.atlauncher.network.Download.build()
+                Download loggerDownload = Download.build()
                         .setUrl(loggingFile.url).hash(loggingFile.sha1)
                         .size(loggingFile.size).downloadTo(FileSystem.RESOURCES_LOG_CONFIGS.resolve(loggingFile.id))
                         .withHttpClient(httpClient);
@@ -535,7 +536,7 @@ public class Instance extends MinecraftVersion {
                         ? LWJGLManager.getReplacementLWJGL3Library(this, l)
                         : l)
                 .forEach(library -> {
-                    com.atlauncher.network.Download download = new com.atlauncher.network.Download()
+                    Download download = new Download()
                             .setUrl(library.downloads.artifact.url)
                             .downloadTo(FileSystem.LIBRARIES.resolve(library.downloads.artifact.path))
                             .hash(library.downloads.artifact.sha1).size(library.downloads.artifact.size)
@@ -551,7 +552,7 @@ public class Instance extends MinecraftVersion {
                 .forEach(library -> {
                     com.atlauncher.data.minecraft.Download download = library.getNativeDownloadForOS();
 
-                    librariesPool.add(new com.atlauncher.network.Download().setUrl(download.url)
+                    librariesPool.add(new Download().setUrl(download.url)
                             .downloadTo(FileSystem.LIBRARIES.resolve(download.path)).hash(download.sha1)
                             .size(download.size)
                             .withHttpClient(httpClient));
@@ -564,7 +565,7 @@ public class Instance extends MinecraftVersion {
 
             if (fmlLibraries != null) {
                 fmlLibraries.forEach((library) -> {
-                    com.atlauncher.network.Download download = new com.atlauncher.network.Download()
+                    Download download = new Download()
                             .setUrl(String.format("%s/fmllibs/%s", Constants.DOWNLOAD_SERVER, library.name))
                             .downloadTo(FileSystem.LIBRARIES.resolve("fmllib/" + library.name))
                             .copyTo(ROOT.resolve("lib/" + library.name)).hash(library.sha1Hash)
@@ -602,7 +603,7 @@ public class Instance extends MinecraftVersion {
                 JavaRuntime runtimeToDownload = runtimesForSystem.get(runtimeToUse).get(0);
 
                 try {
-                    JavaRuntimeManifest javaRuntimeManifest = com.atlauncher.network.Download.build()
+                    JavaRuntimeManifest javaRuntimeManifest = Download.build()
                             .setUrl(runtimeToDownload.manifest.url).size(runtimeToDownload.manifest.size)
                             .hash(runtimeToDownload.manifest.sha1).downloadTo(FileSystem.MINECRAFT_RUNTIMES
                                     .resolve(runtimeToUse).resolve("manifest.json"))
@@ -626,7 +627,7 @@ public class Instance extends MinecraftVersion {
                     // collect the files we need to download
                     javaRuntimeManifest.files.forEach((key, file) -> {
                         if (file.type == JavaRuntimeManifestFileType.FILE) {
-                            com.atlauncher.network.Download download = new com.atlauncher.network.Download()
+                            Download download = new Download()
                                     .setUrl(file.downloads.raw.url).downloadTo(runtimeDirectory.resolve(key))
                                     .hash(file.downloads.raw.sha1).size(file.downloads.raw.size)
                                     .executable(file.executable).withHttpClient(httpClient);
@@ -660,7 +661,7 @@ public class Instance extends MinecraftVersion {
         progressDialog.setLabel(GetText.tr("Organising Resources"));
         MojangAssetIndex assetIndex = this.assetIndex;
 
-        AssetIndex index = com.atlauncher.network.Download.build().setUrl(assetIndex.url).hash(assetIndex.sha1)
+        AssetIndex index = Download.build().setUrl(assetIndex.url).hash(assetIndex.sha1)
                 .size(assetIndex.size).downloadTo(FileSystem.RESOURCES_INDEXES.resolve(assetIndex.id + ".json"))
                 .withHttpClient(httpClient).asClass(AssetIndex.class);
 
@@ -670,7 +671,7 @@ public class Instance extends MinecraftVersion {
             String filename = object.hash.substring(0, 2) + "/" + object.hash;
             String url = String.format("%s/%s", Constants.MINECRAFT_RESOURCES, filename);
 
-            com.atlauncher.network.Download download = new com.atlauncher.network.Download().setUrl(url)
+            Download download = new Download().setUrl(url)
                     .downloadTo(FileSystem.RESOURCES_OBJECTS.resolve(filename)).hash(object.hash).size(object.size)
                     .withHttpClient(httpClient);
 
@@ -768,7 +769,7 @@ public class Instance extends MinecraftVersion {
             LWJGLLibrary library = LWJGLManager.getLegacyLWJGLLibrary();
 
             if (library != null) {
-                com.atlauncher.network.Download download = new com.atlauncher.network.Download().setUrl(library.url)
+                Download download = new Download().setUrl(library.url)
                         .downloadTo(FileSystem.LIBRARIES.resolve(library.path)).unzipTo(lwjglNativesTempDir)
                         .hash(library.sha1).size(library.size).withHttpClient(httpClient);
 
@@ -1507,7 +1508,7 @@ public class Instance extends MinecraftVersion {
                 FileUtils.copyFile(downloadLocation, finalLocation, true);
             }
         } else {
-            com.atlauncher.network.Download download = com.atlauncher.network.Download.build().setUrl(file.downloadUrl)
+            Download download = Download.build().setUrl(file.downloadUrl)
                     .downloadTo(downloadLocation).size(file.fileLength)
                     .withHttpClient(Network.createProgressClient(dialog));
 
@@ -1584,7 +1585,7 @@ public class Instance extends MinecraftVersion {
                 : (mod.projectType == ModrinthProjectType.SHADER
                         ? this.getRoot().resolve("shaderpacks").resolve(fileToDownload.filename)
                         : this.getRoot().resolve("resourcepacks").resolve(fileToDownload.filename));
-        com.atlauncher.network.Download download = com.atlauncher.network.Download.build().setUrl(fileToDownload.url)
+        Download download = Download.build().setUrl(fileToDownload.url)
                 .downloadTo(downloadLocation).copyTo(finalLocation)
                 .withHttpClient(Network.createProgressClient(dialog));
 
@@ -3240,24 +3241,13 @@ public class Instance extends MinecraftVersion {
         return Arrays.stream(folders).map(File::getName).collect(Collectors.toList());
     }
 
-    public boolean isQuickPlayMultiplayerSupported() {
+    public boolean isQuickPlaySupported(QuickPlayOption quickPlayOption) {
+        if (quickPlayOption.argumentRuleValue == null) {
+            return false;
+        }
         return arguments.game.stream().anyMatch(
             argumentRule -> argumentRule.value instanceof List &&
-                ((List<?>) argumentRule.value).contains("--quickPlayMultiplayer")
-        );
-    }
-
-    public boolean isQuickPlaySinglePlayerSupported() {
-        return arguments.game.stream().anyMatch(
-            argumentRule -> argumentRule.value instanceof List &&
-                ((List<?>) argumentRule.value).contains("--quickPlaySingleplayer")
-        );
-    }
-
-    public boolean isQuickPlayRealmsSupported() {
-        return arguments.game.stream().anyMatch(
-            argumentRule -> argumentRule.value instanceof List &&
-                ((List<?>) argumentRule.value).contains("--quickPlayRealms")
+                ((List<?>) argumentRule.value).contains(quickPlayOption.argumentRuleValue)
         );
     }
 
@@ -3305,10 +3295,10 @@ public class Instance extends MinecraftVersion {
                 continue;
             }
 
-            com.atlauncher.data.Type fileType = path.equals(ROOT.resolve("resourcepacks"))
-                    ? com.atlauncher.data.Type.resourcepack
-                    : (path.equals(ROOT.resolve("jarmods")) ? com.atlauncher.data.Type.jar
-                            : com.atlauncher.data.Type.mods);
+            Type fileType = path.equals(ROOT.resolve("resourcepacks"))
+                    ? Type.resourcepack
+                    : (path.equals(ROOT.resolve("jarmods")) ? Type.jar
+                            : Type.mods);
 
             try (Stream<Path> stream = Files.list(path)) {
                 files.addAll(stream
@@ -3329,10 +3319,10 @@ public class Instance extends MinecraftVersion {
             progressDialog.addThread(new Thread(() -> {
                 List<DisableableMod> mods = files.parallelStream()
                         .map(file -> {
-                            com.atlauncher.data.Type fileType = file.getParent().equals(ROOT.resolve("resourcepacks"))
-                                    ? com.atlauncher.data.Type.resourcepack
-                                    : (file.getParent().equals(ROOT.resolve("jarmods")) ? com.atlauncher.data.Type.jar
-                                            : com.atlauncher.data.Type.mods);
+                            Type fileType = file.getParent().equals(ROOT.resolve("resourcepacks"))
+                                    ? Type.resourcepack
+                                    : (file.getParent().equals(ROOT.resolve("jarmods")) ? Type.jar
+                                            : Type.mods);
 
                             return DisableableMod.generateMod(file.toFile(), fileType,
                                     !file.getParent().equals(ROOT.resolve("disabledmods")));
@@ -3471,7 +3461,7 @@ public class Instance extends MinecraftVersion {
         PerformanceManager.start("Instance::scanMissingMods - CheckForRemovedMods");
         // next remove any mods that the no longer exist in the filesystem
         List<DisableableMod> removedMods = launcher.mods.parallelStream().filter(mod -> {
-            if (!mod.wasSelected || mod.skipped || mod.type != com.atlauncher.data.Type.mods) {
+            if (!mod.wasSelected || mod.skipped || mod.type != Type.mods) {
                 return false;
             }
 
@@ -3494,7 +3484,7 @@ public class Instance extends MinecraftVersion {
         Set<File> seenModFiles = new HashSet<>();
         List<DisableableMod> duplicateMods = launcher.mods.stream()
                 .filter(mod -> {
-                    if (!mod.wasSelected || mod.skipped || mod.type != com.atlauncher.data.Type.mods) {
+                    if (!mod.wasSelected || mod.skipped || mod.type != Type.mods) {
                         return false;
                     }
 

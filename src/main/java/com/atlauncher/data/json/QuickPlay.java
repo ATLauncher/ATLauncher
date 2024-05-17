@@ -50,7 +50,7 @@ public class QuickPlay {
     /**
      * @return The current/selected quick play option based on the data in this data class
      * */
-    public QuickPlayOption getQuickPlayOption() {
+    public QuickPlayOption getSelectedQuickPlayOption() {
         if (serverAddress != null) {
             return QuickPlayOption.multiPlayer;
         }
