@@ -137,6 +137,8 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         theme.addItem(new ComboItem<>("com.atlauncher.themes.CyanLight", "Cyan Light"));
         theme.addItem(new ComboItem<>("com.atlauncher.themes.HighTechDarkness", "High Tech Darkness"));
         theme.addItem(new ComboItem<>("com.atlauncher.themes.OneDark", "One Dark"));
+        theme.addItem(new ComboItem<>("com.atlauncher.themes.MacOsDark", "macOS Dark"));
+        theme.addItem(new ComboItem<>("com.atlauncher.themes.MacOsLight", "macOS Light"));
 
         for (int i = 0; i < theme.getItemCount(); i++) {
             ComboItem<String> item = theme.getItemAt(i);

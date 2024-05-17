@@ -39,6 +39,7 @@ import com.formdev.flatlaf.FlatDarkLaf;
 import com.formdev.flatlaf.FlatIntelliJLaf;
 import com.formdev.flatlaf.FlatLaf;
 import com.formdev.flatlaf.FlatLightLaf;
+import com.formdev.flatlaf.themes.FlatMacDarkLaf;
 
 @SuppressWarnings("serial")
 public class ATLauncherLaf extends FlatLaf {
@@ -137,6 +138,10 @@ public class ATLauncherLaf extends FlatLaf {
         return false;
     }
 
+    public boolean isMacOS() {
+        return false;
+    }
+
     @Override
     public List<Class<?>> getLafClassesForDefaultsLoading() {
         List<Class<?>> classes = new ArrayList<>();
@@ -150,11 +155,18 @@ public class ATLauncherLaf extends FlatLaf {
             if (isIntelliJTheme()) {
                 classes.add(FlatDarculaLaf.class);
             }
+
+            if (isMacOS()) {
+                classes.add(FlatMacDarkLaf.class);
+            }
         } else {
             classes.add(FlatLightLaf.class);
 
             if (isIntelliJTheme()) {
                 classes.add(FlatIntelliJLaf.class);
+            }
+            if (isMacOS()) {
+                classes.add(FlatMacDarkLaf.class);
             }
         }
 
