@@ -6,6 +6,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 ## 3.4.36.5
 
 ### New Features
+- Add the option to use macOS dark and light themes [#901]
 
 ### Fixes
 
