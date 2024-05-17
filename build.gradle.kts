@@ -304,16 +304,20 @@ tasks.clean {
     }
 }
 
-// TODO: This has error: * What went wrong:
-//Could not determine the dependencies of task ':build'.
-//> Could not create task ':check'.
-//   > Removing a task dependency from a task instance is not supported.
-
-//project.afterEvaluate {
-//    tasks.check {
-//        dependsOn -= tasks.find { it.name == tasks.checkLicenses.name }
-//    }
-//}
+project.afterEvaluate {
+    tasks.check {
+        /*
+        Trick gradle by not "removing" a task
+         (which throws an unsupported error),
+         Instead filter current tasks and then set the new list.
+        */
+        setDependsOn(
+            dependsOn.filterNot {
+                (it as? Task)?.name == tasks.checkLicenses.name
+            }
+        )
+    }
+}
 
 val shouldIgnoreUpdate: (String) -> Boolean = { version ->
     listOf("ALPHA", "BETA", "RC", "-M").any { version.uppercase().contains(it) }
