@@ -798,7 +798,7 @@ public class App {
             setLAF(theme);
             modifyLAF();
 
-            // now the theme is loaded, we can intialize the toaster/tray menu
+            // now the theme is loaded, we can initialize the toaster/tray menu
             TOASTER = Toaster.instance();
             TRAY_MENU = new TrayMenu();
         } catch (Exception ex) {
