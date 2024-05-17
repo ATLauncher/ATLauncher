@@ -3240,6 +3240,27 @@ public class Instance extends MinecraftVersion {
         return Arrays.stream(folders).map(File::getName).collect(Collectors.toList());
     }
 
+    public boolean isQuickPlayMultiplayerSupported() {
+        return arguments.game.stream().anyMatch(
+            argumentRule -> argumentRule.value instanceof List &&
+                ((List<?>) argumentRule.value).contains("--quickPlayMultiplayer")
+        );
+    }
+
+    public boolean isQuickPlaySinglePlayerSupported() {
+        return arguments.game.stream().anyMatch(
+            argumentRule -> argumentRule.value instanceof List &&
+                ((List<?>) argumentRule.value).contains("--quickPlaySingleplayer")
+        );
+    }
+
+    public boolean isQuickPlayRealmsSupported() {
+        return arguments.game.stream().anyMatch(
+            argumentRule -> argumentRule.value instanceof List &&
+                ((List<?>) argumentRule.value).contains("--quickPlayRealms")
+        );
+    }
+
     private List<Path> getModPathsFromFilesystem() {
         return getModPathsFromFilesystem(Arrays.asList(ROOT.resolve("mods"),
                 ROOT.resolve("resourcepacks"),

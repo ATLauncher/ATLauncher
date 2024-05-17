@@ -416,11 +416,7 @@ public class MCLauncher {
         // Quick Play Multiplayer
         if (quickPlay.serverAddress != null && !quickPlay.serverAddress.isEmpty()) {
             String enteredServerAddress = quickPlay.serverAddress;
-            boolean hasQuickPlayMultiplayer = instance.arguments.game.stream().anyMatch(
-                argumentRule -> argumentRule.value instanceof List &&
-                    ((List<?>) argumentRule.value).contains("--quickPlayMultiplayer")
-            );
-            if (hasQuickPlayMultiplayer) {
+            if (instance.isQuickPlayMultiplayerSupported()) {
                 // Minecraft 23w14a and newer versions
                 arguments.addAll(Arrays.asList("--quickPlayMultiplayer", enteredServerAddress));
                 arguments.add(enteredServerAddress);
@@ -438,11 +434,7 @@ public class MCLauncher {
         // Quick Play Single Player
         if (quickPlay.worldName != null && !quickPlay.worldName.isEmpty()) {
             String selectedWorldSaveName = quickPlay.worldName;
-            boolean hasQuickPlaySinglePlayer = instance.arguments.game.stream().anyMatch(
-                argumentRule -> argumentRule.value instanceof List &&
-                    ((List<?>) argumentRule.value).contains("--quickPlaySingleplayer")
-            );
-            if (hasQuickPlaySinglePlayer) {
+            if (instance.isQuickPlaySinglePlayerSupported()) {
                 // Only work for Minecraft 23w14a and newer versions
                 arguments.addAll(Arrays.asList("--quickPlaySingleplayer", selectedWorldSaveName));
             }
@@ -451,11 +443,7 @@ public class MCLauncher {
         // Quick Play Realm
         if (quickPlay.realmId != null && !quickPlay.realmId.isEmpty()) {
             String realmId = quickPlay.realmId;
-            boolean hasQuickPlayRealms = instance.arguments.game.stream().anyMatch(
-                argumentRule -> argumentRule.value instanceof List &&
-                    ((List<?>) argumentRule.value).contains("--quickPlayRealms")
-            );
-            if (hasQuickPlayRealms) {
+            if (instance.isQuickPlayRealmsSupported()) {
                 // Only work for Minecraft 23w14a and newer versions
                 arguments.addAll(Arrays.asList("--quickPlayRealms", realmId));
             }
