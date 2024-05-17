@@ -443,11 +443,8 @@ public class MCLauncher {
                     ((List<?>) argumentRule.value).contains("--quickPlaySingleplayer")
             );
             if (hasQuickPlaySinglePlayer) {
-                // Minecraft 23w14a and newer versions
+                // Only work for Minecraft 23w14a and newer versions
                 arguments.addAll(Arrays.asList("--quickPlaySingleplayer", selectedWorldSaveName));
-            } else {
-                // Minecraft 23w13a and older versions
-                // TODO: Add support for older minecraft versions (make sure to update the helper label when you do)
             }
         }
 
@@ -459,11 +456,8 @@ public class MCLauncher {
                     ((List<?>) argumentRule.value).contains("--quickPlayRealms")
             );
             if (hasQuickPlayRealms) {
-                // Minecraft 23w14a and newer versions
+                // Only work for Minecraft 23w14a and newer versions
                 arguments.addAll(Arrays.asList("--quickPlayRealms", realmId));
-            } else {
-                // Minecraft 23w13a and older versions
-                // TODO: Add support for older minecraft versions (make sure to update the helper label when you do)
             }
         }
 
