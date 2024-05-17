@@ -330,7 +330,6 @@ tasks.dependencyUpdates.configure {
 }
 
 tasks.build.get().finalizedBy(copyArtifacts)
-tasks.build.get().finalizedBy(copyArtifacts)
 tasks.shadowJar.get().dependsOn(tasks.jar)
 tasks.build.get().dependsOn(tasks.createExe, createMacApp)
 tasks.startScripts.get().dependsOn(tasks.shadowJar)
