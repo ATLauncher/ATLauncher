@@ -209,7 +209,7 @@ public class GeneralInstanceSettingsTab extends JPanel {
         quickPlayServerAddress = new JTextField(13);
         quickPlayServerAddress.putClientProperty("JTextField.showClearButton", true);
         quickPlayServerAddress.putClientProperty("JTextField.clearCallback", (Runnable) () -> quickPlayServerAddress.setText(""));
-        quickPlayServerAddress.setText(quickPlay.getServerAddress());
+        quickPlayServerAddress.setText(quickPlay.serverAddress);
 
         add(quickPlayServerAddress, gbc);
 
@@ -233,7 +233,7 @@ public class GeneralInstanceSettingsTab extends JPanel {
         ));
 
         if (!worldNames.isEmpty()) {
-            final int selectedWorldFolderNameIndex = worldNames.indexOf(quickPlay.getWorldName());
+            final int selectedWorldFolderNameIndex = worldNames.indexOf(quickPlay.worldName);
             quickPlaySinglePlayerWorld.setSelectedIndex(
                 selectedWorldFolderNameIndex != -1 ? selectedWorldFolderNameIndex : 0
             );
@@ -256,7 +256,7 @@ public class GeneralInstanceSettingsTab extends JPanel {
         quickPlayRealmId = new JTextField(13);
         quickPlayRealmId.putClientProperty("JTextField.showClearButton", true);
         quickPlayRealmId.putClientProperty("JTextField.clearCallback", (Runnable) () -> quickPlayRealmId.setText(""));
-        quickPlayRealmId.setText(quickPlay.getRealmId());
+        quickPlayRealmId.setText(quickPlay.realmId);
 
         add(quickPlayRealmId, gbc);
 

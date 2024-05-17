@@ -414,8 +414,8 @@ public class MCLauncher {
         QuickPlay quickPlay = instance.launcher.quickPlay;
 
         // Quick Play Multiplayer
-        if (quickPlay.getServerAddress() != null && !quickPlay.getServerAddress().isEmpty()) {
-            String enteredServerAddress = quickPlay.getServerAddress();
+        if (quickPlay.serverAddress != null && !quickPlay.serverAddress.isEmpty()) {
+            String enteredServerAddress = quickPlay.serverAddress;
             boolean hasQuickPlayMultiplayer = instance.arguments.game.stream().anyMatch(
                 argumentRule -> argumentRule.value instanceof List &&
                     ((List<?>) argumentRule.value).contains("--quickPlayMultiplayer")
@@ -436,8 +436,8 @@ public class MCLauncher {
         }
 
         // Quick Play Single Player
-        if (quickPlay.getWorldName() != null && !quickPlay.getWorldName().isEmpty()) {
-            String selectedWorldSaveName = quickPlay.getWorldName();
+        if (quickPlay.worldName != null && !quickPlay.worldName.isEmpty()) {
+            String selectedWorldSaveName = quickPlay.worldName;
             boolean hasQuickPlaySinglePlayer = instance.arguments.game.stream().anyMatch(
                 argumentRule -> argumentRule.value instanceof List &&
                     ((List<?>) argumentRule.value).contains("--quickPlaySingleplayer")
@@ -452,8 +452,8 @@ public class MCLauncher {
         }
 
         // Quick Play Realm
-        if (quickPlay.getRealmId() != null && !quickPlay.getRealmId().isEmpty()) {
-            String realmId = quickPlay.getRealmId();
+        if (quickPlay.realmId != null && !quickPlay.realmId.isEmpty()) {
+            String realmId = quickPlay.realmId;
             boolean hasQuickPlayRealms = instance.arguments.game.stream().anyMatch(
                 argumentRule -> argumentRule.value instanceof List &&
                     ((List<?>) argumentRule.value).contains("--quickPlayRealms")
