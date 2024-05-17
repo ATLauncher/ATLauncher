@@ -329,10 +329,12 @@ tasks.dependencyUpdates.configure {
     }
 }
 
-tasks.build.get().finalizedBy(copyArtifacts)
-tasks.shadowJar.get().dependsOn(tasks.jar)
-tasks.build.get().dependsOn(tasks.createExe, createMacApp)
-tasks.startScripts.get().dependsOn(tasks.shadowJar)
-tasks.createExe.get().dependsOn(tasks.shadowJar)
-tasks.createAppZip.get().dependsOn(downloadNewerUniversalJavaApplicationStub)
-tasks.createDmg.get().dependsOn(downloadNewerUniversalJavaApplicationStub)
+tasks {
+    build.get().finalizedBy(copyArtifacts)
+    shadowJar.get().dependsOn(jar)
+    build.get().dependsOn(createExe, createMacApp)
+    startScripts.get().dependsOn(shadowJar)
+    createExe.get().dependsOn(shadowJar)
+    createAppZip.get().dependsOn(downloadNewerUniversalJavaApplicationStub)
+    createDmg.get().dependsOn(downloadNewerUniversalJavaApplicationStub)
+}
