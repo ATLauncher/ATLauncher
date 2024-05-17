@@ -177,11 +177,11 @@ public class GeneralInstanceSettingsTab extends JPanel {
         prepareAfterLabelComponentConstraints();
 
         quickPlayType = new JComboBox<>();
-        Arrays.stream(QuickPlayOption.values()).forEach(option ->
+        Arrays.stream(QuickPlayOption.compatibleValues(instance)).forEach(option ->
             quickPlayType.addItem(new ComboItem<>(option, GetText.tr(option.label)))
         );
         quickPlayType.setSelectedIndex(
-            Arrays.asList(QuickPlayOption.values()).indexOf(quickPlay.getSelectedQuickPlayOption())
+            Arrays.asList(QuickPlayOption.compatibleValues(instance)).indexOf(quickPlay.getSelectedQuickPlayOption())
         );
 
         // Code that is responsible for changing the input
@@ -219,8 +219,7 @@ public class GeneralInstanceSettingsTab extends JPanel {
         quickPlaySinglePlayerWorldLabel = new JLabelWithHover(
             GetText.tr("Single Player World") + ":", HELP_ICON,
             GetText.tr(
-                "Select the single player world to load after launching the game (only work for newer" +
-                    " versions of minecraft)."
+                "Select the single player world to load after launching the game."
             )
         );
         add(quickPlaySinglePlayerWorldLabel, gbc);
@@ -245,8 +244,7 @@ public class GeneralInstanceSettingsTab extends JPanel {
         quickPlayRealmIdLabel = new JLabelWithHover(
             GetText.tr("Minecraft Realm") + ":", HELP_ICON,
             GetText.tr(
-                "Type the id of the realm to join after launching the game (only work for newer " +
-                    "versions of minecraft)."
+                "Type the id of the realm to join after launching the game."
             )
         );
         add(quickPlayRealmIdLabel, gbc);

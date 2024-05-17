@@ -17,21 +17,44 @@
  */
 package com.atlauncher.data;
 
+import java.util.Arrays;
+
 /**
  * The types of the Quick Play options
  * The values are from <a href="https://www.minecraft.net/en-us/article/minecraft-snapshot-23w14a">Minecraft QuickPlay</a>
  */
 public enum QuickPlayOption {
-    disabled("Disabled", null),
-    singlePlayer("Single Player", "--quickPlaySingleplayer"),
-    multiPlayer("Multiplayer", "--quickPlayMultiplayer"),
-    realm("Minecraft Realm", "--quickPlayRealms");
+    disabled("Disabled", null, true),
+    singlePlayer("Single Player", "--quickPlaySingleplayer", false),
+    multiPlayer("Multiplayer", "--quickPlayMultiplayer", true),
+    realm("Minecraft Realm", "--quickPlayRealms", false);
 
     public final String label;
     public final String argumentRuleValue;
+    /**
+     * For the minecraft versions that doesn't have Quick plat feature, is this option available on older versions?
+     */
+    public final boolean compatibleOnOlderVersions;
 
-    QuickPlayOption(String label, String argumentRuleValue) {
+    /**
+     * Get only the compatible options for the current minecraft version regardless if it
+     * supports the quick play feature or not, for example joining a minecraft server is supported on older
+     * versions but with different way to use it (not using quick play feature)
+     */
+    public static QuickPlayOption[] compatibleValues(Instance instance) {
+        return Arrays.stream(values())
+            .filter(quickPlayOption -> {
+                if (instance.isQuickPlaySupported(quickPlayOption)) {
+                    return true;
+                }
+                return quickPlayOption.compatibleOnOlderVersions;
+            })
+            .toArray(QuickPlayOption[]::new);
+    }
+
+    QuickPlayOption(String label, String argumentRuleValue, boolean compatibleOnOlderVersions) {
         this.label = label;
         this.argumentRuleValue = argumentRuleValue;
+        this.compatibleOnOlderVersions = compatibleOnOlderVersions;
     }
 }
