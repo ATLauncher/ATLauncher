@@ -39,6 +39,8 @@ import com.atlauncher.data.Instance;
 import com.atlauncher.data.LoginResponse;
 import com.atlauncher.data.MicrosoftAccount;
 import com.atlauncher.data.MojangAccount;
+import com.atlauncher.data.QuickPlayOption;
+import com.atlauncher.data.json.QuickPlay;
 import com.atlauncher.data.minecraft.Library;
 import com.atlauncher.data.minecraft.LoggingClient;
 import com.atlauncher.data.minecraft.PropertyMapSerializer;
@@ -438,6 +440,45 @@ public class MCLauncher {
             } else {
                 arguments.add("--width=" + App.settings.windowWidth);
                 arguments.add("--height=" + App.settings.windowHeight);
+            }
+        }
+
+        // Quick Play feature (with backward compatibility for older versions of Minecraft)
+        QuickPlay quickPlay = instance.launcher.quickPlay;
+
+        // Quick Play Multiplayer
+        if (quickPlay.serverAddress != null && !quickPlay.serverAddress.isEmpty()) {
+            String enteredServerAddress = quickPlay.serverAddress;
+            if (instance.isQuickPlaySupported(QuickPlayOption.multiPlayer)) {
+                // Minecraft 23w14a and newer versions
+                arguments.addAll(Arrays.asList(quickPlay.getSelectedQuickPlayOption().argumentRuleValue, enteredServerAddress));
+                arguments.add(enteredServerAddress);
+            } else {
+                // Minecraft 23w13a and older versions
+                String[] parts = enteredServerAddress.contains(":") ? enteredServerAddress.split(":")
+                    : new String[]{enteredServerAddress};
+                String address = parts[0];
+                String port = parts.length > 1 ? parts[1] : String.valueOf(Constants.MINECRAFT_DEFAULT_SERVER_PORT);
+                arguments.addAll(Arrays.asList("--server", address));
+                arguments.addAll(Arrays.asList("--port", port));
+            }
+        }
+
+        // Quick Play Single Player
+        if (quickPlay.worldName != null && !quickPlay.worldName.isEmpty()) {
+            String selectedWorldSaveName = quickPlay.worldName;
+            if (instance.isQuickPlaySupported(QuickPlayOption.singlePlayer)) {
+                // Only work for Minecraft 23w14a and newer versions
+                arguments.addAll(Arrays.asList(quickPlay.getSelectedQuickPlayOption().argumentRuleValue, selectedWorldSaveName));
+            }
+        }
+
+        // Quick Play Realm
+        if (quickPlay.realmId != null && !quickPlay.realmId.isEmpty()) {
+            String realmId = quickPlay.realmId;
+            if (instance.isQuickPlaySupported(QuickPlayOption.realm)) {
+                // Only work for Minecraft 23w14a and newer versions
+                arguments.addAll(Arrays.asList(quickPlay.getSelectedQuickPlayOption().argumentRuleValue, realmId));
             }
         }
 

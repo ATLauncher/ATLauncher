@@ -149,6 +149,7 @@ public class Constants {
             + "/mc/game/version_manifest.json";
     public static final String MINECRAFT_JAVA_RUNTIME_URL = LAUNCHER_META_MINECRAFT
             + "/v1/products/java-runtime/2ec0cc96c44e5a76b9c8b7c39df7210883d12871/all.json";
+    public static final int MINECRAFT_DEFAULT_SERVER_PORT = 25565;
 
     // Misc
     public static final String LEGACY_JAVA_FIXER_URL = "https://cdn.atlcdn.net/legacyjavafixer-1.0.jar";

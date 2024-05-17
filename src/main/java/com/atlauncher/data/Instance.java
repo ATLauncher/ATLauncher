@@ -3238,6 +3238,22 @@ public class Instance extends MinecraftVersion {
         return launcher.version;
     }
 
+    public List<String> getSinglePlayerWorldNamesFromFilesystem() {
+        File[] folders = ROOT.resolve("saves").toFile().listFiles((dir, name) -> new File(dir, name).isDirectory());
+        if (folders == null) return new ArrayList<>();
+        return Arrays.stream(folders).map(File::getName).collect(Collectors.toList());
+    }
+
+    public boolean isQuickPlaySupported(QuickPlayOption quickPlayOption) {
+        if (quickPlayOption.argumentRuleValue == null) {
+            return false;
+        }
+        return arguments.game.stream().anyMatch(
+            argumentRule -> argumentRule.value instanceof List &&
+                ((List<?>) argumentRule.value).contains(quickPlayOption.argumentRuleValue)
+        );
+    }
+
     private List<Path> getModPathsFromFilesystem() {
         return getModPathsFromFilesystem(Arrays.asList(ROOT.resolve("mods"),
                 ROOT.resolve("resourcepacks"),

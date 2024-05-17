@@ -7,6 +7,8 @@ This changelog only contains the changes that are unreleased. For changes for in
 
 ### New Features
 
+- Add the option to join a minecraft server, world, and realm when launching an instance [#748]
+
 ### Fixes
 - Issue exporting/disabling/deleting worlds downloaded from CurseForge [#927]
 - Issue installing Modrinth pack with invalid filename [#923]
