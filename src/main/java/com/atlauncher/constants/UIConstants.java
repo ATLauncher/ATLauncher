@@ -49,6 +49,7 @@ public class UIConstants {
     public static final int LAUNCHER_ACCOUNTS_TAB = 5;
     public static final int LAUNCHER_TOOLS_TAB = 6;
     public static final int LAUNCHER_SETTINGS_TAB = 7;
+    public static final int LAUNCHER_ABOUT_TAB = 8;
 
     public static final String getInitialTabName(int initialTab) {
         switch (initialTab) {
@@ -68,6 +69,8 @@ public class UIConstants {
                 return "Tools";
             case UIConstants.LAUNCHER_SETTINGS_TAB:
                 return "Settings";
+            case UIConstants.LAUNCHER_ABOUT_TAB:
+                return "About";
         }
 
         return "Unknown";
