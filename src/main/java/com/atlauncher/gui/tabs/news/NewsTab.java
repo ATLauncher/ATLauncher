@@ -33,12 +33,10 @@ import javax.swing.event.HyperlinkEvent;
 import javax.swing.text.html.HTMLEditorKit;
 import javax.swing.text.html.StyleSheet;
 
-import org.apache.logging.log4j.Logger;
 import org.mini2Dx.gettext.GetText;
 
 import com.atlauncher.gui.panels.HierarchyPanel;
 import com.atlauncher.gui.tabs.Tab;
-import com.atlauncher.managers.LogManager;
 import com.atlauncher.utils.OS;
 import com.atlauncher.viewmodel.base.INewsViewModel;
 import com.atlauncher.viewmodel.impl.NewsViewModel;
@@ -47,7 +45,6 @@ import com.atlauncher.viewmodel.impl.NewsViewModel;
  * This class extends {@link JPanel} and provides a Panel for displaying the
  * latest news.
  */
-@SuppressWarnings("serial")
 public class NewsTab extends HierarchyPanel implements Tab {
     private HTMLEditorKit NEWS_KIT;
     private ContextMenu NEWS_MENU;
@@ -83,16 +80,11 @@ public class NewsTab extends HierarchyPanel implements Tab {
         scrollPane.getVerticalScrollBar().setUnitIncrement(16);
         this.add(scrollPane, BorderLayout.CENTER);
 
-        viewModel.addOnReloadListener(html -> {
-            // Because reload() is a public function, we need to ensure it
-            // does not trigger setting the UI when the UI is hidden
-            if (isShowing()) {
-                this.NEWS_PANE.setText("");
-                this.NEWS_PANE.setText(html);
-                this.NEWS_PANE.setCaretPosition(0);
-            }
-        });
-        reload();
+        addDisposable(viewModel.getNewsHTML().subscribe(html -> {
+            this.NEWS_PANE.setText("");
+            this.NEWS_PANE.setText(html);
+            this.NEWS_PANE.setCaretPosition(0);
+        }));
     }
 
     @Override
@@ -101,7 +93,6 @@ public class NewsTab extends HierarchyPanel implements Tab {
         NEWS_MENU = null;
         NEWS_PANE = null;
         removeAll();
-        viewModel.addOnReloadListener(null);
     }
 
     private void createNewsKit() {
@@ -146,14 +137,6 @@ public class NewsTab extends HierarchyPanel implements Tab {
                 });
             }
         };
-    }
-
-    /**
-     * Reloads the panel with updated news.
-     */
-    public void reload() {
-        if (viewModel != null)
-            viewModel.reload();
     }
 
     @Override

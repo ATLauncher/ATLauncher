@@ -170,7 +170,6 @@ public final class LauncherFrame extends JFrame implements RelocalizationListene
         PerformanceManager.start("newsTab");
         NewsTab newsTab = new NewsTab();
         this.tabs.put(UIConstants.LAUNCHER_NEWS_TAB, newsTab);
-        App.launcher.setNewsPanel(newsTab);
         PerformanceManager.end("newsTab");
 
         PerformanceManager.start("createPackTab");
