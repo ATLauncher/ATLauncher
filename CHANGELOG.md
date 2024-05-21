@@ -17,3 +17,4 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Update the `application.yml` GitHub workflow [#889]
 - Migrate to Gradle KTS [#898]
 - Implement HierarchyPanel in ToolsTab [#840]
+- Implement HierarchyPanel in ServersTab [#839]
