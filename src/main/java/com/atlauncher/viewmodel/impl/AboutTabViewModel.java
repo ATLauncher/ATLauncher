@@ -17,7 +17,6 @@
  */
 package com.atlauncher.viewmodel.impl;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -26,7 +25,6 @@ import javax.annotation.Nonnull;
 
 import com.atlauncher.constants.Constants;
 import com.atlauncher.data.Contributor;
-import com.atlauncher.data.LauncherLibrary;
 import com.atlauncher.graphql.GetLauncherContributorsQuery;
 import com.atlauncher.network.GraphqlClient;
 import com.atlauncher.utils.Java;
@@ -84,11 +82,5 @@ public class AboutTabViewModel implements IAboutTabViewModel {
     @Override
     public String getCopyInfo() {
         return getInfo();
-    }
-
-    @Nonnull
-    @Override
-    public List<LauncherLibrary> getLibraries() {
-        return new ArrayList<>();
     }
 }

@@ -72,7 +72,7 @@ public class AboutTab extends HierarchyPanel implements Tab, RelocalizationListe
      */
     private JButton copyButton;
 
-    private JLabel contributorLabel, licenseLabel;
+    private JLabel contributorsLabel, licenseLabel;
 
     private IAboutTabViewModel viewModel;
 
@@ -86,7 +86,7 @@ public class AboutTab extends HierarchyPanel implements Tab, RelocalizationListe
     @Override
     public void onRelocalization() {
         copyButton.setText(GetText.tr("Copy"));
-        contributorLabel.setText(GetText.tr("Contributors"));
+        contributorsLabel.setText(GetText.tr("Contributors"));
         licenseLabel.setText(GetText.tr("License"));
     }
 
@@ -160,11 +160,11 @@ public class AboutTab extends HierarchyPanel implements Tab, RelocalizationListe
         {
             // Header
             {
-                contributorLabel = new JLabel();
-                contributorLabel.setFont(ATLauncherLaf.getInstance().getTitleFont());
-                contributorLabel.setBorder(BorderFactory.createEmptyBorder(UIConstants.SPACING_XLARGE, UIConstants.SPACING_LARGE, 0, 0));
+                contributorsLabel = new JLabel();
+                contributorsLabel.setFont(ATLauncherLaf.getInstance().getTitleFont());
+                contributorsLabel.setBorder(BorderFactory.createEmptyBorder(UIConstants.SPACING_XLARGE, UIConstants.SPACING_LARGE, 0, 0));
                 Box box = Box.createHorizontalBox();
-                box.add(contributorLabel);
+                box.add(contributorsLabel);
                 box.add(Box.createHorizontalGlue());
                 add(box);
                 add(new JSeparator());
@@ -250,6 +250,8 @@ public class AboutTab extends HierarchyPanel implements Tab, RelocalizationListe
                 LogManager.logStackTrace(e);
             }
             JScrollPane scrollPane = new JScrollPane(license);
+            scrollPane.setPreferredSize(new Dimension(0, 220));
+            SwingUtilities.invokeLater(() -> scrollPane.getVerticalScrollBar().setValue(0));
             licensePanel.add(scrollPane);
             add(licensePanel);
         }
@@ -262,7 +264,7 @@ public class AboutTab extends HierarchyPanel implements Tab, RelocalizationListe
         removeAll();
 
         copyButton = null;
-        contributorLabel = null;
+        contributorsLabel = null;
         licenseLabel = null;
     }
 }
