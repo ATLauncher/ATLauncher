@@ -27,6 +27,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -73,6 +74,8 @@ public class AboutTab extends HierarchyPanel implements Tab, RelocalizationListe
     private JButton copyButton;
 
     private JLabel contributorsLabel, licenseLabel;
+    private JScrollPane contributorsScrollPane;
+    private JPanel authorsList;
 
     private IAboutTabViewModel viewModel;
 
@@ -172,55 +175,16 @@ public class AboutTab extends HierarchyPanel implements Tab, RelocalizationListe
             // Content
             {
                 // Create list
-                JPanel authorsList = new JPanel();
+                authorsList = new JPanel();
                 authorsList.setLayout(new GridLayout(1, 0));
 
                 // Populate list
-                for (Contributor contributor : viewModel.getContributors()) {
-                    JPanel panel = new JPanel();
-                    panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-                    panel.setBorder(BorderFactory.createEmptyBorder(0, UIConstants.SPACING_XLARGE, 0, UIConstants.SPACING_XLARGE));
-
-                    BackgroundImageLabel icon = new BackgroundImageLabel(contributor.avatarUrl, 64, 64);
-                    icon.setAlignmentX(Component.CENTER_ALIGNMENT);
-                    icon.addMouseListener(new MouseAdapter() {
-                        @Override
-                        public void mouseClicked(MouseEvent e) {
-                            if (e.getButton() == MouseEvent.BUTTON1) {
-                                OS.openWebBrowser(contributor.url);
-                            }
-                        }
-
-                        @Override
-                        public void mouseEntered(MouseEvent e) {
-                            super.mouseEntered(e);
-                            setCursor(new Cursor(Cursor.HAND_CURSOR));
-                        }
-
-                        @Override
-                        public void mouseExited(MouseEvent e) {
-                            super.mouseExited(e);
-                            setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-                        }
-                    });
-                    panel.add(icon);
-
-                    JEditorPane contributorName = new JEditorPane("text/html", "<html><center><a href=\"" + contributor.url + "\">" + contributor.name + "</a></center></html>");
-                    contributorName.setEditable(false);
-                    contributorName.addHyperlinkListener(e -> {
-                        if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
-                            OS.openWebBrowser(e.getURL());
-                        }
-                    });
-                    panel.add(contributorName);
-                    authorsList.add(panel);
-                }
+                addDisposable(viewModel.getContributors().subscribe(this::renderAuthors));
 
                 // Create scroll panel
-                JScrollPane contributorsScrollPane = new JScrollPane(authorsList);
+                contributorsScrollPane = new JScrollPane(authorsList);
                 contributorsScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
                 contributorsScrollPane.setPreferredSize(new Dimension(0, 80));
-                SwingUtilities.invokeLater(() -> contributorsScrollPane.getHorizontalScrollBar().setValue(0));
                 add(contributorsScrollPane);
             }
         }
@@ -266,5 +230,55 @@ public class AboutTab extends HierarchyPanel implements Tab, RelocalizationListe
         copyButton = null;
         contributorsLabel = null;
         licenseLabel = null;
+        authorsList = null;
+        contributorsScrollPane = null;
+    }
+
+    /**
+     * Accepts contributors to render onto the screen.
+     *
+     * @param contributors contributors to render
+     */
+    private void renderAuthors(List<Contributor> contributors) {
+        for (Contributor contributor : contributors) {
+            JPanel panel = new JPanel();
+            panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+            panel.setBorder(BorderFactory.createEmptyBorder(0, UIConstants.SPACING_XLARGE, 0, UIConstants.SPACING_XLARGE));
+
+            BackgroundImageLabel icon = new BackgroundImageLabel(contributor.avatarUrl, 64, 64);
+            icon.setAlignmentX(Component.CENTER_ALIGNMENT);
+            icon.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    if (e.getButton() == MouseEvent.BUTTON1) {
+                        OS.openWebBrowser(contributor.url);
+                    }
+                }
+
+                @Override
+                public void mouseEntered(MouseEvent e) {
+                    super.mouseEntered(e);
+                    setCursor(new Cursor(Cursor.HAND_CURSOR));
+                }
+
+                @Override
+                public void mouseExited(MouseEvent e) {
+                    super.mouseExited(e);
+                    setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+                }
+            });
+            panel.add(icon);
+
+            JEditorPane contributorName = new JEditorPane("text/html", "<html><center><a href=\"" + contributor.url + "\">" + contributor.name + "</a></center></html>");
+            contributorName.setEditable(false);
+            contributorName.addHyperlinkListener(e -> {
+                if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+                    OS.openWebBrowser(e.getURL());
+                }
+            });
+            panel.add(contributorName);
+            authorsList.add(panel);
+        }
+        SwingUtilities.invokeLater(() -> contributorsScrollPane.getHorizontalScrollBar().setValue(0));
     }
 }

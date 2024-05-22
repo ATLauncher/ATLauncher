@@ -17,6 +17,7 @@
  */
 package com.atlauncher.viewmodel.impl;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -30,23 +31,44 @@ import com.atlauncher.network.GraphqlClient;
 import com.atlauncher.utils.Java;
 import com.atlauncher.utils.OS;
 import com.atlauncher.viewmodel.base.IAboutTabViewModel;
+import com.gitlab.doomsdayrs.lib.rxswing.schedulers.SwingSchedulers;
+
+import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.subjects.BehaviorSubject;
 
 /**
  * 13 / 06 / 2022
  */
 public class AboutTabViewModel implements IAboutTabViewModel {
 
+    private final BehaviorSubject<List<Contributor>> contributorsSubject = BehaviorSubject.createDefault(Collections.emptyList());
     private String info = null;
+
+    public AboutTabViewModel() {
+        // Load up contributors as soon as the view model is created.
+        // This will always take longer then rendering the UI.
+        GraphqlClient.call(
+            new GetLauncherContributorsQuery(),
+            1,
+            TimeUnit.DAYS,
+            this::onContributorsResponse
+        );
+    }
+
+    private void onContributorsResponse(GetLauncherContributorsQuery.Data response) {
+        contributorsSubject.onNext(
+            response.about()
+                .contributors()
+                .stream()
+                .map(contributor -> new Contributor(contributor.name(), contributor.url(), contributor.avatarUrl()))
+                .collect(Collectors.toList())
+        );
+    }
 
     @Nonnull
     @Override
-    public List<Contributor> getContributors() {
-        GetLauncherContributorsQuery.Data response = GraphqlClient
-                            .callAndWait(new GetLauncherContributorsQuery(), 1, TimeUnit.DAYS);
-
-        return response.about().contributors().stream().map(contributor -> {
-            return new Contributor(contributor.name(), contributor.url(), contributor.avatarUrl());
-        }).collect(Collectors.toList());
+    public Observable<List<Contributor>> getContributors() {
+        return contributorsSubject.observeOn(SwingSchedulers.edt());
     }
 
     /**

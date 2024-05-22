@@ -23,6 +23,8 @@ import javax.annotation.Nonnull;
 
 import com.atlauncher.data.Contributor;
 
+import io.reactivex.rxjava3.core.Observable;
+
 /**
  * 13 / 06 / 2022
  * <p>
@@ -34,7 +36,7 @@ public interface IAboutTabViewModel {
      * @return List of contributors
      */
     @Nonnull
-    List<Contributor> getContributors();
+    Observable<List<Contributor>> getContributors();
 
     /**
      * @return Info about the launcher and its environment
