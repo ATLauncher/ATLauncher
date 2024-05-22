@@ -178,7 +178,7 @@ public class GeneralInstanceSettingsTab extends JPanel {
 
         quickPlayType = new JComboBox<>();
         Arrays.stream(QuickPlayOption.compatibleValues(instance)).forEach(option ->
-            quickPlayType.addItem(new ComboItem<>(option, GetText.tr(option.label)))
+            quickPlayType.addItem(new ComboItem<>(option, option.label))
         );
         quickPlayType.setSelectedIndex(
             Arrays.asList(QuickPlayOption.compatibleValues(instance)).indexOf(quickPlay.getSelectedQuickPlayOption())

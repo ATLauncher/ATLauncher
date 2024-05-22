@@ -19,15 +19,17 @@ package com.atlauncher.data;
 
 import java.util.Arrays;
 
+import org.mini2Dx.gettext.GetText;
+
 /**
  * The types of the Quick Play options
  * The values are from <a href="https://www.minecraft.net/en-us/article/minecraft-snapshot-23w14a">Minecraft QuickPlay</a>
  */
 public enum QuickPlayOption {
-    disabled("Disabled", null, true),
-    singlePlayer("Single Player", "--quickPlaySingleplayer", false),
-    multiPlayer("Multiplayer", "--quickPlayMultiplayer", true),
-    realm("Minecraft Realm", "--quickPlayRealms", false);
+    disabled(GetText.tr("Disabled"), null, true),
+    singlePlayer(GetText.tr("Single Player"), "--quickPlaySingleplayer", false),
+    multiPlayer(GetText.tr("Multiplayer"), "--quickPlayMultiplayer", false),
+    realm(GetText.tr("Minecraft Realm"), "--quickPlayRealm", false);
 
     public final String label;
     public final String argumentRuleValue;
