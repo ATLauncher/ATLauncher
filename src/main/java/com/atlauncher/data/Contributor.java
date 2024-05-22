@@ -18,25 +18,31 @@
 package com.atlauncher.data;
 
 /**
- * Represents an author in AboutTab.
+ * Represents an contributor in AboutTab.
  */
-public class Author {
+public class Contributor {
     /**
-     * Name of the author.
+     * Name of the contributor.
      */
     public final String name;
 
     /**
-     * URL to the profile picture of the author.
+     * Url to the GitHub profile of the contributor.
      */
-    public final String imageURL;
+    public final String url;
+
+    /**
+     * URL to the avatar of the contributor.
+     */
+    public final String avatarUrl;
 
     /**
      * @param name     of the author
      * @param imageURL of the authors profile picture
      */
-    public Author(String name, String imageURL) {
+    public Contributor(String name, String url, String avatarUrl) {
         this.name = name;
-        this.imageURL = imageURL;
+        this.url = url;
+        this.avatarUrl = avatarUrl;
     }
 }

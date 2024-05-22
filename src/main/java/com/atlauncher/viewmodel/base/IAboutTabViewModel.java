@@ -21,7 +21,7 @@ import java.util.List;
 
 import javax.annotation.Nonnull;
 
-import com.atlauncher.data.Author;
+import com.atlauncher.data.Contributor;
 import com.atlauncher.data.LauncherLibrary;
 
 /**
@@ -32,10 +32,10 @@ import com.atlauncher.data.LauncherLibrary;
 public interface IAboutTabViewModel {
 
     /**
-     * @return List of authors
+     * @return List of contributors
      */
     @Nonnull
-    List<Author> getAuthors();
+    List<Contributor> getContributors();
 
     /**
      * @return Info about the launcher and its environment

@@ -104,12 +104,17 @@ public class GraphqlClient {
 
     public static <D extends Operation.Data, T, V extends Operation.Variables> T callAndWait(
             @NotNull Query<D, T, V> query) {
+        return callAndWait(query, 5, TimeUnit.MINUTES);
+    }
+
+    public static <D extends Operation.Data, T, V extends Operation.Variables> T callAndWait(
+            @NotNull Query<D, T, V> query, int cachePeriod, TimeUnit timeUnit) {
         final CountDownLatch latch = new CountDownLatch(1);
         AtomicReference<T> data = new AtomicReference<>(null);
 
         apolloClient.query(query)
                 .toBuilder()
-                .httpCachePolicy(new HttpCachePolicy.Policy(FetchStrategy.CACHE_FIRST, 5, TimeUnit.MINUTES, false))
+                .httpCachePolicy(new HttpCachePolicy.Policy(FetchStrategy.CACHE_FIRST, cachePeriod, timeUnit, false))
                 .build()
                 .enqueue(new ApolloCall.Callback<T>() {
                     @Override

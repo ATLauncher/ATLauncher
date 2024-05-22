@@ -18,15 +18,17 @@
 package com.atlauncher.viewmodel.impl;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
 
 import com.atlauncher.constants.Constants;
-import com.atlauncher.data.Author;
+import com.atlauncher.data.Contributor;
 import com.atlauncher.data.LauncherLibrary;
+import com.atlauncher.graphql.GetLauncherContributorsQuery;
+import com.atlauncher.network.GraphqlClient;
 import com.atlauncher.utils.Java;
 import com.atlauncher.utils.OS;
 import com.atlauncher.viewmodel.base.IAboutTabViewModel;
@@ -35,66 +37,18 @@ import com.atlauncher.viewmodel.base.IAboutTabViewModel;
  * 13 / 06 / 2022
  */
 public class AboutTabViewModel implements IAboutTabViewModel {
-    /**
-     * Produced via "git shortlog -s -n --all --no-merges" then some edits
-     * <p>
-     * Use the following pattern to retrieve icons
-     * "https://avatars.githubusercontent.com/USERNAME"
-     */
-    @SuppressWarnings("JavadocLinkAsPlainText")
-    private static final String[] AUTHORS_ARRAY = {
-        "Ryan Dowling",
-        "RyanTheAllmighty",
-        "doomsdayrs",
-        "Asyncronous",
-        "PORTB",
-        "JakeJMattson",
-        "Jamie (Lexteam)",
-        "Ryan",
-        "s0cks",
-        "Jamie Mansfield",
-        "flaw600",
-        "Leah",
-        "Alan Jenkins",
-        "dgelessus",
-        "Kihira",
-        "Harald Krämer",
-        "James Ross",
-        "iarspider",
-        "xz-dev",
-        "Mysticpasta1",
-        "Torsten Walluhn",
-        "modmuss50",
-        "Andrew Thurman",
-        "Cassandra Caina",
-        "Jamie (Lexware)",
-        "Jowsey",
-        "Shegorath123",
-        "Tazz",
-        "notfood",
-        "Dallas Epperson",
-        "Emma Waffle",
-        "Hossam Mohsen",
-        "JBMagination",
-        "Jamie",
-        "Laceh",
-        "Mihail Yaremenko",
-        "Sasha Sorokin",
-        "TecCheck",
-        "Trejkaz",
-        "mac",
-    };
 
     private String info = null;
 
     @Nonnull
     @Override
-    public List<Author> getAuthors() {
-        // Since the source is git, we can just map it
-        return Arrays
-            .stream(AUTHORS_ARRAY)
-            .map(author -> new Author(author, "https://avatars.githubusercontent.com/" + author))
-            .collect(Collectors.toList());
+    public List<Contributor> getContributors() {
+        GetLauncherContributorsQuery.Data response = GraphqlClient
+                            .callAndWait(new GetLauncherContributorsQuery(), 1, TimeUnit.DAYS);
+
+        return response.about().contributors().stream().map(contributor -> {
+            return new Contributor(contributor.name(), contributor.url(), contributor.avatarUrl());
+        }).collect(Collectors.toList());
     }
 
     /**
