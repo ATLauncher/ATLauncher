@@ -23,6 +23,7 @@ jobs:
         uses: gradle/actions/setup-gradle@v3
         with:
           validate-wrappers: true
+          add-job-summary: never
 
       - name: Check license headers
         run: ./gradlew checkLicenses
@@ -50,6 +51,7 @@ jobs:
         uses: gradle/actions/setup-gradle@v3
         with:
           validate-wrappers: true
+          add-job-summary: never
 
       - name: Run Unit Tests
         run: ./gradlew --no-daemon test --tests com.atlauncher.*
@@ -83,6 +85,7 @@ jobs:
         uses: gradle/actions/setup-gradle@v3
         with:
           validate-wrappers: true
+          add-job-summary: never
 
       - name: Build
         run: ./gradlew build -x test
@@ -107,6 +110,7 @@ jobs:
         uses: gradle/actions/setup-gradle@v3
         with:
           validate-wrappers: true
+          add-job-summary: never
 
       - name: Read version
         id: version
