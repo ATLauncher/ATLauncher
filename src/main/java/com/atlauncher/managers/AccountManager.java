@@ -106,20 +106,9 @@ public class AccountManager {
                 List<AbstractAccount> accounts = Gsons.DEFAULT.fromJson(fileReader, abstractAccountListType);
 
                 newAccounts.addAll(accounts.stream().filter(account -> {
-                    if (account instanceof MicrosoftAccount) {
-                        MicrosoftAccount microsoftAccount = (MicrosoftAccount) account;
-                        return microsoftAccount.accessToken != null
-                                && microsoftAccount.accessToken.split("\\.").length == 3;
-                    }
-
-                    if (account instanceof MojangAccount) {
-                        // TODO Delete the account here
-                        MojangAccount mojangAccount = (MojangAccount) account;
-                        return !mojangAccount.uuid.equals("00000000000000000000000000000000")
-                                && !mojangAccount.clientToken.isEmpty();
-                    }
-
-                    return !account.uuid.equals("00000000000000000000000000000000");
+                    MicrosoftAccount microsoftAccount = (MicrosoftAccount) account;
+                    return microsoftAccount.accessToken != null
+                        && microsoftAccount.accessToken.split("\\.").length == 3;
                 }).collect(Collectors.toList()));
             } catch (Exception e) {
                 LogManager.logStackTrace("Exception loading accounts", e);
@@ -131,22 +120,6 @@ public class AccountManager {
         for (AbstractAccount account : newAccounts) {
             if (account.username.equalsIgnoreCase(App.settings.lastAccount)) {
                 SELECTED_ACCOUNT.onNext(Optional.of(account));
-            }
-
-            if (account instanceof MojangAccount) {
-                MojangAccount mojangAccount = (MojangAccount) account;
-
-                if (mojangAccount.encryptedPassword == null) {
-                    mojangAccount.password = "";
-                    mojangAccount.remember = false;
-                } else {
-                    mojangAccount.password = Utils.decrypt(mojangAccount.encryptedPassword);
-                    if (mojangAccount.password == null) {
-                        LogManager.error("Error reading in saved password from file!");
-                        mojangAccount.password = "";
-                        mojangAccount.remember = false;
-                    }
-                }
             }
         }
 
