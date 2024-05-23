@@ -22,6 +22,7 @@ import java.awt.Insets;
 public class UIConstants {
     public static final int SPACING_SMALL = 3;
     public static final int SPACING_LARGE = 5;
+    public static final int SPACING_XLARGE = 10;
 
     public static final Insets LABEL_INSETS = new Insets(SPACING_LARGE, 0, SPACING_LARGE, SPACING_LARGE * 2);
     public static final Insets FIELD_INSETS = new Insets(SPACING_LARGE, 0, SPACING_LARGE, 0);

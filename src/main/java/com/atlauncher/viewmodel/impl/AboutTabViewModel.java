@@ -17,84 +17,58 @@
  */
 package com.atlauncher.viewmodel.impl;
 
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
 
 import com.atlauncher.constants.Constants;
-import com.atlauncher.data.Author;
-import com.atlauncher.data.LauncherLibrary;
+import com.atlauncher.data.Contributor;
+import com.atlauncher.graphql.GetLauncherContributorsQuery;
+import com.atlauncher.network.GraphqlClient;
 import com.atlauncher.utils.Java;
 import com.atlauncher.utils.OS;
 import com.atlauncher.viewmodel.base.IAboutTabViewModel;
+import com.gitlab.doomsdayrs.lib.rxswing.schedulers.SwingSchedulers;
+
+import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.subjects.BehaviorSubject;
 
 /**
  * 13 / 06 / 2022
  */
 public class AboutTabViewModel implements IAboutTabViewModel {
-    /**
-     * Produced via "git shortlog -s -n --all --no-merges" then some edits
-     * <p>
-     * Use the following pattern to retrieve icons
-     * "https://avatars.githubusercontent.com/USERNAME"
-     */
-    @SuppressWarnings("JavadocLinkAsPlainText")
-    private static final String[] AUTHORS_ARRAY = {
-        "Ryan Dowling",
-        "RyanTheAllmighty",
-        "doomsdayrs",
-        "Asyncronous",
-        "PORTB",
-        "JakeJMattson",
-        "Jamie (Lexteam)",
-        "Ryan",
-        "s0cks",
-        "Jamie Mansfield",
-        "flaw600",
-        "Leah",
-        "Alan Jenkins",
-        "dgelessus",
-        "Kihira",
-        "Harald Krämer",
-        "James Ross",
-        "iarspider",
-        "xz-dev",
-        "Mysticpasta1",
-        "Torsten Walluhn",
-        "modmuss50",
-        "Andrew Thurman",
-        "Cassandra Caina",
-        "Jamie (Lexware)",
-        "Jowsey",
-        "Shegorath123",
-        "Tazz",
-        "notfood",
-        "Dallas Epperson",
-        "Emma Waffle",
-        "Hossam Mohsen",
-        "JBMagination",
-        "Jamie",
-        "Laceh",
-        "Mihail Yaremenko",
-        "Sasha Sorokin",
-        "TecCheck",
-        "Trejkaz",
-        "mac",
-    };
 
+    private final BehaviorSubject<List<Contributor>> contributorsSubject = BehaviorSubject.createDefault(Collections.emptyList());
     private String info = null;
+
+    public AboutTabViewModel() {
+        // Load up contributors as soon as the view model is created.
+        // This will always take longer then rendering the UI.
+        GraphqlClient.call(
+            new GetLauncherContributorsQuery(),
+            1,
+            TimeUnit.DAYS,
+            this::onContributorsResponse
+        );
+    }
+
+    private void onContributorsResponse(GetLauncherContributorsQuery.Data response) {
+        contributorsSubject.onNext(
+            response.about()
+                .contributors()
+                .stream()
+                .map(contributor -> new Contributor(contributor.name(), contributor.url(), contributor.avatarUrl()))
+                .collect(Collectors.toList())
+        );
+    }
 
     @Nonnull
     @Override
-    public List<Author> getAuthors() {
-        // Since the source is git, we can just map it
-        return Arrays
-            .stream(AUTHORS_ARRAY)
-            .map(author -> new Author(author, "https://avatars.githubusercontent.com/" + author))
-            .collect(Collectors.toList());
+    public Observable<List<Contributor>> getContributors() {
+        return contributorsSubject.observeOn(SwingSchedulers.edt());
     }
 
     /**
@@ -130,11 +104,5 @@ public class AboutTabViewModel implements IAboutTabViewModel {
     @Override
     public String getCopyInfo() {
         return getInfo();
-    }
-
-    @Nonnull
-    @Override
-    public List<LauncherLibrary> getLibraries() {
-        return new ArrayList<>();
     }
 }

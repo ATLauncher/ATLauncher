@@ -18,28 +18,37 @@
 package com.atlauncher.gui.tabs;
 
 import java.awt.Component;
-import java.awt.Desktop;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.GridLayout;
-import java.io.IOException;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JEditorPane;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JTextPane;
-import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
+import javax.swing.event.HyperlinkEvent;
 
 import org.mini2Dx.gettext.GetText;
 
+import com.atlauncher.App;
+import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.constants.Constants;
-import com.atlauncher.data.Author;
-import com.atlauncher.data.LauncherLibrary;
+import com.atlauncher.constants.UIConstants;
+import com.atlauncher.data.Contributor;
 import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.gui.components.BackgroundImageLabel;
@@ -64,7 +73,9 @@ public class AboutTab extends HierarchyPanel implements Tab, RelocalizationListe
      */
     private JButton copyButton;
 
-    private JLabel contributorLabel, acknowledgementsLabel, librariesLabel, licenseLabel;
+    private JLabel contributorsLabel, licenseLabel;
+    private JScrollPane contributorsScrollPane;
+    private JPanel authorsList;
 
     private IAboutTabViewModel viewModel;
 
@@ -77,11 +88,9 @@ public class AboutTab extends HierarchyPanel implements Tab, RelocalizationListe
 
     @Override
     public void onRelocalization() {
-        //acknowledgementsLabel.setText(GetText.tr("Acknowledgements:"));
         copyButton.setText(GetText.tr("Copy"));
-        contributorLabel.setText(GetText.tr("Contributors:"));
-        //librariesLabel.setText(GetText.tr("Libraries:"));
-        licenseLabel.setText(GetText.tr("License:"));
+        contributorsLabel.setText(GetText.tr("Contributors"));
+        licenseLabel.setText(GetText.tr("License"));
     }
 
     @Override
@@ -112,7 +121,7 @@ public class AboutTab extends HierarchyPanel implements Tab, RelocalizationListe
                 JLabel infoLabel = new JLabel();
                 infoLabel.setText(Constants.LAUNCHER_NAME);
                 infoLabel.setFont(ATLauncherLaf.getInstance().getTitleFont());
-                infoLabel.setBorder(BorderFactory.createEmptyBorder(0, 4, 0, 0));
+                infoLabel.setBorder(BorderFactory.createEmptyBorder(0, UIConstants.SPACING_LARGE, 0, 0));
                 Box box = Box.createHorizontalBox();
                 box.add(infoLabel);
                 box.add(Box.createHorizontalGlue());
@@ -154,11 +163,11 @@ public class AboutTab extends HierarchyPanel implements Tab, RelocalizationListe
         {
             // Header
             {
-                contributorLabel = new JLabel();
-                contributorLabel.setFont(ATLauncherLaf.getInstance().getTitleFont());
-                contributorLabel.setBorder(BorderFactory.createEmptyBorder(0, 4, 0, 0));
+                contributorsLabel = new JLabel();
+                contributorsLabel.setFont(ATLauncherLaf.getInstance().getTitleFont());
+                contributorsLabel.setBorder(BorderFactory.createEmptyBorder(UIConstants.SPACING_XLARGE, UIConstants.SPACING_LARGE, 0, 0));
                 Box box = Box.createHorizontalBox();
-                box.add(contributorLabel);
+                box.add(contributorsLabel);
                 box.add(Box.createHorizontalGlue());
                 add(box);
                 add(new JSeparator());
@@ -166,144 +175,51 @@ public class AboutTab extends HierarchyPanel implements Tab, RelocalizationListe
             // Content
             {
                 // Create list
-                JPanel authorsList = new JPanel();
+                authorsList = new JPanel();
                 authorsList.setLayout(new GridLayout(1, 0));
 
                 // Populate list
-                for (Author author : viewModel.getAuthors()) {
-                    JPanel panel = new JPanel();
-                    panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-                    panel.setBorder(BorderFactory.createEmptyBorder(8, 8, 8, 8));
-
-                    BackgroundImageLabel icon = new BackgroundImageLabel(author.imageURL, 64, 64);
-                    icon.setAlignmentX(Component.CENTER_ALIGNMENT);
-                    panel.add(icon);
-
-                    JLabel pane = new JLabel();
-                    pane.setText(author.name);
-                    pane.setHorizontalAlignment(SwingConstants.CENTER);
-                    pane.setAlignmentX(Component.CENTER_ALIGNMENT);
-                    panel.add(pane);
-                    authorsList.add(panel);
-                }
+                addDisposable(viewModel.getContributors().subscribe(this::renderAuthors));
 
                 // Create scroll panel
-                JScrollPane contributorsScrollPane = new JScrollPane(authorsList);
+                contributorsScrollPane = new JScrollPane(authorsList);
                 contributorsScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-                contributorsScrollPane.setPreferredSize(new Dimension(0, 128));
-                SwingUtilities.invokeLater(() -> contributorsScrollPane.getHorizontalScrollBar().setValue(0));
+                contributorsScrollPane.setPreferredSize(new Dimension(0, 80));
                 add(contributorsScrollPane);
             }
         }
 
-        // Acknowledgements
+        // License
         {
-            // Label
-            /*{
-                acknowledgementsLabel = new JLabel();
-                acknowledgementsLabel.setFont(ATLauncherLaf.getInstance().getTitleFont());
-                acknowledgementsLabel.setBorder(BorderFactory.createEmptyBorder(0, 4, 0, 0));
-                acknowledgementsLabel.setHorizontalAlignment(SwingConstants.LEADING);
-                Box box = Box.createHorizontalBox();
-                box.add(acknowledgementsLabel);
-                box.add(Box.createHorizontalGlue());
-                add(box);
-                add(new JSeparator());
-            }*/
-
-            // Content
-            {
-
-                // Image sources
-                {
-
+            JPanel licensePanel = new JPanel();
+            licensePanel.setLayout(new BoxLayout(licensePanel, BoxLayout.PAGE_AXIS));
+            licenseLabel = new JLabel();
+            licenseLabel.setFont(ATLauncherLaf.getInstance().getTitleFont());
+            licenseLabel.setBorder(BorderFactory.createEmptyBorder(UIConstants.SPACING_XLARGE, UIConstants.SPACING_LARGE, 0, 0));
+            Box box = Box.createHorizontalBox();
+            box.add(licenseLabel);
+            box.add(Box.createHorizontalGlue());
+            licensePanel.add(box);
+            licensePanel.add(new JSeparator());
+            JEditorPane license = new JEditorPane("text/html", "");
+            license.setEditable(false);
+            license.addHyperlinkListener(e -> {
+                if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+                    OS.openWebBrowser(e.getURL());
                 }
-
-                // Libraries
-                /*JPanel librariesPanel = new JPanel();
-                {
-                    librariesPanel.setLayout(new BoxLayout(librariesPanel, BoxLayout.PAGE_AXIS));
-
-                    librariesLabel = new JLabel();
-                    librariesLabel.setFont(ATLauncherLaf.getInstance().getTitleFont());
-                    librariesLabel.setBorder(BorderFactory.createEmptyBorder(0, 4, 0, 0));
-                    Box box = Box.createHorizontalBox();
-                    box.add(librariesLabel);
-                    box.add(Box.createHorizontalGlue());
-                    librariesPanel.add(box);
-                    librariesPanel.add(new JSeparator());
-
-                    JPanel librariesListPanel = new JPanel();
-                    librariesListPanel.setLayout(new BoxLayout(librariesListPanel, BoxLayout.PAGE_AXIS));
-                    for (LauncherLibrary library : viewModel.getLibraries()) {
-                        JButton button = new JButton();
-                        button.setText(library.name);
-                        button.addActionListener(event -> {
-                            try {
-                                Desktop.getDesktop().browse(library.link);
-                            } catch (IOException e) {
-                                LogManager.logStackTrace(e);
-                            }
-                        });
-                        librariesListPanel.add(button);
-                    }
-                    librariesPanel.add(librariesListPanel);
-                }
-                 */
-                // License
-                JPanel licensePanel = new JPanel();
-                {
-                    licensePanel.setLayout(new BoxLayout(licensePanel, BoxLayout.PAGE_AXIS));
-                    licenseLabel = new JLabel();
-                    licenseLabel.setFont(ATLauncherLaf.getInstance().getTitleFont());
-                    licenseLabel.setBorder(BorderFactory.createEmptyBorder(0, 4, 0, 0));
-                    Box box = Box.createHorizontalBox();
-                    box.add(licenseLabel);
-                    box.add(Box.createHorizontalGlue());
-                    licensePanel.add(box);
-                    licensePanel.add(new JSeparator());
-                    JTextPane license = new JTextPane();
-                    license.setEditable(false);
-                    license.setText("ATLauncher - https://github.com/ATLauncher/ATLauncher\n" +
-                        "Copyright (C) 2013-2023 ATLauncher\n" +
-                        "\n" +
-                        "This program is free software: you can redistribute it and/or modify " +
-                        "it under the terms of the GNU General Public License as published by " +
-                        "the Free Software Foundation, either version 3 of the License, or " +
-                        "(at your option) any later version.\n" +
-                        "\n" +
-                        "This program is distributed in the hope that it will be useful, " +
-                        "but WITHOUT ANY WARRANTY; without even the implied warranty of " +
-                        "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the " +
-                        "GNU General Public License for more details.\n" +
-                        "\n" +
-                        "You should have received a copy of the GNU General Public License " +
-                        "along with this program. If not, see <http://www.gnu.org/licenses/>.\n");
-                    JScrollPane scrollPane = new JScrollPane(license);
-                    licensePanel.add(scrollPane);
-                }
-
-                //add(librariesPanel);
-                add(licensePanel);
+            });
+            try {
+                license.setText(new HTMLBuilder().text(String.join("<br/>", Files.readAllLines(Paths.get(App.class.getResource("/LICENSE").toURI()))).replace("%YEAR%", new SimpleDateFormat("yyyy").format(new Date()))).build());
+            } catch (Exception e) {
+                LogManager.logStackTrace(e);
             }
+            JScrollPane scrollPane = new JScrollPane(license);
+            scrollPane.setPreferredSize(new Dimension(0, 220));
+            SwingUtilities.invokeLater(() -> scrollPane.getVerticalScrollBar().setValue(0));
+            licensePanel.add(scrollPane);
+            add(licensePanel);
         }
 
-        // Stickers
-        {
-            JPanel panel = new JPanel();
-            panel.setLayout(new BoxLayout(panel, BoxLayout.LINE_AXIS));
-            panel.setBorder(BorderFactory.createEmptyBorder(8, 0, 0, 0));
-
-            BackgroundImageLabel gpl = new BackgroundImageLabel("https://www.gnu.org/graphics/gplv3-88x31.png", 88, 31);
-            gpl.setToolTipText("GPLv3");
-            panel.add(gpl);
-
-            BackgroundImageLabel nodecraft = new BackgroundImageLabel("https://nodecraft.com/assets/images/community/banner/ncsupportlogo.jpg", 32, 32);
-            nodecraft.setToolTipText("Nodecraft");
-            panel.add(nodecraft);
-
-            add(panel);
-        }
         onRelocalization();
     }
 
@@ -312,9 +228,57 @@ public class AboutTab extends HierarchyPanel implements Tab, RelocalizationListe
         removeAll();
 
         copyButton = null;
-        contributorLabel = null;
-        acknowledgementsLabel = null;
-        librariesLabel = null;
+        contributorsLabel = null;
         licenseLabel = null;
+        authorsList = null;
+        contributorsScrollPane = null;
+    }
+
+    /**
+     * Accepts contributors to render onto the screen.
+     *
+     * @param contributors contributors to render
+     */
+    private void renderAuthors(List<Contributor> contributors) {
+        for (Contributor contributor : contributors) {
+            JPanel panel = new JPanel();
+            panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+            panel.setBorder(BorderFactory.createEmptyBorder(0, UIConstants.SPACING_XLARGE, 0, UIConstants.SPACING_XLARGE));
+
+            BackgroundImageLabel icon = new BackgroundImageLabel(contributor.avatarUrl, 64, 64);
+            icon.setAlignmentX(Component.CENTER_ALIGNMENT);
+            icon.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    if (e.getButton() == MouseEvent.BUTTON1) {
+                        OS.openWebBrowser(contributor.url);
+                    }
+                }
+
+                @Override
+                public void mouseEntered(MouseEvent e) {
+                    super.mouseEntered(e);
+                    setCursor(new Cursor(Cursor.HAND_CURSOR));
+                }
+
+                @Override
+                public void mouseExited(MouseEvent e) {
+                    super.mouseExited(e);
+                    setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+                }
+            });
+            panel.add(icon);
+
+            JEditorPane contributorName = new JEditorPane("text/html", "<html><center><a href=\"" + contributor.url + "\">" + contributor.name + "</a></center></html>");
+            contributorName.setEditable(false);
+            contributorName.addHyperlinkListener(e -> {
+                if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+                    OS.openWebBrowser(e.getURL());
+                }
+            });
+            panel.add(contributorName);
+            authorsList.add(panel);
+        }
+        SwingUtilities.invokeLater(() -> contributorsScrollPane.getHorizontalScrollBar().setValue(0));
     }
 }

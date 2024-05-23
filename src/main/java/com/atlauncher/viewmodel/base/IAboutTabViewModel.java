@@ -21,8 +21,9 @@ import java.util.List;
 
 import javax.annotation.Nonnull;
 
-import com.atlauncher.data.Author;
-import com.atlauncher.data.LauncherLibrary;
+import com.atlauncher.data.Contributor;
+
+import io.reactivex.rxjava3.core.Observable;
 
 /**
  * 13 / 06 / 2022
@@ -32,10 +33,10 @@ import com.atlauncher.data.LauncherLibrary;
 public interface IAboutTabViewModel {
 
     /**
-     * @return List of authors
+     * @return List of contributors
      */
     @Nonnull
-    List<Author> getAuthors();
+    Observable<List<Contributor>> getContributors();
 
     /**
      * @return Info about the launcher and its environment
@@ -48,7 +49,4 @@ public interface IAboutTabViewModel {
      */
     @Nonnull
     String getCopyInfo();
-
-    @Nonnull
-    List<LauncherLibrary> getLibraries();
 }
