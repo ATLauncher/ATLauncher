@@ -22,3 +22,4 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Implement HierarchyPanel in ToolsTab [#840]
 - Mojang Account support completely removed [#907]
 - Update versions of Java tested in GitHub workflows
+- Update dependencies

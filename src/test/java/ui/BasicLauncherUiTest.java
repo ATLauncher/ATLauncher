@@ -36,7 +36,7 @@ import org.assertj.swing.fixture.JTextComponentFixture;
 import org.assertj.swing.timing.Condition;
 import org.assertj.swing.timing.Pause;
 import org.assertj.swing.timing.Timeout;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.atlauncher.gui.card.InstanceCard;
 
