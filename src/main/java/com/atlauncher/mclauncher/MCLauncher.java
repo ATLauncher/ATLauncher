@@ -46,7 +46,6 @@ import com.atlauncher.network.ErrorReporting;
 import com.atlauncher.utils.Java;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
-import com.mojang.util.UUIDTypeAdapter;
 
 public class MCLauncher {
     public static final List<String> IGNORED_ARGUMENTS = new ArrayList<String>() {
@@ -447,7 +446,7 @@ public class MCLauncher {
         argument = argument.replace("${game_assets}", instance.getAssetsDir().getAbsolutePath());
         argument = argument.replace("${assets_root}", FileSystem.ASSETS.toAbsolutePath().toString());
         argument = argument.replace("${assets_index_name}", instance.getAssets());
-        argument = argument.replace("${auth_uuid}", UUIDTypeAdapter.fromUUID(account.getRealUUID()));
+        argument = argument.replace("${auth_uuid}", account.getRealUUID().toString());
         argument = argument.replace("${auth_access_token}", account.getAccessToken());
         argument = argument.replace("${version_type}", instance.type.getValue());
         argument = argument.replace("${launcher_name}", Constants.LAUNCHER_NAME);

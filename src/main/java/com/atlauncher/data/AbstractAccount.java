@@ -40,7 +40,6 @@ import com.atlauncher.managers.LogManager;
 import com.atlauncher.network.Download;
 import com.atlauncher.utils.SkinUtils;
 import com.atlauncher.utils.Utils;
-import com.mojang.util.UUIDTypeAdapter;
 
 /**
  * This class deals with the Accounts in the launcher.
@@ -267,7 +266,7 @@ public abstract class AbstractAccount implements Serializable {
      * @return The real UUID for this Account
      */
     public UUID getRealUUID() {
-        return (this.uuid == null ? UUID.randomUUID() : UUIDTypeAdapter.fromString(this.uuid));
+        return (this.uuid == null ? UUID.randomUUID() : UUID.fromString(this.uuid));
     }
 
     @Override

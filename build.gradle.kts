@@ -47,7 +47,6 @@ dependencies {
     implementation(libs.gson)
     implementation(libs.google.guava)
     implementation(libs.xz)
-    implementation(libs.mojang.authlib)
     implementation(libs.base64)
     implementation(libs.discord.rpc)
     implementation(libs.jopt.simple)
