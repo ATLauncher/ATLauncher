@@ -43,6 +43,10 @@ import com.atlauncher.utils.Authentication;
 import com.atlauncher.utils.MojangAPIUtils;
 import com.atlauncher.utils.Utils;
 
+/**
+ * @deprecated Mojang Accounts are dead!
+ */
+@Deprecated
 public class MojangAccount extends AbstractAccount {
     /**
      * Auto generated serial.
