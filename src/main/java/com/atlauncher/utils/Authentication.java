@@ -30,6 +30,10 @@ import com.mojang.authlib.exceptions.AuthenticationUnavailableException;
 import com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService;
 import com.mojang.authlib.yggdrasil.YggdrasilUserAuthentication;
 
+/**
+ * @deprecated Used by Mojang Accounts
+ */
+@Deprecated
 public class Authentication {
     public static LoginResponse checkAccount(String username, String password, String clientToken) {
         YggdrasilUserAuthentication auth = (YggdrasilUserAuthentication) new YggdrasilAuthenticationService(

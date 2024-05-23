@@ -20,6 +20,10 @@ package com.atlauncher.data;
 import com.atlauncher.managers.AccountManager;
 import com.mojang.authlib.UserAuthentication;
 
+/**
+ * @deprecated Used by MojangAccounts
+ */
+@Deprecated
 public class LoginResponse {
     private boolean offline;
     private boolean hasError;

@@ -26,15 +26,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.atlauncher.data.AbstractAccount;
-import com.atlauncher.data.LoginResponse;
 import com.atlauncher.data.MicrosoftAccount;
-import com.atlauncher.data.MojangAccount;
 import com.atlauncher.gui.dialogs.ChangeSkinDialog;
 import com.atlauncher.managers.AccountManager;
-import com.atlauncher.managers.LogManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.network.analytics.AnalyticsEvent;
-import com.atlauncher.utils.Authentication;
 import com.atlauncher.viewmodel.base.IAccountsViewModel;
 
 /**
@@ -102,40 +98,6 @@ public class AccountsViewModel implements IAccountsViewModel {
         return null;
     }
 
-    private String loginUsername = null;
-    private String loginPassword = null;
-    private boolean loginRemember = false;
-
-    @Override
-    public boolean isLoginUsernameSet() {
-        return loginUsername != null && !loginUsername.isEmpty();
-    }
-
-    @Override
-    public @Nullable String getLoginUsername() {
-        return loginUsername;
-    }
-
-    @Override
-    public void setLoginUsername(String username) {
-        loginUsername = username;
-    }
-
-    @Override
-    public boolean isLoginPasswordSet() {
-        return loginPassword != null && !loginPassword.isEmpty();
-    }
-
-    @Override
-    public void setLoginPassword(String password) {
-        loginPassword = password;
-    }
-
-    @Override
-    public void setRememberLogin(boolean rememberLogin) {
-        loginRemember = rememberLogin;
-    }
-
     private String clientToken = null;
 
     @NotNull
@@ -146,96 +108,9 @@ public class AccountsViewModel implements IAccountsViewModel {
         return clientToken;
     }
 
-    private void invalidateClientToken() {
-        clientToken = null;
-    }
-
-    @Override
-    public LoginPreCheckResult loginPreCheck() {
-        if (AccountManager.isAccountByName(loginUsername)) {
-            return new LoginPreCheckResult.Exists();
-        }
-        return null;
-    }
-
-    /**
-     * @deprecated Mojang account removal
-     */
-    @Deprecated
-    private void addNewAccount(LoginResponse response) {
-        MojangAccount account = new MojangAccount(loginUsername,
-                loginPassword,
-                response,
-                loginRemember,
-                getClientToken());
-
-        AccountManager.addAccount(account);
-        pushNewAccounts();
-    }
-
-    /**
-     * @deprecated Mojang account removal
-     */
-    @Deprecated
-    private void editAccount(LoginResponse response) {
-        AbstractAccount account = getSelectedAccount();
-
-        if (account instanceof MojangAccount) {
-            MojangAccount mojangAccount = (MojangAccount) account;
-
-            mojangAccount.username = loginUsername;
-            mojangAccount.minecraftUsername = response.getAuth().getSelectedProfile().getName();
-            mojangAccount.uuid = response.getAuth().getSelectedProfile().getId().toString();
-            if (loginRemember) {
-                mojangAccount.setPassword(loginPassword);
-            } else {
-                mojangAccount.encryptedPassword = null;
-                mojangAccount.password = null;
-            }
-            mojangAccount.remember = loginRemember;
-            mojangAccount.clientToken = getClientToken();
-            mojangAccount.store = response.getAuth().saveForStorage();
-
-            AccountManager.saveAccounts();
-        }
-
-        Analytics.trackEvent(AnalyticsEvent.simpleEvent("account_edit"));
-        LogManager.info("Edited Account " + account);
-        pushNewAccounts();
-    }
-
-    private LoginResponse loginResponse = null;
-
-    /**
-     * @deprecated Mojang account removal?
-     */
-    @Deprecated
-    @NotNull
-    @Override
-    public LoginPostResult loginPost() {
-        if (loginResponse != null && loginResponse.hasAuth() && loginResponse.isValidAuth()) {
-            if (selectedAccountIndex == -1) {
-                addNewAccount(loginResponse);
-                invalidateClientToken();
-                return new LoginPostResult.Added();
-            } else {
-                editAccount(loginResponse);
-                invalidateClientToken();
-                return new LoginPostResult.Edited();
-            }
-        } else {
-            return new LoginPostResult.Error(loginResponse != null ? loginResponse.getErrorMessage() : null);
-        }
-    }
-
     @Override
     public int getSelectedIndex() {
         return selectedAccountIndex + 1;
-    }
-
-    @Override
-    public void login() {
-        loginResponse = Authentication.checkAccount(loginUsername, loginPassword, getClientToken());
     }
 
     @Override
