@@ -88,14 +88,30 @@ public abstract class AbstractAccount implements Serializable {
 
     public abstract String getUserType();
 
+    /**
+     * TODO move business code to separate class
+     */
     public abstract String getCurrentUsername();
 
+    /**
+     * TODO move business code to separate class
+     */
     public abstract void updateSkinPreCheck();
 
+    /**
+     * TODO move business code to separate class
+     */
     public abstract void changeSkinPreCheck();
 
+    /**
+     * TODO move business code to separate class
+     */
     public abstract String getSkinUrl();
 
+    /**
+     * @deprecated Business code in data class
+     */
+    @Deprecated
     public void updateUsername() {
         final ProgressDialog<Boolean> dialog = new ProgressDialog<>(GetText.tr("Checking For Username Change"), 0,
                 GetText.tr("Checking Username Change For {0}", this.minecraftUsername),
@@ -140,7 +156,10 @@ public abstract class AbstractAccount implements Serializable {
     /**
      * Updates this Account's skin by redownloading the Minecraft skin from Mojang's
      * skin server.
+     *
+     * @deprecated Business code in data class
      */
+    @Deprecated
     public synchronized void updateSkin() {
         final File file = FileSystem.SKINS.resolve(this.getUUIDNoDashes() + ".png").toFile();
         LogManager.info("Downloading skin for " + this.minecraftUsername);
@@ -220,6 +239,8 @@ public abstract class AbstractAccount implements Serializable {
     /**
      * Creates an {@link ImageIcon} of the Account's Minecraft skin, getting just
      * the head of it.
+     * <p>
+     * TODO, Consider for moving to separate repository
      *
      * @return The Account's Minecraft usernames head
      */
@@ -237,6 +258,8 @@ public abstract class AbstractAccount implements Serializable {
 
     /**
      * Creates an {@link ImageIcon} of the Account's Minecraft skin.
+     * <p>
+     * TODO, Consider for moving to separate repository
      *
      * @return The Account's Minecraft usernames skin
      */
