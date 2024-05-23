@@ -965,104 +965,52 @@ public class Instance extends MinecraftVersion {
                     wrapperCommand = null;
                 }
 
-                if (account instanceof MojangAccount) {
-                    MojangAccount mojangAccount = (MojangAccount) account;
-                    LoginResponse session;
+                MicrosoftAccount microsoftAccount = (MicrosoftAccount) account;
 
-                    if (offline) {
-                        session = new LoginResponse(mojangAccount.username);
-                        session.setOffline();
-                    } else {
-                        LogManager.info("Logging into Minecraft!");
-                        ProgressDialog<LoginResponse> loginDialog = new ProgressDialog<>(
-                                GetText.tr("Logging Into Minecraft"), 0, GetText.tr("Logging Into Minecraft"),
-                                "Aborted login to Minecraft!");
-                        loginDialog.addThread(new Thread(() -> {
-                            loginDialog.setReturnValue(mojangAccount.login());
-                            loginDialog.close();
-                        }));
-                        loginDialog.start();
+                if (!offline) {
+                    LogManager.info("Logging into Minecraft!");
+                    ProgressDialog<Boolean> loginDialog = new ProgressDialog<>(GetText.tr("Logging Into Minecraft"),
+                        0, GetText.tr("Logging Into Minecraft"), "Aborted login to Minecraft!");
+                    loginDialog.addThread(new Thread(() -> {
+                        loginDialog.setReturnValue(microsoftAccount.ensureAccessTokenValid());
+                        loginDialog.close();
+                    }));
+                    loginDialog.start();
 
-                        session = loginDialog.getReturnValue();
-
-                        if (session == null) {
-                            Analytics.trackEvent(
-                                    AnalyticsEvent.forInstanceLaunchFailed(this, offline, "mojang_no_session"));
-                            App.launcher.setMinecraftLaunched(false);
-                            if (App.launcher.getParent() != null) {
-                                App.launcher.getParent().setVisible(true);
-                            }
-                            return;
+                    if (!(Boolean) loginDialog.getReturnValue()) {
+                        LogManager.error("Failed to login");
+                        Analytics.trackEvent(
+                            AnalyticsEvent.forInstanceLaunchFailed(this, offline, "microsoft_login_failure"));
+                        App.launcher.setMinecraftLaunched(false);
+                        if (App.launcher.getParent() != null) {
+                            App.launcher.getParent().setVisible(true);
                         }
+                        DialogManager.okDialog().setTitle(GetText.tr("Error Logging In"))
+                            .setContent(GetText.tr("Couldn't login with Microsoft account"))
+                            .setType(DialogManager.ERROR).show();
+                        return;
                     }
-
-                    if (enableCommands && preLaunchCommand != null) {
-                        if (!executeCommand(preLaunchCommand)) {
-                            LogManager.error("Failed to execute pre-launch command");
-
-                            Analytics.trackEvent(
-                                    AnalyticsEvent.forInstanceLaunchFailed(this, offline, "pre_launch_failure"));
-                            App.launcher.setMinecraftLaunched(false);
-
-                            if (App.launcher.getParent() != null) {
-                                App.launcher.getParent().setVisible(true);
-                            }
-
-                            return;
-                        }
-                    }
-
-                    process = MCLauncher.launch(mojangAccount, this, session, nativesTempDir,
-                            LWJGLManager.shouldUseLegacyLWJGL(this) ? lwjglNativesTempDir : null,
-                            wrapperCommand, username);
-                } else if (account instanceof MicrosoftAccount) {
-                    MicrosoftAccount microsoftAccount = (MicrosoftAccount) account;
-
-                    if (!offline) {
-                        LogManager.info("Logging into Minecraft!");
-                        ProgressDialog<Boolean> loginDialog = new ProgressDialog<>(GetText.tr("Logging Into Minecraft"),
-                                0, GetText.tr("Logging Into Minecraft"), "Aborted login to Minecraft!");
-                        loginDialog.addThread(new Thread(() -> {
-                            loginDialog.setReturnValue(microsoftAccount.ensureAccessTokenValid());
-                            loginDialog.close();
-                        }));
-                        loginDialog.start();
-
-                        if (!(Boolean) loginDialog.getReturnValue()) {
-                            LogManager.error("Failed to login");
-                            Analytics.trackEvent(
-                                    AnalyticsEvent.forInstanceLaunchFailed(this, offline, "microsoft_login_failure"));
-                            App.launcher.setMinecraftLaunched(false);
-                            if (App.launcher.getParent() != null) {
-                                App.launcher.getParent().setVisible(true);
-                            }
-                            DialogManager.okDialog().setTitle(GetText.tr("Error Logging In"))
-                                    .setContent(GetText.tr("Couldn't login with Microsoft account"))
-                                    .setType(DialogManager.ERROR).show();
-                            return;
-                        }
-                    }
-
-                    if (enableCommands && preLaunchCommand != null) {
-                        if (!executeCommand(preLaunchCommand)) {
-                            LogManager.error("Failed to execute pre-launch command");
-
-                            Analytics.trackEvent(
-                                    AnalyticsEvent.forInstanceLaunchFailed(this, offline, "pre_launch_failure"));
-                            App.launcher.setMinecraftLaunched(false);
-
-                            if (App.launcher.getParent() != null) {
-                                App.launcher.getParent().setVisible(true);
-                            }
-
-                            return;
-                        }
-                    }
-
-                    process = MCLauncher.launch(microsoftAccount, this, nativesTempDir,
-                            LWJGLManager.shouldUseLegacyLWJGL(this) ? lwjglNativesTempDir : null,
-                            wrapperCommand, username);
                 }
+
+                if (enableCommands && preLaunchCommand != null) {
+                    if (!executeCommand(preLaunchCommand)) {
+                        LogManager.error("Failed to execute pre-launch command");
+
+                        Analytics.trackEvent(
+                            AnalyticsEvent.forInstanceLaunchFailed(this, offline, "pre_launch_failure"));
+                        App.launcher.setMinecraftLaunched(false);
+
+                        if (App.launcher.getParent() != null) {
+                            App.launcher.getParent().setVisible(true);
+                        }
+
+                        return;
+                    }
+                }
+
+                process = MCLauncher.launch(microsoftAccount, this, nativesTempDir,
+                    LWJGLManager.shouldUseLegacyLWJGL(this) ? lwjglNativesTempDir : null,
+                    wrapperCommand, username);
 
                 if (process == null) {
                     Analytics.trackEvent(AnalyticsEvent.forInstanceLaunchFailed(this, offline, "no_process"));
