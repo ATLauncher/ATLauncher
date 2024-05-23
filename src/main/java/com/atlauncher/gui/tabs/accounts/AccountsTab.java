@@ -226,7 +226,7 @@ public class AccountsTab extends HierarchyPanel implements Tab, RelocalizationLi
      * Refresh the access token, and react to result
      */
     private void refreshAccessToken() {
-        MicrosoftAccount account = viewModel.getSelectedAccountAs();
+        MicrosoftAccount account = viewModel.getSelectedAccount();
         if (account == null)
             return;
 

@@ -42,7 +42,7 @@ public interface IAccountsViewModel {
      *
      * @param onAccountSelected function to call
      */
-    void onAccountSelected(Consumer<AbstractAccount> onAccountSelected);
+    void onAccountSelected(Consumer<MicrosoftAccount> onAccountSelected);
 
     /**
      * Get the count of accounts in the launcher
@@ -107,15 +107,7 @@ public interface IAccountsViewModel {
      * @return the currently selected account
      */
     @NotNull
-    AbstractAccount getSelectedAccount();
-
-    /**
-     * Get the selected account as a Microsoft account
-     *
-     * @return the currently selected microsoft account, otherwise null
-     */
-    @Nullable
-    MicrosoftAccount getSelectedAccountAs();
+    MicrosoftAccount getSelectedAccount();
 
     /**
      * Post result for login

@@ -23,7 +23,6 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import com.atlauncher.data.AbstractAccount;
 import com.atlauncher.data.MicrosoftAccount;
@@ -42,7 +41,7 @@ public class AccountsViewModel implements IAccountsViewModel {
         return AccountManager.getAccounts().size();
     }
 
-    private List<AbstractAccount> accounts() {
+    private List<MicrosoftAccount> accounts() {
         return AccountManager.getAccounts();
     }
 
@@ -65,11 +64,11 @@ public class AccountsViewModel implements IAccountsViewModel {
                         .collect(Collectors.toList()));
     }
 
-    private Consumer<AbstractAccount> selected;
+    private Consumer<MicrosoftAccount> selected;
     private int selectedAccountIndex = -1;
 
     @Override
-    public void onAccountSelected(Consumer<AbstractAccount> onAccountSelected) {
+    public void onAccountSelected(Consumer<MicrosoftAccount> onAccountSelected) {
         selected = onAccountSelected;
     }
 
@@ -84,18 +83,8 @@ public class AccountsViewModel implements IAccountsViewModel {
 
     @NotNull
     @Override
-    public AbstractAccount getSelectedAccount() {
+    public MicrosoftAccount getSelectedAccount() {
         return accounts().get(selectedAccountIndex);
-    }
-
-    @Nullable
-    @Override
-    public MicrosoftAccount getSelectedAccountAs() {
-        AbstractAccount account = getSelectedAccount();
-
-        if (account instanceof MicrosoftAccount)
-            return (MicrosoftAccount) account;
-        return null;
     }
 
     private String clientToken = null;
@@ -117,21 +106,17 @@ public class AccountsViewModel implements IAccountsViewModel {
     public boolean refreshAccessToken() {
         Analytics.trackEvent(AnalyticsEvent.simpleEvent("account_refresh_access_token"));
 
-        AbstractAccount abstractAccount = getSelectedAccount();
-        if (abstractAccount instanceof MicrosoftAccount) {
-            MicrosoftAccount account = (MicrosoftAccount) abstractAccount;
-            boolean success = account
-                    .refreshAccessToken(true);
+        MicrosoftAccount account = getSelectedAccount();
+        boolean success = account
+                .refreshAccessToken(true);
 
-            if (!success) {
-                account.mustLogin = true;
-            }
-
-            AccountManager.saveAccounts();
-
-            return success;
+        if (!success) {
+            account.mustLogin = true;
         }
-        return false;
+
+        AccountManager.saveAccounts();
+
+        return success;
     }
 
     @Override
