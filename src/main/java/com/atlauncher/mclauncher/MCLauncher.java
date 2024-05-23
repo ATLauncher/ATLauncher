@@ -34,14 +34,11 @@ import com.atlauncher.constants.Constants;
 import com.atlauncher.data.AbstractAccount;
 import com.atlauncher.data.DisableableMod;
 import com.atlauncher.data.Instance;
-import com.atlauncher.data.LoginResponse;
 import com.atlauncher.data.MicrosoftAccount;
-import com.atlauncher.data.MojangAccount;
 import com.atlauncher.data.QuickPlayOption;
 import com.atlauncher.data.json.QuickPlay;
 import com.atlauncher.data.minecraft.Library;
 import com.atlauncher.data.minecraft.LoggingClient;
-import com.atlauncher.data.minecraft.PropertyMapSerializer;
 import com.atlauncher.managers.ConfigManager;
 import com.atlauncher.managers.LWJGLManager;
 import com.atlauncher.managers.LogManager;
@@ -49,9 +46,6 @@ import com.atlauncher.network.ErrorReporting;
 import com.atlauncher.utils.Java;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.mojang.authlib.properties.PropertyMap;
 import com.mojang.util.UUIDTypeAdapter;
 
 public class MCLauncher {
@@ -69,22 +63,6 @@ public class MCLauncher {
             Path lwjglNativesTempDir,
             String wrapperCommand, String username) throws Exception {
         return launch(account, instance, null, nativesTempDir.toFile(), lwjglNativesTempDir, wrapperCommand, username);
-    }
-
-    /**
-     * @deprecated Mojang account removal
-     */
-    @Deprecated
-    public static Process launch(MojangAccount account, Instance instance, LoginResponse response, Path nativesTempDir,
-            Path lwjglNativesTempDir, String wrapperCommand, String username) throws Exception {
-        String props = "[]";
-
-        if (!response.isOffline()) {
-            Gson gson = new GsonBuilder().registerTypeAdapter(PropertyMap.class, new PropertyMapSerializer()).create();
-            props = gson.toJson(response.getAuth().getUserProperties());
-        }
-
-        return launch(account, instance, props, nativesTempDir.toFile(), lwjglNativesTempDir, wrapperCommand, username);
     }
 
     private static Process launch(AbstractAccount account, Instance instance, String props, File nativesDir,
