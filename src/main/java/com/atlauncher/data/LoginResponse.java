@@ -90,6 +90,10 @@ public class LoginResponse {
         return !this.hasError;
     }
 
+    /**
+     * @deprecated Mojang account removal
+     */
+    @Deprecated
     public void save() {
         MojangAccount account = (MojangAccount) AccountManager.getAccountByName(this.username);
 

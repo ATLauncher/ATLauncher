@@ -158,6 +158,10 @@ public class AccountsViewModel implements IAccountsViewModel {
         return null;
     }
 
+    /**
+     * @deprecated Mojang account removal
+     */
+    @Deprecated
     private void addNewAccount(LoginResponse response) {
         MojangAccount account = new MojangAccount(loginUsername,
                 loginPassword,
@@ -169,6 +173,10 @@ public class AccountsViewModel implements IAccountsViewModel {
         pushNewAccounts();
     }
 
+    /**
+     * @deprecated Mojang account removal
+     */
+    @Deprecated
     private void editAccount(LoginResponse response) {
         AbstractAccount account = getSelectedAccount();
 
@@ -198,6 +206,10 @@ public class AccountsViewModel implements IAccountsViewModel {
 
     private LoginResponse loginResponse = null;
 
+    /**
+     * @deprecated Mojang account removal?
+     */
+    @Deprecated
     @NotNull
     @Override
     public LoginPostResult loginPost() {

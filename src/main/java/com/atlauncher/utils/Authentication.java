@@ -59,6 +59,10 @@ public class Authentication {
         return response;
     }
 
+    /**
+     * @deprecated Mojang account removal
+     */
+    @Deprecated
     public static LoginResponse login(MojangAccount account, boolean usePassword) {
         UserAuthentication auth = new YggdrasilAuthenticationService(App.settings.proxy, account.clientToken)
                 .createUserAuthentication(Agent.MINECRAFT);

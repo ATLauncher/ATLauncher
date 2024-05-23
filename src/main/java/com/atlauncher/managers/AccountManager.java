@@ -113,6 +113,7 @@ public class AccountManager {
                     }
 
                     if (account instanceof MojangAccount) {
+                        // TODO Delete the account here
                         MojangAccount mojangAccount = (MojangAccount) account;
                         return !mojangAccount.uuid.equals("00000000000000000000000000000000")
                                 && !mojangAccount.clientToken.isEmpty();

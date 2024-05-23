@@ -71,6 +71,10 @@ public class MCLauncher {
         return launch(account, instance, null, nativesTempDir.toFile(), lwjglNativesTempDir, wrapperCommand, username);
     }
 
+    /**
+     * @deprecated Mojang account removal
+     */
+    @Deprecated
     public static Process launch(MojangAccount account, Instance instance, LoginResponse response, Path nativesTempDir,
             Path lwjglNativesTempDir, String wrapperCommand, String username) throws Exception {
         String props = "[]";
