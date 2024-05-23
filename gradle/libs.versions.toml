@@ -5,7 +5,6 @@ jna = "5.13.0"
 gson = "2.10.1"
 google-guava = "32.1.1-jre"
 xz = "1.9"
-mojang-authlib = "1.5.21"
 base64 = "2.3.9"
 discord-rpc = "1.6.2"
 jopt-simple = "5.0.4"
@@ -50,7 +49,6 @@ jna-platform = { module = "net.java.dev.jna:jna-platform", version.ref = "jna" }
 gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
 google-guava = { module = "com.google.guava:guava", version.ref = "google-guava" }
 xz = { module = "org.tukaani:xz", version.ref = "xz" }
-mojang-authlib = { module = "com.mojang:authlib", version.ref = "mojang-authlib" }
 base64 = { module = "net.iharder:base64", version.ref = "base64" }
 discord-rpc = { module = "com.github.Vatuu:discord-rpc", version.ref = "discord-rpc" }
 jopt-simple = { module = "net.sf.jopt-simple:jopt-simple", version.ref = "jopt-simple" }
