@@ -63,11 +63,11 @@ public final class LoginWithMicrosoftDialog extends JDialog {
     public MicrosoftAccount account = null;
     private ScheduledExecutorService codeCheckExecutor = Executors.newScheduledThreadPool(1);
 
-    public LoginWithMicrosoftDialog() {
-        this(null);
+    public LoginWithMicrosoftDialog(OauthDeviceCodeResponse deviceCodeResponse) {
+        this(null, deviceCodeResponse);
     }
 
-    public LoginWithMicrosoftDialog(MicrosoftAccount account) {
+    public LoginWithMicrosoftDialog(MicrosoftAccount account, OauthDeviceCodeResponse deviceCodeResponse) {
         super(App.launcher.getParent(), GetText.tr("Login with Microsoft"), ModalityType.DOCUMENT_MODAL);
 
         this.account = account;
@@ -80,8 +80,6 @@ public final class LoginWithMicrosoftDialog extends JDialog {
                 close();
             }
         });
-
-        OauthDeviceCodeResponse deviceCodeResponse = MicrosoftAuthAPI.getDeviceCode();
 
         this.add(new LoadingPanel(null), BorderLayout.CENTER);
 

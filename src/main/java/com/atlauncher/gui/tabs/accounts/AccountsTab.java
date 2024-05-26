@@ -41,6 +41,7 @@ import org.mini2Dx.gettext.GetText;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.data.AbstractAccount;
 import com.atlauncher.data.MicrosoftAccount;
+import com.atlauncher.data.microsoft.OauthDeviceCodeResponse;
 import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.gui.dialogs.LoginWithMicrosoftDialog;
 import com.atlauncher.gui.dialogs.ProgressDialog;
@@ -49,8 +50,10 @@ import com.atlauncher.gui.tabs.Tab;
 import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.utils.ComboItem;
+import com.atlauncher.utils.MicrosoftAuthAPI;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.SkinUtils;
+import com.atlauncher.utils.Utils;
 import com.atlauncher.viewmodel.base.IAccountsViewModel;
 import com.atlauncher.viewmodel.impl.AccountsViewModel;
 
@@ -144,11 +147,23 @@ public class AccountsTab extends HierarchyPanel implements Tab, RelocalizationLi
                 viewModel.deleteAccount();
             }
         });
-        loginWithMicrosoftButton = new JButton(GetText.tr("Login with Microsoft"));
+        loginWithMicrosoftButton = new JButton();
+        loginWithMicrosoftButton.setIcon(Utils.getIconImage("/assets/image/sign-in-with-microsoft.png"));
+        loginWithMicrosoftButton.setToolTipText(GetText.tr("Login with Microsoft"));
         loginWithMicrosoftButton.addActionListener(e -> {
             // TODO This should be handled by some reaction via listener
             int numberOfAccountsBefore = viewModel.accountCount();
-            LoginWithMicrosoftDialog dialog = new LoginWithMicrosoftDialog();
+
+            ProgressDialog<OauthDeviceCodeResponse> codeDialog = new ProgressDialog<OauthDeviceCodeResponse>(
+                    GetText.tr("Getting Login Code From Microsoft"), 0,
+                    GetText.tr("Getting Login Code From Microsoft"),
+                    "Aborting getting login code from Microsoft");
+            codeDialog.addThread(new Thread(() -> {
+                codeDialog.setReturnValue(MicrosoftAuthAPI.getDeviceCode());
+                codeDialog.close();
+            }));
+            codeDialog.start();
+            LoginWithMicrosoftDialog dialog = new LoginWithMicrosoftDialog(codeDialog.getReturnValue());
 
             if (numberOfAccountsBefore != viewModel.accountCount()) {
                 // account was added, so get the skin
@@ -261,7 +276,17 @@ public class AccountsTab extends HierarchyPanel implements Tab, RelocalizationLi
                 .setType(DialogManager.ERROR)
                 .show();
 
-            new LoginWithMicrosoftDialog(account);
+            ProgressDialog<OauthDeviceCodeResponse> codeDialog = new ProgressDialog<OauthDeviceCodeResponse>(
+                GetText.tr("Getting Login Code From Microsoft"), 0,
+                GetText.tr("Getting Login Code From Microsoft"),
+                "Aborting getting login code from Microsoft");
+            codeDialog.addThread(new Thread(() -> {
+                codeDialog.setReturnValue(MicrosoftAuthAPI.getDeviceCode());
+                codeDialog.close();
+            }));
+            codeDialog.start();
+
+            new LoginWithMicrosoftDialog(account, codeDialog.getReturnValue());
         }
     }
 
