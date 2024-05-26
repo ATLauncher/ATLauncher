@@ -40,7 +40,6 @@ import com.atlauncher.managers.LogManager;
 import com.atlauncher.network.Download;
 import com.atlauncher.utils.SkinUtils;
 import com.atlauncher.utils.Utils;
-import com.mojang.util.UUIDTypeAdapter;
 
 /**
  * This class deals with the Accounts in the launcher.
@@ -207,7 +206,6 @@ public abstract class AbstractAccount implements Serializable {
                 } catch (IOException e) {
                     LogManager.logStackTrace(e);
                 }
-                com.atlauncher.evnt.manager.AccountManager.post();
             }
             dialog.close();
         }));
@@ -229,10 +227,6 @@ public abstract class AbstractAccount implements Serializable {
         File file = FileSystem.SKINS.resolve((this.uuid == null ? "default" : this.getUUIDNoDashes()) + ".png")
                 .toFile();
 
-        if (!file.exists()) {
-            this.updateSkin(); // Download/update the users skin
-        }
-
         // If the file doesn't exist then use the default Minecraft skin.
         if (file == null || !file.exists()) {
             return SkinUtils.getDefaultHead();
@@ -248,10 +242,6 @@ public abstract class AbstractAccount implements Serializable {
      */
     public ImageIcon getMinecraftSkin() {
         File file = FileSystem.SKINS.resolve(this.getUUIDNoDashes() + ".png").toFile();
-
-        if (!file.exists()) {
-            this.updateSkin(); // Download/update the users skin
-        }
 
         // If the file doesn't exist then use the default Minecraft skin.
         if (file == null || !file.exists()) {
@@ -271,12 +261,24 @@ public abstract class AbstractAccount implements Serializable {
     }
 
     /**
+     * @see <a href="https://stackoverflow.com/a/19399768">https://stackoverflow.com/a/19399768</a>
+     * @return uuid with dashes.
+     */
+    private String dashedUUID() {
+        return this.uuid
+            .replaceFirst(
+                "(\\p{XDigit}{8})(\\p{XDigit}{4})(\\p{XDigit}{4})(\\p{XDigit}{4})(\\p{XDigit}+)",
+                "$1-$2-$3-$4-$5"
+            );
+    }
+
+    /**
      * Gets the real UUID of this account.
      *
      * @return The real UUID for this Account
      */
     public UUID getRealUUID() {
-        return (this.uuid == null ? UUID.randomUUID() : UUIDTypeAdapter.fromString(this.uuid));
+        return (this.uuid == null ? UUID.randomUUID() : UUID.fromString(dashedUUID()));
     }
 
     @Override

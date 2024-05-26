@@ -17,25 +17,46 @@
  */
 package com.atlauncher.viewmodel.base;
 
+import java.util.List;
+import java.util.Optional;
+
+import javax.annotation.Nullable;
+
 import com.atlauncher.data.Server;
 
-import java.util.List;
-import java.util.function.Consumer;
+import io.reactivex.rxjava3.core.Flowable;
+import io.reactivex.rxjava3.core.Observable;
 
 /**
  * 19 / 11 / 2022
  */
 public interface IServersTabViewModel {
     /**
-     * Whenever the view changes, this listener will be invoked with new data
-     *
-     * @param consumer listener to invoke
+     * Get observable list to subscribe to.
      */
-    void addOnChangeViewListener(Consumer<List<Server>> consumer);
+    Flowable<List<Server>> getServersObservable();
 
-    void setSearch(String search);
+    /**
+     * Get observable of text to subscribe to.
+     *
+     * @return Observable query
+     */
+    Observable<Optional<String>> getSearchObservable();
 
-    void addOnSearchChangeListener(Consumer<String> consumer);
+    /**
+     * Set what to search for.
+     *
+     * @param search Query, else null.
+     */
+    void setSearchSubject(@Nullable String search);
+
+    /**
+     * Watch when the position is changed,
+     * this is used to restore the view.
+     * <p>
+     * Note, that the observable is only updated after a change to search or servers.
+     */
+    Observable<Integer> getViewPosition();
 
     /**
      * Used to save the position the user was looking at
@@ -43,14 +64,4 @@ public interface IServersTabViewModel {
      * @param position position the user was at
      */
     void setViewPosition(int position);
-
-    /**
-     * Watch when the position is changed, this is used to restore the view.
-     * <p>
-     * Note, that the consumer is only called
-     *  after a change to search or servers.
-     *
-     * @param consumer consumer to take new scroll position
-     */
-    void addOnViewPositionChangedListener(Consumer<Integer> consumer);
 }

@@ -25,8 +25,9 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.util.Arrays;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -35,19 +36,20 @@ import javax.swing.WindowConstants;
 
 import com.atlauncher.App;
 import com.atlauncher.constants.Constants;
+import com.atlauncher.constants.UIConstants;
 import com.atlauncher.data.Pack;
-import com.atlauncher.data.PackVersion;
 import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.evnt.manager.TabChangeManager;
 import com.atlauncher.gui.components.LauncherBottomBar;
 import com.atlauncher.gui.dialogs.InstanceInstallerDialog;
+import com.atlauncher.gui.tabs.AboutTab;
+import com.atlauncher.gui.tabs.CreatePackTab;
 import com.atlauncher.gui.tabs.InstancesTab;
 import com.atlauncher.gui.tabs.PacksBrowserTab;
 import com.atlauncher.gui.tabs.ServersTab;
 import com.atlauncher.gui.tabs.SettingsTab;
 import com.atlauncher.gui.tabs.Tab;
-import com.atlauncher.gui.tabs.VanillaPacksTab;
 import com.atlauncher.gui.tabs.accounts.AccountsTab;
 import com.atlauncher.gui.tabs.news.NewsTab;
 import com.atlauncher.gui.tabs.tools.ToolsTab;
@@ -60,9 +62,9 @@ import com.atlauncher.utils.Utils;
 
 @SuppressWarnings("serial")
 public final class LauncherFrame extends JFrame implements RelocalizationListener {
-    private JTabbedPane tabbedPane;
+    public JTabbedPane tabbedPane;
 
-    private List<Tab> tabs;
+    private Map<Integer, Tab> tabs = new HashMap<>();
 
     public LauncherFrame(boolean show) {
         LogManager.info("Launcher opening");
@@ -135,32 +137,6 @@ public final class LauncherFrame extends JFrame implements RelocalizationListene
                     new InstanceInstallerDialog(pack);
                 }
             }
-        } else if (App.packShareCodeToInstall != null) {
-            String[] parts = App.packShareCodeToInstall.split("\\|\\|\\|");
-
-            if (parts.length != 4) {
-                LogManager.error("Error automatically installing pack from share code!");
-            } else {
-                Pack pack = PackManager.getPackBySafeName(parts[0]);
-
-                if (pack != null && pack.isSemiPublic() && !PackManager.canViewSemiPublicPackByCode(pack.getCode())) {
-                    LogManager.error("Error automatically installing " + pack.getName() + " as you don't have the "
-                            + "pack added to the launcher!");
-                } else {
-                    if (pack == null) {
-                        LogManager.error("Error automatically installing pack from share code!");
-                    } else {
-                        PackVersion version = pack.getVersionByName(parts[1]);
-
-                        if (version == null) {
-                            LogManager.error("Error automatically installing " + pack.getName() + " from share code!");
-                        } else {
-                            new InstanceInstallerDialog(pack, version, parts[2], Boolean.parseBoolean(parts[3]));
-                        }
-                    }
-                }
-
-            }
         }
 
         addComponentListener(new ComponentAdapter() {
@@ -194,43 +170,52 @@ public final class LauncherFrame extends JFrame implements RelocalizationListene
 
         PerformanceManager.start("newsTab");
         NewsTab newsTab = new NewsTab();
-        App.launcher.setNewsPanel(newsTab);
+        this.tabs.put(UIConstants.LAUNCHER_NEWS_TAB, newsTab);
         PerformanceManager.end("newsTab");
 
-        PerformanceManager.start("vanillaPacksTab");
-        VanillaPacksTab vanillaPacksTab = new VanillaPacksTab();
-        PerformanceManager.end("vanillaPacksTab");
+        PerformanceManager.start("createPackTab");
+        CreatePackTab createPackTab = new CreatePackTab();
+        this.tabs.put(UIConstants.LAUNCHER_CREATE_PACK_TAB, createPackTab);
+        PerformanceManager.end("createPackTab");
 
         PerformanceManager.start("packsBrowserTab");
         PacksBrowserTab packsBrowserTab = new PacksBrowserTab();
+        this.tabs.put(UIConstants.LAUNCHER_PACKS_TAB, packsBrowserTab);
         App.launcher.setPacksBrowserPanel(packsBrowserTab);
         PerformanceManager.end("packsBrowserTab");
 
         PerformanceManager.start("instancesTab");
         InstancesTab instancesTab = new InstancesTab();
+        this.tabs.put(UIConstants.LAUNCHER_INSTANCES_TAB, instancesTab);
         PerformanceManager.end("instancesTab");
 
         PerformanceManager.start("serversTab");
         ServersTab serversTab = new ServersTab();
+        this.tabs.put(UIConstants.LAUNCHER_SERVERS_TAB, serversTab);
         PerformanceManager.end("serversTab");
 
         PerformanceManager.start("accountsTab");
         AccountsTab accountsTab = new AccountsTab();
+        this.tabs.put(UIConstants.LAUNCHER_ACCOUNTS_TAB, accountsTab);
         PerformanceManager.end("accountsTab");
 
         PerformanceManager.start("toolsTab");
         ToolsTab toolsTab = new ToolsTab();
+        this.tabs.put(UIConstants.LAUNCHER_TOOLS_TAB, toolsTab);
         PerformanceManager.end("toolsTab");
 
         PerformanceManager.start("settingsTab");
         SettingsTab settingsTab = new SettingsTab();
+        this.tabs.put(UIConstants.LAUNCHER_SETTINGS_TAB, settingsTab);
         PerformanceManager.end("settingsTab");
 
-        this.tabs = Arrays.asList(new Tab[] { newsTab, vanillaPacksTab, packsBrowserTab, instancesTab,
-                serversTab, accountsTab, toolsTab, settingsTab });
+        PerformanceManager.start("aboutTab");
+        AboutTab aboutTab = new AboutTab();
+        PerformanceManager.end("aboutTab");
+        this.tabs.put(UIConstants.LAUNCHER_ABOUT_TAB, aboutTab);
 
         tabbedPane.setFont(App.THEME.getTabFont());
-        for (Tab tab : this.tabs) {
+        for (Tab tab : this.tabs.values()) {
             this.tabbedPane.addTab(tab.getTitle(), (JPanel) tab);
         }
         tabbedPane.setOpaque(true);
@@ -241,14 +226,12 @@ public final class LauncherFrame extends JFrame implements RelocalizationListene
             Analytics.sendScreenView(((Tab) tabbedPane.getSelectedComponent()).getAnalyticsScreenViewName());
             TabChangeManager.post(tabbedPane.getSelectedIndex());
         });
-
-        Analytics.sendScreenView(((Tab) tabbedPane.getSelectedComponent()).getAnalyticsScreenViewName());
     }
 
     @Override
     public void onRelocalization() {
-        for (int i = 0; i < this.tabbedPane.getTabCount(); i++) {
-            this.tabbedPane.setTitleAt(i, this.tabs.get(i).getTitle());
+        for (Entry<Integer, Tab> entry : this.tabs.entrySet()) {
+            this.tabbedPane.setTitleAt(entry.getKey(), entry.getValue().getTitle());
         }
 
         tabbedPane.setFont(App.THEME.getTabFont());

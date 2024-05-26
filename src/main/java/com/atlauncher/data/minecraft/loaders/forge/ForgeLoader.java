@@ -280,6 +280,19 @@ public class ForgeLoader implements Loader {
     }
 
     @Override
+    public Path getServerJarPath() {
+        Library forgeLibrary = getLibraries().stream()
+                .filter(library -> library.name.startsWith("net.minecraftforge:forge")).findFirst()
+                .orElse(null);
+
+        if (forgeLibrary != null) {
+            return FileSystem.LIBRARIES.resolve(forgeLibrary.downloads.artifact.path);
+        }
+
+        return null;
+    }
+
+    @Override
     public boolean useMinecraftLibraries() {
         return !this.instanceInstaller.isServer;
     }

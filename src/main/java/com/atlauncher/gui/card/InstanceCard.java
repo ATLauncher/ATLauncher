@@ -21,12 +21,8 @@ import java.awt.BorderLayout;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.Toolkit;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.StringSelection;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.io.IOException;
 import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
@@ -41,10 +37,8 @@ import javax.swing.JTextArea;
 import org.mini2Dx.gettext.GetText;
 
 import com.atlauncher.App;
-import com.atlauncher.Gsons;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.constants.Constants;
-import com.atlauncher.data.APIResponse;
 import com.atlauncher.data.BackupMode;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.minecraft.loaders.LoaderType;
@@ -62,12 +56,9 @@ import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.ConfigManager;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.managers.InstanceManager;
-import com.atlauncher.managers.LogManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.network.analytics.AnalyticsEvent;
 import com.atlauncher.utils.OS;
-import com.atlauncher.utils.Utils;
-import com.google.gson.reflect.TypeToken;
 
 /**
  * <p/>
@@ -85,8 +76,17 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
     private final JButton editButton = new JButton(GetText.tr("Edit Mods"));
     private final JButton serversButton = new JButton(GetText.tr("Servers"));
     private final JButton openWebsite = new JButton(GetText.tr("Open Website"));
-    private final JButton openButton = new JButton(GetText.tr("Open Folder"));
     private final JButton settingsButton = new JButton(GetText.tr("Settings"));
+
+    private final JPopupMenu openPopupMenu = new JPopupMenu();
+    private final JMenuItem openResourceMenuItem = new JMenuItem(GetText.tr("Open Resources"));
+    private final DropDownButton openButton = new DropDownButton(GetText.tr("Open Folder"), openPopupMenu, true,
+            new MouseAdapter() {
+                @Override
+                public void mousePressed(MouseEvent e) {
+                    OS.openFileExplorer(instance.getRoot());
+                }
+            });
 
     private final JPopupMenu playPopupMenu = new JPopupMenu();
     private final JMenuItem playOnlinePlayMenuItem = new JMenuItem(GetText.tr("Play Online"));
@@ -153,10 +153,14 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
     private final DropDownButton editInstanceButton = new DropDownButton(GetText.tr("Edit Instance"),
             editInstancePopupMenu);
 
-    public InstanceCard(Instance instance) {
-        super(instance);
+    private final boolean hasUpdate;
+
+    public InstanceCard(Instance instance, boolean hasUpdate, String instanceTitleFormat) {
+        super(instance, instanceTitleFormat);
         this.instance = instance;
-        this.image = new ImagePanel(instance.getImage().getImage());
+        this.image = new ImagePanel(()-> instance.getImage().getImage());
+        this.hasUpdate = hasUpdate;
+
         JSplitPane splitter = new JSplitPane();
         splitter.setLeftComponent(this.image);
         JPanel rightPanel = new JPanel();
@@ -177,7 +181,7 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
                 public void mouseClicked(MouseEvent e) {
                     if (e.getClickCount() == 2) {
                         instance.startChangeDescription();
-                        descArea.setText(instance.launcher.description);
+                        descArea.setText(instance.getPackDescription());
                     }
                 }
             });
@@ -203,6 +207,7 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
         bottom.add(this.getHelpButton);
 
         setupPlayPopupMenus();
+        setupOpenPopupMenus();
         setupButtonPopupMenus();
 
         // check it can be exported
@@ -250,7 +255,7 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
 
         RelocalizationManager.addListener(this);
 
-        if (!instance.hasUpdate()) {
+        if (!hasUpdate) {
             this.updateButton.setVisible(false);
         }
 
@@ -268,6 +273,16 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
             play(true);
         });
         playPopupMenu.add(playOfflinePlayMenuItem);
+    }
+
+    private void setupOpenPopupMenus() {
+        openResourceMenuItem.addActionListener(e -> {
+            DialogManager.okDialog().setTitle(GetText.tr("Reminder"))
+                    .setContent(GetText.tr("You may not distribute ANY resources."))
+                    .setType(DialogManager.WARNING).show();
+            OS.openFileExplorer(instance.getMinecraftJarLibraryPath());
+        });
+        openPopupMenu.add(openResourceMenuItem);
     }
 
     private void setupButtonPopupMenus() {
@@ -501,7 +516,6 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
                 String.format("%s/%s?utm_source=launcher&utm_medium=button&utm_campaign=instance_v2_button",
                         Constants.SERVERS_LIST_PACK, instance.getSafePackName())));
         this.openWebsite.addActionListener(e -> OS.openWebBrowser(instance.getWebsiteUrl()));
-        this.openButton.addActionListener(e -> OS.openFileExplorer(instance.getRoot()));
         this.settingsButton.addActionListener(e -> {
             Analytics.trackEvent(AnalyticsEvent.forInstanceEvent("instance_settings", instance));
             new InstanceSettingsDialog(instance);
@@ -548,7 +562,7 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
             return;
         }
 
-        if (instance.hasUpdate() && !instance.hasLatestUpdateBeenIgnored()) {
+        if (hasUpdate && !instance.hasLatestUpdateBeenIgnored()) {
             int ret = DialogManager.yesNoDialog().setTitle(GetText.tr("Update Available"))
                     .setContent(new HTMLBuilder().center()
                             .text(GetText.tr(
@@ -622,7 +636,7 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
                     JMenuItem updateItem = new JMenuItem(GetText.tr("Update"));
                     updateItem.addActionListener(l -> instance.update());
                     updateItem.setVisible(instance.isUpdatable());
-                    updateItem.setEnabled(instance.hasUpdate() && instance.launcher.isPlayable);
+                    updateItem.setEnabled(hasUpdate && instance.launcher.isPlayable);
                     rightClickMenu.add(updateItem);
 
                     rightClickMenu.addSeparator();
@@ -651,38 +665,6 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
                         instance.startClone();
                     });
                     rightClickMenu.add(cloneItem);
-
-                    JMenuItem shareCodeItem = new JMenuItem(GetText.tr("Share Code"));
-                    shareCodeItem.addActionListener(e1 -> {
-                        Analytics.trackEvent(AnalyticsEvent.forInstanceEvent("instance_make_share_code", instance));
-                        try {
-                            java.lang.reflect.Type type = new TypeToken<APIResponse<String>>() {
-                            }.getType();
-
-                            APIResponse<String> response = Gsons.DEFAULT.fromJson(
-                                    Utils.sendAPICall("pack/" + instance.getSafePackName() + "/"
-                                            + instance.launcher.version + "/share-code", instance.getShareCodeData()),
-                                    type);
-
-                            if (response.wasError()) {
-                                App.TOASTER.pop(GetText.tr("Error getting share code."));
-                            } else {
-                                StringSelection text = new StringSelection(response.getData());
-                                Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-                                clipboard.setContents(text, null);
-
-                                App.TOASTER.pop(GetText.tr("Share code copied to clipboard"));
-                                LogManager.info("Share code copied to clipboard");
-                            }
-                        } catch (IOException ex) {
-                            LogManager.logStackTrace("API call failed", ex);
-                        }
-                    });
-                    shareCodeItem.setVisible((instance.getPack() != null && !instance.getPack().system)
-                            && !instance.isExternalPack() && !instance.launcher.vanillaInstance
-                            && instance.launcher.mods.stream().anyMatch(mod -> mod.optional));
-                    rightClickMenu.add(shareCodeItem);
-
                     rightClickMenu.show(image, e.getX(), e.getY());
                 }
             }
@@ -716,6 +698,7 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
         this.serversButton.setText(GetText.tr("Servers"));
         this.openWebsite.setText(GetText.tr("Open Website"));
         this.openButton.setText(GetText.tr("Open Folder"));
+        this.openResourceMenuItem.setText(GetText.tr("Open Resources"));
         this.settingsButton.setText(GetText.tr("Settings"));
 
         this.normalBackupMenuItem.setText(GetText.tr("Normal Backup"));

@@ -63,6 +63,14 @@ public class PackVersion {
             return versionString + " (Alpha)";
         }
 
+        if (_curseForgeFile != null && _curseForgeFile.isBetaType()) {
+            return versionString + " (Beta)";
+        }
+
+        if (_curseForgeFile != null && _curseForgeFile.isAlphaType()) {
+            return versionString + " (Alpha)";
+        }
+
         return versionString;
     }
 

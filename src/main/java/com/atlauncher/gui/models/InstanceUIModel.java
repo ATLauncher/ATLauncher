@@ -15,8 +15,19 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.atlauncher.evnt.listener;
+package com.atlauncher.gui.models;
 
-public interface ConsoleCloseListener {
-    void onConsoleClose();
+import com.atlauncher.data.Instance;
+
+/**
+ * 2023 / 08 / 15
+ */
+public class InstanceUIModel {
+    public final Instance instance;
+    public final boolean hasUpdate;
+
+    public InstanceUIModel(Instance instance, boolean hasUpdate) {
+        this.instance = instance;
+        this.hasUpdate = hasUpdate;
+    }
 }

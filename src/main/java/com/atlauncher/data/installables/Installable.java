@@ -24,6 +24,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 
@@ -42,7 +43,6 @@ import com.atlauncher.data.PackVersion;
 import com.atlauncher.data.curseforge.pack.CurseForgeManifest;
 import com.atlauncher.data.minecraft.VersionManifestVersion;
 import com.atlauncher.data.minecraft.loaders.LoaderVersion;
-import com.atlauncher.data.modpacksch.ModpacksChPackManifest;
 import com.atlauncher.data.modrinth.ModrinthProject;
 import com.atlauncher.data.modrinth.pack.ModrinthModpackManifest;
 import com.atlauncher.data.multimc.MultiMCManifest;
@@ -73,7 +73,6 @@ public abstract class Installable {
     public ModrinthProject modrinthProject;
     public ModrinthModpackManifest modrinthManifest;
     public Path modrinthExtractedPath;
-    public ModpacksChPackManifest modpacksChPackManifest;
     public MultiMCManifest multiMCManifest;
     public Path multiMCExtractedPath;
     public TechnicModpack technicModpack;
@@ -162,8 +161,8 @@ public abstract class Installable {
         boolean saveMods = !isServer && isReinstall && this.saveMods;
 
         final InstanceInstaller instanceInstaller = new InstanceInstaller(instanceName, pack, version, isReinstall,
-                isServer, changingLoader, saveMods, null, showModsChooser, loaderVersion, curseForgeManifest,
-                curseExtractedPath, modpacksChPackManifest, modrinthManifest, modrinthExtractedPath, multiMCManifest,
+                isServer, changingLoader, saveMods, showModsChooser, loaderVersion, curseForgeManifest,
+                curseExtractedPath, modrinthManifest, modrinthExtractedPath, multiMCManifest,
                 multiMCExtractedPath, technicModpack, dialog) {
 
             protected void done() {
@@ -186,7 +185,6 @@ public abstract class Installable {
                             instance.launcher.isPlayable = false;
                             instance.save();
 
-                            App.launcher.reloadInstancesPanel();
                         }
                     } else if (isReinstall) {
                         // #. {0} is the pack name and {1} is the pack version
@@ -200,7 +198,6 @@ public abstract class Installable {
                             instance.launcher.isPlayable = false;
                             instance.save();
 
-                            App.launcher.reloadInstancesPanel();
                         }
                     } else {
                         // #. {0} is the pack name and {1} is the pack version
@@ -250,12 +247,6 @@ public abstract class Installable {
                             // #. {0} is the pack name and {1} is the pack version
                             text = GetText.tr("{0} {1} has been installed.<br/><br/>Find it in the instances tab.",
                                     pack.getName(), version.version);
-                        }
-
-                        if (isServer) {
-                            App.launcher.reloadServersPanel();
-                        } else {
-                            App.launcher.reloadInstancesPanel();
                         }
 
                         if (pack.isLoggingEnabled() && App.settings.enableLogs && !version.isDev) {
@@ -367,7 +358,7 @@ public abstract class Installable {
                     }
                 }
                 if (paint == null && progress > 0.0) {
-                    subProgressBar.setString(String.format("%.2f%%", progress));
+                    subProgressBar.setString(String.format(Locale.ENGLISH, "%.2f%%", progress));
                 }
                 subProgressBar.setValue((int) Math.round(progress * 100.0));
             } else if ("subprogressint" == evt.getPropertyName()) {

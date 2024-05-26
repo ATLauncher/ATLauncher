@@ -487,6 +487,40 @@ public enum OS {
      *
      * @param args a List of arguments to pass when starting the launcher
      */
+    public static void restartToUpdateBundledJre(Path newJrePath) {
+        String path = getRunningProgramPath().toString();
+
+        List<String> arguments = new ArrayList<>();
+
+        arguments.add(Java.getPathToJavaExecutable(newJrePath));
+        arguments.add("-Djna.nosys=true");
+        arguments.add("-cp");
+        arguments.add(path);
+        arguments.add("com.atlauncher.UpdateBundledJre");
+        arguments.add(newJrePath.toAbsolutePath().toString());
+        arguments.add(FileSystem.JRE.toAbsolutePath().toString());
+        arguments.add(path);
+
+        // pass in all the original arguments
+        arguments.addAll(Arrays.asList(App.PASSED_ARGS));
+
+        ProcessBuilder processBuilder = new ProcessBuilder();
+        processBuilder.directory(FileSystem.BASE_DIR.toFile());
+        processBuilder.command(arguments);
+
+        try {
+            processBuilder.start();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        System.exit(0);
+    }
+
+    /**
+     * This restarts the launcher with an option set of arguments to add.
+     *
+     * @param args a List of arguments to pass when starting the launcher
+     */
     public static void restartLauncher(List<String> args) {
         String path = getRunningProgramPath().toString();
 

@@ -15,8 +15,34 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.atlauncher.evnt.listener;
+package com.atlauncher.data;
 
-public interface AccountListener {
-    void onAccountsChanged();
+/**
+ * Represents an contributor in AboutTab.
+ */
+public class Contributor {
+    /**
+     * Name of the contributor.
+     */
+    public final String name;
+
+    /**
+     * Url to the GitHub profile of the contributor.
+     */
+    public final String url;
+
+    /**
+     * URL to the avatar of the contributor.
+     */
+    public final String avatarUrl;
+
+    /**
+     * @param name     of the author
+     * @param imageURL of the authors profile picture
+     */
+    public Contributor(String name, String url, String avatarUrl) {
+        this.name = name;
+        this.url = url;
+        this.avatarUrl = avatarUrl;
+    }
 }

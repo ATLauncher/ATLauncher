@@ -27,6 +27,7 @@ import java.nio.channels.ReadableByteChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import com.atlauncher.App;
@@ -356,6 +357,10 @@ public final class Download {
         return this.hash != null && this.hash.length() == 32;
     }
 
+    private boolean sha256() {
+        return this.hash != null && this.hash.length() == 64;
+    }
+
     private boolean sha512() {
         return this.hash != null && this.hash.length() == 128;
     }
@@ -442,6 +447,8 @@ public final class Download {
                 }
             } else if (this.md5() && Hashing.md5(this.to).equals(Hashing.toHashCode(this.getHash()))) {
                 return false;
+            } else if (this.sha256() && Hashing.sha256(this.to).equals(Hashing.toHashCode(this.getHash()))) {
+                return false;
             } else if (this.sha512() && Hashing.sha512(this.to).equals(Hashing.toHashCode(this.getHash()))) {
                 return false;
             } else if (Hashing.sha1(this.to).equals(Hashing.toHashCode(this.getHash()))) {
@@ -484,6 +491,8 @@ public final class Download {
                 }
             } else if (this.md5()) {
                 return Hashing.md5(this.to).equals(Hashing.toHashCode(this.getHash()));
+            } else if (this.sha256()) {
+                return Hashing.sha256(this.to).equals(Hashing.toHashCode(this.getHash()));
             } else if (this.sha512()) {
                 return Hashing.sha512(this.to).equals(Hashing.toHashCode(this.getHash()));
             } else {
@@ -534,7 +543,8 @@ public final class Download {
         // size and log a warning
         if (this.ignoreFailures && this.to.toFile().length() != 0) {
             LogManager
-                    .warn(String.format("%s (of size %d) hash didn't match, but we're ignoring failures, so continuing",
+                    .warn(String.format(Locale.ENGLISH,
+                            "%s (of size %d) hash didn't match, but we're ignoring failures, so continuing",
                             this.to.getFileName(), this.to.toFile().length()));
             return true;
         }
@@ -585,6 +595,8 @@ public final class Download {
                     if (Files.exists(this.copyTo)) {
                         if (this.md5()) {
                             fileHash = Hashing.md5(this.copyTo);
+                        } else if (this.sha256()) {
+                            fileHash = Hashing.sha256(this.copyTo);
                         } else if (this.sha512()) {
                             fileHash = Hashing.sha512(this.copyTo);
                         } else {
@@ -662,16 +674,17 @@ public final class Download {
                 FileUtils.copyFile(this.to, FileSystem.FAILED_DOWNLOADS);
                 if (fingerprint != null) {
                     LogManager.error("Error downloading " + this.to.getFileName() + " from " + this.url + ". Expected"
-                            + " fingerprint of " + fingerprint.toString() + " (with size of " + this.size + ") but got "
+                            + " fingerprint of " + fingerprint.toString() + " (" + (this.size == 0 ? "with unknown size": "with size of" + this.size) + ") but got "
                             + Hashing.murmur(this.to) + " (with size of "
                             + (Files.exists(this.to) ? Files.size(this.to) : 0)
                             + ") instead. Copied to FailedDownloads folder & cancelling install! ("
                             + App.settings.connectionTimeout + "/" + App.settings.concurrentConnections + ")");
                 } else {
                     LogManager.error("Error downloading " + this.to.getFileName() + " from " + this.url + ". Expected"
-                            + " hash of " + expected.toString() + " (with size of " + this.size + ") but got "
+                            + " hash of " + expected.toString() + " (" + (this.size == 0 ? "with unknown size": "with size of" + this.size) + ") but got "
                             + (this.md5() ? Hashing.md5(this.to)
-                                    : (this.sha512() ? Hashing.sha512(this.to) : Hashing.sha1(this.to)))
+                                    : (this.sha256() ? Hashing.sha256(this.to)
+                                            : (this.sha512() ? Hashing.sha512(this.to) : Hashing.sha1(this.to))))
                             + " (with size of " + (Files.exists(this.to) ? Files.size(this.to) : 0)
                             + ") instead. Copied to FailedDownloads folder & cancelling install! ("
                             + App.settings.connectionTimeout + "/" + App.settings.concurrentConnections + ")");
@@ -694,6 +707,8 @@ public final class Download {
                     if (Files.exists(this.copyTo)) {
                         if (this.md5()) {
                             fileHash2 = Hashing.md5(this.copyTo);
+                        } else if (this.sha256()) {
+                            fileHash2 = Hashing.sha256(this.copyTo);
                         } else if (this.sha512()) {
                             fileHash2 = Hashing.sha512(this.copyTo);
                         } else {

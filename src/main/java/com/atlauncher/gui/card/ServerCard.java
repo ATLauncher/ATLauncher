@@ -23,19 +23,15 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.io.File;
-import java.io.IOException;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
-import javax.swing.JFileChooser;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTextArea;
-import javax.swing.filechooser.FileNameExtensionFilter;
 
 import org.mini2Dx.gettext.GetText;
 
@@ -44,15 +40,14 @@ import com.atlauncher.data.Server;
 import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.gui.components.CollapsiblePanel;
+import com.atlauncher.gui.components.DropDownButton;
 import com.atlauncher.gui.components.ImagePanel;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.managers.DialogManager;
-import com.atlauncher.managers.LogManager;
 import com.atlauncher.managers.ServerManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.network.analytics.AnalyticsEvent;
 import com.atlauncher.utils.OS;
-import com.atlauncher.utils.Utils;
 
 @SuppressWarnings("serial")
 public class ServerCard extends CollapsiblePanel implements RelocalizationListener {
@@ -65,18 +60,26 @@ public class ServerCard extends CollapsiblePanel implements RelocalizationListen
     private final JButton backupButton = new JButton(GetText.tr("Backup"));
     private final JButton deleteButton = new JButton(GetText.tr("Delete"));
     private final JButton openButton = new JButton(GetText.tr("Open Folder"));
+    private final JTextArea descArea = new JTextArea();
+
+    private final JPopupMenu getHelpPopupMenu = new JPopupMenu();
+    private final JMenuItem discordLinkMenuItem = new JMenuItem(GetText.tr("Discord"));
+    private final JMenuItem supportLinkMenuItem = new JMenuItem(GetText.tr("Support"));
+    private final JMenuItem websiteLinkMenuItem = new JMenuItem(GetText.tr("Website"));
+    private final JMenuItem wikiLinkMenuItem = new JMenuItem(GetText.tr("Wiki"));
+    private final JMenuItem sourceLinkMenuItem = new JMenuItem(GetText.tr("Source"));
+    private final DropDownButton getHelpButton = new DropDownButton(GetText.tr("Get Help"), getHelpPopupMenu);
 
     public ServerCard(Server server) {
         super(server);
         this.server = server;
-        this.image = new ImagePanel(server.getImage().getImage());
+        this.image = new ImagePanel(() -> server.getImage().getImage());
         JSplitPane splitter = new JSplitPane();
         splitter.setLeftComponent(this.image);
         JPanel rightPanel = new JPanel();
         splitter.setRightComponent(rightPanel);
         splitter.setEnabled(false);
 
-        JTextArea descArea = new JTextArea();
         descArea.setText(server.getPackDescription());
         descArea.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 5));
         descArea.setEditable(false);
@@ -84,6 +87,16 @@ public class ServerCard extends CollapsiblePanel implements RelocalizationListen
         descArea.setLineWrap(true);
         descArea.setWrapStyleWord(true);
         descArea.setEditable(false);
+
+        descArea.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (e.getClickCount() == 2) {
+                    server.startChangeDescription();
+                    descArea.setText(server.getPackDescription());
+                }
+            }
+        });
 
         JPanel top = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 2));
         JPanel bottom = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 2));
@@ -100,7 +113,10 @@ public class ServerCard extends CollapsiblePanel implements RelocalizationListen
         top.add(this.launchWithGuiAndClose);
         bottom.add(this.backupButton);
         bottom.add(this.deleteButton);
+        bottom.add(this.getHelpButton);
         bottom.add(this.openButton);
+
+        this.getHelpButton.setVisible(server.showGetHelpButton());
 
         // unfortunately OSX doesn't allow us to pass arguments with open and Terminal
         if (OS.isMac()) {
@@ -116,6 +132,8 @@ public class ServerCard extends CollapsiblePanel implements RelocalizationListen
 
         this.getContentPane().setLayout(new BorderLayout());
         this.getContentPane().add(splitter, BorderLayout.CENTER);
+
+        setupButtonPopupMenus();
 
         RelocalizationManager.addListener(this);
 
@@ -144,7 +162,6 @@ public class ServerCard extends CollapsiblePanel implements RelocalizationListen
                     App.TOASTER.pop(GetText.tr("Deleted Server Successfully"));
                 }));
                 dialog.start();
-                App.launcher.reloadServersPanel();
             }
         });
         this.openButton.addActionListener(e -> OS.openFileExplorer(server.getRoot()));
@@ -163,30 +180,22 @@ public class ServerCard extends CollapsiblePanel implements RelocalizationListen
                 } else if (e.getButton() == MouseEvent.BUTTON3) {
                     JPopupMenu rightClickMenu = new JPopupMenu();
 
+                    JMenuItem changeDescriptionItem = new JMenuItem(GetText.tr("Change Description"));
+                    rightClickMenu.add(changeDescriptionItem);
+
                     JMenuItem changeImageItem = new JMenuItem(GetText.tr("Change Image"));
                     rightClickMenu.add(changeImageItem);
 
                     rightClickMenu.show(image, e.getX(), e.getY());
 
+                    changeDescriptionItem.addActionListener(e14 -> {
+                        server.startChangeDescription();
+                        descArea.setText(server.getPackDescription());
+                    });
+
                     changeImageItem.addActionListener(e13 -> {
-                        JFileChooser chooser = new JFileChooser();
-                        chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-                        chooser.setAcceptAllFileFilterUsed(false);
-                        chooser.setFileFilter(new FileNameExtensionFilter("PNG Files", "png"));
-                        int ret = chooser.showOpenDialog(App.launcher.getParent());
-                        if (ret == JFileChooser.APPROVE_OPTION) {
-                            File img = chooser.getSelectedFile();
-                            if (img.getAbsolutePath().endsWith(".png")) {
-                                Analytics.trackEvent(AnalyticsEvent.forServerEvent("server_change_image", server));
-                                try {
-                                    Utils.safeCopy(img, server.getRoot().resolve("server.png").toFile());
-                                    image.setImage(server.getImage().getImage());
-                                    server.save();
-                                } catch (IOException ex) {
-                                    LogManager.logStackTrace("Failed to set server image", ex);
-                                }
-                            }
-                        }
+                        server.startChangeImage();
+                        image.setImage(server.getImage().getImage());
                     });
                 }
             }
@@ -203,6 +212,35 @@ public class ServerCard extends CollapsiblePanel implements RelocalizationListen
                 setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
             }
         });
+    }
+
+    private void setupButtonPopupMenus() {
+        if (server.showGetHelpButton()) {
+            if (server.getDiscordInviteUrl() != null) {
+                discordLinkMenuItem.addActionListener(e -> OS.openWebBrowser(server.getDiscordInviteUrl()));
+                getHelpPopupMenu.add(discordLinkMenuItem);
+            }
+
+            if (server.getSupportUrl() != null) {
+                supportLinkMenuItem.addActionListener(e -> OS.openWebBrowser(server.getSupportUrl()));
+                getHelpPopupMenu.add(supportLinkMenuItem);
+            }
+
+            if (server.getWebsiteUrl() != null) {
+                websiteLinkMenuItem.addActionListener(e -> OS.openWebBrowser(server.getWebsiteUrl()));
+                getHelpPopupMenu.add(websiteLinkMenuItem);
+            }
+
+            if (server.getWikiUrl() != null) {
+                wikiLinkMenuItem.addActionListener(e -> OS.openWebBrowser(server.getWikiUrl()));
+                getHelpPopupMenu.add(wikiLinkMenuItem);
+            }
+
+            if (server.getSourceUrl() != null) {
+                sourceLinkMenuItem.addActionListener(e -> OS.openWebBrowser(server.getSourceUrl()));
+                getHelpPopupMenu.add(sourceLinkMenuItem);
+            }
+        }
     }
 
     @Override

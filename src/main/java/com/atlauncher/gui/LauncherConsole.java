@@ -37,9 +37,9 @@ import org.mini2Dx.gettext.GetText;
 
 import com.atlauncher.App;
 import com.atlauncher.constants.Constants;
+import com.atlauncher.data.ConsoleState;
 import com.atlauncher.evnt.listener.RelocalizationListener;
-import com.atlauncher.evnt.manager.ConsoleCloseManager;
-import com.atlauncher.evnt.manager.ConsoleOpenManager;
+import com.atlauncher.evnt.manager.ConsoleStateManager;
 import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.gui.components.Console;
 import com.atlauncher.gui.components.ConsoleBottomBar;
@@ -116,9 +116,9 @@ public class LauncherConsole extends JFrame implements RelocalizationListener {
         super.setVisible(flag);
         bottomBar.hideBottomBarIconsIfNeeded();
         if (flag) {
-            ConsoleOpenManager.post();
+            ConsoleStateManager.setState(ConsoleState.OPEN);
         } else {
-            ConsoleCloseManager.post();
+            ConsoleStateManager.setState(ConsoleState.CLOSED);
         }
     }
 

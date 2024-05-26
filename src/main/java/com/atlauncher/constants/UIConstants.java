@@ -22,6 +22,7 @@ import java.awt.Insets;
 public class UIConstants {
     public static final int SPACING_SMALL = 3;
     public static final int SPACING_LARGE = 5;
+    public static final int SPACING_XLARGE = 10;
 
     public static final Insets LABEL_INSETS = new Insets(SPACING_LARGE, 0, SPACING_LARGE, SPACING_LARGE * 2);
     public static final Insets FIELD_INSETS = new Insets(SPACING_LARGE, 0, SPACING_LARGE, 0);
@@ -40,4 +41,39 @@ public class UIConstants {
     // When using FlowLayout with a horizonal margin, we need to negate the first
     // components margin added from the FlowLayout
     public static final Insets FLOW_FIELD_INSETS = new Insets(SPACING_LARGE, (-SPACING_LARGE) - 3, SPACING_LARGE, 0);
+
+    public static final int LAUNCHER_NEWS_TAB = 0;
+    public static final int LAUNCHER_CREATE_PACK_TAB = 1;
+    public static final int LAUNCHER_PACKS_TAB = 2;
+    public static final int LAUNCHER_INSTANCES_TAB = 3;
+    public static final int LAUNCHER_SERVERS_TAB = 4;
+    public static final int LAUNCHER_ACCOUNTS_TAB = 5;
+    public static final int LAUNCHER_TOOLS_TAB = 6;
+    public static final int LAUNCHER_SETTINGS_TAB = 7;
+    public static final int LAUNCHER_ABOUT_TAB = 8;
+
+    public static final String getInitialTabName(int initialTab) {
+        switch (initialTab) {
+            case UIConstants.LAUNCHER_NEWS_TAB:
+                return "News";
+            case UIConstants.LAUNCHER_CREATE_PACK_TAB:
+                return "Create Pack";
+            case UIConstants.LAUNCHER_PACKS_TAB:
+                return "Packs";
+            case UIConstants.LAUNCHER_INSTANCES_TAB:
+                return "Instances";
+            case UIConstants.LAUNCHER_SERVERS_TAB:
+                return "Servers";
+            case UIConstants.LAUNCHER_ACCOUNTS_TAB:
+                return "Accounts";
+            case UIConstants.LAUNCHER_TOOLS_TAB:
+                return "Tools";
+            case UIConstants.LAUNCHER_SETTINGS_TAB:
+                return "Settings";
+            case UIConstants.LAUNCHER_ABOUT_TAB:
+                return "About";
+        }
+
+        return "Unknown";
+    }
 }

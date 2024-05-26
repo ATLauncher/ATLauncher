@@ -79,7 +79,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ScrollPaneConstants;
 
-import org.apache.commons.io.IOUtils;
+import org.apache.commons.compress.utils.IOUtils;
 import org.tukaani.xz.LZMAInputStream;
 import org.tukaani.xz.XZInputStream;
 
@@ -840,6 +840,8 @@ public class Utils {
 
     public static String sendAPICall(String path, Object data) throws IOException {
         StringBuilder response;
+
+        System.out.println(Gsons.DEFAULT.toJson(data));
 
         byte[] contents = Gsons.DEFAULT.toJson(data).getBytes();
 

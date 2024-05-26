@@ -54,6 +54,7 @@ public class Settings {
     public boolean ignoreProgramFilesWarning = false;
     public boolean ignoreJavaOptionsWarning = false;
     public boolean seenCurseForgeProjectDistributionDialog = false;
+    public int seenBundledJrePromptVersion = 0;
 
     // Window settings
     public boolean rememberWindowSizePosition = false;
@@ -87,6 +88,7 @@ public class Settings {
     public ModPlatform defaultModPlatform = ModPlatform.CURSEFORGE;
     public AddModRestriction addModRestriction = AddModRestriction.STRICT;
     public boolean enableAddedModsByDefault = true;
+    public boolean allowCurseForgeAlphaBetaFiles = false;
     public boolean dontCheckModsOnCurseForge = false;
     public boolean dontCheckModsOnModrinth = false;
     public InstanceExportFormat defaultExportFormat = InstanceExportFormat.CURSEFORGE;
@@ -110,7 +112,7 @@ public class Settings {
     // Network
     public int concurrentConnections = 8;
     public int connectionTimeout = 60;
-    public boolean dontUseHttp2 = false;
+    public String modrinthApiKey = null;
     public boolean enableProxy = false;
     public String proxyHost = "";
     public int proxyPort = 8080;

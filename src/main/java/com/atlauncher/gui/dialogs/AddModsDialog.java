@@ -24,6 +24,7 @@ import java.awt.GridBagConstraints;
 import java.awt.Window;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.swing.BorderFactory;
@@ -48,6 +49,7 @@ import com.atlauncher.App;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.constants.Constants;
 import com.atlauncher.data.AddModRestriction;
+import com.atlauncher.data.DisableableMod;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.ModPlatform;
 import com.atlauncher.data.curseforge.CurseForgeCategoryForGame;
@@ -182,6 +184,7 @@ public final class AddModsDialog extends JDialog {
             sectionComboBox.addItem(new ComboItem<>("Mods", GetText.tr("Mods")));
         }
         sectionComboBox.addItem(new ComboItem<>("Resource Packs", GetText.tr("Resource Packs")));
+        sectionComboBox.addItem(new ComboItem<>("Shaders", GetText.tr("Shaders")));
 
         if (App.settings.defaultModPlatform == ModPlatform.CURSEFORGE) {
             sectionComboBox.addItem(new ComboItem<>("Worlds", GetText.tr("Worlds")));
@@ -190,8 +193,6 @@ public final class AddModsDialog extends JDialog {
             sortComboBox.addItem(new ComboItem<>("Last Updated", GetText.tr("Last Updated")));
             sortComboBox.addItem(new ComboItem<>("Total Downloads", GetText.tr("Total Downloads")));
         } else {
-            sectionComboBox.addItem(new ComboItem<>("Shaders", GetText.tr("Shaders")));
-
             sortComboBox.addItem(new ComboItem<>("relevance", GetText.tr("Relevance")));
             sortComboBox.addItem(new ComboItem<>("newest", GetText.tr("Newest")));
             sortComboBox.addItem(new ComboItem<>("updated", GetText.tr("Last Updated")));
@@ -313,6 +314,12 @@ public final class AddModsDialog extends JDialog {
                     installFabricApiButton.setVisible(false);
                 }
             }
+
+            if (searchField.getText().isEmpty()) {
+                loadDefaultMods();
+            } else {
+                searchForMods();
+            }
         });
 
         this.installLegacyFabricApiButton.addActionListener(e -> {
@@ -404,6 +411,12 @@ public final class AddModsDialog extends JDialog {
                     legacyFabricApiWarningLabel.setVisible(false);
                     installLegacyFabricApiButton.setVisible(false);
                 }
+            }
+
+            if (searchField.getText().isEmpty()) {
+                loadDefaultMods();
+            } else {
+                searchForMods();
             }
         });
 
@@ -531,6 +544,8 @@ public final class AddModsDialog extends JDialog {
 
             boolean resourcePacksSelected = ((ComboItem<String>) sectionComboBox.getSelectedItem()).getValue()
                     .equals("Resource Packs");
+            boolean shadersSelected = ((ComboItem<String>) sectionComboBox.getSelectedItem()).getValue()
+                    .equals("Shaders");
 
             String platformMessage = null;
 
@@ -540,8 +555,14 @@ public final class AddModsDialog extends JDialog {
             if (instance.launcher.loaderVersion != null) {
                 sectionComboBox.addItem(new ComboItem<>("Mods", GetText.tr("Mods")));
             }
+
             sectionComboBox.addItem(new ComboItem<>("Resource Packs", GetText.tr("Resource Packs")));
             if (resourcePacksSelected) {
+                sectionComboBox.setSelectedIndex(sectionComboBox.getItemCount() - 1);
+            }
+
+            sectionComboBox.addItem(new ComboItem<>("Shaders", GetText.tr("Shaders")));
+            if (shadersSelected) {
                 sectionComboBox.setSelectedIndex(sectionComboBox.getItemCount() - 1);
             }
 
@@ -553,7 +574,6 @@ public final class AddModsDialog extends JDialog {
                 sortComboBox.addItem(new ComboItem<>("Total Downloads", GetText.tr("Total Downloads")));
             } else {
                 platformMessage = ConfigManager.getConfigItem("platforms.modrinth.message", null);
-                sectionComboBox.addItem(new ComboItem<>("Shaders", GetText.tr("Shaders")));
                 sortComboBox.addItem(new ComboItem<>("relevance", GetText.tr("Relevance")));
                 sortComboBox.addItem(new ComboItem<>("newest", GetText.tr("Newest")));
                 sortComboBox.addItem(new ComboItem<>("updated", GetText.tr("Last Updated")));
@@ -675,6 +695,11 @@ public final class AddModsDialog extends JDialog {
 
                 if (((ComboItem<String>) sectionComboBox.getSelectedItem()).getValue().equals("Resource Packs")) {
                     setCurseForgeMods(CurseForgeApi.searchResourcePacks(query, page,
+                            ((ComboItem<String>) sortComboBox.getSelectedItem()).getValue(),
+                            ((ComboItem<String>) categoriesComboBox.getSelectedItem()) == null ? null
+                                    : ((ComboItem<String>) categoriesComboBox.getSelectedItem()).getValue()));
+                } else if (((ComboItem<String>) sectionComboBox.getSelectedItem()).getValue().equals("Shaders")) {
+                    setCurseForgeMods(CurseForgeApi.searchShaderPacks(query, page,
                             ((ComboItem<String>) sortComboBox.getSelectedItem()).getValue(),
                             ((ComboItem<String>) categoriesComboBox.getSelectedItem()) == null ? null
                                     : ((ComboItem<String>) categoriesComboBox.getSelectedItem()).getValue()));
@@ -809,9 +834,29 @@ public final class AddModsDialog extends JDialog {
             mods.forEach(mod -> {
                 CurseForgeProject castMod = (CurseForgeProject) mod;
 
-                contentPanel.add(new CurseForgeProjectCard(castMod, e -> {
+                contentPanel.add(new CurseForgeProjectCard(castMod, instance, e -> {
                     Analytics.trackEvent(AnalyticsEvent.forAddMod(castMod));
                     new CurseForgeProjectFileSelectorDialog(this, castMod, instance);
+                }, e -> {
+                    Analytics.trackEvent(AnalyticsEvent.forRemoveMod(castMod));
+
+                    Optional<DisableableMod> foundMod = instance.launcher.mods.stream()
+                            .filter(dm -> dm.isFromCurseForge() && dm.curseForgeProjectId == castMod.id)
+                            .findFirst();
+
+                    if (foundMod.isPresent()) {
+                        instance.removeMod(foundMod.get());
+
+                        if (castMod.id == Constants.CURSEFORGE_FABRIC_MOD_ID) {
+                            fabricApiWarningLabel.setVisible(true);
+                            installFabricApiButton.setVisible(true);
+                        }
+
+                        if (castMod.id == Constants.CURSEFORGE_LEGACY_FABRIC_MOD_ID) {
+                            legacyFabricApiWarningLabel.setVisible(true);
+                            installLegacyFabricApiButton.setVisible(true);
+                        }
+                    }
                 }), gbc);
 
                 gbc.gridy++;
@@ -846,7 +891,7 @@ public final class AddModsDialog extends JDialog {
             searchResult.hits.forEach(mod -> {
                 ModrinthSearchHit castMod = (ModrinthSearchHit) mod;
 
-                contentPanel.add(new ModrinthSearchHitCard(castMod, e -> {
+                contentPanel.add(new ModrinthSearchHitCard(castMod, instance, e -> {
                     final ProgressDialog<ModrinthProject> modrinthProjectLookupDialog = new ProgressDialog<>(
                             GetText.tr("Getting Mod Information"), 0, GetText.tr("Getting Mod Information"),
                             "Aborting Getting Mod Information");
@@ -872,6 +917,31 @@ public final class AddModsDialog extends JDialog {
 
                     Analytics.trackEvent(AnalyticsEvent.forAddMod(castMod));
                     new ModrinthVersionSelectorDialog(this, modrinthMod, instance);
+                }, e -> {
+                    Analytics.trackEvent(AnalyticsEvent.forRemoveMod(castMod));
+
+                    Optional<DisableableMod> foundMod = instance.launcher.mods.stream()
+                            .filter(dm -> dm.isFromModrinth() && dm.modrinthProject.id.equals(castMod.projectId))
+                            .findFirst();
+
+                    if (foundMod.isPresent()) {
+                        instance.removeMod(foundMod.get());
+
+                        if (castMod.projectId.equals(Constants.MODRINTH_FABRIC_MOD_ID)) {
+                            fabricApiWarningLabel.setVisible(true);
+                            installFabricApiButton.setVisible(true);
+                        }
+
+                        if (castMod.projectId.equals(Constants.MODRINTH_LEGACY_FABRIC_MOD_ID)) {
+                            legacyFabricApiWarningLabel.setVisible(true);
+                            installLegacyFabricApiButton.setVisible(true);
+                        }
+
+                        if (castMod.projectId.equals(Constants.MODRINTH_QSL_MOD_ID)) {
+                            quiltStandardLibrariesWarningLabel.setVisible(true);
+                            installQuiltStandardLibrariesButton.setVisible(true);
+                        }
+                    }
                 }), gbc);
 
                 gbc.gridy++;
@@ -898,6 +968,8 @@ public final class AddModsDialog extends JDialog {
 
             if (((ComboItem<String>) sectionComboBox.getSelectedItem()).getValue().equals("Resource Packs")) {
                 categories.addAll(CurseForgeApi.getCategoriesForResourcePacks());
+            } else if (((ComboItem<String>) sectionComboBox.getSelectedItem()).getValue().equals("Shaders")) {
+                categories.addAll(CurseForgeApi.getCategoriesForShaderPacks());
             } else if (((ComboItem<String>) sectionComboBox.getSelectedItem()).getValue().equals("Worlds")) {
                 categories.addAll(CurseForgeApi.getCategoriesForWorlds());
             } else {

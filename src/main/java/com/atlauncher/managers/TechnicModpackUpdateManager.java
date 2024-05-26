@@ -18,9 +18,11 @@
 package com.atlauncher.managers;
 
 import java.io.IOException;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
-import com.atlauncher.App;
-import com.atlauncher.Data;
 import com.atlauncher.Gsons;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.technic.TechnicModpack;
@@ -28,15 +30,96 @@ import com.atlauncher.data.technic.TechnicSolderModpack;
 import com.atlauncher.network.DownloadException;
 import com.atlauncher.utils.TechnicApi;
 
+import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.subjects.BehaviorSubject;
+
 public class TechnicModpackUpdateManager {
+
+    /**
+     * Technic Non Solder instance update checking
+     */
+    private static final Map<UUID, BehaviorSubject<Optional<TechnicModpack>>>
+        TECHNIC_INSTANCE_LATEST_VERSION = new ConcurrentHashMap<>();
+
+    /**
+     * Technic Solder instance update checking
+     */
+    private static final Map<UUID, BehaviorSubject<Optional<TechnicSolderModpack>>>
+        TECHNIC_SOLDER_INSTANCE_LATEST_VERSION = new ConcurrentHashMap<>();
+
+    /**
+     * Get the update behavior subject for a given instance.
+     *
+     * @param instance Instance to get behavior subject for
+     * @return behavior subject for said instance updates.
+     */
+    private static BehaviorSubject<Optional<TechnicModpack>> getSubject(Instance instance){
+        TECHNIC_INSTANCE_LATEST_VERSION.putIfAbsent(
+            instance.getUUID(),
+            BehaviorSubject.createDefault(Optional.empty())
+        );
+        return TECHNIC_INSTANCE_LATEST_VERSION.get(instance.getUUID());
+    }
+
+    /**
+     * Get the solder update behavior subject for a given instance.
+     *
+     * @param instance Instance to get behavior subject for
+     * @return solder behavior subject for said instance updates.
+     */
+    private static BehaviorSubject<Optional<TechnicSolderModpack>> getSolderSubject(Instance instance){
+        TECHNIC_SOLDER_INSTANCE_LATEST_VERSION.putIfAbsent(
+            instance.getUUID(),
+            BehaviorSubject.createDefault(Optional.empty())
+        );
+        return TECHNIC_SOLDER_INSTANCE_LATEST_VERSION.get(instance.getUUID());
+    }
+
+    /**
+     * Get an observable for an instances update.
+     * <p>
+     * Please do not cast to a behavior subject.
+     * @param instance Instance to get an observable for
+     * @return Update observable
+     */
+    public static Observable<Optional<TechnicModpack>> getObservable(Instance instance) {
+        return getSubject(instance);
+    }
+
+    /**
+     * Get an observable for a solder instances update.
+     * <p>
+     * Please do not cast to a behavior subject.
+     * @param instance Instance to get an observable for
+     * @return Solder update observable
+     */
+    public static Observable<Optional<TechnicSolderModpack>> getSolderObservable(Instance instance) {
+        return getSolderSubject(instance);
+    }
+
+    /**
+     * Get the latest version of an instance
+     * @param instance Instance to get version of
+     * @return Latest version, or null if no newer version is found
+     */
     public static TechnicModpack getUpToDateModpack(Instance instance) {
-        return Data.TECHNIC_INSTANCE_LATEST_VERSION.get(instance);
+        return getSubject(instance).getValue().orElse(null);
     }
 
+    /**
+     * Get the latest version of a solder instance
+     * @param instance Instance to get version of
+     * @return Latest solder version, or null if no newer version is found
+     */
     public static TechnicSolderModpack getUpToDateSolderModpack(Instance instance) {
-        return Data.TECHNIC_SOLDER_INSTANCE_LATEST_VERSION.get(instance);
+        return getSolderSubject(instance).getValue().orElse(null);
     }
 
+    /**
+     * Check for new updates.
+     * <p>
+     * Updates observables.
+     */
     public static void checkForUpdates() {
         if (ConfigManager.getConfigItem("platforms.technic.modpacksEnabled", true) == false) {
             return;
@@ -45,10 +128,8 @@ public class TechnicModpackUpdateManager {
         PerformanceManager.start();
         LogManager.info("Checking for updates to Technic Modpack instances");
 
-        boolean refreshInstancesPanel = Data.INSTANCES.parallelStream()
-                .filter(i -> i.isTechnicPack() && i.launcher.checkForUpdates).map(i -> {
-                    boolean wasUpdated = false;
-
+        InstanceManager.getInstances().parallelStream()
+                .filter(i -> i.isTechnicPack() && i.launcher.checkForUpdates).forEach(i -> {
                     TechnicModpack technicModpack = null;
 
                     try {
@@ -69,60 +150,16 @@ public class TechnicModpackUpdateManager {
                         LogManager.logStackTrace(e);
                     }
 
-                    if (technicModpack == null) {
-                        return false;
-                    }
-
-                    if (i.isTechnicSolderPack()) {
+                    if (technicModpack != null & i.isTechnicSolderPack()) {
                         TechnicSolderModpack technicSolderModpack = TechnicApi.getSolderModpackBySlug(
                                 technicModpack.solder,
                                 technicModpack.name);
 
-                        if (technicSolderModpack == null) {
-                            return false;
-                        }
-
-                        // if there is a change to the latest key for an instance (but not a first time
-                        // write), then refresh instances panel
-                        if (Data.TECHNIC_SOLDER_INSTANCE_LATEST_VERSION.containsKey(i)
-                                && !Data.TECHNIC_SOLDER_INSTANCE_LATEST_VERSION.get(i).latest
-                                        .equals(technicSolderModpack.latest)) {
-                            wasUpdated = true;
-                        }
-
-                        // updated if there is no latest version stored yet but the instance has update
-                        if (!Data.TECHNIC_SOLDER_INSTANCE_LATEST_VERSION.containsKey(i)
-                                && !technicSolderModpack.latest.equals(i.launcher.version)) {
-                            wasUpdated = true;
-                        }
-
-                        Data.TECHNIC_SOLDER_INSTANCE_LATEST_VERSION.put(i, technicSolderModpack);
+                        getSolderSubject(i).onNext(Optional.ofNullable(technicSolderModpack));
                     } else {
-                        // if there is a change to the latest key for an instance (but not a first time
-                        // write), then refresh instances panel
-                        if (Data.TECHNIC_INSTANCE_LATEST_VERSION.containsKey(i)
-                                && !Data.TECHNIC_INSTANCE_LATEST_VERSION.get(i).version
-                                        .equals(technicModpack.version)) {
-                            wasUpdated = true;
-                        }
-
-                        // updated if there is no latest version stored yet but the instance has update
-                        if (!Data.TECHNIC_INSTANCE_LATEST_VERSION.containsKey(i)
-                                && !technicModpack.version.equals(i.launcher.version)) {
-                            wasUpdated = true;
-                        }
-
-                        Data.TECHNIC_INSTANCE_LATEST_VERSION.put(i, technicModpack);
-
-                        wasUpdated = !technicModpack.version.equalsIgnoreCase(i.launcher.technicModpack.version);
+                        getSubject(i).onNext(Optional.ofNullable(technicModpack));
                     }
-
-                    return wasUpdated;
-                }).anyMatch(b -> b);
-
-        if (refreshInstancesPanel) {
-            App.launcher.reloadInstancesPanel();
-        }
+                });
 
         PerformanceManager.end();
     }

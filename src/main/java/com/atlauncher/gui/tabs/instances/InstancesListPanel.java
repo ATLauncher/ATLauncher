@@ -19,70 +19,112 @@ package com.atlauncher.gui.tabs.instances;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.util.stream.Collectors;
 
-import javax.swing.JPanel;
-
-import com.atlauncher.viewmodel.base.IInstancesTabViewModel;
 import org.mini2Dx.gettext.GetText;
 
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.constants.UIConstants;
 import com.atlauncher.evnt.listener.RelocalizationListener;
-import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.gui.card.InstanceCard;
 import com.atlauncher.gui.card.NilCard;
+import com.atlauncher.gui.panels.HierarchyPanel;
 import com.atlauncher.gui.tabs.InstancesTab;
+import com.atlauncher.managers.PerformanceManager;
+import com.atlauncher.viewmodel.base.IInstancesTabViewModel;
+import com.google.common.collect.Lists;
 
-public final class InstancesListPanel extends JPanel
-        implements RelocalizationListener {
-    private static NilCard createNilCard() {
-        return new NilCard(new HTMLBuilder()
-                .text(GetText.tr("There are no instances to display.<br/><br/>Install one from the Packs tab."))
-                .build());
-    }
+public final class InstancesListPanel extends HierarchyPanel
+    implements RelocalizationListener {
 
-    private final NilCard nilCard = createNilCard();
-    final InstancesTab parent;
-    final IInstancesTabViewModel viewModel;
+    private final InstancesTab instancesTab;
+    private final IInstancesTabViewModel viewModel;
 
-    public InstancesListPanel(final InstancesTab parent,final IInstancesTabViewModel viewModel) {
-        super(new GridBagLayout());
-        this.parent = parent;
-        this.viewModel = viewModel;
-        this.createView();
-        RelocalizationManager.addListener(this);
-    }
-
-    public void createView() {
-        final GridBagConstraints gbc = new GridBagConstraints();
-        gbc.gridx = gbc.gridy = 0;
-        gbc.weightx = 1.0;
-        gbc.insets = UIConstants.FIELD_INSETS;
-        gbc.fill = GridBagConstraints.BOTH;
-
-        viewModel.setOnViewChanged(instances -> {
-            gbc.gridy = 0;
-            removeAll();
-            instances.forEach(instance -> {
-                this.add(new InstanceCard(instance), gbc);
-                gbc.gridy++;
-            });
-
-            if (this.getComponentCount() == 0) {
-                this.add(this.nilCard, gbc);
-            }
-
-            validate();
-            repaint();
-            parent.validate();
-            parent.repaint();
+    private final NilCard nilCard = new NilCard(
+        getNilMessage(),
+        new NilCard.Action[]{
+            NilCard.Action.createCreatePackAction(),
+            NilCard.Action.createDownloadPackAction()
         });
+
+    public InstancesListPanel(InstancesTab instancesTab, final IInstancesTabViewModel viewModel) {
+        super(new GridBagLayout());
+        this.instancesTab = instancesTab;
+        this.viewModel = viewModel;
+        PerformanceManager.start("Displaying Instances");
+    }
+
+    private static String getNilMessage() {
+        return new HTMLBuilder()
+            .text(GetText.tr("There are no instances to display.<br/><br/>Install one from the Packs tab."))
+            .build();
+    }
+
+    @Override
+    protected void onShow() {
+        addDisposable(viewModel.getInstancesList()
+            .map(instancesList -> {
+                    viewModel.setIsLoading(true);
+                    return instancesList.instances.stream().map(instance ->
+                        new InstanceCard(
+                            instance.instance,
+                            instance.hasUpdate,
+                            instancesList.instanceTitleFormat
+                        )
+                    ).collect(Collectors.toList());
+                }
+            ).subscribe(instances -> {
+                final GridBagConstraints gbc = new GridBagConstraints();
+                gbc.gridx = gbc.gridy = 0;
+                gbc.weightx = 1.0;
+                gbc.insets = UIConstants.FIELD_INSETS;
+                gbc.fill = GridBagConstraints.BOTH;
+
+                removeAll();
+
+                if (instances.isEmpty()) {
+                    this.add(this.nilCard, gbc);
+                } else {
+                    PerformanceManager.start("Render cards");
+                    // Portion up into chunks of 10, to make rendering easier
+                    Lists.partition(instances, 10).forEach(subInstances -> {
+                        instances.forEach(instance -> {
+                            this.add(
+                                instance,
+                                gbc
+                            );
+                            gbc.gridy++;
+                        });
+
+                        validate();
+                        repaint();
+                    });
+                    PerformanceManager.end("Render cards");
+                }
+
+                viewModel.setIsLoading(false); // Broken, reason above
+
+                // After repainting is done, let scroll view resume
+                invokeLater(() -> instancesTab.setScroll(viewModel.getScroll()));
+                PerformanceManager.end("Displaying Instances");
+            }));
     }
 
     @Override
     public void onRelocalization() {
-        this.nilCard.setMessage(new HTMLBuilder()
-                .text(GetText.tr("There are no instances to display.<br/><br/>Install one from the Packs tab."))
-                .build());
+        this.nilCard.setMessage(getNilMessage());
+        nilCard.setActions(new NilCard.Action[]{
+            NilCard.Action.createCreatePackAction(),
+            NilCard.Action.createDownloadPackAction()
+        });
+    }
+
+    @Override
+    protected void createViewModel() {
+    }
+
+    @Override
+    protected void onDestroy() {
+        removeAll();
     }
 }

@@ -17,78 +17,79 @@
  */
 package com.atlauncher.viewmodel.impl;
 
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.TimeUnit;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+
 import com.atlauncher.data.Server;
 import com.atlauncher.managers.ServerManager;
 import com.atlauncher.viewmodel.base.IServersTabViewModel;
+import com.gitlab.doomsdayrs.lib.rxswing.schedulers.SwingSchedulers;
 
-import java.util.List;
-import java.util.function.Consumer;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
+import io.reactivex.rxjava3.core.BackpressureStrategy;
+import io.reactivex.rxjava3.core.Flowable;
+import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.schedulers.Schedulers;
+import io.reactivex.rxjava3.subjects.BehaviorSubject;
 
 /**
  * 19 / 11 / 2022
  */
-public class ServersTabViewModel implements IServersTabViewModel, ServerManager.Listener {
-    private List<Server> sourceServers = ServerManager.getServersSorted();
+public class ServersTabViewModel implements IServersTabViewModel {
+    private final Observable<List<Server>> sourceServers =
+        ServerManager.getServersObservable()
+            .map(servers ->
+                servers.stream()
+                    .sorted(Comparator.comparing(s -> s.name))
+                    .collect(Collectors.toList()))
+            .subscribeOn(Schedulers.computation());
 
-    private Consumer<List<Server>> onChangeViewListener;
+    private final BehaviorSubject<Optional<String>> searchSubject =
+        BehaviorSubject.createDefault(Optional.empty());
 
-    private String search = null;
-    private Consumer<String> onSearchChangeListener;
+    private final BehaviorSubject<Integer> currentPositionSubject = BehaviorSubject.createDefault(0);
 
-    public ServersTabViewModel() {
-        ServerManager.addListener(this);
+    private final Flowable<List<Server>> servers =
+        Observable.combineLatest(sourceServers, searchSubject, (servers, searchOptional) ->
+                servers
+                    .stream()
+                    .filter(server -> {
+                        String search = searchOptional.orElse(null);
+                        if (search != null)
+                            return Pattern.compile(Pattern.quote(search), Pattern.CASE_INSENSITIVE).matcher(server.name).find();
+                        else return true;
+                    })
+                    .collect(Collectors.toList())
+            )
+            .throttleLatest(100, TimeUnit.MILLISECONDS)
+            .toFlowable(BackpressureStrategy.LATEST) // Backpressure first, as down stream is the edt thread
+            .observeOn(SwingSchedulers.edt());
+
+    @Override
+    public Flowable<List<Server>> getServersObservable() {
+        return servers;
     }
 
     @Override
-    public void addOnChangeViewListener(Consumer<List<Server>> consumer) {
-        onChangeViewListener = consumer;
-        post();
+    public Observable<Optional<String>> getSearchObservable() {
+        return searchSubject.observeOn(SwingSchedulers.edt());
     }
 
     @Override
-    public void setSearch(String search) {
-        this.search = search;
-        onSearchChangeListener.accept(search);
-        post();
+    public void setSearchSubject(String search) {
+        searchSubject.onNext(Optional.ofNullable(search));
     }
 
     @Override
-    public void addOnSearchChangeListener(Consumer<String> consumer) {
-        consumer.accept(search);
-        onSearchChangeListener = consumer;
+    public Observable<Integer> getViewPosition() {
+        return currentPositionSubject.observeOn(SwingSchedulers.edt());
     }
-
-    private int currentPosition = 0;
-    private Consumer<Integer> onViewPositionChangedListener;
 
     @Override
     public void setViewPosition(int position) {
-        currentPosition = position;
-    }
-
-    @Override
-    public void addOnViewPositionChangedListener(Consumer<Integer> consumer) {
-        onViewPositionChangedListener = consumer;
-        onViewPositionChangedListener.accept(currentPosition);
-    }
-
-    private void post() {
-        List<Server> mutatedServers = sourceServers.stream().filter(server -> {
-            if (search != null)
-                return Pattern.compile(Pattern.quote(search), Pattern.CASE_INSENSITIVE).matcher(server.name).find();
-            else return true;
-        }).collect(Collectors.toList());
-
-        onChangeViewListener.accept(mutatedServers);
-        if (onViewPositionChangedListener != null)
-            onViewPositionChangedListener.accept(currentPosition);
-    }
-
-    @Override
-    public void onServersChanged() {
-        sourceServers = ServerManager.getServersSorted();
-        post();
+        currentPositionSubject.onNext(position);
     }
 }

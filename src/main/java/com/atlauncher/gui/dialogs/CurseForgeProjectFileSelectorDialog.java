@@ -49,6 +49,7 @@ import com.atlauncher.data.curseforge.CurseForgeProject;
 import com.atlauncher.data.minecraft.loaders.LoaderVersion;
 import com.atlauncher.exceptions.InvalidMinecraftVersion;
 import com.atlauncher.gui.card.CurseForgeFileDependencyCard;
+import com.atlauncher.managers.ConfigManager;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.managers.MinecraftManager;
@@ -112,8 +113,6 @@ public class CurseForgeProjectFileSelectorDialog extends JDialog {
     }
 
     private void setupComponents() {
-        Analytics.sendScreenView("CurseForge Project File Selector Dialog");
-
         // #. {0} is the name of the mod we're installing
         setTitle(GetText.tr("Installing {0}", mod.name));
 
@@ -199,7 +198,7 @@ public class CurseForgeProjectFileSelectorDialog extends JDialog {
         viewFileButton.addActionListener(e -> {
             CurseForgeFile file = (CurseForgeFile) filesDropdown.getSelectedItem();
 
-            OS.openWebBrowser(String.format("%s/files/%d", mod.getWebsiteUrl(), file.id));
+            OS.openWebBrowser(String.format(Locale.ENGLISH, "%s/files/%d", mod.getWebsiteUrl(), file.id));
         });
 
         filesDropdown.addActionListener(e -> {
@@ -314,6 +313,9 @@ public class CurseForgeProjectFileSelectorDialog extends JDialog {
                 }
             }
 
+            List<String> neoForgeForgeCompatabilityVersions = ConfigManager
+                    .getConfigItem("loaders.neoforge.forgeCompatibleMinecraftVersions", new ArrayList<String>());
+
             // filter out files not for our loader (if browsing mods)
             if (mod.getRootCategoryId() == Constants.CURSEFORGE_MODS_SECTION_ID) {
                 curseForgeFilesStream = curseForgeFilesStream.filter(cf -> {
@@ -323,8 +325,15 @@ public class CurseForgeProjectFileSelectorDialog extends JDialog {
                         return true;
                     }
 
+                    if (cf.gameVersions.contains("NeoForge") && loaderVersion != null
+                            && loaderVersion.isNeoForge()) {
+                        return true;
+                    }
+
                     if (cf.gameVersions.contains("Forge") && loaderVersion != null
-                            && loaderVersion.isForge()) {
+                            && (loaderVersion.isForge()
+                                    || (loaderVersion.isNeoForge()
+                                            && neoForgeForgeCompatabilityVersions.contains(this.instance.id)))) {
                         return true;
                     }
 
@@ -334,8 +343,8 @@ public class CurseForgeProjectFileSelectorDialog extends JDialog {
                     }
 
                     // if there's no loaders, assume the mod is untagged so we should show it
-                    if (!cf.gameVersions.contains("Fabric") && !cf.gameVersions.contains("Forge")
-                            && !cf.gameVersions.contains("Quilt")) {
+                    if (!cf.gameVersions.contains("Fabric") && !cf.gameVersions.contains("NeoForge")
+                            && !cf.gameVersions.contains("Forge") && !cf.gameVersions.contains("Quilt")) {
                         return true;
                     }
 

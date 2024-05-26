@@ -60,7 +60,7 @@ import com.atlauncher.utils.OS;
 
 @SuppressWarnings("serial")
 public final class LoginWithMicrosoftDialog extends JDialog {
-    private MicrosoftAccount account = null;
+    public MicrosoftAccount account = null;
     private ScheduledExecutorService codeCheckExecutor = Executors.newScheduledThreadPool(1);
 
     public LoginWithMicrosoftDialog() {
@@ -212,6 +212,7 @@ public final class LoginWithMicrosoftDialog extends JDialog {
                     profile);
 
             AccountManager.addAccount(account);
+            this.account = account;
         }
     }
 

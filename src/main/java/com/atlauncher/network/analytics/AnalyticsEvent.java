@@ -69,7 +69,7 @@ public class AnalyticsEvent {
     }
 
     private static Map<String, Object> getPayloadForStartingInstance(Instance instance, boolean offline,
-            String reason, Integer time) {
+            String reason, Integer timePlayed) {
         final Map<String, Object> payload = new HashMap<>();
         payload.put("offline", offline);
         payload.put("name", instance.launcher.pack);
@@ -80,16 +80,11 @@ public class AnalyticsEvent {
             payload.put("reason", reason);
         }
 
-        if (time != null) {
-            payload.put("time", time);
+        if (timePlayed != null) {
+            payload.put("time_played", timePlayed);
         }
 
         return payload;
-    }
-
-    public static AnalyticsEvent forStartInstanceLaunch(Instance instance, boolean offline) {
-        return new AnalyticsEvent("instance_launch_started",
-                getPayloadForStartingInstance(instance, offline, null, null));
     }
 
     public static AnalyticsEvent forInstanceLaunchFailed(Instance instance, boolean offline, String reason) {
@@ -101,9 +96,9 @@ public class AnalyticsEvent {
         return new AnalyticsEvent("instance_launched", getPayloadForStartingInstance(instance, offline, null, null));
     }
 
-    public static AnalyticsEvent forInstanceLaunchCompleted(Instance instance, boolean offline, int time) {
+    public static AnalyticsEvent forInstanceLaunchCompleted(Instance instance, boolean offline, int timePlayed) {
         return new AnalyticsEvent("instance_launch_completed",
-                getPayloadForStartingInstance(instance, offline, null, time));
+                getPayloadForStartingInstance(instance, offline, null, timePlayed));
     }
 
     public static AnalyticsEvent forInstanceEvent(String event, Instance instance) {
@@ -206,6 +201,22 @@ public class AnalyticsEvent {
         payload.put("platform", platform);
 
         return new AnalyticsEvent("mod_add", payload);
+    }
+
+    public static AnalyticsEvent forRemoveMod(CurseForgeProject mod) {
+        return AnalyticsEvent.forRemoveMod(mod.name, "CurseForge");
+    }
+
+    public static AnalyticsEvent forRemoveMod(ModrinthSearchHit mod) {
+        return AnalyticsEvent.forRemoveMod(mod.title, "Modrinth");
+    }
+
+    public static AnalyticsEvent forRemoveMod(String name, String platform) {
+        final Map<String, Object> payload = new HashMap<>();
+        payload.put("name", name);
+        payload.put("platform", platform);
+
+        return new AnalyticsEvent("mod_remove", payload);
     }
 
     public static AnalyticsEvent forAddedMod(CurseForgeProject mod, CurseForgeFile file) {

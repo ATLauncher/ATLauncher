@@ -29,22 +29,34 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.border.EmptyBorder;
-import javax.swing.border.TitledBorder;
 
 import org.mini2Dx.gettext.GetText;
 
 import com.atlauncher.App;
+import com.atlauncher.data.Instance;
 import com.atlauncher.data.curseforge.CurseForgeAttachment;
 import com.atlauncher.data.curseforge.CurseForgeProject;
+import com.atlauncher.gui.borders.IconTitledBorder;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
 import com.atlauncher.workers.BackgroundImageWorker;
 
 @SuppressWarnings("serial")
 public final class CurseForgeProjectCard extends JPanel {
-    public CurseForgeProjectCard(final CurseForgeProject mod, ActionListener al) {
+    private final CurseForgeProject mod;
+    private final Instance instance;
+
+    private final JButton addButton = new JButton(GetText.tr("Add"));
+    private final JButton reinstallButton = new JButton(GetText.tr("Reinstall"));
+    private final JButton removeButton = new JButton(GetText.tr("Remove"));
+
+    public CurseForgeProjectCard(final CurseForgeProject mod, final Instance instance, ActionListener installAl,
+            ActionListener removeAl) {
         setLayout(new BorderLayout());
         setPreferredSize(new Dimension(250, 180));
+
+        this.mod = mod;
+        this.instance = instance;
 
         JPanel summaryPanel = new JPanel(new BorderLayout());
         JTextArea summary = new JTextArea();
@@ -65,25 +77,44 @@ public final class CurseForgeProjectCard extends JPanel {
         summaryPanel.setBorder(new EmptyBorder(0, 0, 10, 0));
 
         JPanel buttonsPanel = new JPanel(new FlowLayout());
-        JButton addButton = new JButton(GetText.tr("Add"));
         JButton viewButton = new JButton(GetText.tr("View"));
+
         buttonsPanel.add(addButton);
+        buttonsPanel.add(reinstallButton);
+        buttonsPanel.add(removeButton);
         buttonsPanel.add(viewButton);
 
-        addButton.addActionListener(al);
-
+        addButton.addActionListener(e -> {
+            installAl.actionPerformed(e);
+            updateInstalledStatus();
+        });
+        reinstallButton.addActionListener(installAl);
+        removeButton.addActionListener(e -> {
+            removeAl.actionPerformed(e);
+            updateInstalledStatus();
+        });
         viewButton.addActionListener(e -> OS.openWebBrowser(mod.getWebsiteUrl()));
 
         add(summaryPanel, BorderLayout.CENTER);
         add(buttonsPanel, BorderLayout.SOUTH);
 
-        TitledBorder border = new TitledBorder(null, mod.name, TitledBorder.DEFAULT_JUSTIFICATION,
-                TitledBorder.DEFAULT_POSITION, App.THEME.getBoldFont().deriveFont(12f));
-        setBorder(border);
-
         Optional<CurseForgeAttachment> attachment = mod.getLogo();
         if (attachment.isPresent()) {
             new BackgroundImageWorker(icon, attachment.get().thumbnailUrl, 60, 60).execute();
         }
+
+        updateInstalledStatus();
+    }
+
+    private void updateInstalledStatus() {
+        boolean alreadyInstalled = instance.launcher.mods.stream()
+                .anyMatch(m -> m.isFromCurseForge() && m.curseForgeProjectId == mod.id);
+
+        addButton.setVisible(!alreadyInstalled);
+        reinstallButton.setVisible(alreadyInstalled);
+        removeButton.setVisible(alreadyInstalled);
+
+        setBorder(new IconTitledBorder(mod.name, App.THEME.getBoldFont().deriveFont(12f),
+                alreadyInstalled ? Utils.getIconImage(App.THEME.getResourcePath("image", "tick")) : null));
     }
 }

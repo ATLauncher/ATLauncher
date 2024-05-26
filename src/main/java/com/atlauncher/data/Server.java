@@ -17,7 +17,9 @@
  */
 package com.atlauncher.data;
 
+import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -29,6 +31,7 @@ import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -37,6 +40,11 @@ import java.util.Map;
 import javax.imageio.IIOException;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import org.mini2Dx.gettext.GetText;
 
@@ -46,9 +54,14 @@ import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
 import com.atlauncher.annot.Json;
 import com.atlauncher.builders.HTMLBuilder;
+import com.atlauncher.data.curseforge.CurseForgeFile;
+import com.atlauncher.data.curseforge.CurseForgeProject;
 import com.atlauncher.data.minecraft.JavaRuntime;
 import com.atlauncher.data.minecraft.JavaRuntimes;
 import com.atlauncher.data.minecraft.JavaVersion;
+import com.atlauncher.data.modrinth.ModrinthProject;
+import com.atlauncher.data.modrinth.ModrinthVersion;
+import com.atlauncher.data.modrinth.pack.ModrinthModpackManifest;
 import com.atlauncher.exceptions.InvalidPack;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.managers.DialogManager;
@@ -61,9 +74,12 @@ import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
 import com.google.gson.JsonIOException;
 
+import io.github.asyncronous.toast.Toaster;
+
 @Json
 public class Server {
     public String name;
+    public String description;
     public String pack;
     public Integer packId;
     public String version;
@@ -75,6 +91,12 @@ public class Server {
     public boolean isDev;
     public List<DisableableMod> mods = new ArrayList<>();
     public List<String> ignoredUpdates = new ArrayList<>();
+
+    public CurseForgeProject curseForgeProject;
+    public CurseForgeFile curseForgeFile;
+    public ModrinthProject modrinthProject;
+    public ModrinthVersion modrinthVersion;
+    public ModrinthModpackManifest modrinthManifest;
 
     public transient Path ROOT;
 
@@ -120,7 +142,7 @@ public class Server {
         if (serverScript == null) {
             DialogManager.okDialog().setTitle(GetText.tr("Cannot Launch Server"))
                     .setContent(new HTMLBuilder().text(GetText.tr(
-                            "We cannot launch this server for you. Please \"Open Folder\" and run the server manually."))
+                            "We cannot launch this server for you. Please use \"Open Folder\" and run the server manually.<br/><br/>If unsure how to do so, please contact the packs support pages for more further help."))
                             .center().build())
                     .setType(DialogManager.ERROR)
                     .show();
@@ -132,6 +154,10 @@ public class Server {
         Analytics.trackEvent(AnalyticsEvent.forServerEvent("server_run", this));
 
         LogManager.info("Starting server " + name);
+
+        if (curseForgeFile != null) {
+            LogManager.info("Server was created from a CurseForge server file with file ID " + curseForgeFile.id + ". It has been downloaded and unzipped without any modifications.");
+        }
         List<String> arguments = new ArrayList<>();
 
         String javaPath = null;
@@ -145,13 +171,15 @@ public class Server {
 
                 if (Files.isDirectory(runtimeDirectory)) {
                     javaPath = runtimeDirectory.toAbsolutePath().toString();
-                    LogManager.info(String.format("Using Java runtime %s (major version %d) at path %s",
+                    LogManager.info(String.format(Locale.ENGLISH, "Using Java runtime %s (major version %d) at path %s",
                             javaVersion.component, javaVersion.majorVersion, javaPath));
                 }
             }
         }
 
         try {
+            getRoot().resolve(serverScript).toFile().setExecutable(true);
+
             if (OS.isWindows()) {
                 arguments.add("cmd");
                 arguments.add("/K");
@@ -198,6 +226,35 @@ public class Server {
                                             javaPath + "/bin/java ")
                                     : ""),
                             args));
+                } else if (Utils.executableInPath("kitty")) {
+                    arguments.add("kitty");
+                    arguments.addAll(Arrays.asList(String.format(
+                            "./%s %s%s", serverScript, (isATLauncherLaunchScript && javaPath != null
+                                    ? String.format(" ATLcustomjava %s",
+                                            javaPath + "/bin/java ")
+                                    : ""),
+                            args)
+                            .split(" ")));
+                } else if (Utils.executableInPath("alacritty")) {
+                    arguments.add("alacritty");
+                    arguments.add("-e");
+                    arguments.addAll(Arrays.asList(String.format(
+                            "./%s %s%s", serverScript, (isATLauncherLaunchScript && javaPath != null
+                                    ? String.format(" ATLcustomjava %s",
+                                            javaPath + "/bin/java ")
+                                    : ""),
+                            args)
+                            .split(" ")));
+                } else if (Utils.executableInPath("gnome-terminal")) {
+                    arguments.add("gnome-terminal");
+                    arguments.add("--");
+                    arguments.addAll(Arrays.asList(String.format(
+                            "./%s %s%s", serverScript, (isATLauncherLaunchScript && javaPath != null
+                                    ? String.format(" ATLcustomjava %s",
+                                            javaPath + "/bin/java ")
+                                    : ""),
+                            args)
+                            .split(" ")));
                 } else {
                     DialogManager.okDialog().setTitle(GetText.tr("Failed To Launch Server"))
                             .setContent(new HTMLBuilder().center().text(GetText.tr(
@@ -250,16 +307,13 @@ public class Server {
             processBuilder.start();
 
             if (!close) {
-                DialogManager.okDialog().setTitle(GetText.tr("Server Launched"))
-                        .setContent(new HTMLBuilder().center().text(GetText.tr(
-                                "The server has been launched in an external window.<br/><br/>You can close ATLauncher which will not stop the server."))
-                                .build())
-                        .setType(DialogManager.INFO).show();
+                LogManager.info("Server has started. No further logs will be shown in this console. Please check for a separate window or tab for the server logs and provide those logs (not these ones) if asking for help.");
+                Toaster.instance().pop(GetText.tr("The server has been launched."));
             } else {
                 Analytics.endSession();
                 System.exit(0);
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             LogManager.logStackTrace("Failed to launch server", e);
         }
     }
@@ -401,6 +455,10 @@ public class Server {
         if (pack != null) {
             return pack.description;
         } else {
+            if (description != null) {
+                return description;
+            }
+
             return GetText.tr("No Description");
         }
     }
@@ -412,8 +470,20 @@ public class Server {
             try {
                 BufferedImage img = ImageIO.read(customImage);
                 if (img != null) {
-                    Image dimg = img.getScaledInstance(300, 150, Image.SCALE_SMOOTH);
-                    return new ImageIcon(dimg);
+                    // if a square image, then make it 300x150 (without stretching) centered
+                    if (img.getHeight(null) == img.getWidth(null)) {
+                        BufferedImage dimg = new BufferedImage(300, 150, BufferedImage.TYPE_INT_ARGB);
+
+                        Graphics2D g2d = dimg.createGraphics();
+                        g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
+                                RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+                        g2d.drawImage(img, 75, 0, 150, 150, null);
+                        g2d.dispose();
+
+                        return new ImageIcon(dimg);
+                    }
+
+                    return new ImageIcon(img.getScaledInstance(300, 150, Image.SCALE_SMOOTH));
                 }
             } catch (IIOException e) {
                 LogManager.warn("Error creating scaled image from the custom image of server " + this.name
@@ -428,12 +498,145 @@ public class Server {
         if (getPack() != null) {
             File instancesImage = FileSystem.IMAGES.resolve(this.getSafePackName().toLowerCase(Locale.ENGLISH) + ".png")
                     .toFile();
+
             if (instancesImage.exists()) {
                 return Utils.getIconImage(instancesImage);
             }
         }
 
         return Utils.getIconImage("/assets/image/default-image.png");
+    }
+
+    public void startChangeDescription() {
+        JTextArea textArea = new JTextArea(description);
+        textArea.setColumns(30);
+        textArea.setRows(10);
+        textArea.setLineWrap(true);
+        textArea.setWrapStyleWord(true);
+        textArea.setSize(300, 150);
+
+        int ret = JOptionPane.showConfirmDialog(App.launcher.getParent(), new JScrollPane(textArea),
+                GetText.tr("Changing Description"), JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE);
+
+        if (ret == 0) {
+            Analytics.trackEvent(AnalyticsEvent.forServerEvent("server_description_change", this));
+            description = textArea.getText();
+            save();
+        }
+    }
+
+    public void startChangeImage() {
+        JFileChooser chooser = new JFileChooser();
+        chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        chooser.setAcceptAllFileFilterUsed(false);
+        chooser.setFileFilter(new FileNameExtensionFilter("PNG Files", "png"));
+        int ret = chooser.showOpenDialog(App.launcher.getParent());
+        if (ret == JFileChooser.APPROVE_OPTION) {
+            File img = chooser.getSelectedFile();
+            if (img.getAbsolutePath().endsWith(".png")) {
+                Analytics.trackEvent(AnalyticsEvent.forServerEvent("server_image_change", this));
+                try {
+                    Utils.safeCopy(img, getRoot().resolve("server.png").toFile());
+                    save();
+                } catch (IOException ex) {
+                    LogManager.logStackTrace("Failed to set server image", ex);
+                }
+            }
+        }
+    }
+
+    public boolean isCurseForgePack() {
+        return curseForgeProject != null && curseForgeFile != null;
+    }
+
+    public boolean isModrinthPack() {
+        return modrinthManifest != null && modrinthProject != null
+                && modrinthVersion != null;
+    }
+
+    public boolean showGetHelpButton() {
+        if (getPack() != null || isModrinthPack() || isCurseForgePack()) {
+            return getDiscordInviteUrl() != null || getSupportUrl() != null || getWikiUrl() != null
+                    || getSourceUrl() != null;
+        }
+
+        return false;
+    }
+
+    public String getDiscordInviteUrl() {
+        if (getPack() != null) {
+            return getPack().discordInviteURL;
+        }
+
+        if (isModrinthPack()) {
+            return modrinthProject.discordUrl;
+        }
+
+        return null;
+    }
+
+    public String getSupportUrl() {
+        if (getPack() != null) {
+            return getPack().supportURL;
+        }
+
+        if (isModrinthPack()) {
+            return modrinthProject.issuesUrl;
+        }
+
+        if (isCurseForgePack() && curseForgeProject.hasIssuesUrl()) {
+            return curseForgeProject.getIssuesUrl();
+        }
+
+        return null;
+    }
+
+    public boolean hasWebsite() {
+        if (getPack() != null) {
+            return getPack().websiteURL != null;
+        }
+
+        if (isCurseForgePack()) {
+            return curseForgeProject.hasWebsiteUrl();
+        }
+
+        return isModrinthPack();
+    }
+
+    public String getWebsiteUrl() {
+        if (getPack() != null) {
+            return getPack().websiteURL;
+        }
+
+        if (isCurseForgePack() && curseForgeProject.hasWebsiteUrl()) {
+            return curseForgeProject.getWebsiteUrl();
+        }
+
+        if (isModrinthPack()) {
+            return String.format("https://modrinth.com/modpack/%s", modrinthProject.slug);
+        }
+
+        return null;
+    }
+
+    public String getWikiUrl() {
+        if (isModrinthPack()) {
+            return modrinthProject.wikiUrl;
+        }
+
+        if (isCurseForgePack() && curseForgeProject.hasWikiUrl()) {
+            return curseForgeProject.getWikiUrl();
+        }
+
+        return null;
+    }
+
+    public String getSourceUrl() {
+        if (isModrinthPack()) {
+            return modrinthProject.sourceUrl;
+        }
+
+        return null;
     }
 
     public void save() {

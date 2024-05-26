@@ -53,7 +53,6 @@ import io.github.asyncronous.toast.Toaster;
 public class ModsChooser extends JDialog {
     private static final long serialVersionUID = -5309108183485463434L;
     private final InstanceInstaller installer;
-    private final JButton useShareCode;
     private final JButton selectAllButton;
     private final JButton clearAllButton;
     private final JButton installButton;
@@ -134,18 +133,6 @@ public class ModsChooser extends JDialog {
 
         JPanel bottomPanel = new JPanel();
         add(bottomPanel, BorderLayout.SOUTH);
-
-        useShareCode = new JButton();
-        useShareCode.setText(GetText.tr("Use Share Code"));
-        useShareCode.addActionListener(e -> {
-            String ret = JOptionPane.showInputDialog(null, GetText.tr("Enter Share Code"), GetText.tr("Share Code"),
-                    JOptionPane.QUESTION_MESSAGE);
-
-            if (ret != null) {
-                applyShareCode(ret);
-            }
-        });
-        bottomPanel.add(useShareCode);
 
         selectAllButton = new JButton();
 
@@ -355,7 +342,6 @@ public class ModsChooser extends JDialog {
     private int calculateWidth() {
         int width = 50;
 
-        width += useShareCode.getPreferredSize().width;
         width += selectAllButton.getPreferredSize().width;
         width += clearAllButton.getPreferredSize().width;
         width += installButton.getPreferredSize().width;
@@ -365,56 +351,6 @@ public class ModsChooser extends JDialog {
         }
 
         return width;
-    }
-
-    public void applyShareCode(String code) {
-        try {
-            String data = installer.getShareCodeData(code);
-
-            if (data == null) {
-                Toaster.instance().popError(GetText.tr("Invalid Share Code"));
-                return;
-            }
-
-            java.lang.reflect.Type type = new TypeToken<Map<String, List<Map<String, String>>>>() {
-            }.getType();
-
-            Map<String, List<Map<String, String>>> mods = Gsons.DEFAULT.fromJson(data, type);
-
-            if (mods == null) {
-                Toaster.instance().popError(GetText.tr("Invalid Share Code"));
-                return;
-            }
-
-            List<Map<String, String>> optionalMods = mods.get("optional");
-
-            if (optionalMods == null || optionalMods.size() == 0) {
-                Toaster.instance().popError(GetText.tr("Invalid Share Code"));
-                return;
-            }
-
-            for (ModsJCheckBox checkbox : this.modCheckboxes) {
-                if (!checkbox.getMod().isOptional()) {
-                    continue;
-                }
-
-                boolean found = false;
-
-                for (Map<String, String> mod : optionalMods) {
-                    if (mod.get("name").equalsIgnoreCase(checkbox.getMod().getName())) {
-                        found = true;
-                        break;
-                    }
-                }
-
-                if (found) {
-                    checkbox.setSelected(true);
-                }
-            }
-        } catch (Exception e) {
-            LogManager.error("Invalid share code!");
-            Toaster.instance().popError(GetText.tr("Invalid Share Code"));
-        }
     }
 
     private List<Mod> modsToChange(Mod mod) {

@@ -29,10 +29,10 @@ import org.assertj.swing.finder.WindowFinder;
 import org.assertj.swing.fixture.FrameFixture;
 import org.assertj.swing.launcher.ApplicationLauncher;
 import org.assertj.swing.testing.AssertJSwingTestCaseTemplate;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.mockserver.integration.ClientAndServer;
 import org.mockserver.logging.MockServerLogger;
 import org.mockserver.socket.PortFactory;
@@ -53,7 +53,7 @@ public class AbstractUiTest extends AssertJSwingTestCaseTemplate {
 
     protected FrameFixture consoleFrame;
 
-    @BeforeClass
+    @BeforeAll
     public static final void setUpOnce() {
         FileUtils.createDirectory(workingDir);
     }
@@ -61,7 +61,7 @@ public class AbstractUiTest extends AssertJSwingTestCaseTemplate {
     protected void preSetUp() {
     }
 
-    @Before
+    @BeforeEach
     public final void setUp() {
         preSetUp();
 
@@ -81,7 +81,7 @@ public class AbstractUiTest extends AssertJSwingTestCaseTemplate {
         // start the application
         ApplicationLauncher.application(App.class)
                 .withArgs("--skip-setup-dialog", "--disable-analytics", "--disable-error-reporting",
-                        "--skip-tray-integration", "--no-launcher-update", "--disable-http2", "--proxy-type=SOCKS",
+                        "--skip-tray-integration", "--no-launcher-update", "--proxy-type=SOCKS",
                         "--proxy-host=127.0.0.1", "--proxy-port=" + mockServer.getPort(),
                         "--working-dir=" + workingDir.toString())
                 .start();
@@ -126,7 +126,7 @@ public class AbstractUiTest extends AssertJSwingTestCaseTemplate {
     protected void onSetUp() {
     }
 
-    @After
+    @AfterEach
     public final void tearDown() {
         try {
             onTearDown();
@@ -136,7 +136,7 @@ public class AbstractUiTest extends AssertJSwingTestCaseTemplate {
         }
     }
 
-    @AfterClass
+    @AfterAll
     public static final void tearDownOnce() {
         FileUtils.deleteDirectory(workingDir);
     }

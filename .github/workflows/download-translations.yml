@@ -1,6 +1,12 @@
 name: Download Translations
 
-on: [workflow_dispatch]
+on:
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: "Branch to download the approved translations to"
+        default: "master"
+        required: true
 
 jobs:
   download-translations:
@@ -8,23 +14,28 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.branch }}
 
       - name: Download translations from crowdin
-        uses: crowdin/github-action@1.4.10
+        uses: crowdin/github-action@v1.14.1
         with:
           upload_sources: false
           upload_translations: false
           download_translations: true
           skip_untranslated_strings: true
-          skip_untranslated_files: true
           export_only_approved: true
           push_translations: false
+          source: build/gettext/launcher.pot
+          translation: /src/main/resources/assets/lang/%locale%.po
+          download_translations_args: "--all --verbose"
           project_id: ${{ secrets.CROWDIN_PROJECT_ID }}
           token: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}
 
       - name: Commit changed files
-        uses: EndBug/add-and-commit@v7.0.0
+        uses: EndBug/add-and-commit@v9
         with:
-          add: 'packaging/aur/'
-          message: 'chore: update translations'
+          add: "src/main/resources/assets/lang/"
+          message: "chore: update translations"
+          new_branch: ${{ inputs.branch }}

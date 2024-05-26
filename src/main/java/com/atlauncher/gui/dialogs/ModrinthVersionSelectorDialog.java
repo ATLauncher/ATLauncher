@@ -51,6 +51,7 @@ import com.atlauncher.data.modrinth.ModrinthProjectType;
 import com.atlauncher.data.modrinth.ModrinthVersion;
 import com.atlauncher.exceptions.InvalidMinecraftVersion;
 import com.atlauncher.gui.card.ModrinthProjectDependencyCard;
+import com.atlauncher.managers.ConfigManager;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.managers.MinecraftManager;
@@ -205,8 +206,6 @@ public class ModrinthVersionSelectorDialog extends JDialog {
     }
 
     private void setupComponents() {
-        Analytics.sendScreenView("Modrinth Version Selector Dialog");
-
         // #. {0} is the name of the mod we're installing
         setTitle(GetText.tr("Installing {0}", mod.title));
 
@@ -367,14 +366,33 @@ public class ModrinthVersionSelectorDialog extends JDialog {
             Stream<ModrinthVersion> modrinthVersionsStream = this.versionsData.stream()
                     .sorted(Comparator.comparing((ModrinthVersion version) -> version.datePublished).reversed());
 
-            if (App.settings.addModRestriction != AddModRestriction.NONE
-                    && this.instance.launcher.loaderVersion != null && mod.projectType == ModrinthProjectType.MOD) {
-                modrinthVersionsStream = modrinthVersionsStream
-                        .filter(v -> (this.instance.launcher.loaderVersion.isFabric()
-                                || this.instance.launcher.loaderVersion.isLegacyFabric()) ? v.loaders.contains("fabric")
-                                        : (this.instance.launcher.loaderVersion.isQuilt()
-                                                ? (v.loaders.contains("quilt") || v.loaders.contains("fabric"))
-                                                : v.loaders.contains("forge")));
+            if (App.settings.addModRestriction != AddModRestriction.NONE && this.instance.launcher.loaderVersion != null
+                    && mod.projectType == ModrinthProjectType.MOD) {
+                List<String> neoForgeForgeCompatabilityVersions = ConfigManager
+                        .getConfigItem("loaders.neoforge.forgeCompatibleMinecraftVersions", new ArrayList<String>());
+                modrinthVersionsStream = modrinthVersionsStream.filter(v -> {
+                    if (v.loaders.contains("fabric") && (this.instance.launcher.loaderVersion.isFabric()
+                            || this.instance.launcher.loaderVersion.isLegacyFabric()
+                            || this.instance.launcher.loaderVersion.isQuilt())) {
+                        return true;
+                    }
+
+                    if (v.loaders.contains("neoforge") && this.instance.launcher.loaderVersion.isNeoForge()) {
+                        return true;
+                    }
+
+                    if (v.loaders.contains("forge") && (this.instance.launcher.loaderVersion.isForge()
+                            || (this.instance.launcher.loaderVersion.isNeoForge()
+                                    && neoForgeForgeCompatabilityVersions.contains(this.instance.id)))) {
+                        return true;
+                    }
+
+                    if (v.loaders.contains("quilt") && this.instance.launcher.loaderVersion.isQuilt()) {
+                        return true;
+                    }
+
+                    return false;
+                });
             }
 
             if (App.settings.addModRestriction == AddModRestriction.STRICT) {

@@ -25,41 +25,43 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import com.atlauncher.viewmodel.base.IInstancesTabViewModel;
 import org.mini2Dx.gettext.GetText;
 
-import com.atlauncher.App;
 import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.gui.dialogs.ImportInstanceDialog;
 import com.atlauncher.gui.tabs.InstancesTab;
+import com.atlauncher.utils.Utils;
 import com.atlauncher.utils.sort.InstanceSortingStrategies;
 import com.atlauncher.utils.sort.InstanceSortingStrategy;
+import com.atlauncher.viewmodel.base.IInstancesTabViewModel;
 
 public final class InstancesNavigationPanel extends JPanel implements RelocalizationListener {
-    private final InstancesTab parent;
     private final IInstancesTabViewModel viewModel;
 
     private final JButton importButton = new JButton(GetText.tr("Import"));
     private final InstancesSearchField searchField;
     private final JComboBox<InstanceSortingStrategy> sortingBox = new JComboBox<>(InstanceSortingStrategies.values());
 
-    public InstancesNavigationPanel(final InstancesTab parent,final IInstancesTabViewModel viewModel) {
-        this.parent = parent;
+    public InstancesNavigationPanel(final InstancesTab tab, final IInstancesTabViewModel viewModel) {
         this.viewModel = viewModel;
-        this.searchField = new InstancesSearchField(parent,viewModel);
-        this.sortingBox.setMaximumSize(new Dimension(190, 23));
+        this.searchField = new InstancesSearchField(viewModel);
+        this.sortingBox.setMaximumSize(new Dimension(190, 26));
 
-        if (App.settings.defaultInstanceSorting != InstanceSortingStrategies.BY_NAME) {
-            this.sortingBox.setSelectedItem(App.settings.defaultInstanceSorting);
-        }
+        this.sortingBox.setSelectedItem(viewModel.getSort());
 
         this.setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
         this.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
         this.add(importButton);
         this.add(Box.createHorizontalGlue());
+        JLabel iconLabel = new JLabel(Utils.getIconImage("/assets/image/loading-bars-small.gif"));
+        iconLabel.setText(GetText.tr("Loading..."));
+        tab.addDisposable(viewModel.getIsLoading().subscribe(iconLabel::setVisible));
+        this.add(iconLabel);
+        this.add(Box.createHorizontalStrut(5));
         this.add(searchField);
         this.add(Box.createHorizontalStrut(5));
         this.add(this.sortingBox);
@@ -75,7 +77,7 @@ public final class InstancesNavigationPanel extends JPanel implements Relocaliza
         // item listeners
         this.sortingBox.addItemListener((e) -> {
             if (e.getStateChange() == ItemEvent.SELECTED) {
-                this.viewModel.setSort((InstanceSortingStrategy) e.getItem());
+                this.viewModel.setSort((InstanceSortingStrategies) e.getItem());
             }
         });
     }

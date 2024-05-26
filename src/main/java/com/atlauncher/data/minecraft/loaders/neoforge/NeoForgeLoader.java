@@ -79,10 +79,13 @@ public class NeoForgeLoader implements Loader {
             }
         }
 
-        this.installerPath = FileSystem.LOADERS
-                .resolve("forge-" + this.minecraft + "-" + this.version + "-installer.jar");
-        this.installerUrl = Constants.NEOFORGE_MAVEN + "/net/neoforged/forge/" + this.minecraft + "-"
-                + this.version + "/forge-" + this.minecraft + "-" + this.version + "-installer.jar";
+        Boolean is1201Version = this.minecraft.equals("1.20.1");
+        String artifactName = is1201Version ? "forge" : "neoforge";
+        String versionName = is1201Version ? this.minecraft + "-" + this.version : this.rawVersion;
+
+        this.installerPath = FileSystem.LOADERS.resolve(artifactName + "-" + versionName + "-installer.jar");
+        this.installerUrl = Constants.NEOFORGE_MAVEN + "/net/neoforged/" + artifactName + "/" + versionName + "/"
+                + artifactName + "-" + versionName + "-installer.jar";
     }
 
     @Override
@@ -100,6 +103,10 @@ public class NeoForgeLoader implements Loader {
 
         if (installerSha1 != null) {
             download = download.hash(this.installerSha1);
+
+            if (ConfigManager.getConfigItem("loaders.neoforge.disableInstallerHashChecking", false) == true) {
+                download = download.ignoreFailures();
+            }
         }
 
         if (download.needToDownload()) {
@@ -237,6 +244,11 @@ public class NeoForgeLoader implements Loader {
 
     @Override
     public String getServerJar() {
+        return null;
+    }
+
+    @Override
+    public Path getServerJarPath() {
         return null;
     }
 

@@ -69,11 +69,14 @@ import com.atlauncher.gui.LauncherConsole;
 import com.atlauncher.gui.LauncherFrame;
 import com.atlauncher.gui.SplashScreen;
 import com.atlauncher.gui.TrayMenu;
+import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.gui.dialogs.SetupDialog;
+import com.atlauncher.managers.ConfigManager;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.managers.InstanceManager;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.managers.PackManager;
+import com.atlauncher.network.Download;
 import com.atlauncher.network.ErrorReporting;
 import com.atlauncher.themes.ATLauncherLaf;
 import com.atlauncher.utils.Java;
@@ -119,12 +122,21 @@ public class App {
 
     public static LauncherConsole console;
 
+    public static LauncherFrame launcherFrame;
+
     /**
      * If the launcher was just updated and this is it's first time loading after
      * the update. This is used to check for when there are possible issues in which
      * the user may have to download the update manually.
      */
     public static boolean wasUpdated = false;
+
+    /**
+     * If the launcher just updated it's bundled JRE and this is it's first time
+     * loading after the update. This is used to check for when there are possible
+     * issues in which the user may have to fix.
+     */
+    public static boolean justUpdatedBundledJre = false;
 
     public static boolean discordInitialized = false;
 
@@ -179,13 +191,6 @@ public class App {
     public static Path workingDir = null;
 
     /**
-     * This will tell the launcher to disable HTTP2 connections.
-     * <p/>
-     * --disable-http2
-     */
-    public static boolean disableHttp2 = false;
-
-    /**
      * This will tell the launcher to allow all SSL certs regardless of validity.
      * This is insecure and only intended for development purposes.
      * <p/>
@@ -223,14 +228,9 @@ public class App {
     public static String packCodeToAdd = null;
 
     /**
-     * This sets a pack to install on startup (no share code so just prompt).
+     * This sets a pack to install on startup.
      */
     public static String packToInstall = null;
-
-    /**
-     * This sets a pack to install on startup (with share code).
-     */
-    public static String packShareCodeToInstall = null;
 
     /**
      * Config overrides.
@@ -276,6 +276,15 @@ public class App {
 
         // Parse all the command line arguments
         parseCommandLineArguments(args);
+
+        // Workaround for Windows and GUI rendering funny
+        if (OS.isWindows()) {
+            try {
+                System.setProperty("sun.java2d.d3d", "false");
+            } catch (Throwable t) {
+                LogManager.logStackTrace("Failed to disable D3D rendering", t);
+            }
+        }
 
         // Initialize the error reporting unless disabled by command line
         if (!disableErrorReporting) {
@@ -364,6 +373,8 @@ public class App {
             }
         }
 
+        checkIfNeedToUpdateBundledJre();
+
         boolean open = true;
 
         if (autoLaunch != null) {
@@ -398,9 +409,93 @@ public class App {
         // Open the Launcher
         final boolean openLauncher = open;
         SwingUtilities.invokeLater(() -> {
-            new LauncherFrame(openLauncher);
+            launcherFrame = new LauncherFrame(openLauncher);
             ss.close();
         });
+    }
+
+    private static void checkIfNeedToUpdateBundledJre() {
+        if (ConfigManager.getConfigItem("bundledJre.promptToUpdate", false) == true
+                && Java.shouldPromptToUpdateBundledJre()) {
+            String dialogTitle;
+            String dialogText;
+            if (Files.exists(FileSystem.JRE) && Java.bundledJreOutOfDate()) {
+                dialogTitle = GetText.tr("Using Out Of Date Java");
+                dialogText = GetText.tr(
+                        "You're running an out of date version of Java that was installed with the launcher.<br/><br/>In the future the launcher will no longer work without updating this.<br/><br/>This process is automatic and doesn't affect any Java installs outside of the launcher.<br/><br/>Do you want to do it now?");
+            } else if (Java.getLauncherJavaVersionNumber() < ConfigManager.getConfigItem("bundledJre.majorVersion",
+                    17.0).intValue()) {
+                dialogTitle = GetText.tr("Using Out Of Date Java");
+                dialogText = GetText.tr(
+                        "You're running an out of date version of Java.<br/><br/>In the future the launcher will no longer work without updating this.<br/><br/>This process is automatic and doesn't affect any Java installs outside of the launcher.<br/><br/>Do you want to do it now?");
+            } else {
+                dialogTitle = GetText.tr("Let Launcher Manage Java");
+                dialogText = GetText.tr(
+                        "You're currently using a version of Java not managed by the launcher.<br/><br/>Letting the launcher manage it's own version of Java is better for support and ease of use.<br/><br/>This process is automatic and doesn't affect any Java installs outside of the launcher.<br/><br/>Do you want to let the launcher manage it's own version of Java?");
+            }
+
+            int ret = DialogManager
+                    .yesNoDialog().setTitle(dialogTitle).setContent(new HTMLBuilder()
+                            .center().text(dialogText)
+                            .build())
+                    .setType(DialogManager.WARNING).show();
+
+            if (ret == 0) {
+                String bundledJreConfigNamespace = OS.is64Bit() ? "bundledJre.windowsx64" : "bundledJre.windowsx86";
+                Path newJreBundlePath = FileSystem.TEMP.resolve("updatedbundledjre");
+
+                ProgressDialog<Boolean> progressDialog = new ProgressDialog<>(
+                        GetText.tr("Downloading Java Update"), 1,
+                        GetText.tr("Downloading Java Update"));
+                progressDialog.addThread(new Thread(() -> {
+                    Download jreDownload = new Download()
+                            .withHttpClient(Network.createProgressClient(progressDialog))
+                            .setUrl(
+                                    ConfigManager.getConfigItem(bundledJreConfigNamespace + ".url", ""))
+                            .hash(ConfigManager.getConfigItem(bundledJreConfigNamespace + ".hash", ""))
+                            .size(ConfigManager.getConfigItem(bundledJreConfigNamespace + ".size", 0.0).longValue())
+                            .downloadTo(FileSystem.TEMP.resolve("updatedbundledjre.zip"))
+                            .unzipTo(newJreBundlePath).deleteAfterExtract();
+
+                    progressDialog.setTotalBytes(
+                            ConfigManager.getConfigItem(bundledJreConfigNamespace + ".size", 0.0).longValue());
+
+                    try {
+                        jreDownload.downloadFile();
+                    } catch (IOException e) {
+                        LogManager.logStackTrace("Failed to download updated bundled JRE", e);
+                        progressDialog.setReturnValue(false);
+                        progressDialog.close();
+                        return;
+                    }
+
+                    progressDialog.setReturnValue(true);
+                    progressDialog.doneTask();
+                    progressDialog.close();
+                }));
+                progressDialog.start();
+
+                if (progressDialog.getReturnValue()) {
+                    String folder = ConfigManager.getConfigItem(bundledJreConfigNamespace + ".folder", null);
+                    OS.restartToUpdateBundledJre(folder == null ? newJreBundlePath : newJreBundlePath.resolve(folder));
+                    System.exit(0);
+                } else {
+                    DialogManager
+                            .okDialog().setTitle(GetText.tr("Failed To Update Bundled JRE"))
+                            .setContent(new HTMLBuilder()
+                                    .center().split(100).text(
+                                            GetText.tr(
+                                                    "There was an issue updating the bundled JRE. Please try again later and if the issue persists, please contact ATLauncher support via Discord."))
+                                    .build())
+                            .setType(DialogManager.ERROR).show();
+                }
+            }
+
+            // mark as seeing this version of the prompt to avoid repetition
+            App.settings.seenBundledJrePromptVersion = ConfigManager.getConfigItem("bundledJre.promptVersion", 1.0)
+                    .intValue();
+            App.settings.save();
+        }
     }
 
     public static void ensureDiscordIsInitialized() {
@@ -432,7 +527,7 @@ public class App {
                 () -> Java.getInstalledJavas().forEach(version -> LogManager.debug(Gsons.DEFAULT.toJson(version))));
 
         LogManager.info("Java Version: "
-                + String.format("Java %d (%s)", Java.getLauncherJavaVersionNumber(), Java.getLauncherJavaVersion()));
+                + String.format(Locale.ENGLISH, "Java %d (%s)", Java.getLauncherJavaVersionNumber(), Java.getLauncherJavaVersion()));
 
         LogManager.info("Java Path: " + settings.javaPath);
 
@@ -468,7 +563,7 @@ public class App {
             }
 
             CentralProcessor cpu = hal.getProcessor();
-            LogManager.info(String.format("CPU: %s %d cores/%d threads", cpu.getProcessorIdentifier().getName().trim(),
+            LogManager.info(String.format(Locale.ENGLISH, "CPU: %s %d cores/%d threads", cpu.getProcessorIdentifier().getName().trim(),
                     cpu.getPhysicalProcessorCount(), cpu.getLogicalProcessorCount()));
 
             OperatingSystem os = systemInfo.getOperatingSystem();
@@ -868,6 +963,8 @@ public class App {
         // Parse all the command line arguments
         OptionParser parser = new OptionParser();
         parser.accepts("updated", "If the launcher was just updated.").withOptionalArg().ofType(Boolean.class);
+        parser.accepts("updatedBundledJre", "If the launcher just updated it's bundled JRE.").withOptionalArg()
+                .ofType(Boolean.class);
         parser.accepts("skip-setup-dialog",
                 "If the first time setup dialog should be skipped, using the defaults. Note that this will enable analytics by default.")
                 .withOptionalArg().ofType(Boolean.class);
@@ -884,9 +981,6 @@ public class App {
         parser.accepts("base-cdn-domain", "The base CDN domain.").withRequiredArg().ofType(String.class);
         parser.accepts("base-cdn-path", "The path on the CDN used for downloading files.").withRequiredArg()
                 .ofType(String.class);
-        parser.accepts("disable-http2",
-                "This will tell the launcher to disable HTTP2 connections.")
-                .withOptionalArg().ofType(Boolean.class);
         parser.accepts("allow-all-ssl-certs",
                 "This will tell the launcher to allow all SSL certs regardless of validity. This is insecure and only intended for development purposes.")
                 .withOptionalArg().ofType(Boolean.class);
@@ -925,6 +1019,10 @@ public class App {
 
         if (options.has("updated")) {
             wasUpdated = true;
+        }
+
+        if (options.has("updatedBundledJre")) {
+            justUpdatedBundledJre = true;
         }
 
         if (options.has("debug")) {
@@ -988,8 +1086,6 @@ public class App {
             LogManager.warn("Base cdn path set to " + baseCdnPath);
         }
 
-        disableHttp2 = options.has("disable-http2");
-
         allowAllSslCerts = options.has("allow-all-ssl-certs");
         if (allowAllSslCerts) {
             LogManager.warn("Allowing all ssl certs. This is insecure and should only be used for development.");
@@ -1038,5 +1134,14 @@ public class App {
 
             LogManager.warn("Config overridden: " + configOverride);
         }
+    }
+
+    /**
+     * Navigate to a given tab.
+     *
+     * @param destination as defined in UIConstants
+     */
+    public static void navigate(int destination) {
+        App.launcherFrame.tabbedPane.setSelectedIndex(destination);
     }
 }

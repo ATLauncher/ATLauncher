@@ -15,31 +15,38 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.atlauncher.evnt.manager;
+package com.atlauncher.viewmodel.base;
 
-import java.util.LinkedList;
 import java.util.List;
 
-import javax.swing.SwingUtilities;
+import javax.annotation.Nonnull;
 
-import com.atlauncher.evnt.listener.AccountListener;
+import com.atlauncher.data.Contributor;
 
-public final class AccountManager {
-    private static final List<AccountListener> listeners = new LinkedList<>();
+import io.reactivex.rxjava3.core.Observable;
 
-    public static synchronized void addListener(AccountListener listener) {
-        listeners.add(listener);
-    }
+/**
+ * 13 / 06 / 2022
+ * <p>
+ * View model for the about tab.
+ */
+public interface IAboutTabViewModel {
 
-    public static synchronized void removeListener(AccountListener listener) {
-        listeners.remove(listener);
-    }
+    /**
+     * @return List of contributors
+     */
+    @Nonnull
+    Observable<List<Contributor>> getContributors();
 
-    public static synchronized void post() {
-        SwingUtilities.invokeLater(() -> {
-            for (AccountListener listener : listeners) {
-                listener.onAccountsChanged();
-            }
-        });
-    }
+    /**
+     * @return Info about the launcher and its environment
+     */
+    @Nonnull
+    String getInfo();
+
+    /**
+     * @return Info to be copied to users clipboard
+     */
+    @Nonnull
+    String getCopyInfo();
 }

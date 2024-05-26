@@ -15,8 +15,30 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.atlauncher.evnt.listener;
+package com.atlauncher.evnt.manager;
 
-public interface ConsoleOpenListener {
-    void onConsoleOpen();
+import javax.annotation.Nonnull;
+
+import com.atlauncher.data.ConsoleState;
+
+import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.subjects.BehaviorSubject;
+
+public final class ConsoleStateManager {
+    private static final BehaviorSubject<ConsoleState> state = BehaviorSubject.createDefault(ConsoleState.CLOSED);
+
+    private ConsoleStateManager() {
+    }
+
+    public static void setState(@Nonnull ConsoleState newState) {
+        state.onNext(newState);
+    }
+
+    public static @Nonnull ConsoleState getState() {
+        return state.getValue();
+    }
+
+    public static @Nonnull Observable<ConsoleState> getObservable(){
+        return state;
+    }
 }

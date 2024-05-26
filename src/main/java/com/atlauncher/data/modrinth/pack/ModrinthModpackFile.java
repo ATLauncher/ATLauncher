@@ -32,6 +32,22 @@ public class ModrinthModpackFile {
     public Long fileSize = null;
 
     public ModType getType() {
+        if (path.startsWith("resourcepacks/")) {
+            return ModType.resourcepack;
+        }
+
+        if (path.startsWith("texturepacks/")) {
+            return ModType.texturepack;
+        }
+
+        if (path.startsWith("shaderpacks/")) {
+            return ModType.shaderpack;
+        }
+
+        if (path.startsWith("coremods/")) {
+            return ModType.coremods;
+        }
+
         return ModType.mods;
     }
 
@@ -46,13 +62,15 @@ public class ModrinthModpackFile {
             serverEnv = env.containsKey("server") ? env.get("server") : "required";
         }
 
+        int lastIndexOfSlash = path.contains("\\") ? path.lastIndexOf("\\") : path.lastIndexOf("/");
+
         mod.client = !clientEnv.equals("unsupported");
         mod.server = !serverEnv.equals("unsupported");
         mod.download = DownloadType.direct;
-        mod.file = path.substring(path.lastIndexOf("/") + 1);
-        mod.path = path.substring(0, path.lastIndexOf("/"));
+        mod.file = path.substring(lastIndexOfSlash + 1);
+        mod.path = path.substring(0, lastIndexOfSlash);
         mod.sha1 = hashes.get("sha1");
-        mod.name = path.replace("mods/", "").replace(".jar", "");
+        mod.name = path.replace("mods/", "").replace("mods\\", "").replace(".jar", "");
         mod.url = downloads.get(0);
         mod.type = getType();
         mod.version = "";

@@ -25,6 +25,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -69,7 +70,7 @@ public class CurseForgeApi {
     public static List<CurseForgeProject> searchCurseForge(String gameVersion, int sectionId, String query, int page,
             List<Integer> modLoaderTypes, String sort, boolean sortDescending, Integer categoryId) {
         try {
-            String url = String.format(
+            String url = String.format(Locale.ENGLISH,
                     "%s/mods/search?gameId=432&classId=%s&searchFilter=%s&sortField=%s&sortOrder=%s&pageSize=%d&index=%d",
                     Constants.CURSEFORGE_CORE_API_URL, sectionId,
                     URLEncoder.encode(query, StandardCharsets.UTF_8.name()),
@@ -125,6 +126,13 @@ public class CurseForgeApi {
         Integer categoryIdParam = categoryId == null ? null : Integer.parseInt(categoryId);
 
         return searchCurseForge(Constants.CURSEFORGE_RESOURCE_PACKS_SECTION_ID, query, page, null, sort,
+                categoryIdParam);
+    }
+
+    public static List<CurseForgeProject> searchShaderPacks(String query, int page, String sort, String categoryId) {
+        Integer categoryIdParam = categoryId == null ? null : Integer.parseInt(categoryId);
+
+        return searchCurseForge(Constants.CURSEFORGE_SHADER_PACKS_SECTION_ID, query, page, null, sort,
                 categoryIdParam);
     }
 
@@ -191,7 +199,8 @@ public class CurseForgeApi {
     }
 
     public static List<CurseForgeFile> getFilesForProject(int projectId) {
-        String url = String.format("%s/mods/%d/files?pageSize=1000", Constants.CURSEFORGE_CORE_API_URL, projectId);
+        String url = String.format(Locale.ENGLISH, "%s/mods/%d/files?pageSize=1000", Constants.CURSEFORGE_CORE_API_URL,
+                projectId);
 
         Download download = Download.build().setUrl(url).header("x-api-key", Constants.CURSEFORGE_CORE_API_KEY)
                 .cached(new CacheControl.Builder().maxStale(10, TimeUnit.MINUTES).build());
@@ -209,7 +218,8 @@ public class CurseForgeApi {
     }
 
     public static CurseForgeFile getFileForProject(int projectId, int fileId) {
-        String url = String.format("%s/mods/%d/files/%d", Constants.CURSEFORGE_CORE_API_URL, projectId, fileId);
+        String url = String.format(Locale.ENGLISH, "%s/mods/%d/files/%d", Constants.CURSEFORGE_CORE_API_URL, projectId,
+                fileId);
 
         Download download = Download.build().setUrl(url).header("x-api-key", Constants.CURSEFORGE_CORE_API_KEY)
                 .cached(new CacheControl.Builder().maxStale(1, TimeUnit.HOURS).build());
@@ -231,7 +241,7 @@ public class CurseForgeApi {
     }
 
     public static CurseForgeProject getProjectById(String projectId) {
-        String url = String.format("%s/mods/%s", Constants.CURSEFORGE_CORE_API_URL, projectId);
+        String url = String.format(Locale.ENGLISH, "%s/mods/%s", Constants.CURSEFORGE_CORE_API_URL, projectId);
 
         Download download = Download.build().setUrl(url).header("x-api-key", Constants.CURSEFORGE_CORE_API_KEY)
                 .cached(new CacheControl.Builder().maxStale(10, TimeUnit.MINUTES).build());
@@ -257,7 +267,8 @@ public class CurseForgeApi {
     }
 
     private static CurseForgeProject getProjectBySlug(String slug, int classId) {
-        String url = String.format("%s/mods/search?gameId=432&slug=%s&classId=%s", Constants.CURSEFORGE_CORE_API_URL,
+        String url = String.format(Locale.ENGLISH, "%s/mods/search?gameId=432&slug=%s&classId=%s",
+                Constants.CURSEFORGE_CORE_API_URL,
                 slug, classId);
 
         Download download = Download.build().setUrl(url).header("x-api-key", Constants.CURSEFORGE_CORE_API_KEY)
@@ -417,6 +428,18 @@ public class CurseForgeApi {
 
         return categories.stream()
                 .filter(c -> c.classId != null && c.classId == Constants.CURSEFORGE_RESOURCE_PACKS_SECTION_ID)
+                .sorted(Comparator.comparing(c -> c.name)).collect(Collectors.toList());
+    }
+
+    public static List<CurseForgeCategoryForGame> getCategoriesForShaderPacks() {
+        List<CurseForgeCategoryForGame> categories = getCategories();
+
+        if (categories == null) {
+            return new ArrayList<>();
+        }
+
+        return categories.stream()
+                .filter(c -> c.classId != null && c.classId == Constants.CURSEFORGE_SHADER_PACKS_SECTION_ID)
                 .sorted(Comparator.comparing(c -> c.name)).collect(Collectors.toList());
     }
 

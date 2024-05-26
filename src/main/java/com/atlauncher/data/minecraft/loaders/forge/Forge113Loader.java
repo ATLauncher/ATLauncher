@@ -22,6 +22,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -33,6 +34,7 @@ import com.atlauncher.data.minecraft.Arguments;
 import com.atlauncher.data.minecraft.Library;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.utils.FileUtils;
+import com.atlauncher.utils.Utils;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
 
@@ -139,12 +141,33 @@ public class Forge113Loader extends ForgeLoader {
 
     @Override
     public String getServerJar() {
+        if (this.getInstallProfile().path != null) {
+            String serverJarPath = Utils.convertMavenIdentifierToPath(this.getInstallProfile().path);
+            return serverJarPath.substring(serverJarPath.lastIndexOf("/") + 1);
+        }
+
         Library forgeLibrary = this.getVersion().libraries.stream()
                 .filter(library -> library.name.startsWith("net.minecraftforge:forge")).findFirst().orElse(null);
 
         if (forgeLibrary != null) {
             return forgeLibrary.downloads.artifact.path
                     .substring(forgeLibrary.downloads.artifact.path.lastIndexOf("/") + 1);
+        }
+
+        return null;
+    }
+
+    @Override
+    public Path getServerJarPath() {
+        if (this.getInstallProfile().path != null) {
+            return FileSystem.LIBRARIES.resolve(Utils.convertMavenIdentifierToPath(this.getInstallProfile().path));
+        }
+
+        Library forgeLibrary = this.getVersion().libraries.stream()
+                .filter(library -> library.name.startsWith("net.minecraftforge:forge")).findFirst().orElse(null);
+
+        if (forgeLibrary != null) {
+            return FileSystem.LIBRARIES.resolve(forgeLibrary.downloads.artifact.path);
         }
 
         return null;

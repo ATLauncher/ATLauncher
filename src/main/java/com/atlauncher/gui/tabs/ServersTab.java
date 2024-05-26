@@ -33,9 +33,9 @@ import org.mini2Dx.gettext.GetText;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.constants.UIConstants;
 import com.atlauncher.evnt.listener.RelocalizationListener;
-import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.gui.card.NilCard;
 import com.atlauncher.gui.card.ServerCard;
+import com.atlauncher.gui.panels.HierarchyPanel;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.network.analytics.AnalyticsEvent;
 import com.atlauncher.viewmodel.base.IServersTabViewModel;
@@ -43,34 +43,40 @@ import com.atlauncher.viewmodel.impl.ServersTabViewModel;
 import com.formdev.flatlaf.icons.FlatSearchIcon;
 
 @SuppressWarnings("serial")
-public class ServersTab extends JPanel implements Tab, RelocalizationListener {
+public class ServersTab extends HierarchyPanel implements Tab, RelocalizationListener {
     private JTextField searchBox;
 
     private JPanel panel;
     private JScrollPane scrollPane;
 
-    private NilCard nilCard;
+    private NilCard nilCard = new NilCard(
+            getNilMessage(),
+            new NilCard.Action[] {
+                    NilCard.Action.createCreatePackAction(),
+                    NilCard.Action.createDownloadPackAction()
+            });
 
-    private final IServersTabViewModel viewModel = new ServersTabViewModel();
+    private IServersTabViewModel viewModel;
 
     public ServersTab() {
-        setLayout(new BorderLayout());
-        createView();
-        RelocalizationManager.addListener(this);
+        super(new BorderLayout());
     }
 
-    public void createView() {
+    @Override
+    protected void onShow() {
         JPanel topPanel = new JPanel();
         topPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
 
         searchBox = new JTextField(16);
-        viewModel.addOnSearchChangeListener(searchBox::setText);
+        addDisposable(
+            viewModel.getSearchObservable().subscribe(it -> searchBox.setText(it.orElse(null)))
+        );
         searchBox.addKeyListener(new KeyAdapter() {
             public void keyReleased(KeyEvent e) {
                 if (e.getKeyChar() == KeyEvent.VK_ENTER) {
                     String text = searchBox.getText();
                     Analytics.trackEvent(AnalyticsEvent.forSearchEvent("servers", text));
-                    viewModel.setSearch(text);
+                    viewModel.setSearchSubject(text);
                 }
             }
         });
@@ -78,7 +84,7 @@ public class ServersTab extends JPanel implements Tab, RelocalizationListener {
         searchBox.putClientProperty("JTextField.leadingIcon", new FlatSearchIcon());
         searchBox.putClientProperty("JTextField.showClearButton", true);
         searchBox.putClientProperty("JTextField.clearCallback", (Runnable) () -> {
-            viewModel.setSearch("");
+            viewModel.setSearchSubject("");
         });
         topPanel.add(searchBox);
 
@@ -86,19 +92,19 @@ public class ServersTab extends JPanel implements Tab, RelocalizationListener {
 
         panel = new JPanel();
         scrollPane = new JScrollPane(panel, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-                JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+            JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scrollPane.getVerticalScrollBar().setUnitIncrement(16);
         add(scrollPane, BorderLayout.CENTER);
 
         panel.setLayout(new GridBagLayout());
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.gridx = gbc.gridy = 0;
-        gbc.weightx = 1.0;
-        gbc.insets = UIConstants.FIELD_INSETS_SMALL;
-        gbc.fill = GridBagConstraints.BOTH;
 
-        viewModel.addOnChangeViewListener(servers -> {
-            viewModel.setViewPosition(scrollPane.getVerticalScrollBar().getValue());
+        addDisposable(viewModel.getServersObservable().subscribe(servers -> {
+            GridBagConstraints gbc = new GridBagConstraints();
+            gbc.gridx = gbc.gridy = 0;
+            gbc.weightx = 1.0;
+            gbc.insets = UIConstants.FIELD_INSETS_SMALL;
+            gbc.fill = GridBagConstraints.BOTH;
+
             panel.removeAll();
             gbc.gridy = 0;
 
@@ -108,18 +114,17 @@ public class ServersTab extends JPanel implements Tab, RelocalizationListener {
             });
 
             if (panel.getComponentCount() == 0) {
-                nilCard = new NilCard(new HTMLBuilder().text(
-                        GetText.tr("There are no servers to display.<br/><br/>Install one from the Packs tab."))
-                        .build());
                 panel.add(nilCard, gbc);
             }
 
             validate();
             repaint();
             searchBox.requestFocus();
-        });
+        }));
 
-        viewModel.addOnViewPositionChangedListener(scrollPane.getVerticalScrollBar()::setValue);
+        addDisposable(
+            viewModel.getViewPosition().subscribe(scrollPane.getVerticalScrollBar()::setValue)
+        );
     }
 
     @Override
@@ -132,13 +137,33 @@ public class ServersTab extends JPanel implements Tab, RelocalizationListener {
         return "Servers";
     }
 
+    private static String getNilMessage() {
+        return new HTMLBuilder()
+                .text(GetText.tr("There are no servers to display.<br/><br/>Install one from the Packs tab."))
+                .build();
+    }
+
     @Override
     public void onRelocalization() {
         searchBox.putClientProperty("JTextField.placeholderText", GetText.tr("Search"));
+        nilCard.setMessage(getNilMessage());
+        nilCard.setActions(new NilCard.Action[] {
+                NilCard.Action.createCreatePackAction(),
+                NilCard.Action.createDownloadPackAction()
+        });
+    }
 
-        if (nilCard != null) {
-            nilCard.setMessage(new HTMLBuilder().text(
-                    GetText.tr("There are no servers to display.<br/><br/>Install one from the Packs tab.")).build());
-        }
+    @Override
+    protected void createViewModel() {
+        viewModel = new ServersTabViewModel();
+    }
+
+    @Override
+    protected void onDestroy() {
+        viewModel.setViewPosition(scrollPane.getVerticalScrollBar().getValue());
+        removeAll();
+        searchBox = null;
+        panel = null;
+        scrollPane = null;
     }
 }

@@ -21,17 +21,16 @@ import java.io.File;
 import java.net.InetAddress;
 import java.nio.file.Files;
 import java.util.Arrays;
+import java.util.Locale;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import com.atlauncher.App;
-import com.atlauncher.Data;
 import com.atlauncher.FileSystem;
 import com.atlauncher.constants.Constants;
-import com.atlauncher.evnt.listener.AccountListener;
 import com.atlauncher.evnt.listener.SettingsListener;
-import com.atlauncher.evnt.manager.AccountManager;
 import com.atlauncher.evnt.manager.SettingsManager;
+import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.network.Download;
@@ -42,13 +41,12 @@ import com.atlauncher.utils.Utils;
 /**
  * 15 / 06 / 2022
  */
-public class ToolsViewModel implements IToolsViewModel, SettingsListener, AccountListener {
+public class ToolsViewModel implements IToolsViewModel, SettingsListener {
     private Consumer<Boolean> onCanRunNetworkCheckerChanged;
     private Consumer<Boolean> onSkinUpdaterEnabledChanged;
 
     public ToolsViewModel() {
         SettingsManager.addListener(this);
-        AccountManager.addListener(this);
     }
 
     @Override
@@ -56,13 +54,12 @@ public class ToolsViewModel implements IToolsViewModel, SettingsListener, Accoun
         onCanRunNetworkCheckerChanged.accept(canRunNetworkChecker());
     }
 
-    @Override
     public void onAccountsChanged() {
         onSkinUpdaterEnabledChanged.accept(skinUpdaterEnabled());
     }
 
     private boolean skinUpdaterEnabled() {
-        return Data.ACCOUNTS.size() != 0;
+        return !AccountManager.getAccounts().isEmpty();
     }
 
     @Override
@@ -133,7 +130,8 @@ public class ToolsViewModel implements IToolsViewModel, SettingsListener, Accoun
 
     private final String[] HOSTS = { "authserver.mojang.com", "session.minecraft.net", "libraries.minecraft.net",
             "launchermeta.mojang.com", "launcher.mojang.com", Constants.API_HOST, Constants.PASTE_HOST,
-            Constants.DOWNLOAD_HOST, Constants.FABRIC_HOST, Constants.LEGACY_FABRIC_HOST, Constants.NEOFORGE_HOST, Constants.FORGE_HOST,
+            Constants.DOWNLOAD_HOST, Constants.FABRIC_HOST, Constants.LEGACY_FABRIC_HOST, Constants.NEOFORGE_HOST,
+            Constants.FORGE_HOST,
             Constants.QUILT_HOST, Constants.CURSEFORGE_CORE_API_HOST, Constants.MODRINTH_HOST,
             Constants.MODPACKS_CH_HOST };
 
@@ -257,7 +255,7 @@ public class ToolsViewModel implements IToolsViewModel, SettingsListener, Accoun
 
         // Response Code Test
         try {
-            results.append(String.format("Response code to %s was %d\n\n----------------\n\n",
+            results.append(String.format(Locale.ENGLISH, "Response code to %s was %d\n\n----------------\n\n",
                     Constants.DOWNLOAD_SERVER,
                     Download.build()
                             .setUrl(String.format("%s/launcher/json/files.json", Constants.DOWNLOAD_SERVER))
@@ -296,10 +294,12 @@ public class ToolsViewModel implements IToolsViewModel, SettingsListener, Accoun
         float kbps = bps / 1024;
         float mbps = kbps / 1024;
         String speed = (mbps < 1
-                ? (kbps < 1 ? String.format("%.2f B/s", bps) : String.format("%.2f " + "KB/s", kbps))
-                : String.format("%.2f MB/s", mbps));
+                ? (kbps < 1 ? String.format(Locale.ENGLISH, "%.2f B/s", bps)
+                        : String.format(Locale.ENGLISH, "%.2f KB/s", kbps))
+                : String.format(Locale.ENGLISH, "%.2f MB/s", mbps));
         results.append(
-                String.format("Download speed to %s was %s, " + "" + "taking %.2f seconds to download 100MB",
+                String.format(Locale.ENGLISH,
+                        "Download speed to %s was %s, taking %.2f seconds to download 100MB",
                         Constants.DOWNLOAD_SERVER, speed, (timeTaken / 1000.0)));
         onTaskComplete.accept(null);
 
@@ -323,14 +323,14 @@ public class ToolsViewModel implements IToolsViewModel, SettingsListener, Accoun
 
     @Override
     public int accountCount() {
-        return Data.ACCOUNTS.size();
+        return AccountManager.getAccounts().size();
     }
 
     @Override
     public void updateSkins(Consumer<Void> onTaskComplete) {
         Analytics.trackEvent(AnalyticsEvent.forToolRun("skin_updater"));
 
-        Data.ACCOUNTS.forEach(account -> {
+        AccountManager.getAccounts().forEach(account -> {
             account.updateSkin();
             onTaskComplete.accept(null);
         });

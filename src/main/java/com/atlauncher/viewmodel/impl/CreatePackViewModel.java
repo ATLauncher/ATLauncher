@@ -45,6 +45,7 @@ import com.apollographql.apollo.api.Response;
 import com.apollographql.apollo.api.cache.http.HttpCachePolicy;
 import com.apollographql.apollo.rx3.Rx3Apollo;
 import com.atlauncher.App;
+import com.atlauncher.constants.UIConstants;
 import com.atlauncher.data.MCVersionRow;
 import com.atlauncher.data.installables.Installable;
 import com.atlauncher.data.installables.VanillaInstallable;
@@ -70,7 +71,7 @@ import com.atlauncher.managers.MinecraftManager;
 import com.atlauncher.network.GraphqlClient;
 import com.atlauncher.utils.Pair;
 import com.atlauncher.utils.Utils;
-import com.atlauncher.viewmodel.base.IVanillaPacksViewModel;
+import com.atlauncher.viewmodel.base.ICreatePackViewModel;
 import com.gitlab.doomsdayrs.lib.rxswing.schedulers.SwingSchedulers;
 
 import io.reactivex.rxjava3.core.Observable;
@@ -80,7 +81,7 @@ import io.reactivex.rxjava3.subjects.BehaviorSubject;
 /**
  * 25 / 06 / 2022
  */
-public class VanillaPacksViewModel implements SettingsListener, IVanillaPacksViewModel {
+public class CreatePackViewModel implements SettingsListener, ICreatePackViewModel {
     /**
      * Name to display
      */
@@ -350,7 +351,7 @@ public class VanillaPacksViewModel implements SettingsListener, IVanillaPacksVie
      */
     private boolean descriptionDirty = false;
 
-    public VanillaPacksViewModel() {
+    public CreatePackViewModel() {
         SettingsManager.addListener(this);
         setLoaderType(null); // Happen first to prevent race condition
         Map<VersionManifestVersionType, Boolean> map = new HashMap<>();
@@ -367,7 +368,7 @@ public class VanillaPacksViewModel implements SettingsListener, IVanillaPacksVie
         createServerEnabled.onNext(false);
         createInstanceEnabled.onNext(false);
 
-        loaderTypeNoneEnabled.onNext(false);
+        loaderTypeNoneEnabled.onNext(true);
         loaderTypeQuiltEnabled.onNext(true);
         loaderTypeFabricEnabled.onNext(true);
         loaderTypeForgeEnabled.onNext(true);
@@ -383,11 +384,14 @@ public class VanillaPacksViewModel implements SettingsListener, IVanillaPacksVie
                         try {
                             final VersionManifestVersion version = MinecraftManager
                                     .getMinecraftVersion(selectedVersion.get());
+                            createInstanceEnabled.onNext(true);
                             createServerEnabled.onNext(version.hasServer());
                         } catch (InvalidMinecraftVersion ignored) {
+                            createInstanceEnabled.onNext(false);
                             createServerEnabled.onNext(false);
                         }
                     } else {
+                        createInstanceEnabled.onNext(false);
                         createServerEnabled.onNext(false);
                     }
                 });
@@ -398,15 +402,17 @@ public class VanillaPacksViewModel implements SettingsListener, IVanillaPacksVie
                     Optional<LoaderType> loaderTypeOptional = optionalOptionalPair.left();
                     Optional<String> selectedMinecraftVersionOptional = optionalOptionalPair.right();
 
-                    if (!selectedMinecraftVersionOptional.isPresent())
+                    if (!selectedMinecraftVersionOptional.isPresent()) {
                         return;
-
-                    loaderVersionsDropDownEnabled.onNext(false);
+                    }
 
                     if (!loaderTypeOptional.isPresent()) {
                         // update the name and description fields if they're not dirty
                         updateNameAndDescription(selectedMinecraftVersionOptional.get(), null);
                         loaderVersions.onNext(Optional.empty());
+                        setLoaderGroupEnabled(true);
+                        selectedLoaderVersion.onNext(Optional.empty());
+                        loaderVersionsDropDownEnabled.onNext(false);
                         return;
                     }
                     LoaderType loaderType = loaderTypeOptional.get();
@@ -415,6 +421,13 @@ public class VanillaPacksViewModel implements SettingsListener, IVanillaPacksVie
                     updateNameAndDescription(selectedMinecraftVersion, loaderType);
 
                     loaderLoading.onNext(true);
+                    loaderTypeNoneEnabled.onNext(false);
+                    loaderTypeQuiltEnabled.onNext(false);
+                    loaderTypeFabricEnabled.onNext(false);
+                    loaderTypeForgeEnabled.onNext(false);
+                    loaderTypeLegacyFabricEnabled.onNext(false);
+                    loaderTypeNeoForgeEnabled.onNext(false);
+                    loaderVersionsDropDownEnabled.onNext(false);
 
                     setLoaderGroupEnabled(false);
 
@@ -433,10 +446,11 @@ public class VanillaPacksViewModel implements SettingsListener, IVanillaPacksVie
                     if (!loaders.isEmpty()) {
                         if (loaderType == LoaderType.FORGE) {
                             Optional<LoaderVersion> optionalLoaderType = first(loaders, it -> it.recommended);
-                            if (optionalLoaderType.isPresent())
+                            if (optionalLoaderType.isPresent()) {
                                 selectedLoaderVersion.onNext(optionalLoaderType);
-                            else
+                            } else {
                                 selectedLoaderVersion.onNext(loaders.stream().findFirst());
+                            }
                         } else {
                             selectedLoaderVersion.onNext(loaders.stream().findFirst());
                         }
@@ -444,7 +458,13 @@ public class VanillaPacksViewModel implements SettingsListener, IVanillaPacksVie
 
                     boolean hasLoaderVersions = !loaders.isEmpty() && loaders.get(0) != noLoaderVersions;
 
-                    setLoaderGroupEnabled(true, hasLoaderVersions, enableCreateServers);
+                    setLoaderGroupEnabled(hasLoaderVersions, hasLoaderVersions && enableCreateServers);
+                    loaderTypeNoneEnabled.onNext(true);
+                    loaderTypeQuiltEnabled.onNext(true);
+                    loaderTypeFabricEnabled.onNext(true);
+                    loaderTypeForgeEnabled.onNext(true);
+                    loaderTypeLegacyFabricEnabled.onNext(true);
+                    loaderTypeNeoForgeEnabled.onNext(true);
                 });
     }
 
@@ -703,10 +723,18 @@ public class VanillaPacksViewModel implements SettingsListener, IVanillaPacksVie
                 DialogManager.okDialog().setTitle(GetText.tr("No Account Selected"))
                         .setContent(GetText.tr("Cannot create server as you have no account selected."))
                         .setType(DialogManager.ERROR).show();
+
+                if (AccountManager.getAccounts().size() == 0) {
+                    App.navigate(UIConstants.LAUNCHER_ACCOUNTS_TAB);
+                }
             } else {
                 DialogManager.okDialog().setTitle(GetText.tr("No Account Selected"))
                         .setContent(GetText.tr("Cannot create instance as you have no account selected."))
                         .setType(DialogManager.ERROR).show();
+
+                if (AccountManager.getAccounts().size() == 0) {
+                    App.navigate(UIConstants.LAUNCHER_ACCOUNTS_TAB);
+                }
             }
             return;
         }
@@ -716,8 +744,9 @@ public class VanillaPacksViewModel implements SettingsListener, IVanillaPacksVie
             final @Nullable LoaderVersion selectedLoaderVersion = this.selectedLoaderVersion.getValue().orElse(null);
             final Optional<String> selectedMinecraftVersionOptional = this.selectedMinecraftVersionFlow.getValue();
 
-            if (!selectedMinecraftVersionOptional.isPresent())
+            if (!selectedMinecraftVersionOptional.isPresent()) {
                 return;
+            }
 
             final @Nonnull String selectedMinecraftVersion = selectedMinecraftVersionOptional.get();
             final @Nullable String description = this.description.getValue().orElse(null);
@@ -732,14 +761,21 @@ public class VanillaPacksViewModel implements SettingsListener, IVanillaPacksVie
             installable.isServer = isServer;
             final boolean success = installable.startInstall();
 
-            // if (success) {
-            // - Reset the view, currently disabled
-            // nameFieldDirty = false
-            // descriptionFieldDirty = false
-            // loaderTypeNoneRadioButton.isSelected = true
-            // selectedLoaderTypeChanged(null)
-            // minecraftVersionTable!!.setRowSelectionInterfinal void(0, 0)
-            // }
+            if (success) {
+                final String defaultNameField;
+                if (selectedLoaderVersion == null) {
+                    defaultNameField = String.format("Minecraft %s", selectedMinecraftVersion);
+                } else {
+                    defaultNameField = String.format("Minecraft %s with %s", selectedMinecraftVersion,
+                            selectedLoaderVersion.type);
+                }
+
+                nameDirty = false;
+                this.name.onNext(Optional.of(defaultNameField));
+
+                descriptionDirty = false;
+                this.description.onNext(Optional.of(defaultNameField));
+            }
         } catch (InvalidMinecraftVersion e) {
             LogManager.logStackTrace(e);
         }
@@ -916,10 +952,14 @@ public class VanillaPacksViewModel implements SettingsListener, IVanillaPacksVie
                         loaderVersionsList.addAll(data.loaderVersions().neoforge()
                                 .stream()
                                 .filter(fv -> !disabledNeoForgeVersions.contains(fv.version()))
-                                .map(version -> new LoaderVersion(
-                                        version.version(),
-                                        false,
-                                        "NeoForge"))
+                                .map(version -> {
+                                    LoaderVersion lv = new LoaderVersion(
+                                            version.version(),
+                                            false,
+                                            "NeoForge");
+                                    lv.rawVersion = version.rawVersion();
+                                    return lv;
+                                })
                                 .collect(Collectors.toList()));
                         break;
 
@@ -931,31 +971,32 @@ public class VanillaPacksViewModel implements SettingsListener, IVanillaPacksVie
                         break;
                 }
             if (loaderVersionsList.size() == 0) {
-                setLoaderGroupEnabled(true, false, enableCreateServers);
+                setLoaderGroupEnabled(false);
                 return singletonList(noLoaderVersions);
             }
             return loaderVersionsList;
         } catch (RuntimeException e) {
             LogManager.logStackTrace("Error fetching loading versions", e);
-            setLoaderGroupEnabled(true, false, enableCreateServers);
+            setLoaderGroupEnabled(false);
             return singletonList(errorLoadingVersions);
         }
     }
 
     private void setLoaderGroupEnabled(Boolean enabled) {
-        setLoaderGroupEnabled(enabled, enabled, enabled);
+        setLoaderGroupEnabled(enabled, enabled);
     }
 
-    private void setLoaderGroupEnabled(Boolean enabled, Boolean loaderVersionsDropDown, Boolean enableCreateServers) {
-        loaderTypeNoneEnabled.onNext(enabled);
-        loaderTypeFabricEnabled.onNext(enabled);
-        loaderTypeForgeEnabled.onNext(enabled);
-        loaderTypeLegacyFabricEnabled.onNext(enabled);
-        loaderTypeNeoForgeEnabled.onNext(enabled);
-        loaderTypeQuiltEnabled.onNext(enabled);
+    private void setLoaderGroupEnabled(Boolean enabled, Boolean enableCreateServers) {
+        loaderTypeNoneEnabled.onNext(true);
+        loaderTypeFabricEnabled.onNext(true);
+        loaderTypeForgeEnabled.onNext(true);
+        loaderTypeLegacyFabricEnabled.onNext(true);
+        loaderTypeNeoForgeEnabled.onNext(true);
+        loaderTypeQuiltEnabled.onNext(true);
+
         createServerEnabled.onNext(enableCreateServers);
         createInstanceEnabled.onNext(enabled);
-        loaderVersionsDropDownEnabled.onNext(loaderVersionsDropDown);
+        loaderVersionsDropDownEnabled.onNext(enabled);
     }
 
     /**
@@ -983,7 +1024,7 @@ public class VanillaPacksViewModel implements SettingsListener, IVanillaPacksVie
         }
 
         if (loaderVersionsList.size() == 0) {
-            setLoaderGroupEnabled(true, false, enableCreateServers);
+            setLoaderGroupEnabled(false);
             return singletonList(noLoaderVersions);
         }
 

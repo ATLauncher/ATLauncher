@@ -47,7 +47,6 @@ import com.atlauncher.graphql.type.AddLauncherLaunchInput;
 import com.atlauncher.graphql.type.LauncherJavaVersionInput;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.gui.tabs.PacksBrowserTab;
-import com.atlauncher.gui.tabs.news.NewsTab;
 import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.ConfigManager;
 import com.atlauncher.managers.CurseForgeUpdateManager;
@@ -56,7 +55,6 @@ import com.atlauncher.managers.InstanceManager;
 import com.atlauncher.managers.LWJGLManager;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.managers.MinecraftManager;
-import com.atlauncher.managers.ModpacksChUpdateManager;
 import com.atlauncher.managers.ModrinthModpackUpdateManager;
 import com.atlauncher.managers.NewsManager;
 import com.atlauncher.managers.PackManager;
@@ -83,7 +81,6 @@ public class Launcher {
 
     // UI things
     private JFrame parent; // Parent JFrame of the actual Launcher
-    private NewsTab newsPanel; // The news panel
     private PacksBrowserTab packsBrowserPanel; // The packs browser panel
 
     // Update thread
@@ -155,8 +152,9 @@ public class Launcher {
         checkForExternalPackUpdates();
 
         if (App.settings.enableAnalytics && Analytics.isEnabled()) {
-            Analytics.startSession();
+            Analytics.startSession(App.settings.selectedTabOnStartup);
         }
+        System.gc();
         PerformanceManager.end();
     }
 
@@ -330,9 +328,6 @@ public class Launcher {
         }
 
         updateThread = new Thread(() -> {
-            if (InstanceManager.getInstances().stream().anyMatch(i -> i.isModpacksChPack())) {
-                ModpacksChUpdateManager.checkForUpdates();
-            }
             if (InstanceManager.getInstances().stream().anyMatch(i -> i.isCurseForgePack())) {
                 CurseForgeUpdateManager.checkForUpdates();
             }
@@ -376,13 +371,10 @@ public class Launcher {
 
             ConfigManager.loadConfig(); // Load the config
             NewsManager.loadNews(); // Load the news
-            reloadNewsPanel(); // Reload news panel
             PackManager.loadPacks(); // Load the Packs available in the Launcher
             reloadPacksBrowserPanel();// Reload packs browser panel
             PackManager.loadUsers(); // Load the Testers and Allowed Players for the packs
             InstanceManager.loadInstances(); // Load the users installed Instances
-            reloadInstancesPanel(); // Reload instances panel
-            reloadServersPanel(); // Reload instances panel
             dialog.setVisible(false); // Remove the dialog
             dialog.dispose(); // Dispose the dialog
         });
@@ -453,39 +445,12 @@ public class Launcher {
     }
 
     /**
-     * Reloads the panel used for Instances
-     */
-    public void reloadInstancesPanel() {
-        InstanceManager.post();
-    }
-
-    public void reloadServersPanel() {
-        ServerManager.post();
-    }
-
-    /**
      * Sets the panel used for the Packs Browser
      *
      * @param packsBrowserPanel Packs Browser Panel
      */
     public void setPacksBrowserPanel(PacksBrowserTab packsBrowserPanel) {
         this.packsBrowserPanel = packsBrowserPanel;
-    }
-
-    /**
-     * Sets the panel used for News
-     *
-     * @param newsPanel News Panel
-     */
-    public void setNewsPanel(NewsTab newsPanel) {
-        this.newsPanel = newsPanel;
-    }
-
-    /**
-     * Reloads the panel used for News
-     */
-    public void reloadNewsPanel() {
-        this.newsPanel.reload(); // Reload the news panel
     }
 
     /**

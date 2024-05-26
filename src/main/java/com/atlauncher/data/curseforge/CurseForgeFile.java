@@ -64,13 +64,42 @@ public class CurseForgeFile {
     @SerializedName(value = "modId", alternate = { "projectId" })
     public int modId;
 
+    public String getDisplayName() {
+        if (this.isModPack() && displayName.length() >= 4
+                && displayName.substring(displayName.length() - 4).equalsIgnoreCase(".zip")) {
+            return displayName.substring(0, displayName.length() - 4);
+        }
+
+        return displayName;
+    }
+
     public String toString() {
         if (this.releaseType == null) {
-            return this.displayName;
+            return displayName;
         }
 
         String releaseTypeString = this.releaseType == 1 ? "" : this.releaseType == 2 ? " (Beta)" : " (Alpha)";
-        return this.displayName + releaseTypeString;
+        return displayName + releaseTypeString;
+    }
+
+    private boolean isModPack() {
+        if (modules == null) {
+            return false;
+        }
+
+        return modules.stream().anyMatch(m -> m.name.equals("manifest.json"));
+    }
+
+    public boolean isReleaseType() {
+        return this.releaseType == 1;
+    }
+
+    public boolean isBetaType() {
+        return this.releaseType == 2;
+    }
+
+    public boolean isAlphaType() {
+        return this.releaseType == 3;
     }
 
     public Mod convertToMod(CurseForgeProject curseForgeProject) {

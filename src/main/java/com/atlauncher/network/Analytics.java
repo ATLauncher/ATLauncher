@@ -21,10 +21,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Random;
 import java.util.Timer;
-import java.util.TimerTask;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
@@ -35,12 +36,14 @@ import com.atlauncher.App;
 import com.atlauncher.Gsons;
 import com.atlauncher.Network;
 import com.atlauncher.constants.Constants;
+import com.atlauncher.constants.UIConstants;
 import com.atlauncher.managers.ConfigManager;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.network.analytics.AnalyticsApiResponse;
 import com.atlauncher.network.analytics.AnalyticsEvent;
 import com.atlauncher.utils.Java;
 import com.atlauncher.utils.OS;
+import com.atlauncher.utils.Utils;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -55,39 +58,22 @@ public final class Analytics {
     private static boolean sessionInitialised = false;
     private static Timer timer = new Timer();
 
-    public static void startSession() {
-        Map<String, Object> body = new HashMap<>();
-        body.put("userId", App.settings.analyticsClientId);
-        body.put("sessionId", sessionId);
-        body.put("javaVersion", Java.getLauncherJavaVersion());
-        body.put("majorJavaVersion", Java.getLauncherJavaVersionNumber());
-        body.put("osName", OS.getAnalyticsOSName());
-        body.put("osArch", OS.getAnalyticsOSArch());
-        body.put("osVersion", OS.getVersion());
-        body.put("launcherVersion", Constants.VERSION.toStringForLogging());
-        body.put("launcherHash", Constants.VERSION.getSha1Revision().toString());
-        body.put("launcherInstallMethod", OS.getInstallMethodForAnalytics());
+    public static void startSession(int initialTab) {
+        Map<String, Object> properties = new HashMap<>();
+        properties.put("$browser_version", Java.getLauncherJavaVersion());
+        properties.put("major_java_version", Java.getLauncherJavaVersionNumber());
+        properties.put("$os", OS.getAnalyticsOSName());
+        properties.put("os_arch", OS.getAnalyticsOSArch());
+        properties.put("$os_version", OS.getVersion());
+        properties.put("$app_version_string", Constants.VERSION.toStringForLogging());
+        properties.put("$app_build_number", Constants.VERSION.getSha1Revision().toString());
+        properties.put("launcher_install_method", OS.getInstallMethodForAnalytics());
+        properties.put("initial_tab", UIConstants.getInitialTabName(initialTab));
 
-        CompletableFuture<AnalyticsApiResponse> responseFuture = makeApiCall("/session", body);
+        trackEvent(new AnalyticsEvent("$session_start", properties));
+        sessionInitialised = true;
 
-        responseFuture.thenApply((AnalyticsApiResponse response) -> {
-            Analytics.sessionInitialised = response.statusCode >= 200 && response.statusCode < 300;
-
-            Double autoSendInSeconds = ConfigManager.getConfigItem("analytics.autoSendInSeconds", 60d);
-
-            timer.schedule(new TimerTask() {
-                @Override
-                public void run() {
-                    if (events.size() != 0) {
-                        sendAllStoredEvents(false);
-                    }
-                }
-            }, (int) (autoSendInSeconds * 1000), (int) (autoSendInSeconds * 1000));
-
-            Runtime.getRuntime().addShutdownHook(new Thread(Analytics::endSession));
-
-            return response;
-        });
+        Runtime.getRuntime().addShutdownHook(new Thread(Analytics::endSession));
     }
 
     public static void trackEvent(AnalyticsEvent event) {
@@ -106,14 +92,19 @@ public final class Analytics {
     }
 
     private static void sendEvents(List<AnalyticsEvent> events, boolean wait) {
-        LogManager.debug(String.format("Sending %d batched events", events.size()));
+        LogManager.debug(String.format(Locale.ENGLISH, "Sending %d batched events", events.size()));
 
-        Map<String, Object> body = new HashMap<>();
-        body.put("userId", App.settings.analyticsClientId);
-        body.put("sessionId", sessionId);
-        body.put("events", events);
+        List<Map<String, Object>> body = new ArrayList<>();
 
-        final CompletableFuture<AnalyticsApiResponse> responseFuture = makeApiCall("/events", body);
+        for (AnalyticsEvent analyticsEvent : events) {
+            Map<String, Object> event = new HashMap<>();
+            event.put("event", analyticsEvent.name);
+            event.put("properties", getEventProps(analyticsEvent));
+
+            body.add(event);
+        }
+
+        final CompletableFuture<AnalyticsApiResponse> responseFuture = trackEvents(body);
 
         if (wait) {
             try {
@@ -123,20 +114,35 @@ public final class Analytics {
         }
     }
 
-    public static CompletableFuture<AnalyticsApiResponse> makeApiCall(String path, Map<String, Object> body) {
-        LogManager.debug(String.format("Calling %s analytics call", path));
+    private static Map<String, Object> getEventProps(AnalyticsEvent event) {
+        Map<String, Object> props = new HashMap<>();
+
+        for (Entry<String, Object> payloadSet : event.payload.entrySet()) {
+            props.put(payloadSet.getKey(), payloadSet.getValue());
+        }
+
+        props.put("session_id", sessionId);
+        props.put("distinct_id", App.settings.analyticsClientId);
+        props.put("time", event.timestamp);
+        props.put("token", Constants.MIXPANEL_PROJECT_TOKEN);
+
+        return props;
+    }
+
+    public static CompletableFuture<AnalyticsApiResponse> trackEvents(List<Map<String, Object>> body) {
+        LogManager.debug(String.format("Calling analytics call for tracking"));
 
         CompletableFuture<AnalyticsApiResponse> completableFuture = new CompletableFuture<>();
 
         Request request = new Request.Builder()
-                .url(String.format("%s/api%s", Constants.ANALYTICS_BASE_URL, path))
+                .url(String.format("%s/track?ip=1", Constants.MIXPANEL_BASE_URL))
                 .post(RequestBody.create(Gsons.DEFAULT.toJson(body), MediaType.get("application/json; charset=utf-8")))
                 .build();
 
         Network.CLIENT.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-                LogManager.logStackTrace(String.format("Failed to call analytics api for path %s", path), e);
+                LogManager.logStackTrace("Failed to call analytics api for tracking", e);
                 completableFuture.completeExceptionally(e);
             }
 
@@ -165,18 +171,10 @@ public final class Analytics {
         if (sessionInitialised) {
             timer.cancel();
 
+            trackEvent(new AnalyticsEvent("$session_end"));
+
             if (events.size() != 0) {
                 sendAllStoredEvents(true);
-            }
-
-            Map<String, Object> body = new HashMap<>();
-            body.put("userId", App.settings.analyticsClientId);
-            body.put("sessionId", sessionId);
-
-            try {
-                CompletableFuture<AnalyticsApiResponse> response = makeApiCall("/session/end", body);
-                response.get(10, TimeUnit.SECONDS);
-            } catch (InterruptedException | ExecutionException | TimeoutException ignored) {
             }
 
             sessionInitialised = false;
@@ -184,6 +182,14 @@ public final class Analytics {
     }
 
     public static boolean isEnabled() {
+        if (Utils.isDevelopment() || !Constants.VERSION.isReleaseStream()) {
+            return false;
+        }
+
+        if (ConfigManager.getConfigItem("analytics.enabledForAll", false) == true) {
+            return true;
+        }
+
         if (!ConfigManager.getConfigItem("analytics.enabledVersion", "None")
                 .equals(Constants.VERSION.toStringForLogging())) {
             return false;

@@ -74,6 +74,12 @@ public class Constants {
     public static String DOWNLOAD_SERVER = BASE_CDN_PROTOCOL + BASE_CDN_DOMAIN + BASE_CDN_PATH;
     public static String DOWNLOAD_HOST = BASE_CDN_DOMAIN;
 
+    // Mixpanel analytics
+    // if you fork or modify this launcher, you must not use this token and get your
+    // own
+    public static final String MIXPANEL_PROJECT_TOKEN = "3cb6581cb284c1a1b6e189fef3410495";
+    public static final String MIXPANEL_BASE_URL = "https://api.mixpanel.com";
+
     // CurseForge domains, endpoints, config, etc
     public static final String CURSEFORGE_CORE_API_URL = "https://api.curseforge.com/v1";
     // if you fork or modify this launcher, you must not use this API key and apply
@@ -92,6 +98,7 @@ public class Constants {
     public static final int CURSEFORGE_MODPACKS_SECTION_ID = 4471;
     public static final int CURSEFORGE_RESOURCE_PACKS_SECTION_ID = 12;
     public static final int CURSEFORGE_WORLDS_SECTION_ID = 17;
+    public static final int CURSEFORGE_SHADER_PACKS_SECTION_ID = 6552;
 
     // Modrinth domains, endpoints, config, etc
     public static final String MODRINTH_API_URL = "https://api.modrinth.com/v2";
@@ -142,6 +149,7 @@ public class Constants {
             + "/mc/game/version_manifest.json";
     public static final String MINECRAFT_JAVA_RUNTIME_URL = LAUNCHER_META_MINECRAFT
             + "/v1/products/java-runtime/2ec0cc96c44e5a76b9c8b7c39df7210883d12871/all.json";
+    public static final int MINECRAFT_DEFAULT_SERVER_PORT = 25565;
 
     // Misc
     public static final String LEGACY_JAVA_FIXER_URL = "https://cdn.atlcdn.net/legacyjavafixer-1.0.jar";

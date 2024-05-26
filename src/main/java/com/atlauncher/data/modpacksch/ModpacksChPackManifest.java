@@ -49,7 +49,7 @@ public class ModpacksChPackManifest {
     }
 
     public String getWebsiteUrl() {
-        return String.format("https://feed-the-beast.com/modpacks/%d-%s", id, getSlug());
+        return String.format(Locale.ENGLISH, "https://feed-the-beast.com/modpacks/%d-%s", id, getSlug());
     }
 
     public String getSlug() {

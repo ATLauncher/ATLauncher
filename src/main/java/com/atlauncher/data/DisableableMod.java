@@ -23,6 +23,7 @@ import java.io.File;
 import java.io.Serializable;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -43,6 +44,7 @@ import com.atlauncher.exceptions.InvalidMinecraftVersion;
 import com.atlauncher.gui.dialogs.CurseForgeProjectFileSelectorDialog;
 import com.atlauncher.gui.dialogs.ModrinthVersionSelectorDialog;
 import com.atlauncher.gui.dialogs.ProgressDialog;
+import com.atlauncher.managers.ConfigManager;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.managers.MinecraftManager;
 import com.atlauncher.network.Analytics;
@@ -266,6 +268,14 @@ public class DisableableMod implements Serializable {
         return getFile(instance).exists();
     }
 
+    public Path getPath(Instance instance) {
+        if (isDisabled()) {
+            return getDisabledFile(instance).toPath();
+        }
+
+        return getFile(instance).toPath();
+    }
+
     public File getDisabledFile(Instance instance) {
         try {
             return instance.getRoot().resolve("disabledmods/" + this.file).toFile();
@@ -390,6 +400,9 @@ public class DisableableMod implements Serializable {
                     }
                 }
 
+                List<String> neoForgeForgeCompatabilityVersions = ConfigManager
+                        .getConfigItem("loaders.neoforge.forgeCompatibleMinecraftVersions", new ArrayList<String>());
+
                 // filter out files not for our loader
                 curseForgeFilesStream = curseForgeFilesStream.filter(cf -> {
                     if (cf.gameVersions.contains("Fabric") && instance.launcher.loaderVersion != null
@@ -399,8 +412,15 @@ public class DisableableMod implements Serializable {
                         return true;
                     }
 
+                    if (cf.gameVersions.contains("NeoForge") && instance.launcher.loaderVersion != null
+                            && instance.launcher.loaderVersion.isNeoForge()) {
+                        return true;
+                    }
+
                     if (cf.gameVersions.contains("Forge") && instance.launcher.loaderVersion != null
-                            && instance.launcher.loaderVersion.isForge()) {
+                            && (instance.launcher.loaderVersion.isForge()
+                                    || (instance.launcher.loaderVersion.isNeoForge()
+                                            && neoForgeForgeCompatabilityVersions.contains(instance.id)))) {
                         return true;
                     }
 
@@ -410,8 +430,8 @@ public class DisableableMod implements Serializable {
                     }
 
                     // if there's no loaders, assume the mod is untagged so we should show it
-                    if (!cf.gameVersions.contains("Fabric") && !cf.gameVersions.contains("Forge")
-                            && !cf.gameVersions.contains("Quilt")) {
+                    if (!cf.gameVersions.contains("Fabric") && !cf.gameVersions.contains("NeoForge")
+                            && !cf.gameVersions.contains("Forge") && !cf.gameVersions.contains("Quilt")) {
                         return true;
                     }
 

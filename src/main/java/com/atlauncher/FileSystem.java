@@ -33,11 +33,13 @@ import com.atlauncher.utils.Utils;
 public final class FileSystem {
     private static Path CACHED_USER_DOWNLOADS = null;
     public static final Path BASE_DIR = FileSystem.getCoreGracefully();
+    public static final Path JRE = BASE_DIR.resolve("jre");
     public static final Path LOGS = BASE_DIR.resolve("logs");
     public static final Path BACKUPS = BASE_DIR.resolve("backups");
     public static final Path CACHE = BASE_DIR.resolve("cache");
     public static final Path APOLLO_CACHE = CACHE.resolve("apolloCache");
     public static final Path REMOTE_IMAGE_CACHE = CACHE.resolve("remote_image");
+    public static final Path FRACTURISER_SCANNED_HASHES = CACHE.resolve("fracturiser_scanned_hashes.json");
     public static final Path LOADERS = BASE_DIR.resolve("loaders");
     public static final Path RUNTIMES = BASE_DIR.resolve("runtimes");
     public static final Path MINECRAFT_RUNTIMES = RUNTIMES.resolve("minecraft");
@@ -66,7 +68,6 @@ public final class FileSystem {
     public static final Path TEMP = BASE_DIR.resolve("temp");
     public static final Path FAILED_DOWNLOADS = BASE_DIR.resolve("faileddownloads");
 
-    public static final Path USER_DATA = CONFIGS.resolve("userdata");
     public static final Path LAUNCHER_CONFIG = CONFIGS.resolve(Constants.LAUNCHER_NAME + ".conf");
     public static final Path SETTINGS = CONFIGS.resolve(Constants.LAUNCHER_NAME + ".json");
     public static final Path ACCOUNTS = CONFIGS.resolve("accounts.json");

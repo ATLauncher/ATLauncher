@@ -19,6 +19,7 @@ package com.atlauncher.managers;
 
 import java.awt.Window;
 import java.io.File;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Timer;
@@ -28,9 +29,9 @@ import javax.swing.Icon;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 
-import com.atlauncher.App;
-
 import org.mini2Dx.gettext.GetText;
+
+import com.atlauncher.App;
 
 public final class DialogManager {
     public static final int OPTION_TYPE = 0;
@@ -196,6 +197,14 @@ public final class DialogManager {
     }
 
     public int showWithFileMonitoring(File firstFile, File secondFile, int size, int returnValue) {
+        if (secondFile != null) {
+            return showWithFileMonitoring(size, returnValue, firstFile, secondFile);
+        }
+
+        return showWithFileMonitoring(size, returnValue, firstFile);
+    }
+
+    public int showWithFileMonitoring(int size, int returnValue, File... files) {
         try {
             Object[] options = this.getOptions();
 
@@ -206,13 +215,13 @@ public final class DialogManager {
             jop.setComponentOrientation(this.getParent().getComponentOrientation());
 
             JDialog dialog = jop.createDialog(this.getParent(), this.title);
+            List<File> filesForMonitoring = Arrays.asList(files);
 
             Timer timer = new Timer();
             timer.schedule(new TimerTask() {
                 @Override
                 public void run() {
-                    if ((firstFile != null && (firstFile.exists() && firstFile.length() == size))
-                            || (secondFile != null && (secondFile.exists() && secondFile.length() == size))) {
+                    if (filesForMonitoring.stream().anyMatch(f -> f.exists() && f.length() == size)) {
                         timer.cancel();
                         jop.setValue(options[returnValue]);
                         dialog.dispose();
