@@ -63,7 +63,7 @@ import com.atlauncher.utils.ComboItem;
 import com.atlauncher.viewmodel.base.ICreatePackViewModel;
 import com.atlauncher.viewmodel.impl.CreatePackViewModel;
 
-public class CreatePackTab extends HierarchyPanel implements Tab, RelocalizationListener {
+public class CreatePackTab extends HierarchyPanel implements Tab {
     private JTextField nameField;
     private JTextArea descriptionField;
     private JCheckBox minecraftVersionReleasesFilterCheckbox;
@@ -551,18 +551,6 @@ public class CreatePackTab extends HierarchyPanel implements Tab, Relocalization
     }
 
     @Override
-    public void onRelocalization() {
-        minecraftVersionReleasesFilterCheckbox.setText(getReleasesText());
-        minecraftVersionExperimentsFilterCheckbox.setText(getExperimentsText());
-        minecraftVersionSnapshotsFilterCheckbox.setText(getSnapshotsText());
-        minecraftVersionBetasFilterCheckbox.setText(getBetasText());
-        minecraftVersionAlphasFilterCheckbox.setText(getAlphasText());
-        loaderTypeNoneRadioButton.setText(getNoneText());
-        createServerButton.setText(getCreateServerText());
-        createInstanceButton.setText(getCreateInstanceText());
-    }
-
-    @Override
     protected void createViewModel() {
         viewModel = new CreatePackViewModel();
     }
@@ -589,7 +577,6 @@ public class CreatePackTab extends HierarchyPanel implements Tab, Relocalization
 
         setupMainPanel();
         setupBottomPanel();
-        RelocalizationManager.addListener(this);
     }
 
     @Override
@@ -612,7 +599,5 @@ public class CreatePackTab extends HierarchyPanel implements Tab, Relocalization
         loaderVersionsDropDown = null;
         createServerButton = null;
         createInstanceButton = null;
-
-        RelocalizationManager.removeListener(this);
     }
 }
