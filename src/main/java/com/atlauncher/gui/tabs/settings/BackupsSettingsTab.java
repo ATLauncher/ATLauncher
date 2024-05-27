@@ -18,23 +18,28 @@
 package com.atlauncher.gui.tabs.settings;
 
 import java.awt.GridBagConstraints;
+import java.awt.event.ItemEvent;
 
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 
 import org.mini2Dx.gettext.GetText;
 
-import com.atlauncher.App;
 import com.atlauncher.constants.UIConstants;
 import com.atlauncher.data.BackupMode;
 import com.atlauncher.gui.components.JLabelWithHover;
 import com.atlauncher.utils.ComboItem;
+import com.atlauncher.viewmodel.base.settings.IBackupSettingsViewModel;
 
 public class BackupsSettingsTab extends AbstractSettingsTab {
-    private final JComboBox<ComboItem<BackupMode>> backupMode;
-    private final JCheckBox enableAutomaticBackupAfterLaunch;
+    private final IBackupSettingsViewModel viewModel;
 
-    public BackupsSettingsTab() {
+    public BackupsSettingsTab(IBackupSettingsViewModel viewModel) {
+        this.viewModel = viewModel;
+    }
+
+    @Override
+    protected void onShow() {
         // Backup mode
 
         gbc.gridx = 0;
@@ -42,27 +47,23 @@ public class BackupsSettingsTab extends AbstractSettingsTab {
         gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         JLabelWithHover backupModeLabel = new JLabelWithHover(GetText.tr("Backup Mode") + ":", HELP_ICON, GetText.tr(
-                "When backing up an instance, what should get backed up? Mainly used for when doing automated backups."));
+            "When backing up an instance, what should get backed up? Mainly used for when doing automated backups."));
 
         add(backupModeLabel, gbc);
 
         gbc.gridx++;
         gbc.insets = UIConstants.FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-        backupMode = new JComboBox<>();
+        JComboBox<ComboItem<BackupMode>> backupMode = new JComboBox<>();
         backupMode.addItem(new ComboItem<>(BackupMode.NORMAL, GetText.tr("Backup saves, configs and options only")));
         backupMode.addItem(new ComboItem<>(BackupMode.NORMAL_PLUS_MODS,
-                GetText.tr("Backup saves, mods, configs and options only")));
+            GetText.tr("Backup saves, mods, configs and options only")));
         backupMode.addItem(new ComboItem<>(BackupMode.FULL, GetText.tr("Backup everything in the instance folder")));
-
-        for (int i = 0; i < backupMode.getItemCount(); i++) {
-            ComboItem<BackupMode> item = backupMode.getItemAt(i);
-
-            if (item.getValue() == App.settings.backupMode) {
-                backupMode.setSelectedIndex(i);
-                break;
-            }
-        }
+        backupMode.addItemListener(itemEvent -> {
+            if (itemEvent.getStateChange() == ItemEvent.SELECTED)
+                viewModel.setBackupMode(((ComboItem<BackupMode>) itemEvent.getItem()).getValue());
+        });
+        addDisposable(viewModel.getBackupMode().subscribe(backupMode::setSelectedIndex));
 
         add(backupMode, gbc);
 
@@ -73,21 +74,19 @@ public class BackupsSettingsTab extends AbstractSettingsTab {
         gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         JLabelWithHover enableAutomaticBackupAfterLaunchLabel = new JLabelWithHover(
-                GetText.tr("Enable Automatic Backup After Launch") + "?", HELP_ICON,
-                GetText.tr("If a backup should run after launching an instance."));
+            GetText.tr("Enable Automatic Backup After Launch") + "?", HELP_ICON,
+            GetText.tr("If a backup should run after launching an instance."));
         add(enableAutomaticBackupAfterLaunchLabel, gbc);
 
         gbc.gridx++;
         gbc.insets = UIConstants.CHECKBOX_FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-        enableAutomaticBackupAfterLaunch = new JCheckBox();
-        enableAutomaticBackupAfterLaunch.setSelected(App.settings.enableAutomaticBackupAfterLaunch);
+        JCheckBox enableAutomaticBackupAfterLaunch = new JCheckBox();
+        enableAutomaticBackupAfterLaunch.addItemListener(e ->
+            viewModel.setEnableAutoBackup(e.getStateChange() == ItemEvent.SELECTED)
+        );
+        addDisposable(viewModel.getEnableAutoBackup().subscribe(enableAutomaticBackupAfterLaunch::setSelected));
         add(enableAutomaticBackupAfterLaunch, gbc);
-    }
-
-    public void save() {
-        App.settings.backupMode = ((ComboItem<BackupMode>) backupMode.getSelectedItem()).getValue();
-        App.settings.enableAutomaticBackupAfterLaunch = enableAutomaticBackupAfterLaunch.isSelected();
     }
 
     @Override
@@ -98,5 +97,14 @@ public class BackupsSettingsTab extends AbstractSettingsTab {
     @Override
     public String getAnalyticsScreenViewName() {
         return "Backups";
+    }
+
+    @Override
+    protected void createViewModel() {
+    }
+
+    @Override
+    protected void onDestroy() {
+        removeAll();
     }
 }
