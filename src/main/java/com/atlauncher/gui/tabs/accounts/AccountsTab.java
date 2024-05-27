@@ -309,17 +309,6 @@ public class AccountsTab extends HierarchyPanel implements Tab, RelocalizationLi
     }
 
     @Override
-    public void onRelocalization() {
-        if (accountsComboBox.getSelectedIndex() == 0) {
-            deleteButton.setText(GetText.tr("Clear"));
-        } else {
-            deleteButton.setText(GetText.tr("Delete"));
-        }
-
-        updateSkin.setText(GetText.tr("Reload Skin"));
-    }
-
-    @Override
     protected void createViewModel() {
         viewModel = new AccountsViewModel();
     }
