@@ -8,7 +8,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 ### New Features
 
 ### Fixes
+- Issue with installing loader for 1.21 pre versions
 
 ### Misc
-
-- Update the `application.yml` GitHub workflow [#889](https://github.com/ATLauncher/ATLauncher/pull/889)
+- Update the `application.yml` GitHub workflow [#889]
