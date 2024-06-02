@@ -15,26 +15,38 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.atlauncher;
+package com.atlauncher.viewmodel.base;
 
-import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
-import com.atlauncher.data.LWJGLVersions;
-import com.atlauncher.data.Pack;
-import com.atlauncher.data.minecraft.JavaRuntimes;
-import com.atlauncher.data.minecraft.VersionManifestVersion;
+import javax.annotation.Nonnull;
 
-public final class Data {
+import com.atlauncher.data.Contributor;
 
-    public static Map<String, Object> CONFIG = new HashMap<>();
-    public static Map<String, Object> CONFIG_OVERRIDES = new HashMap<>();
+import io.reactivex.rxjava3.core.Observable;
 
-    public static final List<Pack> PACKS = new LinkedList<>();
+/**
+ * 13 / 06 / 2022
+ * <p>
+ * View model for the about tab.
+ */
+public interface IAboutTabViewModel {
 
-    public static final Map<String, VersionManifestVersion> MINECRAFT = new HashMap<>();
-    public static LWJGLVersions LWJGL_VERSIONS = null;
-    public static JavaRuntimes JAVA_RUNTIMES = null;
+    /**
+     * @return List of contributors
+     */
+    @Nonnull
+    Observable<List<Contributor>> getContributors();
+
+    /**
+     * @return Info about the launcher and its environment
+     */
+    @Nonnull
+    String getInfo();
+
+    /**
+     * @return Info to be copied to users clipboard
+     */
+    @Nonnull
+    String getCopyInfo();
 }

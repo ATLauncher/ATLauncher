@@ -15,26 +15,34 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.atlauncher;
+package com.atlauncher.data;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+/**
+ * Represents an contributor in AboutTab.
+ */
+public class Contributor {
+    /**
+     * Name of the contributor.
+     */
+    public final String name;
 
-import com.atlauncher.data.LWJGLVersions;
-import com.atlauncher.data.Pack;
-import com.atlauncher.data.minecraft.JavaRuntimes;
-import com.atlauncher.data.minecraft.VersionManifestVersion;
+    /**
+     * Url to the GitHub profile of the contributor.
+     */
+    public final String url;
 
-public final class Data {
+    /**
+     * URL to the avatar of the contributor.
+     */
+    public final String avatarUrl;
 
-    public static Map<String, Object> CONFIG = new HashMap<>();
-    public static Map<String, Object> CONFIG_OVERRIDES = new HashMap<>();
-
-    public static final List<Pack> PACKS = new LinkedList<>();
-
-    public static final Map<String, VersionManifestVersion> MINECRAFT = new HashMap<>();
-    public static LWJGLVersions LWJGL_VERSIONS = null;
-    public static JavaRuntimes JAVA_RUNTIMES = null;
+    /**
+     * @param name     of the author
+     * @param imageURL of the authors profile picture
+     */
+    public Contributor(String name, String url, String avatarUrl) {
+        this.name = name;
+        this.url = url;
+        this.avatarUrl = avatarUrl;
+    }
 }

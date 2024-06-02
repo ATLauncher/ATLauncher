@@ -15,26 +15,25 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.atlauncher;
+package com.atlauncher.utils;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.regex.Pattern;
 
-import com.atlauncher.data.LWJGLVersions;
-import com.atlauncher.data.Pack;
-import com.atlauncher.data.minecraft.JavaRuntimes;
-import com.atlauncher.data.minecraft.VersionManifestVersion;
-
-public final class Data {
-
-    public static Map<String, Object> CONFIG = new HashMap<>();
-    public static Map<String, Object> CONFIG_OVERRIDES = new HashMap<>();
-
-    public static final List<Pack> PACKS = new LinkedList<>();
-
-    public static final Map<String, VersionManifestVersion> MINECRAFT = new HashMap<>();
-    public static LWJGLVersions LWJGL_VERSIONS = null;
-    public static JavaRuntimes JAVA_RUNTIMES = null;
+/**
+ * A general class that contains general validations for the user input
+ */
+public class ValidationUtils {
+    /**
+     * Example of valid input:
+     * localhost,
+     * localhost:25565
+     * play.server.net
+     * play.server.net:25565
+     *
+     * @return true if the entered server address is valid, otherwise false
+     */
+    public static boolean isValidMinecraftServerAddress(String serverAddress) {
+        Pattern pattern = Pattern.compile("^([A-Za-z0-9.-]+)(:([0-9]{1,5}))?$"); // Less strict pattern
+        return pattern.matcher(serverAddress).matches();
+    }
 }

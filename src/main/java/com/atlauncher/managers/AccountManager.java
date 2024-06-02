@@ -17,12 +17,10 @@
  */
 package com.atlauncher.managers;
 
-import java.io.EOFException;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.ObjectInputStream;
 import java.io.OutputStreamWriter;
 import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
@@ -41,13 +39,9 @@ import org.mini2Dx.gettext.GetText;
 import com.atlauncher.App;
 import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
-import com.atlauncher.data.AbstractAccount;
-import com.atlauncher.data.Account;
 import com.atlauncher.data.MicrosoftAccount;
-import com.atlauncher.data.MojangAccount;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.network.analytics.AnalyticsEvent;
-import com.atlauncher.utils.Utils;
 import com.google.gson.JsonIOException;
 import com.google.gson.reflect.TypeToken;
 
@@ -56,33 +50,33 @@ import io.reactivex.rxjava3.subjects.BehaviorSubject;
 
 @SuppressWarnings("deprecation")
 public class AccountManager {
-    private static final Type abstractAccountListType = new TypeToken<List<AbstractAccount>>() {
+    private static final Type abstractAccountListType = new TypeToken<List<MicrosoftAccount>>() {
     }.getType();
 
-    public static final BehaviorSubject<List<AbstractAccount>> ACCOUNTS = BehaviorSubject
+    public static final BehaviorSubject<List<MicrosoftAccount>> ACCOUNTS = BehaviorSubject
             .createDefault(new LinkedList<>());
 
     /**
      * Account using the Launcher
      */
-    public static final BehaviorSubject<Optional<AbstractAccount>> SELECTED_ACCOUNT = BehaviorSubject
+    public static final BehaviorSubject<Optional<MicrosoftAccount>> SELECTED_ACCOUNT = BehaviorSubject
             .createDefault(Optional.empty());
 
-    public static Observable<List<AbstractAccount>> getAccountsObservable() {
+    public static Observable<List<MicrosoftAccount>> getAccountsObservable() {
         return ACCOUNTS;
     }
 
-    public static Observable<Optional<AbstractAccount>> getSelectedAccountObservable() {
+    public static Observable<Optional<MicrosoftAccount>> getSelectedAccountObservable() {
         return SELECTED_ACCOUNT;
     }
 
     @Nonnull
-    public static List<AbstractAccount> getAccounts() {
+    public static List<MicrosoftAccount> getAccounts() {
         return ACCOUNTS.getValue();
     }
 
     @Nullable
-    public static AbstractAccount getSelectedAccount() {
+    public static MicrosoftAccount getSelectedAccount() {
         return SELECTED_ACCOUNT.getValue().orElse(null);
     }
 
@@ -93,32 +87,16 @@ public class AccountManager {
         PerformanceManager.start();
         LogManager.debug("Loading accounts");
 
-        if (Files.exists(FileSystem.USER_DATA)) {
-            LogManager.info("Converting old account format to new format.");
-            convertAccounts();
-        }
-
-        ArrayList<AbstractAccount> newAccounts = new ArrayList<>();
+        ArrayList<MicrosoftAccount> newAccounts = new ArrayList<>();
 
         if (Files.exists(FileSystem.ACCOUNTS)) {
             try (InputStreamReader fileReader = new InputStreamReader(
                     new FileInputStream(FileSystem.ACCOUNTS.toFile()), StandardCharsets.UTF_8)) {
-                List<AbstractAccount> accounts = Gsons.DEFAULT.fromJson(fileReader, abstractAccountListType);
+                List<MicrosoftAccount> accounts = Gsons.DEFAULT.fromJson(fileReader, abstractAccountListType);
 
                 newAccounts.addAll(accounts.stream().filter(account -> {
-                    if (account instanceof MicrosoftAccount) {
-                        MicrosoftAccount microsoftAccount = (MicrosoftAccount) account;
-                        return microsoftAccount.accessToken != null
-                                && microsoftAccount.accessToken.split("\\.").length == 3;
-                    }
-
-                    if (account instanceof MojangAccount) {
-                        MojangAccount mojangAccount = (MojangAccount) account;
-                        return !mojangAccount.uuid.equals("00000000000000000000000000000000")
-                                && !mojangAccount.clientToken.isEmpty();
-                    }
-
-                    return !account.uuid.equals("00000000000000000000000000000000");
+                    return account.accessToken != null
+                        && account.accessToken.split("\\.").length == 3;
                 }).collect(Collectors.toList()));
             } catch (Exception e) {
                 LogManager.logStackTrace("Exception loading accounts", e);
@@ -127,25 +105,9 @@ public class AccountManager {
 
         ACCOUNTS.onNext(newAccounts);
 
-        for (AbstractAccount account : newAccounts) {
+        for (MicrosoftAccount account : newAccounts) {
             if (account.username.equalsIgnoreCase(App.settings.lastAccount)) {
                 SELECTED_ACCOUNT.onNext(Optional.of(account));
-            }
-
-            if (account instanceof MojangAccount) {
-                MojangAccount mojangAccount = (MojangAccount) account;
-
-                if (mojangAccount.encryptedPassword == null) {
-                    mojangAccount.password = "";
-                    mojangAccount.remember = false;
-                } else {
-                    mojangAccount.password = Utils.decrypt(mojangAccount.encryptedPassword);
-                    if (mojangAccount.password == null) {
-                        LogManager.error("Error reading in saved password from file!");
-                        mojangAccount.password = "";
-                        mojangAccount.remember = false;
-                    }
-                }
             }
         }
 
@@ -157,57 +119,11 @@ public class AccountManager {
         PerformanceManager.end();
     }
 
-    /**
-     * Converts the saved Accounts from old format to new one
-     */
-    private static void convertAccounts() {
-        FileInputStream in = null;
-        ObjectInputStream objIn = null;
-        List<AbstractAccount> convertedAccounts = new LinkedList<>();
-        try {
-            in = new FileInputStream(FileSystem.USER_DATA.toFile());
-            objIn = new ObjectInputStream(in);
-            Object obj;
-            while ((obj = objIn.readObject()) != null) {
-                Account account = (Account) obj;
-
-                convertedAccounts.add(new MojangAccount(account.username, account.password, account.minecraftUsername,
-                        account.uuid, account.remember, account.clientToken, account.store));
-            }
-        } catch (EOFException e) {
-            // Don't log this, it always happens when it gets to the end of the file
-        } catch (IOException | ClassNotFoundException e) {
-            LogManager.logStackTrace("Exception while trying to convert accounts from file.", e);
-        } finally {
-            try {
-                if (objIn != null) {
-                    objIn.close();
-                }
-                if (in != null) {
-                    in.close();
-                }
-            } catch (IOException e) {
-                LogManager.logStackTrace(
-                        "Exception while trying to close FileInputStream/ObjectInputStream when reading in " + ""
-                                + "accounts.",
-                        e);
-            }
-        }
-
-        saveAccounts(convertedAccounts);
-
-        try {
-            Files.delete(FileSystem.USER_DATA);
-        } catch (IOException e) {
-            LogManager.logStackTrace("Exception trying to remove old userdata file after conversion.", e);
-        }
-    }
-
     public static void saveAccounts() {
         saveAccounts(ACCOUNTS.getValue());
     }
 
-    private static void saveAccounts(List<AbstractAccount> accounts) {
+    private static void saveAccounts(List<MicrosoftAccount> accounts) {
         try (OutputStreamWriter fileWriter = new OutputStreamWriter(
                 new FileOutputStream(FileSystem.ACCOUNTS.toFile()), StandardCharsets.UTF_8)) {
             Gsons.DEFAULT.toJson(accounts, abstractAccountListType, fileWriter);
@@ -216,13 +132,13 @@ public class AccountManager {
         }
     }
 
-    public static void addAccount(AbstractAccount account) {
-        String accountType = account instanceof MicrosoftAccount ? "Microsoft" : "Mojang";
+    public static void addAccount(MicrosoftAccount account) {
+        String accountType = "Microsoft";
 
         Analytics.trackEvent(AnalyticsEvent.forAccountAdd(accountType));
         LogManager.info("Added " + accountType + " Account " + account);
 
-        List<AbstractAccount> accounts = ACCOUNTS.getValue();
+        List<MicrosoftAccount> accounts = ACCOUNTS.getValue();
         accounts.add(account);
         ACCOUNTS.onNext(accounts);
 
@@ -243,8 +159,8 @@ public class AccountManager {
         saveAccounts();
     }
 
-    public static void removeAccount(AbstractAccount account) {
-        List<AbstractAccount> accounts = ACCOUNTS.getValue();
+    public static void removeAccount(MicrosoftAccount account) {
+        List<MicrosoftAccount> accounts = ACCOUNTS.getValue();
         if (SELECTED_ACCOUNT.getValue().orElse(null) == account) {
             if (accounts.size() == 1) {
                 // if this was the only account, don't set an account
@@ -264,7 +180,7 @@ public class AccountManager {
      *
      * @param account Account to switch to
      */
-    public static void switchAccount(@Nullable AbstractAccount account) {
+    public static void switchAccount(@Nullable MicrosoftAccount account) {
         if (account == null) {
             LogManager.info("Logging out of account");
             SELECTED_ACCOUNT.onNext(Optional.empty());
@@ -284,8 +200,8 @@ public class AccountManager {
      * @param username Username of the Account to find
      * @return Account if the Account is found from the username
      */
-    public static AbstractAccount getAccountByName(String username) {
-        for (AbstractAccount account : ACCOUNTS.getValue()) {
+    public static MicrosoftAccount getAccountByName(String username) {
+        for (MicrosoftAccount account : ACCOUNTS.getValue()) {
             if (account.username.equalsIgnoreCase(username)) {
                 return account;
             }
@@ -300,7 +216,7 @@ public class AccountManager {
      * @return true if found, false if not
      */
     public static boolean isAccountByName(String username) {
-        for (AbstractAccount account : ACCOUNTS.getValue()) {
+        for (MicrosoftAccount account : ACCOUNTS.getValue()) {
             if (account.username.equalsIgnoreCase(username)) {
                 return true;
             }

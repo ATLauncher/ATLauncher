@@ -1,6 +1,6 @@
 name: Application
 
-on: [ push, pull_request ]
+on: [push, pull_request]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -23,6 +23,7 @@ jobs:
         uses: gradle/actions/setup-gradle@v3
         with:
           validate-wrappers: true
+          add-job-summary: never
 
       - name: Check license headers
         run: ./gradlew checkLicenses
@@ -33,8 +34,8 @@ jobs:
     timeout-minutes: 5
     strategy:
       matrix:
-        java-version: [ "8", "11", "17", "20" ] # LTS + Latest
-        os: [ "ubuntu-latest", "macos-latest", "windows-latest" ]
+        java-version: ["8", "11", "17", "21", "22"] # LTS + Latest
+        os: ["ubuntu-latest", "macos-latest", "windows-latest"]
     name: Java ${{ matrix.java-version }} (${{ matrix.os }}) Tests
     steps:
       - uses: actions/checkout@v4
@@ -50,6 +51,7 @@ jobs:
         uses: gradle/actions/setup-gradle@v3
         with:
           validate-wrappers: true
+          add-job-summary: never
 
       - name: Run Unit Tests
         run: ./gradlew --no-daemon test --tests com.atlauncher.*
@@ -66,8 +68,8 @@ jobs:
     needs: ci
     strategy:
       matrix:
-        java-version: [ "8", "11", "17", "20" ] # LTS + Latest
-        os: [ "ubuntu-latest", "macos-latest", "windows-latest" ]
+        java-version: ["8", "11", "17", "21", "22"] # LTS + Latest
+        os: ["ubuntu-latest", "macos-latest", "windows-latest"]
     name: Java ${{ matrix.java-version }} (${{ matrix.os }}) Build
     steps:
       - uses: actions/checkout@v4
@@ -83,6 +85,7 @@ jobs:
         uses: gradle/actions/setup-gradle@v3
         with:
           validate-wrappers: true
+          add-job-summary: never
 
       - name: Build
         run: ./gradlew build -x test
@@ -107,6 +110,7 @@ jobs:
         uses: gradle/actions/setup-gradle@v3
         with:
           validate-wrappers: true
+          add-job-summary: never
 
       - name: Read version
         id: version
@@ -134,7 +138,7 @@ jobs:
 
   release:
     runs-on: ubuntu-latest
-    needs: [ test, build, package ]
+    needs: [test, build, package]
     timeout-minutes: 5
     if: ${{ github.ref == 'refs/heads/master' && !endsWith(needs.package.outputs.version, '.Beta') }}
     permissions:
