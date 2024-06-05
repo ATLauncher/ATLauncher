@@ -1003,6 +1003,10 @@ public class App {
         parser.accepts("config-override", "A JSON string to override the launchers config.").withRequiredArg()
                 .ofType(String.class);
         parser.acceptsAll(Arrays.asList("help", "?"), "Shows help for the arguments for the application.").forHelp();
+        parser
+            .acceptsAll(Arrays.asList("version", "v"), "Shows the launcher version")
+            .withOptionalArg()
+            .ofType(Boolean.class);
 
         OptionSet options = parser.parse(args);
         autoLaunch = options.has("launch") ? (String) options.valueOf("launch") : null;
@@ -1014,6 +1018,11 @@ public class App {
                 e1.printStackTrace();
             }
 
+            System.exit(0);
+        }
+
+        if (options.has("version")) {
+            System.out.printf("%s %s\n", Constants.LAUNCHER_NAME, Constants.VERSION.toStringForLogging());
             System.exit(0);
         }
 
