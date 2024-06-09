@@ -32,7 +32,8 @@ import java.util.Map.Entry;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
-import javax.swing.WindowConstants;
+
+import org.mini2Dx.gettext.GetText;
 
 import com.atlauncher.App;
 import com.atlauncher.constants.Constants;
@@ -54,15 +55,19 @@ import com.atlauncher.gui.tabs.accounts.AccountsTab;
 import com.atlauncher.gui.tabs.news.NewsTab;
 import com.atlauncher.gui.tabs.tools.ToolsTab;
 import com.atlauncher.managers.AccountManager;
+import com.atlauncher.managers.DialogManager;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.managers.PackManager;
 import com.atlauncher.managers.PerformanceManager;
+import com.atlauncher.managers.WorkerManager;
 import com.atlauncher.network.Analytics;
+import com.atlauncher.repository.base.IWorkerRepository;
+import com.atlauncher.repository.impl.WorkerRepository;
 import com.atlauncher.utils.Utils;
 
 public final class LauncherFrame extends JFrame implements RelocalizationListener {
+    private final IWorkerRepository workerRepository = WorkerRepository.get();
     public JTabbedPane tabbedPane;
-
     private Map<Integer, Tab> tabs = new HashMap<>();
 
     public LauncherFrame(boolean show) {
@@ -72,7 +77,6 @@ public final class LauncherFrame extends JFrame implements RelocalizationListene
 
         App.launcher.setParentFrame(this);
         setTitle(Constants.LAUNCHER_NAME);
-        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setResizable(true);
         setLayout(new BorderLayout());
         setIconImage(Utils.getImage("/assets/image/icon.png"));
@@ -110,11 +114,10 @@ public final class LauncherFrame extends JFrame implements RelocalizationListene
             addWindowListener(new WindowAdapter() {
                 @Override
                 public void windowClosing(WindowEvent windowEvent) {
-                    try {
-                        if (SystemTray.isSupported()) {
-                            SystemTray.getSystemTray().remove(App.trayIcon);
-                        }
-                    } catch (Exception ignored) {
+                    if (workerRepository.hasRunning()) {
+                        askToClose();
+                    } else {
+                        close();
                     }
                 }
             });
@@ -127,11 +130,11 @@ public final class LauncherFrame extends JFrame implements RelocalizationListene
 
             if (pack != null && pack.isSemiPublic() && !PackManager.canViewSemiPublicPackByCode(pack.getCode())) {
                 LogManager.error("Error automatically installing " + pack.getName() + " as you don't have the "
-                        + "pack added to the launcher!");
+                    + "pack added to the launcher!");
             } else {
                 if (AccountManager.getSelectedAccount() == null || pack == null) {
                     LogManager
-                            .error("Error automatically installing " + (pack == null ? "pack" : pack.getName()) + "!");
+                        .error("Error automatically installing " + (pack == null ? "pack" : pack.getName()) + "!");
                 } else {
                     new InstanceInstallerDialog(pack);
                 }
@@ -158,6 +161,36 @@ public final class LauncherFrame extends JFrame implements RelocalizationListene
                 }
             }
         });
+    }
+
+    /**
+     * There are still tasks running,
+     * ask if the user realllly wants to close.
+     */
+    private void askToClose() {
+        int response = DialogManager.confirmDialog()
+            .setContent(GetText.tr("There are tasks still running, are you sure you want to exit?"))
+            .show();
+
+        if (response == 0) {
+            close();
+        }
+    }
+
+    /**
+     * Close the application.
+     */
+    private void close() {
+        WorkerManager.stopAll();
+
+        try {
+            if (SystemTray.isSupported()) {
+                SystemTray.getSystemTray().remove(App.trayIcon);
+            }
+        } catch (Exception ignored) {
+        }
+
+        System.exit(0);
     }
 
     /**
