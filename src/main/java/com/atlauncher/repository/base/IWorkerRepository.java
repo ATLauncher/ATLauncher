@@ -57,4 +57,9 @@ public interface IWorkerRepository {
      * @param id UUID of the worker info.
      */
     void remove(UUID id);
+
+    /**
+     * @return If there are any running workers
+     */
+    boolean hasRunning();
 }

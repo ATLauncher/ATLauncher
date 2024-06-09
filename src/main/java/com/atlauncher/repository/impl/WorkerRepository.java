@@ -104,4 +104,9 @@ public class WorkerRepository implements IWorkerRepository {
             lock.unlock();
         }
     }
+
+    @Override
+    public boolean hasRunning() {
+        return sum.getValue().stream().anyMatch((it) -> !it.isComplete);
+    }
 }
