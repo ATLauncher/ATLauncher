@@ -32,6 +32,7 @@ import java.util.Map.Entry;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
+import javax.swing.WindowConstants;
 
 import org.mini2Dx.gettext.GetText;
 
@@ -78,6 +79,7 @@ public final class LauncherFrame extends JFrame implements RelocalizationListene
 
         App.launcher.setParentFrame(this);
         setTitle(Constants.LAUNCHER_NAME);
+        setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
         setResizable(true);
         setLayout(new BorderLayout());
         setIconImage(Utils.getImage("/assets/image/icon.png"));
@@ -169,7 +171,7 @@ public final class LauncherFrame extends JFrame implements RelocalizationListene
      * ask if the user realllly wants to close.
      */
     private void askToClose() {
-        int response = DialogManager.confirmDialog()
+        int response = DialogManager.yesNoDialog()
             .setContent(GetText.tr("There are tasks still running, are you sure you want to exit?"))
             .show();
 
@@ -191,6 +193,7 @@ public final class LauncherFrame extends JFrame implements RelocalizationListene
         } catch (Exception ignored) {
         }
 
+        this.dispose();
         System.exit(0);
     }
 
