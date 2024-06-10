@@ -1,6 +1,7 @@
 package com.atlauncher.managers;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 import java.util.function.Consumer;
@@ -56,7 +57,7 @@ public class WorkerManager {
      * Kill all workers
      */
     public static void stopAll() {
-        Set<UUID> keys = jobs.keySet();
+        Set<UUID> keys = new HashSet<>(jobs.keySet());
 
         jobs.forEach((id, thread) -> thread.interrupt());
 
