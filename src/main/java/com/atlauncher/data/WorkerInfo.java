@@ -3,6 +3,9 @@ package com.atlauncher.data;
 import java.util.Objects;
 import java.util.UUID;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 /**
  * Defines information of any given worker.
  *
@@ -38,5 +41,26 @@ public class WorkerInfo {
     @Override
     public int hashCode() {
         return Objects.hash(id, name, icon, isComplete, progress);
+    }
+
+    @Nonnull
+    public WorkerInfo copy(@Nullable Boolean isComplete, @Nullable Double progress) {
+        boolean newComplete;
+
+        if (isComplete != null) {
+            newComplete = isComplete;
+        } else {
+            newComplete = this.isComplete;
+        }
+
+        double newProgress;
+
+        if (progress != null) {
+            newProgress = progress;
+        } else {
+            newProgress = this.progress;
+        }
+
+        return new WorkerInfo(id, name, icon, newComplete, newProgress);
     }
 }
