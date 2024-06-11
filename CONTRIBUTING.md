@@ -57,7 +57,7 @@ issues or pull requests you're interested in.
 ### Issue Labels
 
 | Label name                | Description                                                                             |
-| ------------------------- | --------------------------------------------------------------------------------------- |
+|---------------------------|-----------------------------------------------------------------------------------------|
 | `enhancement`             | Feature requests.                                                                       |
 | `bug`                     | Confirmed bugs or reports that are very likely to be bugs.                              |
 | `question`                | Questions more than bug reports or feature requests (e.g. how do I do X).               |
@@ -78,7 +78,7 @@ issues or pull requests you're interested in.
 ### Pull Request Labels
 
 | Label name         | Description                                                                              |
-| ------------------ | ---------------------------------------------------------------------------------------- |
+|--------------------|------------------------------------------------------------------------------------------|
 | `work-in-progress` | Pull requests which are still being worked on, more changes will follow.                 |
 | `needs-review`     | Pull requests which need code review, and approval from maintainers or ATLauncher team.  |
 | `under-review`     | Pull requests being reviewed by maintainers and/or ATLauncher team.                      |
@@ -89,7 +89,7 @@ issues or pull requests you're interested in.
 ### Priority Labels
 
 | Label name          | Description                                    |
-| ------------------- | ---------------------------------------------- |
+|---------------------|------------------------------------------------|
 | `critical-priority` | Should be addressed with the highest priority. |
 | `high-priority`     | High priority to be addressed.                 |
 | `low-priority`      | Low priority to be addressed.                  |
@@ -97,7 +97,7 @@ issues or pull requests you're interested in.
 ### Roadmap Labels
 
 | Label name            | Description                                           |
-| --------------------- | ----------------------------------------------------- |
+|-----------------------|-------------------------------------------------------|
 | `roadmap-short-term`  | Items on the roadmap in the short term (1 month).     |
 | `roadmap-medium-term` | Items on the roadmap in the medium term (3-6 months). |
 | `roadmap-long-term`   | Items on the roadmap in the long term (6-12 months).  |
