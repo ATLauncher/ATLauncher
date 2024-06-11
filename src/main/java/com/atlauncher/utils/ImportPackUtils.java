@@ -191,8 +191,6 @@ public class ImportPackUtils {
             } else if (fileLocation2.exists()) {
                 FileUtils.moveFile(fileLocation2.toPath(), tempZip, true);
             }
-
-            return loadCurseForgeFormat(tempZip.toFile(), projectId, fileId);
         } else {
             try {
                 Download download = new Download().setUrl(curseFile.downloadUrl).downloadTo(tempZip)
@@ -216,9 +214,9 @@ public class ImportPackUtils {
                 LogManager.error("Failed to download modpack file from CurseForge");
                 return false;
             }
-
-            return loadCurseForgeFormat(tempZip.toFile(), projectId, fileId);
         }
+
+        return loadCurseForgeFormat(tempZip.toFile(), projectId, fileId);
     }
 
     public static boolean loadFromModrinthUrl(String url) {
