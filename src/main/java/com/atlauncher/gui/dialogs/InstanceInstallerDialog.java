@@ -530,13 +530,9 @@ public class InstanceInstallerDialog extends JDialog {
                         return false;
                     }
 
-                    if (mv.type == VersionManifestVersionType.OLD_ALPHA
-                            && !ConfigManager.getConfigItem("minecraft.old_alpha.enabled", true)) {
-                        return false;
-                    }
-
-                    return true;
-                }).map(v -> {
+                return mv.type != VersionManifestVersionType.OLD_ALPHA
+                    || ConfigManager.getConfigItem("minecraft.old_alpha.enabled", true);
+            }).map(v -> {
                     PackVersion packVersion = new PackVersion();
                     packVersion.version = v.id;
                     packVersion.minecraftVersion = v;

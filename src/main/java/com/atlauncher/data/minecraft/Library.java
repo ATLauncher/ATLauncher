@@ -57,12 +57,8 @@ public class Library {
             return true;
         }
 
-        if (OS.isMac() && this.natives.containsKey("osx") && this.downloads.classifiers
-                .containsKey(this.natives.get("osx").replace("${arch}", OS.getNativesArch()))) {
-            return true;
-        }
-
-        return false;
+        return OS.isMac() && this.natives.containsKey("osx") && this.downloads.classifiers
+            .containsKey(this.natives.get("osx").replace("${arch}", OS.getNativesArch()));
     }
 
     public Download getNativeDownloadForOS() {

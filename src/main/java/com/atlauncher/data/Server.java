@@ -424,9 +424,7 @@ public class Server {
 
             if (this.isDev && (this.hash != null)) {
                 PackVersion devVersion = pack.getDevVersionByName(this.version);
-                if (devVersion != null && !devVersion.hashMatches(this.hash)) {
-                    return true;
-                }
+                return devVersion != null && !devVersion.hashMatches(this.hash);
             }
         }
 

@@ -207,11 +207,7 @@ public class ATLauncherPacksPanel extends PackBrowserPlatformPanel {
     @Override
     public boolean hasMorePages() {
         // already loaded in all the cards possible, so don't navigate
-        if (!this.packs.isEmpty() && !this.cards.isEmpty() && this.packs.size() == this.cards.size()) {
-            return false;
-        }
-
-        return true;
+        return this.packs.isEmpty() || this.cards.isEmpty() || this.packs.size() != this.cards.size();
     }
 
     @Override

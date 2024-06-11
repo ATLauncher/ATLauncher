@@ -387,11 +387,7 @@ public class ModrinthVersionSelectorDialog extends JDialog {
                         return true;
                     }
 
-                    if (v.loaders.contains("quilt") && this.instance.launcher.loaderVersion.isQuilt()) {
-                        return true;
-                    }
-
-                    return false;
+                    return v.loaders.contains("quilt") && this.instance.launcher.loaderVersion.isQuilt();
                 });
             }
 

@@ -1530,12 +1530,8 @@ public class Utils {
             return true;
         }
 
-        if (!lessThan && versionParts[0].equals(matchedParts[0])
-                && Integer.parseInt(versionParts[1].split("-")[0]) > Integer.parseInt(matchedParts[1].split("-")[0])) {
-            return true;
-        }
-
-        return false;
+        return !lessThan && versionParts[0].equals(matchedParts[0])
+            && Integer.parseInt(versionParts[1].split("-")[0]) > Integer.parseInt(matchedParts[1].split("-")[0]);
     }
 
     public static boolean matchWholeVersion(String version, String matches, boolean equal) {

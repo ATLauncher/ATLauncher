@@ -206,12 +206,9 @@ public final class FileSystem {
         }
 
         try {
-            boolean needToMove = false;
+            boolean needToMove = !Files.exists(to) || (Files.exists(to) && !Files.isSameFile(from, to));
 
             // case sensitive file systems
-            if (!Files.exists(to) || (Files.exists(to) && !Files.isSameFile(from, to))) {
-                needToMove = true;
-            }
 
             // case insensitive file systems
             if (Files.exists(to) && Files.isSameFile(from, to)

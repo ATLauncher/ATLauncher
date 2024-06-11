@@ -456,9 +456,7 @@ public final class Download {
             }
 
             // if no hash, but filesizes match, then no need to download
-            if ((this.hash == null || this.hash.equals("-")) && this.to.toFile().length() == this.getFilesize()) {
-                return false;
-            }
+            return (this.hash != null && !this.hash.equals("-")) || this.to.toFile().length() != this.getFilesize();
         }
 
         return true;

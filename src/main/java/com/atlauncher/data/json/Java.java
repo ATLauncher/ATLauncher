@@ -33,11 +33,7 @@ public class Java {
     }
 
     public boolean conforms(int javaVersion) {
-        boolean conforms = true;
-
-        if (this.min != 0 && javaVersion < this.min) {
-            conforms = false;
-        }
+        boolean conforms = this.min == 0 || javaVersion >= this.min;
 
         if (this.max != 0 && javaVersion > this.max) {
             conforms = false;

@@ -197,19 +197,12 @@ public class Pack {
 
     public boolean canInstall() {
         if (this.type == PackType.PRIVATE) {
-            if (isTester() || (hasVersions() && isAllowedPlayer())) {
-                return true;
-            }
+            return isTester() || (hasVersions() && isAllowedPlayer());
         } else if (this.type == PackType.SEMIPUBLIC && this.code != null) {
-            if (isTester() || (hasVersions() && PackManager.canViewSemiPublicPackByCode(this.code))) {
-                return true;
-            }
+            return isTester() || (hasVersions() && PackManager.canViewSemiPublicPackByCode(this.code));
         } else {
-            if (isTester() || hasVersions()) {
-                return true;
-            }
+            return isTester() || hasVersions();
         }
-        return false;
     }
 
     public boolean isAllowedPlayer() {
