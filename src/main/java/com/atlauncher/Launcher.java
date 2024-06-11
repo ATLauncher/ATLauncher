@@ -277,7 +277,7 @@ public class Launcher {
     }
 
     public void downloadUpdatedFiles() {
-        ProgressDialog progressDialog = new ProgressDialog(GetText.tr("Downloading Updates"), 1,
+        ProgressDialog<Object> progressDialog = new ProgressDialog<>(GetText.tr("Downloading Updates"), 1,
                 GetText.tr("Downloading Updates"));
         progressDialog.addThread(new Thread(() -> {
             DownloadPool pool = new DownloadPool();

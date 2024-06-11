@@ -208,7 +208,7 @@ public class EditModsDialog extends JDialog {
                 return;
             }
 
-            final ProgressDialog progressDialog = new ProgressDialog(GetText.tr("Copying Mods"), 0,
+            final ProgressDialog<Object> progressDialog = new ProgressDialog<>(GetText.tr("Copying Mods"), 0,
                     GetText.tr("Copying Mods"), this);
 
             progressDialog.addThread(new Thread(() -> {

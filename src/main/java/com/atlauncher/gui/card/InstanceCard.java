@@ -528,7 +528,7 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
 
             if (ret == DialogManager.YES_OPTION) {
                 Analytics.trackEvent(AnalyticsEvent.forInstanceEvent("instance_delete", instance));
-                final ProgressDialog dialog = new ProgressDialog(GetText.tr("Deleting Instance"), 0,
+                final ProgressDialog<Object> dialog = new ProgressDialog<>(GetText.tr("Deleting Instance"), 0,
                         GetText.tr("Deleting Instance. Please wait..."), null, App.launcher.getParent());
                 dialog.addThread(new Thread(() -> {
                     InstanceManager.removeInstance(instance);

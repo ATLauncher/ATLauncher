@@ -302,7 +302,7 @@ public class InstanceExportDialog extends JDialog {
         exportButton.addActionListener(arg0 -> {
             instance.scanMissingMods(this);
 
-            final ProgressDialog dialog = new ProgressDialog(GetText.tr("Exporting Instance"), 0,
+            final ProgressDialog<Object> dialog = new ProgressDialog<>(GetText.tr("Exporting Instance"), 0,
                     GetText.tr("Exporting Instance. Please wait..."), null, this);
 
             dialog.addThread(new Thread(() -> {

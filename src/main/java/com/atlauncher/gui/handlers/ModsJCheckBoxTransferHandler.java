@@ -125,7 +125,7 @@ public class ModsJCheckBoxTransferHandler extends TransferHandler {
                 instanceFile = dialog.instance.ROOT.resolve("mods").toFile();
             }
 
-            final ProgressDialog progressDialog = new ProgressDialog(GetText.tr("Copying Mods"), 0,
+            final ProgressDialog<Object> progressDialog = new ProgressDialog<>(GetText.tr("Copying Mods"), 0,
                     GetText.tr("Copying Mods"), dialog);
 
             progressDialog.addThread(new Thread(() -> {
