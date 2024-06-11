@@ -83,9 +83,7 @@ public class ServersTab extends HierarchyPanel implements Tab, RelocalizationLis
         searchBox.putClientProperty("JTextField.placeholderText", GetText.tr("Search"));
         searchBox.putClientProperty("JTextField.leadingIcon", new FlatSearchIcon());
         searchBox.putClientProperty("JTextField.showClearButton", true);
-        searchBox.putClientProperty("JTextField.clearCallback", (Runnable) () -> {
-            viewModel.setSearchSubject("");
-        });
+        searchBox.putClientProperty("JTextField.clearCallback", (Runnable) () -> viewModel.setSearchSubject(""));
         topPanel.add(searchBox);
 
         add(topPanel, BorderLayout.NORTH);

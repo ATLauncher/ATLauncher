@@ -299,9 +299,7 @@ public class ModrinthVersionSelectorDialog extends JDialog {
             dispose();
         });
 
-        viewModButton.addActionListener(e -> {
-            OS.openWebBrowser(String.format("https://modrinth.com/mod/%s", mod.slug));
-        });
+        viewModButton.addActionListener(e -> OS.openWebBrowser(String.format("https://modrinth.com/mod/%s", mod.slug)));
 
         viewFileButton.addActionListener(e -> {
             ModrinthVersion version = (ModrinthVersion) versionsDropdown.getSelectedItem();

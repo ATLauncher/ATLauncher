@@ -71,16 +71,12 @@ public class ModrinthExportOverridesDialog extends JDialog {
 
         // Copy button
         JButton copyButton = new JButton(GetText.tr("Copy"));
-        copyButton.addActionListener(e -> {
-            OS.copyToClipboard(text);
-        });
+        copyButton.addActionListener(e -> OS.copyToClipboard(text));
         buttonPanel.add(copyButton);
 
         // Close button
         JButton closeButton = new JButton(GetText.tr("Close"));
-        closeButton.addActionListener(e -> {
-            close();
-        });
+        closeButton.addActionListener(e -> close());
         buttonPanel.add(closeButton);
 
         add(buttonPanel, BorderLayout.SOUTH);

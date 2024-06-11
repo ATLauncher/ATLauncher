@@ -221,9 +221,7 @@ public class InstanceExportDialog extends JDialog {
         });
 
         JButton resetButton = new JButton(GetText.tr("Reset"));
-        resetButton.addActionListener(e -> {
-            saveTo.setText(instance.getRoot().toAbsolutePath().toString());
-        });
+        resetButton.addActionListener(e -> saveTo.setText(instance.getRoot().toAbsolutePath().toString()));
 
         saveToPanel.add(saveTo);
         saveToPanel.add(Box.createHorizontalStrut(5));
@@ -344,9 +342,7 @@ public class InstanceExportDialog extends JDialog {
         bottomPanel.add(exportButton);
 
         JButton cancelButton = new JButton(GetText.tr("Cancel"));
-        cancelButton.addActionListener(arg0 -> {
-            close();
-        });
+        cancelButton.addActionListener(arg0 -> close());
         bottomPanel.add(cancelButton);
 
         add(topPanel, BorderLayout.CENTER);

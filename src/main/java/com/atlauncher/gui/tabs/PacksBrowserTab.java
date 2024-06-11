@@ -317,9 +317,7 @@ public final class PacksBrowserTab extends JPanel
             tabsEnabledTimer.stop();
         }
         platformTabbedPane.setEnabled(false);
-        tabsEnabledTimer = new Timer(30000, e2 -> {
-            platformTabbedPane.setEnabled(true);
-        });
+        tabsEnabledTimer = new Timer(30000, e2 -> platformTabbedPane.setEnabled(true));
         tabsEnabledTimer.setRepeats(false);
         tabsEnabledTimer.start();
     }

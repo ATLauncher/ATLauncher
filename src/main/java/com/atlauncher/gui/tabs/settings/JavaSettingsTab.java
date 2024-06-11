@@ -481,9 +481,7 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         baseJavaInstallFolder = new JTextField(32);
         baseJavaInstallFolder.setText(App.settings.baseJavaInstallFolder);
         JButton baseJavaInstallFolderResetButton = new JButton(GetText.tr("Reset"));
-        baseJavaInstallFolderResetButton.addActionListener(e -> {
-            baseJavaInstallFolder.setText("");
-        });
+        baseJavaInstallFolderResetButton.addActionListener(e -> baseJavaInstallFolder.setText(""));
         JButton baseJavaInstallFolderBrowseButton = new JButton(GetText.tr("Browse"));
         baseJavaInstallFolderBrowseButton.addActionListener(e -> {
             JFileChooser chooser = new JFileChooser();

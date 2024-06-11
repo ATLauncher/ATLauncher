@@ -155,9 +155,9 @@ public class CurseForgeFile {
                         // this should never happen because of the filter
                         return null;
                     }
-                }).filter(Objects::nonNull).sorted(Comparator.comparingLong((VersionManifestVersion mv) -> {
-                    return ISODateTimeFormat.dateTimeParser().parseDateTime(mv.releaseTime).getMillis() / 1000;
-                }).reversed()).map(mv -> mv.id).findFirst();
+                }).filter(Objects::nonNull).sorted(Comparator.comparingLong((VersionManifestVersion mv) ->
+                ISODateTimeFormat.dateTimeParser().parseDateTime(mv.releaseTime).getMillis() / 1000
+            ).reversed()).map(mv -> mv.id).findFirst();
 
         // worse case if nothing comes back, just grab the first item
         return minecraftVersion.orElseGet(() -> gameVersions.get(0));

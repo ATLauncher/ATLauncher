@@ -80,10 +80,8 @@ public class ModrinthApi {
             }
 
             if (categories != null) {
-                categories.forEach(c -> {
-                    facets
-                            .add(c.stream().map(s -> String.format("categories:%s", s)).collect(Collectors.toList()));
-                });
+                categories.forEach(c -> facets
+                        .add(c.stream().map(s -> String.format("categories:%s", s)).collect(Collectors.toList())));
             }
 
             if (projectType != null) {

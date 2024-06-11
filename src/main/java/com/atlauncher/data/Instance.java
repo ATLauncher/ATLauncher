@@ -1026,9 +1026,7 @@ public class Instance extends MinecraftVersion {
 
                 if (this.getPack() != null && this.getPack().isLoggingEnabled() && !this.launcher.isDev
                         && App.settings.enableLogs) {
-                    App.TASKPOOL.execute(() -> {
-                        addPlay(this.launcher.version);
-                    });
+                    App.TASKPOOL.execute(() -> addPlay(this.launcher.version));
                 }
 
                 if ((App.autoLaunch != null && App.closeLauncher)
@@ -1176,9 +1174,9 @@ public class Instance extends MinecraftVersion {
                                                 && this.launcher.mods.stream()
                                                         .noneMatch(m -> m.type == Type.mods && !m.userAdded
                                                                 && m.getFile(this).toPath().equals(file)))
-                                .forEach(newMod -> {
-                                    LogManager.warn("The mod " + newMod.getFileName().toString() + " has been added.");
-                                });
+                                .forEach(newMod ->
+                                    LogManager.warn("The mod " + newMod.getFileName().toString() + " has been added.")
+                                );
                     }
                 }
 
@@ -1198,9 +1196,7 @@ public class Instance extends MinecraftVersion {
                 if (this.getPack() != null && this.getPack().isLoggingEnabled() && !this.launcher.isDev
                         && App.settings.enableLogs) {
                     if (timePlayed > 0) {
-                        App.TASKPOOL.submit(() -> {
-                            addTimePlayed(timePlayed, this.launcher.version);
-                        });
+                        App.TASKPOOL.submit(() -> addTimePlayed(timePlayed, this.launcher.version));
                     }
                 }
                 if (App.settings.enableAutomaticBackupAfterLaunch) {
@@ -2001,9 +1997,7 @@ public class Instance extends MinecraftVersion {
         try (Stream<Path> walk = Files.walk(dotMinecraftPath)) {
             walk.filter(Files::isRegularFile)
                     .filter(path -> path.getFileName().toString().equals(".DS_Store"))
-                    .forEach(f -> {
-                        FileUtils.delete(f, false);
-                    });
+                    .forEach(f -> FileUtils.delete(f, false));
         } catch (IOException ignored) {
         }
 
@@ -2187,9 +2181,7 @@ public class Instance extends MinecraftVersion {
         try (Stream<Path> walk = Files.walk(overridesPath)) {
             walk.filter(Files::isRegularFile)
                     .filter(path -> path.getFileName().toString().equals(".DS_Store"))
-                    .forEach(f -> {
-                        FileUtils.delete(f, false);
-                    });
+                    .forEach(f -> FileUtils.delete(f, false));
         } catch (IOException ignored) {
         }
 
@@ -2197,11 +2189,9 @@ public class Instance extends MinecraftVersion {
         launcher.mods.stream()
                 .filter(m -> !m.disabled && m.isFromCurseForge())
                 .filter(mod -> !mod.curseForgeFile.isAvailable)
-                .forEach(mod -> {
-                    LogManager.warn(String.format(
-                            "File %s is no longer available according to the CurseForge api, so putting it in overrides",
-                            mod.file));
-                });
+                .forEach(mod -> LogManager.warn(String.format(
+                        "File %s is no longer available according to the CurseForge api, so putting it in overrides",
+                        mod.file)));
 
         // remove files that come from CurseForge or aren't disabled
         launcher.mods.stream()
@@ -2368,9 +2358,7 @@ public class Instance extends MinecraftVersion {
         try (Stream<Path> walk = Files.walk(overridesPath)) {
             walk.filter(Files::isRegularFile)
                     .filter(path -> path.getFileName().toString().equals(".DS_Store"))
-                    .forEach(f -> {
-                        FileUtils.delete(f, false);
-                    });
+                    .forEach(f -> FileUtils.delete(f, false));
         } catch (IOException ignored) {
         }
 
@@ -2402,9 +2390,7 @@ public class Instance extends MinecraftVersion {
             walk.filter(Files::isRegularFile)
                     .filter(path -> path.getFileName().toString().endsWith(".jar")
                             || path.getFileName().toString().endsWith(".zip"))
-                    .forEach(f -> {
-                        overridesForPermissions.append(String.format("%s\n", tempDir.relativize(f)));
-                    });
+                    .forEach(f -> overridesForPermissions.append(String.format("%s\n", tempDir.relativize(f))));
         } catch (IOException ignored) {
         }
 

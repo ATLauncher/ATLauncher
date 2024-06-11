@@ -121,9 +121,7 @@ public class NetworkSettingsTab extends AbstractSettingsTab implements Relocaliz
         modrinthApiKey = new JTextField(40);
         modrinthApiKey.setText(App.settings.modrinthApiKey);
         modrinthApiKey.putClientProperty("JTextField.showClearButton", true);
-        modrinthApiKey.putClientProperty("JTextField.clearCallback", (Runnable) () -> {
-            modrinthApiKey.setText("");
-        });
+        modrinthApiKey.putClientProperty("JTextField.clearCallback", (Runnable) () -> modrinthApiKey.setText(""));
         add(modrinthApiKey, gbc);
 
         // Enable Proxy

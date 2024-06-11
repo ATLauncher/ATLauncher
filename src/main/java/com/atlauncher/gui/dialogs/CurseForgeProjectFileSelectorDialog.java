@@ -191,9 +191,7 @@ public class CurseForgeProjectFileSelectorDialog extends JDialog {
             dispose();
         });
 
-        viewModButton.addActionListener(e -> {
-            OS.openWebBrowser(mod.getWebsiteUrl());
-        });
+        viewModButton.addActionListener(e -> OS.openWebBrowser(mod.getWebsiteUrl()));
 
         viewFileButton.addActionListener(e -> {
             CurseForgeFile file = (CurseForgeFile) filesDropdown.getSelectedItem();
@@ -201,9 +199,7 @@ public class CurseForgeProjectFileSelectorDialog extends JDialog {
             OS.openWebBrowser(String.format(Locale.ENGLISH, "%s/files/%d", mod.getWebsiteUrl(), file.id));
         });
 
-        filesDropdown.addActionListener(e -> {
-            reloadDependenciesPanel();
-        });
+        filesDropdown.addActionListener(e -> reloadDependenciesPanel());
 
         JButton cancel = new JButton(GetText.tr("Cancel"));
         cancel.addActionListener(e -> dispose());

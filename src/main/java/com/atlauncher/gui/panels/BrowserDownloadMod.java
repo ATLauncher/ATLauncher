@@ -54,16 +54,12 @@ public class BrowserDownloadMod extends JPanel {
         gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         add(openButton, gbc);
-        openButton.addActionListener(l -> {
-            OS.openWebBrowser(mod.url);
-        });
+        openButton.addActionListener(l -> OS.openWebBrowser(mod.url));
 
         gbc.gridx++;
         gbc.insets = UIConstants.FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         add(copyLinkButton, gbc);
-        copyLinkButton.addActionListener(l -> {
-            OS.copyToClipboard(mod.url);
-        });
+        copyLinkButton.addActionListener(l -> OS.copyToClipboard(mod.url));
     }
 }

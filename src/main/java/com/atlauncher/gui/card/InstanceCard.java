@@ -264,14 +264,10 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
     }
 
     private void setupPlayPopupMenus() {
-        playOnlinePlayMenuItem.addActionListener(e -> {
-            play(false);
-        });
+        playOnlinePlayMenuItem.addActionListener(e -> play(false));
         playPopupMenu.add(playOnlinePlayMenuItem);
 
-        playOfflinePlayMenuItem.addActionListener(e -> {
-            play(true);
-        });
+        playOfflinePlayMenuItem.addActionListener(e -> play(true));
         playPopupMenu.add(playOfflinePlayMenuItem);
     }
 
@@ -613,15 +609,11 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
                     JPopupMenu rightClickMenu = new JPopupMenu();
 
                     JMenuItem playOnlineButton = new JMenuItem(GetText.tr("Play Online"));
-                    playOnlineButton.addActionListener(l -> {
-                        play(false);
-                    });
+                    playOnlineButton.addActionListener(l -> play(false));
                     rightClickMenu.add(playOnlineButton);
 
                     JMenuItem playOfflineButton = new JMenuItem(GetText.tr("Play Offline"));
-                    playOfflineButton.addActionListener(l -> {
-                        play(true);
-                    });
+                    playOfflineButton.addActionListener(l -> play(true));
                     rightClickMenu.add(playOnlineButton);
 
                     if (instance.isUpdatable()) {
@@ -661,9 +653,7 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
                     rightClickMenu.add(changeImageItem);
 
                     JMenuItem cloneItem = new JMenuItem(GetText.tr("Clone"));
-                    cloneItem.addActionListener(l -> {
-                        instance.startClone();
-                    });
+                    cloneItem.addActionListener(l -> instance.startClone());
                     rightClickMenu.add(cloneItem);
                     rightClickMenu.show(image, e.getX(), e.getY());
                 }

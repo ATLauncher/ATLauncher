@@ -115,9 +115,7 @@ public class InstanceSettingsDialog extends JDialog {
         bottomPanel.add(saveButton);
 
         JButton cancelButton = new JButton(GetText.tr("Cancel"));
-        cancelButton.addActionListener(arg0 -> {
-            close();
-        });
+        cancelButton.addActionListener(arg0 -> close());
         bottomPanel.add(cancelButton);
 
         add(bottomPanel, BorderLayout.SOUTH);

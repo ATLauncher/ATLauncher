@@ -112,10 +112,8 @@ public class MCLauncher {
             }
 
             if (instance.launcher.mods.stream().anyMatch(m -> m.skipped)) {
-                instance.launcher.mods.stream().filter(m -> m.skipped).forEach(m -> {
-                    LogManager.warn(String.format(
-                            "Mod %s (%s) was skipped from downloading during instance installation", m.name, m.file));
-                });
+                instance.launcher.mods.stream().filter(m -> m.skipped).forEach(m -> LogManager.warn(String.format(
+                        "Mod %s (%s) was skipped from downloading during instance installation", m.name, m.file)));
             }
 
             if (instance.shouldUseLegacyLaunch() && Optional.ofNullable(instance.launcher.disableLegacyLaunching)

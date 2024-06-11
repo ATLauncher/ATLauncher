@@ -94,10 +94,8 @@ public class AccountManager {
                     new FileInputStream(FileSystem.ACCOUNTS.toFile()), StandardCharsets.UTF_8)) {
                 List<MicrosoftAccount> accounts = Gsons.DEFAULT.fromJson(fileReader, abstractAccountListType);
 
-                newAccounts.addAll(accounts.stream().filter(account -> {
-                    return account.accessToken != null
-                        && account.accessToken.split("\\.").length == 3;
-                }).collect(Collectors.toList()));
+                newAccounts.addAll(accounts.stream().filter(account -> account.accessToken != null
+                    && account.accessToken.split("\\.").length == 3).collect(Collectors.toList()));
             } catch (Exception e) {
                 LogManager.logStackTrace("Exception loading accounts", e);
             }

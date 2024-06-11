@@ -220,9 +220,7 @@ public class ChangeSkinDialog extends JDialog {
         bottom.add(uploadButton);
 
         JButton cancelButton = new JButton(GetText.tr("Cancel"));
-        cancelButton.addActionListener(e -> {
-            close();
-        });
+        cancelButton.addActionListener(e -> close());
         bottom.add(cancelButton);
 
         add(top, BorderLayout.NORTH);
