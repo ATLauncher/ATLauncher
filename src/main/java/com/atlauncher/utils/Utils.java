@@ -760,7 +760,7 @@ public class Utils {
                 line = line.replace(replaceThis, withThis);
             }
             fileWriter.write(line);
-            fileWriter.write(System.getProperty("line.separator"));
+            fileWriter.write(System.lineSeparator());
             line = br.readLine();
         }
         fileWriter.flush();
@@ -785,7 +785,7 @@ public class Utils {
         String line = br.readLine();
         while (line != null) {
             fileWriter.write(line);
-            fileWriter.write(System.getProperty("line.separator"));
+            fileWriter.write(System.lineSeparator());
             line = br.readLine();
         }
         fileWriter.flush();
@@ -1096,7 +1096,7 @@ public class Utils {
 
             while (line != null) {
                 sb.append(line);
-                sb.append(System.getProperty("line.separator"));
+                sb.append(System.lineSeparator());
                 line = br.readLine();
             }
             contents = sb.toString();
