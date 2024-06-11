@@ -267,11 +267,11 @@ public class NeoForgeLoader implements Loader {
                 .callAndWait(new GetNeoForgeLoaderVersionsForMinecraftVersionQuery(minecraft));
 
         if (response == null) {
-            return new ArrayList<LoaderVersion>();
+            return new ArrayList<>();
         }
 
         List<String> disabledVersions = ConfigManager.getConfigItem("loaders.neoforge.disabledVersions",
-                new ArrayList<String>());
+            new ArrayList<>());
 
         return response.loaderVersions().neoforge().stream().filter(fv -> !disabledVersions.contains(
                 fv.version()))

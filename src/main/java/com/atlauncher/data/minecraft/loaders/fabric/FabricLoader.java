@@ -278,7 +278,7 @@ public class FabricLoader implements Loader {
     public static List<LoaderVersion> getChoosableVersions(String minecraft) {
         try {
             List<String> disabledVersions = ConfigManager.getConfigItem("loaders.fabric.disabledVersions",
-                    new ArrayList<String>());
+                new ArrayList<>());
 
             if (ConfigManager.getConfigItem("useGraphql.loaderVersionsNonForge", false)) {
                 GetFabricLoaderVersionsForMinecraftVersionQuery.Data response = GraphqlClient

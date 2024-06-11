@@ -320,7 +320,7 @@ public class ModrinthVersionSelectorDialog extends JDialog {
                     int selectedIndex = 0;
 
                     for (ModrinthFile file : version.files) {
-                        filesDropdown.addItem(new ComboItem<ModrinthFile>(file, file.toString()));
+                        filesDropdown.addItem(new ComboItem<>(file, file.toString()));
 
                         if (file.primary) {
                             selectedIndex = filesDropdown.getItemCount() - 1;
@@ -369,7 +369,7 @@ public class ModrinthVersionSelectorDialog extends JDialog {
             if (App.settings.addModRestriction != AddModRestriction.NONE && this.instance.launcher.loaderVersion != null
                     && mod.projectType == ModrinthProjectType.MOD) {
                 List<String> neoForgeForgeCompatabilityVersions = ConfigManager
-                        .getConfigItem("loaders.neoforge.forgeCompatibleMinecraftVersions", new ArrayList<String>());
+                        .getConfigItem("loaders.neoforge.forgeCompatibleMinecraftVersions", new ArrayList<>());
                 modrinthVersionsStream = modrinthVersionsStream.filter(v -> {
                     if (v.loaders.contains("fabric") && (this.instance.launcher.loaderVersion.isFabric()
                             || this.instance.launcher.loaderVersion.isLegacyFabric()

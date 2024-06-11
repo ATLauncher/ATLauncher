@@ -189,7 +189,7 @@ public class CurseForgeApi {
         modLoaderTypes.add(Constants.CURSEFORGE_NEOFORGE_MODLOADER_ID);
 
         List<String> neoForgeForgeCompatabilityVersions = ConfigManager
-                .getConfigItem("loaders.neoforge.forgeCompatibleMinecraftVersions", new ArrayList<String>());
+                .getConfigItem("loaders.neoforge.forgeCompatibleMinecraftVersions", new ArrayList<>());
         if (neoForgeForgeCompatabilityVersions.contains(gameVersion)) {
             modLoaderTypes.add(Constants.CURSEFORGE_FORGE_MODLOADER_ID);
         }

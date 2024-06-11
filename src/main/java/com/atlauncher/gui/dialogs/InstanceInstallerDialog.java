@@ -1057,7 +1057,7 @@ public class InstanceInstallerDialog extends JDialog {
         loaderVersions.clear();
 
         loaderVersionsDropDown.removeAllItems();
-        loaderVersionsDropDown.addItem(new ComboItem<LoaderVersion>(null, GetText.tr("Getting Loader Versions")));
+        loaderVersionsDropDown.addItem(new ComboItem<>(null, GetText.tr("Getting Loader Versions")));
 
         loaderVersionLabel.setVisible(true);
         loaderVersionsDropDown.setVisible(true);
@@ -1092,7 +1092,7 @@ public class InstanceInstallerDialog extends JDialog {
 
             if (loaderVersions.isEmpty()) {
                 loaderVersionsDropDown.removeAllItems();
-                loaderVersionsDropDown.addItem(new ComboItem<LoaderVersion>(null, GetText.tr("No Versions Found")));
+                loaderVersionsDropDown.addItem(new ComboItem<>(null, GetText.tr("No Versions Found")));
                 loaderVersionLabel.setVisible(true);
                 loaderVersionsDropDown.setVisible(true);
                 versionsDropDown.setEnabled(true);
@@ -1108,7 +1108,7 @@ public class InstanceInstallerDialog extends JDialog {
             loaderVersionsDropDown.removeAllItems();
 
             loaderVersions.forEach(version -> loaderVersionsDropDown
-                    .addItem(new ComboItem<LoaderVersion>(version, version.toStringWithCurrent(instance))));
+                    .addItem(new ComboItem<>(version, version.toStringWithCurrent(instance))));
 
             if (isReinstall && instance.launcher.loaderVersion != null) {
                 String loaderVersionString = instance.launcher.loaderVersion.version;

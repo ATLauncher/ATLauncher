@@ -241,7 +241,7 @@ public class QuiltLoader implements Loader {
     public static List<LoaderVersion> getChoosableVersions(String minecraft) {
         try {
             List<String> disabledVersions = ConfigManager.getConfigItem("loaders.quilt.disabledVersions",
-                    new ArrayList<String>());
+                new ArrayList<>());
 
             if (ConfigManager.getConfigItem("useGraphql.loaderVersionsNonForge", false)) {
                 GetQuiltLoaderVersionsForMinecraftVersionQuery.Data response = GraphqlClient

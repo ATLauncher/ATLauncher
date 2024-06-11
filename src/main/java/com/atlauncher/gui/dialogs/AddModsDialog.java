@@ -87,10 +87,10 @@ public final class AddModsDialog extends JDialog {
     private final JPanel topPanel = new JPanel(new BorderLayout());
     private final JTextField searchField = new JTextField(16);
     private final JLabel platformMessageLabel = new JLabel();
-    private final JComboBox<ComboItem<ModPlatform>> hostComboBox = new JComboBox<ComboItem<ModPlatform>>();
-    private final JComboBox<ComboItem<String>> sectionComboBox = new JComboBox<ComboItem<String>>();
-    private final JComboBox<ComboItem<String>> sortComboBox = new JComboBox<ComboItem<String>>();
-    private final JComboBox<ComboItem<String>> categoriesComboBox = new JComboBox<ComboItem<String>>();
+    private final JComboBox<ComboItem<ModPlatform>> hostComboBox = new JComboBox<>();
+    private final JComboBox<ComboItem<String>> sectionComboBox = new JComboBox<>();
+    private final JComboBox<ComboItem<String>> sortComboBox = new JComboBox<>();
+    private final JComboBox<ComboItem<String>> categoriesComboBox = new JComboBox<>();
 
     // #. {0} is the loader api (Fabric API/QSL)
     private final JButton installFabricApiButton = new JButton(GetText.tr("Install {0}", "Fabric API"));

@@ -401,7 +401,7 @@ public class DisableableMod implements Serializable {
                 }
 
                 List<String> neoForgeForgeCompatabilityVersions = ConfigManager
-                        .getConfigItem("loaders.neoforge.forgeCompatibleMinecraftVersions", new ArrayList<String>());
+                        .getConfigItem("loaders.neoforge.forgeCompatibleMinecraftVersions", new ArrayList<>());
 
                 // filter out files not for our loader
                 curseForgeFilesStream = curseForgeFilesStream.filter(cf -> {
@@ -489,7 +489,7 @@ public class DisableableMod implements Serializable {
                     return;
                 }
 
-                dialog.setReturnValue(new Pair<ModrinthProject, List<ModrinthVersion>>(mod, versions));
+                dialog.setReturnValue(new Pair<>(mod, versions));
                 dialog.close();
             }));
             dialog.start();

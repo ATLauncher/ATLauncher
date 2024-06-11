@@ -67,12 +67,12 @@ public class MicrosoftAuthAPI {
     }
 
     public static XboxLiveAuthResponse getXBLToken(String accessToken) {
-        Map<Object, Object> properties = new HashMap<Object, Object>();
+        Map<Object, Object> properties = new HashMap<>();
         properties.put("AuthMethod", "RPS");
         properties.put("SiteName", "user.auth.xboxlive.com");
         properties.put("RpsTicket", "d=" + accessToken);
 
-        Map<Object, Object> data = new HashMap<Object, Object>();
+        Map<Object, Object> data = new HashMap<>();
         data.put("Properties", properties);
         data.put("RelyingParty", "http://auth.xboxlive.com");
         data.put("TokenType", "JWT");
@@ -87,14 +87,14 @@ public class MicrosoftAuthAPI {
     }
 
     public static XboxLiveAuthResponse getXstsToken(String xblToken) throws IOException {
-        Map<Object, Object> properties = new HashMap<Object, Object>();
+        Map<Object, Object> properties = new HashMap<>();
         properties.put("SandboxId", "RETAIL");
 
-        List<String> userTokens = new ArrayList<String>();
+        List<String> userTokens = new ArrayList<>();
         userTokens.add(xblToken);
         properties.put("UserTokens", userTokens);
 
-        Map<Object, Object> data = new HashMap<Object, Object>();
+        Map<Object, Object> data = new HashMap<>();
         data.put("Properties", properties);
         data.put("RelyingParty", "rp://api.minecraftservices.com/");
         data.put("TokenType", "JWT");
@@ -109,7 +109,7 @@ public class MicrosoftAuthAPI {
     }
 
     public static LoginResponse loginToMinecraft(String xstsToken) {
-        Map<Object, Object> data = new HashMap<Object, Object>();
+        Map<Object, Object> data = new HashMap<>();
         data.put("xtoken", xstsToken);
         data.put("platform", "PC_LAUNCHER");
 

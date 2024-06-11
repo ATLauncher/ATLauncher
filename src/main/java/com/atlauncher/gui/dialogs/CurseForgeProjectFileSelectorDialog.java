@@ -314,7 +314,7 @@ public class CurseForgeProjectFileSelectorDialog extends JDialog {
             }
 
             List<String> neoForgeForgeCompatabilityVersions = ConfigManager
-                    .getConfigItem("loaders.neoforge.forgeCompatibleMinecraftVersions", new ArrayList<String>());
+                    .getConfigItem("loaders.neoforge.forgeCompatibleMinecraftVersions", new ArrayList<>());
 
             // filter out files not for our loader (if browsing mods)
             if (mod.getRootCategoryId() == Constants.CURSEFORGE_MODS_SECTION_ID) {

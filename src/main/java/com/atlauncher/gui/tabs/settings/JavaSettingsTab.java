@@ -365,10 +365,10 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         installedJavasComboBox.setPreferredSize(new Dimension(516, 24));
         List<JavaInfo> installedJavas = Java.getInstalledJavas();
 
-        installedJavasComboBox.addItem(new ComboItem<JavaInfo>(null, GetText.tr("Select Java Path To Autofill")));
+        installedJavasComboBox.addItem(new ComboItem<>(null, GetText.tr("Select Java Path To Autofill")));
 
         for (JavaInfo javaInfo : installedJavas) {
-            installedJavasComboBox.addItem(new ComboItem<JavaInfo>(javaInfo, javaInfo.toString()));
+            installedJavasComboBox.addItem(new ComboItem<>(javaInfo, javaInfo.toString()));
         }
 
         if (installedJavasComboBox.getItemCount() != 1) {

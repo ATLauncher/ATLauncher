@@ -181,7 +181,7 @@ public class ConfigManager {
         if (!App.disableErrorReporting && ConfigManager.getConfigItem("errorReporting.enabled", true)) {
             ErrorReporting.ignoredMessages.clear();
             ErrorReporting.ignoredMessages
-                    .addAll(ConfigManager.getConfigItem("errorReporting.ignoredMessages", new ArrayList<String>()));
+                    .addAll(ConfigManager.getConfigItem("errorReporting.ignoredMessages", new ArrayList<>()));
 
             // not initiated, so start it up
             if (!ErrorReporting.sentryInitialised) {

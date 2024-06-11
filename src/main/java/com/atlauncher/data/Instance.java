@@ -1675,7 +1675,7 @@ public class Instance extends MinecraftVersion {
             }
         } catch (IOException e) {
             LogManager.logStackTrace("Failed to create export directory", e);
-            return new Pair<Path, String>(null, null);
+            return new Pair<>(null, null);
         }
 
         if (format == InstanceExportFormat.CURSEFORGE) {
@@ -1684,7 +1684,7 @@ public class Instance extends MinecraftVersion {
             return exportAsModrinthZip(name, version, author, saveTo, overrides);
         } else if (format == InstanceExportFormat.CURSEFORGE_AND_MODRINTH) {
             if (exportAsCurseForgeZip(name, version, author, saveTo, overrides).left() == null) {
-                return new Pair<Path, String>(null, null);
+                return new Pair<>(null, null);
             }
 
             return exportAsModrinthZip(name, version, author, saveTo, overrides);
@@ -1692,7 +1692,7 @@ public class Instance extends MinecraftVersion {
             return exportAsMultiMcZip(name, version, author, saveTo, overrides);
         }
 
-        return new Pair<Path, String>(null, null);
+        return new Pair<>(null, null);
     }
 
     public Pair<Path, String> exportAsMultiMcZip(String name, String version, String author, String saveTo,
@@ -1863,7 +1863,7 @@ public class Instance extends MinecraftVersion {
 
             FileUtils.deleteDirectory(tempDir);
 
-            return new Pair<Path, String>(null, null);
+            return new Pair<>(null, null);
         }
 
         // if Legacy Fabric, add patch in
@@ -1893,7 +1893,7 @@ public class Instance extends MinecraftVersion {
 
                 FileUtils.deleteDirectory(tempDir);
 
-                return new Pair<Path, String>(null, null);
+                return new Pair<>(null, null);
             }
 
         }
@@ -1970,7 +1970,7 @@ public class Instance extends MinecraftVersion {
 
             FileUtils.deleteDirectory(tempDir);
 
-            return new Pair<Path, String>(null, null);
+            return new Pair<>(null, null);
         }
 
         // create an empty .packignore file
@@ -2011,7 +2011,7 @@ public class Instance extends MinecraftVersion {
 
         FileUtils.deleteDirectory(tempDir);
 
-        return new Pair<Path, String>(to, null);
+        return new Pair<>(to, null);
     }
 
     public Pair<Path, String> exportAsCurseForgeZip(String name, String version, String author, String saveTo,
@@ -2134,7 +2134,7 @@ public class Instance extends MinecraftVersion {
 
             FileUtils.deleteDirectory(tempDir);
 
-            return new Pair<Path, String>(null, null);
+            return new Pair<>(null, null);
         }
 
         // create modlist.html
@@ -2164,7 +2164,7 @@ public class Instance extends MinecraftVersion {
 
             FileUtils.deleteDirectory(tempDir);
 
-            return new Pair<Path, String>(null, null);
+            return new Pair<>(null, null);
         }
 
         // copy over the overrides folder
@@ -2233,7 +2233,7 @@ public class Instance extends MinecraftVersion {
 
         FileUtils.deleteDirectory(tempDir);
 
-        return new Pair<Path, String>(to, null);
+        return new Pair<>(to, null);
     }
 
     public Pair<Path, String> exportAsModrinthZip(String name, String version, String author, String saveTo,
@@ -2345,7 +2345,7 @@ public class Instance extends MinecraftVersion {
 
             FileUtils.deleteDirectory(tempDir);
 
-            return new Pair<Path, String>(null, null);
+            return new Pair<>(null, null);
         }
 
         // copy over the overrides folder
@@ -2412,7 +2412,7 @@ public class Instance extends MinecraftVersion {
 
         FileUtils.deleteDirectory(tempDir);
 
-        return new Pair<Path, String>(to, overridesForPermissions.toString());
+        return new Pair<>(to, overridesForPermissions.toString());
     }
 
     public boolean rename(String newName) {
@@ -2980,7 +2980,7 @@ public class Instance extends MinecraftVersion {
         }
 
         loaderVersions.forEach(version -> loaderVersionsDropDown
-                .addItem(new ComboItem<LoaderVersion>(version, version.toStringWithCurrent(this))));
+                .addItem(new ComboItem<>(version, version.toStringWithCurrent(this))));
 
         if (loaderType == LoaderType.FORGE) {
             Optional<LoaderVersion> recommendedVersion = loaderVersions.stream().filter(lv -> lv.recommended)

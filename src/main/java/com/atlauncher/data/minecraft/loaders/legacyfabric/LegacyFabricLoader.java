@@ -282,7 +282,7 @@ public class LegacyFabricLoader implements Loader {
         try {
             List<String> disabledVersions = ConfigManager.getConfigItem(
                     "loaders.legacyfabric.disabledVersions",
-                    new ArrayList<String>());
+                new ArrayList<>());
 
             if (ConfigManager.getConfigItem("useGraphql.loaderVersionsNonForge", false)) {
                 GetLegacyFabricLoaderVersionsForMinecraftVersionQuery.Data response = GraphqlClient

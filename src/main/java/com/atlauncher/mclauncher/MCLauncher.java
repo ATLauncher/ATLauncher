@@ -128,7 +128,7 @@ public class MCLauncher {
     }
 
     private static List<String> wrapArguments(String wrapperCommand, List<String> args) {
-        List<String> wrapArgs = new LinkedList<String>(Arrays.asList(wrapperCommand.trim().split("\\s+")));
+        List<String> wrapArgs = new LinkedList<>(Arrays.asList(wrapperCommand.trim().split("\\s+")));
 
         // wrapper not set
         if (wrapArgs.isEmpty()) {

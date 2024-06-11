@@ -833,7 +833,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                     }
                 }
 
-                manualDownloadMods.add(new Pair<CurseForgeProject, CurseForgeFile>(curseForgeProject, curseForgeFile));
+                manualDownloadMods.add(new Pair<>(curseForgeProject, curseForgeFile));
 
                 Mod modToAdd = curseForgeFile.convertToMod(curseForgeProject);
                 modToAdd.download = DownloadType.browser;

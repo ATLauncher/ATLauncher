@@ -131,7 +131,7 @@ public class MinecraftManager {
 
         filterTypes.forEach(ft -> {
             disabledVersions.addAll(ConfigManager.getConfigItem(
-                    String.format("minecraft.%s.disabledVersions", ft.getValue()), new ArrayList<String>()));
+                    String.format("minecraft.%s.disabledVersions", ft.getValue()), new ArrayList<>()));
         });
 
         return Data.MINECRAFT.values().stream().filter(mv -> {
@@ -147,7 +147,7 @@ public class MinecraftManager {
 
     public static List<VersionManifestVersion> getFilteredMinecraftVersions(VersionManifestVersionType filterType) {
         List<String> disabledVersions = ConfigManager.getConfigItem(
-                String.format("minecraft.%s.disabledVersions", filterType.getValue()), new ArrayList<String>());
+                String.format("minecraft.%s.disabledVersions", filterType.getValue()), new ArrayList<>());
 
         return Data.MINECRAFT.values().stream().filter(mv -> {
             if (disabledVersions.contains(mv.id)) {
@@ -165,7 +165,7 @@ public class MinecraftManager {
 
         for (VersionManifestVersionType vt : VersionManifestVersionType.values()) {
             disabledVersions.addAll(ConfigManager.getConfigItem(
-                    String.format("minecraft.%s.disabledVersions", vt.getValue()), new ArrayList<String>()));
+                    String.format("minecraft.%s.disabledVersions", vt.getValue()), new ArrayList<>()));
         }
 
         return Data.MINECRAFT.values().stream().filter(mv -> !disabledVersions.contains(mv.id))

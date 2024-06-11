@@ -138,7 +138,7 @@ public class ModrinthApi {
         }
 
         List<String> neoForgeForgeCompatabilityVersions = ConfigManager
-                .getConfigItem("loaders.neoforge.forgeCompatibleMinecraftVersions", new ArrayList<String>());
+                .getConfigItem("loaders.neoforge.forgeCompatibleMinecraftVersions", new ArrayList<>());
         if (gameVersions.stream().anyMatch(gv -> neoForgeForgeCompatabilityVersions.contains(gv))) {
             categories.add(Arrays.asList("neoforge", "forge"));
         } else {
@@ -220,7 +220,7 @@ public class ModrinthApi {
                 loaders.add("forge");
             } else if (loaderVersion.isNeoForge()) {
                 List<String> neoForgeForgeCompatabilityVersions = ConfigManager
-                        .getConfigItem("loaders.neoforge.forgeCompatibleMinecraftVersions", new ArrayList<String>());
+                        .getConfigItem("loaders.neoforge.forgeCompatibleMinecraftVersions", new ArrayList<>());
                 if (neoForgeForgeCompatabilityVersions.contains(minecraftVersion)) {
                     loaders.add("forge");
                 }

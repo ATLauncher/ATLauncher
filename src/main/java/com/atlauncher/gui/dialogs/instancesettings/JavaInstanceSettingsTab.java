@@ -339,12 +339,12 @@ public class JavaInstanceSettingsTab extends JPanel {
 
         JComboBox<ComboItem<JavaInfo>> installedJavasComboBox = new JComboBox<>();
         installedJavasComboBox.setPreferredSize(new Dimension(516, 24));
-        installedJavasComboBox.addItem(new ComboItem<JavaInfo>(null, GetText.tr("Use Launcher Default")));
+        installedJavasComboBox.addItem(new ComboItem<>(null, GetText.tr("Use Launcher Default")));
         List<JavaInfo> installedJavas = Java.getInstalledJavas();
         int selectedIndex = 0;
 
         for (JavaInfo javaInfo : installedJavas) {
-            installedJavasComboBox.addItem(new ComboItem<JavaInfo>(javaInfo, javaInfo.toString()));
+            installedJavasComboBox.addItem(new ComboItem<>(javaInfo, javaInfo.toString()));
 
             if (javaInfo.rootPath
                     .equalsIgnoreCase(getIfNotNull(this.instance.launcher.javaPath, App.settings.javaPath))) {

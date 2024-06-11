@@ -357,7 +357,7 @@ public final class PacksBrowserTab extends JPanel
 
         // add in minecraft versions combo box items if the platform supports it
         if (selectedPanel.supportsMinecraftVersionFiltering()) {
-            minecraftVersionComboBox.addItem(new ComboItem<String>(null, GetText.tr("All Versions")));
+            minecraftVersionComboBox.addItem(new ComboItem<>(null, GetText.tr("All Versions")));
 
             List<VersionManifestVersion> versionsToShow = !selectedPanel
                 .getSupportedMinecraftVersionsForFiltering().isEmpty()
@@ -368,7 +368,7 @@ public final class PacksBrowserTab extends JPanel
 
             for (VersionManifestVersion mv : versionsToShow) {
                 if (mv != null) {
-                    minecraftVersionComboBox.addItem(new ComboItem<String>(mv.id, mv.id));
+                    minecraftVersionComboBox.addItem(new ComboItem<>(mv.id, mv.id));
                 }
             }
         }
@@ -376,9 +376,9 @@ public final class PacksBrowserTab extends JPanel
         // add in categories combo box items if the platform supports it
         if (selectedPanel.hasCategories()) {
             new Thread(() -> {
-                categoriesComboBox.addItem(new ComboItem<String>(null, GetText.tr("All Categories")));
+                categoriesComboBox.addItem(new ComboItem<>(null, GetText.tr("All Categories")));
                 for (Map.Entry<String, String> entry : selectedPanel.getCategoryFields().entrySet()) {
-                    categoriesComboBox.addItem(new ComboItem<String>(entry.getKey(), entry.getValue()));
+                    categoriesComboBox.addItem(new ComboItem<>(entry.getKey(), entry.getValue()));
                 }
             }).start();
         }
@@ -386,7 +386,7 @@ public final class PacksBrowserTab extends JPanel
         // add in sort combo box items if the platform supports it
         if (selectedPanel.hasSort()) {
             for (Map.Entry<String, String> entry : selectedPanel.getSortFields().entrySet()) {
-                sortComboBox.addItem(new ComboItem<String>(entry.getKey(), entry.getValue()));
+                sortComboBox.addItem(new ComboItem<>(entry.getKey(), entry.getValue()));
             }
         }
 
