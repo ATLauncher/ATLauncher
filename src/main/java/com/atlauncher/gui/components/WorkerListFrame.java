@@ -17,6 +17,7 @@ import com.atlauncher.data.WorkerInfo;
 import com.atlauncher.managers.WorkerManager;
 import com.atlauncher.repository.base.IWorkerRepository;
 import com.atlauncher.repository.impl.WorkerRepository;
+import com.gitlab.doomsdayrs.lib.rxswing.schedulers.SwingSchedulers;
 
 import io.reactivex.rxjava3.disposables.Disposable;
 
@@ -43,7 +44,7 @@ class WorkerListFrame extends JFrame {
         panel.setLayout(new GridBagLayout());
 
         IWorkerRepository workerRepository = WorkerRepository.get();
-        disposable = workerRepository.getAll().subscribe(workers -> {
+        disposable = workerRepository.getAll().observeOn(SwingSchedulers.edt()).subscribe(workers -> {
             panel.removeAll();
             System.gc();
 
