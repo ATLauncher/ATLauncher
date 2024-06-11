@@ -636,7 +636,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                     forgeVersionString = ForgeLoader.getLatestVersion(curseForgeManifest.minecraft.version);
                 }
 
-                if (ConfigManager.getConfigItem("useGraphql.loaderVersions", false) == true) {
+                if (ConfigManager.getConfigItem("useGraphql.loaderVersions", false)) {
                     GetForgeLoaderVersionQuery.Data response = GraphqlClient
                             .callAndWait(new GetForgeLoaderVersionQuery(forgeVersionString));
 
@@ -737,7 +737,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
             } else if (loaderVersion.id.startsWith("neoforge-")) {
                 String neoForgeVersionString = loaderVersion.id.replace("neoforge-", "");
 
-                if (ConfigManager.getConfigItem("useGraphql.loaderVersions", false) == false) {
+                if (!ConfigManager.getConfigItem("useGraphql.loaderVersions", false)) {
                     throw new Exception(
                             "Failed to find loader version for " + neoForgeVersionString + " as GraphQL is disabled");
                 }
@@ -1171,7 +1171,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                     String forgeLibraryName = forgeLibrary.get().name;
                     String forgeVersionString = forgeLibraryName.substring(forgeLibraryName.lastIndexOf(":") + 1);
 
-                    if (ConfigManager.getConfigItem("useGraphql.loaderVersions", false) == true) {
+                    if (ConfigManager.getConfigItem("useGraphql.loaderVersions", false)) {
                         GetForgeLoaderVersionQuery.Data response = GraphqlClient
                                 .callAndWait(new GetForgeLoaderVersionQuery(forgeVersionString));
 
@@ -1322,7 +1322,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
             } else if (modrinthManifest.dependencies.containsKey("neoforge")) {
                 String neoForgeVersionString = modrinthManifest.dependencies.get("neoforge");
 
-                if (ConfigManager.getConfigItem("useGraphql.loaderVersions", false) == false) {
+                if (!ConfigManager.getConfigItem("useGraphql.loaderVersions", false)) {
                     throw new Exception(
                             "Failed to find loader version for " + neoForgeVersionString + " as GraphQL is disabled");
                 }
@@ -1345,7 +1345,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
             } else if (modrinthManifest.dependencies.containsKey("forge")) {
                 String forgeVersionString = modrinthManifest.dependencies.get("forge");
 
-                if (ConfigManager.getConfigItem("useGraphql.loaderVersions", false) == true) {
+                if (ConfigManager.getConfigItem("useGraphql.loaderVersions", false)) {
                     GetForgeLoaderVersionQuery.Data response = GraphqlClient
                             .callAndWait(new GetForgeLoaderVersionQuery(forgeVersionString));
 
@@ -1469,7 +1469,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         if (neoForgedComponent != null) {
             String neoForgeVersionString = neoForgedComponent.version;
 
-            if (ConfigManager.getConfigItem("useGraphql.loaderVersions", false) == false) {
+            if (!ConfigManager.getConfigItem("useGraphql.loaderVersions", false)) {
                 throw new Exception(
                         "Failed to find loader version for " + neoForgeVersionString + " as GraphQL is disabled");
             }
@@ -1492,7 +1492,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         } else if (forgeComponent != null) {
             String forgeVersionString = forgeComponent.version;
 
-            if (ConfigManager.getConfigItem("useGraphql.loaderVersions", false) == true) {
+            if (ConfigManager.getConfigItem("useGraphql.loaderVersions", false)) {
                 GetForgeLoaderVersionQuery.Data response = GraphqlClient
                         .callAndWait(new GetForgeLoaderVersionQuery(forgeVersionString));
 
@@ -1610,7 +1610,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         if (loaderVersion != null && loaderVersion.isForge()) {
             packVersion.loader = new com.atlauncher.data.json.Loader();
 
-            if (ConfigManager.getConfigItem("useGraphql.loaderVersions", false) == true) {
+            if (ConfigManager.getConfigItem("useGraphql.loaderVersions", false)) {
                 GetForgeLoaderVersionQuery.Data response = GraphqlClient
                         .callAndWait(new GetForgeLoaderVersionQuery(loaderVersion.version));
 

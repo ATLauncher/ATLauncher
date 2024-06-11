@@ -511,27 +511,27 @@ public class InstanceInstallerDialog extends JDialog {
         pack.versions = MinecraftManager.getMinecraftVersions().stream()
                 .filter(mv -> showAll || mv.type == instance.type).filter(mv -> {
                     if (mv.type == VersionManifestVersionType.EXPERIMENT
-                            && ConfigManager.getConfigItem("minecraft.experiment.enabled", true) == false) {
+                            && !ConfigManager.getConfigItem("minecraft.experiment.enabled", true)) {
                         return false;
                     }
 
                     if (mv.type == VersionManifestVersionType.SNAPSHOT
-                            && ConfigManager.getConfigItem("minecraft.snapshot.enabled", true) == false) {
+                            && !ConfigManager.getConfigItem("minecraft.snapshot.enabled", true)) {
                         return false;
                     }
 
                     if (mv.type == VersionManifestVersionType.RELEASE
-                            && ConfigManager.getConfigItem("minecraft.release.enabled", true) == false) {
+                            && !ConfigManager.getConfigItem("minecraft.release.enabled", true)) {
                         return false;
                     }
 
                     if (mv.type == VersionManifestVersionType.OLD_BETA
-                            && ConfigManager.getConfigItem("minecraft.old_beta.enabled", true) == false) {
+                            && !ConfigManager.getConfigItem("minecraft.old_beta.enabled", true)) {
                         return false;
                     }
 
                     if (mv.type == VersionManifestVersionType.OLD_ALPHA
-                            && ConfigManager.getConfigItem("minecraft.old_alpha.enabled", true) == false) {
+                            && !ConfigManager.getConfigItem("minecraft.old_alpha.enabled", true)) {
                         return false;
                     }
 
@@ -1026,28 +1026,28 @@ public class InstanceInstallerDialog extends JDialog {
         }
 
         if (item.loaderType != null && item.loaderType.equalsIgnoreCase("fabric")) {
-            if (ConfigManager.getConfigItem("loaders.fabric.enabled", true) == false) {
+            if (!ConfigManager.getConfigItem("loaders.fabric.enabled", true)) {
                 return;
             }
 
             // #. {0} is the loader (Fabric/Forge/Quilt)
             loaderVersionLabel.setText(GetText.tr("{0} Version", "Fabric") + ": ");
         } else if (item.loaderType != null && item.loaderType.equalsIgnoreCase("forge")) {
-            if (ConfigManager.getConfigItem("loaders.forge.enabled", true) == false) {
+            if (!ConfigManager.getConfigItem("loaders.forge.enabled", true)) {
                 return;
             }
 
             // #. {0} is the loader (Fabric/Forge/Quilt)
             loaderVersionLabel.setText(GetText.tr("{0} Version", "Forge") + ": ");
         } else if (item.loaderType != null && item.loaderType.equalsIgnoreCase("legacyfabric")) {
-            if (ConfigManager.getConfigItem("loaders.legacyfabric.enabled", true) == false) {
+            if (!ConfigManager.getConfigItem("loaders.legacyfabric.enabled", true)) {
                 return;
             }
 
             // #. {0} is the loader (Fabric/Forge/Quilt)
             loaderVersionLabel.setText(GetText.tr("{0} Version", "Legacy Fabric") + ": ");
         } else if (item.loaderType != null && item.loaderType.equalsIgnoreCase("quilt")) {
-            if (ConfigManager.getConfigItem("loaders.quilt.enabled", false) == false) {
+            if (!ConfigManager.getConfigItem("loaders.quilt.enabled", false)) {
                 return;
             }
 

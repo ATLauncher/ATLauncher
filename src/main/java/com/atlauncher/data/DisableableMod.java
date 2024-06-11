@@ -450,7 +450,7 @@ public class DisableableMod implements Serializable {
             dialog.start();
 
             if (dialog.getReturnValue() instanceof Boolean) {
-                return ((Boolean) dialog.getReturnValue()) == true;
+                return ((Boolean) dialog.getReturnValue());
             }
 
             if (dialog.getReturnValue() == null) {

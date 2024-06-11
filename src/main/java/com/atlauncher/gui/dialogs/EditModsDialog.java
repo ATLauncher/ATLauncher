@@ -274,8 +274,8 @@ public class EditModsDialog extends JDialog {
         bottomPanel.add(addButton);
 
         if (instance.launcher.enableCurseForgeIntegration) {
-            if (ConfigManager.getConfigItem("platforms.curseforge.modsEnabled", true) == true
-                    || (ConfigManager.getConfigItem("platforms.modrinth.modsEnabled", true) == true
+            if (ConfigManager.getConfigItem("platforms.curseforge.modsEnabled", true)
+                    || (ConfigManager.getConfigItem("platforms.modrinth.modsEnabled", true)
                             && this.instance.launcher.loaderVersion != null)) {
                 JButton browseMods = new JButton(GetText.tr("Browse Mods"));
                 browseMods.addActionListener(e -> {

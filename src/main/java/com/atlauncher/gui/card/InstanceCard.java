@@ -230,8 +230,8 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
         this.openWebsite.setVisible(instance.hasWebsite());
 
         if (instance.launcher.enableCurseForgeIntegration
-                && (ConfigManager.getConfigItem("platforms.curseforge.modsEnabled", true) == true
-                        || (ConfigManager.getConfigItem("platforms.modrinth.modsEnabled", true) == true
+                && (ConfigManager.getConfigItem("platforms.curseforge.modsEnabled", true)
+                        || (ConfigManager.getConfigItem("platforms.modrinth.modsEnabled", true)
                                 && this.instance.launcher.loaderVersion != null))) {
             bottom.add(this.addButton);
         }
@@ -333,7 +333,7 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
         editInstancePopupMenu.add(changeImageMenuItem);
         editInstancePopupMenu.addSeparator();
 
-        if (ConfigManager.getConfigItem("loaders.fabric.enabled", true) == true
+        if (ConfigManager.getConfigItem("loaders.fabric.enabled", true)
                 && !ConfigManager.getConfigItem("loaders.fabric.disabledMinecraftVersions", new ArrayList<String>())
                         .contains(instance.id)) {
             editInstancePopupMenu.add(addFabricMenuItem);
@@ -341,7 +341,7 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
         }
         editInstancePopupMenu.add(removeFabricMenuItem);
 
-        if (ConfigManager.getConfigItem("loaders.forge.enabled", true) == true
+        if (ConfigManager.getConfigItem("loaders.forge.enabled", true)
                 && !ConfigManager.getConfigItem("loaders.forge.disabledMinecraftVersions", new ArrayList<String>())
                         .contains(instance.id)) {
             editInstancePopupMenu.add(addForgeMenuItem);
@@ -349,7 +349,7 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
         }
         editInstancePopupMenu.add(removeForgeMenuItem);
 
-        if (ConfigManager.getConfigItem("loaders.legacyfabric.enabled", true) == true
+        if (ConfigManager.getConfigItem("loaders.legacyfabric.enabled", true)
                 && !ConfigManager
                         .getConfigItem("loaders.legacyfabric.disabledMinecraftVersions", new ArrayList<String>())
                         .contains(instance.id)) {
@@ -358,7 +358,7 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
         }
         editInstancePopupMenu.add(removeLegacyFabricMenuItem);
 
-        if (ConfigManager.getConfigItem("loaders.neoforge.enabled", true) == true
+        if (ConfigManager.getConfigItem("loaders.neoforge.enabled", true)
                 && !ConfigManager
                         .getConfigItem("loaders.neoforge.disabledMinecraftVersions", new ArrayList<String>())
                         .contains(instance.id)) {
@@ -367,7 +367,7 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
         }
         editInstancePopupMenu.add(removeNeoForgeMenuItem);
 
-        if (ConfigManager.getConfigItem("loaders.quilt.enabled", false) == true
+        if (ConfigManager.getConfigItem("loaders.quilt.enabled", false)
                 && !ConfigManager.getConfigItem("loaders.quilt.disabledMinecraftVersions", new ArrayList<String>())
                         .contains(instance.id)) {
             editInstancePopupMenu.add(addQuiltMenuItem);

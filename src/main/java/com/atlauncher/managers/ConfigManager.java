@@ -178,7 +178,7 @@ public class ConfigManager {
     }
 
     private static void afterConfigLoaded() {
-        if (!App.disableErrorReporting && ConfigManager.getConfigItem("errorReporting.enabled", true) == true) {
+        if (!App.disableErrorReporting && ConfigManager.getConfigItem("errorReporting.enabled", true)) {
             ErrorReporting.ignoredMessages.clear();
             ErrorReporting.ignoredMessages
                     .addAll(ConfigManager.getConfigItem("errorReporting.ignoredMessages", new ArrayList<String>()));
@@ -190,7 +190,7 @@ public class ConfigManager {
         }
 
         // error reporting disabled, but we have a client initated, so close it
-        if (ConfigManager.getConfigItem("errorReporting.enabled", true) == false && ErrorReporting.sentryInitialised) {
+        if (!ConfigManager.getConfigItem("errorReporting.enabled", true) && ErrorReporting.sentryInitialised) {
             ErrorReporting.disable();
         }
     }

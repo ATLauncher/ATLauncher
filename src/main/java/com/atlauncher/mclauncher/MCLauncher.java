@@ -255,7 +255,7 @@ public class MCLauncher {
         }
         arguments.add(path);
 
-        if (ConfigManager.getConfigItem("removeInitialMemoryOption", false) == false) {
+        if (!ConfigManager.getConfigItem("removeInitialMemoryOption", false)) {
             int initialMemory = Optional.ofNullable(instance.launcher.initialMemory).orElse(App.settings.initialMemory);
             arguments.add("-Xms" + initialMemory + "M");
         }

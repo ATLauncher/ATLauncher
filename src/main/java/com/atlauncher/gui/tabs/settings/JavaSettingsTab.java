@@ -109,7 +109,7 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         RelocalizationManager.addListener(this);
         SettingsManager.addListener(this);
 
-        if (ConfigManager.getConfigItem("removeInitialMemoryOption", false) == false) {
+        if (!ConfigManager.getConfigItem("removeInitialMemoryOption", false)) {
             // Initial Memory Settings
             gbc.gridx = 0;
             gbc.gridy++;
@@ -205,7 +205,7 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
             @Override
             public void stateChanged(ChangeEvent e) {
                 JSpinner s = (JSpinner) e.getSource();
-                if (ConfigManager.getConfigItem("removeInitialMemoryOption", false) == false) {
+                if (!ConfigManager.getConfigItem("removeInitialMemoryOption", false)) {
                     // if initial memory is larger than maximum memory, make initial memory match
                     if ((Integer) initialMemory.getValue() > (Integer) s.getValue()) {
                         initialMemory.setValue(s.getValue());
@@ -655,7 +655,7 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
     }
 
     public boolean isValidJavaParamaters() {
-        if ((ConfigManager.getConfigItem("removeInitialMemoryOption", false) == false
+        if ((!ConfigManager.getConfigItem("removeInitialMemoryOption", false)
                 && javaParameters.getText().contains("-Xms")) || javaParameters.getText().contains("-Xmx")
                 || javaParameters.getText().contains("-XX:PermSize")
                 || javaParameters.getText().contains("-XX:MetaspaceSize")) {
@@ -668,7 +668,7 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
     }
 
     public void save() {
-        if (ConfigManager.getConfigItem("removeInitialMemoryOption", false) == false) {
+        if (!ConfigManager.getConfigItem("removeInitialMemoryOption", false)) {
             App.settings.initialMemory = (Integer) initialMemory.getValue();
         }
 
@@ -701,7 +701,7 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
 
     @Override
     public void onRelocalization() {
-        if (ConfigManager.getConfigItem("removeInitialMemoryOption", false) == false) {
+        if (!ConfigManager.getConfigItem("removeInitialMemoryOption", false)) {
             this.initialMemoryLabelWarning.setToolTipText(new HTMLBuilder().center().split(100).text(GetText.tr(
                     "You're running a 32 bit Java and therefore cannot use more than 1GB of Ram. Please see http://atl.pw/32bit for help."))
                     .build());

@@ -101,7 +101,7 @@ public class JavaInstanceSettingsTab extends JPanel {
         int systemRam = OS.getSystemRam();
         setLayout(new GridBagLayout());
 
-        if (ConfigManager.getConfigItem("removeInitialMemoryOption", false) == false) {
+        if (!ConfigManager.getConfigItem("removeInitialMemoryOption", false)) {
             // Initial Memory Settings
             gbc.gridx = 0;
             gbc.gridy++;
@@ -193,7 +193,7 @@ public class JavaInstanceSettingsTab extends JPanel {
             @Override
             public void stateChanged(ChangeEvent e) {
                 JSpinner s = (JSpinner) e.getSource();
-                if (ConfigManager.getConfigItem("removeInitialMemoryOption", false) == false) {
+                if (!ConfigManager.getConfigItem("removeInitialMemoryOption", false)) {
                     // if initial memory is larger than maximum memory, make initial memory match
                     if ((Integer) initialMemory.getValue() > (Integer) s.getValue()) {
                         initialMemory.setValue(s.getValue());
@@ -661,7 +661,7 @@ public class JavaInstanceSettingsTab extends JPanel {
     }
 
     public boolean isValidJavaParamaters() {
-        if ((ConfigManager.getConfigItem("removeInitialMemoryOption", false) == false
+        if ((!ConfigManager.getConfigItem("removeInitialMemoryOption", false)
                 && javaParameters.getText().contains("-Xms")) || javaParameters.getText().contains("-Xmx")
                 || javaParameters.getText().contains("-XX:PermSize")
                 || javaParameters.getText().contains("-XX:MetaspaceSize")) {
@@ -674,7 +674,7 @@ public class JavaInstanceSettingsTab extends JPanel {
     }
 
     public void saveSettings() {
-        if (ConfigManager.getConfigItem("removeInitialMemoryOption", false) == false) {
+        if (!ConfigManager.getConfigItem("removeInitialMemoryOption", false)) {
             Integer initialMemory = (Integer) this.initialMemory.getValue();
 
             this.instance.launcher.initialMemory = (initialMemory == App.settings.initialMemory ? null : initialMemory);

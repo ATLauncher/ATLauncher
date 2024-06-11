@@ -102,7 +102,7 @@ public class Launcher {
 
         NewsManager.loadNews(); // Load the news
 
-        if (App.settings.enableAnalytics && ConfigManager.getConfigItem("useGraphql.launcherLaunch", false) == true) {
+        if (App.settings.enableAnalytics && ConfigManager.getConfigItem("useGraphql.launcherLaunch", false)) {
             App.TASKPOOL.execute(() -> {
                 GraphqlClient.mutate(new AddLauncherLaunchMutation(
                         AddLauncherLaunchInput.builder().version(Constants.VERSION.toStringForLogging())

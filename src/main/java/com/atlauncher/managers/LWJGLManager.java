@@ -218,7 +218,7 @@ public class LWJGLManager {
      * We only replace LWJGL 2 if the user is on linux ARM
      */
     public static boolean shouldUseLegacyLWJGL(MinecraftVersion minecraftVersion) {
-        return ConfigManager.getConfigItem("useLwjglReplacement", false) == true && App.settings.enableArmSupport
+        return ConfigManager.getConfigItem("useLwjglReplacement", false) && App.settings.enableArmSupport
                 && usesLegacyLWJGL(minecraftVersion) && OS.isArm() && OS.isLinux();
     }
 
@@ -227,7 +227,7 @@ public class LWJGLManager {
      * Minecraft provides natives for it already)
      */
     public static boolean shouldReplaceLWJGL3(MinecraftVersion minecraftVersion) {
-        return ConfigManager.getConfigItem("useLwjglReplacement", false) == true && App.settings.enableArmSupport
+        return ConfigManager.getConfigItem("useLwjglReplacement", false) && App.settings.enableArmSupport
                 && !usesLegacyLWJGL(minecraftVersion)
                 && (OS.isArm() && (!OS.isMacArm() || !minecraftVersion.libraries.stream().anyMatch(
                         l -> l.name.startsWith("org.lwjgl:lwjgl") && l.name.endsWith("natives-macos-arm64"))));

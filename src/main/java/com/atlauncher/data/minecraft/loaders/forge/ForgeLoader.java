@@ -307,7 +307,7 @@ public class ForgeLoader implements Loader {
         }.getType();
 
         try {
-            if (ConfigManager.getConfigItem("useGraphql.loaderVersions", false) == true) {
+            if (ConfigManager.getConfigItem("useGraphql.loaderVersions", false)) {
                 GetForgeLoaderVersionsForMinecraftVersionQuery.Data response = GraphqlClient
                         .callAndWait(new GetForgeLoaderVersionsForMinecraftVersionQuery(minecraft));
 

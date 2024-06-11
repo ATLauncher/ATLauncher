@@ -155,11 +155,11 @@ public final class AddModsDialog extends JDialog {
         this.setResizable(true);
         this.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 
-        if (ConfigManager.getConfigItem("platforms.curseforge.modsEnabled", true) == true) {
+        if (ConfigManager.getConfigItem("platforms.curseforge.modsEnabled", true)) {
             hostComboBox.addItem(new ComboItem<>(ModPlatform.CURSEFORGE, "CurseForge"));
         }
 
-        if (ConfigManager.getConfigItem("platforms.modrinth.modsEnabled", true) == true) {
+        if (ConfigManager.getConfigItem("platforms.modrinth.modsEnabled", true)) {
             hostComboBox.addItem(new ComboItem<>(ModPlatform.MODRINTH, "Modrinth"));
         }
 

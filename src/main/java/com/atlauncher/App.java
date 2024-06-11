@@ -415,7 +415,7 @@ public class App {
     }
 
     private static void checkIfNeedToUpdateBundledJre() {
-        if (ConfigManager.getConfigItem("bundledJre.promptToUpdate", false) == true
+        if (ConfigManager.getConfigItem("bundledJre.promptToUpdate", false)
                 && Java.shouldPromptToUpdateBundledJre()) {
             String dialogTitle;
             String dialogText;

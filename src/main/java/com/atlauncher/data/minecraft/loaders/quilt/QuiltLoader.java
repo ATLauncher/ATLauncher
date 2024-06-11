@@ -77,7 +77,7 @@ public class QuiltLoader implements Loader {
     }
 
     private QuiltMetaProfile getLoader(String version) {
-        if (ConfigManager.getConfigItem("useGraphql.loaderVersionsNonForge", false) == true) {
+        if (ConfigManager.getConfigItem("useGraphql.loaderVersionsNonForge", false)) {
             GetQuiltLoaderVersionQuery.Data response = GraphqlClient
                     .callAndWait(GetQuiltLoaderVersionQuery.builder().quiltVersion(version)
                             .minecraftVersion(this.minecraft).includeClientJson(
@@ -105,7 +105,7 @@ public class QuiltLoader implements Loader {
     }
 
     public String getLatestVersion() {
-        if (ConfigManager.getConfigItem("useGraphql.loaderVersionsNonForge", false) == true) {
+        if (ConfigManager.getConfigItem("useGraphql.loaderVersionsNonForge", false)) {
             GetLatestQuiltLoaderVersionQuery.Data response = GraphqlClient
                     .callAndWait(new GetLatestQuiltLoaderVersionQuery());
 
@@ -243,7 +243,7 @@ public class QuiltLoader implements Loader {
             List<String> disabledVersions = ConfigManager.getConfigItem("loaders.quilt.disabledVersions",
                     new ArrayList<String>());
 
-            if (ConfigManager.getConfigItem("useGraphql.loaderVersionsNonForge", false) == true) {
+            if (ConfigManager.getConfigItem("useGraphql.loaderVersionsNonForge", false)) {
                 GetQuiltLoaderVersionsForMinecraftVersionQuery.Data response = GraphqlClient
                         .callAndWait(new GetQuiltLoaderVersionsForMinecraftVersionQuery(minecraft));
 

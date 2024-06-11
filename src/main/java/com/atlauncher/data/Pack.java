@@ -315,7 +315,7 @@ public class Pack {
     }
 
     public void addInstall(String version) {
-        if (ConfigManager.getConfigItem("useGraphql.packActions", false) == true) {
+        if (ConfigManager.getConfigItem("useGraphql.packActions", false)) {
             GraphqlClient
                     .mutateAndWait(
                             new AddPackActionMutation(AddPackActionInput.builder().packId(Integer.toString(
@@ -334,7 +334,7 @@ public class Pack {
     }
 
     public void addServerInstall(String version) {
-        if (ConfigManager.getConfigItem("useGraphql.packActions", false) == true) {
+        if (ConfigManager.getConfigItem("useGraphql.packActions", false)) {
             GraphqlClient
                     .mutateAndWait(
                             new AddPackActionMutation(AddPackActionInput.builder().packId(Integer.toString(
@@ -353,7 +353,7 @@ public class Pack {
     }
 
     public void addUpdate(String version) {
-        if (ConfigManager.getConfigItem("useGraphql.packActions", false) == true) {
+        if (ConfigManager.getConfigItem("useGraphql.packActions", false)) {
             GraphqlClient
                     .mutateAndWait(
                             new AddPackActionMutation(AddPackActionInput.builder().packId(Integer.toString(

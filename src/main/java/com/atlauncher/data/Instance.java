@@ -1261,7 +1261,7 @@ public class Instance extends MinecraftVersion {
     }
 
     public void addPlay(String version) {
-        if (ConfigManager.getConfigItem("useGraphql.packActions", false) == true) {
+        if (ConfigManager.getConfigItem("useGraphql.packActions", false)) {
             GraphqlClient
                     .mutateAndWait(
                             new AddPackActionMutation(AddPackActionInput.builder().packId(Integer.toString(
@@ -1281,7 +1281,7 @@ public class Instance extends MinecraftVersion {
     }
 
     public void addTimePlayed(int time, String version) {
-        if (ConfigManager.getConfigItem("useGraphql.packActions", false) == true) {
+        if (ConfigManager.getConfigItem("useGraphql.packActions", false)) {
             GraphqlClient
                     .mutateAndWait(
                             new AddPackTimePlayedMutation(AddPackTimePlayedInput.builder().packId(Integer.toString(
@@ -1813,7 +1813,7 @@ public class Instance extends MinecraftVersion {
         if (launcher.loaderVersion.isQuilt()) {
             String hashedName = "org.quiltmc.hashed";
             String cachedName = "Hashed Mappings";
-            if (ConfigManager.getConfigItem("loaders.quilt.switchHashedForIntermediary", true) == false) {
+            if (!ConfigManager.getConfigItem("loaders.quilt.switchHashedForIntermediary", true)) {
                 hashedName = "net.fabricmc.intermediary";
                 cachedName = "Intermediary Mappings";
             }
@@ -1927,7 +1927,7 @@ public class Instance extends MinecraftVersion {
         instanceCfg.setProperty("MaxMemAlloc",
                 Optional.ofNullable(launcher.maximumMemory).orElse(App.settings.maximumMemory) + "");
 
-        if (ConfigManager.getConfigItem("removeInitialMemoryOption", false) == false) {
+        if (!ConfigManager.getConfigItem("removeInitialMemoryOption", false)) {
             instanceCfg.setProperty("MinMemAlloc",
                     Optional.ofNullable(launcher.initialMemory).orElse(App.settings.initialMemory) + "");
         }
@@ -2575,10 +2575,10 @@ public class Instance extends MinecraftVersion {
 
     public boolean isUpdatableExternalPack() {
         return isExternalPack() && ((isCurseForgePack()
-                && ConfigManager.getConfigItem("platforms.curseforge.modpacksEnabled", true) == true)
-                || (isTechnicPack() && ConfigManager.getConfigItem("platforms.technic.modpacksEnabled", true) == true)
+                && ConfigManager.getConfigItem("platforms.curseforge.modpacksEnabled", true))
+                || (isTechnicPack() && ConfigManager.getConfigItem("platforms.technic.modpacksEnabled", true))
                 || (isModrinthPack()
-                        && ConfigManager.getConfigItem("platforms.modrinth.modpacksEnabled", true) == true));
+                        && ConfigManager.getConfigItem("platforms.modrinth.modpacksEnabled", true)));
     }
 
     public String getPlatformName() {

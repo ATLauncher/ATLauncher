@@ -186,7 +186,7 @@ public final class Analytics {
             return false;
         }
 
-        if (ConfigManager.getConfigItem("analytics.enabledForAll", false) == true) {
+        if (ConfigManager.getConfigItem("analytics.enabledForAll", false)) {
             return true;
         }
 

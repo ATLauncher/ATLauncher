@@ -181,7 +181,7 @@ public final class PacksBrowserTab extends JPanel
 
                 PackBrowserPlatformPanel selectedPanel = (PackBrowserPlatformPanel) platformTabbedPane
                         .getSelectedComponent();
-                setSortOrder(selectedPanel.getSortFieldsDefaultOrder().getOrDefault(newSort, true) == true);
+                setSortOrder(selectedPanel.getSortFieldsDefaultOrder().getOrDefault(newSort, true));
 
                 load(true);
             }
@@ -273,7 +273,7 @@ public final class PacksBrowserTab extends JPanel
 
         int index = 0;
 
-        if (ConfigManager.getConfigItem("useGraphql.unifiedModPacks", false) == true) {
+        if (ConfigManager.getConfigItem("useGraphql.unifiedModPacks", false)) {
             platformTabbedPane.add(unifiedPacksPanel);
             platformTabbedPane.setTabComponentAt(index++, new PacksBrowserTabTitlePanel("Search"));
         }
@@ -281,17 +281,17 @@ public final class PacksBrowserTab extends JPanel
         platformTabbedPane.add(atlauncherPacksPanel);
         platformTabbedPane.setTabComponentAt(index++, new PacksBrowserTabTitlePanel("ATLauncher"));
 
-        if (ConfigManager.getConfigItem("platforms.curseforge.modpacksEnabled", true) == true) {
+        if (ConfigManager.getConfigItem("platforms.curseforge.modpacksEnabled", true)) {
             platformTabbedPane.add(curseForgePacksPanel);
             platformTabbedPane.setTabComponentAt(index++, new PacksBrowserTabTitlePanel("CurseForge"));
         }
 
-        if (ConfigManager.getConfigItem("platforms.modrinth.modpacksEnabled", true) == true) {
+        if (ConfigManager.getConfigItem("platforms.modrinth.modpacksEnabled", true)) {
             platformTabbedPane.add(modrinthPacksPanel);
             platformTabbedPane.setTabComponentAt(index++, new PacksBrowserTabTitlePanel("Modrinth"));
         }
 
-        if (ConfigManager.getConfigItem("platforms.technic.modpacksEnabled", true) == true) {
+        if (ConfigManager.getConfigItem("platforms.technic.modpacksEnabled", true)) {
             platformTabbedPane.add(technicPacksPanel);
             platformTabbedPane.setTabComponentAt(index++, new PacksBrowserTabTitlePanel("Technic"));
         }
@@ -393,7 +393,7 @@ public final class PacksBrowserTab extends JPanel
         if (selectedPanel.supportsSortOrder()) {
             String newSort = ((ComboItem<String>) sortComboBox.getSelectedItem()).getValue();
 
-            setSortOrder(selectedPanel.getSortFieldsDefaultOrder().getOrDefault(newSort, true) == true);
+            setSortOrder(selectedPanel.getSortFieldsDefaultOrder().getOrDefault(newSort, true));
         } else {
             setSortOrder(true);
         }
@@ -543,7 +543,7 @@ public final class PacksBrowserTab extends JPanel
 
     @Override
     public String getAnalyticsScreenViewName() {
-        if (ConfigManager.getConfigItem("useGraphql.unifiedModPacks", false) == true) {
+        if (ConfigManager.getConfigItem("useGraphql.unifiedModPacks", false)) {
             return "Unified ModPack Search";
         }
 

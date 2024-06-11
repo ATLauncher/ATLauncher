@@ -397,7 +397,7 @@ public class Settings {
         boolean needToSave = false;
         int systemMemory = OS.getMaximumRam();
 
-        if (ConfigManager.getConfigItem("removeInitialMemoryOption", false) == false) {
+        if (!ConfigManager.getConfigItem("removeInitialMemoryOption", false)) {
             if (systemMemory != 0 && initialMemory > systemMemory) {
                 LogManager.warn("Tried to allocate " + initialMemory + "MB for initial memory but only " + systemMemory
                         + "MB is available to use!");
