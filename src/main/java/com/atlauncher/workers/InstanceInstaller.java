@@ -777,7 +777,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                     Optional<CurseForgeFile> curseForgeFile = filesFound.stream().filter(f -> f.id == file.fileID)
                             .findFirst();
 
-                    return curseForgeFile.isPresent() ? curseForgeFile.get().downloadUrl == null : false;
+                    return curseForgeFile.filter(forgeFile -> forgeFile.downloadUrl == null).isPresent();
                 }).map(file -> filesFound.stream().filter(f -> f.id == file.fileID)
                         .findFirst().get())
                 .collect(Collectors.toList());
@@ -2832,14 +2832,12 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                         browserDownloadMods);
 
                 for (Mod mod : browserDownloadMods) {
-                    if (!browserDownloadDialog.modsDownloaded.stream()
-                            .anyMatch(m -> m.curseForgeFileId == mod.curseForgeFileId)) {
+                    if (browserDownloadDialog.modsDownloaded.stream()
+                            .noneMatch(m -> m.curseForgeFileId == mod.curseForgeFileId)) {
                         LogManager.info("Browser download mod " + mod.name + " was skipped");
                         Optional<DisableableMod> disableableMod = this.modsInstalled.stream()
                                 .filter(m -> m.curseForgeFileId == mod.curseForgeFileId).findFirst();
-                        if (disableableMod.isPresent()) {
-                            disableableMod.get().skipped = true;
-                        }
+                        disableableMod.ifPresent(value -> value.skipped = true);
                     }
                 }
 
@@ -2857,9 +2855,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                             LogManager.info("Browser download mod " + mod.name + " was skipped");
                             Optional<DisableableMod> disableableMod = this.modsInstalled.stream()
                                     .filter(m -> m.file == mod.file).findFirst();
-                            if (disableableMod.isPresent()) {
-                                disableableMod.get().skipped = true;
-                            }
+                            disableableMod.ifPresent(value -> value.skipped = true);
                         }
 
                         browserDownloadModsDownloaded++;

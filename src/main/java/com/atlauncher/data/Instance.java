@@ -2986,9 +2986,9 @@ public class Instance extends MinecraftVersion {
             Optional<LoaderVersion> recommendedVersion = loaderVersions.stream().filter(lv -> lv.recommended)
                     .findFirst();
 
-            if (recommendedVersion.isPresent()) {
-                loaderVersionsDropDown.setSelectedIndex(loaderVersions.indexOf(recommendedVersion.get()));
-            }
+            recommendedVersion.ifPresent(loaderVersion ->
+                loaderVersionsDropDown.setSelectedIndex(loaderVersions.indexOf(loaderVersion))
+            );
         }
 
         if (launcher.loaderVersion != null) {

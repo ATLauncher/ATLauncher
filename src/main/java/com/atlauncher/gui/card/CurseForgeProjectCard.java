@@ -99,9 +99,9 @@ public final class CurseForgeProjectCard extends JPanel {
         add(buttonsPanel, BorderLayout.SOUTH);
 
         Optional<CurseForgeAttachment> attachment = mod.getLogo();
-        if (attachment.isPresent()) {
-            new BackgroundImageWorker(icon, attachment.get().thumbnailUrl, 60, 60).execute();
-        }
+        attachment.ifPresent(curseForgeAttachment ->
+            new BackgroundImageWorker(icon, curseForgeAttachment.thumbnailUrl, 60, 60).execute()
+        );
 
         updateInstalledStatus();
     }

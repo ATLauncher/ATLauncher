@@ -444,9 +444,7 @@ public class InstanceInstallerDialog extends JDialog {
                                         .filter(sf -> sf.serverPackFileId != null)
                                         .filter(sf -> sf.serverPackFileId == f.id).findFirst();
 
-                                if (matchingFile.isPresent()) {
-                                    f.gameVersions = matchingFile.get().gameVersions;
-                                }
+                                matchingFile.ifPresent(curseForgeFile -> f.gameVersions = curseForgeFile.gameVersions);
                             }
 
                             return f;
@@ -940,9 +938,7 @@ public class InstanceInstallerDialog extends JDialog {
             Optional<PackVersion> versionToSelect = this.pack.versions.stream()
                     .filter(pv -> pv._modrinthVersion.id.equals(this.preselectedModrinthVersion.id)).findFirst();
 
-            if (versionToSelect.isPresent()) {
-                versionsDropDown.setSelectedItem(versionToSelect.get());
-            }
+            versionToSelect.ifPresent(packVersion -> versionsDropDown.setSelectedItem(packVersion));
         }
 
         if (multiMCManifest != null) {

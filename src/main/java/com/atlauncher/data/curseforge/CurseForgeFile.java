@@ -123,15 +123,11 @@ public class CurseForgeFile {
 
         Optional<CurseForgeFileHash> md5Hash = hashes.stream().filter(h -> h.isMd5())
                 .findFirst();
-        if (md5Hash.isPresent()) {
-            mod.md5 = md5Hash.get().value;
-        }
+        md5Hash.ifPresent(curseForgeFileHash -> mod.md5 = curseForgeFileHash.value);
 
         Optional<CurseForgeFileHash> sha1Hash = hashes.stream().filter(h -> h.isSha1())
                 .findFirst();
-        if (sha1Hash.isPresent()) {
-            mod.sha1 = sha1Hash.get().value;
-        }
+        sha1Hash.ifPresent(curseForgeFileHash -> mod.sha1 = curseForgeFileHash.value);
 
         return mod;
     }

@@ -85,11 +85,8 @@ public class LWJGLManager {
         Optional<LWJGLLibrary> library = Optional
                 .ofNullable(lwjglVersion.libraries.get("lwjgl").get(OS.getLWJGLClassifier()));
 
-        if (!library.isPresent()) {
-            return null;
-        }
+        return library.orElse(null);
 
-        return library.get();
     }
 
     public static Library getReplacementLWJGL3Library(MinecraftVersion minecraftVersion, Library library) {
