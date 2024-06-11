@@ -242,7 +242,7 @@ public final class DialogManager {
 
             if (options == null) {
                 if (selectedValue instanceof Integer) {
-                    return ((Integer) selectedValue).intValue();
+                    return (Integer) selectedValue;
                 }
                 return CLOSED_OPTION;
             }
