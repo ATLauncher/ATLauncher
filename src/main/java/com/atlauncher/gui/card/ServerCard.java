@@ -49,7 +49,6 @@ import com.atlauncher.network.Analytics;
 import com.atlauncher.network.analytics.AnalyticsEvent;
 import com.atlauncher.utils.OS;
 
-@SuppressWarnings("serial")
 public class ServerCard extends CollapsiblePanel implements RelocalizationListener {
     private final Server server;
     private final ImagePanel image;

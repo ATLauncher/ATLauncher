@@ -53,7 +53,6 @@ import com.atlauncher.utils.Markdown;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
 
-@SuppressWarnings("serial")
 public class UnifiedPackCard extends JPanel implements RelocalizationListener {
     private final JButton newInstanceButton = new JButton(GetText.tr("New Instance"));
     private final JButton createServerButton = new JButton(GetText.tr("Create Server"));

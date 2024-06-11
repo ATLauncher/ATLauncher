@@ -45,7 +45,6 @@ import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
 import com.atlauncher.workers.BackgroundImageWorker;
 
-@SuppressWarnings("serial")
 public final class CurseForgeFileDependencyCard extends JPanel {
     private final CurseForgeProjectFileSelectorDialog parent;
     private final CurseForgeFileDependency dependency;

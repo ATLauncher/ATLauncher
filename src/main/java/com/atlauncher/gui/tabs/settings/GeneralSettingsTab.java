@@ -51,7 +51,6 @@ import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
 import com.atlauncher.utils.sort.InstanceSortingStrategies;
 
-@SuppressWarnings("serial")
 public class GeneralSettingsTab extends AbstractSettingsTab {
     private final JComboBox<String> language;
     private final JComboBox<ComboItem<String>> theme;

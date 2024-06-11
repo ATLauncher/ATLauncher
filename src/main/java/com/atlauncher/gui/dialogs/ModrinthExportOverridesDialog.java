@@ -35,7 +35,6 @@ import org.mini2Dx.gettext.GetText;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.utils.OS;
 
-@SuppressWarnings("serial")
 public class ModrinthExportOverridesDialog extends JDialog {
     public ModrinthExportOverridesDialog(Dialog parent, String text) {
         super(parent, GetText.tr("Overrides Included"), true);

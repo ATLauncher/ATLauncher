@@ -58,7 +58,6 @@ import com.atlauncher.network.analytics.AnalyticsEvent;
 import com.atlauncher.utils.CurseForgeApi;
 import com.atlauncher.utils.OS;
 
-@SuppressWarnings("serial")
 public class CurseForgeProjectFileSelectorDialog extends JDialog {
     private int filesLength = 0;
     private final CurseForgeProject mod;

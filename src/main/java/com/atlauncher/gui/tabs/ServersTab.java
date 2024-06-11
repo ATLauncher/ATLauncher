@@ -42,7 +42,6 @@ import com.atlauncher.viewmodel.base.IServersTabViewModel;
 import com.atlauncher.viewmodel.impl.ServersTabViewModel;
 import com.formdev.flatlaf.icons.FlatSearchIcon;
 
-@SuppressWarnings("serial")
 public class ServersTab extends HierarchyPanel implements Tab, RelocalizationListener {
     private JTextField searchBox;
 

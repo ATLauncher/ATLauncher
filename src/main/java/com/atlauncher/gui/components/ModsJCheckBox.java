@@ -47,7 +47,6 @@ import com.atlauncher.utils.Utils;
  * hover tooltip for a mods description, as well as giving pack developers a way
  * to colour mod's names.
  */
-@SuppressWarnings("serial")
 public class ModsJCheckBox extends JCheckBox {
     /**
      * The mod this object will use to display it's data. Will be type {@link Mod},

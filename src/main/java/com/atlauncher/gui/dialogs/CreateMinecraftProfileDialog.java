@@ -43,7 +43,6 @@ import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.MojangAPIUtils;
 import com.atlauncher.utils.Utils;
 
-@SuppressWarnings("serial")
 public class CreateMinecraftProfileDialog extends JDialog {
     private final Pattern VALID_PROFILE_NAME = Pattern.compile("[a-zA-Z0-9_]{3,16}");
 

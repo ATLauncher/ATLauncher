@@ -57,7 +57,6 @@ import com.atlauncher.utils.Hashing;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
 
-@SuppressWarnings("serial")
 public final class BrowserDownloadDialog extends JDialog {
     private final List<Mod> browserDownloadMods;
     public final List<Mod> modsDownloaded = new ArrayList<>();

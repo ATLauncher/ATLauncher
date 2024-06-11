@@ -63,7 +63,6 @@ import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
 import com.atlauncher.utils.javafinder.JavaInfo;
 
-@SuppressWarnings("serial")
 public class JavaInstanceSettingsTab extends JPanel {
     private final Instance instance;
 

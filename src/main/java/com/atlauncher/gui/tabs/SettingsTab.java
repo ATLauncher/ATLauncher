@@ -46,7 +46,6 @@ import com.atlauncher.network.analytics.AnalyticsEvent;
 import com.atlauncher.utils.OS;
 import com.formdev.flatlaf.FlatLaf;
 
-@SuppressWarnings("serial")
 public class SettingsTab extends JPanel implements Tab, RelocalizationListener {
     private final GeneralSettingsTab generalSettingsTab = new GeneralSettingsTab();
     private final ModsSettingsTab modsSettingsTab = new ModsSettingsTab();

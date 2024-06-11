@@ -43,7 +43,6 @@ import com.atlauncher.managers.LogManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.Utils;
 
-@SuppressWarnings("serial")
 public class RenameInstanceDialog extends JDialog {
 
     private JTextField instanceName;

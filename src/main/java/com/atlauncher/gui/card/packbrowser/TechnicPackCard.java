@@ -44,7 +44,6 @@ import com.atlauncher.network.Analytics;
 import com.atlauncher.network.analytics.AnalyticsEvent;
 import com.atlauncher.utils.OS;
 
-@SuppressWarnings("serial")
 public class TechnicPackCard extends JPanel implements RelocalizationListener {
     private final JButton newInstanceButton = new JButton(GetText.tr("New Instance"));
     private final JButton websiteButton = new JButton(GetText.tr("Website"));

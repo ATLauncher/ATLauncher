@@ -41,7 +41,6 @@ import com.atlauncher.gui.dialogs.instancesettings.GeneralInstanceSettingsTab;
 import com.atlauncher.gui.dialogs.instancesettings.JavaInstanceSettingsTab;
 import com.atlauncher.utils.Utils;
 
-@SuppressWarnings("serial")
 public class InstanceSettingsDialog extends JDialog {
     private final Instance instance;
 

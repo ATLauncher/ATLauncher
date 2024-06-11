@@ -31,7 +31,6 @@ import javax.swing.UIManager;
 import com.atlauncher.App;
 import com.atlauncher.utils.Utils;
 
-@SuppressWarnings("serial")
 public class DropDownButton extends JButton {
     private final JPopupMenu popupMenu;
     private final boolean isSeparated;

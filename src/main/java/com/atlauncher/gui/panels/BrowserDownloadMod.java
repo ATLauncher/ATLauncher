@@ -30,7 +30,6 @@ import com.atlauncher.constants.UIConstants;
 import com.atlauncher.data.json.Mod;
 import com.atlauncher.utils.OS;
 
-@SuppressWarnings("serial")
 public class BrowserDownloadMod extends JPanel {
     private JButton openButton = new JButton(GetText.tr("Open"));
     private JButton copyLinkButton = new JButton(GetText.tr("Copy Link"));

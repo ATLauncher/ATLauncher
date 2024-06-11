@@ -57,7 +57,6 @@ import com.atlauncher.utils.OS;
 import net.freeutils.httpserver.HTTPServer;
 import net.freeutils.httpserver.HTTPServer.VirtualHost;
 
-@SuppressWarnings("serial")
 public final class LoginWithMicrosoftDialog extends JDialog {
     private static final HTTPServer server = new HTTPServer(Constants.MICROSOFT_LOGIN_REDIRECT_PORT);
     private static final VirtualHost host = server.getVirtualHost(null);

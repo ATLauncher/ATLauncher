@@ -40,7 +40,6 @@ import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.utils.Utils;
 
-@SuppressWarnings("serial")
 public class NetworkSettingsTab extends AbstractSettingsTab implements RelocalizationListener {
     private final JLabelWithHover concurrentConnectionsLabel;
     private final JSpinner concurrentConnections;

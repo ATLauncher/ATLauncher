@@ -33,7 +33,6 @@ import com.atlauncher.data.ModPlatform;
 import com.atlauncher.gui.components.JLabelWithHover;
 import com.atlauncher.utils.ComboItem;
 
-@SuppressWarnings("serial")
 public class ModsSettingsTab extends AbstractSettingsTab {
     private final JComboBox<ComboItem<ModPlatform>> defaultModPlatform;
     private final JComboBox<ComboItem<AddModRestriction>> addModRestriction;

@@ -77,7 +77,6 @@ import com.atlauncher.utils.ModrinthApi;
 import com.atlauncher.utils.OS;
 import com.formdev.flatlaf.icons.FlatSearchIcon;
 
-@SuppressWarnings("serial")
 public final class AddModsDialog extends JDialog {
     private final Instance instance;
 

@@ -46,7 +46,6 @@ import com.atlauncher.network.Analytics;
 import com.atlauncher.network.analytics.AnalyticsEvent;
 import com.atlauncher.utils.OS;
 
-@SuppressWarnings("serial")
 public class ModrinthPackCard extends JPanel implements RelocalizationListener {
     private final JButton newInstanceButton = new JButton(GetText.tr("New Instance"));
     private final JButton createServerButton = new JButton(GetText.tr("Create Server"));

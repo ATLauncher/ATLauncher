@@ -41,7 +41,6 @@ import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
 import com.atlauncher.workers.BackgroundImageWorker;
 
-@SuppressWarnings("serial")
 public final class CurseForgeProjectCard extends JPanel {
     private final CurseForgeProject mod;
     private final Instance instance;

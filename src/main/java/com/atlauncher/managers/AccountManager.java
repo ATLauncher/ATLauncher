@@ -48,7 +48,6 @@ import com.google.gson.reflect.TypeToken;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.subjects.BehaviorSubject;
 
-@SuppressWarnings("deprecation")
 public class AccountManager {
     private static final Type abstractAccountListType = new TypeToken<List<MicrosoftAccount>>() {
     }.getType();

@@ -61,7 +61,6 @@ import com.atlauncher.utils.ComboItem;
 import com.atlauncher.utils.ModrinthApi;
 import com.atlauncher.utils.OS;
 
-@SuppressWarnings("serial")
 public class ModrinthVersionSelectorDialog extends JDialog {
     private int versionsLength = 0;
     private int filesLength = 0;

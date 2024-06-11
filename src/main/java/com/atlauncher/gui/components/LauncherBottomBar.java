@@ -48,7 +48,6 @@ import com.atlauncher.utils.Pair;
 
 import io.reactivex.rxjava3.core.Observable;
 
-@SuppressWarnings("serial")
 public class LauncherBottomBar extends BottomBar implements RelocalizationListener {
     private final Observable<Pair<List<MicrosoftAccount>, Optional<MicrosoftAccount>>> accountState = Observable
             .combineLatest(

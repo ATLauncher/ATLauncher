@@ -68,7 +68,6 @@ public class AccountsTab extends HierarchyPanel implements Tab, RelocalizationLi
     private JMenuItem changeSkin;
     private JPopupMenu contextMenu; // Right click menu
 
-    @SuppressWarnings("unchecked")
     public AccountsTab() {
         super(new BorderLayout());
     }

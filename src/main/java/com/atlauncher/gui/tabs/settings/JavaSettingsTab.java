@@ -60,7 +60,6 @@ import com.atlauncher.utils.Java;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.javafinder.JavaInfo;
 
-@SuppressWarnings("serial")
 public class JavaSettingsTab extends AbstractSettingsTab implements RelocalizationListener, SettingsListener {
     private JLabelWithHover initialMemoryLabel;
     private JSpinner initialMemory;

@@ -69,7 +69,6 @@ import com.atlauncher.utils.ComboItem;
 import com.atlauncher.utils.Utils;
 import com.formdev.flatlaf.icons.FlatSearchIcon;
 
-@SuppressWarnings("serial")
 public final class PacksBrowserTab extends JPanel
         implements Tab, RelocalizationListener, ThemeListener, TabChangeListener {
     private final JPanel actionsPanel = new JPanel();

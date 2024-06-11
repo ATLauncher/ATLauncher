@@ -36,7 +36,6 @@ import com.atlauncher.interfaces.NetworkProgressable;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.utils.Utils;
 
-@SuppressWarnings("serial")
 public class ProgressDialog<T> extends JDialog implements NetworkProgressable {
     private final String labelText; // The text to add to the JLabel
     private final JProgressBar progressBar; // The Progress Bar

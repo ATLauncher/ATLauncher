@@ -57,7 +57,6 @@ import com.atlauncher.utils.Pair;
 import com.atlauncher.utils.Utils;
 import com.atlauncher.utils.WindowUtils;
 
-@SuppressWarnings("serial")
 public class InstanceExportDialog extends JDialog {
     private final Instance instance;
     private final List<String> overrides = new ArrayList<>();

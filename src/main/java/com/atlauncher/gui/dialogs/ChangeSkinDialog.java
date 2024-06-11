@@ -54,7 +54,6 @@ import com.atlauncher.utils.ComboItem;
 import com.atlauncher.utils.MojangAPIUtils;
 import com.atlauncher.utils.Utils;
 
-@SuppressWarnings("serial")
 public class ChangeSkinDialog extends JDialog {
     private JTextField skinPath;
     private JComboBox<ComboItem<String>> skinType;

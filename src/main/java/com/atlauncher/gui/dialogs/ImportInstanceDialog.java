@@ -56,7 +56,6 @@ import com.atlauncher.utils.ImportPackUtils;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
 
-@SuppressWarnings("serial")
 public class ImportInstanceDialog extends JDialog {
 
     private final JTextField url;
