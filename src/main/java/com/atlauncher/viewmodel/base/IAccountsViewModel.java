@@ -17,7 +17,6 @@
  */
 package com.atlauncher.viewmodel.base;
 
-import com.atlauncher.data.AbstractAccount;
 import com.atlauncher.data.MicrosoftAccount;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
