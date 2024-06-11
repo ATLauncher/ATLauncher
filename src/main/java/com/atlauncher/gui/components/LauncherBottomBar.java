@@ -74,6 +74,11 @@ public class LauncherBottomBar extends BottomBar implements RelocalizationListen
         gbc.gridy = GridBagConstraints.RELATIVE;
 
         gbc.insets = new Insets(0, 5, 0, 5);
+        WorkerIndicator workerIndicator = new WorkerIndicator();
+        leftSide.add(workerIndicator, gbc);
+
+        gbc.insets = new Insets(0, 5, 0, 5);
+        gbc.gridx++;
         leftSide.add(toggleConsole, gbc);
 
         gbc.insets = new Insets(0, 0, 0, 5);
