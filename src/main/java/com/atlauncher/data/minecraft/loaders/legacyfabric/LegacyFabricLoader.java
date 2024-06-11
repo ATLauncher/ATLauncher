@@ -115,7 +115,7 @@ public class LegacyFabricLoader implements Loader {
                     .callAndWait(new GetLatestLegacyFabricLoaderVersionQuery());
 
             if (response == null || response.legacyFabricLoaderVersions() == null
-                    || response.legacyFabricLoaderVersions().size() == 0) {
+                    || response.legacyFabricLoaderVersions().isEmpty()) {
                 return null;
             }
 
@@ -129,7 +129,7 @@ public class LegacyFabricLoader implements Loader {
                 .setUrl(String.format("https://meta.legacyfabric.net/v2/versions/loader/%s?limit=1", this.minecraft))
                 .asType(type);
 
-        if (loaders == null || loaders.size() == 0) {
+        if (loaders == null || loaders.isEmpty()) {
             return null;
         }
 
@@ -290,7 +290,7 @@ public class LegacyFabricLoader implements Loader {
 
                 if (response == null || response.loaderVersions() == null
                         || response.loaderVersions().legacyfabric() == null
-                        || response.loaderVersions().legacyfabric().size() == 0) {
+                        || response.loaderVersions().legacyfabric().isEmpty()) {
                     return null;
                 }
 

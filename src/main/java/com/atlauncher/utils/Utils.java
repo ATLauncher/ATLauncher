@@ -1561,7 +1561,7 @@ public class Utils {
 
             List<MCMod> mods = Gsons.DEFAULT.fromJson(ArchiveUtils.getFile(file.toPath(), "mcmod.info"), type);
 
-            if (mods.size() != 0 && mods.get(0) != null) {
+            if (!mods.isEmpty() && mods.get(0) != null) {
                 return mods.get(0);
             }
         } catch (Exception ignored) {

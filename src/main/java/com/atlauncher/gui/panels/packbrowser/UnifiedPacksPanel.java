@@ -56,7 +56,7 @@ public class UnifiedPacksPanel extends PackBrowserPlatformPanel {
         }
 
         List<UnifiedModPackResultsFragment> items = new ArrayList<>();
-        if (search.isEmpty() || search.length() == 0) {
+        if (search.isEmpty() || search.isEmpty()) {
             UnifiedModPackHomeQuery.Data response = GraphqlClient
                     .callAndWait(new UnifiedModPackHomeQuery());
 
@@ -77,7 +77,7 @@ public class UnifiedPacksPanel extends PackBrowserPlatformPanel {
             }
         }
 
-        if (items.size() == 0) {
+        if (items.isEmpty()) {
             contentPanel.removeAll();
             contentPanel.add(
                     new NilCard(new HTMLBuilder().text(GetText

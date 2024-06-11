@@ -66,7 +66,7 @@ public class Java {
         }
 
         if (this.max != 0) {
-            string += (string.length() != 0 ? " up to, and including, " : "Nothing newer than ") + "Java " + this.max;
+            string += (!string.isEmpty() ? " up to, and including, " : "Nothing newer than ") + "Java " + this.max;
         }
 
         return string;

@@ -228,7 +228,7 @@ public class CurseForgeProjectFileSelectorDialog extends JDialog {
         dependenciesPanel.setVisible(false);
 
         // this file has dependencies
-        if (selectedFile.dependencies.size() != 0) {
+        if (!selectedFile.dependencies.isEmpty()) {
             // check to see which required ones we don't already have
             List<CurseForgeFileDependency> dependencies = selectedFile.dependencies.stream()
                     .filter(dependency -> dependency.isRequired() && instance.launcher.mods.stream()
@@ -261,7 +261,7 @@ public class CurseForgeProjectFileSelectorDialog extends JDialog {
                             }))
                     .collect(Collectors.toList());
 
-            if (dependencies.size() != 0) {
+            if (!dependencies.isEmpty()) {
                 dependenciesPanel.removeAll();
 
                 dependencies.forEach(dependency -> dependenciesPanel

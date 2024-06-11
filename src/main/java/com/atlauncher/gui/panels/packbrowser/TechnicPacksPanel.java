@@ -52,7 +52,7 @@ public class TechnicPacksPanel extends PackBrowserPlatformPanel {
             packs = TechnicApi.searchModpacks(search).modpacks;
         }
 
-        if (packs == null || packs.size() == 0) {
+        if (packs == null || packs.isEmpty()) {
             contentPanel.removeAll();
             contentPanel.add(
                     new NilCard(new HTMLBuilder().text(GetText

@@ -113,7 +113,7 @@ public class FabricLoader implements Loader {
                     .callAndWait(new GetLatestFabricLoaderVersionQuery());
 
             if (response == null || response.fabricLoaderVersions() == null
-                    || response.fabricLoaderVersions().size() == 0) {
+                    || response.fabricLoaderVersions().isEmpty()) {
                 return null;
             }
 
@@ -127,7 +127,7 @@ public class FabricLoader implements Loader {
                 .setUrl(String.format("https://meta.fabricmc.net/v2/versions/loader/%s?limit=1", this.minecraft))
                 .asType(type);
 
-        if (loaders == null || loaders.size() == 0) {
+        if (loaders == null || loaders.isEmpty()) {
             return null;
         }
 
@@ -286,7 +286,7 @@ public class FabricLoader implements Loader {
 
                 if (response == null || response.loaderVersions() == null
                         || response.loaderVersions().fabric() == null
-                        || response.loaderVersions().fabric().size() == 0) {
+                        || response.loaderVersions().fabric().isEmpty()) {
                     return null;
                 }
 

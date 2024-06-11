@@ -145,7 +145,7 @@ public class ModrinthVersionSelectorDialog extends JDialog {
                 .collect(Collectors.toList());
 
         // this file has dependencies
-        if (dependencies.size() != 0) {
+        if (!dependencies.isEmpty()) {
             // check to see which required ones we don't already have
             List<ModrinthDependency> dependenciesNeeded = dependencies.stream()
                     .filter(dependency -> dependency.dependencyType == ModrinthDependencyType.REQUIRED
@@ -180,7 +180,7 @@ public class ModrinthVersionSelectorDialog extends JDialog {
                                     }))
                     .collect(Collectors.toList());
 
-            if (dependenciesNeeded.size() != 0) {
+            if (!dependenciesNeeded.isEmpty()) {
                 dependenciesPanel.removeAll();
 
                 dependenciesNeeded.forEach(dependency -> dependenciesPanel

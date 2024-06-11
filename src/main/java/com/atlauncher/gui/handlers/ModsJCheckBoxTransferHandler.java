@@ -76,7 +76,7 @@ public class ModsJCheckBoxTransferHandler extends TransferHandler {
         try {
             @SuppressWarnings("unchecked")
             final List<File> data = (List<File>) ts.getTransferable().getTransferData(DataFlavor.javaFileListFlavor);
-            if (data.size() < 1) {
+            if (data.isEmpty()) {
                 return false;
             }
 
@@ -195,7 +195,7 @@ public class ModsJCheckBoxTransferHandler extends TransferHandler {
                                 }
                             });
 
-                    if (murmurHashes.size() != 0) {
+                    if (!murmurHashes.isEmpty()) {
                         CurseForgeFingerprint fingerprintResponse = CurseForgeApi
                                 .checkFingerprints(murmurHashes.keySet().stream().toArray(Long[]::new));
 
@@ -255,12 +255,12 @@ public class ModsJCheckBoxTransferHandler extends TransferHandler {
                                 }
                             });
 
-                    if (sha1Hashes.size() != 0) {
+                    if (!sha1Hashes.isEmpty()) {
                         Set<String> keys = sha1Hashes.keySet();
                         Map<String, ModrinthVersion> modrinthVersions = ModrinthApi
                                 .getVersionsFromSha1Hashes(keys.toArray(new String[keys.size()]));
 
-                        if (modrinthVersions != null && modrinthVersions.size() != 0) {
+                        if (modrinthVersions != null && !modrinthVersions.isEmpty()) {
                             String[] projectIdsFound = modrinthVersions.values().stream().map(mv -> mv.projectId)
                                     .toArray(String[]::new);
 

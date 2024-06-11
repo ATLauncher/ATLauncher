@@ -450,7 +450,7 @@ public class JavaInstanceSettingsTab extends JPanel {
         for (String runtime : runtimes.keySet()) {
             List<JavaRuntime> runtimeObject = runtimes.get(runtime);
 
-            if (runtimeObject != null && runtimeObject.size() != 0) {
+            if (runtimeObject != null && !runtimeObject.isEmpty()) {
                 javaRuntimeOverride.addItem(
                         new ComboItem<>(runtime,
                                 String.format("%s (Java %s)", runtime, runtimeObject.get(0).version.name)));

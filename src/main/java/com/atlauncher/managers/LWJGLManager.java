@@ -72,7 +72,7 @@ public class LWJGLManager {
         Optional<LWJGLMajorVersion> version = Data.LWJGL_VERSIONS.versions.stream().filter(v -> v.version == 2)
                 .findFirst();
 
-        if (!version.isPresent() || version.get().versions.size() == 0) {
+        if (!version.isPresent() || version.get().versions.isEmpty()) {
             return null;
         }
 
@@ -102,7 +102,7 @@ public class LWJGLManager {
         Optional<LWJGLMajorVersion> version = Data.LWJGL_VERSIONS.versions.stream().filter(v -> v.version == 3)
                 .findFirst();
 
-        if (!version.isPresent() || version.get().versions.size() == 0) {
+        if (!version.isPresent() || version.get().versions.isEmpty()) {
             LogManager.debug(String.format("Not replacing library %s as major version 3 not found",
                     library.name));
             return library;
@@ -128,7 +128,7 @@ public class LWJGLManager {
 
         // 1.19-pre1 and onwards removed natives/classifiers, but we're worried about
         // the base library, no natives library here
-        if ((library.natives == null || library.natives.size() == 0) && !library.name.contains(":natives-")) {
+        if ((library.natives == null || library.natives.isEmpty()) && !library.name.contains(":natives-")) {
             Optional<LWJGLLibrary> lwjglLibrary = Optional
                     .ofNullable(lwjglVersion.get().libraries.get(libraryName).get("*"));
 
@@ -157,7 +157,7 @@ public class LWJGLManager {
         }
 
         // now worry about 1.19-pre1 format natives
-        if ((library.natives == null || library.natives.size() == 0) && library.name.contains(":natives-")) {
+        if ((library.natives == null || library.natives.isEmpty()) && library.name.contains(":natives-")) {
             Optional<LWJGLLibrary> lwjglLibrary = Optional
                     .ofNullable(lwjglVersion.get().libraries.get(libraryName).get(OS.getLWJGLClassifier()));
 
@@ -187,7 +187,7 @@ public class LWJGLManager {
         }
 
         // now the old version natives format
-        if (library.natives != null && library.natives.size() != 0) {
+        if (library.natives != null && !library.natives.isEmpty()) {
             Optional<LWJGLLibrary> lwjglLibrary = Optional
                     .ofNullable(lwjglVersion.get().libraries.get(libraryName).get(OS.getLWJGLClassifier()));
 

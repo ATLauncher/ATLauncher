@@ -317,7 +317,7 @@ public final class Download {
             builder.post(this.post);
         }
 
-        if (this.headers.size() != 0) {
+        if (!this.headers.isEmpty()) {
             builder.headers(Headers.of(this.headers));
         }
 

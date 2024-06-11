@@ -406,7 +406,7 @@ public class Instance extends MinecraftVersion {
             return true;
         }
 
-        if (version == null || this.launcher.ignoredUpdates.size() == 0) {
+        if (version == null || this.launcher.ignoredUpdates.isEmpty()) {
             return false;
         }
 
@@ -515,7 +515,7 @@ public class Instance extends MinecraftVersion {
                         && library.downloads.artifact.url != null && library.downloads.artifact.url.isEmpty()
                         && !Files.exists(FileSystem.LIBRARIES.resolve(library.downloads.artifact.path)))
                 .collect(Collectors.toList());
-        if (librariesMissingWithNoUrl.size() != 0) {
+        if (!librariesMissingWithNoUrl.isEmpty()) {
             DialogManager.okDialog().setTitle(GetText.tr("Missing Libraries Found"))
                     .setContent(new HTMLBuilder().center()
                             .text(GetText.tr(
@@ -594,7 +594,7 @@ public class Instance extends MinecraftVersion {
             String runtimeToUse = Optional.ofNullable(launcher.javaRuntimeOverride).orElse(javaVersion.component);
 
             if (runtimesForSystem.containsKey(runtimeToUse)
-                    && runtimesForSystem.get(runtimeToUse).size() != 0) {
+                    && !runtimesForSystem.get(runtimeToUse).isEmpty()) {
                 // #. {0} is the version of Java were downloading
                 progressDialog.setLabel(GetText.tr("Downloading Java Runtime {0}",
                         runtimesForSystem.get(runtimeToUse).get(0).version.name));
@@ -679,7 +679,7 @@ public class Instance extends MinecraftVersion {
 
         DownloadPool smallPool = pool.downsize();
 
-        if (smallPool.size() != 0) {
+        if (!smallPool.isEmpty()) {
             progressDialog.setLabel(GetText.tr("Downloading Resources"));
 
             progressDialog.setTotalBytes(smallPool.totalSize());
@@ -820,7 +820,7 @@ public class Instance extends MinecraftVersion {
             }
             PerformanceManager.end("Scanning mods for Fractureiser");
 
-            if (foundInfections.size() != 0) {
+            if (!foundInfections.isEmpty()) {
                 LogManager.error("Infections have been found in your mods. See the below list of paths");
                 foundInfections.forEach(p -> LogManager.error(p.toAbsolutePath().toString()));
                 return false;
@@ -846,7 +846,7 @@ public class Instance extends MinecraftVersion {
                             .text(GetText.tr("Cannot play instance as you have no account selected.")).build())
                     .setType(DialogManager.ERROR).show();
 
-            if (AccountManager.getAccounts().size() == 0) {
+            if (AccountManager.getAccounts().isEmpty()) {
                 App.navigate(UIConstants.LAUNCHER_ACCOUNTS_TAB);
             }
 
@@ -2035,7 +2035,7 @@ public class Instance extends MinecraftVersion {
                         }
                     });
 
-            if (murmurHashes.size() != 0) {
+            if (!murmurHashes.isEmpty()) {
                 CurseForgeFingerprint fingerprintResponse = CurseForgeApi
                         .checkFingerprints(murmurHashes.keySet().stream().toArray(Long[]::new));
 
@@ -2253,7 +2253,7 @@ public class Instance extends MinecraftVersion {
 
             Map<String, ModrinthVersion> modrinthVersions = ModrinthApi.getVersionsFromSha1Hashes(sha1Hashes);
 
-            if (modrinthVersions.size() != 0) {
+            if (!modrinthVersions.isEmpty()) {
                 Map<String, ModrinthProject> modrinthProjects = ModrinthApi.getProjectsAsMap(
                         modrinthVersions.values().parallelStream().map(mv -> mv.projectId).toArray(String[]::new));
 
@@ -2748,11 +2748,11 @@ public class Instance extends MinecraftVersion {
                 GetText.tr("Enter a new name for this cloned instance."),
                 GetText.tr("Cloning Instance"), JOptionPane.INFORMATION_MESSAGE);
 
-        if (clonedName != null && clonedName.length() >= 1
+        if (clonedName != null && !clonedName.isEmpty()
                 && InstanceManager.getInstanceByName(clonedName) == null
                 && InstanceManager
                         .getInstanceBySafeName(clonedName.replaceAll("[^A-Za-z0-9]", "")) == null
-                && clonedName.replaceAll("[^A-Za-z0-9]", "").length() >= 1 && !Files.exists(
+                && !clonedName.replaceAll("[^A-Za-z0-9]", "").isEmpty() && !Files.exists(
                         FileSystem.INSTANCES.resolve(clonedName.replaceAll("[^A-Za-z0-9]", "")))) {
             Analytics.trackEvent(AnalyticsEvent.forInstanceEvent("instance_clone", this));
 
@@ -2772,7 +2772,7 @@ public class Instance extends MinecraftVersion {
                             "An error occurred while cloning the instance.<br/><br/>Please check the console and try again."))
                             .build())
                     .setType(DialogManager.ERROR).show();
-        } else if (clonedName.replaceAll("[^A-Za-z0-9]", "").length() == 0) {
+        } else if (clonedName.replaceAll("[^A-Za-z0-9]", "").isEmpty()) {
             LogManager.error("Error Occurred While Cloning Instance! Invalid Name!");
             DialogManager.okDialog().setTitle(GetText.tr("Error"))
                     .setContent(new HTMLBuilder().center().text(GetText.tr(
@@ -2957,7 +2957,7 @@ public class Instance extends MinecraftVersion {
 
         List<LoaderVersion> loaderVersions = progressDialog.getReturnValue();
 
-        if (loaderVersions == null || loaderVersions.size() == 0) {
+        if (loaderVersions == null || loaderVersions.isEmpty()) {
             // #. {0} is the loader (Forge/Fabric/Quilt)
             DialogManager.okDialog().setTitle(GetText.tr("No Versions Available For {0}", loaderType))
                     .setContent(new HTMLBuilder().center()
@@ -3134,7 +3134,7 @@ public class Instance extends MinecraftVersion {
             // make sure the runtime is available in the data set (so it's not disabled
             // remotely)
             if (runtimesForSystem.containsKey(runtimeToUse)
-                    && runtimesForSystem.get(runtimeToUse).size() != 0) {
+                    && !runtimesForSystem.get(runtimeToUse).isEmpty()) {
                 Path runtimeDirectory = FileSystem.MINECRAFT_RUNTIMES.resolve(runtimeToUse)
                         .resolve(JavaRuntimes.getSystem()).resolve(runtimeToUse);
 
@@ -3259,7 +3259,7 @@ public class Instance extends MinecraftVersion {
             }
         }
 
-        if (files.size() != 0) {
+        if (!files.isEmpty()) {
             final ProgressDialog progressDialog = new ProgressDialog(GetText.tr("Scanning New Mods"), 0,
                     GetText.tr("Scanning New Mods"), parent);
 
@@ -3293,7 +3293,7 @@ public class Instance extends MinecraftVersion {
                                 }
                             });
 
-                    if (murmurHashes.size() != 0) {
+                    if (!murmurHashes.isEmpty()) {
                         CurseForgeFingerprint fingerprintResponse = CurseForgeApi
                                 .checkFingerprints(murmurHashes.keySet().stream().toArray(Long[]::new));
 
@@ -3353,12 +3353,12 @@ public class Instance extends MinecraftVersion {
                                 }
                             });
 
-                    if (sha1Hashes.size() != 0) {
+                    if (!sha1Hashes.isEmpty()) {
                         Set<String> keys = sha1Hashes.keySet();
                         Map<String, ModrinthVersion> modrinthVersions = ModrinthApi
                                 .getVersionsFromSha1Hashes(keys.toArray(new String[keys.size()]));
 
-                        if (modrinthVersions != null && modrinthVersions.size() != 0) {
+                        if (modrinthVersions != null && !modrinthVersions.isEmpty()) {
                             String[] projectIdsFound = modrinthVersions.values().stream().map(mv -> mv.projectId)
                                     .toArray(String[]::new);
 
@@ -3419,7 +3419,7 @@ public class Instance extends MinecraftVersion {
             }
         }).collect(Collectors.toList());
 
-        if (removedMods.size() != 0) {
+        if (!removedMods.isEmpty()) {
             removedMods.forEach(mod -> LogManager.info("Mod no longer in filesystem: " + mod.file));
             launcher.mods.removeAll(removedMods);
             save();
@@ -3450,7 +3450,7 @@ public class Instance extends MinecraftVersion {
                 })
                 .collect(Collectors.toList());
 
-        if (duplicateMods.size() != 0) {
+        if (!duplicateMods.isEmpty()) {
             duplicateMods.forEach(mod -> LogManager.info("Mod is a duplicate: " + mod.file));
             launcher.mods.removeAll(duplicateMods);
             save();

@@ -359,8 +359,8 @@ public final class PacksBrowserTab extends JPanel
         if (selectedPanel.supportsMinecraftVersionFiltering()) {
             minecraftVersionComboBox.addItem(new ComboItem<String>(null, GetText.tr("All Versions")));
 
-            List<VersionManifestVersion> versionsToShow = selectedPanel
-                    .getSupportedMinecraftVersionsForFiltering().size() != 0
+            List<VersionManifestVersion> versionsToShow = !selectedPanel
+                .getSupportedMinecraftVersionsForFiltering().isEmpty()
                             ? selectedPanel.getSupportedMinecraftVersionsForFiltering()
                             : MinecraftManager
                                     .getFilteredMinecraftVersions(

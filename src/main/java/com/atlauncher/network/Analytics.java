@@ -173,7 +173,7 @@ public final class Analytics {
 
             trackEvent(new AnalyticsEvent("$session_end"));
 
-            if (events.size() != 0) {
+            if (!events.isEmpty()) {
                 sendAllStoredEvents(true);
             }
 

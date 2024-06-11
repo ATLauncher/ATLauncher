@@ -822,7 +822,7 @@ public final class AddModsDialog extends JDialog {
 
         contentPanel.removeAll();
 
-        if (mods == null || mods.size() == 0) {
+        if (mods == null || mods.isEmpty()) {
             contentPanel.setLayout(new BorderLayout());
             contentPanel.add(new NoCurseModsPanel(!this.searchField.getText().isEmpty()), BorderLayout.CENTER);
         } else {
@@ -879,7 +879,7 @@ public final class AddModsDialog extends JDialog {
 
         contentPanel.removeAll();
 
-        if (searchResult == null || searchResult.hits.size() == 0) {
+        if (searchResult == null || searchResult.hits.isEmpty()) {
             contentPanel.setLayout(new BorderLayout());
             contentPanel.add(new NoCurseModsPanel(!this.searchField.getText().isEmpty()), BorderLayout.CENTER);
         } else {

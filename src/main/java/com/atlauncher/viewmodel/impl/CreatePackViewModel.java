@@ -724,7 +724,7 @@ public class CreatePackViewModel implements SettingsListener, ICreatePackViewMod
                         .setContent(GetText.tr("Cannot create server as you have no account selected."))
                         .setType(DialogManager.ERROR).show();
 
-                if (AccountManager.getAccounts().size() == 0) {
+                if (AccountManager.getAccounts().isEmpty()) {
                     App.navigate(UIConstants.LAUNCHER_ACCOUNTS_TAB);
                 }
             } else {
@@ -732,7 +732,7 @@ public class CreatePackViewModel implements SettingsListener, ICreatePackViewMod
                         .setContent(GetText.tr("Cannot create instance as you have no account selected."))
                         .setType(DialogManager.ERROR).show();
 
-                if (AccountManager.getAccounts().size() == 0) {
+                if (AccountManager.getAccounts().isEmpty()) {
                     App.navigate(UIConstants.LAUNCHER_ACCOUNTS_TAB);
                 }
             }
@@ -883,7 +883,7 @@ public class CreatePackViewModel implements SettingsListener, ICreatePackViewMod
 
     @Override
     public Boolean warnUserAboutServer() {
-        return InstanceManager.getInstances().size() == 0;
+        return InstanceManager.getInstances().isEmpty();
     }
 
     private List<LoaderVersion> apolloLoad(
@@ -970,7 +970,7 @@ public class CreatePackViewModel implements SettingsListener, ICreatePackViewMod
                                 .collect(Collectors.toList()));
                         break;
                 }
-            if (loaderVersionsList.size() == 0) {
+            if (loaderVersionsList.isEmpty()) {
                 setLoaderGroupEnabled(false);
                 return singletonList(noLoaderVersions);
             }
@@ -1023,7 +1023,7 @@ public class CreatePackViewModel implements SettingsListener, ICreatePackViewMod
                 break;
         }
 
-        if (loaderVersionsList.size() == 0) {
+        if (loaderVersionsList.isEmpty()) {
             setLoaderGroupEnabled(false);
             return singletonList(noLoaderVersions);
         }

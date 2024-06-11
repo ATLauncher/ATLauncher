@@ -76,7 +76,7 @@ public class TechnicPackCard extends JPanel implements RelocalizationListener {
                         .setContent(GetText.tr("Cannot create instance as you have no account selected."))
                         .setType(DialogManager.ERROR).show();
 
-                if (AccountManager.getAccounts().size() == 0) {
+                if (AccountManager.getAccounts().isEmpty()) {
                     App.navigate(UIConstants.LAUNCHER_ACCOUNTS_TAB);
                 }
             } else {

@@ -62,7 +62,7 @@ public class CurseForgePacksPanel extends PackBrowserPlatformPanel {
 
         hasMorePages = packs != null && packs.size() == Constants.CURSEFORGE_PAGINATION_SIZE;
 
-        if (packs == null || packs.size() == 0) {
+        if (packs == null || packs.isEmpty()) {
             hasMorePages = false;
             contentPanel.removeAll();
             contentPanel.add(
@@ -264,7 +264,7 @@ public class CurseForgePacksPanel extends PackBrowserPlatformPanel {
                     .setContent(GetText.tr("Cannot create instance as you have no account selected."))
                     .setType(DialogManager.ERROR).show();
 
-            if (AccountManager.getAccounts().size() == 0) {
+            if (AccountManager.getAccounts().isEmpty()) {
                 App.navigate(UIConstants.LAUNCHER_ACCOUNTS_TAB);
             }
         } else {

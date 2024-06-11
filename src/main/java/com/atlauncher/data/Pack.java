@@ -188,11 +188,11 @@ public class Pack {
     }
 
     public boolean hasVersions() {
-        return this.versions.size() != 0;
+        return !this.versions.isEmpty();
     }
 
     public boolean hasDevVersions() {
-        return this.devVersions.size() != 0;
+        return !this.devVersions.isEmpty();
     }
 
     public boolean canInstall() {
@@ -237,7 +237,7 @@ public class Pack {
     }
 
     public PackVersion getDevVersionByName(String name) {
-        if (this.devVersions.size() == 0) {
+        if (this.devVersions.isEmpty()) {
             return null;
         }
 
@@ -251,7 +251,7 @@ public class Pack {
     }
 
     public PackVersion getVersionByName(String name) {
-        if (this.versions.size() == 0) {
+        if (this.versions.isEmpty()) {
             return null;
         }
 
@@ -265,21 +265,21 @@ public class Pack {
     }
 
     public PackVersion getLatestVersion() {
-        if (this.versions.size() == 0) {
+        if (this.versions.isEmpty()) {
             return null;
         }
         return this.versions.get(0);
     }
 
     public PackVersion getLatestDevVersion() {
-        if (this.devVersions.size() == 0) {
+        if (this.devVersions.isEmpty()) {
             return null;
         }
         return this.devVersions.get(0);
     }
 
     public boolean isLatestVersionNoUpdate() {
-        if (this.versions.size() == 0) {
+        if (this.versions.isEmpty()) {
             return false;
         }
         if (!getLatestVersion().canUpdate) {

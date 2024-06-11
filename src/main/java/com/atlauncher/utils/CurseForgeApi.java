@@ -78,7 +78,7 @@ public class CurseForgeApi {
                     sortDescending ? "desc" : "asc",
                     Constants.CURSEFORGE_PAGINATION_SIZE, page * Constants.CURSEFORGE_PAGINATION_SIZE);
 
-            if (modLoaderTypes != null && modLoaderTypes.size() != 0) {
+            if (modLoaderTypes != null && !modLoaderTypes.isEmpty()) {
                 url += "&modLoaderTypes=" + Gsons.DEFAULT.toJson(modLoaderTypes);
             }
 
@@ -279,7 +279,7 @@ public class CurseForgeApi {
 
         CurseForgeCoreApiResponse<List<CurseForgeProject>> response = download.asType(type);
 
-        if (response != null && response.data.size() != 0) {
+        if (response != null && !response.data.isEmpty()) {
             return response.data.get(0);
         }
 

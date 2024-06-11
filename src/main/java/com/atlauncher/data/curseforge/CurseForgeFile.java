@@ -138,7 +138,7 @@ public class CurseForgeFile {
 
     public String getGameVersion() {
         // CurseForge api returning no versions for some reason
-        if (gameVersions.size() == 0) {
+        if (gameVersions.isEmpty()) {
             return null;
         }
 

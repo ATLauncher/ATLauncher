@@ -110,7 +110,7 @@ public class QuiltLoader implements Loader {
                     .callAndWait(new GetLatestQuiltLoaderVersionQuery());
 
             if (response == null || response.quiltLoaderVersions() == null
-                    || response.quiltLoaderVersions().size() == 0) {
+                    || response.quiltLoaderVersions().isEmpty()) {
                 return null;
             }
 
@@ -124,7 +124,7 @@ public class QuiltLoader implements Loader {
                 .setUrl(String.format("https://meta.quiltmc.org/v3/versions/loader/%s?limit=1", this.minecraft))
                 .asType(type);
 
-        if (loaders == null || loaders.size() == 0) {
+        if (loaders == null || loaders.isEmpty()) {
             return null;
         }
 
@@ -249,7 +249,7 @@ public class QuiltLoader implements Loader {
 
                 if (response == null || response.loaderVersions() == null
                         || response.loaderVersions().quilt() == null
-                        || response.loaderVersions().quilt().size() == 0) {
+                        || response.loaderVersions().quilt().isEmpty()) {
                     return null;
                 }
 

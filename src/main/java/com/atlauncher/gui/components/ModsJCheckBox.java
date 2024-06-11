@@ -180,7 +180,7 @@ public class ModsJCheckBox extends JCheckBox {
 
             contextMenu.add(new JPopupMenu.Separator());
 
-            if (modrinthMod.donationUrls != null && modrinthMod.donationUrls.size() != 0) {
+            if (modrinthMod.donationUrls != null && !modrinthMod.donationUrls.isEmpty()) {
                 for (ModrinthDonationUrl donation : modrinthMod.donationUrls) {
                     // #. {0} is the name of the platform used for donations (Patreon, paypal, etc)
                     JMenuItem openDonationLink = new JMenuItem(GetText.tr("Donate ({0})", donation.platform));

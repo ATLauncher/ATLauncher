@@ -463,7 +463,7 @@ public class InstanceInstallerDialog extends JDialog {
 
         List<CurseForgeFile> files = dialog.getReturnValue();
 
-        if (files == null || files.size() == 0) {
+        if (files == null || files.isEmpty()) {
             // TODO: this still throws an exception, fix at some point
             DialogManager.okDialog().setTitle(GetText.tr("No Server Files Available"))
                     .setContent(new HTMLBuilder().text(GetText.tr(
@@ -600,7 +600,7 @@ public class InstanceInstallerDialog extends JDialog {
                 .map(version -> {
                     PackVersion packVersion = new PackVersion();
                     packVersion.version = String.format("%s (%s)", version.name, version.versionNumber);
-                    packVersion.hasLoader = version.loaders.size() != 0;
+                    packVersion.hasLoader = !version.loaders.isEmpty();
                     packVersion._modrinthVersion = version;
 
                     try {
@@ -1098,7 +1098,7 @@ public class InstanceInstallerDialog extends JDialog {
                 loaderVersions.addAll(jsonVersion.getLoader().getChoosableVersions(jsonVersion.getMinecraft()));
             }
 
-            if (loaderVersions.size() == 0) {
+            if (loaderVersions.isEmpty()) {
                 loaderVersionsDropDown.removeAllItems();
                 loaderVersionsDropDown.addItem(new ComboItem<LoaderVersion>(null, GetText.tr("No Versions Found")));
                 loaderVersionLabel.setVisible(true);

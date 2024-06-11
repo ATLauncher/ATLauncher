@@ -605,7 +605,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                     String.format("https://meta.fabricmc.net/v2/versions/loader/%s?limit=1", packVersion.minecraft))
                     .asType(type);
 
-            if (loaders == null || loaders.size() == 0) {
+            if (loaders == null || loaders.isEmpty()) {
                 throw new Exception("Failed to get Fabric version for pack containing JumpLoader");
             }
 
@@ -785,7 +785,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         Map<String, ModrinthVersion> modrinthVersions = new HashMap<>();
         Map<String, ModrinthProject> modrinthProjects = new HashMap<>();
 
-        if (filesForManualDownload.size() != 0) {
+        if (!filesForManualDownload.isEmpty()) {
             String[] sha1Hashes = filesForManualDownload.parallelStream()
                     .map(file -> file.hashes.stream().filter(h -> h.isSha1()).findFirst().orElse(null))
                     .filter(f -> f != null)
@@ -794,7 +794,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
 
             modrinthVersions.putAll(ModrinthApi.getVersionsFromSha1Hashes(sha1Hashes));
 
-            if (modrinthVersions.size() != 0) {
+            if (!modrinthVersions.isEmpty()) {
                 modrinthProjects.putAll(ModrinthApi.getProjectsAsMap(
                         modrinthVersions.values().parallelStream().map(mv -> mv.projectId).toArray(String[]::new)));
             }
@@ -848,7 +848,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
             return mod;
         }).filter(m -> m != null).collect(Collectors.toList());
 
-        if (manualDownloadMods.size() != 0 && !App.settings.seenCurseForgeProjectDistributionDialog) {
+        if (!manualDownloadMods.isEmpty() && !App.settings.seenCurseForgeProjectDistributionDialog) {
             App.settings.seenCurseForgeProjectDistributionDialog = true;
             App.settings.save();
 
@@ -1772,7 +1772,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
 
         boolean hasOptional = this.allMods.stream().anyMatch(Mod::isOptional);
 
-        if (this.allMods.size() != 0 && hasOptional) {
+        if (!this.allMods.isEmpty() && hasOptional) {
             com.atlauncher.gui.dialogs.ModsChooser modsChooser = new com.atlauncher.gui.dialogs.ModsChooser(this);
 
             if (this.showModsChooser) {
@@ -2309,11 +2309,11 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
             Arguments loaderArguments = this.loader.getArguments();
 
             if (loaderArguments != null) {
-                if (loaderArguments.game != null && loaderArguments.game.size() != 0) {
+                if (loaderArguments.game != null && !loaderArguments.game.isEmpty()) {
                     this.arguments.game.addAll(loaderArguments.game);
                 }
 
-                if (loaderArguments.jvm != null && loaderArguments.jvm.size() != 0) {
+                if (loaderArguments.jvm != null && !loaderArguments.jvm.isEmpty()) {
                     this.arguments.jvm.addAll(loaderArguments.jvm);
                 }
             }
@@ -2357,11 +2357,11 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
 
         // newer MC versions
         if (this.minecraftVersion.arguments != null) {
-            if (this.minecraftVersion.arguments.game != null && this.minecraftVersion.arguments.game.size() != 0) {
+            if (this.minecraftVersion.arguments.game != null && !this.minecraftVersion.arguments.game.isEmpty()) {
                 this.arguments.game.addAll(this.minecraftVersion.arguments.game);
             }
 
-            if (this.minecraftVersion.arguments.jvm != null && this.minecraftVersion.arguments.jvm.size() != 0) {
+            if (this.minecraftVersion.arguments.jvm != null && !this.minecraftVersion.arguments.jvm.isEmpty()) {
                 this.arguments.jvm.addAll(this.minecraftVersion.arguments.jvm);
             }
         }
@@ -2404,7 +2404,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
 
         DownloadPool smallPool = pool.downsize();
 
-        if (smallPool.size() != 0) {
+        if (!smallPool.isEmpty()) {
             fireTask(GetText.tr("Downloading Resources"));
             this.setTotalBytes(smallPool.totalSize());
             this.fireSubProgress(0);
@@ -2494,7 +2494,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
 
         List<Library> packVersionLibraries = getPackVersionLibraries();
 
-        if (packVersionLibraries != null && packVersionLibraries.size() != 0) {
+        if (packVersionLibraries != null && !packVersionLibraries.isEmpty()) {
             libraries.addAll(packVersionLibraries);
         }
 
@@ -2700,7 +2700,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         String runtimeSystemString = JavaRuntimes.getSystem();
 
         if (runtimesForSystem.containsKey(minecraftVersion.javaVersion.component)
-                && runtimesForSystem.get(minecraftVersion.javaVersion.component).size() != 0) {
+                && !runtimesForSystem.get(minecraftVersion.javaVersion.component).isEmpty()) {
             fireTask(GetText.tr("Downloading Java Runtime {0}", minecraftVersion.javaVersion.majorVersion));
             fireSubProgressUnknown();
 
@@ -2781,7 +2781,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
     private void downloadMods() throws Exception {
         addPercent(25);
 
-        if (multiMCManifest != null || selectedMods.size() == 0) {
+        if (multiMCManifest != null || selectedMods.isEmpty()) {
             return;
         }
 
@@ -2824,7 +2824,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
 
         List<Mod> browserDownloadMods = this.selectedMods.stream().filter(mod -> mod.download == DownloadType.browser)
                 .collect(Collectors.toList());
-        if (browserDownloadMods.size() != 0) {
+        if (!browserDownloadMods.isEmpty()) {
             if (curseForgeManifest != null) {
                 fireTask(GetText.tr("Downloading Browser Mods"));
 
@@ -2878,7 +2878,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
     private void installMods() {
         addPercent(25);
 
-        if (multiMCManifest != null || this.selectedMods.size() == 0) {
+        if (multiMCManifest != null || this.selectedMods.isEmpty()) {
             return;
         }
 
@@ -2898,7 +2898,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
     private void downloadTechnicSolderMods() {
         addPercent(25);
 
-        if (technicSolderModsToDownload.size() == 0) {
+        if (technicSolderModsToDownload.isEmpty()) {
             return;
         }
 
@@ -2968,7 +2968,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
     private void installLegacyJavaFixer() {
         addPercent(5);
 
-        if ((this.technicModpack == null && this.allMods.size() == 0)
+        if ((this.technicModpack == null && this.allMods.isEmpty())
                 || !Utils.matchVersion(minecraftVersion.id, "1.6", true, true)) {
             return;
         }
@@ -3023,7 +3023,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
     private void runActions() {
         addPercent(5);
 
-        if (this.packVersion.actions == null || this.packVersion.actions.size() == 0) {
+        if (this.packVersion.actions == null || this.packVersion.actions.isEmpty()) {
             return;
         }
 
@@ -3157,7 +3157,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
     }
 
     private void checkModsOnCurseForge() {
-        if (App.settings.dontCheckModsOnCurseForge || this.modsInstalled.size() == 0) {
+        if (App.settings.dontCheckModsOnCurseForge || this.modsInstalled.isEmpty()) {
             return;
         }
 
@@ -3177,7 +3177,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                     }
                 });
 
-        if (murmurHashes.size() != 0) {
+        if (!murmurHashes.isEmpty()) {
             CurseForgeFingerprint fingerprintResponse = CurseForgeApi
                     .checkFingerprints(murmurHashes.keySet().stream().toArray(Long[]::new));
 
@@ -3215,7 +3215,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
     }
 
     private void checkModsOnModrinth() {
-        if (App.settings.dontCheckModsOnModrinth || this.modsInstalled.size() == 0) {
+        if (App.settings.dontCheckModsOnModrinth || this.modsInstalled.isEmpty()) {
             return;
         }
 
@@ -3235,12 +3235,12 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                     }
                 });
 
-        if (sha1Hashes.size() != 0) {
+        if (!sha1Hashes.isEmpty()) {
             Set<String> keys = sha1Hashes.keySet();
             Map<String, ModrinthVersion> modrinthVersions = ModrinthApi
                     .getVersionsFromSha1Hashes(keys.toArray(new String[keys.size()]));
 
-            if (modrinthVersions != null && modrinthVersions.size() != 0) {
+            if (modrinthVersions != null && !modrinthVersions.isEmpty()) {
                 String[] projectIdsFound = modrinthVersions.values().stream().map(mv -> mv.projectId)
                         .toArray(String[]::new);
 

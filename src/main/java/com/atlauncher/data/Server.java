@@ -165,7 +165,7 @@ public class Server {
             Map<String, List<JavaRuntime>> runtimesForSystem = Data.JAVA_RUNTIMES.getForSystem();
 
             if (runtimesForSystem.containsKey(javaVersion.component)
-                    && runtimesForSystem.get(javaVersion.component).size() != 0) {
+                    && !runtimesForSystem.get(javaVersion.component).isEmpty()) {
                 Path runtimeDirectory = FileSystem.MINECRAFT_RUNTIMES.resolve(javaVersion.component)
                         .resolve(JavaRuntimes.getSystem()).resolve(javaVersion.component);
 

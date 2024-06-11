@@ -270,7 +270,7 @@ public enum OS {
     }
 
     public static JavaInfo getPreferredJava(List<JavaInfo> installedJavas) {
-        if (installedJavas.size() == 0) {
+        if (installedJavas.isEmpty()) {
             return null;
         }
 
@@ -278,7 +278,7 @@ public enum OS {
                 .filter(javaInfo -> javaInfo.majorVersion != null && javaInfo.minorVersion != null)
                 .collect(Collectors.toList());
 
-        if (validVersions.size() == 0) {
+        if (validVersions.isEmpty()) {
             return null;
         }
 
@@ -662,7 +662,7 @@ public enum OS {
 
     public static boolean isUsingAntivirus() {
         if (isWindows()) {
-            return Optional.ofNullable(getAntivirusProcesses()).orElse(new ArrayList<>()).size() != 0;
+            return !Optional.ofNullable(getAntivirusProcesses()).orElse(new ArrayList<>()).isEmpty();
         }
 
         return false;

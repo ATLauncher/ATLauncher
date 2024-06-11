@@ -114,7 +114,7 @@ public class RenameInstanceDialog extends JDialog {
                                 GetText.tr("There is already an instance called {0}.<br/><br/>Rename it and try again.",
                                         instanceName.getText()))
                         .setType(DialogManager.ERROR).show();
-            } else if (instanceName.getText().replaceAll("[^A-Za-z0-9]", "").length() == 0) {
+            } else if (instanceName.getText().replaceAll("[^A-Za-z0-9]", "").isEmpty()) {
                 DialogManager.okDialog().setTitle(GetText.tr("Error"))
                         .setContent(
                                 new HTMLBuilder().center()

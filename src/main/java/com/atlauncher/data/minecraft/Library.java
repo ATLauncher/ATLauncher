@@ -31,7 +31,7 @@ public class Library {
     public ExtractRule extract;
 
     public boolean shouldInstall() {
-        if (this.rules == null || this.rules.size() == 0) {
+        if (this.rules == null || this.rules.isEmpty()) {
             return true; // No rules setup so we need it
         }
 

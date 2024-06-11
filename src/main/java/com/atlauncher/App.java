@@ -555,7 +555,7 @@ public class App {
             HardwareAbstractionLayer hal = systemInfo.getHardware();
 
             List<GraphicsCard> cards = hal.getGraphicsCards();
-            if (cards.size() != 0) {
+            if (!cards.isEmpty()) {
                 for (GraphicsCard card : cards) {
                     LogManager.info("GPU: " + card.getName() + " (" + card.getVendor() + ") " + card.getVersionInfo()
                             + " " + (card.getVRam() / 1048576) + "MB VRAM");

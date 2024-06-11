@@ -74,7 +74,7 @@ public class ModrinthApi {
                     Constants.MODRINTH_PAGINATION_SIZE, page * Constants.MODRINTH_PAGINATION_SIZE,
                     URLEncoder.encode(query, StandardCharsets.UTF_8.name()), index);
 
-            if (gameVersions != null && gameVersions.size() != 0) {
+            if (gameVersions != null && !gameVersions.isEmpty()) {
                 facets.add(
                         gameVersions.stream().map(gv -> String.format("versions:%s", gv)).collect(Collectors.toList()));
             }
@@ -93,7 +93,7 @@ public class ModrinthApi {
                 facets.add(projectTypeFacets);
             }
 
-            if (facets.size() != 0) {
+            if (!facets.isEmpty()) {
                 url += String.format("&facets=%s", Gsons.DEFAULT_SLIM.toJson(facets));
             }
 
@@ -200,7 +200,7 @@ public class ModrinthApi {
         String queryParamsString = "";
 
         if (minecraftVersion != null) {
-            if (queryParamsString.length() == 0) {
+            if (queryParamsString.isEmpty()) {
                 queryParamsString += "?";
             }
 
@@ -208,7 +208,7 @@ public class ModrinthApi {
         }
 
         if (loaderVersion != null) {
-            if (queryParamsString.length() == 0) {
+            if (queryParamsString.isEmpty()) {
                 queryParamsString += "?";
             } else {
                 queryParamsString += "&";

@@ -166,7 +166,7 @@ public final class DialogManager {
     }
 
     public Object[] getOptions() {
-        if (this.options.size() == 0) {
+        if (this.options.isEmpty()) {
             return null;
         }
 
