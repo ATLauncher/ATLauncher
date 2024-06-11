@@ -81,7 +81,7 @@ public class ModrinthPacksPanel extends PackBrowserPlatformPanel {
         gbc.insets = UIConstants.FIELD_INSETS;
         gbc.fill = GridBagConstraints.BOTH;
 
-        List<ModrinthPackCard> cards = searchResult.hits.stream().map(p -> new ModrinthPackCard(p))
+        List<ModrinthPackCard> cards = searchResult.hits.stream().map(ModrinthPackCard::new)
                 .collect(Collectors.toList());
 
         contentPanel.removeAll();

@@ -24,6 +24,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.joda.time.format.ISODateTimeFormat;
@@ -122,7 +123,7 @@ public class MinecraftManager {
 
                     return e.getKey().startsWith(version.substring(0, version.lastIndexOf(".")));
                 })
-                .map(e -> e.getValue()).collect(Collectors.toList());
+                .map(Map.Entry::getValue).collect(Collectors.toList());
     }
 
     public static List<VersionManifestVersion> getFilteredMinecraftVersions(

@@ -394,7 +394,7 @@ public class DisableableMod implements Serializable {
 
                         curseForgeFilesStream = curseForgeFilesStream.filter(
                                 file -> file.gameVersions.stream()
-                                        .anyMatch(gv -> minecraftVersionsToSearch.contains(gv)));
+                                        .anyMatch(minecraftVersionsToSearch::contains));
                     } catch (InvalidMinecraftVersion e) {
                         LogManager.logStackTrace(e);
                     }

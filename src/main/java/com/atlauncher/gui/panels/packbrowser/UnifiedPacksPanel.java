@@ -94,7 +94,7 @@ public class UnifiedPacksPanel extends PackBrowserPlatformPanel {
         gbc.fill = GridBagConstraints.BOTH;
 
         List<UnifiedPackCard> cards = items.stream()
-                .map(p -> new UnifiedPackCard(p))
+                .map(UnifiedPackCard::new)
                 .collect(Collectors.toList());
 
         contentPanel.removeAll();

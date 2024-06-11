@@ -68,7 +68,7 @@ public class TechnicPacksPanel extends PackBrowserPlatformPanel {
         gbc.insets = UIConstants.FIELD_INSETS;
         gbc.fill = GridBagConstraints.BOTH;
 
-        List<TechnicPackCard> cards = packs.stream().map(p -> new TechnicPackCard(p)).collect(Collectors.toList());
+        List<TechnicPackCard> cards = packs.stream().map(TechnicPackCard::new).collect(Collectors.toList());
 
         contentPanel.removeAll();
 

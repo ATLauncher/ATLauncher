@@ -400,7 +400,7 @@ public class ModrinthVersionSelectorDialog extends JDialog {
                             .collect(Collectors.toList());
 
                     modrinthVersionsStream = modrinthVersionsStream.filter(
-                            v -> v.gameVersions.stream().anyMatch(gv -> minecraftVersionsToSearch.contains(gv)));
+                            v -> v.gameVersions.stream().anyMatch(minecraftVersionsToSearch::contains));
                 } catch (InvalidMinecraftVersion e) {
                     LogManager.logStackTrace(e);
                 }

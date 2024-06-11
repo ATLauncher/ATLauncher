@@ -41,6 +41,7 @@ import org.mini2Dx.gettext.GetText;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.constants.Constants;
 import com.atlauncher.data.DownloadableFile;
+import com.atlauncher.data.Instance;
 import com.atlauncher.data.LauncherVersion;
 import com.atlauncher.graphql.AddLauncherLaunchMutation;
 import com.atlauncher.graphql.type.AddLauncherLaunchInput;
@@ -300,9 +301,7 @@ public class Launcher {
     public boolean checkForUpdatedFiles() {
         this.launcherFiles = null;
 
-        App.TASKPOOL.execute(() -> {
-            checkForExternalPackUpdates();
-        });
+        App.TASKPOOL.execute(this::checkForExternalPackUpdates);
 
         return hasUpdatedFiles();
     }
@@ -328,13 +327,13 @@ public class Launcher {
         }
 
         updateThread = new Thread(() -> {
-            if (InstanceManager.getInstances().stream().anyMatch(i -> i.isCurseForgePack())) {
+            if (InstanceManager.getInstances().stream().anyMatch(Instance::isCurseForgePack)) {
                 CurseForgeUpdateManager.checkForUpdates();
             }
-            if (InstanceManager.getInstances().stream().anyMatch(i -> i.isTechnicPack())) {
+            if (InstanceManager.getInstances().stream().anyMatch(Instance::isTechnicPack)) {
                 TechnicModpackUpdateManager.checkForUpdates();
             }
-            if (InstanceManager.getInstances().stream().anyMatch(i -> i.isModrinthPack())) {
+            if (InstanceManager.getInstances().stream().anyMatch(Instance::isModrinthPack)) {
                 ModrinthModpackUpdateManager.checkForUpdates();
             }
         });

@@ -196,9 +196,9 @@ public class ImportPackUtils {
                 Download download = new Download().setUrl(curseFile.downloadUrl).downloadTo(tempZip)
                         .size(curseFile.fileLength);
 
-                Optional<CurseForgeFileHash> md5Hash = curseFile.hashes.stream().filter(h -> h.isMd5())
+                Optional<CurseForgeFileHash> md5Hash = curseFile.hashes.stream().filter(CurseForgeFileHash::isMd5)
                         .findFirst();
-                Optional<CurseForgeFileHash> sha1Hash = curseFile.hashes.stream().filter(h -> h.isSha1())
+                Optional<CurseForgeFileHash> sha1Hash = curseFile.hashes.stream().filter(CurseForgeFileHash::isSha1)
                         .findFirst();
 
                 if (md5Hash.isPresent()) {

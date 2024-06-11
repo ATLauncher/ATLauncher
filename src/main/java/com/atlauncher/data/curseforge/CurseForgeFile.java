@@ -20,6 +20,7 @@ package com.atlauncher.data.curseforge;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import org.joda.time.format.ISODateTimeFormat;
@@ -121,11 +122,11 @@ public class CurseForgeFile {
         mod.curseForgeProject = curseForgeProject;
         mod.curseForgeFile = this;
 
-        Optional<CurseForgeFileHash> md5Hash = hashes.stream().filter(h -> h.isMd5())
+        Optional<CurseForgeFileHash> md5Hash = hashes.stream().filter(CurseForgeFileHash::isMd5)
                 .findFirst();
         md5Hash.ifPresent(curseForgeFileHash -> mod.md5 = curseForgeFileHash.value);
 
-        Optional<CurseForgeFileHash> sha1Hash = hashes.stream().filter(h -> h.isSha1())
+        Optional<CurseForgeFileHash> sha1Hash = hashes.stream().filter(CurseForgeFileHash::isSha1)
                 .findFirst();
         sha1Hash.ifPresent(curseForgeFileHash -> mod.sha1 = curseForgeFileHash.value);
 
@@ -146,7 +147,7 @@ public class CurseForgeFile {
         // if more than 1, we need to filter out non Minecraft versions (loaders for
         // instance) and then order them by Minecraft versions release date to make sure
         // we use the newest (SkyFactory 4 lists 3 Minecraft versions for some reason)
-        Optional<String> minecraftVersion = gameVersions.stream().filter(gv -> MinecraftManager.isMinecraftVersion(gv))
+        Optional<String> minecraftVersion = gameVersions.stream().filter(MinecraftManager::isMinecraftVersion)
                 .map(gv -> {
                     try {
                         return MinecraftManager.getMinecraftVersion(gv);
@@ -154,7 +155,7 @@ public class CurseForgeFile {
                         // this should never happen because of the filter
                         return null;
                     }
-                }).filter(gv -> gv != null).sorted(Comparator.comparingLong((VersionManifestVersion mv) -> {
+                }).filter(Objects::nonNull).sorted(Comparator.comparingLong((VersionManifestVersion mv) -> {
                     return ISODateTimeFormat.dateTimeParser().parseDateTime(mv.releaseTime).getMillis() / 1000;
                 }).reversed()).map(mv -> mv.id).findFirst();
 

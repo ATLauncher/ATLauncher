@@ -139,7 +139,7 @@ public class ModrinthApi {
 
         List<String> neoForgeForgeCompatabilityVersions = ConfigManager
                 .getConfigItem("loaders.neoforge.forgeCompatibleMinecraftVersions", new ArrayList<>());
-        if (gameVersions.stream().anyMatch(gv -> neoForgeForgeCompatabilityVersions.contains(gv))) {
+        if (gameVersions.stream().anyMatch(neoForgeForgeCompatabilityVersions::contains)) {
             categories.add(Arrays.asList("neoforge", "forge"));
         } else {
             categories.add(Arrays.asList("forge"));

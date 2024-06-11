@@ -34,6 +34,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -104,6 +105,7 @@ import com.atlauncher.data.multimc.MultiMCComponent;
 import com.atlauncher.data.multimc.MultiMCManifest;
 import com.atlauncher.data.technic.TechnicModpack;
 import com.atlauncher.data.technic.TechnicModpackAsset;
+import com.atlauncher.data.technic.TechnicModpackManifestMod;
 import com.atlauncher.data.technic.TechnicSolderModpackManifest;
 import com.atlauncher.exceptions.LocalException;
 import com.atlauncher.graphql.GetForgeLoaderVersionQuery;
@@ -483,9 +485,9 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                     .setUrl(version._curseForgeFile.downloadUrl).downloadTo(serverPackFile)
                     .size(version._curseForgeFile.fileLength);
 
-            Optional<CurseForgeFileHash> md5Hash = version._curseForgeFile.hashes.stream().filter(h -> h.isMd5())
+            Optional<CurseForgeFileHash> md5Hash = version._curseForgeFile.hashes.stream().filter(CurseForgeFileHash::isMd5)
                     .findFirst();
-            Optional<CurseForgeFileHash> sha1Hash = version._curseForgeFile.hashes.stream().filter(h -> h.isSha1())
+            Optional<CurseForgeFileHash> sha1Hash = version._curseForgeFile.hashes.stream().filter(CurseForgeFileHash::isSha1)
                     .findFirst();
 
             if (md5Hash.isPresent()) {
@@ -784,8 +786,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
 
         if (!filesForManualDownload.isEmpty()) {
             String[] sha1Hashes = filesForManualDownload.parallelStream()
-                    .map(file -> file.hashes.stream().filter(h -> h.isSha1()).findFirst().orElse(null))
-                    .filter(f -> f != null)
+                    .map(file -> file.hashes.stream().filter(CurseForgeFileHash::isSha1).findFirst().orElse(null))
+                    .filter(Objects::nonNull)
                     .map(hash -> hash.value)
                     .toArray(String[]::new);
 
@@ -812,7 +814,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                         curseForgeProject.allowModDistribution, curseForgeProject.allowModDistribution == null ? "null"
                                 : curseForgeProject.allowModDistribution.toString()));
 
-                Optional<CurseForgeFileHash> sha1Hash = curseForgeFile.hashes.stream().filter(h -> h.isSha1())
+                Optional<CurseForgeFileHash> sha1Hash = curseForgeFile.hashes.stream().filter(CurseForgeFileHash::isSha1)
                         .findFirst();
                 if (sha1Hash.isPresent()) {
                     ModrinthVersion modrinthVersion = modrinthVersions.get(sha1Hash.get().value);
@@ -843,7 +845,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
             mod.optional = !file.required;
 
             return mod;
-        }).filter(m -> m != null).collect(Collectors.toList());
+        }).filter(Objects::nonNull).collect(Collectors.toList());
 
         if (!manualDownloadMods.isEmpty() && !App.settings.seenCurseForgeProjectDistributionDialog) {
             App.settings.seenCurseForgeProjectDistributionDialog = true;
@@ -953,9 +955,9 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                     .setUrl(version._curseForgeFile.downloadUrl).downloadTo(manifestFile)
                     .size(version._curseForgeFile.fileLength);
 
-            Optional<CurseForgeFileHash> md5Hash = version._curseForgeFile.hashes.stream().filter(h -> h.isMd5())
+            Optional<CurseForgeFileHash> md5Hash = version._curseForgeFile.hashes.stream().filter(CurseForgeFileHash::isMd5)
                     .findFirst();
-            Optional<CurseForgeFileHash> sha1Hash = version._curseForgeFile.hashes.stream().filter(h -> h.isSha1())
+            Optional<CurseForgeFileHash> sha1Hash = version._curseForgeFile.hashes.stream().filter(CurseForgeFileHash::isSha1)
                     .findFirst();
 
             if (md5Hash.isPresent()) {
@@ -1076,7 +1078,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         this.version.minecraftVersion = MinecraftManager.getMinecraftVersion(packVersion.minecraft);
 
         technicSolderModsToDownload.addAll(technicSolderModpackManifest.mods.parallelStream()
-                .map(file -> file.convertToMod()).collect(Collectors.toList()));
+                .map(TechnicModpackManifestMod::convertToMod).collect(Collectors.toList()));
 
         hideSubProgressBar();
     }

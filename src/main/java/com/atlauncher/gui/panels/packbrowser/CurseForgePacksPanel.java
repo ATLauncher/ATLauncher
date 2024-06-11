@@ -79,7 +79,7 @@ public class CurseForgePacksPanel extends PackBrowserPlatformPanel {
         gbc.insets = UIConstants.FIELD_INSETS;
         gbc.fill = GridBagConstraints.BOTH;
 
-        List<CurseForgePackCard> cards = packs.stream().map(p -> new CurseForgePackCard(p))
+        List<CurseForgePackCard> cards = packs.stream().map(CurseForgePackCard::new)
                 .collect(Collectors.toList());
 
         contentPanel.removeAll();

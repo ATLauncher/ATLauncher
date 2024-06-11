@@ -307,7 +307,7 @@ public class CurseForgeProjectFileSelectorDialog extends JDialog {
 
                     curseForgeFilesStream = curseForgeFilesStream
                             .filter(v -> v.gameVersions.stream()
-                                    .anyMatch(gv -> minecraftVersionsToSearch.contains(gv)));
+                                    .anyMatch(minecraftVersionsToSearch::contains));
                 } catch (InvalidMinecraftVersion e) {
                     LogManager.logStackTrace(e);
                 }

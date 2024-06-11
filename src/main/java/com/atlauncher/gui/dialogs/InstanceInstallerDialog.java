@@ -36,6 +36,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -487,7 +488,7 @@ public class InstanceInstallerDialog extends JDialog {
                     }
 
                     return packVersion;
-                }).filter(pv -> pv != null).collect(Collectors.toList());
+                }).filter(Objects::nonNull).collect(Collectors.toList());
 
         // #. {0} is the name of the pack the user is installing
         setTitle(GetText.tr("Installing {0}", curseForgeProject.name));
@@ -601,7 +602,7 @@ public class InstanceInstallerDialog extends JDialog {
                     }
 
                     return packVersion;
-                }).filter(pv -> pv != null).collect(Collectors.toList());
+                }).filter(Objects::nonNull).collect(Collectors.toList());
 
         // #. {0} is the name of the pack the user is installing
         setTitle(GetText.tr("Installing {0}", modrinthProject.title));
