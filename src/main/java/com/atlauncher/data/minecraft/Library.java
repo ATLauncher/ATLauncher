@@ -106,35 +106,39 @@ public class Library {
         } catch (NumberFormatException ignored) {
         }
 
-        if (libraryParts[1].equals("log4j-api")) {
-            if (libraryParts[2].startsWith("2.0-beta9")) {
-                name = "org.apache.logging.log4j:log4j-api:2.0-beta9-fixed";
-                downloads.artifact.path = "org/apache/logging/log4j/log4j-api/2.0-beta9-fixed/log4j-api-2.0-beta9-fixed.jar";
-                downloads.artifact.sha1 = "b61eaf2e64d8b0277e188262a8b771bbfa1502b3";
-                downloads.artifact.size = 107347;
-            } else {
-                name = "org.apache.logging.log4j:log4j-api:2.16.0";
-                downloads.artifact.path = "org/apache/logging/log4j/log4j-api/2.16.0/log4j-api-2.16.0.jar";
-                downloads.artifact.sha1 = "f821a18687126c2e2f227038f540e7953ad2cc8c";
-                downloads.artifact.size = 301892;
-            }
-        } else if (libraryParts[1].equals("log4j-core")) {
-            if (libraryParts[2].startsWith("2.0-beta9")) {
-                name = "org.apache.logging.log4j:log4j-core:2.0-beta9-fixed";
-                downloads.artifact.path = "org/apache/logging/log4j/log4j-core/2.0-beta9-fixed/log4j-core-2.0-beta9-fixed.jar";
-                downloads.artifact.sha1 = "677991ea2d7426f76309a73739cecf609679492c";
-                downloads.artifact.size = 677588;
-            } else {
-                name = "org.apache.logging.log4j:log4j-core:2.16.0";
-                downloads.artifact.path = "org/apache/logging/log4j/log4j-core/2.16.0/log4j-core-2.16.0.jar";
-                downloads.artifact.sha1 = "539a445388aee52108700f26d9644989e7916e7c";
-                downloads.artifact.size = 1789565;
-            }
-        } else if (libraryParts[1].equals("log4j-slf4j18-impl")) {
-            name = "org.apache.logging.log4j:log4j-slf4j18-impl:2.16.0";
-            downloads.artifact.path = "org/apache/logging/log4j/log4j-slf4j18-impl/2.16.0/log4j-slf4j18-impl-2.16.0.jar";
-            downloads.artifact.sha1 = "0c880a059056df5725f5d8d1035276d9749eba6d";
-            downloads.artifact.size = 21249;
+        switch (libraryParts[1]) {
+            case "log4j-api":
+                if (libraryParts[2].startsWith("2.0-beta9")) {
+                    name = "org.apache.logging.log4j:log4j-api:2.0-beta9-fixed";
+                    downloads.artifact.path = "org/apache/logging/log4j/log4j-api/2.0-beta9-fixed/log4j-api-2.0-beta9-fixed.jar";
+                    downloads.artifact.sha1 = "b61eaf2e64d8b0277e188262a8b771bbfa1502b3";
+                    downloads.artifact.size = 107347;
+                } else {
+                    name = "org.apache.logging.log4j:log4j-api:2.16.0";
+                    downloads.artifact.path = "org/apache/logging/log4j/log4j-api/2.16.0/log4j-api-2.16.0.jar";
+                    downloads.artifact.sha1 = "f821a18687126c2e2f227038f540e7953ad2cc8c";
+                    downloads.artifact.size = 301892;
+                }
+                break;
+            case "log4j-core":
+                if (libraryParts[2].startsWith("2.0-beta9")) {
+                    name = "org.apache.logging.log4j:log4j-core:2.0-beta9-fixed";
+                    downloads.artifact.path = "org/apache/logging/log4j/log4j-core/2.0-beta9-fixed/log4j-core-2.0-beta9-fixed.jar";
+                    downloads.artifact.sha1 = "677991ea2d7426f76309a73739cecf609679492c";
+                    downloads.artifact.size = 677588;
+                } else {
+                    name = "org.apache.logging.log4j:log4j-core:2.16.0";
+                    downloads.artifact.path = "org/apache/logging/log4j/log4j-core/2.16.0/log4j-core-2.16.0.jar";
+                    downloads.artifact.sha1 = "539a445388aee52108700f26d9644989e7916e7c";
+                    downloads.artifact.size = 1789565;
+                }
+                break;
+            case "log4j-slf4j18-impl":
+                name = "org.apache.logging.log4j:log4j-slf4j18-impl:2.16.0";
+                downloads.artifact.path = "org/apache/logging/log4j/log4j-slf4j18-impl/2.16.0/log4j-slf4j18-impl-2.16.0.jar";
+                downloads.artifact.sha1 = "0c880a059056df5725f5d8d1035276d9749eba6d";
+                downloads.artifact.size = 21249;
+                break;
         }
 
         // adjust the download url
