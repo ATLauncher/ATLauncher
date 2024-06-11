@@ -147,15 +147,12 @@ public class ImportInstanceDialog extends JDialog {
                 }
             } else if (App.settings.useNativeFilePicker) {
                 FileDialog fileDialog = new FileDialog(this, GetText.tr("Select file/s"), FileDialog.LOAD);
-                fileDialog.setFilenameFilter(new FilenameFilter() {
-                    @Override
-                    public boolean accept(File f, String name) {
-                        if (f.isDirectory()) {
-                            return true;
-                        }
-
-                        return f.getName().endsWith(".zip");
+                fileDialog.setFilenameFilter((f, name) -> {
+                    if (f.isDirectory()) {
+                        return true;
                     }
+
+                    return f.getName().endsWith(".zip");
                 });
                 fileDialog.setVisible(true);
 

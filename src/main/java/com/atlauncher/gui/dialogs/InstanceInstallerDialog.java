@@ -280,13 +280,10 @@ public class InstanceInstallerDialog extends JDialog {
             gbc.gridx++;
             middle.add(showAllMinecraftVersionsCheckbox, gbc);
 
-            showAllMinecraftVersionsCheckbox.addItemListener(new ItemListener() {
-                @Override
-                public void itemStateChanged(ItemEvent e) {
-                    if (e.getStateChange() == ItemEvent.SELECTED || e.getStateChange() == ItemEvent.DESELECTED) {
-                        setVanillaPackVersions(e.getStateChange() == ItemEvent.SELECTED);
-                        setVersionsDropdown();
-                    }
+            showAllMinecraftVersionsCheckbox.addItemListener(e -> {
+                if (e.getStateChange() == ItemEvent.SELECTED || e.getStateChange() == ItemEvent.DESELECTED) {
+                    setVanillaPackVersions(e.getStateChange() == ItemEvent.SELECTED);
+                    setVersionsDropdown();
                 }
             });
 
@@ -327,68 +324,66 @@ public class InstanceInstallerDialog extends JDialog {
         // Bottom Panel Stuff
         JPanel bottom = new JPanel();
         bottom.setLayout(new FlowLayout());
-        install.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                Installable installable = null;
+        install.addActionListener(e -> {
+            Installable installable;
 
-                PackVersion packVersion = ((PackVersion) versionsDropDown.getSelectedItem());
-                LoaderVersion loaderVersion = (packVersion.hasLoader() && packVersion.hasChoosableLoader())
-                        ? ((ComboItem<LoaderVersion>) loaderVersionsDropDown.getSelectedItem()).getValue()
-                        : null;
+            PackVersion packVersion = ((PackVersion) versionsDropDown.getSelectedItem());
+            LoaderVersion loaderVersion = (packVersion.hasLoader() && packVersion.hasChoosableLoader())
+                    ? ((ComboItem<LoaderVersion>) loaderVersionsDropDown.getSelectedItem()).getValue()
+                    : null;
 
-                if (curseForgeManifest != null) {
-                    installable = new CurseForgeManifestInstallable(pack, packVersion, loaderVersion);
+            if (curseForgeManifest != null) {
+                installable = new CurseForgeManifestInstallable(pack, packVersion, loaderVersion);
 
-                    installable.curseForgeManifest = curseForgeManifest;
-                    installable.curseExtractedPath = extractedPath;
-                } else if (curseForgeProject != null) {
-                    installable = new CurseForgeInstallable(pack, packVersion, loaderVersion);
+                installable.curseForgeManifest = curseForgeManifest;
+                installable.curseExtractedPath = extractedPath;
+            } else if (curseForgeProject != null) {
+                installable = new CurseForgeInstallable(pack, packVersion, loaderVersion);
 
-                    installable.curseForgeManifest = curseForgeManifest;
-                    installable.curseExtractedPath = extractedPath;
-                } else if (modrinthProject != null) {
-                    installable = new ModrinthInstallable(pack, packVersion, loaderVersion);
+                installable.curseForgeManifest = curseForgeManifest;
+                installable.curseExtractedPath = extractedPath;
+            } else if (modrinthProject != null) {
+                installable = new ModrinthInstallable(pack, packVersion, loaderVersion);
 
-                    installable.modrinthProject = modrinthProject;
-                } else if (modrinthManifest != null) {
-                    installable = new ModrinthManifestInstallable(pack, packVersion, loaderVersion);
+                installable.modrinthProject = modrinthProject;
+            } else if (modrinthManifest != null) {
+                installable = new ModrinthManifestInstallable(pack, packVersion, loaderVersion);
 
-                    installable.modrinthManifest = modrinthManifest;
-                    installable.modrinthExtractedPath = extractedPath;
-                } else if (multiMCManifest != null) {
-                    installable = new MultiMCInstallable(pack, packVersion, loaderVersion);
+                installable.modrinthManifest = modrinthManifest;
+                installable.modrinthExtractedPath = extractedPath;
+            } else if (multiMCManifest != null) {
+                installable = new MultiMCInstallable(pack, packVersion, loaderVersion);
 
-                    installable.multiMCManifest = multiMCManifest;
-                    installable.multiMCExtractedPath = extractedPath;
-                } else if (technicModpack != null) {
-                    installable = new TechnicModpackInstallable(pack, packVersion, loaderVersion);
+                installable.multiMCManifest = multiMCManifest;
+                installable.multiMCExtractedPath = extractedPath;
+            } else if (technicModpack != null) {
+                installable = new TechnicModpackInstallable(pack, packVersion, loaderVersion);
 
-                    installable.technicModpack = technicModpack;
-                } else if (instance != null && instance.launcher.vanillaInstance) {
-                    installable = new VanillaInstallable(packVersion.minecraftVersion, loaderVersion,
-                            instance.launcher.description);
-                } else {
-                    installable = new ATLauncherInstallable(pack, packVersion, loaderVersion);
-                }
+                installable.technicModpack = technicModpack;
+            } else if (instance != null && instance.launcher.vanillaInstance) {
+                installable = new VanillaInstallable(packVersion.minecraftVersion, loaderVersion,
+                        instance.launcher.description);
+            } else {
+                installable = new ATLauncherInstallable(pack, packVersion, loaderVersion);
+            }
 
-                if (instance != null) {
-                    installable.instance = instance;
-                }
+            if (instance != null) {
+                installable.instance = instance;
+            }
 
-                installable.instanceName = nameField.getText();
-                installable.isReinstall = isReinstall;
-                installable.isUpdate = isUpdate;
-                installable.isServer = isServer;
-                installable.saveMods = !isServer && isReinstall && saveModsCheckbox != null
-                        && saveModsCheckbox.isSelected();
+            installable.instanceName = nameField.getText();
+            installable.isReinstall = isReinstall;
+            installable.isUpdate = isUpdate;
+            installable.isServer = isServer;
+            installable.saveMods = !isServer && isReinstall && saveModsCheckbox != null
+                    && saveModsCheckbox.isSelected();
 
-                setVisible(false);
+            setVisible(false);
 
-                boolean success = installable.startInstall();
+            boolean success = installable.startInstall();
 
-                if (success) {
-                    dispose();
-                }
+            if (success) {
+                dispose();
             }
         });
         JButton cancel = new JButton(GetText.tr("Cancel"));

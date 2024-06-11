@@ -86,12 +86,9 @@ public final class LoginWithMicrosoftDialog extends JDialog {
         linkPanel.add(linkTextField, BorderLayout.SOUTH);
 
         JButton linkCopyButton = new JButton("Copy");
-        linkCopyButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                linkTextField.selectAll();
-                OS.copyToClipboard(Constants.MICROSOFT_LOGIN_URL);
-            }
+        linkCopyButton.addActionListener(e -> {
+            linkTextField.selectAll();
+            OS.copyToClipboard(Constants.MICROSOFT_LOGIN_URL);
         });
         linkPanel.add(linkCopyButton);
 

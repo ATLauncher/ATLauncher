@@ -201,39 +201,36 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         maximumMemoryModel.setMaximum((systemRam == 0 ? null : systemRam));
         maximumMemory = new JSpinner(maximumMemoryModel);
         ((JSpinner.DefaultEditor) maximumMemory.getEditor()).getTextField().setColumns(5);
-        maximumMemory.addChangeListener(new ChangeListener() {
-            @Override
-            public void stateChanged(ChangeEvent e) {
-                JSpinner s = (JSpinner) e.getSource();
-                if (!ConfigManager.getConfigItem("removeInitialMemoryOption", false)) {
-                    // if initial memory is larger than maximum memory, make initial memory match
-                    if ((Integer) initialMemory.getValue() > (Integer) s.getValue()) {
-                        initialMemory.setValue(s.getValue());
-                    }
+        maximumMemory.addChangeListener(e -> {
+            JSpinner s = (JSpinner) e.getSource();
+            if (!ConfigManager.getConfigItem("removeInitialMemoryOption", false)) {
+                // if initial memory is larger than maximum memory, make initial memory match
+                if ((Integer) initialMemory.getValue() > (Integer) s.getValue()) {
+                    initialMemory.setValue(s.getValue());
                 }
+            }
 
-                if ((Integer) s.getValue() > 8192 && !maximumMemoryEightGBWarningShown) {
-                    maximumMemoryEightGBWarningShown = true;
-                    int ret = DialogManager.okDialog().setTitle(GetText.tr("Warning"))
-                            .setType(DialogManager.WARNING)
-                            .setContent(GetText.tr(
-                                    "Setting maximum memory above 8GB is not recommended for most modpacks and can cause issues."))
-                            .addOption(GetText.tr("More Explanation"))
-                            .show();
+            if ((Integer) s.getValue() > 8192 && !maximumMemoryEightGBWarningShown) {
+                maximumMemoryEightGBWarningShown = true;
+                int ret = DialogManager.okDialog().setTitle(GetText.tr("Warning"))
+                        .setType(DialogManager.WARNING)
+                        .setContent(GetText.tr(
+                                "Setting maximum memory above 8GB is not recommended for most modpacks and can cause issues."))
+                        .addOption(GetText.tr("More Explanation"))
+                        .show();
 
-                    if (ret == 1) {
-                        OS.openWebBrowser("https://atl.pw/allocatetoomuchram");
-                    }
-                } else if ((OS.getMaximumRam() != 0 && OS.getMaximumRam() < 16384)
-                        && (Integer) s.getValue() > (OS.getMaximumRam() / 2)
-                        && !maximumMemoryHalfWarningShown) {
-                    maximumMemoryHalfWarningShown = true;
-                    DialogManager.okDialog().setTitle(GetText.tr("Warning"))
-                            .setType(DialogManager.WARNING)
-                            .setContent(GetText.tr(
-                                    "Setting maximum memory to more than half of your systems total memory is not recommended and can cause issues in some cases. Are you sure you want to do this?"))
-                            .show();
+                if (ret == 1) {
+                    OS.openWebBrowser("https://atl.pw/allocatetoomuchram");
                 }
+            } else if ((OS.getMaximumRam() != 0 && OS.getMaximumRam() < 16384)
+                    && (Integer) s.getValue() > (OS.getMaximumRam() / 2)
+                    && !maximumMemoryHalfWarningShown) {
+                maximumMemoryHalfWarningShown = true;
+                DialogManager.okDialog().setTitle(GetText.tr("Warning"))
+                        .setType(DialogManager.WARNING)
+                        .setContent(GetText.tr(
+                                "Setting maximum memory to more than half of your systems total memory is not recommended and can cause issues in some cases. Are you sure you want to do this?"))
+                        .show();
             }
         });
         add(maximumMemory, gbc);
@@ -255,24 +252,21 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         permGenModel.setMaximum((systemRam == 0 ? null : systemRam));
         permGen = new JSpinner(permGenModel);
         ((JSpinner.DefaultEditor) permGen.getEditor()).getTextField().setColumns(3);
-        permGen.addChangeListener(new ChangeListener() {
-            @Override
-            public void stateChanged(ChangeEvent e) {
-                JSpinner s = (JSpinner) e.getSource();
-                int permGenMaxRecommendedSize = (OS.is64Bit() ? 256 : 128);
+        permGen.addChangeListener(e -> {
+            JSpinner s = (JSpinner) e.getSource();
+            int permGenMaxRecommendedSize = (OS.is64Bit() ? 256 : 128);
 
-                if ((Integer) s.getValue() > permGenMaxRecommendedSize && !permgenWarningShown) {
-                    permgenWarningShown = true;
-                    int ret = DialogManager.yesNoDialog().setTitle(GetText.tr("Warning"))
-                            .setType(DialogManager.WARNING)
-                            .setContent(GetText.tr(
-                                    "Setting PermGen size above {0}MB is not recommended and can cause issues. Are you sure you want to do this?",
-                                    permGenMaxRecommendedSize))
-                            .show();
+            if ((Integer) s.getValue() > permGenMaxRecommendedSize && !permgenWarningShown) {
+                permgenWarningShown = true;
+                int ret = DialogManager.yesNoDialog().setTitle(GetText.tr("Warning"))
+                        .setType(DialogManager.WARNING)
+                        .setContent(GetText.tr(
+                                "Setting PermGen size above {0}MB is not recommended and can cause issues. Are you sure you want to do this?",
+                                permGenMaxRecommendedSize))
+                        .show();
 
-                    if (ret != 0) {
-                        permGen.setValue(permGenMaxRecommendedSize);
-                    }
+                if (ret != 0) {
+                    permGen.setValue(permGenMaxRecommendedSize);
                 }
             }
         });
@@ -569,24 +563,19 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         useJavaProvidedByMinecraft = new JCheckBox();
         useJavaProvidedByMinecraft.setSelected(App.settings.useJavaProvidedByMinecraft);
-        useJavaProvidedByMinecraft.addItemListener(new ItemListener() {
-            @Override
-            public void itemStateChanged(ItemEvent e) {
-                SwingUtilities.invokeLater(() -> {
-                    if (!useJavaProvidedByMinecraft.isSelected()) {
-                        int ret = DialogManager.yesNoDialog().setTitle(GetText.tr("Warning"))
-                                .setType(DialogManager.WARNING)
-                                .setContent(GetText.tr(
-                                        "Unchecking this is not recommended and may cause Minecraft to no longer run. Are you sure you want to do this?"))
-                                .show();
+        useJavaProvidedByMinecraft.addItemListener(e -> SwingUtilities.invokeLater(() -> {
+            if (!useJavaProvidedByMinecraft.isSelected()) {
+                int ret = DialogManager.yesNoDialog().setTitle(GetText.tr("Warning"))
+                        .setType(DialogManager.WARNING)
+                        .setContent(GetText.tr(
+                                "Unchecking this is not recommended and may cause Minecraft to no longer run. Are you sure you want to do this?"))
+                        .show();
 
-                        if (ret != 0) {
-                            useJavaProvidedByMinecraft.setSelected(true);
-                        }
-                    }
-                });
+                if (ret != 0) {
+                    useJavaProvidedByMinecraft.setSelected(true);
+                }
             }
-        });
+        }));
         add(useJavaProvidedByMinecraft, gbc);
 
         // Disable Legacy Launching

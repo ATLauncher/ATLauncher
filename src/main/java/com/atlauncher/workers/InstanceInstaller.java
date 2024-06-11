@@ -511,12 +511,9 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         ArchiveUtils.extract(serverPackFile, serverPackExtractedPath);
         Files.delete(serverPackFile);
 
-        File[] directories = serverPackExtractedPath.toFile().listFiles(new FilenameFilter() {
-            @Override
-            public boolean accept(File dir, String name) {
-                return !name.startsWith(".") && new File(dir, name).isDirectory();
-            }
-        });
+        File[] directories = serverPackExtractedPath.toFile().listFiles((dir, name) ->
+            !name.startsWith(".") && new File(dir, name).isDirectory()
+        );
 
         // Only 1 folder, so likely a folder within the folder
         if (directories.length == 1) {

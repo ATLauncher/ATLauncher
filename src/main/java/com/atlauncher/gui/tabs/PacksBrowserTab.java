@@ -249,20 +249,17 @@ public final class PacksBrowserTab extends JPanel
         scrollPane = new JScrollPane(contentPanel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
                 JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scrollPane.getVerticalScrollBar().setUnitIncrement(16);
-        scrollPane.getVerticalScrollBar().addAdjustmentListener(new AdjustmentListener() {
-            @Override
-            public void adjustmentValueChanged(AdjustmentEvent e) {
-                PackBrowserPlatformPanel selectedPanel = (PackBrowserPlatformPanel) platformTabbedPane
-                        .getSelectedComponent();
+        scrollPane.getVerticalScrollBar().addAdjustmentListener(e -> {
+            PackBrowserPlatformPanel selectedPanel = (PackBrowserPlatformPanel) platformTabbedPane
+                    .getSelectedComponent();
 
-                if (!loading && selectedPanel.hasPagination() && selectedPanel.hasMorePages()) {
-                    int maxValue = scrollPane.getVerticalScrollBar().getMaximum()
-                            - scrollPane.getVerticalScrollBar().getVisibleAmount();
-                    int currentValue = scrollPane.getVerticalScrollBar().getValue();
+            if (!loading && selectedPanel.hasPagination() && selectedPanel.hasMorePages()) {
+                int maxValue = scrollPane.getVerticalScrollBar().getMaximum()
+                        - scrollPane.getVerticalScrollBar().getVisibleAmount();
+                int currentValue = scrollPane.getVerticalScrollBar().getValue();
 
-                    if ((float) currentValue / (float) maxValue > 0.9f) {
-                        loadMorePacks();
-                    }
+                if ((float) currentValue / (float) maxValue > 0.9f) {
+                    loadMorePacks();
                 }
             }
         });
@@ -454,12 +451,9 @@ public final class PacksBrowserTab extends JPanel
                 selectedPanel.loadMorePacks(contentPanel, minecraftVersion, category, sort, sortDescending,
                         searchField.getText(), page);
 
-                SwingUtilities.invokeLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        loading = false;
-                        enableTabsAfterLoading();
-                    }
+                SwingUtilities.invokeLater(() -> {
+                    loading = false;
+                    enableTabsAfterLoading();
                 });
 
                 revalidate();
@@ -512,16 +506,13 @@ public final class PacksBrowserTab extends JPanel
             selectedPanel.load(contentPanel, minecraftVersion, category, sort, sortDescending, searchField.getText(),
                     page);
 
-            SwingUtilities.invokeLater(new Runnable() {
-                @Override
-                public void run() {
-                    if (scrollToTop) {
-                        scrollPane.getVerticalScrollBar().setValue(0);
-                    }
-
-                    loading = false;
-                    enableTabsAfterLoading();
+            SwingUtilities.invokeLater(() -> {
+                if (scrollToTop) {
+                    scrollPane.getVerticalScrollBar().setValue(0);
                 }
+
+                loading = false;
+                enableTabsAfterLoading();
             });
 
             revalidate();

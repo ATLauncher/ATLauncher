@@ -151,30 +151,15 @@ public final class Network {
             final SSLSocketFactory sslSocketFactory = sslContext.getSocketFactory();
 
             CLIENT = CLIENT.newBuilder().sslSocketFactory(sslSocketFactory, (X509TrustManager) trustAllCerts[0])
-                    .hostnameVerifier(new HostnameVerifier() {
-                        @Override
-                        public boolean verify(String hostname, SSLSession session) {
-                            return true;
-                        }
-                    }).build();
+                    .hostnameVerifier((hostname, session) -> true).build();
 
             GRAPHQL_CLIENT = GRAPHQL_CLIENT.newBuilder()
                     .sslSocketFactory(sslSocketFactory, (X509TrustManager) trustAllCerts[0])
-                    .hostnameVerifier(new HostnameVerifier() {
-                        @Override
-                        public boolean verify(String hostname, SSLSession session) {
-                            return true;
-                        }
-                    }).build();
+                    .hostnameVerifier((hostname, session) -> true).build();
 
             CACHED_CLIENT = CACHED_CLIENT.newBuilder()
                     .sslSocketFactory(sslSocketFactory, (X509TrustManager) trustAllCerts[0])
-                    .hostnameVerifier(new HostnameVerifier() {
-                        @Override
-                        public boolean verify(String hostname, SSLSession session) {
-                            return true;
-                        }
-                    }).build();
+                    .hostnameVerifier((hostname, session) -> true).build();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
