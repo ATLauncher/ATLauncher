@@ -8,6 +8,7 @@ import javax.swing.JLabel;
 import com.atlauncher.repository.base.IWorkerRepository;
 import com.atlauncher.repository.impl.WorkerRepository;
 import com.atlauncher.utils.Utils;
+import com.gitlab.doomsdayrs.lib.rxswing.schedulers.SwingSchedulers;
 
 /**
  * @since 2024 / 06 / 10
@@ -18,7 +19,7 @@ public class WorkerIndicator extends JLabel {
 
     public WorkerIndicator() {
         super(Utils.getIconImage("/assets/image/loading-bars-small.gif"));
-        workerRepository.getAll().subscribe(jobs -> {
+        workerRepository.getAll().observeOn(SwingSchedulers.edt()).subscribe(jobs -> {
             setVisible(!jobs.isEmpty());
         });
 
