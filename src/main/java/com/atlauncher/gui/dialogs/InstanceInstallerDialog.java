@@ -1110,7 +1110,7 @@ public class InstanceInstallerDialog extends JDialog {
                 String loaderVersionString = instance.launcher.loaderVersion.version;
 
                 for (int i = 0; i < loaderVersionsDropDown.getItemCount(); i++) {
-                    LoaderVersion loaderVersion = ((ComboItem<LoaderVersion>) loaderVersionsDropDown.getItemAt(i))
+                    LoaderVersion loaderVersion = loaderVersionsDropDown.getItemAt(i)
                             .getValue();
 
                     if (loaderVersion.version.equals(loaderVersionString)) {

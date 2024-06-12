@@ -149,7 +149,7 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
                     JSpinner s = (JSpinner) e.getSource();
                     // if initial memory is larger than maximum memory, make maximum memory match
                     if ((Integer) s.getValue() > (Integer) maximumMemory.getValue()) {
-                        maximumMemory.setValue((Integer) s.getValue());
+                        maximumMemory.setValue(s.getValue());
                     }
 
                     if ((Integer) s.getValue() > 512 && !initialMemoryWarningShown) {
