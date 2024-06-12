@@ -23,6 +23,7 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -106,22 +107,22 @@ public class ModrinthApi {
 
     public static ModrinthSearchResult searchResourcePacks(List<String> gameVersions, String query, int page,
             String sort, String category) {
-        List<List<String>> categories = category == null ? null : Arrays.asList(Arrays.asList(category));
+        List<List<String>> categories = category == null ? null : Collections.singletonList(Collections.singletonList(category));
 
         return searchModrinth(gameVersions, query, page, sort, categories, ModrinthProjectType.RESOURCEPACK);
     }
 
     public static ModrinthSearchResult searchShaders(List<String> gameVersions, String query, int page,
             String sort, String category) {
-        List<List<String>> categories = category == null ? null : Arrays.asList(Arrays.asList(category));
+        List<List<String>> categories = category == null ? null : Collections.singletonList(Collections.singletonList(category));
 
         return searchModrinth(gameVersions, query, page, sort, categories, ModrinthProjectType.SHADER);
     }
 
     public static ModrinthSearchResult searchModsForForge(List<String> gameVersions, String query, int page,
             String sort, String category) {
-        List<List<String>> categories = category == null ? Arrays.asList(Arrays.asList("forge"))
-                : Arrays.asList(Arrays.asList(category), Arrays.asList("forge"));
+        List<List<String>> categories = category == null ? Collections.singletonList(Collections.singletonList("forge"))
+                : Arrays.asList(Collections.singletonList(category), Collections.singletonList("forge"));
 
         return searchModrinth(gameVersions, query, page, sort, categories,
                 ModrinthProjectType.MOD);
@@ -132,7 +133,7 @@ public class ModrinthApi {
         List<List<String>> categories = new ArrayList<>();
 
         if (category != null) {
-            categories.add(Arrays.asList(category));
+            categories.add(Collections.singletonList(category));
         }
 
         List<String> neoForgeForgeCompatabilityVersions = ConfigManager
@@ -140,7 +141,7 @@ public class ModrinthApi {
         if (gameVersions.stream().anyMatch(neoForgeForgeCompatabilityVersions::contains)) {
             categories.add(Arrays.asList("neoforge", "forge"));
         } else {
-            categories.add(Arrays.asList("forge"));
+            categories.add(Collections.singletonList("forge"));
         }
 
         return searchModrinth(gameVersions, query, page, sort, categories, ModrinthProjectType.MOD);
@@ -148,8 +149,8 @@ public class ModrinthApi {
 
     public static ModrinthSearchResult searchModsForFabric(List<String> gameVersions, String query, int page,
             String sort, String category) {
-        List<List<String>> categories = category == null ? Arrays.asList(Arrays.asList("fabric"))
-                : Arrays.asList(Arrays.asList(category), Arrays.asList("fabric"));
+        List<List<String>> categories = category == null ? Collections.singletonList(Collections.singletonList("fabric"))
+                : Arrays.asList(Collections.singletonList(category), Collections.singletonList("fabric"));
 
         return searchModrinth(gameVersions, query, page, sort, categories,
                 ModrinthProjectType.MOD);
@@ -157,25 +158,25 @@ public class ModrinthApi {
 
     public static ModrinthSearchResult searchModsForQuilt(List<String> gameVersions, String query, int page,
             String sort, String category) {
-        List<List<String>> categories = category == null ? Arrays.asList(Arrays.asList("quilt"))
-                : Arrays.asList(Arrays.asList(category), Arrays.asList("quilt"));
+        List<List<String>> categories = category == null ? Collections.singletonList(Collections.singletonList("quilt"))
+                : Arrays.asList(Collections.singletonList(category), Collections.singletonList("quilt"));
 
         return searchModrinth(gameVersions, query, page, sort, categories, ModrinthProjectType.MOD);
     }
 
     public static ModrinthSearchResult searchModsForQuiltOrFabric(List<String> gameVersions, String query, int page,
             String sort, String category) {
-        List<List<String>> categories = category == null ? Arrays.asList(Arrays.asList("quilt", "fabric"))
-                : Arrays.asList(Arrays.asList(category), Arrays.asList("quilt", "fabric"));
+        List<List<String>> categories = category == null ? Collections.singletonList(Arrays.asList("quilt", "fabric"))
+                : Arrays.asList(Collections.singletonList(category), Arrays.asList("quilt", "fabric"));
 
         return searchModrinth(gameVersions, query, page, sort, categories, ModrinthProjectType.MOD);
     }
 
     public static ModrinthSearchResult searchModPacks(String minecraftVersion, String query, int page, String sort,
             String category) {
-        List<List<String>> categories = category == null ? null : Arrays.asList(Arrays.asList(category));
+        List<List<String>> categories = category == null ? null : Collections.singletonList(Collections.singletonList(category));
 
-        return searchModrinth(minecraftVersion == null ? null : Arrays.asList(minecraftVersion), query, page, sort,
+        return searchModrinth(minecraftVersion == null ? null : Collections.singletonList(minecraftVersion), query, page, sort,
                 categories, ModrinthProjectType.MODPACK);
     }
 

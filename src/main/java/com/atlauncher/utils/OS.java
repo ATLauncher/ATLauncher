@@ -40,6 +40,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
@@ -598,7 +599,7 @@ public enum OS {
      * This restarts the launcher in debug mode.
      */
     public static void relaunchInDebugMode() {
-        restartLauncher(new ArrayList<>(Arrays.asList("--debug")));
+        restartLauncher(new ArrayList<>(Collections.singletonList("--debug")));
     }
 
     /**
