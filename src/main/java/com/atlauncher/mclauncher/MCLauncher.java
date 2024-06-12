@@ -169,7 +169,7 @@ public class MCLauncher {
 
         File jarMods = instance.getJarModsDirectory();
         File[] jarModFiles = jarMods.listFiles();
-        if (jarMods.exists() && jarModFiles != null && jarModFiles.length != 0) {
+        if (jarMods.exists() && jarModFiles != null) {
             for (File file : jarModFiles) {
                 hasCustomJarMods = true;
                 cpb.append(file.getAbsolutePath());
@@ -206,7 +206,7 @@ public class MCLauncher {
 
         File binFolder = instance.getBinDirectory();
         File[] libraryFiles = binFolder.listFiles();
-        if (binFolder.exists() && libraryFiles != null && libraryFiles.length != 0) {
+        if (binFolder.exists() && libraryFiles != null) {
             for (File file : libraryFiles) {
                 if (!file.getName().equalsIgnoreCase("minecraft.jar")
                         && !file.getName().equalsIgnoreCase("modpack.jar")
