@@ -106,9 +106,10 @@ public final class Network {
         };
 
         return Network.CLIENT.newBuilder().addNetworkInterceptor(chain -> {
-            Response originalResponse = chain.proceed(chain.request());
-            return originalResponse.newBuilder()
+            try (Response originalResponse = chain.proceed(chain.request())) {
+                return originalResponse.newBuilder()
                     .body(new ProgressResponseBody(originalResponse.body(), progressListener)).build();
+            }
         }).build();
     }
 
