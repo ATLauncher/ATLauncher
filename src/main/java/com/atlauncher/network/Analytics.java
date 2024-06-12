@@ -117,9 +117,7 @@ public final class Analytics {
     private static Map<String, Object> getEventProps(AnalyticsEvent event) {
         Map<String, Object> props = new HashMap<>();
 
-        for (Entry<String, Object> payloadSet : event.payload.entrySet()) {
-            props.put(payloadSet.getKey(), payloadSet.getValue());
-        }
+        props.putAll(event.payload);
 
         props.put("session_id", sessionId);
         props.put("distinct_id", App.settings.analyticsClientId);
