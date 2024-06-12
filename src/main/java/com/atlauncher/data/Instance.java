@@ -837,7 +837,7 @@ public class Instance extends MinecraftVersion {
     }
 
     public boolean launch(boolean offline) {
-        final AbstractAccount account = launcher.account == null ? AccountManager.getSelectedAccount()
+        final MicrosoftAccount account = launcher.account == null ? AccountManager.getSelectedAccount()
                 : AccountManager.getAccountByName(launcher.account);
 
         if (account == null) {
@@ -855,8 +855,8 @@ public class Instance extends MinecraftVersion {
         }
 
         // if Microsoft account must login again, then make sure to do that
-        if (!offline && account instanceof MicrosoftAccount && ((MicrosoftAccount) account).mustLogin) {
-            if (!((MicrosoftAccount) account).ensureAccountIsLoggedIn()) {
+        if (!offline && account.mustLogin) {
+            if (!account.ensureAccountIsLoggedIn()) {
                 LogManager.info("You must login to your account before continuing.");
                 return false;
             }
@@ -965,14 +965,12 @@ public class Instance extends MinecraftVersion {
                     wrapperCommand = null;
                 }
 
-                MicrosoftAccount microsoftAccount = (MicrosoftAccount) account;
-
                 if (!offline) {
                     LogManager.info("Logging into Minecraft!");
                     ProgressDialog<Boolean> loginDialog = new ProgressDialog<>(GetText.tr("Logging Into Minecraft"),
                         0, GetText.tr("Logging Into Minecraft"), "Aborted login to Minecraft!");
                     loginDialog.addThread(new Thread(() -> {
-                        loginDialog.setReturnValue(microsoftAccount.ensureAccessTokenValid());
+                        loginDialog.setReturnValue(account.ensureAccessTokenValid());
                         loginDialog.close();
                     }));
                     loginDialog.start();
@@ -1008,7 +1006,7 @@ public class Instance extends MinecraftVersion {
                     }
                 }
 
-                process = MCLauncher.launch(microsoftAccount, this, nativesTempDir,
+                process = MCLauncher.launch(account, this, nativesTempDir,
                     LWJGLManager.shouldUseLegacyLWJGL(this) ? lwjglNativesTempDir : null,
                     wrapperCommand, username);
 
