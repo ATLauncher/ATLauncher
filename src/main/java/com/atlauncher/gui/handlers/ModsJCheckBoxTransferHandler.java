@@ -161,13 +161,13 @@ public class ModsJCheckBoxTransferHandler extends TransferHandler {
                     if (mcMod != null) {
                         mod.name = Optional.ofNullable(mcMod.name).orElse(file.getName());
                         mod.version = Optional.ofNullable(mcMod.version).orElse("Unknown");
-                        mod.description = Optional.ofNullable(mcMod.description).orElse(null);
+                        mod.description = mcMod.description;
                     } else {
                         FabricMod fabricMod = Utils.getFabricModForFile(file);
                         if (fabricMod != null) {
                             mod.name = Optional.ofNullable(fabricMod.name).orElse(file.getName());
                             mod.version = Optional.ofNullable(fabricMod.version).orElse("Unknown");
-                            mod.description = Optional.ofNullable(fabricMod.description).orElse(null);
+                            mod.description = fabricMod.description;
                         }
                     }
 
