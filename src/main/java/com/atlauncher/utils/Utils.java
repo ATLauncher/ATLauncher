@@ -1126,7 +1126,7 @@ public class Utils {
     public static String splitMultilinedString(String string, int maxLineLength, String lineSeparator) {
         char[] chars = string.toCharArray();
         StringBuilder sb = new StringBuilder();
-        char spaceChar = " ".charAt(0);
+        char spaceChar = ' ';
         int count = 0;
         for (char character : chars) {
             if (count >= maxLineLength && character == spaceChar) {
