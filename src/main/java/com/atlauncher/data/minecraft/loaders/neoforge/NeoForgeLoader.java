@@ -79,7 +79,7 @@ public class NeoForgeLoader implements Loader {
             }
         }
 
-        Boolean is1201Version = this.minecraft.equals("1.20.1");
+        boolean is1201Version = this.minecraft.equals("1.20.1");
         String artifactName = is1201Version ? "forge" : "neoforge";
         String versionName = is1201Version ? this.minecraft + "-" + this.version : this.rawVersion;
 
