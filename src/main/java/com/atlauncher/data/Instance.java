@@ -1666,8 +1666,9 @@ public class Instance extends MinecraftVersion {
     public Pair<Path, String> export(String name, String version, String author, InstanceExportFormat format,
             String saveTo, List<String> overrides) {
         try {
-            if (!Files.isDirectory(Paths.get(saveTo))) {
-                Files.createDirectories(Paths.get(saveTo));
+            Path saveToPath = Paths.get(saveTo);
+            if (!Files.isDirectory(saveToPath)) {
+                Files.createDirectories(saveToPath);
             }
         } catch (IOException e) {
             LogManager.logStackTrace("Failed to create export directory", e);
