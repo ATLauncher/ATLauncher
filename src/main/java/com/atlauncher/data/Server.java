@@ -272,7 +272,7 @@ public class Server {
                     launchScript.add("; rm -f ./.launcherrun.sh");
 
                     Path tempLaunchFile = getRoot().resolve(".launcherrun.sh");
-                    Files.write(tempLaunchFile, String.join(" ", launchScript).toString().getBytes(),
+                    Files.write(tempLaunchFile, String.join(" ", launchScript).getBytes(),
                             StandardOpenOption.CREATE,
                             StandardOpenOption.TRUNCATE_EXISTING);
                     tempLaunchFile.toFile().setExecutable(true);

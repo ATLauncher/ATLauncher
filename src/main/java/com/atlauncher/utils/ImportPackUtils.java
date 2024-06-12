@@ -258,7 +258,7 @@ public class ImportPackUtils {
     public static boolean loadFromFile(File file) {
         try {
             Path tmpDir = FileSystem.TEMP
-                    .resolve("multimcimport" + file.getName().toString().toLowerCase(Locale.ENGLISH));
+                    .resolve("multimcimport" + file.getName().toLowerCase(Locale.ENGLISH));
 
             ArchiveUtils.extract(file.toPath(), tmpDir);
 
@@ -296,7 +296,7 @@ public class ImportPackUtils {
         }
 
         Path tmpDir = FileSystem.TEMP
-                .resolve("curseforgeimport" + file.getName().toString().toLowerCase(Locale.ENGLISH));
+                .resolve("curseforgeimport" + file.getName().toLowerCase(Locale.ENGLISH));
 
         try {
             CurseForgeManifest manifest = Gsons.DEFAULT.fromJson(ArchiveUtils.getFile(file.toPath(), "manifest.json"),
@@ -353,7 +353,7 @@ public class ImportPackUtils {
             }
         }
 
-        Path tmpDir = FileSystem.TEMP.resolve("modrinthimport" + file.getName().toString().toLowerCase(Locale.ENGLISH));
+        Path tmpDir = FileSystem.TEMP.resolve("modrinthimport" + file.getName().toLowerCase(Locale.ENGLISH));
 
         try {
             ModrinthModpackManifest manifest = Gsons.DEFAULT

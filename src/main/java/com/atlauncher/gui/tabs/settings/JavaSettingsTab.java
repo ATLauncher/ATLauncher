@@ -400,7 +400,7 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
 
                 // user selected the bin dir
                 if (!jPath.exists() && (javaExe.exists() || javaExecutable.exists())) {
-                    javaPath.setText(selectedPath.getParent().toString());
+                    javaPath.setText(selectedPath.getParent());
                 } else {
                     javaPath.setText(selectedPath.getAbsolutePath());
                 }
