@@ -207,7 +207,6 @@ public final class BrowserDownloadDialog extends JDialog {
                         && Hashing.sha512(finalLocation).equals(Hashing.toHashCode(mod.sha512))) {
                     modsDownloaded.add(mod);
                     reloadMainPanel = true;
-                    continue;
                 }
             }
         }

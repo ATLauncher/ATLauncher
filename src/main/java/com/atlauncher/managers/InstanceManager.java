@@ -132,7 +132,6 @@ public class InstanceManager {
                 newInstances.add(instance);
             } catch (Exception e2) {
                 LogManager.logStackTrace("Failed to load instance in the folder " + instanceDir, e2);
-                continue;
             }
         }
 
