@@ -2751,7 +2751,7 @@ public class Instance extends MinecraftVersion {
                 App.TOASTER.pop(GetText.tr("Cloned Instance Successfully"));
             }));
             dialog.start();
-        } else if (clonedName == null || clonedName.equals("")) {
+        } else if (clonedName == null || clonedName.isEmpty()) {
             LogManager.error("Error Occurred While Cloning Instance! Dialog Closed/Cancelled!");
             DialogManager.okDialog().setTitle(GetText.tr("Error"))
                     .setContent(new HTMLBuilder().center().text(GetText.tr(
