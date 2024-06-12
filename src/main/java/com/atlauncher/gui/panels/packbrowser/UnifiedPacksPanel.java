@@ -56,7 +56,7 @@ public class UnifiedPacksPanel extends PackBrowserPlatformPanel {
         }
 
         List<UnifiedModPackResultsFragment> items = new ArrayList<>();
-        if (search.isEmpty() || search.isEmpty()) {
+        if (search.isEmpty()) {
             UnifiedModPackHomeQuery.Data response = GraphqlClient
                     .callAndWait(new UnifiedModPackHomeQuery());
 
