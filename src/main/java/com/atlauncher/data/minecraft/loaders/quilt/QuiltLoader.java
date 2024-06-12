@@ -133,11 +133,7 @@ public class QuiltLoader implements Loader {
 
     @Override
     public List<Library> getLibraries() {
-        List<Library> libraries = new ArrayList<>();
-
-        libraries.addAll(this.version.libraries);
-
-        return libraries;
+        return new ArrayList<>(this.version.libraries);
     }
 
     private List<File> getLibraryFiles() {
