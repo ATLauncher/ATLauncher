@@ -209,59 +209,49 @@ public class Server {
                     arguments.add("x-terminal-emulator");
                     arguments.add("-e");
 
-                    arguments.add(getRoot().resolve(serverScript).toString()
+                    arguments.add(getRoot().resolve(serverScript)
                             + (isATLauncherLaunchScript && javaPath != null ? String.format(" ATLcustomjava %s",
                                     javaPath + "/bin/java ") : " ")
                             + args);
-                } else if (Utils.executableInPath("exo-open")) {
-                    arguments.add("exo-open");
-                    arguments.add("--launch");
-                    arguments.add("TerminalEmulator");
-                    arguments.add("--working-directory");
-                    arguments.add(getRoot().toAbsolutePath().toString());
-                    arguments.add(String.format(
-                            "./%s %s%s", serverScript, (isATLauncherLaunchScript && javaPath != null
-                                    ? String.format(" ATLcustomjava %s",
-                                            javaPath + "/bin/java ")
-                                    : ""),
-                            args));
-                } else if (Utils.executableInPath("kitty")) {
-                    arguments.add("kitty");
-                    arguments.addAll(Arrays.asList(String.format(
-                            "./%s %s%s", serverScript, (isATLauncherLaunchScript && javaPath != null
-                                    ? String.format(" ATLcustomjava %s",
-                                            javaPath + "/bin/java ")
-                                    : ""),
-                            args)
-                            .split(" ")));
-                } else if (Utils.executableInPath("alacritty")) {
-                    arguments.add("alacritty");
-                    arguments.add("-e");
-                    arguments.addAll(Arrays.asList(String.format(
-                            "./%s %s%s", serverScript, (isATLauncherLaunchScript && javaPath != null
-                                    ? String.format(" ATLcustomjava %s",
-                                            javaPath + "/bin/java ")
-                                    : ""),
-                            args)
-                            .split(" ")));
-                } else if (Utils.executableInPath("gnome-terminal")) {
-                    arguments.add("gnome-terminal");
-                    arguments.add("--");
-                    arguments.addAll(Arrays.asList(String.format(
-                            "./%s %s%s", serverScript, (isATLauncherLaunchScript && javaPath != null
-                                    ? String.format(" ATLcustomjava %s",
-                                            javaPath + "/bin/java ")
-                                    : ""),
-                            args)
-                            .split(" ")));
                 } else {
-                    DialogManager.okDialog().setTitle(GetText.tr("Failed To Launch Server"))
-                            .setContent(new HTMLBuilder().center().text(GetText.tr(
-                                    "The server couldn't be launched as we don't know how to launch it.<br/><br/>Please open the server folder and run the {0} file manually.",
-                                    serverScript))
-                                    .build())
-                            .setType(DialogManager.ERROR).show();
-                    return;
+                    String format = String.format(
+                        "./%s %s%s",
+                        serverScript,
+                        (isATLauncherLaunchScript && javaPath != null ?
+                            String.format(" ATLcustomjava %s", javaPath + "/bin/java ") : ""),
+                        args
+                    );
+
+                    if (Utils.executableInPath("exo-open")) {
+                        arguments.add("exo-open");
+                        arguments.add("--launch");
+                        arguments.add("TerminalEmulator");
+                        arguments.add("--working-directory");
+                        arguments.add(getRoot().toAbsolutePath().toString());
+                        arguments.add(format);
+                    } else if (Utils.executableInPath("kitty")) {
+                        arguments.add("kitty");
+                        arguments.addAll(Arrays.asList(format
+                                .split(" ")));
+                    } else if (Utils.executableInPath("alacritty")) {
+                        arguments.add("alacritty");
+                        arguments.add("-e");
+                        arguments.addAll(Arrays.asList(format
+                                .split(" ")));
+                    } else if (Utils.executableInPath("gnome-terminal")) {
+                        arguments.add("gnome-terminal");
+                        arguments.add("--");
+                        arguments.addAll(Arrays.asList(format
+                                .split(" ")));
+                    } else {
+                        DialogManager.okDialog().setTitle(GetText.tr("Failed To Launch Server"))
+                                .setContent(new HTMLBuilder().center().text(GetText.tr(
+                                        "The server couldn't be launched as we don't know how to launch it.<br/><br/>Please open the server folder and run the {0} file manually.",
+                                        serverScript))
+                                        .build())
+                                .setType(DialogManager.ERROR).show();
+                        return;
+                    }
                 }
             } else if (OS.isMac()) {
                 String launchCommand = serverScript;
