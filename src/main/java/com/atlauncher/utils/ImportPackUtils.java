@@ -18,10 +18,10 @@
 package com.atlauncher.utils;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Locale;
 import java.util.Optional;
@@ -389,10 +389,10 @@ public class ImportPackUtils {
 
     public static boolean loadMultiMCFormat(Path extractedPath) {
         try (InputStreamReader fileReader = new InputStreamReader(
-                new FileInputStream(extractedPath.resolve("mmc-pack.json").toFile()),
+            Files.newInputStream(extractedPath.resolve("mmc-pack.json")),
                 StandardCharsets.UTF_8);
                 InputStreamReader instanceCfgStream = new InputStreamReader(
-                        new FileInputStream(extractedPath.resolve("instance.cfg").toFile()),
+                    Files.newInputStream(extractedPath.resolve("instance.cfg")),
                         StandardCharsets.UTF_8)) {
             MultiMCManifest manifest = Gsons.DEFAULT.fromJson(fileReader, MultiMCManifest.class);
 

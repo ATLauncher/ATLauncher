@@ -18,10 +18,10 @@
 package com.atlauncher.data.minecraft.loaders.forge;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -58,6 +58,9 @@ public class ForgeLoader implements Loader {
     protected Long installerSize;
     protected String installerSha1;
     protected String minecraft;
+    /**
+     * TODO Replace with Path. No usages of file methods used.
+     */
     protected File tempDir;
     protected InstanceInstaller instanceInstaller;
     protected Path installerPath;
@@ -209,7 +212,7 @@ public class ForgeLoader implements Loader {
         ForgeInstallProfile installProfile = null;
 
         try (InputStreamReader fileReader = new InputStreamReader(
-                new FileInputStream(new File(this.tempDir, "install_profile.json")), StandardCharsets.UTF_8)) {
+            Files.newInputStream(new File(this.tempDir, "install_profile.json").toPath()), StandardCharsets.UTF_8)) {
             installProfile = Gsons.DEFAULT.fromJson(fileReader, ForgeInstallProfile.class);
         } catch (Throwable e) {
             LogManager.logStackTrace(e);
@@ -226,7 +229,7 @@ public class ForgeLoader implements Loader {
         ForgeInstallProfile versionInfo = null;
 
         try (InputStreamReader fileReader = new InputStreamReader(
-                new FileInputStream(new File(this.tempDir, "version.json")), StandardCharsets.UTF_8)) {
+            Files.newInputStream(new File(this.tempDir, "version.json").toPath()), StandardCharsets.UTF_8)) {
             versionInfo = Gsons.DEFAULT.fromJson(fileReader, ForgeInstallProfile.class);
         } catch (Throwable e) {
             LogManager.logStackTrace(e);

@@ -18,8 +18,6 @@
 package com.atlauncher.workers;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
@@ -1025,7 +1023,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         ArchiveUtils.extract(manifestFile, modrinthExtractedPath);
 
         try (InputStreamReader fileReader = new InputStreamReader(
-                new FileInputStream(modrinthExtractedPath.resolve("modrinth.index.json").toFile()),
+            Files.newInputStream(modrinthExtractedPath.resolve("modrinth.index.json")),
                 StandardCharsets.UTF_8)) {
             modrinthManifest = Gsons.DEFAULT.fromJson(fileReader, ModrinthModpackManifest.class);
         } catch (Exception e) {
@@ -1132,7 +1130,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
 
         if (Files.exists(versionJsonPath)) {
             try (InputStreamReader fileReader = new InputStreamReader(
-                    new FileInputStream(versionJsonPath.toFile()), StandardCharsets.UTF_8)) {
+                Files.newInputStream(versionJsonPath), StandardCharsets.UTF_8)) {
                 versionJson = Gsons.DEFAULT.fromJson(fileReader, MinecraftVersion.class);
             } catch (Exception e) {
                 LogManager.error("Error reading in version.json");
@@ -3543,29 +3541,31 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
             return;
         }
 
-        File batFile = new File(this.root.toFile(), "LaunchServer.bat");
-        File shFile = new File(this.root.toFile(), "LaunchServer.sh");
-        File tmpBatFile = new File(this.temp.toFile(), "LaunchServer.bat");
-        File tmpShFile = new File(this.temp.toFile(), "LaunchServer.sh");
-        File tmp1BatFile = new File(this.temp.toFile(), "LaunchServer1.bat");
-        File tmp1ShFile = new File(this.temp.toFile(), "LaunchServer1.sh");
+        Path batPath = this.root.resolve("LaunchServer.bat");
+        Path shPath = this.root.resolve("LaunchServer.sh");
+        Path tmpBatPath = this.temp.resolve("LaunchServer.bat");
+        Path tmpShPath = this.temp.resolve("LaunchServer.sh");
+        Path tmp1BatPath = this.temp.resolve("LaunchServer1.bat");
+        Path tmp1ShPath = this.temp.resolve("LaunchServer1.sh");
+        File batFile = batPath.toFile();
+        File shFile = shPath.toFile();
 
         // write out the server jar filename
-        Utils.replaceText(App.class.getResourceAsStream("/server-scripts/LaunchServer.bat"), tmpBatFile,
+        Utils.replaceText(App.class.getResourceAsStream("/server-scripts/LaunchServer.bat"),  tmpBatPath.toFile(),
                 "%%SERVERJAR%%", getServerJar());
-        Utils.replaceText(App.class.getResourceAsStream("/server-scripts/LaunchServer.sh"), tmpShFile, "%%SERVERJAR%%",
+        Utils.replaceText(App.class.getResourceAsStream("/server-scripts/LaunchServer.sh"), tmpShPath.toFile(), "%%SERVERJAR%%",
                 getServerJar());
 
         // replace/remove the server arguments (if any)
-        Utils.replaceText(new FileInputStream(tmpBatFile), tmp1BatFile, "%%ARGUMENTS%%",
+        Utils.replaceText(Files.newInputStream(tmpBatPath), tmp1BatPath.toFile(), "%%ARGUMENTS%%",
                 this.packVersion.serverArguments);
-        Utils.replaceText(new FileInputStream(tmpShFile), tmp1ShFile, "%%ARGUMENTS%%",
+        Utils.replaceText(Files.newInputStream(tmpShPath), tmp1ShPath.toFile(), "%%ARGUMENTS%%",
                 this.packVersion.serverArguments);
 
         // replace/remove the logging arguments for Log4Shell exploit (if any)
         String log4ShellArguments = this.getLog4ShellArguments();
-        Utils.replaceText(new FileInputStream(tmp1BatFile), batFile, "%%LOG4SHELLARGUMENTS%%", log4ShellArguments);
-        Utils.replaceText(new FileInputStream(tmp1ShFile), shFile, "%%LOG4SHELLARGUMENTS%%", log4ShellArguments);
+        Utils.replaceText(Files.newInputStream(tmp1BatPath), batFile, "%%LOG4SHELLARGUMENTS%%", log4ShellArguments);
+        Utils.replaceText(Files.newInputStream(tmp1ShPath), shFile, "%%LOG4SHELLARGUMENTS%%", log4ShellArguments);
 
         batFile.setExecutable(true);
         shFile.setExecutable(true);

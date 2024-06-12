@@ -17,8 +17,6 @@
  */
 package com.atlauncher.managers;
 
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
@@ -90,7 +88,7 @@ public class AccountManager {
 
         if (Files.exists(FileSystem.ACCOUNTS)) {
             try (InputStreamReader fileReader = new InputStreamReader(
-                    new FileInputStream(FileSystem.ACCOUNTS.toFile()), StandardCharsets.UTF_8)) {
+                Files.newInputStream(FileSystem.ACCOUNTS), StandardCharsets.UTF_8)) {
                 List<MicrosoftAccount> accounts = Gsons.DEFAULT.fromJson(fileReader, abstractAccountListType);
 
                 newAccounts.addAll(accounts.stream().filter(account -> account.accessToken != null
@@ -122,7 +120,7 @@ public class AccountManager {
 
     private static void saveAccounts(List<MicrosoftAccount> accounts) {
         try (OutputStreamWriter fileWriter = new OutputStreamWriter(
-                new FileOutputStream(FileSystem.ACCOUNTS.toFile()), StandardCharsets.UTF_8)) {
+            Files.newOutputStream(FileSystem.ACCOUNTS), StandardCharsets.UTF_8)) {
             Gsons.DEFAULT.toJson(accounts, abstractAccountListType, fileWriter);
         } catch (JsonIOException | IOException e) {
             LogManager.logStackTrace(e);

@@ -18,11 +18,11 @@
 package com.atlauncher.managers;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -153,9 +153,9 @@ public class ConfigManager {
         }.getType();
 
         try {
-            File fileDir = FileSystem.JSON.resolve("config.json").toFile();
+            Path fileDir = FileSystem.JSON.resolve("config.json");
             BufferedReader in = new BufferedReader(
-                    new InputStreamReader(new FileInputStream(fileDir), StandardCharsets.UTF_8));
+                    new InputStreamReader(Files.newInputStream(fileDir), StandardCharsets.UTF_8));
 
             Data.CONFIG = Gsons.DEFAULT.fromJson(in, type);
             in.close();

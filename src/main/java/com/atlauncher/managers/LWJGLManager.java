@@ -17,7 +17,6 @@
  */
 package com.atlauncher.managers;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
@@ -54,7 +53,7 @@ public class LWJGLManager {
 
         if (Files.exists(lwjglPath)) {
             try (InputStreamReader fileReader = new InputStreamReader(
-                    new FileInputStream(lwjglPath.toFile()), StandardCharsets.UTF_8)) {
+                Files.newInputStream(lwjglPath), StandardCharsets.UTF_8)) {
                 Data.LWJGL_VERSIONS = Gsons.DEFAULT.fromJson(fileReader, LWJGLVersions.class);
             } catch (JsonSyntaxException | IOException | JsonIOException e1) {
                 LogManager.logStackTrace(e1);

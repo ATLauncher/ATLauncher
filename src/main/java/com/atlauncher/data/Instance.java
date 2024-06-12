@@ -1852,7 +1852,7 @@ public class Instance extends MinecraftVersion {
 
         // create mmc-pack.json
         try (OutputStreamWriter fileWriter = new OutputStreamWriter(
-                new FileOutputStream(tempDir.resolve("mmc-pack.json").toFile()), StandardCharsets.UTF_8)) {
+            Files.newOutputStream(tempDir.resolve("mmc-pack.json")), StandardCharsets.UTF_8)) {
             Gsons.DEFAULT.toJson(manifest, fileWriter);
         } catch (JsonIOException | IOException e) {
             LogManager.logStackTrace("Failed to save mmc-pack.json", e);
@@ -1881,7 +1881,7 @@ public class Instance extends MinecraftVersion {
 
             // create net.fabricmc.intermediary.json
             try (OutputStreamWriter fileWriter = new OutputStreamWriter(
-                    new FileOutputStream(tempDir.resolve("net.fabricmc.intermediary.json").toFile()),
+                Files.newOutputStream(tempDir.resolve("net.fabricmc.intermediary.json")),
                     StandardCharsets.UTF_8)) {
                 Gsons.DEFAULT.toJson(patch, fileWriter);
             } catch (JsonIOException | IOException e) {
@@ -2121,7 +2121,7 @@ public class Instance extends MinecraftVersion {
 
         // create manifest.json
         try (OutputStreamWriter fileWriter = new OutputStreamWriter(
-                new FileOutputStream(tempDir.resolve("manifest.json").toFile()), StandardCharsets.UTF_8)) {
+            Files.newOutputStream(tempDir.resolve("manifest.json")), StandardCharsets.UTF_8)) {
             Gsons.DEFAULT.toJson(manifest, fileWriter);
         } catch (JsonIOException | IOException e) {
             LogManager.logStackTrace("Failed to save manifest.json", e);
@@ -2151,7 +2151,7 @@ public class Instance extends MinecraftVersion {
         sb.append("</ul>");
 
         try (OutputStreamWriter fileWriter = new OutputStreamWriter(
-                new FileOutputStream(tempDir.resolve("modlist.html").toFile()), StandardCharsets.UTF_8)) {
+            Files.newOutputStream(tempDir.resolve("modlist.html")), StandardCharsets.UTF_8)) {
             fileWriter.write(sb.toString());
         } catch (JsonIOException | IOException e) {
             LogManager.logStackTrace("Failed to save modlist.html", e);
@@ -2418,7 +2418,7 @@ public class Instance extends MinecraftVersion {
 
     public void save() {
         try (OutputStreamWriter fileWriter = new OutputStreamWriter(
-                new FileOutputStream(this.getRoot().resolve("instance.json").toFile()), StandardCharsets.UTF_8)) {
+            Files.newOutputStream(this.getRoot().resolve("instance.json")), StandardCharsets.UTF_8)) {
             Gsons.DEFAULT.toJson(this, fileWriter);
         } catch (JsonIOException | IOException e) {
             LogManager.logStackTrace(e);

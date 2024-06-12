@@ -17,10 +17,10 @@
  */
 package com.atlauncher.managers;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -51,7 +51,7 @@ public class MinecraftManager {
         Data.MINECRAFT.clear();
 
         try (InputStreamReader fileReader = new InputStreamReader(
-                new FileInputStream(FileSystem.JSON.resolve("minecraft_versions.json").toFile()),
+            Files.newInputStream(FileSystem.JSON.resolve("minecraft_versions.json")),
                 StandardCharsets.UTF_8)) {
             VersionManifest versionManifest = Gsons.DEFAULT.fromJson(fileReader, VersionManifest.class);
 
@@ -74,7 +74,7 @@ public class MinecraftManager {
         LogManager.debug("Loading Java runtimes");
 
         try (InputStreamReader fileReader = new InputStreamReader(
-                new FileInputStream(FileSystem.JSON.resolve("java_runtimes.json").toFile()),
+            Files.newInputStream(FileSystem.JSON.resolve("java_runtimes.json")),
                 StandardCharsets.UTF_8)) {
             Data.JAVA_RUNTIMES = Gsons.DEFAULT.fromJson(fileReader, JavaRuntimes.class);
         } catch (JsonSyntaxException | IOException | JsonIOException e) {

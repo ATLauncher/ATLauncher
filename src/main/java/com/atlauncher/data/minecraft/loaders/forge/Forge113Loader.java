@@ -18,10 +18,10 @@
 package com.atlauncher.data.minecraft.loaders.forge;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -83,7 +83,7 @@ public class Forge113Loader extends ForgeLoader {
         Version version = null;
 
         try (InputStreamReader fileReader = new InputStreamReader(
-                new FileInputStream(new File(this.tempDir, "version.json")), StandardCharsets.UTF_8)) {
+            Files.newInputStream(this.tempDir.toPath().resolve( "version.json")), StandardCharsets.UTF_8)) {
             version = Gsons.DEFAULT.fromJson(fileReader, Version.class);
         } catch (JsonSyntaxException | JsonIOException | IOException e) {
             LogManager.logStackTrace(e);

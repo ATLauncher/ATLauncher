@@ -27,7 +27,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.management.ManagementFactory;
@@ -810,7 +809,7 @@ public class App {
     private static void loadSettings() {
         // load the users settings or load defaults if settings file doesn't exist
         if (Files.exists(FileSystem.SETTINGS)) {
-            try (InputStreamReader fileReader = new InputStreamReader(new FileInputStream(FileSystem.SETTINGS.toFile()),
+            try (InputStreamReader fileReader = new InputStreamReader(Files.newInputStream(FileSystem.SETTINGS),
                     StandardCharsets.UTF_8)) {
                 settings = Gsons.DEFAULT.fromJson(fileReader, Settings.class);
             } catch (Throwable t) {
@@ -823,7 +822,7 @@ public class App {
 
         if (Files.exists(FileSystem.LAUNCHER_CONFIG)) {
             try (InputStreamReader fileReader = new InputStreamReader(
-                    new FileInputStream(FileSystem.LAUNCHER_CONFIG.toFile()), StandardCharsets.UTF_8)) {
+                Files.newInputStream(FileSystem.LAUNCHER_CONFIG), StandardCharsets.UTF_8)) {
                 Properties properties = new Properties();
                 properties.load(fileReader);
                 settings.convert(properties);

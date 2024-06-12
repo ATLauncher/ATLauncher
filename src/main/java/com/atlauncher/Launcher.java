@@ -21,7 +21,6 @@ import java.awt.Dialog.ModalityType;
 import java.awt.FlowLayout;
 import java.awt.Window;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URLDecoder;
@@ -159,7 +158,7 @@ public class Launcher {
 
     public boolean launcherHasUpdate() {
         try (InputStreamReader fileReader = new InputStreamReader(
-                new FileInputStream(FileSystem.JSON.resolve("version.json").toFile()), StandardCharsets.UTF_8)) {
+            Files.newInputStream(FileSystem.JSON.resolve("version.json")), StandardCharsets.UTF_8)) {
             this.latestLauncherVersion = Gsons.DEFAULT.fromJson(fileReader, LauncherVersion.class);
         } catch (JsonSyntaxException | JsonIOException | IOException e) {
             LogManager.logStackTrace("Exception when loading latest launcher version!", e);

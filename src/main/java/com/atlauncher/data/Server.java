@@ -22,7 +22,6 @@ import java.awt.Image;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
@@ -639,7 +638,7 @@ public class Server {
 
     public void save() {
         try (OutputStreamWriter fileWriter = new OutputStreamWriter(
-                new FileOutputStream(this.getRoot().resolve("server.json").toFile()), StandardCharsets.UTF_8)) {
+            Files.newOutputStream(this.getRoot().resolve("server.json")), StandardCharsets.UTF_8)) {
             Gsons.DEFAULT.toJson(this, fileWriter);
         } catch (JsonIOException | IOException e) {
             LogManager.logStackTrace(e);
