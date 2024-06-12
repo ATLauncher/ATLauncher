@@ -2522,8 +2522,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
     }
 
     public String getMinecraftJarLibraryPath(String type) {
-        return "net/minecraft/" + type + "/" + this.minecraftVersion.id + "/" + type + "-" + this.minecraftVersion.id
-                + ".jar".replace("/", File.separatorChar + "");
+        return ("net/minecraft/" + type + "/" + this.minecraftVersion.id + "/" + type + "-" + this.minecraftVersion.id
+                + ".jar").replace("/", File.separatorChar + "");
     }
 
     public List<String> getLibrariesForLaunch() {
