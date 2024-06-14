@@ -24,8 +24,10 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import com.atlauncher.App;
@@ -46,6 +48,7 @@ import com.atlauncher.managers.LogManager;
 import com.atlauncher.network.ErrorReporting;
 import com.atlauncher.utils.Java;
 import com.atlauncher.utils.OS;
+import com.atlauncher.utils.Pair;
 import com.atlauncher.utils.Utils;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -108,7 +111,8 @@ public class MCLauncher {
             }
 
             if (instance.hasDisabledJavaRuntime()) {
-                LogManager.warn("The Use Java Provided By Minecraft option has been disabled. If you're experiencing crashes, please enable this option.");
+                LogManager.warn(
+                        "The Use Java Provided By Minecraft option has been disabled. If you're experiencing crashes, please enable this option.");
             }
 
             if (instance.ROOT.resolve("mods").toFile().listFiles().length != 0) {
@@ -196,12 +200,32 @@ public class MCLauncher {
             }
         }
 
+        Map<String, Library> dedupedLibraries = new HashMap<>();
         instance.libraries.stream().filter(
                 library -> library.shouldInstall() && library.downloads.artifact != null && !library.hasNativeForOS())
                 .filter(library -> library.downloads.artifact != null && library.downloads.artifact.path != null)
                 .map(l -> LWJGLManager.shouldReplaceLWJGL3(instance)
                         ? LWJGLManager.getReplacementLWJGL3Library(instance, l)
                         : l)
+                .forEach(library -> {
+                    Pair<String, String> libraryName = Utils.convertMavenIdentifierToNameAndVersion(library.name);
+
+                    if (dedupedLibraries.containsKey(libraryName.left())) {
+                        Library existingLibrary = dedupedLibraries.get(libraryName.left());
+
+                        String existingVersion = Utils.convertMavenIdentifierToNameAndVersion(existingLibrary.name)
+                                .right();
+                        String libraryVersion = Utils.convertMavenIdentifierToNameAndVersion(library.name).right();
+
+                        if (Utils.compareVersions(libraryVersion, existingVersion) == 1) {
+                            dedupedLibraries.put(libraryName.left(), library);
+                        }
+                    } else {
+                        dedupedLibraries.put(libraryName.left(), library);
+                    }
+                });
+
+        dedupedLibraries.values().stream()
                 .forEach(library -> {
                     String path = FileSystem.LIBRARIES.resolve(library.downloads.artifact.path).toFile()
                             .getAbsolutePath();
