@@ -1539,12 +1539,26 @@ public class Utils {
 
         int maxLengthOfVersionSplits = Math.max(parts1.length, parts2.length);
         for (int i = 0; i < maxLengthOfVersionSplits; i++) {
-            Integer v1 = i < parts1.length ? Integer.parseInt(parts1[i]) : 0;
-            Integer v2 = i < parts2.length ? Integer.parseInt(parts2[i]) : 0;
-            int compare = v1.compareTo(v2);
-            if (compare != 0) {
-                result = compare;
-                break;
+            if (parts1.length <= i) {
+                return -1;
+            }
+            if (parts2.length <= i) {
+                return 1;
+            }
+
+            try {
+                String part1Sanatised = parts1[i].split("[^0-9]", 2)[0];
+                String part2Sanatised = parts2[i].split("[^0-9]", 2)[0];
+                Integer v1 = i < parts1.length ? Integer.valueOf(part1Sanatised) : 0;
+                Integer v2 = i < parts2.length ? Integer.valueOf(part2Sanatised) : 0;
+                int compare = v1.compareTo(v2);
+                if (compare != 0) {
+                    result = compare;
+                    break;
+                }
+            } catch (NumberFormatException | ArrayIndexOutOfBoundsException e) {
+                // if any exception is thrown, just show that the versions are equal
+                return 0;
             }
         }
 

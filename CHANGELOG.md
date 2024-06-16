@@ -10,6 +10,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Add the option to join a minecraft server, world, and realm when launching an instance [#748]
 
 ### Fixes
+- Versions not parsing correctly when launching certain MC versions causing crashes [#919]
 
 ### Misc
 - Update gradle wrapper version from 8.2 to 8.7 [#886]
