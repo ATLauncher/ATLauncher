@@ -5,7 +5,7 @@ on:
     inputs:
       branch:
         description: "Branch to download the approved translations to"
-        default: "master"
+        default: "develop"
         required: true
 
 jobs:
