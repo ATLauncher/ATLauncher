@@ -3,14 +3,14 @@
 This changelog only contains the changes that are unreleased. For changes for individual releases, please visit the
 [releases](https://github.com/ATLauncher/ATLauncher/releases) page on GitHub.
 
-## 3.4.36.8
+## 3.4.36.9
 
 ### New Features
 - Add AboutTab [#568]
 - Add the option to join a minecraft server, world, and realm when launching an instance [#748]
 
 ### Fixes
-- Failing to launch when libraries not following maven identitifers were used
+- Libraries loading in the incorrect order breaking some modpacks
 
 ### Misc
 - Update gradle wrapper version from 8.2 to 8.7 [#886]
