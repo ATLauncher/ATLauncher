@@ -8,5 +8,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 ### New Features
 
 ### Fixes
+- Versions not parsing correctly when launching certain MC versions causing crashes [#919]
 
 ### Misc
