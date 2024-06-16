@@ -191,20 +191,28 @@ public class MCLauncher {
                         ? LWJGLManager.getReplacementLWJGL3Library(instance, l)
                         : l)
                 .forEach(library -> {
-                    Pair<String, String> libraryName = Utils.convertMavenIdentifierToNameAndVersion(library.name);
+                    try {
+                        Pair<String, String> libraryName = Utils.convertMavenIdentifierToNameAndVersion(library.name);
 
-                    if (dedupedLibraries.containsKey(libraryName.left())) {
-                        Library existingLibrary = dedupedLibraries.get(libraryName.left());
+                        if (dedupedLibraries.containsKey(libraryName.left())) {
+                            Library existingLibrary = dedupedLibraries.get(libraryName.left());
 
-                        String existingVersion = Utils.convertMavenIdentifierToNameAndVersion(existingLibrary.name)
-                                .right();
-                        String libraryVersion = Utils.convertMavenIdentifierToNameAndVersion(library.name).right();
+                            String existingVersion = Utils.convertMavenIdentifierToNameAndVersion(existingLibrary.name)
+                                    .right();
+                            String libraryVersion = Utils.convertMavenIdentifierToNameAndVersion(library.name).right();
 
-                        if (Utils.compareVersions(libraryVersion, existingVersion) == 1) {
+                            if (Utils.compareVersions(libraryVersion, existingVersion) == 1) {
+                                dedupedLibraries.put(libraryName.left(), library);
+                            }
+                        } else {
                             dedupedLibraries.put(libraryName.left(), library);
                         }
-                    } else {
-                        dedupedLibraries.put(libraryName.left(), library);
+                    } catch (Throwable throwable) {
+                        LogManager.logStackTrace("Failed to dedupe library " + library.name + ". Adding regardless.",
+                                throwable);
+
+                        // worse case scenario, just add it to the list
+                        dedupedLibraries.put(library.name, library);
                     }
                 });
 

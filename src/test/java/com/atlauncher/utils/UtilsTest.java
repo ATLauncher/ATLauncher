@@ -47,6 +47,19 @@ public class UtilsTest {
     }
 
     @Test
+    public void testThatConvertingMavenIdentifierOnInvalidIdentifierWorksCorrectly() {
+        Pair<String, String> pair = Utils
+                .convertMavenIdentifierToNameAndVersion("launchwrapper-1.12.jar");
+        assertEquals("launchwrapper-1.12.jar", pair.left());
+        assertEquals("0", pair.right());
+
+        pair = Utils
+                .convertMavenIdentifierToNameAndVersion("com.mojang:1.3.5");
+        assertEquals("com.mojang:1.3.5", pair.left());
+        assertEquals("0", pair.right());
+    }
+
+    @Test
     public void testThatComparingVersionsWorksCorrectlyWhenVersionsAreEqual() {
         assertEquals(0, Utils.compareVersions("1.7.0", "1.7.0"));
     }
