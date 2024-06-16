@@ -1511,6 +1511,11 @@ public class Utils {
 
     public static Pair<String, String> convertMavenIdentifierToNameAndVersion(String identifier) {
         String[] parts = identifier.split(":", 3);
+        if (parts.length < 3) {
+            // old ATLauncher libraries don't use maven identifiers, so just return the
+            // identifier
+            return new Pair<>(identifier, "0");
+        }
         String name = parts[1];
         String version = parts[2];
         String classifier = "";

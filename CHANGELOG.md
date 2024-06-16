@@ -8,5 +8,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 ### New Features
 
 ### Fixes
+- Failing to launch when libraries not following maven identitifers were used
 
 ### Misc
