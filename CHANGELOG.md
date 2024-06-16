@@ -8,5 +8,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 ### New Features
 
 ### Fixes
+- Libraries loading in the incorrect order breaking some modpacks
 
 ### Misc

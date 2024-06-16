@@ -24,7 +24,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -200,7 +200,7 @@ public class MCLauncher {
             }
         }
 
-        Map<String, Library> dedupedLibraries = new HashMap<>();
+        Map<String, Library> dedupedLibraries = new LinkedHashMap<>();
         instance.libraries.stream().filter(
                 library -> library.shouldInstall() && library.downloads.artifact != null && !library.hasNativeForOS())
                 .filter(library -> library.downloads.artifact != null && library.downloads.artifact.path != null)
