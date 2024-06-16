@@ -56,6 +56,9 @@ public class UtilsTest {
         assertEquals(-1, Utils.compareVersions("1.7.0", "2.0.0"));
         assertEquals(-1, Utils.compareVersions("1.7.0", "1.8.0"));
         assertEquals(-1, Utils.compareVersions("1.7.0", "1.7.1"));
+        assertEquals(-1, Utils.compareVersions("1.7.0", "1.8"));
+        assertEquals(-1, Utils.compareVersions("1", "1.7.0"));
+        assertEquals(-1, Utils.compareVersions("2.1.2", "3"));
     }
 
     @Test
@@ -63,6 +66,9 @@ public class UtilsTest {
         assertEquals(1, Utils.compareVersions("1.8.0", "1.7.0"));
         assertEquals(1, Utils.compareVersions("1.8.1", "1.8.0"));
         assertEquals(1, Utils.compareVersions("2.8.0", "1.8.0"));
+        assertEquals(1, Utils.compareVersions("1.8.1", "1.8"));
+        assertEquals(1, Utils.compareVersions("2", "1.7.0"));
+        assertEquals(1, Utils.compareVersions("2.1.2", "2"));
     }
 
     @Test
