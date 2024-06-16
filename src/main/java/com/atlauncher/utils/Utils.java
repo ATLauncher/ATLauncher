@@ -1509,8 +1509,46 @@ public class Utils {
         return path;
     }
 
+    public static Pair<String, String> convertMavenIdentifierToNameAndVersion(String identifier) {
+        String[] parts = identifier.split(":", 3);
+        String name = parts[1];
+        String version = parts[2];
+        String classifier = "";
+
+        if (version.indexOf('@') != -1) {
+            version = version.substring(0, version.indexOf('@'));
+        }
+
+        if (version.indexOf(':') != -1) {
+            classifier = ":" + version.substring(version.indexOf(':') + 1);
+            version = version.substring(0, version.indexOf(':'));
+        }
+
+        return new Pair<>(parts[0] + ":" + name + classifier, version);
+    }
+
     public static File convertMavenIdentifierToFile(String identifier, File base) {
         return new File(base, convertMavenIdentifierToPath(identifier).replace("/", File.separatorChar + ""));
+    }
+
+    public static int compareVersions(String version1, String version2) {
+        int result = 0;
+
+        String[] parts1 = version1.split("\\.");
+        String[] parts2 = version2.split("\\.");
+
+        int maxLengthOfVersionSplits = Math.max(parts1.length, parts2.length);
+        for (int i = 0; i < maxLengthOfVersionSplits; i++) {
+            Integer v1 = i < parts1.length ? Integer.parseInt(parts1[i]) : 0;
+            Integer v2 = i < parts2.length ? Integer.parseInt(parts2[i]) : 0;
+            int compare = v1.compareTo(v2);
+            if (compare != 0) {
+                result = compare;
+                break;
+            }
+        }
+
+        return result;
     }
 
     public static boolean matchVersion(String version, String matches, boolean lessThan, boolean equal) {
