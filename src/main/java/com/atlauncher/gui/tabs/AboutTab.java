@@ -83,14 +83,6 @@ public class AboutTab extends HierarchyPanel implements Tab, RelocalizationListe
         super();
         setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
         setBorder(BorderFactory.createEmptyBorder(16, 16, 16, 16));
-        RelocalizationManager.addListener(this);
-    }
-
-    @Override
-    public void onRelocalization() {
-        copyButton.setText(GetText.tr("Copy"));
-        contributorsLabel.setText(GetText.tr("Contributors"));
-        licenseLabel.setText(GetText.tr("License"));
     }
 
     @Override
