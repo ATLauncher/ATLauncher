@@ -22,6 +22,7 @@ import java.awt.event.KeyEvent;
 import java.util.function.Consumer;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * 29 / 04 / 2023
@@ -33,13 +34,28 @@ public class StatefulTextKeyAdapter extends KeyAdapter {
     /**
      * Consumer to feed events
      */
-    @Nonnull
-    private final Consumer<KeyEvent> consumer;
+    @Nullable
+    private Consumer<KeyEvent> consumer;
 
     /**
      * @param consumer Consumer to receive events with
      */
     public StatefulTextKeyAdapter(@Nonnull Consumer<KeyEvent> consumer) {
+        this.consumer = consumer;
+    }
+
+    /**
+     * Empty constructor.
+     * Use `setConsumer`
+     */
+    public StatefulTextKeyAdapter() {
+    }
+
+    /**
+     * Used as per the empty constructor.
+     * @param consumer Consumer to receive events with.
+     */
+    public void setConsumer(@Nullable Consumer<KeyEvent> consumer) {
         this.consumer = consumer;
     }
 
@@ -59,7 +75,9 @@ public class StatefulTextKeyAdapter extends KeyAdapter {
             e.getKeyCode() != KeyEvent.VK_ALT &&
             e.getModifiersEx() != KeyEvent.CTRL_DOWN_MASK
         ) {
-            consumer.accept(e);
+            if (consumer != null) {
+                consumer.accept(e);
+            }
         } else super.keyReleased(e);
     }
 }

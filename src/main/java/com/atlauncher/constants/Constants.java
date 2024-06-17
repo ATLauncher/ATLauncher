@@ -24,6 +24,7 @@ import java.util.stream.Collectors;
 
 import com.atlauncher.App;
 import com.atlauncher.data.LauncherVersion;
+import com.atlauncher.data.ScreenResolution;
 import com.atlauncher.utils.OS;
 
 public class Constants {
@@ -158,8 +159,18 @@ public class Constants {
             "dd-MM-yyyy", "MM-dd-yyyy", "yyyy-MM-dd" };
     // instance name, pack name, pack version, minecraft version
     public static final String[] INSTANCE_TITLE_FORMATS = { "%1$s (%2$s %3$s)", "%1$s", "%1$s (%4$s)", "%1$s (%3$s)" };
-    public static final String[] SCREEN_RESOLUTIONS = { "854x480", "1280x720", "1366x768", "1600x900", "1920x1080",
-            "2560x1440", "3440x1440", "3840x2160" };
+
+    public static final ScreenResolution[] SCREEN_RESOLUTIONS = {
+        new ScreenResolution(854, 480),
+        new ScreenResolution(1280, 720),
+        new ScreenResolution(1366, 768),
+        new ScreenResolution(1600, 900),
+        new ScreenResolution(1920, 1080),
+        new ScreenResolution(2560, 1440),
+        new ScreenResolution(3440, 1440),
+        new ScreenResolution(3840, 2160)
+    };
+
     public static final String DEFAULT_JAVA_PARAMETERS = "-XX:+UnlockExperimentalVMOptions -XX:+UseG1GC -XX:G1NewSizePercent=20 -XX:G1ReservePercent=20 -XX:MaxGCPauseMillis=50 -XX:G1HeapRegionSize=32M";
 
     // Custom for ATLauncher Microsoft login constants
