@@ -41,7 +41,7 @@ public class MultiMCInstanceConfig {
         }
 
         if (props.getProperty("MinMemAlloc") != null
-                && ConfigManager.getConfigItem("removeInitialMemoryOption", false) == false) {
+                && !ConfigManager.getConfigItem("removeInitialMemoryOption", false)) {
             initialMemory = Integer.parseInt(props.getProperty("MinMemAlloc"));
         }
 

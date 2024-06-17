@@ -82,7 +82,7 @@ public class FabricLoader implements Loader {
     }
 
     private FabricMetaProfile getLoader(String version) {
-        if (ConfigManager.getConfigItem("useGraphql.loaderVersionsNonForge", false) == true) {
+        if (ConfigManager.getConfigItem("useGraphql.loaderVersionsNonForge", false)) {
             GetFabricLoaderVersionQuery.Data response = GraphqlClient
                     .callAndWait(GetFabricLoaderVersionQuery.builder().fabricVersion(version)
                             .minecraftVersion(this.minecraft).includeClientJson(
@@ -108,12 +108,12 @@ public class FabricLoader implements Loader {
     }
 
     public String getLatestVersion() {
-        if (ConfigManager.getConfigItem("useGraphql.loaderVersionsNonForge", false) == true) {
+        if (ConfigManager.getConfigItem("useGraphql.loaderVersionsNonForge", false)) {
             GetLatestFabricLoaderVersionQuery.Data response = GraphqlClient
                     .callAndWait(new GetLatestFabricLoaderVersionQuery());
 
             if (response == null || response.fabricLoaderVersions() == null
-                    || response.fabricLoaderVersions().size() == 0) {
+                    || response.fabricLoaderVersions().isEmpty()) {
                 return null;
             }
 
@@ -127,7 +127,7 @@ public class FabricLoader implements Loader {
                 .setUrl(String.format("https://meta.fabricmc.net/v2/versions/loader/%s?limit=1", this.minecraft))
                 .asType(type);
 
-        if (loaders == null || loaders.size() == 0) {
+        if (loaders == null || loaders.isEmpty()) {
             return null;
         }
 
@@ -136,11 +136,7 @@ public class FabricLoader implements Loader {
 
     @Override
     public List<Library> getLibraries() {
-        List<Library> libraries = new ArrayList<>();
-
-        libraries.addAll(this.version.libraries);
-
-        return libraries;
+        return new ArrayList<>(this.version.libraries);
     }
 
     private List<File> getLibraryFiles() {
@@ -278,15 +274,15 @@ public class FabricLoader implements Loader {
     public static List<LoaderVersion> getChoosableVersions(String minecraft) {
         try {
             List<String> disabledVersions = ConfigManager.getConfigItem("loaders.fabric.disabledVersions",
-                    new ArrayList<String>());
+                new ArrayList<>());
 
-            if (ConfigManager.getConfigItem("useGraphql.loaderVersionsNonForge", false) == true) {
+            if (ConfigManager.getConfigItem("useGraphql.loaderVersionsNonForge", false)) {
                 GetFabricLoaderVersionsForMinecraftVersionQuery.Data response = GraphqlClient
                         .callAndWait(new GetFabricLoaderVersionsForMinecraftVersionQuery(minecraft));
 
                 if (response == null || response.loaderVersions() == null
                         || response.loaderVersions().fabric() == null
-                        || response.loaderVersions().fabric().size() == 0) {
+                        || response.loaderVersions().fabric().isEmpty()) {
                     return null;
                 }
 

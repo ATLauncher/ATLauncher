@@ -270,7 +270,7 @@ public class CreatePackTab extends JPanel implements Tab, RelocalizationListener
                             getFontMetrics(App.THEME.getNormalFont())
                                     .stringWidth(version.toString()) + 25);
 
-                    loaderVersionsDropDown.addItem(new ComboItem(version, version.toString()));
+                    loaderVersionsDropDown.addItem(new ComboItem<>(version, version.toString()));
                 }
 
                 // ensures that the dropdown is at least 200 px wide
@@ -324,9 +324,7 @@ public class CreatePackTab extends JPanel implements Tab, RelocalizationListener
         viewModel.loaderTypeQuiltSelected().subscribe(loaderTypeQuiltRadioButton::setSelected);
         viewModel.loaderTypeQuiltEnabled().subscribe(loaderTypeQuiltRadioButton::setEnabled);
         viewModel.isQuiltVisible().subscribe(loaderTypeQuiltRadioButton::setVisible);
-        loaderTypeQuiltRadioButton.addActionListener((e) -> {
-            viewModel.setLoaderType(LoaderType.QUILT);
-        });
+        loaderTypeQuiltRadioButton.addActionListener((e) -> viewModel.setLoaderType(LoaderType.QUILT));
         if (viewModel.showQuiltOption()) {
             loaderTypePanel.add(loaderTypeQuiltRadioButton);
         }
@@ -381,9 +379,7 @@ public class CreatePackTab extends JPanel implements Tab, RelocalizationListener
     private void setupLoaderNoneButton(JPanel loaderTypePanel) {
         viewModel.loaderTypeNoneSelected().subscribe(loaderTypeNoneRadioButton::setSelected);
         viewModel.loaderTypeNoneEnabled().subscribe(loaderTypeNoneRadioButton::setEnabled);
-        loaderTypeNoneRadioButton.addActionListener((e) -> {
-            viewModel.setLoaderType(null);
-        });
+        loaderTypeNoneRadioButton.addActionListener((e) -> viewModel.setLoaderType(null));
         loaderTypePanel.add(loaderTypeNoneRadioButton);
     }
 
@@ -536,9 +532,7 @@ public class CreatePackTab extends JPanel implements Tab, RelocalizationListener
         viewModel.createInstanceEnabled().subscribe(createInstanceButton::setEnabled);
         viewModel.createServerEnabled().subscribe(createServerButton::setEnabled);
         bottomPanel.add(createInstanceButton);
-        createInstanceButton.addActionListener((event) -> {
-            viewModel.createInstance();
-        });
+        createInstanceButton.addActionListener((event) -> viewModel.createInstance());
         add(bottomPanel, BorderLayout.SOUTH);
     }
 

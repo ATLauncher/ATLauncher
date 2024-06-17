@@ -30,7 +30,6 @@ import com.atlauncher.data.BackupMode;
 import com.atlauncher.gui.components.JLabelWithHover;
 import com.atlauncher.utils.ComboItem;
 
-@SuppressWarnings("serial")
 public class BackupsSettingsTab extends AbstractSettingsTab {
     private final JComboBox<ComboItem<BackupMode>> backupMode;
     private final JCheckBox enableAutomaticBackupAfterLaunch;

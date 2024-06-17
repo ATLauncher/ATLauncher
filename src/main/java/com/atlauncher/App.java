@@ -27,7 +27,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.management.ManagementFactory;
@@ -42,6 +41,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
@@ -415,7 +415,7 @@ public class App {
     }
 
     private static void checkIfNeedToUpdateBundledJre() {
-        if (ConfigManager.getConfigItem("bundledJre.promptToUpdate", false) == true
+        if (ConfigManager.getConfigItem("bundledJre.promptToUpdate", false)
                 && Java.shouldPromptToUpdateBundledJre()) {
             String dialogTitle;
             String dialogText;
@@ -555,7 +555,7 @@ public class App {
             HardwareAbstractionLayer hal = systemInfo.getHardware();
 
             List<GraphicsCard> cards = hal.getGraphicsCards();
-            if (cards.size() != 0) {
+            if (!cards.isEmpty()) {
                 for (GraphicsCard card : cards) {
                     LogManager.info("GPU: " + card.getName() + " (" + card.getVendor() + ") " + card.getVersionInfo()
                             + " " + (card.getVRam() / 1048576) + "MB VRAM");
@@ -809,7 +809,7 @@ public class App {
     private static void loadSettings() {
         // load the users settings or load defaults if settings file doesn't exist
         if (Files.exists(FileSystem.SETTINGS)) {
-            try (InputStreamReader fileReader = new InputStreamReader(new FileInputStream(FileSystem.SETTINGS.toFile()),
+            try (InputStreamReader fileReader = new InputStreamReader(Files.newInputStream(FileSystem.SETTINGS),
                     StandardCharsets.UTF_8)) {
                 settings = Gsons.DEFAULT.fromJson(fileReader, Settings.class);
             } catch (Throwable t) {
@@ -822,7 +822,7 @@ public class App {
 
         if (Files.exists(FileSystem.LAUNCHER_CONFIG)) {
             try (InputStreamReader fileReader = new InputStreamReader(
-                    new FileInputStream(FileSystem.LAUNCHER_CONFIG.toFile()), StandardCharsets.UTF_8)) {
+                Files.newInputStream(FileSystem.LAUNCHER_CONFIG), StandardCharsets.UTF_8)) {
                 Properties properties = new Properties();
                 properties.load(fileReader);
                 settings.convert(properties);
@@ -1119,7 +1119,7 @@ public class App {
             ProxySelector.setDefault(new ProxySelector() {
                 @Override
                 public List<java.net.Proxy> select(URI uri) {
-                    return Arrays.asList(proxy);
+                    return Collections.singletonList(proxy);
                 }
 
                 @Override

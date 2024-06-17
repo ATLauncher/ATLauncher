@@ -30,7 +30,6 @@ import com.atlauncher.constants.UIConstants;
 import com.atlauncher.data.json.Mod;
 import com.atlauncher.utils.OS;
 
-@SuppressWarnings("serial")
 public class BrowserDownloadMod extends JPanel {
     private JButton openButton = new JButton(GetText.tr("Open"));
     private JButton copyLinkButton = new JButton(GetText.tr("Copy Link"));
@@ -54,16 +53,12 @@ public class BrowserDownloadMod extends JPanel {
         gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         add(openButton, gbc);
-        openButton.addActionListener(l -> {
-            OS.openWebBrowser(mod.url);
-        });
+        openButton.addActionListener(l -> OS.openWebBrowser(mod.url));
 
         gbc.gridx++;
         gbc.insets = UIConstants.FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         add(copyLinkButton, gbc);
-        copyLinkButton.addActionListener(l -> {
-            OS.copyToClipboard(mod.url);
-        });
+        copyLinkButton.addActionListener(l -> OS.copyToClipboard(mod.url));
     }
 }

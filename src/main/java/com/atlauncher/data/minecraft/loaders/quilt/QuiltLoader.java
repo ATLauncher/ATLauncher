@@ -77,7 +77,7 @@ public class QuiltLoader implements Loader {
     }
 
     private QuiltMetaProfile getLoader(String version) {
-        if (ConfigManager.getConfigItem("useGraphql.loaderVersionsNonForge", false) == true) {
+        if (ConfigManager.getConfigItem("useGraphql.loaderVersionsNonForge", false)) {
             GetQuiltLoaderVersionQuery.Data response = GraphqlClient
                     .callAndWait(GetQuiltLoaderVersionQuery.builder().quiltVersion(version)
                             .minecraftVersion(this.minecraft).includeClientJson(
@@ -105,12 +105,12 @@ public class QuiltLoader implements Loader {
     }
 
     public String getLatestVersion() {
-        if (ConfigManager.getConfigItem("useGraphql.loaderVersionsNonForge", false) == true) {
+        if (ConfigManager.getConfigItem("useGraphql.loaderVersionsNonForge", false)) {
             GetLatestQuiltLoaderVersionQuery.Data response = GraphqlClient
                     .callAndWait(new GetLatestQuiltLoaderVersionQuery());
 
             if (response == null || response.quiltLoaderVersions() == null
-                    || response.quiltLoaderVersions().size() == 0) {
+                    || response.quiltLoaderVersions().isEmpty()) {
                 return null;
             }
 
@@ -124,7 +124,7 @@ public class QuiltLoader implements Loader {
                 .setUrl(String.format("https://meta.quiltmc.org/v3/versions/loader/%s?limit=1", this.minecraft))
                 .asType(type);
 
-        if (loaders == null || loaders.size() == 0) {
+        if (loaders == null || loaders.isEmpty()) {
             return null;
         }
 
@@ -133,11 +133,7 @@ public class QuiltLoader implements Loader {
 
     @Override
     public List<Library> getLibraries() {
-        List<Library> libraries = new ArrayList<>();
-
-        libraries.addAll(this.version.libraries);
-
-        return libraries;
+        return new ArrayList<>(this.version.libraries);
     }
 
     private List<File> getLibraryFiles() {
@@ -241,15 +237,15 @@ public class QuiltLoader implements Loader {
     public static List<LoaderVersion> getChoosableVersions(String minecraft) {
         try {
             List<String> disabledVersions = ConfigManager.getConfigItem("loaders.quilt.disabledVersions",
-                    new ArrayList<String>());
+                new ArrayList<>());
 
-            if (ConfigManager.getConfigItem("useGraphql.loaderVersionsNonForge", false) == true) {
+            if (ConfigManager.getConfigItem("useGraphql.loaderVersionsNonForge", false)) {
                 GetQuiltLoaderVersionsForMinecraftVersionQuery.Data response = GraphqlClient
                         .callAndWait(new GetQuiltLoaderVersionsForMinecraftVersionQuery(minecraft));
 
                 if (response == null || response.loaderVersions() == null
                         || response.loaderVersions().quilt() == null
-                        || response.loaderVersions().quilt().size() == 0) {
+                        || response.loaderVersions().quilt().isEmpty()) {
                     return null;
                 }
 

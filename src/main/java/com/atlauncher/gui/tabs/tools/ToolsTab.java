@@ -28,7 +28,6 @@ import org.mini2Dx.gettext.GetText;
 import com.atlauncher.gui.panels.HierarchyPanel;
 import com.atlauncher.gui.tabs.Tab;
 
-@SuppressWarnings("serial")
 public class ToolsTab extends HierarchyPanel implements Tab {
 
     private IToolsViewModel viewModel;

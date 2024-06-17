@@ -63,7 +63,7 @@ public class Processor {
     }
 
     public boolean hasOutputs() {
-        return this.outputs != null && this.outputs.size() != 0;
+        return this.outputs != null && !this.outputs.isEmpty();
     }
 
     public void process(ForgeInstallProfile installProfile, File extractedDir, InstanceInstaller instanceInstaller)

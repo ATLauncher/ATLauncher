@@ -40,6 +40,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
@@ -270,7 +271,7 @@ public enum OS {
     }
 
     public static JavaInfo getPreferredJava(List<JavaInfo> installedJavas) {
-        if (installedJavas.size() == 0) {
+        if (installedJavas.isEmpty()) {
             return null;
         }
 
@@ -278,7 +279,7 @@ public enum OS {
                 .filter(javaInfo -> javaInfo.majorVersion != null && javaInfo.minorVersion != null)
                 .collect(Collectors.toList());
 
-        if (validVersions.size() == 0) {
+        if (validVersions.isEmpty()) {
             return null;
         }
 
@@ -598,7 +599,7 @@ public enum OS {
      * This restarts the launcher in debug mode.
      */
     public static void relaunchInDebugMode() {
-        restartLauncher(new ArrayList<>(Arrays.asList("--debug")));
+        restartLauncher(new ArrayList<>(Collections.singletonList("--debug")));
     }
 
     /**
@@ -662,7 +663,7 @@ public enum OS {
 
     public static boolean isUsingAntivirus() {
         if (isWindows()) {
-            return Optional.ofNullable(getAntivirusProcesses()).orElse(new ArrayList<>()).size() != 0;
+            return !Optional.ofNullable(getAntivirusProcesses()).orElse(new ArrayList<>()).isEmpty();
         }
 
         return false;

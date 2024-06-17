@@ -35,7 +35,6 @@ import org.mini2Dx.gettext.GetText;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.utils.OS;
 
-@SuppressWarnings("serial")
 public class ModrinthExportOverridesDialog extends JDialog {
     public ModrinthExportOverridesDialog(Dialog parent, String text) {
         super(parent, GetText.tr("Overrides Included"), true);
@@ -71,16 +70,12 @@ public class ModrinthExportOverridesDialog extends JDialog {
 
         // Copy button
         JButton copyButton = new JButton(GetText.tr("Copy"));
-        copyButton.addActionListener(e -> {
-            OS.copyToClipboard(text);
-        });
+        copyButton.addActionListener(e -> OS.copyToClipboard(text));
         buttonPanel.add(copyButton);
 
         // Close button
         JButton closeButton = new JButton(GetText.tr("Close"));
-        closeButton.addActionListener(e -> {
-            close();
-        });
+        closeButton.addActionListener(e -> close());
         buttonPanel.add(closeButton);
 
         add(buttonPanel, BorderLayout.SOUTH);

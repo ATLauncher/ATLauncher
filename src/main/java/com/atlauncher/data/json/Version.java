@@ -309,7 +309,7 @@ public class Version {
     }
 
     public boolean hasActions() {
-        return this.actions != null && this.actions.size() != 0;
+        return this.actions != null && !this.actions.isEmpty();
     }
 
     /**

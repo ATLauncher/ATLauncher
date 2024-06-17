@@ -149,9 +149,7 @@ public class AboutTab extends HierarchyPanel implements Tab, RelocalizationListe
             // Add copy button
             {
                 copyButton = new JButton();
-                copyButton.addActionListener(e -> {
-                    OS.copyToClipboard(viewModel.getCopyInfo());
-                });
+                copyButton.addActionListener(e -> OS.copyToClipboard(viewModel.getCopyInfo()));
                 info.add(copyButton);
             }
 
