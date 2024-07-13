@@ -142,7 +142,7 @@ public class ModrinthApi {
         if (gameVersions.stream().anyMatch(gv -> neoForgeForgeCompatabilityVersions.contains(gv))) {
             categories.add(Arrays.asList("neoforge", "forge"));
         } else {
-            categories.add(Arrays.asList("forge"));
+            categories.add(Arrays.asList("neoforge"));
         }
 
         return searchModrinth(gameVersions, query, page, sort, categories, ModrinthProjectType.MOD);
