@@ -11,6 +11,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 
 ### Fixes
 - Issue exporting/disabling/deleting worlds downloaded from CurseForge [#927]
+- Issue installing Modrinth pack with invalid filename [#923]
 
 ### Misc
 - Update gradle wrapper version from 8.2 to 8.7 [#886]
