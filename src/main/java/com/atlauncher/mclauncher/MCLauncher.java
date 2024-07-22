@@ -443,7 +443,8 @@ public class MCLauncher {
             }
         }
 
-        // Quick Play feature (with backward compatibility for older versions of Minecraft)
+        // Quick Play feature (with backward compatibility for older versions of
+        // Minecraft)
         QuickPlay quickPlay = instance.launcher.quickPlay;
 
         // Quick Play Multiplayer
@@ -451,12 +452,12 @@ public class MCLauncher {
             String enteredServerAddress = quickPlay.serverAddress;
             if (instance.isQuickPlaySupported(QuickPlayOption.multiPlayer)) {
                 // Minecraft 23w14a and newer versions
-                arguments.addAll(Arrays.asList(quickPlay.getSelectedQuickPlayOption().argumentRuleValue, enteredServerAddress));
-                arguments.add(enteredServerAddress);
+                arguments.addAll(
+                        Arrays.asList(quickPlay.getSelectedQuickPlayOption().argumentRuleValue, enteredServerAddress));
             } else {
                 // Minecraft 23w13a and older versions
                 String[] parts = enteredServerAddress.contains(":") ? enteredServerAddress.split(":")
-                    : new String[]{enteredServerAddress};
+                        : new String[] { enteredServerAddress };
                 String address = parts[0];
                 String port = parts.length > 1 ? parts[1] : String.valueOf(Constants.MINECRAFT_DEFAULT_SERVER_PORT);
                 arguments.addAll(Arrays.asList("--server", address));
@@ -469,7 +470,8 @@ public class MCLauncher {
             String selectedWorldSaveName = quickPlay.worldName;
             if (instance.isQuickPlaySupported(QuickPlayOption.singlePlayer)) {
                 // Only work for Minecraft 23w14a and newer versions
-                arguments.addAll(Arrays.asList(quickPlay.getSelectedQuickPlayOption().argumentRuleValue, selectedWorldSaveName));
+                arguments.addAll(
+                        Arrays.asList(quickPlay.getSelectedQuickPlayOption().argumentRuleValue, selectedWorldSaveName));
             }
         }
 
