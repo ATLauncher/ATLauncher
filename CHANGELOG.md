@@ -8,5 +8,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 ### New Features
 
 ### Fixes
+- Issue exporting/disabling/deleting worlds downloaded from CurseForge [#927]
 
 ### Misc
