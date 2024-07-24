@@ -54,13 +54,13 @@ jobs:
           add-job-summary: never
 
       - name: Run Unit Tests
-        run: ./gradlew --no-daemon test --tests com.atlauncher.*
+        run: ./gradlew --no-daemon test
 
       - name: Run UI Tests
         uses: coactions/setup-xvfb@v1
         continue-on-error: true
         with:
-          run: ./gradlew --no-daemon test --tests ui.*
+          run: ./gradlew --no-daemon uiTest
 
   build:
     runs-on: ${{ matrix.os }}

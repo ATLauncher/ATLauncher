@@ -10,6 +10,8 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Add the option to join a minecraft server, world, and realm when launching an instance [#748]
 
 ### Fixes
+- Issue exporting/disabling/deleting worlds downloaded from CurseForge [#927]
+- Issue installing Modrinth pack with invalid filename [#923]
 
 ### Misc
 - Update gradle wrapper version from 8.2 to 8.7 [#886]
@@ -23,4 +25,5 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Mojang Account support completely removed [#907]
 - Update versions of Java tested in GitHub workflows
 - Update dependencies
+- Recreate UI on re-localization [#912]
 - Squash a ton of warnings [#918]

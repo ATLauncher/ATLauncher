@@ -1509,8 +1509,65 @@ public class Utils {
         return path;
     }
 
+    public static Pair<String, String> convertMavenIdentifierToNameAndVersion(String identifier) {
+        String[] parts = identifier.split(":", 3);
+        if (parts.length < 3) {
+            // old ATLauncher libraries don't use maven identifiers, so just return the
+            // identifier
+            return new Pair<>(identifier, "0");
+        }
+        String name = parts[1];
+        String version = parts[2];
+        String classifier = "";
+
+        if (version.indexOf('@') != -1) {
+            version = version.substring(0, version.indexOf('@'));
+        }
+
+        if (version.indexOf(':') != -1) {
+            classifier = ":" + version.substring(version.indexOf(':') + 1);
+            version = version.substring(0, version.indexOf(':'));
+        }
+
+        return new Pair<>(parts[0] + ":" + name + classifier, version);
+    }
+
     public static File convertMavenIdentifierToFile(String identifier, File base) {
         return new File(base, convertMavenIdentifierToPath(identifier).replace("/", File.separatorChar + ""));
+    }
+
+    public static int compareVersions(String version1, String version2) {
+        int result = 0;
+
+        String[] parts1 = version1.split("\\.");
+        String[] parts2 = version2.split("\\.");
+
+        int maxLengthOfVersionSplits = Math.max(parts1.length, parts2.length);
+        for (int i = 0; i < maxLengthOfVersionSplits; i++) {
+            if (parts1.length <= i) {
+                return -1;
+            }
+            if (parts2.length <= i) {
+                return 1;
+            }
+
+            try {
+                String part1Sanatised = parts1[i].split("[^0-9]", 2)[0];
+                String part2Sanatised = parts2[i].split("[^0-9]", 2)[0];
+                Integer v1 = i < parts1.length ? Integer.valueOf(part1Sanatised) : 0;
+                Integer v2 = i < parts2.length ? Integer.valueOf(part2Sanatised) : 0;
+                int compare = v1.compareTo(v2);
+                if (compare != 0) {
+                    result = compare;
+                    break;
+                }
+            } catch (NumberFormatException | ArrayIndexOutOfBoundsException e) {
+                // if any exception is thrown, just show that the versions are equal
+                return 0;
+            }
+        }
+
+        return result;
     }
 
     public static boolean matchVersion(String version, String matches, boolean lessThan, boolean equal) {

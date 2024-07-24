@@ -996,8 +996,9 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         fireSubProgressUnknown();
 
         ModrinthFile file = version._modrinthVersion.getPrimaryFile();
+        String filename = file.filename.toLowerCase(Locale.ENGLISH).replaceAll("[\\\"?:*<>|]", "");
 
-        Path manifestFile = this.temp.resolve(file.filename.toLowerCase(Locale.ENGLISH));
+        Path manifestFile = this.temp.resolve(filename);
 
         com.atlauncher.network.Download manifestDownload = com.atlauncher.network.Download.build().setUrl(file.url)
                 .downloadTo(manifestFile).withInstanceInstaller(this)

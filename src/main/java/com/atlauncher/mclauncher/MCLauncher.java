@@ -24,8 +24,10 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import com.atlauncher.App;
@@ -45,6 +47,7 @@ import com.atlauncher.managers.LogManager;
 import com.atlauncher.network.ErrorReporting;
 import com.atlauncher.utils.Java;
 import com.atlauncher.utils.OS;
+import com.atlauncher.utils.Pair;
 import com.atlauncher.utils.Utils;
 
 public class MCLauncher {
@@ -91,7 +94,8 @@ public class MCLauncher {
             }
 
             if (instance.hasDisabledJavaRuntime()) {
-                LogManager.warn("The Use Java Provided By Minecraft option has been disabled. If you're experiencing crashes, please enable this option.");
+                LogManager.warn(
+                        "The Use Java Provided By Minecraft option has been disabled. If you're experiencing crashes, please enable this option.");
             }
 
             if (instance.ROOT.resolve("mods").toFile().listFiles().length != 0) {
@@ -177,12 +181,40 @@ public class MCLauncher {
             }
         }
 
+        Map<String, Library> dedupedLibraries = new LinkedHashMap<>();
         instance.libraries.stream().filter(
                 library -> library.shouldInstall() && library.downloads.artifact != null && !library.hasNativeForOS())
                 .filter(library -> library.downloads.artifact != null && library.downloads.artifact.path != null)
                 .map(l -> LWJGLManager.shouldReplaceLWJGL3(instance)
                         ? LWJGLManager.getReplacementLWJGL3Library(instance, l)
                         : l)
+                .forEach(library -> {
+                    try {
+                        Pair<String, String> libraryName = Utils.convertMavenIdentifierToNameAndVersion(library.name);
+
+                        if (dedupedLibraries.containsKey(libraryName.left())) {
+                            Library existingLibrary = dedupedLibraries.get(libraryName.left());
+
+                            String existingVersion = Utils.convertMavenIdentifierToNameAndVersion(existingLibrary.name)
+                                    .right();
+                            String libraryVersion = Utils.convertMavenIdentifierToNameAndVersion(library.name).right();
+
+                            if (Utils.compareVersions(libraryVersion, existingVersion) == 1) {
+                                dedupedLibraries.put(libraryName.left(), library);
+                            }
+                        } else {
+                            dedupedLibraries.put(libraryName.left(), library);
+                        }
+                    } catch (Throwable throwable) {
+                        LogManager.logStackTrace("Failed to dedupe library " + library.name + ". Adding regardless.",
+                                throwable);
+
+                        // worse case scenario, just add it to the list
+                        dedupedLibraries.put(library.name, library);
+                    }
+                });
+
+        dedupedLibraries.values().stream()
                 .forEach(library -> {
                     String path = FileSystem.LIBRARIES.resolve(library.downloads.artifact.path).toFile()
                             .getAbsolutePath();
@@ -390,7 +422,8 @@ public class MCLauncher {
             }
         }
 
-        // Quick Play feature (with backward compatibility for older versions of Minecraft)
+        // Quick Play feature (with backward compatibility for older versions of
+        // Minecraft)
         QuickPlay quickPlay = instance.launcher.quickPlay;
 
         // Quick Play Multiplayer
@@ -398,12 +431,12 @@ public class MCLauncher {
             String enteredServerAddress = quickPlay.serverAddress;
             if (instance.isQuickPlaySupported(QuickPlayOption.multiPlayer)) {
                 // Minecraft 23w14a and newer versions
-                arguments.addAll(Arrays.asList(quickPlay.getSelectedQuickPlayOption().argumentRuleValue, enteredServerAddress));
-                arguments.add(enteredServerAddress);
+                arguments.addAll(
+                        Arrays.asList(quickPlay.getSelectedQuickPlayOption().argumentRuleValue, enteredServerAddress));
             } else {
                 // Minecraft 23w13a and older versions
                 String[] parts = enteredServerAddress.contains(":") ? enteredServerAddress.split(":")
-                    : new String[]{enteredServerAddress};
+                        : new String[] { enteredServerAddress };
                 String address = parts[0];
                 String port = parts.length > 1 ? parts[1] : String.valueOf(Constants.MINECRAFT_DEFAULT_SERVER_PORT);
                 arguments.addAll(Arrays.asList("--server", address));
@@ -416,7 +449,8 @@ public class MCLauncher {
             String selectedWorldSaveName = quickPlay.worldName;
             if (instance.isQuickPlaySupported(QuickPlayOption.singlePlayer)) {
                 // Only work for Minecraft 23w14a and newer versions
-                arguments.addAll(Arrays.asList(quickPlay.getSelectedQuickPlayOption().argumentRuleValue, selectedWorldSaveName));
+                arguments.addAll(
+                        Arrays.asList(quickPlay.getSelectedQuickPlayOption().argumentRuleValue, selectedWorldSaveName));
             }
         }
 

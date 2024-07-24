@@ -141,16 +141,6 @@ public class ServersTab extends HierarchyPanel implements Tab, RelocalizationLis
     }
 
     @Override
-    public void onRelocalization() {
-        searchBox.putClientProperty("JTextField.placeholderText", GetText.tr("Search"));
-        nilCard.setMessage(getNilMessage());
-        nilCard.setActions(new NilCard.Action[] {
-                NilCard.Action.createCreatePackAction(),
-                NilCard.Action.createDownloadPackAction()
-        });
-    }
-
-    @Override
     protected void createViewModel() {
         viewModel = new ServersTabViewModel();
     }

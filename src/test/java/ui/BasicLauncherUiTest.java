@@ -36,6 +36,7 @@ import org.assertj.swing.fixture.JTextComponentFixture;
 import org.assertj.swing.timing.Condition;
 import org.assertj.swing.timing.Pause;
 import org.assertj.swing.timing.Timeout;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import com.atlauncher.gui.card.InstanceCard;
@@ -44,6 +45,7 @@ import ui.mocks.MockHelper;
 
 public class BasicLauncherUiTest extends AbstractUiTest {
     @Test
+    @Tag("ui")
     public void testTheLauncherOpens() {
         this.frame.button("checkForUpdates").requireVisible();
 

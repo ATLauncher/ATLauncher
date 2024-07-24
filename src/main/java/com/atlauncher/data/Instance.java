@@ -1155,7 +1155,8 @@ public class Instance extends MinecraftVersion {
                             "Oh no. Minecraft crashed. Please check the logs for any errors and provide these logs when asking for support.");
 
                     if (hasDisabledJavaRuntime()) {
-                        LogManager.warn("The Use Java Provided By Minecraft option has been disabled. Please enable this option again.");
+                        LogManager.warn(
+                                "The Use Java Provided By Minecraft option has been disabled. Please enable this option again.");
                     }
 
                     if (this.getPack() != null && !this.getPack().system) {
@@ -1508,9 +1509,11 @@ public class Instance extends MinecraftVersion {
             }
         }
 
-        // add this mod
-        this.launcher.mods.add(dm);
-        this.save();
+        // add this mod to the instance (if not a world)
+        if (dm.type != com.atlauncher.data.Type.worlds) {
+            this.launcher.mods.add(dm);
+            this.save();
+        }
 
         // #. {0} is the name of a mod that was installed
         App.TOASTER.pop(GetText.tr("{0} Installed", mod.name));
@@ -2018,7 +2021,7 @@ public class Instance extends MinecraftVersion {
             Map<Long, DisableableMod> murmurHashes = new HashMap<>();
 
             this.launcher.mods.stream()
-                    .filter(m -> !m.disabled)
+                    .filter(m -> !m.disabled && m.type != com.atlauncher.data.Type.worlds)
                     .forEach(dm -> {
                         try {
                             long hash = Hashing.murmur(dm.getFile(this.ROOT, this.id).toPath());
@@ -2092,7 +2095,7 @@ public class Instance extends MinecraftVersion {
         manifest.version = version;
         manifest.author = author;
         manifest.files = this.launcher.mods.stream()
-                .filter(m -> !m.disabled && m.isFromCurseForge())
+                .filter(m -> !m.disabled && m.isFromCurseForge() && m.type != com.atlauncher.data.Type.worlds)
                 .filter(mod -> overrides.stream()
                         .anyMatch(path -> getRoot().relativize(mod.getPath(this)).startsWith(path)))
                 .collect(Collectors.collectingAndThen(
@@ -2133,7 +2136,7 @@ public class Instance extends MinecraftVersion {
         // create modlist.html
         StringBuilder sb = new StringBuilder("<ul>");
         this.launcher.mods.stream()
-                .filter(m -> !m.disabled && m.isFromCurseForge())
+                .filter(m -> !m.disabled && m.isFromCurseForge() && m.type != com.atlauncher.data.Type.worlds)
                 // #875 - Non available mods/files will be rejected by CurseForge
                 .filter(mod -> mod.curseForgeFile.isAvailable)
                 .filter(mod -> overrides.stream()
@@ -2194,13 +2197,13 @@ public class Instance extends MinecraftVersion {
 
         // remove files that come from CurseForge or aren't disabled
         launcher.mods.stream()
-                .filter(m -> !m.disabled && m.isFromCurseForge())
+                .filter(m -> !m.disabled && m.isFromCurseForge() && m.type != com.atlauncher.data.Type.worlds)
                 // #875 - Non available mods/files will be rejected by CurseForge
                 .filter(mod -> mod.curseForgeFile.isAvailable)
                 .forEach(mod -> {
                     File file = mod.getFile(this, overridesPath);
 
-                    if (file.exists()) {
+                    if (file != null && file.exists()) {
                         FileUtils.delete(file.toPath());
                     }
                 });
@@ -2297,7 +2300,8 @@ public class Instance extends MinecraftVersion {
                                         file.env.put("client", "required");
                                         file.env.put("server", "required");
 
-                                        if (mod.modrinthProject != null && mod.modrinthProject.serverSide == ModrinthSide.UNSUPPORTED) {
+                                        if (mod.modrinthProject != null
+                                                && mod.modrinthProject.serverSide == ModrinthSide.UNSUPPORTED) {
                                             file.env.put("server", "unsupported");
                                         }
 
