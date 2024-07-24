@@ -55,7 +55,7 @@ public class LoggingSettingsViewModel implements ILoggingSettingsViewModel {
     }
 
     @Override
-    public Observable<String> LoggingLevelChanged() {
+    public Observable<String> getLoggingLevel() {
         return _addOnLoggingLevelChanged.observeOn(SwingSchedulers.edt());
     }
 
@@ -66,7 +66,7 @@ public class LoggingSettingsViewModel implements ILoggingSettingsViewModel {
     }
 
     @Override
-    public Observable<Boolean> EnableLoggingChanged() {
+    public Observable<Boolean> get5EnableLogging() {
         return _addOnEnableLoggingChanged.observeOn(SwingSchedulers.edt());
     }
 
@@ -77,7 +77,7 @@ public class LoggingSettingsViewModel implements ILoggingSettingsViewModel {
     }
 
     @Override
-    public Observable<Boolean> EnableAnonAnalyticsChanged() {
+    public Observable<Boolean> getEnableAnonAnalytics() {
         return _addOnEnableAnonAnalyticsChanged.observeOn(SwingSchedulers.edt());
     }
 }

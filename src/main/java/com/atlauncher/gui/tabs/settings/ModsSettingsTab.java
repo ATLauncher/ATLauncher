@@ -74,7 +74,7 @@ public class ModsSettingsTab extends AbstractSettingsTab {
                 viewModel.setDefaultModPlatform(item.getValue());
             }
         });
-        addDisposable(viewModel.DefaultModPlatformChanged().subscribe(defaultModPlatform::setSelectedIndex));
+        addDisposable(viewModel.getDefaultModPlatform().subscribe(defaultModPlatform::setSelectedIndex));
 
         add(defaultModPlatform, gbc);
 
@@ -110,7 +110,7 @@ public class ModsSettingsTab extends AbstractSettingsTab {
                 viewModel.setAddModRestrictions(item.getValue());
             }
         });
-        addDisposable(viewModel.AddModRestrictionsChanged().subscribe(addModRestriction::setSelectedIndex));
+        addDisposable(viewModel.getAddModRestrictions().subscribe(addModRestriction::setSelectedIndex));
 
         add(addModRestriction, gbc);
 
@@ -130,8 +130,8 @@ public class ModsSettingsTab extends AbstractSettingsTab {
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         JCheckBox enableAddedModsByDefault = new JCheckBox();
         enableAddedModsByDefault.addItemListener(itemEvent ->
-            viewModel.setEAMBD(itemEvent.getStateChange() == ItemEvent.SELECTED));
-        addDisposable(viewModel.EAMBDChanged().subscribe(enableAddedModsByDefault::setSelected));
+            viewModel.setEnableAddedModsByDefault(itemEvent.getStateChange() == ItemEvent.SELECTED));
+        addDisposable(viewModel.getEnableAddedModsByDefault().subscribe(enableAddedModsByDefault::setSelected));
         add(enableAddedModsByDefault, gbc);
 
         // Allow CurseForge Alpha/Beta CurseForge files
@@ -154,8 +154,8 @@ public class ModsSettingsTab extends AbstractSettingsTab {
         JCheckBox allowCurseForgeAlphaBetaFiles = new JCheckBox();
         allowCurseForgeAlphaBetaFiles.setSelected(App.settings.allowCurseForgeAlphaBetaFiles);
         allowCurseForgeAlphaBetaFiles.addItemListener(itemEvent ->
-            viewModel.setACFABF(itemEvent.getStateChange() == ItemEvent.SELECTED));
-        addDisposable(viewModel.getACFABF().subscribe(allowCurseForgeAlphaBetaFiles::setSelected));
+            viewModel.setAllowCurseForgeAlphaBetaFiles(itemEvent.getStateChange() == ItemEvent.SELECTED));
+        addDisposable(viewModel.getAllowCurseForgeAlphaBetaFiles().subscribe(allowCurseForgeAlphaBetaFiles::setSelected));
         add(allowCurseForgeAlphaBetaFiles, gbc);
 
         // Dont check mods on CurseForge
@@ -179,8 +179,8 @@ public class ModsSettingsTab extends AbstractSettingsTab {
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         JCheckBox dontCheckModsOnCurseForge = new JCheckBox();
         dontCheckModsOnCurseForge.addItemListener(itemEvent ->
-            viewModel.setDCMOC(itemEvent.getStateChange() == ItemEvent.SELECTED));
-        addDisposable(viewModel.DCMOCChanged().subscribe(dontCheckModsOnCurseForge::setSelected));
+            viewModel.setDoNotCheckModsOnCurseForge(itemEvent.getStateChange() == ItemEvent.SELECTED));
+        addDisposable(viewModel.getDoNotCheckModsOnCurseForge().subscribe(dontCheckModsOnCurseForge::setSelected));
         add(dontCheckModsOnCurseForge, gbc);
 
         // Dont check mods on Modrinth
@@ -204,8 +204,8 @@ public class ModsSettingsTab extends AbstractSettingsTab {
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         JCheckBox dontCheckModsOnModrinth = new JCheckBox();
         dontCheckModsOnModrinth.addItemListener(itemEvent ->
-            viewModel.setDCMOM(itemEvent.getStateChange() == ItemEvent.SELECTED));
-        addDisposable(viewModel.DCMOMChanged().subscribe(dontCheckModsOnModrinth::setSelected));
+            viewModel.setDoNotCheckModsOnModrinth(itemEvent.getStateChange() == ItemEvent.SELECTED));
+        addDisposable(viewModel.getDoNotCheckModsOnModrinth().subscribe(dontCheckModsOnModrinth::setSelected));
         add(dontCheckModsOnModrinth, gbc);
 
         // Default export format
@@ -240,7 +240,7 @@ public class ModsSettingsTab extends AbstractSettingsTab {
                 viewModel.setDefaultExportFormat(item.getValue());
             }
         });
-        addDisposable(viewModel.DefaultExportFormatChanged().subscribe(defaultExportFormat::setSelectedIndex));
+        addDisposable(viewModel.getDefaultExportFormat().subscribe(defaultExportFormat::setSelectedIndex));
 
         add(defaultExportFormat, gbc);
     }

@@ -44,7 +44,7 @@ public class SettingsViewModel implements ISettingsViewModel {
     }
 
     @Override
-    public Observable<Boolean> SaveEnabledChanged() {
+    public Observable<Boolean> getSaveEnabled() {
         return SettingsValidityManager.isValid.observeOn(SwingSchedulers.edt());
     }
 }

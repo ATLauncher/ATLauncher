@@ -32,27 +32,27 @@ public interface INetworkSettingsViewModel extends SettingsListener {
 
     void setConcurrentConnections(int connections);
 
-    Observable<Integer> ConcurrentConnectionsChanged();
+    Observable<Integer> getConcurrentConnections();
 
     void setConnectionTimeout(int timeout);
 
-    Observable<Integer> ConnectionTimeoutChanged();
+    Observable<Integer> getConnectionTimeout();
 
     void setEnableProxy(Boolean b);
 
-    Observable<Boolean> EnableProxyChanged();
+    Observable<Boolean> getEnableProxy();
 
     void setProxyHost(String host);
 
-    Observable<String> ProxyHostChanged();
+    Observable<String> getProxyHost();
 
     void setProxyPort(int port);
 
-    Observable<Integer> ProxyPortChanged();
+    Observable<Integer> getProxyPort();
 
     void setProxyType(ProxyType type);
 
-    Observable<Integer> ProxyTypeChanged();
+    Observable<Integer> getProxyType();
 
     void setModrinthAPIKey(String apiKey);
 

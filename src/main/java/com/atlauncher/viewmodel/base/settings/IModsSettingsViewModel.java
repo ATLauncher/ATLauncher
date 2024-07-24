@@ -28,47 +28,35 @@ import io.reactivex.rxjava3.core.Observable;
 /**
  * @since 2022 / 06 / 15
  * <p>
- * Why are there functions here that are acronym?
- * The settings name would be too long otherwise.
- * </p>
- * <p>
- * EAMBD : enableAddedModsByDefault
- * <p>
- * DCMOC : dontCheckModsOnCurseForge
- * <p>
- * DCMOM : dontCheckModsOnModrinth
- * <p>
- * ACFABF : allowCurseForgeAlphaBetaFiles
- * <p>
  * View model for {@link ModsSettingsTab}
  */
 public interface IModsSettingsViewModel extends SettingsListener {
 
     void setDefaultModPlatform(ModPlatform modPlatform);
 
-    Observable<Integer> DefaultModPlatformChanged();
+    Observable<Integer> getDefaultModPlatform();
 
     void setAddModRestrictions(AddModRestriction modRestrictions);
 
-    Observable<Integer> AddModRestrictionsChanged();
+    Observable<Integer> getAddModRestrictions();
 
-    void setEAMBD(Boolean b);
+    void setEnableAddedModsByDefault(Boolean b);
 
-    Observable<Boolean> EAMBDChanged();
+    Observable<Boolean> getEnableAddedModsByDefault();
 
-    void setDCMOC(Boolean b);
+    void setDoNotCheckModsOnCurseForge(Boolean b);
 
-    Observable<Boolean> DCMOCChanged();
+    Observable<Boolean> getDoNotCheckModsOnCurseForge();
 
-    void setDCMOM(Boolean b);
+    void setDoNotCheckModsOnModrinth(Boolean b);
 
-    Observable<Boolean> DCMOMChanged();
+    Observable<Boolean> getDoNotCheckModsOnModrinth();
 
     void setDefaultExportFormat(InstanceExportFormat exportFormat);
 
-    Observable<Integer> DefaultExportFormatChanged();
+    Observable<Integer> getDefaultExportFormat();
 
-    void setACFABF(boolean b);
+    void setAllowCurseForgeAlphaBetaFiles(boolean b);
 
-    Observable<Boolean> getACFABF();
+    Observable<Boolean> getAllowCurseForgeAlphaBetaFiles();
 }

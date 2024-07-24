@@ -117,7 +117,7 @@ public class GeneralSettingsViewModel implements IGeneralSettingsViewModel {
     }
 
     @Override
-    public Observable<Integer> SelectedLanguageChanged() {
+    public Observable<Integer> getSelectedLanguage() {
         return _addOnSelectedLanguageChanged.observeOn(SwingSchedulers.edt());
     }
 
@@ -158,7 +158,7 @@ public class GeneralSettingsViewModel implements IGeneralSettingsViewModel {
     }
 
     @Override
-    public Observable<Integer> SelectedThemeChanged() {
+    public Observable<Integer> getSelectedTheme() {
         return _addOnSelectedThemeChanged.observeOn(SwingSchedulers.edt());
     }
 
@@ -190,7 +190,7 @@ public class GeneralSettingsViewModel implements IGeneralSettingsViewModel {
     }
 
     @Override
-    public Observable<Integer> DateFormatChanged() {
+    public Observable<Integer> getDateFormat() {
         return _addOnDateFormatChanged.observeOn(SwingSchedulers.edt());
     }
 
@@ -213,7 +213,7 @@ public class GeneralSettingsViewModel implements IGeneralSettingsViewModel {
     }
 
     @Override
-    public Observable<Integer> InstanceFormatChanged() {
+    public Observable<Integer> getInstanceFormat() {
         return _addOnInstanceFormatChanged.observeOn(SwingSchedulers.edt());
     }
 
@@ -231,7 +231,7 @@ public class GeneralSettingsViewModel implements IGeneralSettingsViewModel {
     }
 
     @Override
-    public Observable<Integer> SelectedTabOnStartupChanged() {
+    public Observable<Integer> getSelectedTabOnStartup() {
         return _addOnSelectedTabOnStartupChanged.observeOn(SwingSchedulers.edt());
     }
 
@@ -247,7 +247,7 @@ public class GeneralSettingsViewModel implements IGeneralSettingsViewModel {
     }
 
     @Override
-    public Observable<Integer> addInstanceSortingChanged() {
+    public Observable<Integer> getInstanceSortingObservable() {
         return _addInstanceSortingChanged.observeOn(SwingSchedulers.edt());
     }
 
@@ -277,7 +277,7 @@ public class GeneralSettingsViewModel implements IGeneralSettingsViewModel {
     }
 
     @Override
-    public Observable<String> CustomsDownloadPathChanged() {
+    public Observable<String> getCustomsDownloadPath() {
         return _addOnCustomsDownloadPathChanged.observeOn(SwingSchedulers.edt());
     }
 
@@ -288,7 +288,7 @@ public class GeneralSettingsViewModel implements IGeneralSettingsViewModel {
     }
 
     @Override
-    public Observable<Boolean> KeepLauncherOpenChanged() {
+    public Observable<Boolean> getKeepLauncherOpen() {
         return _addOnKeepLauncherOpenChanged.observeOn(SwingSchedulers.edt());
     }
 
@@ -299,7 +299,7 @@ public class GeneralSettingsViewModel implements IGeneralSettingsViewModel {
     }
 
     @Override
-    public Observable<Boolean> EnableConsoleChanged() {
+    public Observable<Boolean> getEnableConsole() {
         return _addOnEnableConsoleChanged.observeOn(SwingSchedulers.edt());
     }
 
@@ -310,7 +310,7 @@ public class GeneralSettingsViewModel implements IGeneralSettingsViewModel {
     }
 
     @Override
-    public Observable<Boolean> EnableTrayMenuChanged() {
+    public Observable<Boolean> getEnableTrayMenu() {
         return _addOnEnableTrayMenuChanged.observeOn(SwingSchedulers.edt());
     }
 
@@ -321,7 +321,7 @@ public class GeneralSettingsViewModel implements IGeneralSettingsViewModel {
     }
 
     @Override
-    public Observable<Boolean> EnableDiscordIntegrationChanged() {
+    public Observable<Boolean> getEnableDiscordIntegration() {
         return _addOnEnableDiscordIntegrationChanged.observeOn(SwingSchedulers.edt());
     }
 
@@ -342,7 +342,7 @@ public class GeneralSettingsViewModel implements IGeneralSettingsViewModel {
     }
 
     @Override
-    public Observable<Boolean> EnableFeralGameModeChanged() {
+    public Observable<Boolean> getEnableFeralGameMode() {
         return _addOnEnableFeralGameModeChanged.observeOn(SwingSchedulers.edt());
     }
 
@@ -353,7 +353,7 @@ public class GeneralSettingsViewModel implements IGeneralSettingsViewModel {
     }
 
     @Override
-    public Observable<Boolean> DisableCustomFontsChanged() {
+    public Observable<Boolean> getDisableCustomFonts() {
         return _addOnDisableCustomFontsChanged.observeOn(SwingSchedulers.edt());
     }
 
@@ -371,7 +371,7 @@ public class GeneralSettingsViewModel implements IGeneralSettingsViewModel {
     }
 
     @Override
-    public Observable<Boolean> RememberWindowStuffChanged() {
+    public Observable<Boolean> getRememberWindowStuff() {
         return _addOnRememberWindowStuffChanged.observeOn(SwingSchedulers.edt());
     }
 
@@ -387,7 +387,7 @@ public class GeneralSettingsViewModel implements IGeneralSettingsViewModel {
     }
 
     @Override
-    public Observable<Boolean> UseNativeFilePickerChanged() {
+    public Observable<Boolean> getUseNativeFilePicker() {
         return _addOnUseNativeFilePickerChanged.observeOn(SwingSchedulers.edt());
     }
 
@@ -398,7 +398,7 @@ public class GeneralSettingsViewModel implements IGeneralSettingsViewModel {
     }
 
     @Override
-    public Observable<Boolean> UseRecycleBinChanged() {
+    public Observable<Boolean> getUseRecycleBin() {
         return _addOnUseRecycleBinChanged.observeOn(SwingSchedulers.edt());
     }
 

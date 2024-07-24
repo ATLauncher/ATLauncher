@@ -68,7 +68,7 @@ public class NetworkSettingsTab extends AbstractSettingsTab {
         concurrentConnectionsModel.setMaximum(100);
         concurrentConnectionsModel.addChangeListener(changeEvent ->
             viewModel.setConcurrentConnections((Integer) concurrentConnectionsModel.getValue()));
-        addDisposable(viewModel.ConcurrentConnectionsChanged().subscribe(concurrentConnectionsModel::setValue));
+        addDisposable(viewModel.getConcurrentConnections().subscribe(concurrentConnectionsModel::setValue));
         JSpinner concurrentConnections = new JSpinner(concurrentConnectionsModel);
         add(concurrentConnections, gbc);
 
@@ -90,7 +90,7 @@ public class NetworkSettingsTab extends AbstractSettingsTab {
         connectionTimeoutModel.setMaximum(600);
         connectionTimeoutModel.addChangeListener(changeEvent ->
             viewModel.setConnectionTimeout((Integer) connectionTimeoutModel.getValue()));
-        addDisposable(viewModel.ConnectionTimeoutChanged().subscribe(connectionTimeoutModel::setValue));
+        addDisposable(viewModel.getConnectionTimeout().subscribe(connectionTimeoutModel::setValue));
         JSpinner connectionTimeout = new JSpinner(connectionTimeoutModel);
         add(connectionTimeout, gbc);
 
@@ -154,7 +154,7 @@ public class NetworkSettingsTab extends AbstractSettingsTab {
         proxyHost.addKeyListener(new StatefulTextKeyAdapter(
             (e) -> viewModel.setProxyHost(proxyHost.getText())
         ));
-        addDisposable(viewModel.ProxyHostChanged().subscribe(proxyHostText -> {
+        addDisposable(viewModel.getProxyHost().subscribe(proxyHostText -> {
             if (!proxyHost.getText().equals(proxyHostText)) {
                 proxyHost.setText(proxyHostText);
             }
@@ -178,7 +178,7 @@ public class NetworkSettingsTab extends AbstractSettingsTab {
         proxyPortModel.setMaximum(65535);
         proxyPortModel.addChangeListener(changeEvent ->
             viewModel.setProxyPort((Integer) proxyPortModel.getValue()));
-        addDisposable(viewModel.ProxyPortChanged().subscribe(proxyPortModel::setValue));
+        addDisposable(viewModel.getProxyPort().subscribe(proxyPortModel::setValue));
         proxyPort = new JSpinner(proxyPortModel);
         proxyPort.setEditor(new JSpinner.NumberEditor(proxyPort, "#"));
         if (!enableProxy.isSelected()) {
@@ -211,10 +211,10 @@ public class NetworkSettingsTab extends AbstractSettingsTab {
                 }
             }
         );
-        addDisposable(viewModel.ProxyTypeChanged().subscribe(proxyType::setSelectedIndex));
+        addDisposable(viewModel.getProxyType().subscribe(proxyType::setSelectedIndex));
         add(proxyType, gbc);
 
-        addDisposable(viewModel.EnableProxyChanged().subscribe(enabled -> {
+        addDisposable(viewModel.getEnableProxy().subscribe(enabled -> {
             enableProxy.setSelected(enabled);
             proxyHost.setEnabled(enabled);
             proxyPort.setEnabled(enabled);

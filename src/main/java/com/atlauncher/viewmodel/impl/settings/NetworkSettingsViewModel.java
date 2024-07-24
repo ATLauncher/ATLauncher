@@ -74,7 +74,7 @@ public class NetworkSettingsViewModel implements INetworkSettingsViewModel {
     }
 
     @Override
-    public Observable<Integer> ConcurrentConnectionsChanged() {
+    public Observable<Integer> getConcurrentConnections() {
         return _addOnConcurrentConnectionsChanged.observeOn(SwingSchedulers.edt());
     }
 
@@ -91,7 +91,7 @@ public class NetworkSettingsViewModel implements INetworkSettingsViewModel {
     }
 
     @Override
-    public Observable<Integer> ConnectionTimeoutChanged() {
+    public Observable<Integer> getConnectionTimeout() {
         return _addOnConnectionTimeoutChanged.observeOn(SwingSchedulers.edt());
     }
 
@@ -102,7 +102,7 @@ public class NetworkSettingsViewModel implements INetworkSettingsViewModel {
     }
 
     @Override
-    public Observable<Boolean> EnableProxyChanged() {
+    public Observable<Boolean> getEnableProxy() {
         return _addOnEnableProxyChanged.observeOn(SwingSchedulers.edt());
     }
 
@@ -117,7 +117,7 @@ public class NetworkSettingsViewModel implements INetworkSettingsViewModel {
     }
 
     @Override
-    public Observable<String> ProxyHostChanged() {
+    public Observable<String> getProxyHost() {
         return _addOnProxyHostChanged.observeOn(SwingSchedulers.edt());
     }
 
@@ -129,7 +129,7 @@ public class NetworkSettingsViewModel implements INetworkSettingsViewModel {
     }
 
     @Override
-    public Observable<Integer> ProxyPortChanged() {
+    public Observable<Integer> getProxyPort() {
         return _addOnProxyPortChanged.observeOn(SwingSchedulers.edt());
     }
 
@@ -141,7 +141,7 @@ public class NetworkSettingsViewModel implements INetworkSettingsViewModel {
     }
 
     @Override
-    public Observable<Integer> ProxyTypeChanged() {
+    public Observable<Integer> getProxyType() {
         return _addOnProxyTypeChanged.observeOn(SwingSchedulers.edt());
     }
 

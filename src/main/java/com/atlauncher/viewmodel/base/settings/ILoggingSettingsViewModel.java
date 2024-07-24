@@ -30,13 +30,13 @@ import io.reactivex.rxjava3.core.Observable;
 public interface ILoggingSettingsViewModel extends SettingsListener {
     void setLoggingLevel(String level);
 
-    Observable<String> LoggingLevelChanged();
+    Observable<String> getLoggingLevel();
 
     void setEnableLogging(Boolean b);
 
-    Observable<Boolean> EnableLoggingChanged();
+    Observable<Boolean> get5EnableLogging();
 
     void setEnableAnonAnalytics(Boolean b);
 
-    Observable<Boolean> EnableAnonAnalyticsChanged();
+    Observable<Boolean> getEnableAnonAnalytics();
 }

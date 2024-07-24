@@ -124,7 +124,7 @@ public class JavaSettingsTab extends AbstractSettingsTab {
                 }
             });
             add(initialMemory, gbc);
-            addDisposable(viewModel.InitialRamChanged().subscribe(initialMemory::setValue));
+            addDisposable(viewModel.getInitialRam().subscribe(initialMemory::setValue));
         }
 
         // Maximum Memory Settings
@@ -188,7 +188,7 @@ public class JavaSettingsTab extends AbstractSettingsTab {
                     break;
             }
         });
-        addDisposable(viewModel.MaxRamChanged().subscribe(maximumMemory::setValue));
+        addDisposable(viewModel.getMaxRam().subscribe(maximumMemory::setValue));
         add(maximumMemory, gbc);
 
         // Perm Gen Settings
@@ -225,7 +225,7 @@ public class JavaSettingsTab extends AbstractSettingsTab {
                 }
             }
         });
-        addDisposable(viewModel.PermGenChanged().subscribe(permGen::setValue));
+        addDisposable(viewModel.getPermGen().subscribe(permGen::setValue));
         add(permGen, gbc);
 
         // Window Size
@@ -251,7 +251,7 @@ public class JavaSettingsTab extends AbstractSettingsTab {
         widthField.setEditor(new JSpinner.NumberEditor(widthField, "#"));
         widthField.addChangeListener(e ->
             viewModel.setWidth((Integer) widthModel.getValue()));
-        addDisposable(viewModel.WidthChanged().subscribe(widthModel::setValue));
+        addDisposable(viewModel.getWidth().subscribe(widthModel::setValue));
 
         SpinnerNumberModel heightModel = new SpinnerNumberModel(App.settings.windowHeight, 1,
             OS.getMaximumWindowHeight(), 1);
@@ -259,7 +259,7 @@ public class JavaSettingsTab extends AbstractSettingsTab {
         heightField.setEditor(new JSpinner.NumberEditor(heightField, "#"));
         heightField.addChangeListener(e ->
             viewModel.setHeight((Integer) heightField.getValue()));
-        addDisposable(viewModel.HeightChanged().subscribe(heightField::setValue));
+        addDisposable(viewModel.getHeight().subscribe(heightField::setValue));
 
         JComboBox<ComboItem<ScreenResolution>> commonScreenSizes = new JComboBox<>();
         commonScreenSizes.addItem(new ComboItem<>(null, "Select An Option"));
@@ -345,12 +345,12 @@ public class JavaSettingsTab extends AbstractSettingsTab {
             viewModel::setJavaPathPending
         ));
 
-        addDisposable(viewModel.JavaPathChanged().subscribe(path -> {
+        addDisposable(viewModel.getJavaPathObservable().subscribe(path -> {
             if (!javaPath.getText().equals(path))
                 javaPath.setText(path);
         }));
         javaPath.setText(App.settings.javaPath);
-        addDisposable(viewModel.JavaPathCheckerListener().subscribe(this::setJavaPathCheckState));
+        addDisposable(viewModel.getJavaPathChecker().subscribe(this::setJavaPathCheckState));
 
         JButton javaPathResetButton = new JButton(GetText.tr("Reset"));
         javaPathResetButton.addActionListener(e -> {
@@ -423,11 +423,11 @@ public class JavaSettingsTab extends AbstractSettingsTab {
             () -> viewModel.setJavaParams(javaParameters.getText()),
             viewModel::setJavaParamsPending
         ));
-        addDisposable(viewModel.JavaParamsChanged().subscribe(params -> {
+        addDisposable(viewModel.getJavaParams().subscribe(params -> {
             if (!javaParameters.getText().equals(params))
                 javaParameters.setText(params);
         }));
-        addDisposable(viewModel.JavaParamsCheckerListener().subscribe(this::setJavaParamCheckState));
+        addDisposable(viewModel.getJavaParamsChecker().subscribe(this::setJavaParamCheckState));
 
         JButton javaParametersResetButton = new JButton(GetText.tr("Reset"));
         javaParametersResetButton.addActionListener(e -> viewModel.resetJavaParams());
@@ -516,7 +516,7 @@ public class JavaSettingsTab extends AbstractSettingsTab {
         startMinecraftMaximised.addItemListener(itemEvent ->
             viewModel.setStartMinecraftMax(itemEvent.getStateChange() == ItemEvent.SELECTED)
         );
-        addDisposable(viewModel.StartMinecraftMaxChanged().subscribe(startMinecraftMaximised::setSelected));
+        addDisposable(viewModel.get5StartMinecraftMax().subscribe(startMinecraftMaximised::setSelected));
         add(startMinecraftMaximised, gbc);
 
         // Ignore Java checks On Launch
@@ -537,7 +537,7 @@ public class JavaSettingsTab extends AbstractSettingsTab {
         ignoreJavaOnInstanceLaunch.addItemListener(itemEvent ->
             viewModel.setIgnoreJavaChecks(itemEvent.getStateChange() == ItemEvent.SELECTED)
         );
-        addDisposable(viewModel.IgnoreJavaChecksChanged().subscribe(ignoreJavaOnInstanceLaunch::setSelected));
+        addDisposable(viewModel.getIgnoreJavaChecks().subscribe(ignoreJavaOnInstanceLaunch::setSelected));
         add(ignoreJavaOnInstanceLaunch, gbc);
 
         // Use Java Provided By Minecraft
@@ -576,7 +576,7 @@ public class JavaSettingsTab extends AbstractSettingsTab {
                 });
             }
         });
-        addDisposable(viewModel.JavaFromMinecraftChanged().subscribe(useJavaProvidedByMinecraft::setEnabled));
+        addDisposable(viewModel.getJavaFromMinecraft().subscribe(useJavaProvidedByMinecraft::setEnabled));
         add(useJavaProvidedByMinecraft, gbc);
 
         // Disable Legacy Launching
@@ -598,7 +598,7 @@ public class JavaSettingsTab extends AbstractSettingsTab {
         disableLegacyLaunching.addItemListener(itemEvent ->
             viewModel.setDisableLegacyLaunching(itemEvent.getStateChange() == ItemEvent.SELECTED));
         addDisposable(
-            viewModel.DisableLegacyLaunchingChanged().subscribe(disableLegacyLaunching::setSelected)
+            viewModel.getDisableLegacyLaunching().subscribe(disableLegacyLaunching::setSelected)
         );
         add(disableLegacyLaunching, gbc);
 
@@ -618,7 +618,7 @@ public class JavaSettingsTab extends AbstractSettingsTab {
         JCheckBox useSystemGlfw = new JCheckBox();
         useSystemGlfw.addItemListener(itemEvent ->
             viewModel.setSystemGLFW(itemEvent.getStateChange() == ItemEvent.SELECTED));
-        addDisposable(viewModel.SystemGLFWChanged().subscribe(useSystemGlfw::setSelected));
+        addDisposable(viewModel.getSystemGLFW().subscribe(useSystemGlfw::setSelected));
         add(useSystemGlfw, gbc);
 
         // Use System OpenAL
@@ -637,7 +637,7 @@ public class JavaSettingsTab extends AbstractSettingsTab {
         JCheckBox useSystemOpenAl = new JCheckBox();
         useSystemOpenAl.addItemListener(itemEvent ->
             viewModel.setSystemOpenAL(itemEvent.getStateChange() == ItemEvent.SELECTED));
-        addDisposable(viewModel.SystemOpenALChanged().subscribe(useSystemOpenAl::setSelected));
+        addDisposable(viewModel.getSystemOpenAL().subscribe(useSystemOpenAl::setSelected));
         add(useSystemOpenAl, gbc);
     }
 

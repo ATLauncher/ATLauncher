@@ -38,5 +38,5 @@ public interface ISettingsViewModel {
      * This is because certain setting events require the save button to be
      * disabled during various operation.
      */
-    Observable<Boolean> SaveEnabledChanged();
+    Observable<Boolean> getSaveEnabled();
 }

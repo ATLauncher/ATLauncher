@@ -50,7 +50,7 @@ public interface IGeneralSettingsViewModel extends SettingsListener {
      */
     void setSelectedLanguage(String language);
 
-    Observable<Integer> SelectedLanguageChanged();
+    Observable<Integer> getSelectedLanguage();
 
     /**
      * Get the themes.
@@ -71,7 +71,7 @@ public interface IGeneralSettingsViewModel extends SettingsListener {
     /**
      * Listen to the theme being changed
      */
-    Observable<Integer> SelectedThemeChanged();
+    Observable<Integer> getSelectedTheme();
 
     /**
      * Get today's date
@@ -95,7 +95,7 @@ public interface IGeneralSettingsViewModel extends SettingsListener {
     /**
      * Listen to date format being changed
      */
-    Observable<Integer> DateFormatChanged();
+    Observable<Integer> getDateFormat();
 
     /**
      * Get instance title formats
@@ -114,7 +114,7 @@ public interface IGeneralSettingsViewModel extends SettingsListener {
     /**
      * Listen to the instance title format being changed
      */
-    Observable<Integer> InstanceFormatChanged();
+    Observable<Integer> getInstanceFormat();
 
     /**
      * Set selected tab on startup
@@ -127,7 +127,7 @@ public interface IGeneralSettingsViewModel extends SettingsListener {
     /**
      * Listen to selected tab on startup being changed
      */
-    Observable<Integer> SelectedTabOnStartupChanged();
+    Observable<Integer> getSelectedTabOnStartup();
 
     /**
      * Get instance sorting strategies
@@ -146,7 +146,7 @@ public interface IGeneralSettingsViewModel extends SettingsListener {
     /**
      * Listen to sorting strategy being changed
      */
-    Observable<Integer> addInstanceSortingChanged();
+    Observable<Integer> getInstanceSortingObservable();
 
     /**
      * Reset the custom download path
@@ -168,7 +168,7 @@ public interface IGeneralSettingsViewModel extends SettingsListener {
     /**
      * Listen to the custom download path being changed
      */
-    Observable<String> CustomsDownloadPathChanged();
+    Observable<String> getCustomsDownloadPath();
 
     /**
      * Set the launcher to stay open with a minecraft launch
@@ -180,7 +180,7 @@ public interface IGeneralSettingsViewModel extends SettingsListener {
     /**
      * Listen to keep launcher open changed
      */
-    Observable<Boolean> KeepLauncherOpenChanged();
+    Observable<Boolean> getKeepLauncherOpen();
 
     /**
      * Enable the console or not
@@ -192,7 +192,7 @@ public interface IGeneralSettingsViewModel extends SettingsListener {
     /**
      * Listen to console being enabled or not
      */
-    Observable<Boolean> EnableConsoleChanged();
+    Observable<Boolean> getEnableConsole();
 
     /**
      * Set tray menu enabled or not
@@ -204,11 +204,11 @@ public interface IGeneralSettingsViewModel extends SettingsListener {
     /**
      * Listen to tray menu being enabled or not
      */
-    Observable<Boolean> EnableTrayMenuChanged();
+    Observable<Boolean> getEnableTrayMenu();
 
     void setEnableDiscordIntegration(boolean b);
 
-    Observable<Boolean> EnableDiscordIntegrationChanged();
+    Observable<Boolean> getEnableDiscordIntegration();
 
     /**
      * Whether to show the option for FeralGameMode
@@ -221,25 +221,25 @@ public interface IGeneralSettingsViewModel extends SettingsListener {
 
     void setEnableFeralGameMode(boolean b);
 
-    Observable<Boolean> EnableFeralGameModeChanged();
+    Observable<Boolean> getEnableFeralGameMode();
 
     void setDisableCustomFonts(boolean b);
 
-    Observable<Boolean> DisableCustomFontsChanged();
+    Observable<Boolean> getDisableCustomFonts();
 
     void setRememberWindowStuff(boolean b);
 
-    Observable<Boolean> RememberWindowStuffChanged();
+    Observable<Boolean> getRememberWindowStuff();
 
     boolean getShowNativeFilePickerOption();
 
     void setUseNativeFilePicker(boolean b);
 
-    Observable<Boolean> UseNativeFilePickerChanged();
+    Observable<Boolean> getUseNativeFilePicker();
 
     void setUseRecycleBin(boolean b);
 
-    Observable<Boolean> UseRecycleBinChanged();
+    Observable<Boolean> getUseRecycleBin();
 
     boolean showArmSupport();
 

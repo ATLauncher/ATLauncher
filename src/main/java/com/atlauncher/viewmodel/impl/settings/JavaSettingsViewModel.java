@@ -253,7 +253,7 @@ public class JavaSettingsViewModel implements IJavaSettingsViewModel {
     }
 
     @Override
-    public Observable<Integer> InitialRamChanged() {
+    public Observable<Integer> getInitialRam() {
         return _addOnInitialRamChanged.observeOn(SwingSchedulers.edt());
     }
 
@@ -279,7 +279,7 @@ public class JavaSettingsViewModel implements IJavaSettingsViewModel {
     }
 
     @Override
-    public Observable<Integer> MaxRamChanged() {
+    public Observable<Integer> getMaxRam() {
         return _addOnMaxRamChanged.observeOn(SwingSchedulers.edt());
     }
 
@@ -301,7 +301,7 @@ public class JavaSettingsViewModel implements IJavaSettingsViewModel {
     }
 
     @Override
-    public Observable<Integer> PermGenChanged() {
+    public Observable<Integer> getPermGen() {
         return _addOnPermGenChanged.observeOn(SwingSchedulers.edt());
     }
 
@@ -312,7 +312,7 @@ public class JavaSettingsViewModel implements IJavaSettingsViewModel {
     }
 
     @Override
-    public Observable<Integer> WidthChanged() {
+    public Observable<Integer> getWidth() {
         return _addOnWidthChanged.observeOn(SwingSchedulers.edt());
     }
 
@@ -323,7 +323,7 @@ public class JavaSettingsViewModel implements IJavaSettingsViewModel {
     }
 
     @Override
-    public Observable<Integer> HeightChanged() {
+    public Observable<Integer> getHeight() {
         return _addOnHeightChanged.observeOn(SwingSchedulers.edt());
     }
 
@@ -382,12 +382,12 @@ public class JavaSettingsViewModel implements IJavaSettingsViewModel {
     }
 
     @Override
-    public Observable<String> JavaPathChanged() {
+    public Observable<String> getJavaPathObservable() {
         return _addOnJavaPathChanged.observeOn(SwingSchedulers.edt());
     }
 
     @Override
-    public Observable<CheckState> JavaPathCheckerListener() {
+    public Observable<CheckState> getJavaPathChecker() {
         return javaPathCheckStateConsumer.observeOn(SwingSchedulers.edt());
     }
 
@@ -414,12 +414,12 @@ public class JavaSettingsViewModel implements IJavaSettingsViewModel {
     }
 
     @Override
-    public Observable<String> JavaParamsChanged() {
+    public Observable<String> getJavaParams() {
         return _addOnJavaParamsChanged.observeOn(SwingSchedulers.edt());
     }
 
     @Override
-    public Observable<CheckState> JavaParamsCheckerListener() {
+    public Observable<CheckState> getJavaParamsChecker() {
         return javaParamCheckStateConsumer.observeOn(SwingSchedulers.edt());
     }
 
@@ -430,7 +430,7 @@ public class JavaSettingsViewModel implements IJavaSettingsViewModel {
     }
 
     @Override
-    public Observable<Boolean> StartMinecraftMaxChanged() {
+    public Observable<Boolean> get5StartMinecraftMax() {
         return _addOnStartMinecraftMaxChanged.observeOn(SwingSchedulers.edt());
     }
 
@@ -442,7 +442,7 @@ public class JavaSettingsViewModel implements IJavaSettingsViewModel {
     }
 
     @Override
-    public Observable<Boolean> IgnoreJavaChecksChanged() {
+    public Observable<Boolean> getIgnoreJavaChecks() {
         return _addOnIgnoreJavaChecksChanged.observeOn(SwingSchedulers.edt());
     }
 
@@ -458,7 +458,7 @@ public class JavaSettingsViewModel implements IJavaSettingsViewModel {
     }
 
     @Override
-    public Observable<Boolean> JavaFromMinecraftChanged() {
+    public Observable<Boolean> getJavaFromMinecraft() {
         return _addOnJavaFromMinecraftChanged.observeOn(SwingSchedulers.edt());
     }
 
@@ -469,7 +469,7 @@ public class JavaSettingsViewModel implements IJavaSettingsViewModel {
     }
 
     @Override
-    public Observable<Boolean> DisableLegacyLaunchingChanged() {
+    public Observable<Boolean> getDisableLegacyLaunching() {
         return _addOnDisableLegacyLaunchingChanged.observeOn(SwingSchedulers.edt());
     }
 
@@ -480,7 +480,7 @@ public class JavaSettingsViewModel implements IJavaSettingsViewModel {
     }
 
     @Override
-    public Observable<Boolean> SystemGLFWChanged() {
+    public Observable<Boolean> getSystemGLFW() {
         return _addOnSystemGLFWChanged.observeOn(SwingSchedulers.edt());
     }
 
@@ -491,7 +491,7 @@ public class JavaSettingsViewModel implements IJavaSettingsViewModel {
     }
 
     @Override
-    public Observable<Boolean> SystemOpenALChanged() {
+    public Observable<Boolean> getSystemOpenAL() {
         return _addOnSystemOpenALChanged.observeOn(SwingSchedulers.edt());
     }
 

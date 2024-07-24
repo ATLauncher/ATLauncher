@@ -29,7 +29,6 @@ import javax.swing.JTabbedPane;
 import org.mini2Dx.gettext.GetText;
 
 import com.atlauncher.App;
-import com.atlauncher.evnt.manager.SettingsManager;
 import com.atlauncher.gui.panels.HierarchyPanel;
 import com.atlauncher.gui.tabs.settings.BackupsSettingsTab;
 import com.atlauncher.gui.tabs.settings.CommandsSettingsTab;
@@ -137,7 +136,7 @@ public class SettingsTab extends HierarchyPanel implements Tab {
         bottomPanel.add(saveButton);
 
         add(bottomPanel, BorderLayout.SOUTH);
-        addDisposable(viewModel.SaveEnabledChanged().subscribe(saveButton::setEnabled));
+        addDisposable(viewModel.getSaveEnabled().subscribe(saveButton::setEnabled));
         saveButton.addActionListener(arg0 -> viewModel.save());
 
         tabbedPane.addChangeListener(e -> Analytics

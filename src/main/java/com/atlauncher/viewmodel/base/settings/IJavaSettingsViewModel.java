@@ -74,7 +74,7 @@ public interface IJavaSettingsViewModel extends SettingsListener {
      */
     boolean setInitialRam(int initialRam);
 
-    Observable<Integer> InitialRamChanged();
+    Observable<Integer> getInitialRam();
 
 
     /**
@@ -86,7 +86,7 @@ public interface IJavaSettingsViewModel extends SettingsListener {
     @Nullable
     MaxRamWarning setMaxRam(int maxRam);
 
-    Observable<Integer> MaxRamChanged();
+    Observable<Integer> getMaxRam();
 
     int getPermGenMaxRecommendSize();
 
@@ -98,15 +98,15 @@ public interface IJavaSettingsViewModel extends SettingsListener {
      */
     boolean setPermGen(int permGen);
 
-    Observable<Integer> PermGenChanged();
+    Observable<Integer> getPermGen();
 
     void setWidth(int width);
 
-    Observable<Integer> WidthChanged();
+    Observable<Integer> getWidth();
 
     void setHeight(int height);
 
-    Observable<Integer> HeightChanged();
+    Observable<Integer> getHeight();
 
     List<ScreenResolution> getScreenResolutions();
 
@@ -125,9 +125,9 @@ public interface IJavaSettingsViewModel extends SettingsListener {
      */
     void setJavaPath(String path);
 
-    Observable<String> JavaPathChanged();
+    Observable<String> getJavaPathObservable();
 
-    Observable<CheckState> JavaPathCheckerListener();
+    Observable<CheckState> getJavaPathChecker();
 
     void resetJavaParams();
 
@@ -138,35 +138,35 @@ public interface IJavaSettingsViewModel extends SettingsListener {
 
     void setJavaParamsPending();
 
-    Observable<String> JavaParamsChanged();
+    Observable<String> getJavaParams();
 
-    Observable<CheckState> JavaParamsCheckerListener();
+    Observable<CheckState> getJavaParamsChecker();
 
     void setStartMinecraftMax(Boolean b);
 
-    Observable<Boolean> StartMinecraftMaxChanged();
+    Observable<Boolean> get5StartMinecraftMax();
 
     void setIgnoreJavaChecks(Boolean b);
 
-    Observable<Boolean> IgnoreJavaChecksChanged();
+    Observable<Boolean> getIgnoreJavaChecks();
 
     boolean getUseJavaFromMinecraftEnabled();
 
     void setJavaFromMinecraft(Boolean b);
 
-    Observable<Boolean> JavaFromMinecraftChanged();
+    Observable<Boolean> getJavaFromMinecraft();
 
     void setDisableLegacyLaunching(Boolean b);
 
-    Observable<Boolean> DisableLegacyLaunchingChanged();
+    Observable<Boolean> getDisableLegacyLaunching();
 
     void setSystemGLFW(Boolean b);
 
-    Observable<Boolean> SystemGLFWChanged();
+    Observable<Boolean> getSystemGLFW();
 
     void setSystemOpenAL(Boolean b);
 
-    Observable<Boolean> SystemOpenALChanged();
+    Observable<Boolean> getSystemOpenAL();
 
     Boolean useInitialMemoryOption();
 

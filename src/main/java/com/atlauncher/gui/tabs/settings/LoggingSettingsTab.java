@@ -25,7 +25,6 @@ import javax.swing.JComboBox;
 
 import org.mini2Dx.gettext.GetText;
 
-import com.atlauncher.App;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.constants.UIConstants;
 import com.atlauncher.gui.components.JLabelWithHover;
@@ -70,7 +69,7 @@ public class LoggingSettingsTab extends AbstractSettingsTab {
             if (itemEvent.getStateChange() == ItemEvent.SELECTED)
                 viewModel.setLoggingLevel((String) itemEvent.getItem());
         });
-        addDisposable(viewModel.LoggingLevelChanged().subscribe(forgeLoggingLevel::setSelectedItem));
+        addDisposable(viewModel.getLoggingLevel().subscribe(forgeLoggingLevel::setSelectedItem));
         add(forgeLoggingLevel, gbc);
 
         // Enable Logging
@@ -92,7 +91,7 @@ public class LoggingSettingsTab extends AbstractSettingsTab {
         enableLogs.addActionListener(e ->
             viewModel.setEnableLogging(enableLogs.isSelected())
         );
-        addDisposable(viewModel.EnableLoggingChanged().subscribe(enableLogs::setSelected));
+        addDisposable(viewModel.get5EnableLogging().subscribe(enableLogs::setSelected));
         add(enableLogs, gbc);
 
         // Enable Analytics
@@ -115,7 +114,7 @@ public class LoggingSettingsTab extends AbstractSettingsTab {
         enableAnalytics.addActionListener(e ->
             viewModel.setEnableAnonAnalytics(enableAnalytics.isSelected())
         );
-        addDisposable(viewModel.EnableAnonAnalyticsChanged().subscribe(enableAnalytics::setSelected));
+        addDisposable(viewModel.getEnableAnonAnalytics().subscribe(enableAnalytics::setSelected));
         add(enableAnalytics, gbc);
     }
 

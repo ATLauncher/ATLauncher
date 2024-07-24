@@ -78,7 +78,7 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
             if (itemEvent.getStateChange() == ItemEvent.SELECTED)
                 viewModel.setSelectedLanguage((String) itemEvent.getItem());
         });
-        addDisposable(viewModel.SelectedLanguageChanged().subscribe(language::setSelectedItem));
+        addDisposable(viewModel.getSelectedLanguage().subscribe(language::setSelectedItem));
         languagePanel.add(language);
 
         languagePanel.add(Box.createHorizontalStrut(5));
@@ -114,7 +114,7 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         for (LauncherTheme launcherTheme : viewModel.getThemes()) {
             theme.addItem(new ComboItem<>(launcherTheme.id, launcherTheme.label));
         }
-        addDisposable(viewModel.SelectedThemeChanged().subscribe(theme::setSelectedIndex));
+        addDisposable(viewModel.getSelectedTheme().subscribe(theme::setSelectedIndex));
 
         add(theme, gbc);
 
@@ -146,7 +146,7 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
             dateFormat.addItem(new ComboItem<>(format, new SimpleDateFormat(format).format(exampleDate)));
         }
 
-        addDisposable(viewModel.DateFormatChanged().subscribe(dateFormat::setSelectedIndex));
+        addDisposable(viewModel.getDateFormat().subscribe(dateFormat::setSelectedIndex));
 
         add(dateFormat, gbc);
 
@@ -177,7 +177,7 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
                 GetText.tr("Pack Name"), GetText.tr("Pack Version"), GetText.tr("Minecraft Version"))));
         }
 
-        addDisposable(viewModel.InstanceFormatChanged().subscribe(instanceTitleFormat::setSelectedIndex));
+        addDisposable(viewModel.getInstanceFormat().subscribe(instanceTitleFormat::setSelectedIndex));
 
         add(instanceTitleFormat, gbc);
 
@@ -207,7 +207,7 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         selectedTabOnStartup.addItem(new ComboItem<>(UIConstants.LAUNCHER_TOOLS_TAB, GetText.tr("Tools")));
         selectedTabOnStartup.addItem(new ComboItem<>(UIConstants.LAUNCHER_SETTINGS_TAB, GetText.tr("Settings")));
 
-        addDisposable(viewModel.SelectedTabOnStartupChanged().subscribe(selectedTabOnStartup::setSelectedIndex));
+        addDisposable(viewModel.getSelectedTabOnStartup().subscribe(selectedTabOnStartup::setSelectedIndex));
 
         selectedTabOnStartup.addItemListener(itemEvent -> {
             if (itemEvent.getStateChange() == ItemEvent.SELECTED)
@@ -237,7 +237,7 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
             if (itemEvent.getStateChange() == ItemEvent.SELECTED)
                 viewModel.setInstanceSorting((InstanceSortingStrategies) itemEvent.getItem());
         });
-        addDisposable(viewModel.addInstanceSortingChanged().subscribe(defaultInstanceSorting::setSelectedIndex));
+        addDisposable(viewModel.getInstanceSortingObservable().subscribe(defaultInstanceSorting::setSelectedIndex));
 
         add(defaultInstanceSorting, gbc);
 
@@ -261,7 +261,7 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         customDownloadsPathPanel.setLayout(new BoxLayout(customDownloadsPathPanel, BoxLayout.X_AXIS));
 
         JTextField customDownloadsPath = new JTextField(16);
-        addDisposable(viewModel.CustomsDownloadPathChanged().subscribe(customDownloadsPath::setText));
+        addDisposable(viewModel.getCustomsDownloadPath().subscribe(customDownloadsPath::setText));
         customDownloadsPath.addKeyListener(
             new DelayedSavingKeyListener(
                 100,
@@ -312,7 +312,7 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         JCheckBox keepLauncherOpen = new JCheckBox();
         keepLauncherOpen.addItemListener(e -> viewModel.setKeepLauncherOpen(e.getStateChange() == ItemEvent.SELECTED));
-        addDisposable(viewModel.KeepLauncherOpenChanged().subscribe(keepLauncherOpen::setSelected));
+        addDisposable(viewModel.getKeepLauncherOpen().subscribe(keepLauncherOpen::setSelected));
         add(keepLauncherOpen, gbc);
 
         // Enable Console
@@ -330,7 +330,7 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         JCheckBox enableConsole = new JCheckBox();
         enableConsole.addItemListener(e -> viewModel.setEnableConsole(e.getStateChange() == ItemEvent.SELECTED));
-        addDisposable(viewModel.EnableConsoleChanged().subscribe(enableConsole::setSelected));
+        addDisposable(viewModel.getEnableConsole().subscribe(enableConsole::setSelected));
         add(enableConsole, gbc);
 
         // Enable Tray Icon
@@ -350,7 +350,7 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         JCheckBox enableTrayIcon = new JCheckBox();
         enableTrayIcon.addItemListener(e -> viewModel.setEnableTrayMenuOpen(e.getStateChange() == ItemEvent.SELECTED));
-        addDisposable(viewModel.EnableTrayMenuChanged().subscribe(enableTrayIcon::setSelected));
+        addDisposable(viewModel.getEnableTrayMenu().subscribe(enableTrayIcon::setSelected));
         add(enableTrayIcon, gbc);
 
         // Enable Discord Integration
@@ -369,7 +369,7 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         JCheckBox enableDiscordIntegration = new JCheckBox();
         enableDiscordIntegration.addItemListener(e -> viewModel.setEnableDiscordIntegration(e.getStateChange() == ItemEvent.SELECTED));
-        addDisposable(viewModel.EnableDiscordIntegrationChanged().subscribe(enableDiscordIntegration::setSelected));
+        addDisposable(viewModel.getEnableDiscordIntegration().subscribe(enableDiscordIntegration::setSelected));
         enableDiscordIntegration.setEnabled(!OS.isArm());
         add(enableDiscordIntegration, gbc);
 
@@ -393,7 +393,7 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
             enableFeralGamemode.addItemListener(e ->
                 viewModel.setEnableFeralGameMode(e.getStateChange() == ItemEvent.SELECTED)
             );
-            addDisposable(viewModel.EnableFeralGameModeChanged().subscribe(enableFeralGamemode::setSelected));
+            addDisposable(viewModel.getEnableFeralGameMode().subscribe(enableFeralGamemode::setSelected));
 
             if (!gameModeExistsInPath) {
                 enableFeralGamemodeLabel.setToolTipText(GetText.tr(
@@ -425,7 +425,7 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         disableCustomFonts.addItemListener(itemEvent -> {
             viewModel.setDisableCustomFonts(itemEvent.getStateChange() == ItemEvent.SELECTED);
         });
-        addDisposable(viewModel.DisableCustomFontsChanged().subscribe(disableCustomFonts::setSelected));
+        addDisposable(viewModel.getDisableCustomFonts().subscribe(disableCustomFonts::setSelected));
         add(disableCustomFonts, gbc);
 
         // Remember gui sizes and positions
@@ -448,7 +448,7 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         rememberWindowSizePosition.addItemListener(e ->
             viewModel.setRememberWindowStuff(e.getStateChange() == ItemEvent.SELECTED)
         );
-        addDisposable(viewModel.RememberWindowStuffChanged().subscribe(rememberWindowSizePosition::setSelected));
+        addDisposable(viewModel.getRememberWindowStuff().subscribe(rememberWindowSizePosition::setSelected));
         add(rememberWindowSizePosition, gbc);
 
         // Use native file picker
@@ -472,7 +472,7 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
             useNativeFilePicker.addItemListener(e ->
                 viewModel.setUseNativeFilePicker(e.getStateChange() == ItemEvent.SELECTED)
             );
-            addDisposable(viewModel.UseNativeFilePickerChanged().subscribe(useNativeFilePicker::setSelected));
+            addDisposable(viewModel.getUseNativeFilePicker().subscribe(useNativeFilePicker::setSelected));
             add(useNativeFilePicker, gbc);
         }
 
@@ -496,7 +496,7 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         useRecycleBin.addItemListener(e ->
             viewModel.setUseRecycleBin(e.getStateChange() == ItemEvent.SELECTED)
         );
-        addDisposable(viewModel.UseRecycleBinChanged().subscribe(useRecycleBin::setSelected));
+        addDisposable(viewModel.getUseRecycleBin().subscribe(useRecycleBin::setSelected));
         add(useRecycleBin, gbc);
 
         if (viewModel.showArmSupport()) {

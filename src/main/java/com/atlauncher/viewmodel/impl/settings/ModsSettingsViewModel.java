@@ -72,7 +72,7 @@ public class ModsSettingsViewModel implements IModsSettingsViewModel {
     }
 
     @Override
-    public Observable<Integer> DefaultModPlatformChanged() {
+    public Observable<Integer> getDefaultModPlatform() {
         return _addOnDefaultModPlatformChanged.observeOn(SwingSchedulers.edt());
     }
 
@@ -83,40 +83,40 @@ public class ModsSettingsViewModel implements IModsSettingsViewModel {
     }
 
     @Override
-    public Observable<Integer> AddModRestrictionsChanged() {
+    public Observable<Integer> getAddModRestrictions() {
         return _addOnAddModRestrictionsChanged.observeOn(SwingSchedulers.edt());
     }
 
     @Override
-    public void setEAMBD(Boolean b) {
+    public void setEnableAddedModsByDefault(Boolean b) {
         App.settings.enableAddedModsByDefault = b;
         SettingsManager.post();
     }
 
     @Override
-    public Observable<Boolean> EAMBDChanged() {
+    public Observable<Boolean> getEnableAddedModsByDefault() {
         return _addOnEAMBDChanged.observeOn(SwingSchedulers.edt());
     }
 
     @Override
-    public void setDCMOC(Boolean b) {
+    public void setDoNotCheckModsOnCurseForge(Boolean b) {
         App.settings.dontCheckModsOnCurseForge = b;
         SettingsManager.post();
     }
 
     @Override
-    public Observable<Boolean> DCMOCChanged() {
+    public Observable<Boolean> getDoNotCheckModsOnCurseForge() {
         return _addOnDCMOCChanged.observeOn(SwingSchedulers.edt());
     }
 
     @Override
-    public void setDCMOM(Boolean b) {
+    public void setDoNotCheckModsOnModrinth(Boolean b) {
         App.settings.dontCheckModsOnModrinth = b;
         SettingsManager.post();
     }
 
     @Override
-    public Observable<Boolean> DCMOMChanged() {
+    public Observable<Boolean> getDoNotCheckModsOnModrinth() {
         return _addOnDCMOMChanged.observeOn(SwingSchedulers.edt());
     }
 
@@ -127,17 +127,17 @@ public class ModsSettingsViewModel implements IModsSettingsViewModel {
     }
 
     @Override
-    public Observable<Integer> DefaultExportFormatChanged() {
+    public Observable<Integer> getDefaultExportFormat() {
         return _addOnDefaultExportFormatChanged.observeOn(SwingSchedulers.edt());
     }
 
     @Override
-    public Observable<Boolean> getACFABF() {
+    public Observable<Boolean> getAllowCurseForgeAlphaBetaFiles() {
         return acfabf.observeOn(SwingSchedulers.edt());
     }
 
     @Override
-    public void setACFABF(boolean b) {
+    public void setAllowCurseForgeAlphaBetaFiles(boolean b) {
         if (App.settings.allowCurseForgeAlphaBetaFiles != b) {
             modReloadRequiredRepository.setModReloadRequired(true);
         }
