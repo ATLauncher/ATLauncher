@@ -23,6 +23,7 @@ import java.util.Optional;
 
 import com.atlauncher.App;
 import com.atlauncher.Network;
+import com.atlauncher.data.CheckState;
 import com.atlauncher.data.ProxyType;
 import com.atlauncher.evnt.manager.SettingsManager;
 import com.atlauncher.managers.SettingsValidityManager;
@@ -50,6 +51,12 @@ public class NetworkSettingsViewModel implements INetworkSettingsViewModel {
     private final BehaviorSubject<String>
         _addOnProxyHostChanged = BehaviorSubject.create(),
         modrinthAPIKey = BehaviorSubject.create();
+
+    private final BehaviorSubject<CheckState> proxyCheckState =
+        BehaviorSubject.createDefault(CheckState.NotChecking);
+
+    private long lastSetPending = System.currentTimeMillis();
+    private boolean isCheckThreadRunning = false;
 
     public NetworkSettingsViewModel() {
         onSettingsSaved();
@@ -99,6 +106,17 @@ public class NetworkSettingsViewModel implements INetworkSettingsViewModel {
     public void setEnableProxy(Boolean b) {
         App.settings.enableProxy = b;
         SettingsManager.post();
+
+        if (b) {
+            // If enabled, check the proxy soon
+            SettingsValidityManager.setValidity("proxy", false);
+            proxyCheckState.onNext(CheckState.CheckPending);
+            setProxyHostPending(2000);
+        } else {
+            // Mark proxy as valid if disabled
+            SettingsValidityManager.setValidity("proxy", true);
+            proxyCheckState.onNext(CheckState.NotChecking);
+        }
     }
 
     @Override
@@ -112,8 +130,39 @@ public class NetworkSettingsViewModel implements INetworkSettingsViewModel {
         setProxyHostPending();
     }
 
-    public void setProxyHostPending() {
+    /**
+     * Basic set, will check in a second
+     */
+    private void setProxyHostPending() {
+        setProxyHostPending(1000);
+    }
+
+    /**
+     * Custom pending set
+     *
+     * @param delay how long until checked
+     */
+    private void setProxyHostPending(long delay) {
         SettingsValidityManager.setValidity("proxy", false);
+        proxyCheckState.onNext(CheckState.CheckPending);
+        lastSetPending = System.currentTimeMillis();
+
+        if (!isCheckThreadRunning) {
+            isCheckThreadRunning = true;
+
+            new Thread(() -> {
+                while (lastSetPending + delay > System.currentTimeMillis()) {
+                    try {
+                        Thread.sleep(200);
+                    } catch (InterruptedException ignored) {
+                    }
+                }
+
+                checkProxy();
+
+                isCheckThreadRunning = false;
+            }).start();
+        }
     }
 
     @Override
@@ -172,11 +221,20 @@ public class NetworkSettingsViewModel implements INetworkSettingsViewModel {
     }
 
     @Override
-    public boolean checkProxy() {
-        setProxyHostPending();
+    public Observable<CheckState> getProxyCheckState() {
+        return proxyCheckState.observeOn(SwingSchedulers.edt());
+    }
+
+    private void checkProxy() {
         if (!App.settings.enableProxy) {
-            return true;
+            // If not enabled, we can skip this
+            proxyCheckState.onNext(CheckState.NotChecking);
+            SettingsValidityManager.setValidity("proxy", true);
+            return;
         }
+
+        SettingsValidityManager.setValidity("proxy", false);
+        proxyCheckState.onNext(CheckState.Checking);
 
         Proxy.Type type;
 
@@ -191,7 +249,10 @@ public class NetworkSettingsViewModel implements INetworkSettingsViewModel {
                 type = Proxy.Type.DIRECT;
                 break;
             default:
-                return false;
+                SettingsValidityManager.setValidity("proxy", false);
+
+                proxyCheckState.onNext(new CheckState.Checked(false));
+                return;
         }
 
         boolean result = Utils.testProxy(
@@ -200,6 +261,6 @@ public class NetworkSettingsViewModel implements INetworkSettingsViewModel {
 
         SettingsValidityManager.setValidity("proxy", result);
 
-        return result;
+        proxyCheckState.onNext(new CheckState.Checked(result));
     }
 }

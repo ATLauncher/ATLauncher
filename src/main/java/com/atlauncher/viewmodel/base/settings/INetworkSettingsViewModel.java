@@ -17,6 +17,7 @@
  */
 package com.atlauncher.viewmodel.base.settings;
 
+import com.atlauncher.data.CheckState;
 import com.atlauncher.data.ProxyType;
 import com.atlauncher.evnt.listener.SettingsListener;
 import com.atlauncher.gui.tabs.settings.NetworkSettingsTab;
@@ -58,5 +59,5 @@ public interface INetworkSettingsViewModel extends SettingsListener {
 
     Observable<String> getModrinthAPIKey();
 
-    boolean checkProxy();
+    Observable<CheckState> getProxyCheckState();
 }

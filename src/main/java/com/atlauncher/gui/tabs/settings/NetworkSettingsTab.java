@@ -20,6 +20,7 @@ package com.atlauncher.gui.tabs.settings;
 import java.awt.GridBagConstraints;
 import java.awt.event.ItemEvent;
 
+import javax.swing.ImageIcon;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JSpinner;
@@ -30,16 +31,18 @@ import org.mini2Dx.gettext.GetText;
 
 import com.atlauncher.App;
 import com.atlauncher.constants.UIConstants;
+import com.atlauncher.data.CheckState;
 import com.atlauncher.data.ProxyType;
 import com.atlauncher.gui.components.JLabelWithHover;
-import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.listener.StatefulTextKeyAdapter;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.utils.ComboItem;
+import com.atlauncher.utils.Utils;
 import com.atlauncher.viewmodel.base.settings.INetworkSettingsViewModel;
 
 public class NetworkSettingsTab extends AbstractSettingsTab {
     private final INetworkSettingsViewModel viewModel;
+    private JLabelWithHover proxyCheckIndicator;
     private JTextField proxyHost;
     private JSpinner proxyPort;
     private JComboBox<ComboItem<ProxyType>> proxyType;
@@ -138,6 +141,14 @@ public class NetworkSettingsTab extends AbstractSettingsTab {
             viewModel.setEnableProxy(itemEvent.getStateChange() == ItemEvent.SELECTED));
         add(enableProxy, gbc);
 
+        gbc.gridx++;
+        gbc.insets = UIConstants.CHECKBOX_FIELD_INSETS;
+        gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
+        proxyCheckIndicator = new JLabelWithHover("", null, null);
+        resetProxyCheck();
+        addDisposable(viewModel.getProxyCheckState().subscribe(this::setProxyCheckState));
+        add(proxyCheckIndicator, gbc);
+
         // Proxy Host Settings
         gbc.gridx = 0;
         gbc.gridy++;
@@ -222,29 +233,39 @@ public class NetworkSettingsTab extends AbstractSettingsTab {
         }));
     }
 
-    /**
-     * TODO perhaps this can be done automatically
-     */
-    public void showProxyCheckDialog() {
-        final ProgressDialog<Boolean> dialog = new ProgressDialog<>(
-            GetText.tr("Checking Proxy"),
-            0,
-            GetText.tr("Checking the proxy entered."),
-            GetText.tr("Cancelled Proxy Test!")
-        );
+    private void setLabelState(String tooltip, String path) {
+        try {
+            proxyCheckIndicator.setToolTipText(tooltip);
+            ImageIcon icon = Utils.getIconImage(path);
+            if (icon != null) {
+                proxyCheckIndicator.setIcon(icon);
+                icon.setImageObserver(proxyCheckIndicator);
+            }
+        } catch (NullPointerException ignored) {
+        }
+    }
 
-        dialog.addThread(new Thread(() -> {
-            dialog.setReturnValue(viewModel.checkProxy());
-            dialog.close();
-        }));
+    private void resetProxyCheck() {
+        setLabelState("Visualize proxy checker", "/assets/icon/question.png");
+    }
 
-        dialog.start();
-
-        if (Boolean.FALSE.equals(dialog.getReturnValue())) {
-            DialogManager.okDialog()
-                .setTitle(GetText.tr("Help"))
-                .setContent(GetText.tr("Cannot connect to proxy. Please check the settings and try again."))
-                .setType(DialogManager.ERROR).show();
+    private void setProxyCheckState(CheckState state) {
+        if (state == CheckState.NotChecking) {
+            resetProxyCheck();
+        } else if (state == CheckState.CheckPending) {
+            setLabelState("Proxy check pending", "/assets/icon/warning.png");
+        } else if (state == CheckState.Checking) {
+            setLabelState("Checking Proxy", "/assets/image/loading-bars-small.gif");
+        } else if (state instanceof CheckState.Checked) {
+            if (((CheckState.Checked) state).valid) {
+                resetProxyCheck();
+            } else {
+                setLabelState("Invalid!", "/assets/icon/error.png");
+                DialogManager.okDialog()
+                    .setTitle(GetText.tr("Help"))
+                    .setContent(GetText.tr("Cannot connect to proxy. Please check the settings and try again."))
+                    .setType(DialogManager.ERROR).show();
+            }
         }
     }
 
@@ -265,5 +286,9 @@ public class NetworkSettingsTab extends AbstractSettingsTab {
     @Override
     protected void onDestroy() {
         removeAll();
+        proxyCheckIndicator = null;
+        proxyHost = null;
+        proxyPort = null;
+        proxyType = null;
     }
 }
