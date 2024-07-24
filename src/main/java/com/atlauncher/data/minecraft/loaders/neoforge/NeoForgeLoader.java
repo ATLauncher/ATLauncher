@@ -18,10 +18,10 @@
 package com.atlauncher.data.minecraft.loaders.neoforge;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -79,7 +79,7 @@ public class NeoForgeLoader implements Loader {
             }
         }
 
-        Boolean is1201Version = this.minecraft.equals("1.20.1");
+        boolean is1201Version = this.minecraft.equals("1.20.1");
         String artifactName = is1201Version ? "forge" : "neoforge";
         String versionName = is1201Version ? this.minecraft + "-" + this.version : this.rawVersion;
 
@@ -104,7 +104,7 @@ public class NeoForgeLoader implements Loader {
         if (installerSha1 != null) {
             download = download.hash(this.installerSha1);
 
-            if (ConfigManager.getConfigItem("loaders.neoforge.disableInstallerHashChecking", false) == true) {
+            if (ConfigManager.getConfigItem("loaders.neoforge.disableInstallerHashChecking", false)) {
                 download = download.ignoreFailures();
             }
         }
@@ -132,7 +132,7 @@ public class NeoForgeLoader implements Loader {
         Version version = null;
 
         try (InputStreamReader fileReader = new InputStreamReader(
-                new FileInputStream(new File(this.tempDir, "version.json")), StandardCharsets.UTF_8)) {
+            Files.newInputStream(new File(this.tempDir, "version.json").toPath()), StandardCharsets.UTF_8)) {
             version = Gsons.DEFAULT.fromJson(fileReader, Version.class);
         } catch (JsonSyntaxException | JsonIOException | IOException e) {
             LogManager.logStackTrace(e);
@@ -166,7 +166,7 @@ public class NeoForgeLoader implements Loader {
         NeoForgeInstallProfile installProfile = null;
 
         try (InputStreamReader fileReader = new InputStreamReader(
-                new FileInputStream(new File(this.tempDir, "install_profile.json")), StandardCharsets.UTF_8)) {
+            Files.newInputStream(new File(this.tempDir, "install_profile.json").toPath()), StandardCharsets.UTF_8)) {
             installProfile = Gsons.DEFAULT.fromJson(fileReader, NeoForgeInstallProfile.class);
         } catch (Throwable e) {
             LogManager.logStackTrace(e);
@@ -190,7 +190,7 @@ public class NeoForgeLoader implements Loader {
         NeoForgeInstallProfile versionInfo = null;
 
         try (InputStreamReader fileReader = new InputStreamReader(
-                new FileInputStream(new File(this.tempDir, "version.json")), StandardCharsets.UTF_8)) {
+            Files.newInputStream(new File(this.tempDir, "version.json").toPath()), StandardCharsets.UTF_8)) {
             versionInfo = Gsons.DEFAULT.fromJson(fileReader, NeoForgeInstallProfile.class);
         } catch (Throwable e) {
             LogManager.logStackTrace(e);
@@ -267,11 +267,11 @@ public class NeoForgeLoader implements Loader {
                 .callAndWait(new GetNeoForgeLoaderVersionsForMinecraftVersionQuery(minecraft));
 
         if (response == null) {
-            return new ArrayList<LoaderVersion>();
+            return new ArrayList<>();
         }
 
         List<String> disabledVersions = ConfigManager.getConfigItem("loaders.neoforge.disabledVersions",
-                new ArrayList<String>());
+            new ArrayList<>());
 
         return response.loaderVersions().neoforge().stream().filter(fv -> !disabledVersions.contains(
                 fv.version()))

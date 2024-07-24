@@ -26,7 +26,6 @@ import org.mini2Dx.gettext.GetText;
 
 import com.atlauncher.builders.HTMLBuilder;
 
-@SuppressWarnings("serial")
 public class DebugModePanel extends AbstractToolPanel {
 
     public DebugModePanel(IToolsViewModel viewModel) {

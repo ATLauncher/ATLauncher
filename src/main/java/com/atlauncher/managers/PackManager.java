@@ -18,10 +18,10 @@
 package com.atlauncher.managers;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -56,7 +56,7 @@ public class PackManager {
         LogManager.debug("Loading packs");
         Data.PACKS.clear();
         try (InputStreamReader fileReader = new InputStreamReader(
-                new FileInputStream(FileSystem.JSON.resolve("packsnew.json").toFile()),
+            Files.newInputStream(FileSystem.JSON.resolve("packsnew.json")),
                 StandardCharsets.UTF_8)) {
             java.lang.reflect.Type type = new TypeToken<List<Pack>>() {
             }.getType();
@@ -271,7 +271,7 @@ public class PackManager {
         List<PackUsers> packUsers = new ArrayList<>();
 
         try (InputStreamReader fileReader = new InputStreamReader(
-                new FileInputStream(FileSystem.JSON.resolve("users.json").toFile()),
+            Files.newInputStream(FileSystem.JSON.resolve("users.json")),
                 StandardCharsets.UTF_8)) {
             java.lang.reflect.Type type = new TypeToken<List<PackUsers>>() {
             }.getType();

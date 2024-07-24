@@ -58,7 +58,6 @@ import com.atlauncher.network.analytics.AnalyticsEvent;
 import com.atlauncher.utils.CurseForgeApi;
 import com.atlauncher.utils.OS;
 
-@SuppressWarnings("serial")
 public class CurseForgeProjectFileSelectorDialog extends JDialog {
     private int filesLength = 0;
     private final CurseForgeProject mod;
@@ -178,7 +177,7 @@ public class CurseForgeProjectFileSelectorDialog extends JDialog {
         addButton.addActionListener(e -> {
             CurseForgeFile file = (CurseForgeFile) filesDropdown.getSelectedItem();
 
-            ProgressDialog progressDialog = new ProgressDialog<>(
+            ProgressDialog<Object> progressDialog = new ProgressDialog<>(
                     // #. {0} is the name of the mod we're installing
                     GetText.tr("Installing {0}", file.displayName), false, this);
             progressDialog.addThread(new Thread(() -> {
@@ -191,9 +190,7 @@ public class CurseForgeProjectFileSelectorDialog extends JDialog {
             dispose();
         });
 
-        viewModButton.addActionListener(e -> {
-            OS.openWebBrowser(mod.getWebsiteUrl());
-        });
+        viewModButton.addActionListener(e -> OS.openWebBrowser(mod.getWebsiteUrl()));
 
         viewFileButton.addActionListener(e -> {
             CurseForgeFile file = (CurseForgeFile) filesDropdown.getSelectedItem();
@@ -201,9 +198,7 @@ public class CurseForgeProjectFileSelectorDialog extends JDialog {
             OS.openWebBrowser(String.format(Locale.ENGLISH, "%s/files/%d", mod.getWebsiteUrl(), file.id));
         });
 
-        filesDropdown.addActionListener(e -> {
-            reloadDependenciesPanel();
-        });
+        filesDropdown.addActionListener(e -> reloadDependenciesPanel());
 
         JButton cancel = new JButton(GetText.tr("Cancel"));
         cancel.addActionListener(e -> dispose());
@@ -228,7 +223,7 @@ public class CurseForgeProjectFileSelectorDialog extends JDialog {
         dependenciesPanel.setVisible(false);
 
         // this file has dependencies
-        if (selectedFile.dependencies.size() != 0) {
+        if (!selectedFile.dependencies.isEmpty()) {
             // check to see which required ones we don't already have
             List<CurseForgeFileDependency> dependencies = selectedFile.dependencies.stream()
                     .filter(dependency -> dependency.isRequired() && instance.launcher.mods.stream()
@@ -261,7 +256,7 @@ public class CurseForgeProjectFileSelectorDialog extends JDialog {
                             }))
                     .collect(Collectors.toList());
 
-            if (dependencies.size() != 0) {
+            if (!dependencies.isEmpty()) {
                 dependenciesPanel.removeAll();
 
                 dependencies.forEach(dependency -> dependenciesPanel
@@ -307,14 +302,14 @@ public class CurseForgeProjectFileSelectorDialog extends JDialog {
 
                     curseForgeFilesStream = curseForgeFilesStream
                             .filter(v -> v.gameVersions.stream()
-                                    .anyMatch(gv -> minecraftVersionsToSearch.contains(gv)));
+                                    .anyMatch(minecraftVersionsToSearch::contains));
                 } catch (InvalidMinecraftVersion e) {
                     LogManager.logStackTrace(e);
                 }
             }
 
             List<String> neoForgeForgeCompatabilityVersions = ConfigManager
-                    .getConfigItem("loaders.neoforge.forgeCompatibleMinecraftVersions", new ArrayList<String>());
+                    .getConfigItem("loaders.neoforge.forgeCompatibleMinecraftVersions", new ArrayList<>());
 
             // filter out files not for our loader (if browsing mods)
             if (mod.getRootCategoryId() == Constants.CURSEFORGE_MODS_SECTION_ID) {
@@ -343,12 +338,8 @@ public class CurseForgeProjectFileSelectorDialog extends JDialog {
                     }
 
                     // if there's no loaders, assume the mod is untagged so we should show it
-                    if (!cf.gameVersions.contains("Fabric") && !cf.gameVersions.contains("NeoForge")
-                            && !cf.gameVersions.contains("Forge") && !cf.gameVersions.contains("Quilt")) {
-                        return true;
-                    }
-
-                    return false;
+                    return !cf.gameVersions.contains("Fabric") && !cf.gameVersions.contains("NeoForge")
+                        && !cf.gameVersions.contains("Forge") && !cf.gameVersions.contains("Quilt");
                 });
             }
 

@@ -29,7 +29,6 @@ import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.constants.UIConstants;
 import com.atlauncher.gui.components.JLabelWithHover;
 
-@SuppressWarnings("serial")
 public class LoggingSettingsTab extends AbstractSettingsTab {
     private final JComboBox<String> forgeLoggingLevel;
 

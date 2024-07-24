@@ -26,3 +26,4 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Update versions of Java tested in GitHub workflows
 - Update dependencies
 - Recreate UI on re-localization [#912]
+- Squash a ton of warnings [#918]

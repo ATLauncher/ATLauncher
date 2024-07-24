@@ -116,10 +116,8 @@ public class MCLauncher {
             }
 
             if (instance.launcher.mods.stream().anyMatch(m -> m.skipped)) {
-                instance.launcher.mods.stream().filter(m -> m.skipped).forEach(m -> {
-                    LogManager.warn(String.format(
-                            "Mod %s (%s) was skipped from downloading during instance installation", m.name, m.file));
-                });
+                instance.launcher.mods.stream().filter(m -> m.skipped).forEach(m -> LogManager.warn(String.format(
+                        "Mod %s (%s) was skipped from downloading during instance installation", m.name, m.file)));
             }
 
             if (instance.shouldUseLegacyLaunch() && Optional.ofNullable(instance.launcher.disableLegacyLaunching)
@@ -132,7 +130,7 @@ public class MCLauncher {
     }
 
     private static List<String> wrapArguments(String wrapperCommand, List<String> args) {
-        List<String> wrapArgs = new LinkedList<String>(Arrays.asList(wrapperCommand.trim().split("\\s+")));
+        List<String> wrapArgs = new LinkedList<>(Arrays.asList(wrapperCommand.trim().split("\\s+")));
 
         // wrapper not set
         if (wrapArgs.isEmpty()) {
@@ -175,7 +173,7 @@ public class MCLauncher {
 
         File jarMods = instance.getJarModsDirectory();
         File[] jarModFiles = jarMods.listFiles();
-        if (jarMods.exists() && jarModFiles != null && jarModFiles.length != 0) {
+        if (jarMods.exists() && jarModFiles != null) {
             for (File file : jarModFiles) {
                 hasCustomJarMods = true;
                 cpb.append(file.getAbsolutePath());
@@ -240,7 +238,7 @@ public class MCLauncher {
 
         File binFolder = instance.getBinDirectory();
         File[] libraryFiles = binFolder.listFiles();
-        if (binFolder.exists() && libraryFiles != null && libraryFiles.length != 0) {
+        if (binFolder.exists() && libraryFiles != null) {
             for (File file : libraryFiles) {
                 if (!file.getName().equalsIgnoreCase("minecraft.jar")
                         && !file.getName().equalsIgnoreCase("modpack.jar")
@@ -287,7 +285,7 @@ public class MCLauncher {
         }
         arguments.add(path);
 
-        if (ConfigManager.getConfigItem("removeInitialMemoryOption", false) == false) {
+        if (!ConfigManager.getConfigItem("removeInitialMemoryOption", false)) {
             int initialMemory = Optional.ofNullable(instance.launcher.initialMemory).orElse(App.settings.initialMemory);
             arguments.add("-Xms" + initialMemory + "M");
         }

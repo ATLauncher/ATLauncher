@@ -23,6 +23,7 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -74,16 +75,14 @@ public class ModrinthApi {
                     Constants.MODRINTH_PAGINATION_SIZE, page * Constants.MODRINTH_PAGINATION_SIZE,
                     URLEncoder.encode(query, StandardCharsets.UTF_8.name()), index);
 
-            if (gameVersions != null && gameVersions.size() != 0) {
+            if (gameVersions != null && !gameVersions.isEmpty()) {
                 facets.add(
                         gameVersions.stream().map(gv -> String.format("versions:%s", gv)).collect(Collectors.toList()));
             }
 
             if (categories != null) {
-                categories.forEach(c -> {
-                    facets
-                            .add(c.stream().map(s -> String.format("categories:%s", s)).collect(Collectors.toList()));
-                });
+                categories.forEach(c -> facets
+                        .add(c.stream().map(s -> String.format("categories:%s", s)).collect(Collectors.toList())));
             }
 
             if (projectType != null) {
@@ -93,7 +92,7 @@ public class ModrinthApi {
                 facets.add(projectTypeFacets);
             }
 
-            if (facets.size() != 0) {
+            if (!facets.isEmpty()) {
                 url += String.format("&facets=%s", Gsons.DEFAULT_SLIM.toJson(facets));
             }
 
@@ -108,22 +107,22 @@ public class ModrinthApi {
 
     public static ModrinthSearchResult searchResourcePacks(List<String> gameVersions, String query, int page,
             String sort, String category) {
-        List<List<String>> categories = category == null ? null : Arrays.asList(Arrays.asList(category));
+        List<List<String>> categories = category == null ? null : Collections.singletonList(Collections.singletonList(category));
 
         return searchModrinth(gameVersions, query, page, sort, categories, ModrinthProjectType.RESOURCEPACK);
     }
 
     public static ModrinthSearchResult searchShaders(List<String> gameVersions, String query, int page,
             String sort, String category) {
-        List<List<String>> categories = category == null ? null : Arrays.asList(Arrays.asList(category));
+        List<List<String>> categories = category == null ? null : Collections.singletonList(Collections.singletonList(category));
 
         return searchModrinth(gameVersions, query, page, sort, categories, ModrinthProjectType.SHADER);
     }
 
     public static ModrinthSearchResult searchModsForForge(List<String> gameVersions, String query, int page,
             String sort, String category) {
-        List<List<String>> categories = category == null ? Arrays.asList(Arrays.asList("forge"))
-                : Arrays.asList(Arrays.asList(category), Arrays.asList("forge"));
+        List<List<String>> categories = category == null ? Collections.singletonList(Collections.singletonList("forge"))
+                : Arrays.asList(Collections.singletonList(category), Collections.singletonList("forge"));
 
         return searchModrinth(gameVersions, query, page, sort, categories,
                 ModrinthProjectType.MOD);
@@ -134,15 +133,15 @@ public class ModrinthApi {
         List<List<String>> categories = new ArrayList<>();
 
         if (category != null) {
-            categories.add(Arrays.asList(category));
+            categories.add(Collections.singletonList(category));
         }
 
         List<String> neoForgeForgeCompatabilityVersions = ConfigManager
-                .getConfigItem("loaders.neoforge.forgeCompatibleMinecraftVersions", new ArrayList<String>());
-        if (gameVersions.stream().anyMatch(gv -> neoForgeForgeCompatabilityVersions.contains(gv))) {
+                .getConfigItem("loaders.neoforge.forgeCompatibleMinecraftVersions", new ArrayList<>());
+        if (gameVersions.stream().anyMatch(neoForgeForgeCompatabilityVersions::contains)) {
             categories.add(Arrays.asList("neoforge", "forge"));
         } else {
-            categories.add(Arrays.asList("neoforge"));
+            categories.add(Collections.singletonList("neoforge"));
         }
 
         return searchModrinth(gameVersions, query, page, sort, categories, ModrinthProjectType.MOD);
@@ -150,8 +149,8 @@ public class ModrinthApi {
 
     public static ModrinthSearchResult searchModsForFabric(List<String> gameVersions, String query, int page,
             String sort, String category) {
-        List<List<String>> categories = category == null ? Arrays.asList(Arrays.asList("fabric"))
-                : Arrays.asList(Arrays.asList(category), Arrays.asList("fabric"));
+        List<List<String>> categories = category == null ? Collections.singletonList(Collections.singletonList("fabric"))
+                : Arrays.asList(Collections.singletonList(category), Collections.singletonList("fabric"));
 
         return searchModrinth(gameVersions, query, page, sort, categories,
                 ModrinthProjectType.MOD);
@@ -159,25 +158,25 @@ public class ModrinthApi {
 
     public static ModrinthSearchResult searchModsForQuilt(List<String> gameVersions, String query, int page,
             String sort, String category) {
-        List<List<String>> categories = category == null ? Arrays.asList(Arrays.asList("quilt"))
-                : Arrays.asList(Arrays.asList(category), Arrays.asList("quilt"));
+        List<List<String>> categories = category == null ? Collections.singletonList(Collections.singletonList("quilt"))
+                : Arrays.asList(Collections.singletonList(category), Collections.singletonList("quilt"));
 
         return searchModrinth(gameVersions, query, page, sort, categories, ModrinthProjectType.MOD);
     }
 
     public static ModrinthSearchResult searchModsForQuiltOrFabric(List<String> gameVersions, String query, int page,
             String sort, String category) {
-        List<List<String>> categories = category == null ? Arrays.asList(Arrays.asList("quilt", "fabric"))
-                : Arrays.asList(Arrays.asList(category), Arrays.asList("quilt", "fabric"));
+        List<List<String>> categories = category == null ? Collections.singletonList(Arrays.asList("quilt", "fabric"))
+                : Arrays.asList(Collections.singletonList(category), Arrays.asList("quilt", "fabric"));
 
         return searchModrinth(gameVersions, query, page, sort, categories, ModrinthProjectType.MOD);
     }
 
     public static ModrinthSearchResult searchModPacks(String minecraftVersion, String query, int page, String sort,
             String category) {
-        List<List<String>> categories = category == null ? null : Arrays.asList(Arrays.asList(category));
+        List<List<String>> categories = category == null ? null : Collections.singletonList(Collections.singletonList(category));
 
-        return searchModrinth(minecraftVersion == null ? null : Arrays.asList(minecraftVersion), query, page, sort,
+        return searchModrinth(minecraftVersion == null ? null : Collections.singletonList(minecraftVersion), query, page, sort,
                 categories, ModrinthProjectType.MODPACK);
     }
 
@@ -200,7 +199,7 @@ public class ModrinthApi {
         String queryParamsString = "";
 
         if (minecraftVersion != null) {
-            if (queryParamsString.length() == 0) {
+            if (queryParamsString.isEmpty()) {
                 queryParamsString += "?";
             }
 
@@ -208,7 +207,7 @@ public class ModrinthApi {
         }
 
         if (loaderVersion != null) {
-            if (queryParamsString.length() == 0) {
+            if (queryParamsString.isEmpty()) {
                 queryParamsString += "?";
             } else {
                 queryParamsString += "&";
@@ -220,7 +219,7 @@ public class ModrinthApi {
                 loaders.add("forge");
             } else if (loaderVersion.isNeoForge()) {
                 List<String> neoForgeForgeCompatabilityVersions = ConfigManager
-                        .getConfigItem("loaders.neoforge.forgeCompatibleMinecraftVersions", new ArrayList<String>());
+                        .getConfigItem("loaders.neoforge.forgeCompatibleMinecraftVersions", new ArrayList<>());
                 if (neoForgeForgeCompatabilityVersions.contains(minecraftVersion)) {
                     loaders.add("forge");
                 }

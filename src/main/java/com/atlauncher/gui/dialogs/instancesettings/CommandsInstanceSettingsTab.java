@@ -39,7 +39,6 @@ import com.atlauncher.gui.components.JLabelWithHover;
 import com.atlauncher.utils.ComboItem;
 import com.atlauncher.utils.Utils;
 
-@SuppressWarnings("serial")
 public class CommandsInstanceSettingsTab extends JPanel {
     private final Instance instance;
 

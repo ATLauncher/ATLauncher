@@ -68,7 +68,6 @@ public class AccountsTab extends HierarchyPanel implements Tab, RelocalizationLi
     private JMenuItem changeSkin;
     private JPopupMenu contextMenu; // Right click menu
 
-    @SuppressWarnings("unchecked")
     public AccountsTab() {
         super(new BorderLayout());
     }
@@ -196,9 +195,7 @@ public class AccountsTab extends HierarchyPanel implements Tab, RelocalizationLi
 
         refreshAccessTokenMenuItem = new JMenuItem(GetText.tr("Refresh Access Token"));
         refreshAccessTokenMenuItem.setVisible(false);
-        refreshAccessTokenMenuItem.addActionListener(e -> {
-            refreshAccessToken();
-        });
+        refreshAccessTokenMenuItem.addActionListener(e -> refreshAccessToken());
         contextMenu.add(refreshAccessTokenMenuItem);
 
         userSkin = new JLabel(SkinUtils.getDefaultSkin());

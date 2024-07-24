@@ -17,8 +17,6 @@
  */
 package com.atlauncher.managers;
 
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
@@ -48,7 +46,6 @@ import com.google.gson.reflect.TypeToken;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.subjects.BehaviorSubject;
 
-@SuppressWarnings("deprecation")
 public class AccountManager {
     private static final Type abstractAccountListType = new TypeToken<List<MicrosoftAccount>>() {
     }.getType();
@@ -91,13 +88,11 @@ public class AccountManager {
 
         if (Files.exists(FileSystem.ACCOUNTS)) {
             try (InputStreamReader fileReader = new InputStreamReader(
-                    new FileInputStream(FileSystem.ACCOUNTS.toFile()), StandardCharsets.UTF_8)) {
+                Files.newInputStream(FileSystem.ACCOUNTS), StandardCharsets.UTF_8)) {
                 List<MicrosoftAccount> accounts = Gsons.DEFAULT.fromJson(fileReader, abstractAccountListType);
 
-                newAccounts.addAll(accounts.stream().filter(account -> {
-                    return account.accessToken != null
-                        && account.accessToken.split("\\.").length == 3;
-                }).collect(Collectors.toList()));
+                newAccounts.addAll(accounts.stream().filter(account -> account.accessToken != null
+                    && account.accessToken.split("\\.").length == 3).collect(Collectors.toList()));
             } catch (Exception e) {
                 LogManager.logStackTrace("Exception loading accounts", e);
             }
@@ -125,7 +120,7 @@ public class AccountManager {
 
     private static void saveAccounts(List<MicrosoftAccount> accounts) {
         try (OutputStreamWriter fileWriter = new OutputStreamWriter(
-                new FileOutputStream(FileSystem.ACCOUNTS.toFile()), StandardCharsets.UTF_8)) {
+            Files.newOutputStream(FileSystem.ACCOUNTS), StandardCharsets.UTF_8)) {
             Gsons.DEFAULT.toJson(accounts, abstractAccountListType, fileWriter);
         } catch (JsonIOException | IOException e) {
             LogManager.logStackTrace(e);

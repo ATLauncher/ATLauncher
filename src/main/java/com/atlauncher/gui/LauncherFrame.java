@@ -60,7 +60,6 @@ import com.atlauncher.managers.PerformanceManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.Utils;
 
-@SuppressWarnings("serial")
 public final class LauncherFrame extends JFrame implements RelocalizationListener {
     public JTabbedPane tabbedPane;
 

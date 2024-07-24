@@ -51,7 +51,6 @@ import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
 import com.atlauncher.utils.sort.InstanceSortingStrategies;
 
-@SuppressWarnings("serial")
 public class GeneralSettingsTab extends AbstractSettingsTab {
     private final JComboBox<String> language;
     private final JComboBox<ComboItem<String>> theme;
@@ -518,7 +517,7 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         useRecycleBin.setSelected(App.settings.useRecycleBin);
         add(useRecycleBin, gbc);
 
-        if (ConfigManager.getConfigItem("useLwjglReplacement", false) == true) {
+        if (ConfigManager.getConfigItem("useLwjglReplacement", false)) {
             // Enable ARM Support
 
             gbc.gridx = 0;
@@ -620,7 +619,7 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         App.settings.useNativeFilePicker = useNativeFilePicker.isSelected();
         App.settings.useRecycleBin = useRecycleBin.isSelected();
 
-        if (ConfigManager.getConfigItem("useLwjglReplacement", false) == true) {
+        if (ConfigManager.getConfigItem("useLwjglReplacement", false)) {
             App.settings.enableArmSupport = enableArmSupport.isSelected();
         }
         App.settings.scanModsOnLaunch = scanModsOnLaunch.isSelected();

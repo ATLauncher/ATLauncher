@@ -63,7 +63,6 @@ import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
 import com.atlauncher.utils.javafinder.JavaInfo;
 
-@SuppressWarnings("serial")
 public class JavaInstanceSettingsTab extends JPanel {
     private final Instance instance;
 
@@ -101,7 +100,7 @@ public class JavaInstanceSettingsTab extends JPanel {
         int systemRam = OS.getSystemRam();
         setLayout(new GridBagLayout());
 
-        if (ConfigManager.getConfigItem("removeInitialMemoryOption", false) == false) {
+        if (!ConfigManager.getConfigItem("removeInitialMemoryOption", false)) {
             // Initial Memory Settings
             gbc.gridx = 0;
             gbc.gridy++;
@@ -137,26 +136,23 @@ public class JavaInstanceSettingsTab extends JPanel {
             initialMemoryModel.setMaximum((systemRam == 0 ? null : systemRam));
             initialMemory = new JSpinner(initialMemoryModel);
             ((JSpinner.DefaultEditor) initialMemory.getEditor()).getTextField().setColumns(5);
-            initialMemory.addChangeListener(new ChangeListener() {
-                @Override
-                public void stateChanged(ChangeEvent e) {
-                    JSpinner s = (JSpinner) e.getSource();
-                    // if initial memory is larger than maximum memory, make maximum memory match
-                    if ((Integer) s.getValue() > (Integer) maximumMemory.getValue()) {
-                        maximumMemory.setValue((Integer) s.getValue());
-                    }
+            initialMemory.addChangeListener(e -> {
+                JSpinner s = (JSpinner) e.getSource();
+                // if initial memory is larger than maximum memory, make maximum memory match
+                if ((Integer) s.getValue() > (Integer) maximumMemory.getValue()) {
+                    maximumMemory.setValue((Integer) s.getValue());
+                }
 
-                    if ((Integer) s.getValue() > 512 && !initialMemoryWarningShown) {
-                        initialMemoryWarningShown = true;
-                        int ret = DialogManager.yesNoDialog().setTitle(GetText.tr("Warning"))
-                                .setType(DialogManager.WARNING)
-                                .setContent(GetText.tr(
-                                        "Setting initial memory above 512MB is not recommended and can cause issues. Are you sure you want to do this?"))
-                                .show();
+                if ((Integer) s.getValue() > 512 && !initialMemoryWarningShown) {
+                    initialMemoryWarningShown = true;
+                    int ret = DialogManager.yesNoDialog().setTitle(GetText.tr("Warning"))
+                            .setType(DialogManager.WARNING)
+                            .setContent(GetText.tr(
+                                    "Setting initial memory above 512MB is not recommended and can cause issues. Are you sure you want to do this?"))
+                            .show();
 
-                        if (ret != 0) {
-                            initialMemory.setValue(512);
-                        }
+                    if (ret != 0) {
+                        initialMemory.setValue(512);
                     }
                 }
             });
@@ -189,39 +185,36 @@ public class JavaInstanceSettingsTab extends JPanel {
         maximumMemoryModel.setMaximum((systemRam == 0 ? null : systemRam));
         maximumMemory = new JSpinner(maximumMemoryModel);
         ((JSpinner.DefaultEditor) maximumMemory.getEditor()).getTextField().setColumns(5);
-        maximumMemory.addChangeListener(new ChangeListener() {
-            @Override
-            public void stateChanged(ChangeEvent e) {
-                JSpinner s = (JSpinner) e.getSource();
-                if (ConfigManager.getConfigItem("removeInitialMemoryOption", false) == false) {
-                    // if initial memory is larger than maximum memory, make initial memory match
-                    if ((Integer) initialMemory.getValue() > (Integer) s.getValue()) {
-                        initialMemory.setValue(s.getValue());
-                    }
+        maximumMemory.addChangeListener(e -> {
+            JSpinner s = (JSpinner) e.getSource();
+            if (!ConfigManager.getConfigItem("removeInitialMemoryOption", false)) {
+                // if initial memory is larger than maximum memory, make initial memory match
+                if ((Integer) initialMemory.getValue() > (Integer) s.getValue()) {
+                    initialMemory.setValue(s.getValue());
                 }
+            }
 
-                if ((Integer) s.getValue() > 8192 && !maximumMemoryEightGBWarningShown) {
-                    maximumMemoryEightGBWarningShown = true;
-                    int ret = DialogManager.okDialog().setTitle(GetText.tr("Warning"))
-                            .setType(DialogManager.WARNING)
-                            .setContent(GetText.tr(
-                                    "Setting maximum memory above 8GB is not recommended for most modpacks and can cause issues."))
-                            .addOption(GetText.tr("More Explanation"))
-                            .show();
+            if ((Integer) s.getValue() > 8192 && !maximumMemoryEightGBWarningShown) {
+                maximumMemoryEightGBWarningShown = true;
+                int ret = DialogManager.okDialog().setTitle(GetText.tr("Warning"))
+                        .setType(DialogManager.WARNING)
+                        .setContent(GetText.tr(
+                                "Setting maximum memory above 8GB is not recommended for most modpacks and can cause issues."))
+                        .addOption(GetText.tr("More Explanation"))
+                        .show();
 
-                    if (ret == 1) {
-                        OS.openWebBrowser("https://atl.pw/allocatetoomuchram");
-                    }
-                } else if ((OS.getMaximumRam() != 0 && OS.getMaximumRam() < 16384)
-                        && (Integer) s.getValue() > (OS.getMaximumRam() / 2)
-                        && !maximumMemoryHalfWarningShown) {
-                    maximumMemoryHalfWarningShown = true;
-                    DialogManager.okDialog().setTitle(GetText.tr("Warning"))
-                            .setType(DialogManager.WARNING)
-                            .setContent(GetText.tr(
-                                    "Setting maximum memory to more than half of your systems total memory is not recommended and can cause issues in some cases. Are you sure you want to do this?"))
-                            .show();
+                if (ret == 1) {
+                    OS.openWebBrowser("https://atl.pw/allocatetoomuchram");
                 }
+            } else if ((OS.getMaximumRam() != 0 && OS.getMaximumRam() < 16384)
+                    && (Integer) s.getValue() > (OS.getMaximumRam() / 2)
+                    && !maximumMemoryHalfWarningShown) {
+                maximumMemoryHalfWarningShown = true;
+                DialogManager.okDialog().setTitle(GetText.tr("Warning"))
+                        .setType(DialogManager.WARNING)
+                        .setContent(GetText.tr(
+                                "Setting maximum memory to more than half of your systems total memory is not recommended and can cause issues in some cases. Are you sure you want to do this?"))
+                        .show();
             }
         });
         add(maximumMemory, gbc);
@@ -244,24 +237,21 @@ public class JavaInstanceSettingsTab extends JPanel {
         permGenModel.setMaximum((systemRam == 0 ? null : systemRam));
         permGen = new JSpinner(permGenModel);
         ((JSpinner.DefaultEditor) permGen.getEditor()).getTextField().setColumns(3);
-        permGen.addChangeListener(new ChangeListener() {
-            @Override
-            public void stateChanged(ChangeEvent e) {
-                JSpinner s = (JSpinner) e.getSource();
-                int permGenMaxRecommendedSize = (OS.is64Bit() ? 256 : 128);
+        permGen.addChangeListener(e -> {
+            JSpinner s = (JSpinner) e.getSource();
+            int permGenMaxRecommendedSize = (OS.is64Bit() ? 256 : 128);
 
-                if ((Integer) s.getValue() > permGenMaxRecommendedSize && !permgenWarningShown) {
-                    permgenWarningShown = true;
-                    int ret = DialogManager.yesNoDialog().setTitle(GetText.tr("Warning"))
-                            .setType(DialogManager.WARNING)
-                            .setContent(GetText.tr(
-                                    "Setting PermGen size above {0}MB is not recommended and can cause issues. Are you sure you want to do this?",
-                                    permGenMaxRecommendedSize))
-                            .show();
+            if ((Integer) s.getValue() > permGenMaxRecommendedSize && !permgenWarningShown) {
+                permgenWarningShown = true;
+                int ret = DialogManager.yesNoDialog().setTitle(GetText.tr("Warning"))
+                        .setType(DialogManager.WARNING)
+                        .setContent(GetText.tr(
+                                "Setting PermGen size above {0}MB is not recommended and can cause issues. Are you sure you want to do this?",
+                                permGenMaxRecommendedSize))
+                        .show();
 
-                    if (ret != 0) {
-                        permGen.setValue(permGenMaxRecommendedSize);
-                    }
+                if (ret != 0) {
+                    permGen.setValue(permGenMaxRecommendedSize);
                 }
             }
         });
@@ -330,7 +320,7 @@ public class JavaInstanceSettingsTab extends JPanel {
 
                 // user selected the bin dir
                 if (!jPath.exists() && (javaExe.exists() || javaExecutable.exists())) {
-                    javaPath.setText(selectedPath.getParent().toString());
+                    javaPath.setText(selectedPath.getParent());
                 } else {
                     javaPath.setText(selectedPath.getAbsolutePath());
                 }
@@ -339,12 +329,12 @@ public class JavaInstanceSettingsTab extends JPanel {
 
         JComboBox<ComboItem<JavaInfo>> installedJavasComboBox = new JComboBox<>();
         installedJavasComboBox.setPreferredSize(new Dimension(516, 24));
-        installedJavasComboBox.addItem(new ComboItem<JavaInfo>(null, GetText.tr("Use Launcher Default")));
+        installedJavasComboBox.addItem(new ComboItem<>(null, GetText.tr("Use Launcher Default")));
         List<JavaInfo> installedJavas = Java.getInstalledJavas();
         int selectedIndex = 0;
 
         for (JavaInfo javaInfo : installedJavas) {
-            installedJavasComboBox.addItem(new ComboItem<JavaInfo>(javaInfo, javaInfo.toString()));
+            installedJavasComboBox.addItem(new ComboItem<>(javaInfo, javaInfo.toString()));
 
             if (javaInfo.rootPath
                     .equalsIgnoreCase(getIfNotNull(this.instance.launcher.javaPath, App.settings.javaPath))) {
@@ -450,7 +440,7 @@ public class JavaInstanceSettingsTab extends JPanel {
         for (String runtime : runtimes.keySet()) {
             List<JavaRuntime> runtimeObject = runtimes.get(runtime);
 
-            if (runtimeObject != null && runtimeObject.size() != 0) {
+            if (runtimeObject != null && !runtimeObject.isEmpty()) {
                 javaRuntimeOverride.addItem(
                         new ComboItem<>(runtime,
                                 String.format("%s (Java %s)", runtime, runtimeObject.get(0).version.name)));
@@ -496,48 +486,45 @@ public class JavaInstanceSettingsTab extends JPanel {
             useJavaProvidedByMinecraft.setSelectedIndex(2);
         }
 
-        useJavaProvidedByMinecraft.addItemListener(new ItemListener() {
-            @Override
-            public void itemStateChanged(ItemEvent e) {
-                if (e.getStateChange() == ItemEvent.SELECTED) {
-                    SwingUtilities.invokeLater(() -> {
-                        if (useJavaProvidedByMinecraft.getSelectedIndex() == 2) {
-                            int ret = DialogManager.yesNoDialog().setTitle(GetText.tr("Warning"))
-                                    .setType(DialogManager.WARNING)
-                                    .setContent(GetText.tr(
-                                            "Unchecking this is not recommended and may cause Minecraft to no longer run. Are you sure you want to do this?"))
-                                    .show();
+        useJavaProvidedByMinecraft.addItemListener(e -> {
+            if (e.getStateChange() == ItemEvent.SELECTED) {
+                SwingUtilities.invokeLater(() -> {
+                    if (useJavaProvidedByMinecraft.getSelectedIndex() == 2) {
+                        int ret = DialogManager.yesNoDialog().setTitle(GetText.tr("Warning"))
+                                .setType(DialogManager.WARNING)
+                                .setContent(GetText.tr(
+                                        "Unchecking this is not recommended and may cause Minecraft to no longer run. Are you sure you want to do this?"))
+                                .show();
 
-                            if (ret != 0) {
-                                useJavaProvidedByMinecraft.setSelectedIndex(0);
-                            } else {
-                                javaMinecraftProvidedLabel.setVisible(false);
-                                javaPathDummy.setVisible(false);
-                                javaRuntimeOverrideLabel.setVisible(false);
-                                javaRuntimeOverride.setVisible(false);
-
-                                javaPathLabel.setVisible(true);
-                                javaPathPanel.setVisible(true);
-                            }
-                        } else if (useJavaProvidedByMinecraft.getSelectedIndex() == 1) {
-                            javaMinecraftProvidedLabel.setVisible(true);
-                            javaPathDummy.setVisible(true);
-                            javaRuntimeOverrideLabel.setVisible(true);
-                            javaRuntimeOverride.setVisible(true);
-
-                            javaPathLabel.setVisible(false);
-                            javaPathPanel.setVisible(false);
+                        if (ret != 0) {
+                            useJavaProvidedByMinecraft.setSelectedIndex(0);
                         } else {
-                            javaMinecraftProvidedLabel.setVisible(App.settings.useJavaProvidedByMinecraft);
-                            javaPathDummy.setVisible(App.settings.useJavaProvidedByMinecraft);
-                            javaRuntimeOverrideLabel.setVisible(App.settings.useJavaProvidedByMinecraft);
-                            javaRuntimeOverride.setVisible(App.settings.useJavaProvidedByMinecraft);
+                            javaMinecraftProvidedLabel.setVisible(false);
+                            javaPathDummy.setVisible(false);
+                            javaRuntimeOverrideLabel.setVisible(false);
+                            javaRuntimeOverride.setVisible(false);
 
-                            javaPathLabel.setVisible(!App.settings.useJavaProvidedByMinecraft);
-                            javaPathPanel.setVisible(!App.settings.useJavaProvidedByMinecraft);
+                            javaPathLabel.setVisible(true);
+                            javaPathPanel.setVisible(true);
                         }
-                    });
-                }
+                    } else if (useJavaProvidedByMinecraft.getSelectedIndex() == 1) {
+                        javaMinecraftProvidedLabel.setVisible(true);
+                        javaPathDummy.setVisible(true);
+                        javaRuntimeOverrideLabel.setVisible(true);
+                        javaRuntimeOverride.setVisible(true);
+
+                        javaPathLabel.setVisible(false);
+                        javaPathPanel.setVisible(false);
+                    } else {
+                        javaMinecraftProvidedLabel.setVisible(App.settings.useJavaProvidedByMinecraft);
+                        javaPathDummy.setVisible(App.settings.useJavaProvidedByMinecraft);
+                        javaRuntimeOverrideLabel.setVisible(App.settings.useJavaProvidedByMinecraft);
+                        javaRuntimeOverride.setVisible(App.settings.useJavaProvidedByMinecraft);
+
+                        javaPathLabel.setVisible(!App.settings.useJavaProvidedByMinecraft);
+                        javaPathPanel.setVisible(!App.settings.useJavaProvidedByMinecraft);
+                    }
+                });
             }
         });
 
@@ -661,7 +648,7 @@ public class JavaInstanceSettingsTab extends JPanel {
     }
 
     public boolean isValidJavaParamaters() {
-        if ((ConfigManager.getConfigItem("removeInitialMemoryOption", false) == false
+        if ((!ConfigManager.getConfigItem("removeInitialMemoryOption", false)
                 && javaParameters.getText().contains("-Xms")) || javaParameters.getText().contains("-Xmx")
                 || javaParameters.getText().contains("-XX:PermSize")
                 || javaParameters.getText().contains("-XX:MetaspaceSize")) {
@@ -674,7 +661,7 @@ public class JavaInstanceSettingsTab extends JPanel {
     }
 
     public void saveSettings() {
-        if (ConfigManager.getConfigItem("removeInitialMemoryOption", false) == false) {
+        if (!ConfigManager.getConfigItem("removeInitialMemoryOption", false)) {
             Integer initialMemory = (Integer) this.initialMemory.getValue();
 
             this.instance.launcher.initialMemory = (initialMemory == App.settings.initialMemory ? null : initialMemory);

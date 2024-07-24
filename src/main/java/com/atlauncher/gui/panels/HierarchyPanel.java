@@ -172,6 +172,5 @@ public abstract class HierarchyPanel extends JPanel implements HierarchyListener
                 runnable.run();
             }
         });
-        ;
     }
 }

@@ -61,7 +61,6 @@ import com.atlauncher.utils.ComboItem;
 import com.atlauncher.utils.ModrinthApi;
 import com.atlauncher.utils.OS;
 
-@SuppressWarnings("serial")
 public class ModrinthVersionSelectorDialog extends JDialog {
     private int versionsLength = 0;
     private int filesLength = 0;
@@ -145,7 +144,7 @@ public class ModrinthVersionSelectorDialog extends JDialog {
                 .collect(Collectors.toList());
 
         // this file has dependencies
-        if (dependencies.size() != 0) {
+        if (!dependencies.isEmpty()) {
             // check to see which required ones we don't already have
             List<ModrinthDependency> dependenciesNeeded = dependencies.stream()
                     .filter(dependency -> dependency.dependencyType == ModrinthDependencyType.REQUIRED
@@ -180,7 +179,7 @@ public class ModrinthVersionSelectorDialog extends JDialog {
                                     }))
                     .collect(Collectors.toList());
 
-            if (dependenciesNeeded.size() != 0) {
+            if (!dependenciesNeeded.isEmpty()) {
                 dependenciesPanel.removeAll();
 
                 dependenciesNeeded.forEach(dependency -> dependenciesPanel
@@ -286,7 +285,7 @@ public class ModrinthVersionSelectorDialog extends JDialog {
             ModrinthFile file = filesDropdown.getSelectedItem() == null ? null
                     : ((ComboItem<ModrinthFile>) filesDropdown.getSelectedItem()).getValue();
 
-            ProgressDialog progressDialog = new ProgressDialog<>(
+            ProgressDialog<Object> progressDialog = new ProgressDialog<>(
                     // #. {0} is the name of the mod we're installing
                     GetText.tr("Installing {0}", version.name), true, this);
             progressDialog.addThread(new Thread(() -> {
@@ -299,9 +298,7 @@ public class ModrinthVersionSelectorDialog extends JDialog {
             dispose();
         });
 
-        viewModButton.addActionListener(e -> {
-            OS.openWebBrowser(String.format("https://modrinth.com/mod/%s", mod.slug));
-        });
+        viewModButton.addActionListener(e -> OS.openWebBrowser(String.format("https://modrinth.com/mod/%s", mod.slug)));
 
         viewFileButton.addActionListener(e -> {
             ModrinthVersion version = (ModrinthVersion) versionsDropdown.getSelectedItem();
@@ -320,7 +317,7 @@ public class ModrinthVersionSelectorDialog extends JDialog {
                     int selectedIndex = 0;
 
                     for (ModrinthFile file : version.files) {
-                        filesDropdown.addItem(new ComboItem<ModrinthFile>(file, file.toString()));
+                        filesDropdown.addItem(new ComboItem<>(file, file.toString()));
 
                         if (file.primary) {
                             selectedIndex = filesDropdown.getItemCount() - 1;
@@ -369,7 +366,7 @@ public class ModrinthVersionSelectorDialog extends JDialog {
             if (App.settings.addModRestriction != AddModRestriction.NONE && this.instance.launcher.loaderVersion != null
                     && mod.projectType == ModrinthProjectType.MOD) {
                 List<String> neoForgeForgeCompatabilityVersions = ConfigManager
-                        .getConfigItem("loaders.neoforge.forgeCompatibleMinecraftVersions", new ArrayList<String>());
+                        .getConfigItem("loaders.neoforge.forgeCompatibleMinecraftVersions", new ArrayList<>());
                 modrinthVersionsStream = modrinthVersionsStream.filter(v -> {
                     if (v.loaders.contains("fabric") && (this.instance.launcher.loaderVersion.isFabric()
                             || this.instance.launcher.loaderVersion.isLegacyFabric()
@@ -387,11 +384,7 @@ public class ModrinthVersionSelectorDialog extends JDialog {
                         return true;
                     }
 
-                    if (v.loaders.contains("quilt") && this.instance.launcher.loaderVersion.isQuilt()) {
-                        return true;
-                    }
-
-                    return false;
+                    return v.loaders.contains("quilt") && this.instance.launcher.loaderVersion.isQuilt();
                 });
             }
 
@@ -404,7 +397,7 @@ public class ModrinthVersionSelectorDialog extends JDialog {
                             .collect(Collectors.toList());
 
                     modrinthVersionsStream = modrinthVersionsStream.filter(
-                            v -> v.gameVersions.stream().anyMatch(gv -> minecraftVersionsToSearch.contains(gv)));
+                            v -> v.gameVersions.stream().anyMatch(minecraftVersionsToSearch::contains));
                 } catch (InvalidMinecraftVersion e) {
                     LogManager.logStackTrace(e);
                 }
