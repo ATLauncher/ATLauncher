@@ -1,6 +1,13 @@
 name: Application
 
-on: [push, pull_request]
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+      - develop
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
