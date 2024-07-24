@@ -31,11 +31,7 @@ import com.atlauncher.gui.components.JLabelWithHover;
 import com.atlauncher.viewmodel.base.settings.ILoggingSettingsViewModel;
 
 public class LoggingSettingsTab extends AbstractSettingsTab {
-    private  JComboBox<String> forgeLoggingLevel;
 
-    private  JCheckBox enableLogs;
-
-    private  JCheckBox enableAnalytics;
     private final ILoggingSettingsViewModel viewModel;
 
     public LoggingSettingsTab(ILoggingSettingsViewModel viewModel) {
@@ -57,7 +53,7 @@ public class LoggingSettingsTab extends AbstractSettingsTab {
         gbc.gridx++;
         gbc.insets = UIConstants.FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-        forgeLoggingLevel = new JComboBox<>();
+        JComboBox<String> forgeLoggingLevel = new JComboBox<>();
         forgeLoggingLevel.addItem("SEVERE");
         forgeLoggingLevel.addItem("WARNING");
         forgeLoggingLevel.addItem("INFO");
@@ -87,7 +83,7 @@ public class LoggingSettingsTab extends AbstractSettingsTab {
         gbc.gridx++;
         gbc.insets = UIConstants.CHECKBOX_FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-        enableLogs = new JCheckBox();
+        JCheckBox enableLogs = new JCheckBox();
         enableLogs.addActionListener(e ->
             viewModel.setEnableLogging(enableLogs.isSelected())
         );
@@ -110,7 +106,7 @@ public class LoggingSettingsTab extends AbstractSettingsTab {
         gbc.gridx++;
         gbc.insets = UIConstants.CHECKBOX_FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-        enableAnalytics = new JCheckBox();
+        JCheckBox enableAnalytics = new JCheckBox();
         enableAnalytics.addActionListener(e ->
             viewModel.setEnableAnonAnalytics(enableAnalytics.isSelected())
         );
