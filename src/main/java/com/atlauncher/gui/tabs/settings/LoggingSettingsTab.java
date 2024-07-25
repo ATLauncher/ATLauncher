@@ -108,9 +108,9 @@ public class LoggingSettingsTab extends AbstractSettingsTab {
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         JCheckBox enableAnalytics = new JCheckBox();
         enableAnalytics.addActionListener(e ->
-            viewModel.setEnableAnonAnalytics(enableAnalytics.isSelected())
+            viewModel.setEnableAnalytics(enableAnalytics.isSelected())
         );
-        addDisposable(viewModel.getEnableAnonAnalytics().subscribe(enableAnalytics::setSelected));
+        addDisposable(viewModel.getEnableAnalytics().subscribe(enableAnalytics::setSelected));
         add(enableAnalytics, gbc);
     }
 

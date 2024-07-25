@@ -34,7 +34,7 @@ public class LoggingSettingsViewModel implements ILoggingSettingsViewModel {
 
     private final BehaviorSubject<Boolean>
         _addOnEnableLoggingChanged = BehaviorSubject.create(),
-        _addOnEnableAnonAnalyticsChanged = BehaviorSubject.create();
+        _addOnEnableAnalyticsChanged = BehaviorSubject.create();
 
     public LoggingSettingsViewModel() {
         onSettingsSaved();
@@ -45,7 +45,7 @@ public class LoggingSettingsViewModel implements ILoggingSettingsViewModel {
     public void onSettingsSaved() {
         _addOnLoggingLevelChanged.onNext(App.settings.forgeLoggingLevel);
         _addOnEnableLoggingChanged.onNext(App.settings.enableLogs);
-        _addOnEnableAnonAnalyticsChanged.onNext(App.settings.enableAnalytics);
+        _addOnEnableAnalyticsChanged.onNext(App.settings.enableAnalytics);
     }
 
     @Override
@@ -71,13 +71,13 @@ public class LoggingSettingsViewModel implements ILoggingSettingsViewModel {
     }
 
     @Override
-    public void setEnableAnonAnalytics(Boolean b) {
+    public void setEnableAnalytics(Boolean b) {
         App.settings.enableAnalytics = b;
         SettingsManager.post();
     }
 
     @Override
-    public Observable<Boolean> getEnableAnonAnalytics() {
-        return _addOnEnableAnonAnalyticsChanged.observeOn(SwingSchedulers.edt());
+    public Observable<Boolean> getEnableAnalytics() {
+        return _addOnEnableAnalyticsChanged.observeOn(SwingSchedulers.edt());
     }
 }

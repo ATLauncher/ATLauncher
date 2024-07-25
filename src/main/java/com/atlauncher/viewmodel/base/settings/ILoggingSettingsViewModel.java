@@ -36,7 +36,7 @@ public interface ILoggingSettingsViewModel extends SettingsListener {
 
     Observable<Boolean> getEnableLogging();
 
-    void setEnableAnonAnalytics(Boolean b);
+    void setEnableAnalytics(Boolean b);
 
-    Observable<Boolean> getEnableAnonAnalytics();
+    Observable<Boolean> getEnableAnalytics();
 }
