@@ -43,10 +43,10 @@ public class ModsSettingsViewModel implements IModsSettingsViewModel {
         _addOnDefaultExportFormatChanged = BehaviorSubject.create();
 
     private final BehaviorSubject<Boolean>
-        _addOnEAMBDChanged = BehaviorSubject.create(),
-        _addOnDCMOCChanged = BehaviorSubject.create(),
-        _addOnDCMOMChanged = BehaviorSubject.create(),
-        acfabf = BehaviorSubject.create();
+        _addOnEnableAddedModsByDefaultChanged = BehaviorSubject.create(),
+        _addOnDoNotCheckModsOnCurseForgeChanged = BehaviorSubject.create(),
+        _addOnDoNotCheckModsOnModrinthChanged = BehaviorSubject.create(),
+        allowCurseForgeAlphaBetaFiles = BehaviorSubject.create();
 
     public ModsSettingsViewModel() {
         onSettingsSaved();
@@ -59,10 +59,10 @@ public class ModsSettingsViewModel implements IModsSettingsViewModel {
         _addOnAddModRestrictionsChanged.onNext(App.settings.addModRestriction.ordinal());
         _addOnDefaultExportFormatChanged.onNext(App.settings.defaultExportFormat.ordinal());
 
-        _addOnEAMBDChanged.onNext(App.settings.enableAddedModsByDefault);
-        _addOnDCMOCChanged.onNext(App.settings.dontCheckModsOnCurseForge);
-        _addOnDCMOMChanged.onNext(App.settings.dontCheckModsOnModrinth);
-        acfabf.onNext(App.settings.allowCurseForgeAlphaBetaFiles);
+        _addOnEnableAddedModsByDefaultChanged.onNext(App.settings.enableAddedModsByDefault);
+        _addOnDoNotCheckModsOnCurseForgeChanged.onNext(App.settings.dontCheckModsOnCurseForge);
+        _addOnDoNotCheckModsOnModrinthChanged.onNext(App.settings.dontCheckModsOnModrinth);
+        allowCurseForgeAlphaBetaFiles.onNext(App.settings.allowCurseForgeAlphaBetaFiles);
     }
 
     @Override
@@ -95,7 +95,7 @@ public class ModsSettingsViewModel implements IModsSettingsViewModel {
 
     @Override
     public Observable<Boolean> getEnableAddedModsByDefault() {
-        return _addOnEAMBDChanged.observeOn(SwingSchedulers.edt());
+        return _addOnEnableAddedModsByDefaultChanged.observeOn(SwingSchedulers.edt());
     }
 
     @Override
@@ -106,7 +106,7 @@ public class ModsSettingsViewModel implements IModsSettingsViewModel {
 
     @Override
     public Observable<Boolean> getDoNotCheckModsOnCurseForge() {
-        return _addOnDCMOCChanged.observeOn(SwingSchedulers.edt());
+        return _addOnDoNotCheckModsOnCurseForgeChanged.observeOn(SwingSchedulers.edt());
     }
 
     @Override
@@ -117,7 +117,7 @@ public class ModsSettingsViewModel implements IModsSettingsViewModel {
 
     @Override
     public Observable<Boolean> getDoNotCheckModsOnModrinth() {
-        return _addOnDCMOMChanged.observeOn(SwingSchedulers.edt());
+        return _addOnDoNotCheckModsOnModrinthChanged.observeOn(SwingSchedulers.edt());
     }
 
     @Override
@@ -133,7 +133,7 @@ public class ModsSettingsViewModel implements IModsSettingsViewModel {
 
     @Override
     public Observable<Boolean> getAllowCurseForgeAlphaBetaFiles() {
-        return acfabf.observeOn(SwingSchedulers.edt());
+        return allowCurseForgeAlphaBetaFiles.observeOn(SwingSchedulers.edt());
     }
 
     @Override
