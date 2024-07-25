@@ -40,16 +40,16 @@ import io.reactivex.rxjava3.subjects.BehaviorSubject;
 public class NetworkSettingsViewModel implements INetworkSettingsViewModel {
 
     private final BehaviorSubject<Integer>
-        _addOnConcurrentConnectionsChanged = BehaviorSubject.create(),
-        _addOnConnectionTimeoutChanged = BehaviorSubject.create(),
-        _addOnProxyPortChanged = BehaviorSubject.create(),
-        _addOnProxyTypeChanged = BehaviorSubject.create();
+        _concurrentConnections = BehaviorSubject.create(),
+        _connectionTimeout = BehaviorSubject.create(),
+        _proxyPort = BehaviorSubject.create(),
+        _proxyType = BehaviorSubject.create();
 
     private final BehaviorSubject<Boolean>
-        _addOnEnableProxyChanged = BehaviorSubject.create();
+        _enableProxy = BehaviorSubject.create();
 
     private final BehaviorSubject<String>
-        _addOnProxyHostChanged = BehaviorSubject.create(),
+        _proxyHost = BehaviorSubject.create(),
         modrinthAPIKey = BehaviorSubject.create();
 
     private final BehaviorSubject<CheckState> proxyCheckState =
@@ -65,11 +65,11 @@ public class NetworkSettingsViewModel implements INetworkSettingsViewModel {
 
     @Override
     public void onSettingsSaved() {
-        _addOnConcurrentConnectionsChanged.onNext(App.settings.concurrentConnections);
-        _addOnConnectionTimeoutChanged.onNext(App.settings.connectionTimeout);
-        _addOnProxyPortChanged.onNext(App.settings.proxyPort);
-        _addOnEnableProxyChanged.onNext(App.settings.enableProxy);
-        _addOnProxyHostChanged.onNext(App.settings.proxyHost);
+        _concurrentConnections.onNext(App.settings.concurrentConnections);
+        _connectionTimeout.onNext(App.settings.connectionTimeout);
+        _proxyPort.onNext(App.settings.proxyPort);
+        _enableProxy.onNext(App.settings.enableProxy);
+        _proxyHost.onNext(App.settings.proxyHost);
         modrinthAPIKey.onNext(Optional.ofNullable(App.settings.modrinthApiKey).orElse(""));
         pushProxyType();
     }
@@ -82,7 +82,7 @@ public class NetworkSettingsViewModel implements INetworkSettingsViewModel {
 
     @Override
     public Observable<Integer> getConcurrentConnections() {
-        return _addOnConcurrentConnectionsChanged.observeOn(SwingSchedulers.edt());
+        return _concurrentConnections.observeOn(SwingSchedulers.edt());
     }
 
     @Override
@@ -99,7 +99,7 @@ public class NetworkSettingsViewModel implements INetworkSettingsViewModel {
 
     @Override
     public Observable<Integer> getConnectionTimeout() {
-        return _addOnConnectionTimeoutChanged.observeOn(SwingSchedulers.edt());
+        return _connectionTimeout.observeOn(SwingSchedulers.edt());
     }
 
     @Override
@@ -121,7 +121,7 @@ public class NetworkSettingsViewModel implements INetworkSettingsViewModel {
 
     @Override
     public Observable<Boolean> getEnableProxy() {
-        return _addOnEnableProxyChanged.observeOn(SwingSchedulers.edt());
+        return _enableProxy.observeOn(SwingSchedulers.edt());
     }
 
     @Override
@@ -167,7 +167,7 @@ public class NetworkSettingsViewModel implements INetworkSettingsViewModel {
 
     @Override
     public Observable<String> getProxyHost() {
-        return _addOnProxyHostChanged.observeOn(SwingSchedulers.edt());
+        return _proxyHost.observeOn(SwingSchedulers.edt());
     }
 
     @Override
@@ -179,7 +179,7 @@ public class NetworkSettingsViewModel implements INetworkSettingsViewModel {
 
     @Override
     public Observable<Integer> getProxyPort() {
-        return _addOnProxyPortChanged.observeOn(SwingSchedulers.edt());
+        return _proxyPort.observeOn(SwingSchedulers.edt());
     }
 
     @Override
@@ -191,19 +191,19 @@ public class NetworkSettingsViewModel implements INetworkSettingsViewModel {
 
     @Override
     public Observable<Integer> getProxyType() {
-        return _addOnProxyTypeChanged.observeOn(SwingSchedulers.edt());
+        return _proxyType.observeOn(SwingSchedulers.edt());
     }
 
     private void pushProxyType() {
         switch (App.settings.proxyType) {
             case "HTTP":
-                _addOnProxyTypeChanged.onNext(0);
+                _proxyType.onNext(0);
                 break;
             case "SOCKS":
-                _addOnProxyTypeChanged.onNext(1);
+                _proxyType.onNext(1);
                 break;
             default:
-                _addOnProxyTypeChanged.onNext(2);
+                _proxyType.onNext(2);
                 break;
         }
     }

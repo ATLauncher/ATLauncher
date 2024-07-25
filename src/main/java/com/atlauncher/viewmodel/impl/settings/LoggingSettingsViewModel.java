@@ -30,11 +30,11 @@ import io.reactivex.rxjava3.subjects.BehaviorSubject;
  */
 public class LoggingSettingsViewModel implements ILoggingSettingsViewModel {
     private final BehaviorSubject<String>
-        _addOnLoggingLevelChanged = BehaviorSubject.create();
+        _loggingLevel = BehaviorSubject.create();
 
     private final BehaviorSubject<Boolean>
-        _addOnEnableLoggingChanged = BehaviorSubject.create(),
-        _addOnEnableAnalyticsChanged = BehaviorSubject.create();
+        _enableLogging = BehaviorSubject.create(),
+        _enableAnalytics = BehaviorSubject.create();
 
     public LoggingSettingsViewModel() {
         onSettingsSaved();
@@ -43,9 +43,9 @@ public class LoggingSettingsViewModel implements ILoggingSettingsViewModel {
 
     @Override
     public void onSettingsSaved() {
-        _addOnLoggingLevelChanged.onNext(App.settings.forgeLoggingLevel);
-        _addOnEnableLoggingChanged.onNext(App.settings.enableLogs);
-        _addOnEnableAnalyticsChanged.onNext(App.settings.enableAnalytics);
+        _loggingLevel.onNext(App.settings.forgeLoggingLevel);
+        _enableLogging.onNext(App.settings.enableLogs);
+        _enableAnalytics.onNext(App.settings.enableAnalytics);
     }
 
     @Override
@@ -56,7 +56,7 @@ public class LoggingSettingsViewModel implements ILoggingSettingsViewModel {
 
     @Override
     public Observable<String> getLoggingLevel() {
-        return _addOnLoggingLevelChanged.observeOn(SwingSchedulers.edt());
+        return _loggingLevel.observeOn(SwingSchedulers.edt());
     }
 
     @Override
@@ -67,7 +67,7 @@ public class LoggingSettingsViewModel implements ILoggingSettingsViewModel {
 
     @Override
     public Observable<Boolean> getEnableLogging() {
-        return _addOnEnableLoggingChanged.observeOn(SwingSchedulers.edt());
+        return _enableLogging.observeOn(SwingSchedulers.edt());
     }
 
     @Override
@@ -78,6 +78,6 @@ public class LoggingSettingsViewModel implements ILoggingSettingsViewModel {
 
     @Override
     public Observable<Boolean> getEnableAnalytics() {
-        return _addOnEnableAnalyticsChanged.observeOn(SwingSchedulers.edt());
+        return _enableAnalytics.observeOn(SwingSchedulers.edt());
     }
 }

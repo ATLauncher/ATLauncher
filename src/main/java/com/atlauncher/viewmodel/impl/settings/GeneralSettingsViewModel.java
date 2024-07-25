@@ -51,26 +51,26 @@ import io.reactivex.rxjava3.subjects.BehaviorSubject;
  * @since 2022 / 06 / 15
  */
 public class GeneralSettingsViewModel implements IGeneralSettingsViewModel {
-    private final BehaviorSubject<Integer> _addOnSelectedLanguageChanged = BehaviorSubject.create(),
-        _addOnSelectedThemeChanged = BehaviorSubject.create(),
-        _addOnDateFormatChanged = BehaviorSubject.create(),
-        _addOnInstanceFormatChanged = BehaviorSubject.create(),
-        _addOnSelectedTabOnStartupChanged = BehaviorSubject.create(),
-        _addInstanceSortingChanged = BehaviorSubject.create();
+    private final BehaviorSubject<Integer> _addOnSelectedLanguage = BehaviorSubject.create(),
+        _selectedTheme = BehaviorSubject.create(),
+        _dateFormat = BehaviorSubject.create(),
+        _addOnInstanceFormat = BehaviorSubject.create(),
+        _addOnSelectedTabOnStartup = BehaviorSubject.create(),
+        _addInstanceSorting = BehaviorSubject.create();
 
-    private final BehaviorSubject<String> _addOnCustomsDownloadPathChanged =
+    private final BehaviorSubject<String> _addOnCustomsDownloadPath =
         BehaviorSubject.create();
 
     private final BehaviorSubject<Boolean>
-        _addOnKeepLauncherOpenChanged = BehaviorSubject.create(),
-        _addOnEnableConsoleChanged = BehaviorSubject.create(),
-        _addOnEnableTrayMenuChanged = BehaviorSubject.create(),
-        _addOnEnableDiscordIntegrationChanged = BehaviorSubject.create(),
-        _addOnEnableFeralGameModeChanged = BehaviorSubject.create(),
-        _addOnDisableCustomFontsChanged = BehaviorSubject.create(),
-        _addOnRememberWindowStuffChanged = BehaviorSubject.create(),
-        _addOnUseNativeFilePickerChanged = BehaviorSubject.create(),
-        _addOnUseRecycleBinChanged = BehaviorSubject.create(),
+        _keepLauncherOpen = BehaviorSubject.create(),
+        _enableConsole = BehaviorSubject.create(),
+        _enableTrayMenu = BehaviorSubject.create(),
+        _enableDiscordIntegration = BehaviorSubject.create(),
+        _enableFeralGameMode = BehaviorSubject.create(),
+        _disableCustomFonts = BehaviorSubject.create(),
+        _rememberWindowStuff = BehaviorSubject.create(),
+        _useNativeFilePicker = BehaviorSubject.create(),
+        _useRecycleBin = BehaviorSubject.create(),
         enableArmSupport = BehaviorSubject.create(),
         scanModsOnLaunch = BehaviorSubject.create();
 
@@ -87,21 +87,21 @@ public class GeneralSettingsViewModel implements IGeneralSettingsViewModel {
         pushSelectedTheme();
         pushDateFormat();
         pushInstanceFormat();
-        _addOnSelectedTabOnStartupChanged.onNext(App.settings.selectedTabOnStartup);
+        _addOnSelectedTabOnStartup.onNext(App.settings.selectedTabOnStartup);
         pushInstanceSorting();
 
-        _addOnCustomsDownloadPathChanged.onNext(Optional.ofNullable(App.settings.customDownloadsPath)
+        _addOnCustomsDownloadPath.onNext(Optional.ofNullable(App.settings.customDownloadsPath)
             .orElse(FileSystem.getUserDownloadsPath(false).toString()));
 
-        _addOnKeepLauncherOpenChanged.onNext(App.settings.keepLauncherOpen);
-        _addOnEnableConsoleChanged.onNext(App.settings.enableConsole);
-        _addOnEnableTrayMenuChanged.onNext(App.settings.enableTrayMenu);
-        _addOnEnableDiscordIntegrationChanged.onNext(App.settings.enableDiscordIntegration);
-        _addOnEnableFeralGameModeChanged.onNext(App.settings.enableFeralGamemode);
-        _addOnDisableCustomFontsChanged.onNext(App.settings.disableCustomFonts);
-        _addOnRememberWindowStuffChanged.onNext(App.settings.rememberWindowSizePosition);
-        _addOnUseNativeFilePickerChanged.onNext(App.settings.useNativeFilePicker);
-        _addOnUseRecycleBinChanged.onNext(App.settings.useRecycleBin);
+        _keepLauncherOpen.onNext(App.settings.keepLauncherOpen);
+        _enableConsole.onNext(App.settings.enableConsole);
+        _enableTrayMenu.onNext(App.settings.enableTrayMenu);
+        _enableDiscordIntegration.onNext(App.settings.enableDiscordIntegration);
+        _enableFeralGameMode.onNext(App.settings.enableFeralGamemode);
+        _disableCustomFonts.onNext(App.settings.disableCustomFonts);
+        _rememberWindowStuff.onNext(App.settings.rememberWindowSizePosition);
+        _useNativeFilePicker.onNext(App.settings.useNativeFilePicker);
+        _useRecycleBin.onNext(App.settings.useRecycleBin);
     }
 
     @Override
@@ -118,13 +118,13 @@ public class GeneralSettingsViewModel implements IGeneralSettingsViewModel {
 
     @Override
     public Observable<Integer> getSelectedLanguage() {
-        return _addOnSelectedLanguageChanged.observeOn(SwingSchedulers.edt());
+        return _addOnSelectedLanguage.observeOn(SwingSchedulers.edt());
     }
 
     private void pushSelectedLanguage() {
         for (int index = 0; index < getLanguages().length; index++) {
             if (getLanguages()[index].equals(App.settings.language))
-                _addOnSelectedLanguageChanged.onNext(index);
+                _addOnSelectedLanguage.onNext(index);
         }
     }
 
@@ -159,13 +159,13 @@ public class GeneralSettingsViewModel implements IGeneralSettingsViewModel {
 
     @Override
     public Observable<Integer> getSelectedTheme() {
-        return _addOnSelectedThemeChanged.observeOn(SwingSchedulers.edt());
+        return _selectedTheme.observeOn(SwingSchedulers.edt());
     }
 
     private void pushSelectedTheme() {
         for (int index = 0; index < getThemes().size(); index++) {
             if (getThemes().get(index).id.equals(App.settings.theme))
-                _addOnSelectedThemeChanged.onNext(index);
+                _selectedTheme.onNext(index);
         }
     }
 
@@ -191,13 +191,13 @@ public class GeneralSettingsViewModel implements IGeneralSettingsViewModel {
 
     @Override
     public Observable<Integer> getDateFormat() {
-        return _addOnDateFormatChanged.observeOn(SwingSchedulers.edt());
+        return _dateFormat.observeOn(SwingSchedulers.edt());
     }
 
     private void pushDateFormat() {
         for (int index = 0; index < getDateFormats().length; index++) {
             if (getDateFormats()[index].equals(App.settings.dateFormat))
-                _addOnDateFormatChanged.onNext(index);
+                _dateFormat.onNext(index);
         }
     }
 
@@ -214,13 +214,13 @@ public class GeneralSettingsViewModel implements IGeneralSettingsViewModel {
 
     @Override
     public Observable<Integer> getInstanceFormat() {
-        return _addOnInstanceFormatChanged.observeOn(SwingSchedulers.edt());
+        return _addOnInstanceFormat.observeOn(SwingSchedulers.edt());
     }
 
     private void pushInstanceFormat() {
         for (int index = 0; index < getInstanceTitleFormats().length; index++) {
             if (getInstanceTitleFormats()[index].equals(App.settings.instanceTitleFormat))
-                _addOnInstanceFormatChanged.onNext(index);
+                _addOnInstanceFormat.onNext(index);
         }
     }
 
@@ -232,7 +232,7 @@ public class GeneralSettingsViewModel implements IGeneralSettingsViewModel {
 
     @Override
     public Observable<Integer> getSelectedTabOnStartup() {
-        return _addOnSelectedTabOnStartupChanged.observeOn(SwingSchedulers.edt());
+        return _addOnSelectedTabOnStartup.observeOn(SwingSchedulers.edt());
     }
 
     @Override
@@ -248,13 +248,13 @@ public class GeneralSettingsViewModel implements IGeneralSettingsViewModel {
 
     @Override
     public Observable<Integer> getInstanceSortingObservable() {
-        return _addInstanceSortingChanged.observeOn(SwingSchedulers.edt());
+        return _addInstanceSorting.observeOn(SwingSchedulers.edt());
     }
 
     private void pushInstanceSorting() {
         for (int index = 0; index < getInstanceSorting().length; index++) {
             if (getInstanceSorting()[index] == App.settings.defaultInstanceSorting)
-                _addInstanceSortingChanged.onNext(index);
+                _addInstanceSorting.onNext(index);
         }
     }
 
@@ -278,7 +278,7 @@ public class GeneralSettingsViewModel implements IGeneralSettingsViewModel {
 
     @Override
     public Observable<String> getCustomsDownloadPath() {
-        return _addOnCustomsDownloadPathChanged.observeOn(SwingSchedulers.edt());
+        return _addOnCustomsDownloadPath.observeOn(SwingSchedulers.edt());
     }
 
     @Override
@@ -289,7 +289,7 @@ public class GeneralSettingsViewModel implements IGeneralSettingsViewModel {
 
     @Override
     public Observable<Boolean> getKeepLauncherOpen() {
-        return _addOnKeepLauncherOpenChanged.observeOn(SwingSchedulers.edt());
+        return _keepLauncherOpen.observeOn(SwingSchedulers.edt());
     }
 
     @Override
@@ -300,7 +300,7 @@ public class GeneralSettingsViewModel implements IGeneralSettingsViewModel {
 
     @Override
     public Observable<Boolean> getEnableConsole() {
-        return _addOnEnableConsoleChanged.observeOn(SwingSchedulers.edt());
+        return _enableConsole.observeOn(SwingSchedulers.edt());
     }
 
     @Override
@@ -311,7 +311,7 @@ public class GeneralSettingsViewModel implements IGeneralSettingsViewModel {
 
     @Override
     public Observable<Boolean> getEnableTrayMenu() {
-        return _addOnEnableTrayMenuChanged.observeOn(SwingSchedulers.edt());
+        return _enableTrayMenu.observeOn(SwingSchedulers.edt());
     }
 
     @Override
@@ -322,7 +322,7 @@ public class GeneralSettingsViewModel implements IGeneralSettingsViewModel {
 
     @Override
     public Observable<Boolean> getEnableDiscordIntegration() {
-        return _addOnEnableDiscordIntegrationChanged.observeOn(SwingSchedulers.edt());
+        return _enableDiscordIntegration.observeOn(SwingSchedulers.edt());
     }
 
     @Override
@@ -343,7 +343,7 @@ public class GeneralSettingsViewModel implements IGeneralSettingsViewModel {
 
     @Override
     public Observable<Boolean> getEnableFeralGameMode() {
-        return _addOnEnableFeralGameModeChanged.observeOn(SwingSchedulers.edt());
+        return _enableFeralGameMode.observeOn(SwingSchedulers.edt());
     }
 
     @Override
@@ -354,7 +354,7 @@ public class GeneralSettingsViewModel implements IGeneralSettingsViewModel {
 
     @Override
     public Observable<Boolean> getDisableCustomFonts() {
-        return _addOnDisableCustomFontsChanged.observeOn(SwingSchedulers.edt());
+        return _disableCustomFonts.observeOn(SwingSchedulers.edt());
     }
 
     @Override
@@ -372,7 +372,7 @@ public class GeneralSettingsViewModel implements IGeneralSettingsViewModel {
 
     @Override
     public Observable<Boolean> getRememberWindowStuff() {
-        return _addOnRememberWindowStuffChanged.observeOn(SwingSchedulers.edt());
+        return _rememberWindowStuff.observeOn(SwingSchedulers.edt());
     }
 
     @Override
@@ -388,7 +388,7 @@ public class GeneralSettingsViewModel implements IGeneralSettingsViewModel {
 
     @Override
     public Observable<Boolean> getUseNativeFilePicker() {
-        return _addOnUseNativeFilePickerChanged.observeOn(SwingSchedulers.edt());
+        return _useNativeFilePicker.observeOn(SwingSchedulers.edt());
     }
 
     @Override
@@ -399,7 +399,7 @@ public class GeneralSettingsViewModel implements IGeneralSettingsViewModel {
 
     @Override
     public Observable<Boolean> getUseRecycleBin() {
-        return _addOnUseRecycleBinChanged.observeOn(SwingSchedulers.edt());
+        return _useRecycleBin.observeOn(SwingSchedulers.edt());
     }
 
     @Override

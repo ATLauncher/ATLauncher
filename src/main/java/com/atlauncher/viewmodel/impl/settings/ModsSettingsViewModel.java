@@ -38,14 +38,14 @@ public class ModsSettingsViewModel implements IModsSettingsViewModel {
         ModReloadRequiredRepository.get();
 
     private final BehaviorSubject<Integer>
-        _addOnDefaultModPlatformChanged = BehaviorSubject.create(),
-        _addOnAddModRestrictionsChanged = BehaviorSubject.create(),
-        _addOnDefaultExportFormatChanged = BehaviorSubject.create();
+        _defaultModPlatform = BehaviorSubject.create(),
+        _modRestrictions = BehaviorSubject.create(),
+        _defaultExportFormat = BehaviorSubject.create();
 
     private final BehaviorSubject<Boolean>
-        _addOnEnableAddedModsByDefaultChanged = BehaviorSubject.create(),
-        _addOnDoNotCheckModsOnCurseForgeChanged = BehaviorSubject.create(),
-        _addOnDoNotCheckModsOnModrinthChanged = BehaviorSubject.create(),
+        _enableAddedModsByDefault = BehaviorSubject.create(),
+        _doNotCheckModsOnCurseForge = BehaviorSubject.create(),
+        _doNotCheckModsOnModrinth = BehaviorSubject.create(),
         allowCurseForgeAlphaBetaFiles = BehaviorSubject.create();
 
     public ModsSettingsViewModel() {
@@ -55,13 +55,13 @@ public class ModsSettingsViewModel implements IModsSettingsViewModel {
 
     @Override
     public void onSettingsSaved() {
-        _addOnDefaultModPlatformChanged.onNext(App.settings.defaultModPlatform.ordinal());
-        _addOnAddModRestrictionsChanged.onNext(App.settings.addModRestriction.ordinal());
-        _addOnDefaultExportFormatChanged.onNext(App.settings.defaultExportFormat.ordinal());
+        _defaultModPlatform.onNext(App.settings.defaultModPlatform.ordinal());
+        _modRestrictions.onNext(App.settings.addModRestriction.ordinal());
+        _defaultExportFormat.onNext(App.settings.defaultExportFormat.ordinal());
 
-        _addOnEnableAddedModsByDefaultChanged.onNext(App.settings.enableAddedModsByDefault);
-        _addOnDoNotCheckModsOnCurseForgeChanged.onNext(App.settings.dontCheckModsOnCurseForge);
-        _addOnDoNotCheckModsOnModrinthChanged.onNext(App.settings.dontCheckModsOnModrinth);
+        _enableAddedModsByDefault.onNext(App.settings.enableAddedModsByDefault);
+        _doNotCheckModsOnCurseForge.onNext(App.settings.dontCheckModsOnCurseForge);
+        _doNotCheckModsOnModrinth.onNext(App.settings.dontCheckModsOnModrinth);
         allowCurseForgeAlphaBetaFiles.onNext(App.settings.allowCurseForgeAlphaBetaFiles);
     }
 
@@ -73,7 +73,7 @@ public class ModsSettingsViewModel implements IModsSettingsViewModel {
 
     @Override
     public Observable<Integer> getDefaultModPlatform() {
-        return _addOnDefaultModPlatformChanged.observeOn(SwingSchedulers.edt());
+        return _defaultModPlatform.observeOn(SwingSchedulers.edt());
     }
 
     @Override
@@ -84,7 +84,7 @@ public class ModsSettingsViewModel implements IModsSettingsViewModel {
 
     @Override
     public Observable<Integer> getAddModRestrictions() {
-        return _addOnAddModRestrictionsChanged.observeOn(SwingSchedulers.edt());
+        return _modRestrictions.observeOn(SwingSchedulers.edt());
     }
 
     @Override
@@ -95,7 +95,7 @@ public class ModsSettingsViewModel implements IModsSettingsViewModel {
 
     @Override
     public Observable<Boolean> getEnableAddedModsByDefault() {
-        return _addOnEnableAddedModsByDefaultChanged.observeOn(SwingSchedulers.edt());
+        return _enableAddedModsByDefault.observeOn(SwingSchedulers.edt());
     }
 
     @Override
@@ -106,7 +106,7 @@ public class ModsSettingsViewModel implements IModsSettingsViewModel {
 
     @Override
     public Observable<Boolean> getDoNotCheckModsOnCurseForge() {
-        return _addOnDoNotCheckModsOnCurseForgeChanged.observeOn(SwingSchedulers.edt());
+        return _doNotCheckModsOnCurseForge.observeOn(SwingSchedulers.edt());
     }
 
     @Override
@@ -117,7 +117,7 @@ public class ModsSettingsViewModel implements IModsSettingsViewModel {
 
     @Override
     public Observable<Boolean> getDoNotCheckModsOnModrinth() {
-        return _addOnDoNotCheckModsOnModrinthChanged.observeOn(SwingSchedulers.edt());
+        return _doNotCheckModsOnModrinth.observeOn(SwingSchedulers.edt());
     }
 
     @Override
@@ -128,7 +128,7 @@ public class ModsSettingsViewModel implements IModsSettingsViewModel {
 
     @Override
     public Observable<Integer> getDefaultExportFormat() {
-        return _addOnDefaultExportFormatChanged.observeOn(SwingSchedulers.edt());
+        return _defaultExportFormat.observeOn(SwingSchedulers.edt());
     }
 
     @Override
