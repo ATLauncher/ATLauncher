@@ -55,7 +55,7 @@ public class JavaSettingsViewModel implements IJavaSettingsViewModel {
     private final BehaviorSubject<Integer>
         _initialRam = BehaviorSubject.create(),
         _maxRam = BehaviorSubject.create(),
-        _permGen = BehaviorSubject.create(),
+        _metaspace = BehaviorSubject.create(),
         _width = BehaviorSubject.create(),
         _height = BehaviorSubject.create();
 
@@ -65,12 +65,12 @@ public class JavaSettingsViewModel implements IJavaSettingsViewModel {
         baseJavaInstallFolder = BehaviorSubject.create();
 
     private final BehaviorSubject<Boolean>
-        _startMinecraftMax = BehaviorSubject.create(),
-        _ignoreJavaChecks = BehaviorSubject.create(),
-        _javaFromMinecraft = BehaviorSubject.create(),
+        _maximizeMinecraft = BehaviorSubject.create(),
+        _ignoreJavaOnInstanceLaunch = BehaviorSubject.create(),
+        _useJavaProvidedByMinecraft = BehaviorSubject.create(),
         _disableLegacyLaunching = BehaviorSubject.create(),
-        _systemGLFW = BehaviorSubject.create(),
-        _systemOpenAL = BehaviorSubject.create();
+        _useSystemGlfw = BehaviorSubject.create(),
+        _useSystemOpenAl = BehaviorSubject.create();
 
     private final BehaviorSubject<CheckState>
         javaPathCheckState = BehaviorSubject.create(),
@@ -170,7 +170,7 @@ public class JavaSettingsViewModel implements IJavaSettingsViewModel {
     public void onSettingsSaved() {
         _initialRam.onNext(App.settings.initialMemory);
         _maxRam.onNext(App.settings.maximumMemory);
-        _permGen.onNext(App.settings.metaspace);
+        _metaspace.onNext(App.settings.metaspace);
         _width.onNext(App.settings.windowWidth);
         _height.onNext(App.settings.windowHeight);
 
@@ -178,12 +178,12 @@ public class JavaSettingsViewModel implements IJavaSettingsViewModel {
         _javaParams.onNext(App.settings.javaParameters);
         baseJavaInstallFolder.onNext(Optional.ofNullable(App.settings.baseJavaInstallFolder).orElse(""));
 
-        _startMinecraftMax.onNext(App.settings.maximiseMinecraft);
-        _ignoreJavaChecks.onNext(App.settings.ignoreJavaOnInstanceLaunch);
-        _javaFromMinecraft.onNext(App.settings.useJavaProvidedByMinecraft);
+        _maximizeMinecraft.onNext(App.settings.maximiseMinecraft);
+        _ignoreJavaOnInstanceLaunch.onNext(App.settings.ignoreJavaOnInstanceLaunch);
+        _useJavaProvidedByMinecraft.onNext(App.settings.useJavaProvidedByMinecraft);
         _disableLegacyLaunching.onNext(App.settings.disableLegacyLaunching);
-        _systemGLFW.onNext(App.settings.useSystemGlfw);
-        _systemOpenAL.onNext(App.settings.useSystemOpenAl);
+        _useSystemGlfw.onNext(App.settings.useSystemGlfw);
+        _useSystemOpenAl.onNext(App.settings.useSystemOpenAl);
     }
 
     @Override
@@ -303,8 +303,8 @@ public class JavaSettingsViewModel implements IJavaSettingsViewModel {
     }
 
     @Override
-    public Observable<Integer> getPermGen() {
-        return _permGen.observeOn(SwingSchedulers.edt());
+    public Observable<Integer> getMetaspace() {
+        return _metaspace.observeOn(SwingSchedulers.edt());
     }
 
     @Override
@@ -432,8 +432,8 @@ public class JavaSettingsViewModel implements IJavaSettingsViewModel {
     }
 
     @Override
-    public Observable<Boolean> get5StartMinecraftMax() {
-        return _startMinecraftMax.observeOn(SwingSchedulers.edt());
+    public Observable<Boolean> getMaximizeMinecraft() {
+        return _maximizeMinecraft.observeOn(SwingSchedulers.edt());
     }
 
 
@@ -444,8 +444,8 @@ public class JavaSettingsViewModel implements IJavaSettingsViewModel {
     }
 
     @Override
-    public Observable<Boolean> getIgnoreJavaChecks() {
-        return _ignoreJavaChecks.observeOn(SwingSchedulers.edt());
+    public Observable<Boolean> getIgnoreJavaOnInstanceLaunch() {
+        return _ignoreJavaOnInstanceLaunch.observeOn(SwingSchedulers.edt());
     }
 
     @Override
@@ -460,8 +460,8 @@ public class JavaSettingsViewModel implements IJavaSettingsViewModel {
     }
 
     @Override
-    public Observable<Boolean> getJavaFromMinecraft() {
-        return _javaFromMinecraft.observeOn(SwingSchedulers.edt());
+    public Observable<Boolean> getUseJavaProvidedByMinecraft() {
+        return _useJavaProvidedByMinecraft.observeOn(SwingSchedulers.edt());
     }
 
     @Override
@@ -483,7 +483,7 @@ public class JavaSettingsViewModel implements IJavaSettingsViewModel {
 
     @Override
     public Observable<Boolean> getSystemGLFW() {
-        return _systemGLFW.observeOn(SwingSchedulers.edt());
+        return _useSystemGlfw.observeOn(SwingSchedulers.edt());
     }
 
     @Override
@@ -494,7 +494,7 @@ public class JavaSettingsViewModel implements IJavaSettingsViewModel {
 
     @Override
     public Observable<Boolean> getSystemOpenAL() {
-        return _systemOpenAL.observeOn(SwingSchedulers.edt());
+        return _useSystemOpenAl.observeOn(SwingSchedulers.edt());
     }
 
     @Override

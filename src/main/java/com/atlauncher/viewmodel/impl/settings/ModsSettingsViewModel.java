@@ -39,7 +39,7 @@ public class ModsSettingsViewModel implements IModsSettingsViewModel {
 
     private final BehaviorSubject<Integer>
         _defaultModPlatform = BehaviorSubject.create(),
-        _modRestrictions = BehaviorSubject.create(),
+        _addModRestriction = BehaviorSubject.create(),
         _defaultExportFormat = BehaviorSubject.create();
 
     private final BehaviorSubject<Boolean>
@@ -56,7 +56,7 @@ public class ModsSettingsViewModel implements IModsSettingsViewModel {
     @Override
     public void onSettingsSaved() {
         _defaultModPlatform.onNext(App.settings.defaultModPlatform.ordinal());
-        _modRestrictions.onNext(App.settings.addModRestriction.ordinal());
+        _addModRestriction.onNext(App.settings.addModRestriction.ordinal());
         _defaultExportFormat.onNext(App.settings.defaultExportFormat.ordinal());
 
         _enableAddedModsByDefault.onNext(App.settings.enableAddedModsByDefault);
@@ -83,8 +83,8 @@ public class ModsSettingsViewModel implements IModsSettingsViewModel {
     }
 
     @Override
-    public Observable<Integer> getAddModRestrictions() {
-        return _modRestrictions.observeOn(SwingSchedulers.edt());
+    public Observable<Integer> getAddModRestriction() {
+        return _addModRestriction.observeOn(SwingSchedulers.edt());
     }
 
     @Override

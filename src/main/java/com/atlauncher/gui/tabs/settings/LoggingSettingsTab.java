@@ -65,7 +65,7 @@ public class LoggingSettingsTab extends AbstractSettingsTab {
             if (itemEvent.getStateChange() == ItemEvent.SELECTED)
                 viewModel.setLoggingLevel((String) itemEvent.getItem());
         });
-        addDisposable(viewModel.getLoggingLevel().subscribe(forgeLoggingLevel::setSelectedItem));
+        addDisposable(viewModel.getForgeLoggingLevel().subscribe(forgeLoggingLevel::setSelectedItem));
         add(forgeLoggingLevel, gbc);
 
         // Enable Logging

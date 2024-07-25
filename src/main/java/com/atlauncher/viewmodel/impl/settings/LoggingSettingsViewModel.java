@@ -30,7 +30,7 @@ import io.reactivex.rxjava3.subjects.BehaviorSubject;
  */
 public class LoggingSettingsViewModel implements ILoggingSettingsViewModel {
     private final BehaviorSubject<String>
-        _loggingLevel = BehaviorSubject.create();
+        _forgeLoggingLevel = BehaviorSubject.create();
 
     private final BehaviorSubject<Boolean>
         _enableLogging = BehaviorSubject.create(),
@@ -43,7 +43,7 @@ public class LoggingSettingsViewModel implements ILoggingSettingsViewModel {
 
     @Override
     public void onSettingsSaved() {
-        _loggingLevel.onNext(App.settings.forgeLoggingLevel);
+        _forgeLoggingLevel.onNext(App.settings.forgeLoggingLevel);
         _enableLogging.onNext(App.settings.enableLogs);
         _enableAnalytics.onNext(App.settings.enableAnalytics);
     }
@@ -55,8 +55,8 @@ public class LoggingSettingsViewModel implements ILoggingSettingsViewModel {
     }
 
     @Override
-    public Observable<String> getLoggingLevel() {
-        return _loggingLevel.observeOn(SwingSchedulers.edt());
+    public Observable<String> getForgeLoggingLevel() {
+        return _forgeLoggingLevel.observeOn(SwingSchedulers.edt());
     }
 
     @Override

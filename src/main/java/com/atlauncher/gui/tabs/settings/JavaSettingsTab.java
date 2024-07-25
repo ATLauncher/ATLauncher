@@ -225,7 +225,7 @@ public class JavaSettingsTab extends AbstractSettingsTab {
                 }
             }
         });
-        addDisposable(viewModel.getPermGen().subscribe(permGen::setValue));
+        addDisposable(viewModel.getMetaspace().subscribe(permGen::setValue));
         add(permGen, gbc);
 
         // Window Size
@@ -516,7 +516,7 @@ public class JavaSettingsTab extends AbstractSettingsTab {
         startMinecraftMaximised.addItemListener(itemEvent ->
             viewModel.setStartMinecraftMax(itemEvent.getStateChange() == ItemEvent.SELECTED)
         );
-        addDisposable(viewModel.get5StartMinecraftMax().subscribe(startMinecraftMaximised::setSelected));
+        addDisposable(viewModel.getMaximizeMinecraft().subscribe(startMinecraftMaximised::setSelected));
         add(startMinecraftMaximised, gbc);
 
         // Ignore Java checks On Launch
@@ -537,7 +537,7 @@ public class JavaSettingsTab extends AbstractSettingsTab {
         ignoreJavaOnInstanceLaunch.addItemListener(itemEvent ->
             viewModel.setIgnoreJavaChecks(itemEvent.getStateChange() == ItemEvent.SELECTED)
         );
-        addDisposable(viewModel.getIgnoreJavaChecks().subscribe(ignoreJavaOnInstanceLaunch::setSelected));
+        addDisposable(viewModel.getIgnoreJavaOnInstanceLaunch().subscribe(ignoreJavaOnInstanceLaunch::setSelected));
         add(ignoreJavaOnInstanceLaunch, gbc);
 
         // Use Java Provided By Minecraft
@@ -576,7 +576,7 @@ public class JavaSettingsTab extends AbstractSettingsTab {
                 });
             }
         });
-        addDisposable(viewModel.getJavaFromMinecraft().subscribe(useJavaProvidedByMinecraft::setEnabled));
+        addDisposable(viewModel.getUseJavaProvidedByMinecraft().subscribe(useJavaProvidedByMinecraft::setEnabled));
         add(useJavaProvidedByMinecraft, gbc);
 
         // Disable Legacy Launching

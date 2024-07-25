@@ -98,7 +98,7 @@ public interface IJavaSettingsViewModel extends SettingsListener {
      */
     boolean setPermGen(int permGen);
 
-    Observable<Integer> getPermGen();
+    Observable<Integer> getMetaspace();
 
     void setWidth(int width);
 
@@ -144,17 +144,17 @@ public interface IJavaSettingsViewModel extends SettingsListener {
 
     void setStartMinecraftMax(Boolean b);
 
-    Observable<Boolean> get5StartMinecraftMax();
+    Observable<Boolean> getMaximizeMinecraft();
 
     void setIgnoreJavaChecks(Boolean b);
 
-    Observable<Boolean> getIgnoreJavaChecks();
+    Observable<Boolean> getIgnoreJavaOnInstanceLaunch();
 
     boolean getUseJavaFromMinecraftEnabled();
 
     void setJavaFromMinecraft(Boolean b);
 
-    Observable<Boolean> getJavaFromMinecraft();
+    Observable<Boolean> getUseJavaProvidedByMinecraft();
 
     void setDisableLegacyLaunching(Boolean b);
 

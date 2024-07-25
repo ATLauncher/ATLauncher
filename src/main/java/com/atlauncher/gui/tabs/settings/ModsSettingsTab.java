@@ -110,7 +110,7 @@ public class ModsSettingsTab extends AbstractSettingsTab {
                 viewModel.setAddModRestrictions(item.getValue());
             }
         });
-        addDisposable(viewModel.getAddModRestrictions().subscribe(addModRestriction::setSelectedIndex));
+        addDisposable(viewModel.getAddModRestriction().subscribe(addModRestriction::setSelectedIndex));
 
         add(addModRestriction, gbc);
 

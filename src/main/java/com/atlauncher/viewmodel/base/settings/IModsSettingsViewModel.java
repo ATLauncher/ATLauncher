@@ -38,7 +38,7 @@ public interface IModsSettingsViewModel extends SettingsListener {
 
     void setAddModRestrictions(AddModRestriction modRestrictions);
 
-    Observable<Integer> getAddModRestrictions();
+    Observable<Integer> getAddModRestriction();
 
     void setEnableAddedModsByDefault(Boolean b);
 

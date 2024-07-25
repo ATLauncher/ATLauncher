@@ -229,7 +229,7 @@ public interface IGeneralSettingsViewModel extends SettingsListener {
 
     void setRememberWindowStuff(boolean b);
 
-    Observable<Boolean> getRememberWindowStuff();
+    Observable<Boolean> getRememberWindowSizePosition();
 
     boolean getShowNativeFilePickerOption();
 

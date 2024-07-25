@@ -68,7 +68,7 @@ public class GeneralSettingsViewModel implements IGeneralSettingsViewModel {
         _enableDiscordIntegration = BehaviorSubject.create(),
         _enableFeralGameMode = BehaviorSubject.create(),
         _disableCustomFonts = BehaviorSubject.create(),
-        _rememberWindowStuff = BehaviorSubject.create(),
+        _rememberWindowSizePosition = BehaviorSubject.create(),
         _useNativeFilePicker = BehaviorSubject.create(),
         _useRecycleBin = BehaviorSubject.create(),
         enableArmSupport = BehaviorSubject.create(),
@@ -99,7 +99,7 @@ public class GeneralSettingsViewModel implements IGeneralSettingsViewModel {
         _enableDiscordIntegration.onNext(App.settings.enableDiscordIntegration);
         _enableFeralGameMode.onNext(App.settings.enableFeralGamemode);
         _disableCustomFonts.onNext(App.settings.disableCustomFonts);
-        _rememberWindowStuff.onNext(App.settings.rememberWindowSizePosition);
+        _rememberWindowSizePosition.onNext(App.settings.rememberWindowSizePosition);
         _useNativeFilePicker.onNext(App.settings.useNativeFilePicker);
         _useRecycleBin.onNext(App.settings.useRecycleBin);
     }
@@ -371,8 +371,8 @@ public class GeneralSettingsViewModel implements IGeneralSettingsViewModel {
     }
 
     @Override
-    public Observable<Boolean> getRememberWindowStuff() {
-        return _rememberWindowStuff.observeOn(SwingSchedulers.edt());
+    public Observable<Boolean> getRememberWindowSizePosition() {
+        return _rememberWindowSizePosition.observeOn(SwingSchedulers.edt());
     }
 
     @Override

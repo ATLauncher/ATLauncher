@@ -30,7 +30,7 @@ import io.reactivex.rxjava3.core.Observable;
 public interface ILoggingSettingsViewModel extends SettingsListener {
     void setLoggingLevel(String level);
 
-    Observable<String> getLoggingLevel();
+    Observable<String> getForgeLoggingLevel();
 
     void setEnableLogging(Boolean b);
 

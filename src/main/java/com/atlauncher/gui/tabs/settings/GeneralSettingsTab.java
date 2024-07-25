@@ -448,7 +448,7 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         rememberWindowSizePosition.addItemListener(e ->
             viewModel.setRememberWindowStuff(e.getStateChange() == ItemEvent.SELECTED)
         );
-        addDisposable(viewModel.getRememberWindowStuff().subscribe(rememberWindowSizePosition::setSelected));
+        addDisposable(viewModel.getRememberWindowSizePosition().subscribe(rememberWindowSizePosition::setSelected));
         add(rememberWindowSizePosition, gbc);
 
         // Use native file picker
