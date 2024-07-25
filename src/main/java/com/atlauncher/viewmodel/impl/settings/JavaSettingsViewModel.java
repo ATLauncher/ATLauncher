@@ -148,9 +148,11 @@ public class JavaSettingsViewModel implements IJavaSettingsViewModel {
                         javaParamCheckStateConsumer.onNext(CheckState.Checking);
 
                         String params = App.settings.javaParameters;
-                        boolean valid = !(params.contains("-Xms") || params.contains("-Xmx")
-                            || params.contains("-XX:PermSize")
-                            || params.contains("-XX:MetaspaceSize"));
+                        boolean valid =
+                            (useInitialMemoryOption() || !params.contains("-Xms")) &&
+                            !params.contains("-Xmx") &&
+                            !params.contains("-XX:PermSize") &&
+                            !params.contains("-XX:MetaspaceSize");
                         javaParamCheckStateConsumer.onNext(new CheckState.Checked(valid));
                         javaParamChanged = false;
                         SettingsValidityManager.setValidity("javaParam", valid);
