@@ -97,11 +97,22 @@ application {
 }
 
 tasks.test {
-    // Use JUnit Platform for unit tests.
-    useJUnitPlatform()
+    if (JavaVersion.current().isJava9Compatible) {
+        jvmArgs = listOf("--add-opens", "java.base/sun.security.x509=ALL-UNNAMED")
+    }
+
+    useJUnitPlatform {
+        excludeTags("ui")
+    }
 
     testlogger {
         setTheme("mocha")
+    }
+}
+
+tasks.register("uiTest", Test::class) {
+    useJUnitPlatform {
+        includeTags("ui")
     }
 }
 
@@ -247,12 +258,6 @@ artifacts {
                 .replace("libs", "distributions")
         )
     )
-}
-
-tasks.test {
-    if (JavaVersion.current().isJava9Compatible) {
-        jvmArgs = listOf("--add-opens", "java.base/sun.security.x509=ALL-UNNAMED")
-    }
 }
 
 val copyArtifacts = tasks.register("copyArtifacts", Copy::class) {
