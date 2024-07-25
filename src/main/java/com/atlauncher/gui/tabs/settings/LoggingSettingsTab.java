@@ -87,7 +87,7 @@ public class LoggingSettingsTab extends AbstractSettingsTab {
         enableLogs.addActionListener(e ->
             viewModel.setEnableLogging(enableLogs.isSelected())
         );
-        addDisposable(viewModel.get5EnableLogging().subscribe(enableLogs::setSelected));
+        addDisposable(viewModel.getEnableLogging().subscribe(enableLogs::setSelected));
         add(enableLogs, gbc);
 
         // Enable Analytics

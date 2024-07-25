@@ -66,7 +66,7 @@ public class LoggingSettingsViewModel implements ILoggingSettingsViewModel {
     }
 
     @Override
-    public Observable<Boolean> get5EnableLogging() {
+    public Observable<Boolean> getEnableLogging() {
         return _addOnEnableLoggingChanged.observeOn(SwingSchedulers.edt());
     }
 
