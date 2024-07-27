@@ -38,7 +38,6 @@ import org.mini2Dx.gettext.GetText;
 
 import com.atlauncher.App;
 import com.atlauncher.builders.HTMLBuilder;
-import com.atlauncher.constants.Constants;
 import com.atlauncher.data.BackupMode;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.minecraft.loaders.LoaderType;
@@ -52,6 +51,7 @@ import com.atlauncher.gui.dialogs.EditModsDialog;
 import com.atlauncher.gui.dialogs.InstanceExportDialog;
 import com.atlauncher.gui.dialogs.InstanceSettingsDialog;
 import com.atlauncher.gui.dialogs.ProgressDialog;
+import com.atlauncher.gui.dialogs.ServersDialog;
 import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.ConfigManager;
 import com.atlauncher.managers.DialogManager;
@@ -158,7 +158,7 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
     public InstanceCard(Instance instance, boolean hasUpdate, String instanceTitleFormat) {
         super(instance, instanceTitleFormat);
         this.instance = instance;
-        this.image = new ImagePanel(()-> instance.getImage().getImage());
+        this.image = new ImagePanel(() -> instance.getImage().getImage());
         this.hasUpdate = hasUpdate;
 
         JSplitPane splitter = new JSplitPane();
@@ -219,13 +219,7 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
             this.updateButton.setVisible(instance.isUpdatable());
         }
 
-        if (instance.isExternalPack() || instance.launcher.vanillaInstance) {
-            this.serversButton.setVisible(false);
-        }
-
-        if (instance.getPack() != null && instance.getPack().system) {
-            this.serversButton.setVisible(false);
-        }
+        this.serversButton.setVisible(instance.canSearchForServers());
 
         this.openWebsite.setVisible(instance.hasWebsite());
 
@@ -512,9 +506,12 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
             new EditModsDialog(instance);
             exportButton.setVisible(instance.canBeExported());
         });
-        this.serversButton.addActionListener(e -> OS.openWebBrowser(
-                String.format("%s/%s?utm_source=launcher&utm_medium=button&utm_campaign=instance_v2_button",
-                        Constants.SERVERS_LIST_PACK, instance.getSafePackName())));
+        this.serversButton.addActionListener(e -> {
+            Analytics.trackEvent(AnalyticsEvent.forInstanceEvent("instance_servers", instance));
+            new ServersDialog(instance, e1 -> {
+                play(false);
+            });
+        });
         this.openWebsite.addActionListener(e -> OS.openWebBrowser(instance.getWebsiteUrl()));
         this.settingsButton.addActionListener(e -> {
             Analytics.trackEvent(AnalyticsEvent.forInstanceEvent("instance_settings", instance));

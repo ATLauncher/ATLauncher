@@ -1,0 +1,25 @@
+query GetServersForModPack($packId: String!, $platform: ServerPackPlatform!) {
+    serversForPack(packId: $packId, platform: $platform) {
+        id
+        name
+        safeName
+        position
+        shortDescription
+        language
+        countryCode
+
+        websiteUrl
+        bannerUrl
+
+        isFeatured
+        isOnline
+        onlinePlayers
+        motd
+
+        packs {
+            id
+            platform
+            version
+        }
+    }
+}

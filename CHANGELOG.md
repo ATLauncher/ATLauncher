@@ -7,6 +7,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 
 ### New Features
 - Add the option to join a minecraft server, world, and realm when launching an instance [#748]
+- Add server browser to instances and allow auto joining servers
 
 ### Fixes
 - Issue exporting/disabling/deleting worlds downloaded from CurseForge [#927]

@@ -72,6 +72,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+import org.jetbrains.annotations.Nullable;
 import org.mini2Dx.gettext.GetText;
 
 import com.atlauncher.App;
@@ -132,6 +133,7 @@ import com.atlauncher.graphql.AddPackTimePlayedMutation;
 import com.atlauncher.graphql.type.AddPackActionInput;
 import com.atlauncher.graphql.type.AddPackTimePlayedInput;
 import com.atlauncher.graphql.type.PackLogAction;
+import com.atlauncher.graphql.type.ServerPackPlatform;
 import com.atlauncher.gui.dialogs.InstanceInstallerDialog;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.gui.dialogs.RenameInstanceDialog;
@@ -3240,7 +3242,8 @@ public class Instance extends MinecraftVersion {
 
     public List<String> getSinglePlayerWorldNamesFromFilesystem() {
         File[] folders = ROOT.resolve("saves").toFile().listFiles((dir, name) -> new File(dir, name).isDirectory());
-        if (folders == null) return new ArrayList<>();
+        if (folders == null)
+            return new ArrayList<>();
         return Arrays.stream(folders).map(File::getName).collect(Collectors.toList());
     }
 
@@ -3249,9 +3252,8 @@ public class Instance extends MinecraftVersion {
             return false;
         }
         return arguments.game.stream().anyMatch(
-            argumentRule -> argumentRule.value instanceof List &&
-                ((List<?>) argumentRule.value).contains(quickPlayOption.argumentRuleValue)
-        );
+                argumentRule -> argumentRule.value instanceof List &&
+                        ((List<?>) argumentRule.value).contains(quickPlayOption.argumentRuleValue));
     }
 
     private List<Path> getModPathsFromFilesystem() {
@@ -3512,6 +3514,50 @@ public class Instance extends MinecraftVersion {
             save();
         }
         PerformanceManager.end("Instance::scanMissingMods - CheckForDuplicateMods");
+    }
+
+    public boolean canSearchForServers() {
+        return getPackId() != null && getServersPackPlatform() != null;
+    }
+
+    public @Nullable String getPackId() {
+        if (isModrinthPack()) {
+            return launcher.modrinthProject.id;
+        }
+
+        if (isCurseForgePack()) {
+            return Integer.toString(launcher.curseForgeProject.id);
+        }
+
+        if (getPack() != null) {
+            return Integer.toString(getPack().id);
+        }
+
+        if (isVanillaInstance()) {
+            return id;
+        }
+
+        return null;
+    }
+
+    public @Nullable ServerPackPlatform getServersPackPlatform() {
+        if (isModrinthPack()) {
+            return ServerPackPlatform.MODRINTH;
+        }
+
+        if (isCurseForgePack()) {
+            return ServerPackPlatform.CURSEFORGE;
+        }
+
+        if (getPack() != null) {
+            return ServerPackPlatform.ATLAUNCHER;
+        }
+
+        if (isVanillaInstance()) {
+            return ServerPackPlatform.VANILLA;
+        }
+
+        return null;
     }
 
     public boolean showGetHelpButton() {

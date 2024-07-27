@@ -33,6 +33,7 @@ import com.atlauncher.data.modrinth.ModrinthProject;
 import com.atlauncher.data.modrinth.ModrinthSearchHit;
 import com.atlauncher.data.modrinth.ModrinthVersion;
 import com.atlauncher.data.technic.TechnicModpackSlim;
+import com.atlauncher.graphql.GetServersForModPackQuery;
 import com.atlauncher.graphql.fragment.UnifiedModPackResultsFragment;
 
 public class AnalyticsEvent {
@@ -106,6 +107,18 @@ public class AnalyticsEvent {
         payload.put("name", instance.launcher.pack);
         payload.put("version", instance.launcher.version);
         payload.put("platform", instance.getPlatformName());
+
+        return new AnalyticsEvent(event, payload);
+    }
+
+    public static AnalyticsEvent forInstanceServerEvent(String event, Instance instance,
+            GetServersForModPackQuery.ServersForPack server) {
+        final Map<String, Object> payload = new HashMap<>();
+        payload.put("name", instance.launcher.pack);
+        payload.put("version", instance.launcher.version);
+        payload.put("platform", instance.getPlatformName());
+        payload.put("server_id", server.id());
+        payload.put("server_featured", server.isFeatured());
 
         return new AnalyticsEvent(event, payload);
     }
