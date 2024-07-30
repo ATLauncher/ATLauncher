@@ -31,8 +31,10 @@ import com.atlauncher.FileSystem;
 import com.atlauncher.constants.Constants;
 import com.atlauncher.data.Language;
 import com.atlauncher.data.LauncherTheme;
+import com.atlauncher.evnt.listener.SettingsListener;
 import com.atlauncher.evnt.manager.SettingsManager;
 import com.atlauncher.evnt.manager.ThemeManager;
+import com.atlauncher.gui.tabs.settings.GeneralSettingsTab;
 import com.atlauncher.managers.ConfigManager;
 import com.atlauncher.managers.SettingsValidityManager;
 import com.atlauncher.network.Analytics;
@@ -40,7 +42,6 @@ import com.atlauncher.network.analytics.AnalyticsEvent;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
 import com.atlauncher.utils.sort.InstanceSortingStrategies;
-import com.atlauncher.viewmodel.base.settings.IGeneralSettingsViewModel;
 import com.formdev.flatlaf.FlatLaf;
 import com.gitlab.doomsdayrs.lib.rxswing.schedulers.SwingSchedulers;
 
@@ -49,17 +50,20 @@ import io.reactivex.rxjava3.subjects.BehaviorSubject;
 
 /**
  * @since 2022 / 06 / 15
+ * <p>
+ * View model for {@link GeneralSettingsTab}
  */
-public class GeneralSettingsViewModel implements IGeneralSettingsViewModel {
-    private final BehaviorSubject<Integer> _addOnSelectedLanguage = BehaviorSubject.create(),
+public class GeneralSettingsViewModel implements SettingsListener {
+    private final BehaviorSubject<Integer>
+        _addOnSelectedLanguage = BehaviorSubject.create(),
         _selectedTheme = BehaviorSubject.create(),
         _dateFormat = BehaviorSubject.create(),
         _addOnInstanceFormat = BehaviorSubject.create(),
         _addOnSelectedTabOnStartup = BehaviorSubject.create(),
         _addInstanceSorting = BehaviorSubject.create();
 
-    private final BehaviorSubject<String> _addOnCustomsDownloadPath =
-        BehaviorSubject.create();
+    private final BehaviorSubject<String>
+        _addOnCustomsDownloadPath = BehaviorSubject.create();
 
     private final BehaviorSubject<Boolean>
         _keepLauncherOpen = BehaviorSubject.create(),
@@ -104,21 +108,34 @@ public class GeneralSettingsViewModel implements IGeneralSettingsViewModel {
         _useRecycleBin.onNext(App.settings.useRecycleBin);
     }
 
-    @Override
+    /**
+     * Get the languages to have as options.
+     * <p>
+     * TODO Upon implementation of translations, ensure the returned value is
+     *  cached in the view model to avoid extra processing.
+     *
+     * @return languages
+     */
     public String[] getLanguages() {
         return Language.locales.stream().map(Locale::getDisplayName).toArray(String[]::new);
     }
 
-    @Override
+    /**
+     * @return Selected language as per settings
+     */
+    public Observable<Integer> getSelectedLanguage() {
+        return _addOnSelectedLanguage.observeOn(SwingSchedulers.edt());
+    }
+
+    /**
+     * Set the launcher language.
+     *
+     * @param language language
+     */
     public void setSelectedLanguage(String language) {
         Language.setLanguage(language);
         App.settings.language = language;
         SettingsManager.post();
-    }
-
-    @Override
-    public Observable<Integer> getSelectedLanguage() {
-        return _addOnSelectedLanguage.observeOn(SwingSchedulers.edt());
     }
 
     private void pushSelectedLanguage() {
@@ -128,7 +145,13 @@ public class GeneralSettingsViewModel implements IGeneralSettingsViewModel {
         }
     }
 
-    @Override
+    /**
+     * Get the themes.
+     * <p>
+     * This is a cached result, subsequent calls are faster.
+     *
+     * @return Launcher themes
+     */
     public List<LauncherTheme> getThemes() {
         if (themes == null)
             themes = Arrays.asList(
@@ -147,7 +170,18 @@ public class GeneralSettingsViewModel implements IGeneralSettingsViewModel {
         return themes;
     }
 
-    @Override
+    /**
+     * Listen to the theme being changed
+     */
+    public Observable<Integer> getSelectedTheme() {
+        return _selectedTheme.observeOn(SwingSchedulers.edt());
+    }
+
+    /**
+     * Set the launcher theme
+     *
+     * @param theme Theme id as provided in {@link LauncherTheme}
+     */
     public void setSelectedTheme(String theme) {
         Analytics.trackEvent(AnalyticsEvent.forThemeChange(App.THEME.getName()));
         App.settings.theme = theme;
@@ -157,11 +191,6 @@ public class GeneralSettingsViewModel implements IGeneralSettingsViewModel {
         ThemeManager.post();
     }
 
-    @Override
-    public Observable<Integer> getSelectedTheme() {
-        return _selectedTheme.observeOn(SwingSchedulers.edt());
-    }
-
     private void pushSelectedTheme() {
         for (int index = 0; index < getThemes().size(); index++) {
             if (getThemes().get(index).id.equals(App.settings.theme))
@@ -169,7 +198,9 @@ public class GeneralSettingsViewModel implements IGeneralSettingsViewModel {
         }
     }
 
-    @Override
+    /**
+     * Get today's date
+     */
     public Date getDate() {
         Calendar cal = Calendar.getInstance();
         cal.setTime(new Date());
@@ -178,20 +209,30 @@ public class GeneralSettingsViewModel implements IGeneralSettingsViewModel {
         return cal.getTime();
     }
 
-    @Override
+    /**
+     * Get the date formats
+     *
+     * @return date formats
+     */
     public String[] getDateFormats() {
         return Constants.DATE_FORMATS;
     }
 
-    @Override
+    /**
+     * Listen to date format being changed
+     */
+    public Observable<Integer> getDateFormat() {
+        return _dateFormat.observeOn(SwingSchedulers.edt());
+    }
+
+    /**
+     * Set the selected date format
+     *
+     * @param format date format
+     */
     public void setDateFormat(String format) {
         App.settings.dateFormat = format;
         SettingsManager.post();
-    }
-
-    @Override
-    public Observable<Integer> getDateFormat() {
-        return _dateFormat.observeOn(SwingSchedulers.edt());
     }
 
     private void pushDateFormat() {
@@ -201,18 +242,28 @@ public class GeneralSettingsViewModel implements IGeneralSettingsViewModel {
         }
     }
 
-    @Override
+    /**
+     * Get instance title formats
+     *
+     * @return instance title formats
+     */
     public String[] getInstanceTitleFormats() {
         return Constants.INSTANCE_TITLE_FORMATS;
     }
 
-    @Override
+    /**
+     * Set the instance title format
+     *
+     * @param format instance title format
+     */
     public void setInstanceTitleFormat(String format) {
         App.settings.instanceTitleFormat = format;
         SettingsManager.post();
     }
 
-    @Override
+    /**
+     * Listen to the instance title format being changed
+     */
     public Observable<Integer> getInstanceFormat() {
         return _addOnInstanceFormat.observeOn(SwingSchedulers.edt());
     }
@@ -224,29 +275,45 @@ public class GeneralSettingsViewModel implements IGeneralSettingsViewModel {
         }
     }
 
-    @Override
+    /**
+     * Listen to selected tab on startup being changed
+     */
+    public Observable<Integer> getSelectedTabOnStartup() {
+        return _addOnSelectedTabOnStartup.observeOn(SwingSchedulers.edt());
+    }
+
+    /**
+     * Set selected tab on startup
+     *
+     * @param tab selected tab index, starting from 0
+     */
     public void setSelectedTabOnStartup(int tab) {
         App.settings.selectedTabOnStartup = tab;
         SettingsManager.post();
     }
 
-    @Override
-    public Observable<Integer> getSelectedTabOnStartup() {
-        return _addOnSelectedTabOnStartup.observeOn(SwingSchedulers.edt());
-    }
-
-    @Override
+    /**
+     * Get instance sorting strategies
+     *
+     * @return instance sorting strategies
+     */
     public InstanceSortingStrategies[] getInstanceSorting() {
         return InstanceSortingStrategies.values();
     }
 
-    @Override
+    /**
+     * Set the selected instance sorting strategies
+     *
+     * @param sorting sorting strategy
+     */
     public void setInstanceSorting(InstanceSortingStrategies sorting) {
         App.settings.defaultInstanceSorting = sorting;
         SettingsManager.post();
     }
 
-    @Override
+    /**
+     * Listen to sorting strategy being changed
+     */
     public Observable<Integer> getInstanceSortingObservable() {
         return _addInstanceSorting.observeOn(SwingSchedulers.edt());
     }
@@ -258,106 +325,132 @@ public class GeneralSettingsViewModel implements IGeneralSettingsViewModel {
         }
     }
 
-    @Override
+    /**
+     * Reset the custom download path
+     */
     public void resetCustomDownloadPath() {
         App.settings.customDownloadsPath = null;
         SettingsManager.post();
     }
 
-    @Override
+    /**
+     * Inform the settings that the custom download path is pending write
+     */
+    public void setCustomsDownloadPathPending() {
+        SettingsValidityManager.setValidity("customDownloadsPath", false);
+    }
+
+    /**
+     * Listen to the custom download path being changed
+     */
+    public Observable<String> getCustomsDownloadPath() {
+        return _addOnCustomsDownloadPath.observeOn(SwingSchedulers.edt());
+    }
+
+    /**
+     * Set the custom download path
+     *
+     * @param value download path
+     */
     public void setCustomsDownloadPath(String value) {
         App.settings.customDownloadsPath = value;
         SettingsValidityManager.setValidity("customDownloadsPath", true);
         SettingsManager.post();
     }
 
-    @Override
-    public void setCustomsDownloadPathPending() {
-        SettingsValidityManager.setValidity("customDownloadsPath", false);
+    /**
+     * Listen to keep launcher open changed
+     */
+    public Observable<Boolean> getKeepLauncherOpen() {
+        return _keepLauncherOpen.observeOn(SwingSchedulers.edt());
     }
 
-    @Override
-    public Observable<String> getCustomsDownloadPath() {
-        return _addOnCustomsDownloadPath.observeOn(SwingSchedulers.edt());
-    }
-
-    @Override
+    /**
+     * Set the launcher to stay open with a minecraft launch
+     *
+     * @param b keep launcher open or not
+     */
     public void setKeepLauncherOpen(boolean b) {
         App.settings.keepLauncherOpen = b;
         SettingsManager.post();
     }
 
-    @Override
-    public Observable<Boolean> getKeepLauncherOpen() {
-        return _keepLauncherOpen.observeOn(SwingSchedulers.edt());
+    /**
+     * Listen to console being enabled or not
+     */
+    public Observable<Boolean> getEnableConsole() {
+        return _enableConsole.observeOn(SwingSchedulers.edt());
     }
 
-    @Override
+    /**
+     * Enable the console or not
+     *
+     * @param b console enabled?
+     */
     public void setEnableConsole(boolean b) {
         App.settings.enableConsole = b;
         SettingsManager.post();
     }
 
-    @Override
-    public Observable<Boolean> getEnableConsole() {
-        return _enableConsole.observeOn(SwingSchedulers.edt());
-    }
-
-    @Override
+    /**
+     * Set tray menu enabled or not
+     *
+     * @param b enabled?
+     */
     public void setEnableTrayMenuOpen(boolean b) {
         App.settings.enableTrayMenu = b;
         SettingsManager.post();
     }
 
-    @Override
+    /**
+     * Listen to tray menu being enabled or not
+     */
     public Observable<Boolean> getEnableTrayMenu() {
         return _enableTrayMenu.observeOn(SwingSchedulers.edt());
     }
 
-    @Override
+    public Observable<Boolean> getEnableDiscordIntegration() {
+        return _enableDiscordIntegration.observeOn(SwingSchedulers.edt());
+    }
+
     public void setEnableDiscordIntegration(boolean b) {
         App.settings.enableDiscordIntegration = b;
         SettingsManager.post();
     }
 
-    @Override
-    public Observable<Boolean> getEnableDiscordIntegration() {
-        return _enableDiscordIntegration.observeOn(SwingSchedulers.edt());
-    }
-
-    @Override
+    /**
+     * Whether to show the option for FeralGameMode
+     *
+     * @return if to show
+     */
     public boolean showFeralGameMode() {
         return OS.isLinux();
     }
 
-    @Override
     public boolean hasFeralGameMode() {
         return Utils.executableInPath("gamemoderun");
     }
 
-    @Override
+    public Observable<Boolean> getEnableFeralGameMode() {
+        return _enableFeralGameMode.observeOn(SwingSchedulers.edt());
+    }
+
     public void setEnableFeralGameMode(boolean b) {
         App.settings.enableFeralGamemode = b;
         SettingsManager.post();
     }
 
-    @Override
-    public Observable<Boolean> getEnableFeralGameMode() {
-        return _enableFeralGameMode.observeOn(SwingSchedulers.edt());
+
+    public Observable<Boolean> getDisableCustomFonts() {
+        return _disableCustomFonts.observeOn(SwingSchedulers.edt());
     }
 
-    @Override
     public void setDisableCustomFonts(boolean b) {
         App.settings.disableCustomFonts = b;
         SettingsManager.post();
     }
 
-    @Override
-    public Observable<Boolean> getDisableCustomFonts() {
-        return _disableCustomFonts.observeOn(SwingSchedulers.edt());
-    }
 
-    @Override
     public void setRememberWindowStuff(boolean remember) {
         App.settings.rememberWindowSizePosition = remember;
         if (!remember) {
@@ -370,60 +463,51 @@ public class GeneralSettingsViewModel implements IGeneralSettingsViewModel {
         SettingsManager.post();
     }
 
-    @Override
     public Observable<Boolean> getRememberWindowSizePosition() {
         return _rememberWindowSizePosition.observeOn(SwingSchedulers.edt());
     }
 
-    @Override
     public boolean getShowNativeFilePickerOption() {
         return !OS.isUsingFlatpak();
     }
 
-    @Override
+    public Observable<Boolean> getUseNativeFilePicker() {
+        return _useNativeFilePicker.observeOn(SwingSchedulers.edt());
+    }
+
+
     public void setUseNativeFilePicker(boolean b) {
         App.settings.useNativeFilePicker = b;
         SettingsManager.post();
     }
 
-    @Override
-    public Observable<Boolean> getUseNativeFilePicker() {
-        return _useNativeFilePicker.observeOn(SwingSchedulers.edt());
+    public Observable<Boolean> getUseRecycleBin() {
+        return _useRecycleBin.observeOn(SwingSchedulers.edt());
     }
 
-    @Override
     public void setUseRecycleBin(boolean b) {
         App.settings.useRecycleBin = b;
         SettingsManager.post();
     }
 
-    @Override
-    public Observable<Boolean> getUseRecycleBin() {
-        return _useRecycleBin.observeOn(SwingSchedulers.edt());
-    }
 
-    @Override
     public boolean showArmSupport() {
         return ConfigManager.getConfigItem("useLwjglReplacement", false);
     }
 
-    @Override
     public Observable<Boolean> getEnableArmSupport() {
         return enableArmSupport.observeOn(SwingSchedulers.edt());
     }
 
-    @Override
     public void setEnableArmSupport(boolean b) {
         App.settings.enableArmSupport = b;
         SettingsManager.post();
     }
 
-    @Override
     public Observable<Boolean> getScanModsOnLaunch() {
         return scanModsOnLaunch.observeOn(SwingSchedulers.edt());
     }
 
-    @Override
     public void setScanModsOnLaunch(boolean b) {
         App.settings.scanModsOnLaunch = b;
         SettingsManager.post();

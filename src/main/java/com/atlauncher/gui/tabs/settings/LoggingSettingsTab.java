@@ -28,13 +28,13 @@ import org.mini2Dx.gettext.GetText;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.constants.UIConstants;
 import com.atlauncher.gui.components.JLabelWithHover;
-import com.atlauncher.viewmodel.base.settings.ILoggingSettingsViewModel;
+import com.atlauncher.viewmodel.impl.settings.LoggingSettingsViewModel;
 
 public class LoggingSettingsTab extends AbstractSettingsTab {
 
-    private final ILoggingSettingsViewModel viewModel;
+    private final LoggingSettingsViewModel viewModel;
 
-    public LoggingSettingsTab(ILoggingSettingsViewModel viewModel) {
+    public LoggingSettingsTab(LoggingSettingsViewModel viewModel) {
         this.viewModel = viewModel;
     }
 

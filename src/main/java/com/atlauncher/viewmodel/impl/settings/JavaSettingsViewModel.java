@@ -24,6 +24,8 @@ import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+import javax.annotation.Nullable;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
@@ -33,12 +35,13 @@ import com.atlauncher.constants.Constants;
 import com.atlauncher.data.CheckState;
 import com.atlauncher.data.MaxRamWarning;
 import com.atlauncher.data.ScreenResolution;
+import com.atlauncher.evnt.listener.SettingsListener;
 import com.atlauncher.evnt.manager.SettingsManager;
+import com.atlauncher.gui.tabs.settings.JavaSettingsTab;
 import com.atlauncher.managers.ConfigManager;
 import com.atlauncher.managers.SettingsValidityManager;
 import com.atlauncher.utils.Java;
 import com.atlauncher.utils.OS;
-import com.atlauncher.viewmodel.base.settings.IJavaSettingsViewModel;
 import com.gitlab.doomsdayrs.lib.rxswing.schedulers.SwingSchedulers;
 
 import io.reactivex.rxjava3.core.Observable;
@@ -46,8 +49,10 @@ import io.reactivex.rxjava3.subjects.BehaviorSubject;
 
 /**
  * @since 2022 / 06 / 16
+ * <p>
+ * View model for {@link JavaSettingsTab}
  */
-public class JavaSettingsViewModel implements IJavaSettingsViewModel {
+public class JavaSettingsViewModel implements SettingsListener {
     private static final long javaPathCheckDelay = 2000;
     private static final Logger LOG = LogManager.getLogger();
     private static final long javaParamCheckDelay = 2000;
@@ -150,9 +155,9 @@ public class JavaSettingsViewModel implements IJavaSettingsViewModel {
                         String params = App.settings.javaParameters;
                         boolean valid =
                             (useInitialMemoryOption() || !params.contains("-Xms")) &&
-                            !params.contains("-Xmx") &&
-                            !params.contains("-XX:PermSize") &&
-                            !params.contains("-XX:MetaspaceSize");
+                                !params.contains("-Xmx") &&
+                                !params.contains("-XX:PermSize") &&
+                                !params.contains("-XX:MetaspaceSize");
                         javaParamCheckState.onNext(new CheckState.Checked(valid));
                         javaParamChanged = false;
                         SettingsValidityManager.setValidity("javaParam", valid);
@@ -186,12 +191,16 @@ public class JavaSettingsViewModel implements IJavaSettingsViewModel {
         _useSystemOpenAl.onNext(App.settings.useSystemOpenAl);
     }
 
-    @Override
+    /**
+     * @return Is the current java 32 bit
+     */
     public boolean isJava32Bit() {
         return !Java.is64Bit();
     }
 
-    @Override
+    /**
+     * @return total system ram
+     */
     public Integer getSystemRam() {
         if (systemRam == -1) {
             int ram = OS.getSystemRam();
@@ -200,47 +209,44 @@ public class JavaSettingsViewModel implements IJavaSettingsViewModel {
         return systemRam;
     }
 
-    @Override
     public boolean isInitialMemoryWarningShown() {
         return initialMemoryWarningShown;
     }
 
-    @Override
     public void setInitialMemoryWarningShown() {
         initialMemoryWarningShown = true;
     }
 
-    @Override
     public boolean isMaximumMemoryHalfWarningShown() {
         return maximumMemoryHalfWarningShown;
     }
 
-    @Override
     public void setMaximumMemoryHalfWarningShown() {
         maximumMemoryHalfWarningShown = true;
     }
 
-    @Override
     public boolean isMaximumMemoryEightGBWarningShown() {
         return maximumMemoryEightGBWarningShown;
     }
 
-    @Override
     public void setMaximumMemoryEightGBWarningShown() {
         maximumMemoryEightGBWarningShown = true;
     }
 
-    @Override
     public boolean isPermgenWarningShown() {
         return permgenWarningShown;
     }
 
-    @Override
     public void setPermgenWarningShown() {
         permgenWarningShown = true;
     }
 
-    @Override
+    /**
+     * Set the initial ram
+     *
+     * @param initialRam initial ram value
+     * @return true to show warning for above 512, false otherwise
+     */
     public boolean setInitialRam(int initialRam) {
         App.settings.initialMemory = initialRam;
 
@@ -254,12 +260,17 @@ public class JavaSettingsViewModel implements IJavaSettingsViewModel {
         return initialRam > 512 && !isInitialMemoryWarningShown();
     }
 
-    @Override
     public Observable<Integer> getInitialRam() {
         return _initialRam.observeOn(SwingSchedulers.edt());
     }
 
-    @Override
+    /**
+     * Set the maximum ram
+     *
+     * @param maxRam max ram value
+     * @return null if no warning, else handle the warning
+     */
+    @Nullable
     public MaxRamWarning setMaxRam(int maxRam) {
         App.settings.maximumMemory = maxRam;
         // if initial memory is larger than maximum memory, make initial memory match
@@ -280,12 +291,10 @@ public class JavaSettingsViewModel implements IJavaSettingsViewModel {
         return null;
     }
 
-    @Override
     public Observable<Integer> getMaxRam() {
         return _maxRam.observeOn(SwingSchedulers.edt());
     }
 
-    @Override
     public int getPermGenMaxRecommendSize() {
         if (recommendSize == null)
             recommendSize = OS.is64Bit() ? 256 : 128;
@@ -293,7 +302,12 @@ public class JavaSettingsViewModel implements IJavaSettingsViewModel {
         return recommendSize;
     }
 
-    @Override
+    /**
+     * Set the perm gen size
+     *
+     * @param permGen perm gen size
+     * @return true to show warning, false otherwise
+     */
     public boolean setPermGen(int permGen) {
         App.settings.metaspace = permGen;
 
@@ -302,48 +316,40 @@ public class JavaSettingsViewModel implements IJavaSettingsViewModel {
         return permGen > getPermGenMaxRecommendSize() && !isPermgenWarningShown();
     }
 
-    @Override
     public Observable<Integer> getMetaspace() {
         return _metaspace.observeOn(SwingSchedulers.edt());
     }
 
-    @Override
+    public Observable<Integer> getWidth() {
+        return _width.observeOn(SwingSchedulers.edt());
+    }
+
     public void setWidth(int width) {
         App.settings.windowWidth = width;
         SettingsManager.post();
     }
 
-    @Override
-    public Observable<Integer> getWidth() {
-        return _width.observeOn(SwingSchedulers.edt());
+    public Observable<Integer> getHeight() {
+        return _height.observeOn(SwingSchedulers.edt());
     }
 
-    @Override
     public void setHeight(int height) {
         App.settings.windowHeight = height;
         SettingsManager.post();
     }
 
-    @Override
-    public Observable<Integer> getHeight() {
-        return _height.observeOn(SwingSchedulers.edt());
-    }
-
-    @Override
     public List<ScreenResolution> getScreenResolutions() {
         return Arrays.stream(Constants.SCREEN_RESOLUTIONS)
             .filter((it) -> it.width <= OS.getMaximumWindowWidth() && it.height <= OS.getMaximumWindowHeight())
             .collect(Collectors.toList());
     }
 
-    @Override
     public void setScreenResolution(ScreenResolution resolution) {
         App.settings.windowWidth = resolution.width;
         App.settings.windowHeight = resolution.height;
         SettingsManager.post();
     }
 
-    @Override
     public List<String> getJavaPaths() {
         if (javaPaths == null)
             javaPaths = Java.getInstalledJavas().stream()
@@ -353,7 +359,6 @@ public class JavaSettingsViewModel implements IJavaSettingsViewModel {
         return javaPaths;
     }
 
-    @Override
     public void resetJavaPath() {
         App.settings.javaPath = OS.getDefaultJavaPath();
         javaPathLastChange = System.currentTimeMillis();
@@ -361,17 +366,17 @@ public class JavaSettingsViewModel implements IJavaSettingsViewModel {
         SettingsManager.post();
     }
 
-    @Override
     public void setJavaPathPending() {
         SettingsValidityManager.setValidity("javaPath", false);
     }
 
-    @Override
     public String getJavaPath() {
         return App.settings.javaPath;
     }
 
-    @Override
+    /**
+     * Set the java path
+     */
     public void setJavaPath(String path) {
         setJavaPathPending();
         App.settings.javaPath = path;
@@ -383,17 +388,14 @@ public class JavaSettingsViewModel implements IJavaSettingsViewModel {
             javaPathCheckThread.start();
     }
 
-    @Override
     public Observable<String> getJavaPathObservable() {
         return _javaPath.observeOn(SwingSchedulers.edt());
     }
 
-    @Override
     public Observable<CheckState> getJavaPathChecker() {
         return javaPathCheckState.observeOn(SwingSchedulers.edt());
     }
 
-    @Override
     public void resetJavaParams() {
         App.settings.javaParameters = Constants.DEFAULT_JAVA_PARAMETERS;
         javaParamLastChange = System.currentTimeMillis();
@@ -401,7 +403,17 @@ public class JavaSettingsViewModel implements IJavaSettingsViewModel {
         SettingsManager.post();
     }
 
-    @Override
+    public void setJavaParamsPending() {
+        SettingsValidityManager.setValidity("javaParam", false);
+    }
+
+    public Observable<String> getJavaParams() {
+        return _javaParams.observeOn(SwingSchedulers.edt());
+    }
+
+    /**
+     * Set the java params
+     */
     public void setJavaParams(String params) {
         App.settings.javaParameters = params;
         javaParamLastChange = System.currentTimeMillis();
@@ -410,110 +422,82 @@ public class JavaSettingsViewModel implements IJavaSettingsViewModel {
             javaParamCheckThread.start();
     }
 
-    @Override
-    public void setJavaParamsPending() {
-        SettingsValidityManager.setValidity("javaParam", false);
-    }
-
-    @Override
-    public Observable<String> getJavaParams() {
-        return _javaParams.observeOn(SwingSchedulers.edt());
-    }
-
-    @Override
     public Observable<CheckState> getJavaParamsChecker() {
         return javaParamCheckState.observeOn(SwingSchedulers.edt());
     }
 
-    @Override
     public void setStartMinecraftMax(Boolean b) {
         App.settings.maximiseMinecraft = b;
         SettingsManager.post();
     }
 
-    @Override
     public Observable<Boolean> getMaximizeMinecraft() {
         return _maximizeMinecraft.observeOn(SwingSchedulers.edt());
     }
 
 
-    @Override
     public void setIgnoreJavaChecks(Boolean b) {
         App.settings.ignoreJavaOnInstanceLaunch = b;
         SettingsManager.post();
     }
 
-    @Override
     public Observable<Boolean> getIgnoreJavaOnInstanceLaunch() {
         return _ignoreJavaOnInstanceLaunch.observeOn(SwingSchedulers.edt());
     }
 
-    @Override
     public boolean getUseJavaFromMinecraftEnabled() {
         return !OS.isArm() || OS.isMacArm();
     }
 
-    @Override
     public void setJavaFromMinecraft(Boolean b) {
         App.settings.useJavaProvidedByMinecraft = b;
         SettingsManager.post();
     }
 
-    @Override
     public Observable<Boolean> getUseJavaProvidedByMinecraft() {
         return _useJavaProvidedByMinecraft.observeOn(SwingSchedulers.edt());
     }
 
-    @Override
+    public Observable<Boolean> getDisableLegacyLaunching() {
+        return _disableLegacyLaunching.observeOn(SwingSchedulers.edt());
+    }
+
     public void setDisableLegacyLaunching(Boolean b) {
         App.settings.disableLegacyLaunching = b;
         SettingsManager.post();
     }
 
-    @Override
-    public Observable<Boolean> getDisableLegacyLaunching() {
-        return _disableLegacyLaunching.observeOn(SwingSchedulers.edt());
+    public Observable<Boolean> getSystemGLFW() {
+        return _useSystemGlfw.observeOn(SwingSchedulers.edt());
     }
 
-    @Override
     public void setSystemGLFW(Boolean b) {
         App.settings.useSystemGlfw = b;
         SettingsManager.post();
     }
 
-    @Override
-    public Observable<Boolean> getSystemGLFW() {
-        return _useSystemGlfw.observeOn(SwingSchedulers.edt());
+    public Observable<Boolean> getSystemOpenAL() {
+        return _useSystemOpenAl.observeOn(SwingSchedulers.edt());
     }
 
-    @Override
     public void setSystemOpenAL(Boolean b) {
         App.settings.useSystemOpenAl = b;
         SettingsManager.post();
     }
 
-    @Override
-    public Observable<Boolean> getSystemOpenAL() {
-        return _useSystemOpenAl.observeOn(SwingSchedulers.edt());
-    }
-
-    @Override
     public Boolean useInitialMemoryOption() {
         return !ConfigManager.getConfigItem("removeInitialMemoryOption", false);
     }
 
-    @Override
     public void resetBaseInstallFolder() {
         App.settings.baseJavaInstallFolder = null;
         SettingsManager.post();
     }
 
-    @Override
     public Observable<String> getBaseInstallFolder() {
         return baseJavaInstallFolder.observeOn(SwingSchedulers.edt());
     }
 
-    @Override
     public void setBaseInstallFolder(@NotNull String path) {
         if (!path.isEmpty()) {
             App.settings.baseJavaInstallFolder = path;

@@ -21,10 +21,11 @@ import com.atlauncher.App;
 import com.atlauncher.data.AddModRestriction;
 import com.atlauncher.data.InstanceExportFormat;
 import com.atlauncher.data.ModPlatform;
+import com.atlauncher.evnt.listener.SettingsListener;
 import com.atlauncher.evnt.manager.SettingsManager;
+import com.atlauncher.gui.tabs.settings.ModsSettingsTab;
 import com.atlauncher.repository.base.IModReloadRequiredRepository;
 import com.atlauncher.repository.impl.ModReloadRequiredRepository;
-import com.atlauncher.viewmodel.base.settings.IModsSettingsViewModel;
 import com.gitlab.doomsdayrs.lib.rxswing.schedulers.SwingSchedulers;
 
 import io.reactivex.rxjava3.core.Observable;
@@ -32,8 +33,10 @@ import io.reactivex.rxjava3.subjects.BehaviorSubject;
 
 /**
  * @since 2022 / 06 / 17
+ * <p>
+ * View model for {@link ModsSettingsTab}
  */
-public class ModsSettingsViewModel implements IModsSettingsViewModel {
+public class ModsSettingsViewModel implements SettingsListener {
     private final IModReloadRequiredRepository modReloadRequiredRepository =
         ModReloadRequiredRepository.get();
 
@@ -65,78 +68,64 @@ public class ModsSettingsViewModel implements IModsSettingsViewModel {
         allowCurseForgeAlphaBetaFiles.onNext(App.settings.allowCurseForgeAlphaBetaFiles);
     }
 
-    @Override
+    public Observable<Integer> getDefaultModPlatform() {
+        return _defaultModPlatform.observeOn(SwingSchedulers.edt());
+    }
+
     public void setDefaultModPlatform(ModPlatform modPlatform) {
         App.settings.defaultModPlatform = modPlatform;
         SettingsManager.post();
     }
 
-    @Override
-    public Observable<Integer> getDefaultModPlatform() {
-        return _defaultModPlatform.observeOn(SwingSchedulers.edt());
-    }
-
-    @Override
     public void setAddModRestrictions(AddModRestriction modRestrictions) {
         App.settings.addModRestriction = modRestrictions;
         SettingsManager.post();
     }
 
-    @Override
     public Observable<Integer> getAddModRestriction() {
         return _addModRestriction.observeOn(SwingSchedulers.edt());
     }
 
-    @Override
+    public Observable<Boolean> getEnableAddedModsByDefault() {
+        return _enableAddedModsByDefault.observeOn(SwingSchedulers.edt());
+    }
+
     public void setEnableAddedModsByDefault(Boolean b) {
         App.settings.enableAddedModsByDefault = b;
         SettingsManager.post();
     }
 
-    @Override
-    public Observable<Boolean> getEnableAddedModsByDefault() {
-        return _enableAddedModsByDefault.observeOn(SwingSchedulers.edt());
+    public Observable<Boolean> getDoNotCheckModsOnCurseForge() {
+        return _doNotCheckModsOnCurseForge.observeOn(SwingSchedulers.edt());
     }
 
-    @Override
     public void setDoNotCheckModsOnCurseForge(Boolean b) {
         App.settings.dontCheckModsOnCurseForge = b;
         SettingsManager.post();
     }
 
-    @Override
-    public Observable<Boolean> getDoNotCheckModsOnCurseForge() {
-        return _doNotCheckModsOnCurseForge.observeOn(SwingSchedulers.edt());
+    public Observable<Boolean> getDoNotCheckModsOnModrinth() {
+        return _doNotCheckModsOnModrinth.observeOn(SwingSchedulers.edt());
     }
 
-    @Override
     public void setDoNotCheckModsOnModrinth(Boolean b) {
         App.settings.dontCheckModsOnModrinth = b;
         SettingsManager.post();
     }
 
-    @Override
-    public Observable<Boolean> getDoNotCheckModsOnModrinth() {
-        return _doNotCheckModsOnModrinth.observeOn(SwingSchedulers.edt());
+    public Observable<Integer> getDefaultExportFormat() {
+        return _defaultExportFormat.observeOn(SwingSchedulers.edt());
     }
 
-    @Override
     public void setDefaultExportFormat(InstanceExportFormat exportFormat) {
         App.settings.defaultExportFormat = exportFormat;
         SettingsManager.post();
     }
 
-    @Override
-    public Observable<Integer> getDefaultExportFormat() {
-        return _defaultExportFormat.observeOn(SwingSchedulers.edt());
-    }
-
-    @Override
     public Observable<Boolean> getAllowCurseForgeAlphaBetaFiles() {
         return allowCurseForgeAlphaBetaFiles.observeOn(SwingSchedulers.edt());
     }
 
-    @Override
     public void setAllowCurseForgeAlphaBetaFiles(boolean b) {
         if (App.settings.allowCurseForgeAlphaBetaFiles != b) {
             modReloadRequiredRepository.setModReloadRequired(true);

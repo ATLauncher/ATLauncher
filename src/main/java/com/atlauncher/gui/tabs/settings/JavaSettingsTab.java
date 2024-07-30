@@ -54,17 +54,17 @@ import com.atlauncher.managers.DialogManager;
 import com.atlauncher.utils.ComboItem;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
-import com.atlauncher.viewmodel.base.settings.IJavaSettingsViewModel;
+import com.atlauncher.viewmodel.impl.settings.JavaSettingsViewModel;
 
 public class JavaSettingsTab extends AbstractSettingsTab {
-    private final IJavaSettingsViewModel viewModel;
+    private final JavaSettingsViewModel viewModel;
 
     private JTextField javaPath;
     private JLabelWithHover javaPathChecker;
     private JLabelWithHover javaParamChecker;
     private JTextArea javaParameters;
 
-    public JavaSettingsTab(IJavaSettingsViewModel viewModel) {
+    public JavaSettingsTab(JavaSettingsViewModel viewModel) {
         this.viewModel = viewModel;
     }
 

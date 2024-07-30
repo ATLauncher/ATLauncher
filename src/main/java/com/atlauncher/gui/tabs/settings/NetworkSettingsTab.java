@@ -38,16 +38,16 @@ import com.atlauncher.listener.StatefulTextKeyAdapter;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.utils.ComboItem;
 import com.atlauncher.utils.Utils;
-import com.atlauncher.viewmodel.base.settings.INetworkSettingsViewModel;
+import com.atlauncher.viewmodel.impl.settings.NetworkSettingsViewModel;
 
 public class NetworkSettingsTab extends AbstractSettingsTab {
-    private final INetworkSettingsViewModel viewModel;
+    private final NetworkSettingsViewModel viewModel;
     private JLabelWithHover proxyCheckIndicator;
     private JTextField proxyHost;
     private JSpinner proxyPort;
     private JComboBox<ComboItem<ProxyType>> proxyType;
 
-    public NetworkSettingsTab(INetworkSettingsViewModel viewModel) {
+    public NetworkSettingsTab(NetworkSettingsViewModel viewModel) {
         this.viewModel = viewModel;
     }
 

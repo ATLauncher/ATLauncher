@@ -18,8 +18,9 @@
 package com.atlauncher.viewmodel.impl.settings;
 
 import com.atlauncher.App;
+import com.atlauncher.evnt.listener.SettingsListener;
 import com.atlauncher.evnt.manager.SettingsManager;
-import com.atlauncher.viewmodel.base.settings.ILoggingSettingsViewModel;
+import com.atlauncher.gui.tabs.settings.LoggingSettingsTab;
 import com.gitlab.doomsdayrs.lib.rxswing.schedulers.SwingSchedulers;
 
 import io.reactivex.rxjava3.core.Observable;
@@ -27,8 +28,10 @@ import io.reactivex.rxjava3.subjects.BehaviorSubject;
 
 /**
  * @since 2022 / 06 / 17
+ * <p>
+ * View model for {@link LoggingSettingsTab}
  */
-public class LoggingSettingsViewModel implements ILoggingSettingsViewModel {
+public class LoggingSettingsViewModel implements SettingsListener {
     private final BehaviorSubject<String>
         _forgeLoggingLevel = BehaviorSubject.create();
 
@@ -48,36 +51,30 @@ public class LoggingSettingsViewModel implements ILoggingSettingsViewModel {
         _enableAnalytics.onNext(App.settings.enableAnalytics);
     }
 
-    @Override
     public void setLoggingLevel(String level) {
         App.settings.forgeLoggingLevel = level;
         SettingsManager.post();
     }
 
-    @Override
     public Observable<String> getForgeLoggingLevel() {
         return _forgeLoggingLevel.observeOn(SwingSchedulers.edt());
     }
 
-    @Override
+    public Observable<Boolean> getEnableLogging() {
+        return _enableLogging.observeOn(SwingSchedulers.edt());
+    }
+
     public void setEnableLogging(Boolean b) {
         App.settings.enableLogs = b;
         SettingsManager.post();
     }
 
-    @Override
-    public Observable<Boolean> getEnableLogging() {
-        return _enableLogging.observeOn(SwingSchedulers.edt());
+    public Observable<Boolean> getEnableAnalytics() {
+        return _enableAnalytics.observeOn(SwingSchedulers.edt());
     }
 
-    @Override
     public void setEnableAnalytics(Boolean b) {
         App.settings.enableAnalytics = b;
         SettingsManager.post();
-    }
-
-    @Override
-    public Observable<Boolean> getEnableAnalytics() {
-        return _enableAnalytics.observeOn(SwingSchedulers.edt());
     }
 }

@@ -29,12 +29,12 @@ import com.atlauncher.constants.UIConstants;
 import com.atlauncher.data.BackupMode;
 import com.atlauncher.gui.components.JLabelWithHover;
 import com.atlauncher.utils.ComboItem;
-import com.atlauncher.viewmodel.base.settings.IBackupSettingsViewModel;
+import com.atlauncher.viewmodel.impl.settings.BackupsSettingsViewModel;
 
 public class BackupsSettingsTab extends AbstractSettingsTab {
-    private final IBackupSettingsViewModel viewModel;
+    private final BackupsSettingsViewModel viewModel;
 
-    public BackupsSettingsTab(IBackupSettingsViewModel viewModel) {
+    public BackupsSettingsTab(BackupsSettingsViewModel viewModel) {
         this.viewModel = viewModel;
     }
 

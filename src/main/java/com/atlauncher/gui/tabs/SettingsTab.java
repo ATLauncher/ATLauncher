@@ -38,14 +38,6 @@ import com.atlauncher.gui.tabs.settings.LoggingSettingsTab;
 import com.atlauncher.gui.tabs.settings.ModsSettingsTab;
 import com.atlauncher.gui.tabs.settings.NetworkSettingsTab;
 import com.atlauncher.network.Analytics;
-import com.atlauncher.viewmodel.base.settings.IBackupSettingsViewModel;
-import com.atlauncher.viewmodel.base.settings.ICommandsSettingsViewModel;
-import com.atlauncher.viewmodel.base.settings.IGeneralSettingsViewModel;
-import com.atlauncher.viewmodel.base.settings.IJavaSettingsViewModel;
-import com.atlauncher.viewmodel.base.settings.ILoggingSettingsViewModel;
-import com.atlauncher.viewmodel.base.settings.IModsSettingsViewModel;
-import com.atlauncher.viewmodel.base.settings.INetworkSettingsViewModel;
-import com.atlauncher.viewmodel.base.settings.ISettingsViewModel;
 import com.atlauncher.viewmodel.impl.settings.BackupsSettingsViewModel;
 import com.atlauncher.viewmodel.impl.settings.CommandsSettingsViewModel;
 import com.atlauncher.viewmodel.impl.settings.GeneralSettingsViewModel;
@@ -61,17 +53,17 @@ public class SettingsTab extends HierarchyPanel implements Tab {
     @Nullable
     private JButton saveButton;
 
-    private ISettingsViewModel viewModel;
+    private SettingsViewModel viewModel;
 
     // We maintain the state at the top level for all tabs
 
-    private IBackupSettingsViewModel backupSettingsViewModel;
-    private ICommandsSettingsViewModel commandsSettingsViewModel;
-    private IGeneralSettingsViewModel generalSettingsViewModel;
-    private IJavaSettingsViewModel javaSettingsViewModel;
-    private ILoggingSettingsViewModel loggingSettingsViewModel;
-    private IModsSettingsViewModel modsSettingsViewModel;
-    private INetworkSettingsViewModel networkSettingsViewModel;
+    private BackupsSettingsViewModel backupSettingsViewModel;
+    private CommandsSettingsViewModel commandsSettingsViewModel;
+    private GeneralSettingsViewModel generalSettingsViewModel;
+    private JavaSettingsViewModel javaSettingsViewModel;
+    private LoggingSettingsViewModel loggingSettingsViewModel;
+    private ModsSettingsViewModel modsSettingsViewModel;
+    private NetworkSettingsViewModel networkSettingsViewModel;
 
     @Nullable
     private GeneralSettingsTab generalSettingsTab;

@@ -33,12 +33,12 @@ import com.atlauncher.data.InstanceExportFormat;
 import com.atlauncher.data.ModPlatform;
 import com.atlauncher.gui.components.JLabelWithHover;
 import com.atlauncher.utils.ComboItem;
-import com.atlauncher.viewmodel.base.settings.IModsSettingsViewModel;
+import com.atlauncher.viewmodel.impl.settings.ModsSettingsViewModel;
 
 public class ModsSettingsTab extends AbstractSettingsTab {
-    private final IModsSettingsViewModel viewModel;
+    private final ModsSettingsViewModel viewModel;
 
-    public ModsSettingsTab(IModsSettingsViewModel viewModel) {
+    public ModsSettingsTab(ModsSettingsViewModel viewModel) {
         this.viewModel = viewModel;
     }
 

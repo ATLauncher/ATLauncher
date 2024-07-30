@@ -44,12 +44,12 @@ import com.atlauncher.listener.DelayedSavingKeyListener;
 import com.atlauncher.utils.ComboItem;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.sort.InstanceSortingStrategies;
-import com.atlauncher.viewmodel.base.settings.IGeneralSettingsViewModel;
+import com.atlauncher.viewmodel.impl.settings.GeneralSettingsViewModel;
 
 public class GeneralSettingsTab extends AbstractSettingsTab {
-    private final IGeneralSettingsViewModel viewModel;
+    private final GeneralSettingsViewModel viewModel;
 
-    public GeneralSettingsTab(IGeneralSettingsViewModel generalSettingsViewModel) {
+    public GeneralSettingsTab(GeneralSettingsViewModel generalSettingsViewModel) {
         this.viewModel = generalSettingsViewModel;
     }
 

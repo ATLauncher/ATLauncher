@@ -20,9 +20,10 @@ package com.atlauncher.viewmodel.impl.settings;
 import java.util.Optional;
 
 import com.atlauncher.App;
+import com.atlauncher.evnt.listener.SettingsListener;
 import com.atlauncher.evnt.manager.SettingsManager;
+import com.atlauncher.gui.tabs.settings.CommandsSettingsTab;
 import com.atlauncher.managers.SettingsValidityManager;
-import com.atlauncher.viewmodel.base.settings.ICommandsSettingsViewModel;
 import com.gitlab.doomsdayrs.lib.rxswing.schedulers.SwingSchedulers;
 
 import io.reactivex.rxjava3.core.Observable;
@@ -30,10 +31,12 @@ import io.reactivex.rxjava3.subjects.BehaviorSubject;
 
 /**
  * @since 2022 / 06 / 15
+ * <p>
+ * View model for {@link CommandsSettingsTab}
  */
-public class CommandsSettingsViewModel implements ICommandsSettingsViewModel {
-    private final BehaviorSubject<Boolean> enableCommands =
-        BehaviorSubject.createDefault(App.settings.enableCommands);
+public class CommandsSettingsViewModel implements SettingsListener {
+    private final BehaviorSubject<Boolean>
+        enableCommands = BehaviorSubject.createDefault(App.settings.enableCommands);
 
     private final BehaviorSubject<String>
         preLaunchCommand = BehaviorSubject.create(),
@@ -60,62 +63,92 @@ public class CommandsSettingsViewModel implements ICommandsSettingsViewModel {
         wrapperCommand.onNext(Optional.ofNullable(App.settings.wrapperCommand).orElse(""));
     }
 
-    @Override
+    /**
+     * Listen to command enable state change
+     */
     public Observable<Boolean> getEnableCommands() {
         return enableCommands.observeOn(SwingSchedulers.edt());
     }
 
-    @Override
+    /**
+     * Set commands enabled or not
+     *
+     * @param b if commands are enabled
+     */
     public void setEnableCommands(boolean b) {
         App.settings.enableCommands = b;
         SettingsManager.post();
     }
 
-    @Override
+    /**
+     * Inform the settings that the pre-launch command has not been stored yet
+     */
     public void setPreLaunchCommandPending() {
         SettingsValidityManager.setValidity("preLaunchCommand", false);
     }
 
-    @Override
+    /**
+     * Listen to the pre-launch command being changed
+     */
     public Observable<String> getPreLaunchCommand() {
         return preLaunchCommand.observeOn(SwingSchedulers.edt());
     }
 
-    @Override
+    /**
+     * Set the pre-launch command
+     *
+     * @param text pre-launch command
+     */
     public void setPreLaunchCommand(String text) {
         App.settings.preLaunchCommand = nullIfEmpty(text);
         SettingsValidityManager.setValidity("preLaunchCommand", true);
         SettingsManager.post();
     }
 
-    @Override
+    /**
+     * Inform the settings that the post-exit command has not been stored yet
+     */
     public void setPostExitCommandPending() {
         SettingsValidityManager.setValidity("setPostExitCommand", false);
     }
 
-    @Override
+    /**
+     * Listen to the post-exit command being changed
+     */
     public Observable<String> getPostExitCommand() {
         return postExitCommand.observeOn(SwingSchedulers.edt());
     }
 
-    @Override
+    /**
+     * Set the post-exit command
+     *
+     * @param text post-exit command
+     */
     public void setPostExitCommand(String text) {
         App.settings.postExitCommand = nullIfEmpty(text);
         SettingsValidityManager.setValidity("setPostExitCommand", true);
         SettingsManager.post();
     }
 
-    @Override
+    /**
+     * Inform the settings that the wrapper command has not been stored yet
+     */
     public void setWrapperCommandPending() {
         SettingsValidityManager.setValidity("wrapperCommand", false);
     }
 
-    @Override
+    /**
+     * Listen to the wrapper command being changed
+     */
     public Observable<String> getWrapperCommand() {
         return wrapperCommand.observeOn(SwingSchedulers.edt());
     }
 
-    @Override
+    /**
+     * Set the wrapper command
+     *
+     * @param text wrapper command
+     */
     public void setWrapperCommand(String text) {
         App.settings.wrapperCommand = nullIfEmpty(text);
         SettingsValidityManager.setValidity("wrapperCommand", true);

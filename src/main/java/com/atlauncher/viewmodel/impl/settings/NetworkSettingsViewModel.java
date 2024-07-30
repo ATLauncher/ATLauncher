@@ -25,10 +25,11 @@ import com.atlauncher.App;
 import com.atlauncher.Network;
 import com.atlauncher.data.CheckState;
 import com.atlauncher.data.ProxyType;
+import com.atlauncher.evnt.listener.SettingsListener;
 import com.atlauncher.evnt.manager.SettingsManager;
+import com.atlauncher.gui.tabs.settings.NetworkSettingsTab;
 import com.atlauncher.managers.SettingsValidityManager;
 import com.atlauncher.utils.Utils;
-import com.atlauncher.viewmodel.base.settings.INetworkSettingsViewModel;
 import com.gitlab.doomsdayrs.lib.rxswing.schedulers.SwingSchedulers;
 
 import io.reactivex.rxjava3.core.Observable;
@@ -36,8 +37,10 @@ import io.reactivex.rxjava3.subjects.BehaviorSubject;
 
 /**
  * @since 2022 / 06 / 18
+ * <p>
+ * View model for {@link NetworkSettingsTab}
  */
-public class NetworkSettingsViewModel implements INetworkSettingsViewModel {
+public class NetworkSettingsViewModel implements SettingsListener {
 
     private final BehaviorSubject<Integer>
         _concurrentConnections = BehaviorSubject.create(),
@@ -74,18 +77,15 @@ public class NetworkSettingsViewModel implements INetworkSettingsViewModel {
         pushProxyType();
     }
 
-    @Override
     public void setConcurrentConnections(int connections) {
         App.settings.concurrentConnections = connections;
         SettingsManager.post();
     }
 
-    @Override
     public Observable<Integer> getConcurrentConnections() {
         return _concurrentConnections.observeOn(SwingSchedulers.edt());
     }
 
-    @Override
     public void setConnectionTimeout(int timeout) {
         boolean timeoutChanged = App.settings.connectionTimeout != timeout;
 
@@ -97,12 +97,10 @@ public class NetworkSettingsViewModel implements INetworkSettingsViewModel {
         }
     }
 
-    @Override
     public Observable<Integer> getConnectionTimeout() {
         return _connectionTimeout.observeOn(SwingSchedulers.edt());
     }
 
-    @Override
     public void setEnableProxy(Boolean b) {
         App.settings.enableProxy = b;
         SettingsManager.post();
@@ -119,12 +117,10 @@ public class NetworkSettingsViewModel implements INetworkSettingsViewModel {
         }
     }
 
-    @Override
     public Observable<Boolean> getEnableProxy() {
         return _enableProxy.observeOn(SwingSchedulers.edt());
     }
 
-    @Override
     public void setProxyHost(String host) {
         App.settings.proxyHost = host;
         setProxyHostPending();
@@ -165,31 +161,26 @@ public class NetworkSettingsViewModel implements INetworkSettingsViewModel {
         }
     }
 
-    @Override
     public Observable<String> getProxyHost() {
         return _proxyHost.observeOn(SwingSchedulers.edt());
     }
 
-    @Override
     public void setProxyPort(int port) {
         App.settings.proxyPort = port;
         setProxyHostPending();
         SettingsManager.post();
     }
 
-    @Override
     public Observable<Integer> getProxyPort() {
         return _proxyPort.observeOn(SwingSchedulers.edt());
     }
 
-    @Override
     public void setProxyType(ProxyType type) {
         App.settings.proxyType = type.name();
         setProxyHostPending();
         SettingsManager.post();
     }
 
-    @Override
     public Observable<Integer> getProxyType() {
         return _proxyType.observeOn(SwingSchedulers.edt());
     }
@@ -208,19 +199,16 @@ public class NetworkSettingsViewModel implements INetworkSettingsViewModel {
         }
     }
 
-    @Override
     public Observable<String> getModrinthAPIKey() {
         return modrinthAPIKey.observeOn(SwingSchedulers.edt());
     }
 
-    @Override
     public void setModrinthAPIKey(String apiKey) {
         if (!apiKey.isEmpty())
             App.settings.modrinthApiKey = apiKey;
         else App.settings.modrinthApiKey = null;
     }
 
-    @Override
     public Observable<CheckState> getProxyCheckState() {
         return proxyCheckState.observeOn(SwingSchedulers.edt());
     }

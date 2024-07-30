@@ -19,31 +19,40 @@ package com.atlauncher.viewmodel.impl.settings;
 
 import com.atlauncher.App;
 import com.atlauncher.evnt.manager.SettingsManager;
+import com.atlauncher.gui.tabs.SettingsTab;
 import com.atlauncher.managers.SettingsValidityManager;
 import com.atlauncher.repository.base.IModReloadRequiredRepository;
 import com.atlauncher.repository.impl.ModReloadRequiredRepository;
-import com.atlauncher.viewmodel.base.settings.ISettingsViewModel;
 import com.gitlab.doomsdayrs.lib.rxswing.schedulers.SwingSchedulers;
 
 import io.reactivex.rxjava3.core.Observable;
 
 /**
  * @since 2022 / 06 / 19
+ * <p>
+ * View model for {@link SettingsTab}
  */
-public class SettingsViewModel implements ISettingsViewModel {
+public class SettingsViewModel {
     private final IModReloadRequiredRepository modReloadRequiredRepository = ModReloadRequiredRepository.get();
 
-    @Override
+    /**
+     * Save settings
+     */
     public void save() {
         App.settings.save();
         SettingsManager.post();
         App.TOASTER.pop("Settings Saved");
-        if (modReloadRequiredRepository.getModReloadRequired()){
+        if (modReloadRequiredRepository.getModReloadRequired()) {
             App.launcher.checkForExternalPackUpdates();
         }
     }
 
-    @Override
+    /**
+     * Listen to the save button being enabled or not.
+     * <p>
+     * This is because certain setting events require the save button to be
+     * disabled during various operation.
+     */
     public Observable<Boolean> getSaveEnabled() {
         return SettingsValidityManager.isValid.observeOn(SwingSchedulers.edt());
     }

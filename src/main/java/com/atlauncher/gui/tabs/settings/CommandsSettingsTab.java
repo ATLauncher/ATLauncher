@@ -32,16 +32,16 @@ import com.atlauncher.App;
 import com.atlauncher.constants.UIConstants;
 import com.atlauncher.gui.components.JLabelWithHover;
 import com.atlauncher.listener.DelayedSavingKeyListener;
-import com.atlauncher.viewmodel.base.settings.ICommandsSettingsViewModel;
+import com.atlauncher.viewmodel.impl.settings.CommandsSettingsViewModel;
 
 public class CommandsSettingsTab extends AbstractSettingsTab {
-    private final ICommandsSettingsViewModel viewModel;
+    private final CommandsSettingsViewModel viewModel;
     private JTextField preLaunchCommand;
     private JTextField postExitCommand;
     private JTextField wrapperCommand;
     private JCheckBox enableCommands;
 
-    public CommandsSettingsTab(ICommandsSettingsViewModel viewModel) {
+    public CommandsSettingsTab(CommandsSettingsViewModel viewModel) {
         this.viewModel = viewModel;
     }
 

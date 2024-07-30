@@ -19,8 +19,9 @@ package com.atlauncher.viewmodel.impl.settings;
 
 import com.atlauncher.App;
 import com.atlauncher.data.BackupMode;
+import com.atlauncher.evnt.listener.SettingsListener;
 import com.atlauncher.evnt.manager.SettingsManager;
-import com.atlauncher.viewmodel.base.settings.IBackupSettingsViewModel;
+import com.atlauncher.gui.tabs.settings.BackupsSettingsTab;
 import com.gitlab.doomsdayrs.lib.rxswing.schedulers.SwingSchedulers;
 
 import io.reactivex.rxjava3.core.Observable;
@@ -28,13 +29,15 @@ import io.reactivex.rxjava3.subjects.BehaviorSubject;
 
 /**
  * @since 2022 / 06 / 15
+ * <p>
+ * View model for {@link BackupsSettingsTab}
  */
-public class BackupsSettingsViewModel implements IBackupSettingsViewModel {
-    private final BehaviorSubject<Integer> backupMode =
-        BehaviorSubject.create();
+public class BackupsSettingsViewModel implements SettingsListener {
+    private final BehaviorSubject<Integer>
+        backupMode = BehaviorSubject.create();
 
-    private final BehaviorSubject<Boolean> enableAutomaticBackupAfterLaunch =
-        BehaviorSubject.create();
+    private final BehaviorSubject<Boolean>
+        enableAutomaticBackupAfterLaunch = BehaviorSubject.create();
 
     public BackupsSettingsViewModel() {
         onSettingsSaved();
@@ -47,23 +50,33 @@ public class BackupsSettingsViewModel implements IBackupSettingsViewModel {
         enableAutomaticBackupAfterLaunch.onNext(App.settings.enableAutomaticBackupAfterLaunch);
     }
 
-    @Override
+    /**
+     * Listen to back up mode changes
+     */
     public Observable<Integer> getBackupMode() {
         return backupMode.observeOn(SwingSchedulers.edt());
     }
 
-    @Override
+    /**
+     * Set the backup mode
+     *
+     * @param item backup mode
+     */
     public void setBackupMode(BackupMode item) {
         App.settings.backupMode = item;
         SettingsManager.post();
     }
 
-    @Override
+    /**
+     * Listen to auto backup changes
+     */
     public Observable<Boolean> getEnableAutoBackup() {
         return enableAutomaticBackupAfterLaunch.observeOn(SwingSchedulers.edt());
     }
 
-    @Override
+    /**
+     * Set if auto backup is available
+     */
     public void setEnableAutoBackup(boolean enabled) {
         App.settings.enableAutomaticBackupAfterLaunch = enabled;
         SettingsManager.post();
