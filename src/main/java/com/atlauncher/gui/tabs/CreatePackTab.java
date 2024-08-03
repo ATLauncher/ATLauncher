@@ -55,7 +55,7 @@ import com.atlauncher.data.minecraft.loaders.LoaderType;
 import com.atlauncher.data.minecraft.loaders.LoaderVersion;
 import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.RelocalizationManager;
-import com.atlauncher.gui.components.PreservingCaretTextSetter;
+import com.atlauncher.gui.components.LockingPreservingCaretTextSetter;
 import com.atlauncher.listener.StatefulTextKeyAdapter;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.utils.ComboItem;
@@ -146,9 +146,13 @@ public class CreatePackTab extends JPanel implements Tab, RelocalizationListener
         gbc.gridx++;
         gbc.insets = UIConstants.FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-        PreservingCaretTextSetter nameFieldSetter = new PreservingCaretTextSetter(nameField);
+        LockingPreservingCaretTextSetter nameFieldSetter = new LockingPreservingCaretTextSetter(nameField);
         viewModel.name().subscribe((it) -> nameFieldSetter.setText(it.orElse(null)));
-        nameField.addKeyListener(new StatefulTextKeyAdapter((e) -> viewModel.setName(nameField.getText())));
+        nameField.addKeyListener(new StatefulTextKeyAdapter(
+            (e) -> viewModel.setName(nameField.getText()),
+            (e) -> nameFieldSetter.setLocked(true),
+            (e) -> nameFieldSetter.setLocked(false)
+        ));
         mainPanel.add(nameField, gbc);
 
         // Description
@@ -166,10 +170,13 @@ public class CreatePackTab extends JPanel implements Tab, RelocalizationListener
         descriptionScrollPane.setPreferredSize(new Dimension(450, 80));
         descriptionScrollPane.setViewportView(descriptionField);
 
-        PreservingCaretTextSetter descriptionFieldSetter = new PreservingCaretTextSetter(descriptionField);
+        LockingPreservingCaretTextSetter descriptionFieldSetter = new LockingPreservingCaretTextSetter(descriptionField);
         viewModel.description().subscribe((it) -> descriptionFieldSetter.setText(it.orElse(null)));
-        descriptionField.addKeyListener(
-                new StatefulTextKeyAdapter((e) -> viewModel.setDescription(descriptionField.getText())));
+        descriptionField.addKeyListener(new StatefulTextKeyAdapter(
+            (e) -> viewModel.setDescription(descriptionField.getText()),
+            (e) -> descriptionFieldSetter.setLocked(true),
+            (e) -> descriptionFieldSetter.setLocked(false)
+        ));
         mainPanel.add(descriptionScrollPane, gbc);
 
         // Minecraft Version
