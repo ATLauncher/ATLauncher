@@ -55,6 +55,7 @@ public class Settings {
     public boolean ignoreJavaOptionsWarning = false;
     public boolean seenCurseForgeProjectDistributionDialog = false;
     public int seenBundledJrePromptVersion = 0;
+    public int seenOutdatedJavaPromptVersion = 0;
 
     // Window settings
     public boolean rememberWindowSizePosition = false;
