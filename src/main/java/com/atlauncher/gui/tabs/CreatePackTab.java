@@ -170,6 +170,7 @@ public class CreatePackTab extends JPanel implements Tab, RelocalizationListener
         descriptionScrollPane.setPreferredSize(new Dimension(450, 80));
         descriptionScrollPane.setViewportView(descriptionField);
 
+        descriptionField.setLineWrap(true);
         LockingPreservingCaretTextSetter descriptionFieldSetter = new LockingPreservingCaretTextSetter(descriptionField);
         viewModel.description().subscribe((it) -> descriptionFieldSetter.setText(it.orElse(null)));
         descriptionField.addKeyListener(new StatefulTextKeyAdapter(
