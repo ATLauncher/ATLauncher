@@ -42,6 +42,7 @@ import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
+import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
 
@@ -151,7 +152,7 @@ public class CreatePackTab extends JPanel implements Tab, RelocalizationListener
         nameField.addKeyListener(new StatefulTextKeyAdapter(
             (e) -> viewModel.setName(nameField.getText()),
             (e) -> nameFieldSetter.setLocked(true),
-            (e) -> nameFieldSetter.setLocked(false)
+            (e) -> SwingUtilities.invokeLater(() -> nameFieldSetter.setLocked(false))
         ));
         mainPanel.add(nameField, gbc);
 
@@ -176,7 +177,7 @@ public class CreatePackTab extends JPanel implements Tab, RelocalizationListener
         descriptionField.addKeyListener(new StatefulTextKeyAdapter(
             (e) -> viewModel.setDescription(descriptionField.getText()),
             (e) -> descriptionFieldSetter.setLocked(true),
-            (e) -> descriptionFieldSetter.setLocked(false)
+            (e) -> SwingUtilities.invokeLater(() -> descriptionFieldSetter.setLocked(false))
         ));
         mainPanel.add(descriptionScrollPane, gbc);
 
