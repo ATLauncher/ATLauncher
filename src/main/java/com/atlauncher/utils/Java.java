@@ -327,6 +327,10 @@ public class Java {
             return false;
         }
 
+        if (ConfigManager.getConfigItem("outdatedJavaPrompt.everyLaunch", false) == true) {
+            return true;
+        }
+
         if (App.settings.seenBundledJrePromptVersion == ConfigManager.getConfigItem("bundledJre.promptVersion", 1.0)
                 .intValue()) {
             return false;
@@ -343,5 +347,24 @@ public class Java {
     public static boolean bundledJreOutOfDate() {
         return !Java.getVersionForJavaPath(FileSystem.JRE.toFile())
                 .equals(ConfigManager.getConfigItem("bundledJre.version", ""));
+    }
+
+    public static boolean shouldPromptToUpdateOutdatedJava() {
+        if (Java.getLauncherJavaVersionNumber() >= ConfigManager
+                .getConfigItem("outdatedJavaPrompt.majorVersion", 17.0)
+                .intValue()) {
+            return false;
+        }
+
+        if (ConfigManager.getConfigItem("outdatedJavaPrompt.everyLaunch", false) == true) {
+            return true;
+        }
+
+        if (App.settings.seenOutdatedJavaPromptVersion != ConfigManager.getConfigItem("outdatedJavaPrompt.version", 1.0)
+                .intValue()) {
+            return true;
+        }
+
+        return false;
     }
 }

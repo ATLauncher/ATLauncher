@@ -374,6 +374,7 @@ public class App {
         }
 
         checkIfNeedToUpdateBundledJre();
+        checkIfUsingOutdatedJava();
 
         boolean open = true;
 
@@ -498,6 +499,47 @@ public class App {
         }
     }
 
+    private static void checkIfUsingOutdatedJava() {
+        if (ConfigManager.getConfigItem("outdatedJavaPrompt.enabled", false) == true
+                && Java.shouldPromptToUpdateOutdatedJava()) {
+            boolean isForced = ConfigManager.getConfigItem("outdatedJavaPrompt.forced", false) == true;
+            String dialogText;
+            DialogManager dialogManager;
+
+            if (isForced) {
+                dialogManager = DialogManager.okDialog().setType(DialogManager.ERROR);
+                dialogText = GetText.tr(
+                        "You're running an out of date version of Java and the launcher will no longer open.<br/><br/>If you see this message after updating Java, please make sure you updated to<br/>at least Java {0} and uninstalled any older versions of Java from your system.<br/><br/>The launcher will now exit.",
+                        ConfigManager.getConfigItem("bundledJre.majorVersion",
+                                17.0).intValue());
+            } else {
+                dialogManager = DialogManager.yesNoDialog().setType(DialogManager.WARNING);
+                dialogText = GetText.tr(
+                        "You're running an out of date version of Java.<br/><br/><font color=\"red\"><b>Soon the launcher will no longer open without updating Java.</b></font><br/><br/>If you see this message after updating Java, please make sure you updated to<br/>at least Java {0} and uninstalled any older versions of Java from your system.<br/><br/>Do you want to update Java now?",
+                        ConfigManager.getConfigItem("bundledJre.majorVersion",
+                                17.0).intValue());
+            }
+
+            int ret = dialogManager.setTitle(GetText.tr("Using Out Of Date Java")).setContent(new HTMLBuilder()
+                    .center().text(dialogText)
+                    .build()).show();
+
+            if (isForced || ret == 0) {
+                OS.openWebBrowser(ConfigManager.getConfigItem("outdatedJavaPrompt.downloadLink",
+                        "https://adoptium.net/temurin/releases/?package=jre&version=17"));
+            }
+
+            if (isForced) {
+                System.exit(0);
+            }
+
+            // mark as seeing this version of the prompt to avoid repetition
+            App.settings.seenOutdatedJavaPromptVersion = ConfigManager.getConfigItem("outdatedJavaPrompt.version", 1.0)
+                    .intValue();
+            App.settings.save();
+        }
+    }
+
     public static void ensureDiscordIsInitialized() {
         if (!OS.isArm() && !discordInitialized) {
             try {
@@ -527,7 +569,8 @@ public class App {
                 () -> Java.getInstalledJavas().forEach(version -> LogManager.debug(Gsons.DEFAULT.toJson(version))));
 
         LogManager.info("Java Version: "
-                + String.format(Locale.ENGLISH, "Java %d (%s)", Java.getLauncherJavaVersionNumber(), Java.getLauncherJavaVersion()));
+                + String.format(Locale.ENGLISH, "Java %d (%s)", Java.getLauncherJavaVersionNumber(),
+                        Java.getLauncherJavaVersion()));
 
         LogManager.info("Java Path: " + settings.javaPath);
 
@@ -563,7 +606,8 @@ public class App {
             }
 
             CentralProcessor cpu = hal.getProcessor();
-            LogManager.info(String.format(Locale.ENGLISH, "CPU: %s %d cores/%d threads", cpu.getProcessorIdentifier().getName().trim(),
+            LogManager.info(String.format(Locale.ENGLISH, "CPU: %s %d cores/%d threads",
+                    cpu.getProcessorIdentifier().getName().trim(),
                     cpu.getPhysicalProcessorCount(), cpu.getLogicalProcessorCount()));
 
             OperatingSystem os = systemInfo.getOperatingSystem();
