@@ -23,6 +23,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.Locale;
 
+import javax.annotation.Nullable;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -149,6 +150,7 @@ public class ProgressDialog<T> extends JDialog implements NetworkProgressable {
         this.returnValue = returnValue;
     }
 
+    @Nullable
     public T getReturnValue() {
         return this.returnValue;
     }

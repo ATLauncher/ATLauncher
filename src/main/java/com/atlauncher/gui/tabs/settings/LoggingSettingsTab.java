@@ -18,39 +18,42 @@
 package com.atlauncher.gui.tabs.settings;
 
 import java.awt.GridBagConstraints;
+import java.awt.event.ItemEvent;
 
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 
 import org.mini2Dx.gettext.GetText;
 
-import com.atlauncher.App;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.constants.UIConstants;
 import com.atlauncher.gui.components.JLabelWithHover;
+import com.atlauncher.viewmodel.impl.settings.LoggingSettingsViewModel;
 
 public class LoggingSettingsTab extends AbstractSettingsTab {
-    private final JComboBox<String> forgeLoggingLevel;
 
-    private final JCheckBox enableLogs;
+    private final LoggingSettingsViewModel viewModel;
 
-    private final JCheckBox enableAnalytics;
+    public LoggingSettingsTab(LoggingSettingsViewModel viewModel) {
+        this.viewModel = viewModel;
+    }
 
-    public LoggingSettingsTab() {
+    @Override
+    protected void onShow() {
         // Forge Logging Level
         gbc.gridx = 0;
         gbc.gridy++;
         gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         JLabelWithHover forgeLoggingLevelLabel = new JLabelWithHover(GetText.tr("Forge Logging Level") + ":", HELP_ICON,
-                "<html>" + GetText.tr("This determines the type of logging that Forge should report back to you.")
-                        + "</html>");
+            "<html>" + GetText.tr("This determines the type of logging that Forge should report back to you.")
+                + "</html>");
         add(forgeLoggingLevelLabel, gbc);
 
         gbc.gridx++;
         gbc.insets = UIConstants.FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-        forgeLoggingLevel = new JComboBox<>();
+        JComboBox<String> forgeLoggingLevel = new JComboBox<>();
         forgeLoggingLevel.addItem("SEVERE");
         forgeLoggingLevel.addItem("WARNING");
         forgeLoggingLevel.addItem("INFO");
@@ -58,7 +61,11 @@ public class LoggingSettingsTab extends AbstractSettingsTab {
         forgeLoggingLevel.addItem("FINE");
         forgeLoggingLevel.addItem("FINER");
         forgeLoggingLevel.addItem("FINEST");
-        forgeLoggingLevel.setSelectedItem(App.settings.forgeLoggingLevel);
+        forgeLoggingLevel.addItemListener(itemEvent -> {
+            if (itemEvent.getStateChange() == ItemEvent.SELECTED)
+                viewModel.setLoggingLevel((String) itemEvent.getItem());
+        });
+        addDisposable(viewModel.getForgeLoggingLevel().subscribe(forgeLoggingLevel::setSelectedItem));
         add(forgeLoggingLevel, gbc);
 
         // Enable Logging
@@ -68,18 +75,19 @@ public class LoggingSettingsTab extends AbstractSettingsTab {
         gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         JLabelWithHover enableLoggingLabel = new JLabelWithHover(GetText.tr("Enable Logging") + "?", HELP_ICON,
-                new HTMLBuilder().center().split(100).text(GetText.tr(
-                        "The Launcher sends back anonymous usage and error logs to our servers in order to make the Launcher and Packs better. If you don't want this to happen then simply disable this option."))
-                        .build());
+            new HTMLBuilder().center().split(100).text(GetText.tr(
+                    "The Launcher sends back anonymous usage and error logs to our servers in order to make the Launcher and Packs better. If you don't want this to happen then simply disable this option."))
+                .build());
         add(enableLoggingLabel, gbc);
 
         gbc.gridx++;
         gbc.insets = UIConstants.CHECKBOX_FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-        enableLogs = new JCheckBox();
-        if (App.settings.enableLogs) {
-            enableLogs.setSelected(true);
-        }
+        JCheckBox enableLogs = new JCheckBox();
+        enableLogs.addActionListener(e ->
+            viewModel.setEnableLogging(enableLogs.isSelected())
+        );
+        addDisposable(viewModel.getEnableLogging().subscribe(enableLogs::setSelected));
         add(enableLogs, gbc);
 
         // Enable Analytics
@@ -89,26 +97,21 @@ public class LoggingSettingsTab extends AbstractSettingsTab {
         gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         JLabelWithHover enableAnalyticsLabel = new JLabelWithHover(GetText.tr("Enable Anonymous Analytics") + "?",
-                HELP_ICON,
-                new HTMLBuilder().center().split(100).text(GetText.tr(
-                        "The Launcher sends back anonymous analytics to our own servers in a non identifying way in order to track what people do and don't use in the launcher. This helps determine what new features we implement in the future. All analytics are anonymous and contain no user/instance information in it at all. If you don't want to send anonymous analytics, you can disable this option."))
-                        .build());
+            HELP_ICON,
+            new HTMLBuilder().center().split(100).text(GetText.tr(
+                    "The Launcher sends back anonymous analytics to our own servers in a non identifying way in order to track what people do and don't use in the launcher. This helps determine what new features we implement in the future. All analytics are anonymous and contain no user/instance information in it at all. If you don't want to send anonymous analytics, you can disable this option."))
+                .build());
         add(enableAnalyticsLabel, gbc);
 
         gbc.gridx++;
         gbc.insets = UIConstants.CHECKBOX_FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-        enableAnalytics = new JCheckBox();
-        if (App.settings.enableAnalytics) {
-            enableAnalytics.setSelected(true);
-        }
+        JCheckBox enableAnalytics = new JCheckBox();
+        enableAnalytics.addActionListener(e ->
+            viewModel.setEnableAnalytics(enableAnalytics.isSelected())
+        );
+        addDisposable(viewModel.getEnableAnalytics().subscribe(enableAnalytics::setSelected));
         add(enableAnalytics, gbc);
-    }
-
-    public void save() {
-        App.settings.forgeLoggingLevel = (String) forgeLoggingLevel.getSelectedItem();
-        App.settings.enableLogs = enableLogs.isSelected();
-        App.settings.enableAnalytics = enableAnalytics.isSelected();
     }
 
     @Override
@@ -119,5 +122,14 @@ public class LoggingSettingsTab extends AbstractSettingsTab {
     @Override
     public String getAnalyticsScreenViewName() {
         return "Logging";
+    }
+
+    @Override
+    protected void createViewModel() {
+    }
+
+    @Override
+    protected void onDestroy() {
+        removeAll();
     }
 }
