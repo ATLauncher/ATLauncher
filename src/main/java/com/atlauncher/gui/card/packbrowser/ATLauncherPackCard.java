@@ -50,7 +50,7 @@ import com.atlauncher.utils.OS;
 
 @SuppressWarnings("serial")
 public class ATLauncherPackCard extends JPanel implements RelocalizationListener {
-    private final JButton newInstanceButton = new JButton(GetText.tr("New Instance"));
+    private final JButton newInstanceButton = new JButton(GetText.tr("Install"));
     private final JButton createServerButton = new JButton(GetText.tr("Create Server"));
     private final JButton discordInviteButton = new JButton("Discord");
     private final JButton supportButton = new JButton(GetText.tr("Support"));
