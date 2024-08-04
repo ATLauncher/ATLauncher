@@ -60,7 +60,10 @@ public class PackManager {
                 StandardCharsets.UTF_8)) {
             java.lang.reflect.Type type = new TypeToken<List<Pack>>() {
             }.getType();
-            Data.PACKS.addAll(Gsons.DEFAULT.fromJson(fileReader, type));
+            List<Pack> packs = Gsons.DEFAULT.fromJson(fileReader, type);
+            if (packs!=null) {
+                Data.PACKS.addAll(packs);
+            }
         } catch (JsonSyntaxException | IOException | JsonIOException e) {
             LogManager.logStackTrace(e);
         }
@@ -275,7 +278,10 @@ public class PackManager {
                 StandardCharsets.UTF_8)) {
             java.lang.reflect.Type type = new TypeToken<List<PackUsers>>() {
             }.getType();
-            packUsers.addAll(Gsons.DEFAULT.fromJson(fileReader, type));
+            List<PackUsers> users = Gsons.DEFAULT.fromJson(fileReader, type);
+            if (users!=null) {
+                packUsers.addAll(users);
+            }
         } catch (JsonSyntaxException | IOException | JsonIOException e) {
             LogManager.logStackTrace(e);
         }

@@ -87,8 +87,10 @@ public class NewsManager {
             List<News> fileNews = Gsons.DEFAULT.fromJson(in, type);
             in.close();
 
-            // Map the [News] to [AbstractNews]
-            NEWS.onNext(fileNews.stream().map(AbstractNews::new).collect(Collectors.toList()));
+            if (fileNews!=null) {
+                // Map the [News] to [AbstractNews]
+                NEWS.onNext(fileNews.stream().map(AbstractNews::new).collect(Collectors.toList()));
+            }
         } catch (JsonIOException | JsonSyntaxException | IOException e) {
             LogManager.logStackTrace(e);
         }
