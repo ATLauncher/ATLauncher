@@ -22,6 +22,7 @@ import java.awt.event.KeyEvent;
 import java.util.function.Consumer;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * 29 / 04 / 2023
@@ -37,10 +38,36 @@ public class StatefulTextKeyAdapter extends KeyAdapter {
     private final Consumer<KeyEvent> consumer;
 
     /**
+     * Consumer to feed garbage events too
+     */
+    @Nullable
+    private final Consumer<KeyEvent> ignoredReceiver;
+
+    /**
+     * Consumer to feed garbage events too after super takes them.
+     */
+    @Nullable
+    private final Consumer<KeyEvent> postIgnoredReceiver;
+
+    /**
      * @param consumer Consumer to receive events with
      */
     public StatefulTextKeyAdapter(@Nonnull Consumer<KeyEvent> consumer) {
         this.consumer = consumer;
+        ignoredReceiver = null;
+        postIgnoredReceiver = null;
+    }
+
+    /**
+     * @param consumer        Consumer to receive events with
+     * @param ignoredReceiver Receiver to get events not sent to consumer, but not consume them. (They are passed to super).
+     */
+    public StatefulTextKeyAdapter(@Nonnull Consumer<KeyEvent> consumer,
+                                  @Nonnull Consumer<KeyEvent> ignoredReceiver,
+                                  @Nonnull Consumer<KeyEvent> postIgnoredReceiver) {
+        this.consumer = consumer;
+        this.ignoredReceiver = ignoredReceiver;
+        this.postIgnoredReceiver = postIgnoredReceiver;
     }
 
     @Override
@@ -60,6 +87,10 @@ public class StatefulTextKeyAdapter extends KeyAdapter {
             e.getModifiersEx() != KeyEvent.CTRL_DOWN_MASK
         ) {
             consumer.accept(e);
-        } else super.keyReleased(e);
+        } else {
+            if (ignoredReceiver != null) ignoredReceiver.accept(e);
+            super.keyReleased(e);
+            if (postIgnoredReceiver != null) postIgnoredReceiver.accept(e);
+        }
     }
 }
