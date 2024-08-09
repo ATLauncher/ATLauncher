@@ -28,3 +28,4 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Update dependencies
 - Recreate UI on re-localization [#912]
 - Squash a ton of warnings [#918]
+- Rename "New Instance" to "Install" [#936]
