@@ -244,7 +244,7 @@ public class NeoForgeLoader implements Loader {
 
     @Override
     public String getServerJar() {
-        return null;
+        return "server.jar";
     }
 
     @Override

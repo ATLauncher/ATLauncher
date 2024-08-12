@@ -3575,6 +3575,32 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
 
         batFile.setExecutable(true);
         shFile.setExecutable(true);
+
+        Utils.writeResourceToFile(
+                App.class.getResourceAsStream("/server-scripts/readme.txt"),
+                new File(this.root.toFile(), "_readme.txt"));
+
+        if (this.loaderVersion != null && this.loaderVersion.isForgeLikeAndUsesServerStarterJar()) {
+            String url = ConfigManager.getConfigItem("neoForgeServerStarterJar.url", "");
+            String[] parts = url.split("/");
+            String downloadsFileName = String.format("ServerStarterJar-%s.jar", parts[parts.length - 2]);
+            com.atlauncher.network.Download download = new com.atlauncher.network.Download()
+                    .setUrl(url)
+                    .hash(ConfigManager.getConfigItem("neoForgeServerStarterJar.hash", ""))
+                    .size(ConfigManager.getConfigItem("neoForgeServerStarterJar.size", 0.0).longValue())
+                    .downloadTo(FileSystem.DOWNLOADS.resolve(downloadsFileName))
+                    .copyTo(root.resolve("server.jar"));
+
+            if (download.needToDownload()) {
+                try {
+                    download.downloadFile();
+                } catch (IOException e) {
+                    LogManager.logStackTrace("Failed to download NeoForge ServerStarterJar", e);
+                }
+            } else {
+                download.copy();
+            }
+        }
     }
 
     private void writeLog4ShellExploitArgumentsForForgeScripts() throws Exception {

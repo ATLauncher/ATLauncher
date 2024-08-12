@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.atlauncher.data.Instance;
+import com.atlauncher.managers.ConfigManager;
 import com.atlauncher.utils.Pair;
 
 public class LoaderVersion {
@@ -110,13 +111,21 @@ public class LoaderVersion {
     }
 
     public boolean shouldInstallServerScripts() {
+        if (ConfigManager.getConfigItem("neoForgeServerStarterJar.enabled", false) == true) {
+            return true;
+        }
+
+        return !this.isForgeLikeAndUsesServerStarterJar();
+    }
+
+    public boolean isForgeLikeAndUsesServerStarterJar() {
         // Forge 37 and newer (assumed) provide their own scripts for launching
         if (this.isForge() && Integer.parseInt(this.version.substring(0, this.version.indexOf(".")), 10) >= 37) {
-            return false;
+            return true;
         }
 
         // NeoForge also use their own run scripts
-        return !this.isNeoForge();
+        return this.isNeoForge();
     }
 
     public String getTypeForModrinthExport() {
