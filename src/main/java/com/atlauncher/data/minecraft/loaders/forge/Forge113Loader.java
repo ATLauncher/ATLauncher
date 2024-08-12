@@ -147,11 +147,16 @@ public class Forge113Loader extends ForgeLoader {
         }
 
         Library forgeLibrary = this.getVersion().libraries.stream()
-                .filter(library -> library.name.startsWith("net.minecraftforge:forge")).findFirst().orElse(null);
+                .filter(library -> library.name.startsWith("net.minecraftforge:forge:")).findFirst().orElse(null);
 
         if (forgeLibrary != null) {
             return forgeLibrary.downloads.artifact.path
                     .substring(forgeLibrary.downloads.artifact.path.lastIndexOf("/") + 1);
+        }
+
+        int forgeMajorVersion = Integer.parseInt(this.version.substring(0, this.version.indexOf(".")));
+        if (forgeMajorVersion >= 37) {
+            return "server.jar";
         }
 
         return null;
@@ -164,7 +169,7 @@ public class Forge113Loader extends ForgeLoader {
         }
 
         Library forgeLibrary = this.getVersion().libraries.stream()
-                .filter(library -> library.name.startsWith("net.minecraftforge:forge")).findFirst().orElse(null);
+                .filter(library -> library.name.startsWith("net.minecraftforge:forge:")).findFirst().orElse(null);
 
         if (forgeLibrary != null) {
             return FileSystem.LIBRARIES.resolve(forgeLibrary.downloads.artifact.path);
