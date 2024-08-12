@@ -11,5 +11,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 ### Fixes
 - Issue exporting/disabling/deleting worlds downloaded from CurseForge [#927]
 - Issue installing Modrinth pack with invalid filename [#923]
+- Issue with launching servers with a space in the name not removing Java path correctly on Windows
 
 ### Misc

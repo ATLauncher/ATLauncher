@@ -19,10 +19,11 @@ set jvmargs=""
 set launchargs=%*
 :: Launcher can specify path to java using a custom token
 IF "%1"=="ATLcustomjava" (
-    for /f "tokens=2,* delims= " %%a in ("%*") do set launchargs=%%b
-
     echo Using launcher provided Java from %2
     SET javapath="%2"
+
+    :: Set launchargs to %3 and onwards
+    call set launchargs=%%launchargs:*%2=%%
 )
 
 :: Remove all double quotes from jvmargs
