@@ -17,3 +17,4 @@ This changelog only contains the changes that are unreleased. For changes for in
 
 ### Misc
 - Speed up CreatePackTab [#933]
+- Rename "New Instance" to "Install" [#936]
