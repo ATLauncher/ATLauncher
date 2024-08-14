@@ -16,4 +16,5 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Issue with launching servers with a space in the name not removing Java path correctly on Windows
 
 ### Misc
+- Speed up CreatePackTab [#933]
 - Rename "New Instance" to "Install" [#936]
