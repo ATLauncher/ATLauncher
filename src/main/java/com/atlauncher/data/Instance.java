@@ -156,6 +156,7 @@ import com.atlauncher.utils.ArchiveUtils;
 import com.atlauncher.utils.ComboItem;
 import com.atlauncher.utils.CommandExecutor;
 import com.atlauncher.utils.CurseForgeApi;
+import com.atlauncher.utils.CurseForgeUtils;
 import com.atlauncher.utils.FileUtils;
 import com.atlauncher.utils.Hashing;
 import com.atlauncher.utils.Java;
@@ -3240,7 +3241,8 @@ public class Instance extends MinecraftVersion {
 
     public List<String> getSinglePlayerWorldNamesFromFilesystem() {
         File[] folders = ROOT.resolve("saves").toFile().listFiles((dir, name) -> new File(dir, name).isDirectory());
-        if (folders == null) return new ArrayList<>();
+        if (folders == null)
+            return new ArrayList<>();
         return Arrays.stream(folders).map(File::getName).collect(Collectors.toList());
     }
 
@@ -3249,9 +3251,8 @@ public class Instance extends MinecraftVersion {
             return false;
         }
         return arguments.game.stream().anyMatch(
-            argumentRule -> argumentRule.value instanceof List &&
-                ((List<?>) argumentRule.value).contains(quickPlayOption.argumentRuleValue)
-        );
+                argumentRule -> argumentRule.value instanceof List &&
+                        ((List<?>) argumentRule.value).contains(quickPlayOption.argumentRuleValue));
     }
 
     private List<Path> getModPathsFromFilesystem() {
@@ -3530,6 +3531,37 @@ public class Instance extends MinecraftVersion {
 
         if (isModrinthPack()) {
             return launcher.modrinthProject.discordUrl;
+        }
+
+        if (isCurseForgePack()) {
+            if (launcher.curseForgeProjectDescription != null) {
+                String discordLinkFromDescription = CurseForgeUtils
+                        .parseDescriptionForDiscordInvite(launcher.curseForgeProjectDescription);
+                if (discordLinkFromDescription != null) {
+                    return discordLinkFromDescription;
+                }
+            }
+
+            // allow overriding the discord link from ATLauncher's side
+            String overriddenDiscordLink = ConfigManager
+                    .<String>getConfigItem(
+                            "discordLinkMatching.curseForgeProjectIdsToDiscordLink." + launcher.curseForgeProject.id,
+                            null);
+            if (overriddenDiscordLink != null) {
+                return overriddenDiscordLink;
+            }
+
+            // allow overriding the discord link from ATLauncher's side for an author
+            if (launcher.curseForgeProject.authors != null && !launcher.curseForgeProject.authors.isEmpty()) {
+                String overriddenDiscordLinkForAuthor = ConfigManager
+                        .<String>getConfigItem(
+                                "discordLinkMatching.curseForgeAuthorIdsToDiscordLink."
+                                        + launcher.curseForgeProject.authors.get(0).id,
+                                null);
+                if (overriddenDiscordLinkForAuthor != null) {
+                    return overriddenDiscordLinkForAuthor;
+                }
+            }
         }
 
         return null;
