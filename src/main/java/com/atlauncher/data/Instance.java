@@ -1122,6 +1122,7 @@ public class Instance extends MinecraftVersion {
                 BufferedReader br = new BufferedReader(isr);
                 String line;
                 int detectedError = 0;
+                boolean crashedWithoutKnownResolution = false;
 
                 String replaceUUID = account.uuid.replace("-", "");
 
@@ -1149,6 +1150,10 @@ public class Instance extends MinecraftVersion {
                     if (line.contains(
                             "class jdk.internal.loader.ClassLoaders$AppClassLoader cannot be cast to class")) {
                         detectedError = MinecraftError.USING_NEWER_JAVA_THAN_8;
+                    }
+
+                    if (line.contains("Crash report saved to") || line.contains("Minecraft Crash Report")) {
+                        crashedWithoutKnownResolution = true;
                     }
 
                     if (!LogManager.showDebug) {
@@ -1207,7 +1212,9 @@ public class Instance extends MinecraftVersion {
                     App.console.setVisible(false); // Hide the console to pretend we've closed
                 }
 
-                if (exitValue != 0) {
+                if (exitValue != 0 || crashedWithoutKnownResolution) {
+                    App.launcher.setLastInstanceCrash(this);
+
                     LogManager.error(
                             "Oh no. Minecraft crashed. Please check the logs for any errors and provide these logs when asking for support.");
 
@@ -1216,23 +1223,10 @@ public class Instance extends MinecraftVersion {
                                 "The Use Java Provided By Minecraft option has been disabled. Please enable this option again.");
                     }
 
-                    if (this.getPack() != null && !this.getPack().system) {
-                        LogManager.info("Checking for modifications to the pack since installation.");
-                        this.launcher.mods.forEach(mod -> {
-                            if (!mod.userAdded && mod.wasSelected && mod.disabled) {
-                                LogManager.warn("The mod " + mod.name + " (" + mod.file + ") has been disabled.");
-                            }
-                        });
-
-                        Files.list(
-                                this.ROOT.resolve("mods")).filter(
-                                        file -> Files.isRegularFile(file)
-                                                && this.launcher.mods.stream()
-                                                        .noneMatch(m -> m.type == Type.mods && !m.userAdded
-                                                                && m.getFile(this).toPath().equals(file)))
-                                .forEach(newMod -> {
-                                    LogManager.warn("The mod " + newMod.getFileName().toString() + " has been added.");
-                                });
+                    if (this.getDiscordInviteUrl() != null) {
+                        LogManager.error(String.format(
+                                "If you're having issues, please visit the Discord server for the modpack at %s",
+                                this.getDiscordInviteUrl()));
                     }
                 }
 

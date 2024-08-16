@@ -29,6 +29,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -41,6 +42,7 @@ import org.mini2Dx.gettext.GetText;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.constants.Constants;
 import com.atlauncher.data.DownloadableFile;
+import com.atlauncher.data.Instance;
 import com.atlauncher.data.LauncherVersion;
 import com.atlauncher.graphql.AddLauncherLaunchMutation;
 import com.atlauncher.graphql.type.AddLauncherLaunchInput;
@@ -91,6 +93,8 @@ public class Launcher {
     // Minecraft tracking variables
     private Process minecraftProcess = null; // The process minecraft is running on
     public boolean minecraftLaunched = false; // If Minecraft has been Launched
+    public Instance lastInstanceCrash = null; // The last instance that crashed
+    public Date lastInstanceCrashTime = null; // The time the last instance crashed
 
     public void loadEverything() {
         PerformanceManager.start();
@@ -488,6 +492,8 @@ public class Launcher {
 
     public void showKillMinecraft(Process minecraft) {
         this.minecraftProcess = minecraft;
+        this.lastInstanceCrash = null;
+        this.lastInstanceCrashTime = null;
         App.console.showKillMinecraft();
     }
 
@@ -508,5 +514,10 @@ public class Launcher {
         } else {
             LogManager.error("Cannot kill Minecraft as there is no instance open!");
         }
+    }
+
+    public void setLastInstanceCrash(Instance instance) {
+        this.lastInstanceCrash = instance;
+        this.lastInstanceCrashTime = new Date();
     }
 }
