@@ -79,12 +79,9 @@ public class JavaInstanceSettingsTab extends JPanel {
     private JComboBox<ComboItem<Boolean>> useSystemOpenAl;
 
     private boolean initialMemoryWarningShown = false;
-    private boolean maximumMemoryHalfWarningShown = false;
-    private boolean maximumMemoryEightGBWarningShown = false;
     private boolean permgenWarningShown = false;
 
     final ImageIcon HELP_ICON = Utils.getIconImage(App.THEME.getIconPath("question"));
-    final ImageIcon ERROR_ICON = Utils.getIconImage(App.THEME.getIconPath("error"));
     final ImageIcon WARNING_ICON = Utils.getIconImage(App.THEME.getIconPath("warning"));
 
     final Border RESTART_BORDER = BorderFactory.createEmptyBorder(0, 0, 0, 5);
@@ -198,29 +195,6 @@ public class JavaInstanceSettingsTab extends JPanel {
                     if ((Integer) initialMemory.getValue() > (Integer) s.getValue()) {
                         initialMemory.setValue(s.getValue());
                     }
-                }
-
-                if ((Integer) s.getValue() > 8192 && !maximumMemoryEightGBWarningShown) {
-                    maximumMemoryEightGBWarningShown = true;
-                    int ret = DialogManager.okDialog().setTitle(GetText.tr("Warning"))
-                            .setType(DialogManager.WARNING)
-                            .setContent(GetText.tr(
-                                    "Setting maximum memory above 8GB is not recommended for most modpacks and can cause issues."))
-                            .addOption(GetText.tr("More Explanation"))
-                            .show();
-
-                    if (ret == 1) {
-                        OS.openWebBrowser("https://atl.pw/allocatetoomuchram");
-                    }
-                } else if ((OS.getMaximumRam() != 0 && OS.getMaximumRam() < 16384)
-                        && (Integer) s.getValue() > (OS.getMaximumRam() / 2)
-                        && !maximumMemoryHalfWarningShown) {
-                    maximumMemoryHalfWarningShown = true;
-                    DialogManager.okDialog().setTitle(GetText.tr("Warning"))
-                            .setType(DialogManager.WARNING)
-                            .setContent(GetText.tr(
-                                    "Setting maximum memory to more than half of your systems total memory is not recommended and can cause issues in some cases. Are you sure you want to do this?"))
-                            .show();
                 }
             }
         });
