@@ -29,3 +29,4 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Recreate UI on re-localization [#912]
 - Squash a ton of warnings [#918]
 - Implement architecture for all settings tabs [#910]
+- Implement HierarchyPanel to CreatePackTab [#816]
