@@ -424,7 +424,7 @@ public class CollapsiblePanel extends JPanel implements ThemeListener, Relocaliz
         public Rectangle getComponentRect(Rectangle rect, Insets borderInsets) {
             Dimension compD = component.getPreferredSize();
 
-            Rectangle compR = new Rectangle(0, 0, compD.width+2, compD.height);
+            Rectangle compR = new Rectangle(0, 0, compD.width+5, compD.height);
             switch (titlePosition) {
                 case ABOVE_TOP:
                     compR.y = EDGE_SPACING;
