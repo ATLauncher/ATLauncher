@@ -231,7 +231,16 @@ public class CurseForgeProjectFileSelectorDialog extends JDialog {
         if (selectedFile.dependencies.size() != 0) {
             // check to see which required ones we don't already have
             List<CurseForgeFileDependency> dependencies = selectedFile.dependencies.stream()
-                    .filter(dependency -> dependency.isRequired() && instance.launcher.mods.stream()
+                    .filter(dependency -> dependency.isRequired())
+                    .filter(dependency -> {
+                        if (dependency.modId != Constants.CURSEFORGE_FABRIC_MOD_ID) {
+                            return true;
+                        }
+
+                        // We shouldn't install Fabric API when using Sinytra Connector
+                        return !instance.isForgeLikeAndHasInstalledSinytraConnector();
+                    })
+                    .filter(dependency -> instance.launcher.mods.stream()
                             .noneMatch(installedMod -> {
                                 if (instance.getLoaderVersion().isQuilt()
                                         && dependency.modId == Constants.CURSEFORGE_FABRIC_MOD_ID) {
