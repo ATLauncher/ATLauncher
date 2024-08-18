@@ -300,7 +300,8 @@ public class CurseForgeProjectFileSelectorDialog extends JDialog {
         Runnable r = () -> {
             LoaderVersion loaderVersion = this.instance.launcher.loaderVersion;
 
-            Stream<CurseForgeFile> curseForgeFilesStream = CurseForgeApi.getFilesForProject(mod.id).stream()
+            List<CurseForgeFile> projectFiles = CurseForgeApi.getFilesForProject(mod.id);
+            Stream<CurseForgeFile> curseForgeFilesStream = projectFiles.stream()
                     .sorted(Comparator.comparingInt((CurseForgeFile file) -> file.id).reversed());
 
             if (App.settings.addModRestriction == AddModRestriction.STRICT) {
@@ -323,6 +324,11 @@ public class CurseForgeProjectFileSelectorDialog extends JDialog {
 
             List<String> neoForgeForgeCompatabilityVersions = ConfigManager
                     .getConfigItem("loaders.neoforge.forgeCompatibleMinecraftVersions", new ArrayList<String>());
+            boolean hasNeoForgeVersion = projectFiles.stream()
+                    .anyMatch(v -> v.gameVersions.contains("NeoForge")
+                            || (neoForgeForgeCompatabilityVersions.contains(this.instance.id)
+                                    && v.gameVersions.contains("Forge")));
+            boolean hasForgeVersion = projectFiles.stream().anyMatch(v -> v.gameVersions.contains("Forge"));
 
             // filter out files not for our loader (if browsing mods)
             if (mod.getRootCategoryId() == Constants.CURSEFORGE_MODS_SECTION_ID) {
@@ -330,7 +336,11 @@ public class CurseForgeProjectFileSelectorDialog extends JDialog {
                     if (cf.gameVersions.contains("Fabric") && loaderVersion != null
                             && (loaderVersion.isFabric() || loaderVersion.isLegacyFabric()
                                     || loaderVersion.isQuilt()
-                                    || this.instance.isForgeLikeAndHasInstalledSinytraConnector())) {
+                                    || (this.instance.isForgeLikeAndHasInstalledSinytraConnector()
+                                            && this.instance.launcher.loaderVersion.isForge() && !hasForgeVersion)
+                                    || (this.instance.isForgeLikeAndHasInstalledSinytraConnector()
+                                            && this.instance.launcher.loaderVersion.isNeoForge()
+                                            && !hasNeoForgeVersion))) {
                         return true;
                     }
 

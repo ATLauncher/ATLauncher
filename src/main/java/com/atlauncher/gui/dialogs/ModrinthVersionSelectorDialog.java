@@ -378,11 +378,19 @@ public class ModrinthVersionSelectorDialog extends JDialog {
                     && mod.projectType == ModrinthProjectType.MOD) {
                 List<String> neoForgeForgeCompatabilityVersions = ConfigManager
                         .getConfigItem("loaders.neoforge.forgeCompatibleMinecraftVersions", new ArrayList<String>());
+                boolean hasNeoForgeVersion = this.versionsData.stream()
+                        .anyMatch(v -> v.loaders.contains("neoforge")
+                                || (neoForgeForgeCompatabilityVersions.contains(this.instance.id)
+                                        && v.loaders.contains("forge")));
+                boolean hasForgeVersion = this.versionsData.stream().anyMatch(v -> v.loaders.contains("forge"));
                 modrinthVersionsStream = modrinthVersionsStream.filter(v -> {
                     if (v.loaders.contains("fabric") && (this.instance.launcher.loaderVersion.isFabric()
                             || this.instance.launcher.loaderVersion.isLegacyFabric()
                             || this.instance.launcher.loaderVersion.isQuilt()
-                            || this.instance.isForgeLikeAndHasInstalledSinytraConnector())) {
+                            || (this.instance.isForgeLikeAndHasInstalledSinytraConnector()
+                                    && this.instance.launcher.loaderVersion.isForge() && !hasForgeVersion)
+                            || (this.instance.isForgeLikeAndHasInstalledSinytraConnector()
+                                    && this.instance.launcher.loaderVersion.isNeoForge() && !hasNeoForgeVersion))) {
                         return true;
                     }
 
