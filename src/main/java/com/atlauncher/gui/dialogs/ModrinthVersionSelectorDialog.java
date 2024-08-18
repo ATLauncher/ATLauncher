@@ -175,6 +175,14 @@ public class ModrinthVersionSelectorDialog extends JDialog {
                                             return true;
                                         }
 
+                                        // don't show Modrinth dependency when grabbed from CurseForge
+                                        if (dependency.projectId.equals(Constants.MODRINTH_FORGIFIED_FABRIC_API_MOD_ID)
+                                                && installedMod.isFromCurseForge()
+                                                && installedMod
+                                                        .getCurseForgeFileId() == Constants.CURSEFORGE_FORGIFIED_FABRIC_API_MOD_ID) {
+                                            return true;
+                                        }
+
                                         return installedMod.isFromModrinth()
                                                 && installedMod.modrinthProject.id.equals(dependency.projectId);
                                     }))
@@ -373,7 +381,8 @@ public class ModrinthVersionSelectorDialog extends JDialog {
                 modrinthVersionsStream = modrinthVersionsStream.filter(v -> {
                     if (v.loaders.contains("fabric") && (this.instance.launcher.loaderVersion.isFabric()
                             || this.instance.launcher.loaderVersion.isLegacyFabric()
-                            || this.instance.launcher.loaderVersion.isQuilt())) {
+                            || this.instance.launcher.loaderVersion.isQuilt()
+                            || this.instance.isForgeLikeAndHasInstalledSinytraConnector())) {
                         return true;
                     }
 

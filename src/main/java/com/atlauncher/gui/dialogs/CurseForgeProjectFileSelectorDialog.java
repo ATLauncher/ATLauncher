@@ -256,6 +256,14 @@ public class CurseForgeProjectFileSelectorDialog extends JDialog {
                                     return true;
                                 }
 
+                                // don't show CurseForge dependency when grabbed from Modrinth
+                                if (dependency.modId == Constants.CURSEFORGE_FORGIFIED_FABRIC_API_MOD_ID
+                                        && installedMod.isFromModrinth()
+                                        && installedMod.modrinthProject.id
+                                                .equals(Constants.MODRINTH_FORGIFIED_FABRIC_API_MOD_ID)) {
+                                    return true;
+                                }
+
                                 return installedMod.isFromCurseForge()
                                         && installedMod.getCurseForgeModId() == dependency.modId;
                             }))
@@ -321,7 +329,8 @@ public class CurseForgeProjectFileSelectorDialog extends JDialog {
                 curseForgeFilesStream = curseForgeFilesStream.filter(cf -> {
                     if (cf.gameVersions.contains("Fabric") && loaderVersion != null
                             && (loaderVersion.isFabric() || loaderVersion.isLegacyFabric()
-                                    || loaderVersion.isQuilt())) {
+                                    || loaderVersion.isQuilt()
+                                    || this.instance.isForgeLikeAndHasInstalledSinytraConnector())) {
                         return true;
                     }
 

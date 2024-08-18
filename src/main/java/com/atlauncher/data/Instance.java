@@ -3240,7 +3240,8 @@ public class Instance extends MinecraftVersion {
 
     public List<String> getSinglePlayerWorldNamesFromFilesystem() {
         File[] folders = ROOT.resolve("saves").toFile().listFiles((dir, name) -> new File(dir, name).isDirectory());
-        if (folders == null) return new ArrayList<>();
+        if (folders == null)
+            return new ArrayList<>();
         return Arrays.stream(folders).map(File::getName).collect(Collectors.toList());
     }
 
@@ -3249,9 +3250,8 @@ public class Instance extends MinecraftVersion {
             return false;
         }
         return arguments.game.stream().anyMatch(
-            argumentRule -> argumentRule.value instanceof List &&
-                ((List<?>) argumentRule.value).contains(quickPlayOption.argumentRuleValue)
-        );
+                argumentRule -> argumentRule.value instanceof List &&
+                        ((List<?>) argumentRule.value).contains(quickPlayOption.argumentRuleValue));
     }
 
     private List<Path> getModPathsFromFilesystem() {
@@ -3614,5 +3614,17 @@ public class Instance extends MinecraftVersion {
 
         // #. {0} is the name of a mod that was removed
         App.TOASTER.pop(GetText.tr("{0} Removed", foundMod.name));
+    }
+
+    public boolean isForgeLikeAndHasInstalledSinytraConnector() {
+        if (launcher.loaderVersion == null || !(launcher.loaderVersion.isForge()
+                || launcher.loaderVersion.isNeoForge())) {
+            return false;
+        }
+
+        return launcher.mods.stream().anyMatch(m -> (m.isFromCurseForge()
+                && m.getCurseForgeModId() == Constants.CURSEFORGE_SINYTRA_CONNECTOR_MOD_ID)
+                || m.isFromModrinth()
+                        && m.modrinthProject.id.equalsIgnoreCase(Constants.MODRINTH_SINYTRA_CONNECTOR_MOD_ID));
     }
 }
