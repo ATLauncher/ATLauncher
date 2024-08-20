@@ -323,7 +323,7 @@ public class EditModsDialog extends JDialog {
     private void loadMods() {
         List<DisableableMod> mods = instance.launcher.mods.stream().filter(DisableableMod::wasSelected)
                 .filter(m -> !m.skipped && m.type != com.atlauncher.data.Type.worlds)
-                .sorted(Comparator.comparing(m -> m.name)).collect(Collectors.toList());
+                .sorted(Comparator.comparing(m -> m.name, String.CASE_INSENSITIVE_ORDER)).collect(Collectors.toList());
         enabledMods = new ArrayList<>();
         disabledMods = new ArrayList<>();
         int dCount = 0;
