@@ -10,6 +10,8 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Use NeoForge server start jar to allow launching servers using our scripts (partially) [#921]
 - Add a readme file when creating servers using our scripts
 - Add prompt to update outdated Java [#930]
+- Try to get support links for CurseForge packs from description and from overrides
+- Prompt to visit last instance that crashed when trying to visit ATLauncher Discord
 - Allow installing Fabric mods to Forge and NeoForge instances when Sinytra Connector is installed [#942]
 
 ### Fixes
@@ -17,6 +19,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Issue installing Modrinth pack with invalid filename [#923]
 - Issue with launching servers with a space in the name not removing Java path correctly on Windows
 - Remove warnings on too much memory being allocated
+- Attempt to fix popup dialogs causing other application windows to not be responsive [#715]
 
 ### Misc
 - Speed up CreatePackTab [#933]

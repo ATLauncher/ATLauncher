@@ -264,6 +264,25 @@ public class CurseForgeApi {
         return null;
     }
 
+    public static String getProjectDescription(int projectId) {
+        String url = String.format(Locale.ENGLISH, "%s/mods/%d/description?raw=true", Constants.CURSEFORGE_CORE_API_URL,
+                projectId);
+
+        Download download = Download.build().setUrl(url).header("x-api-key", Constants.CURSEFORGE_CORE_API_KEY)
+                .cached(new CacheControl.Builder().maxStale(1, TimeUnit.HOURS).build());
+
+        java.lang.reflect.Type type = new TypeToken<CurseForgeCoreApiResponse<String>>() {
+        }.getType();
+
+        CurseForgeCoreApiResponse<String> response = download.asType(type);
+
+        if (response != null) {
+            return response.data;
+        }
+
+        return null;
+    }
+
     public static CurseForgeProject getProjectById(int projectId) {
         return getProjectById(Integer.toString(projectId));
     }
