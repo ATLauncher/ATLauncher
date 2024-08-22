@@ -38,6 +38,7 @@ public class ModsSettingsTab extends AbstractSettingsTab {
     private final JComboBox<ComboItem<ModPlatform>> defaultModPlatform;
     private final JComboBox<ComboItem<AddModRestriction>> addModRestriction;
     private final JCheckBox enableAddedModsByDefault;
+    private final JCheckBox showFabricModsWhenSinytraInstalled;
     private final JCheckBox allowCurseForgeAlphaBetaFiles;
     private final JCheckBox dontCheckModsOnCurseForge;
     private final JCheckBox dontCheckModsOnModrinth;
@@ -126,6 +127,24 @@ public class ModsSettingsTab extends AbstractSettingsTab {
         enableAddedModsByDefault = new JCheckBox();
         enableAddedModsByDefault.setSelected(App.settings.enableAddedModsByDefault);
         add(enableAddedModsByDefault, gbc);
+
+        // Show Fabric Mods When Sinytra Installed
+
+        gbc.gridx = 0;
+        gbc.gridy++;
+        gbc.insets = UIConstants.LABEL_INSETS;
+        gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
+        JLabelWithHover showFabricModsWhenSinytraInstalledLabel = new JLabelWithHover(GetText.tr("Show Fabric Mods When Sinytra Installed?"),
+                HELP_ICON, new HTMLBuilder().center().split(100)
+                        .text(GetText.tr("When Sinytra Connector is installed, should Fabric mods be shown?")).build());
+        add(showFabricModsWhenSinytraInstalledLabel, gbc);
+
+        gbc.gridx++;
+        gbc.insets = UIConstants.CHECKBOX_FIELD_INSETS;
+        gbc.anchor = GridBagConstraints.BASELINE_LEADING;
+        showFabricModsWhenSinytraInstalled = new JCheckBox();
+        showFabricModsWhenSinytraInstalled.setSelected(App.settings.showFabricModsWhenSinytraInstalled);
+        add(showFabricModsWhenSinytraInstalled, gbc);
 
         // Allow CurseForge Alpha/Beta CurseForge files
 
@@ -239,6 +258,7 @@ public class ModsSettingsTab extends AbstractSettingsTab {
         App.settings.addModRestriction = ((ComboItem<AddModRestriction>) addModRestriction.getSelectedItem())
                 .getValue();
         App.settings.enableAddedModsByDefault = enableAddedModsByDefault.isSelected();
+        App.settings.showFabricModsWhenSinytraInstalled = showFabricModsWhenSinytraInstalled.isSelected();
         App.settings.allowCurseForgeAlphaBetaFiles = allowCurseForgeAlphaBetaFiles.isSelected();
         App.settings.dontCheckModsOnCurseForge = dontCheckModsOnCurseForge.isSelected();
         App.settings.dontCheckModsOnModrinth = dontCheckModsOnModrinth.isSelected();

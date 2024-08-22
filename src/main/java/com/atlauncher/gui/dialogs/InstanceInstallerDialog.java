@@ -100,6 +100,7 @@ import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.ComboItem;
 import com.atlauncher.utils.CurseForgeApi;
 import com.atlauncher.utils.ModrinthApi;
+import com.atlauncher.utils.Pair;
 import com.atlauncher.utils.TechnicApi;
 import com.atlauncher.utils.Utils;
 import com.atlauncher.utils.WindowUtils;
@@ -179,7 +180,8 @@ public class InstanceInstallerDialog extends JDialog {
         this(pack, false, true, null, true, null, App.launcher.getParent(), null);
     }
 
-    public InstanceInstallerDialog(Object object, boolean isUpdate, boolean isServer, PackVersion autoInstallVersion, boolean showModsChooser, Path extractedPath) {
+    public InstanceInstallerDialog(Object object, boolean isUpdate, boolean isServer, PackVersion autoInstallVersion,
+            boolean showModsChooser, Path extractedPath) {
         this(object, isUpdate, isServer, autoInstallVersion, showModsChooser, extractedPath,
                 App.launcher.getParent(), null);
     }
@@ -426,11 +428,13 @@ public class InstanceInstallerDialog extends JDialog {
         pack.websiteURL = curseForgeProject.getWebsiteUrl();
         pack.curseForgeProject = curseForgeProject;
 
-        final ProgressDialog<List<CurseForgeFile>> dialog = new ProgressDialog<>(GetText.tr("Getting Versions"), 0,
+        final ProgressDialog<Pair<List<CurseForgeFile>, String>> dialog = new ProgressDialog<>(
+                GetText.tr("Getting Versions"), 0,
                 GetText.tr("Getting Versions"), "Aborting Getting Versions");
 
         dialog.addThread(new Thread(() -> {
             List<CurseForgeFile> files = CurseForgeApi.getFilesForProject(curseForgeProject.id);
+            String description = CurseForgeApi.getProjectDescription(curseForgeProject.id);
 
             if (isServer) {
                 int[] serverFileIds = files.stream().filter(file -> file.serverPackFileId != null)
@@ -438,7 +442,7 @@ public class InstanceInstallerDialog extends JDialog {
                 List<CurseForgeFile> serverFiles = CurseForgeApi.getFiles(serverFileIds);
 
                 dialog.setReturnValue(
-                        serverFiles.stream().map(f -> {
+                        new Pair<>(serverFiles.stream().map(f -> {
                             if (f.getGameVersion() == null) {
                                 Optional<CurseForgeFile> matchingFile = files.stream()
                                         .filter(sf -> sf.serverPackFileId != null)
@@ -451,9 +455,9 @@ public class InstanceInstallerDialog extends JDialog {
 
                             return f;
                         }).filter(f -> f.isAvailable && f.isServerPack && f.getGameVersion() != null)
-                                .collect(Collectors.toList()));
+                                .collect(Collectors.toList()), description));
             } else {
-                dialog.setReturnValue(files);
+                dialog.setReturnValue(new Pair<>(files, description));
             }
 
             dialog.close();
@@ -461,7 +465,8 @@ public class InstanceInstallerDialog extends JDialog {
 
         dialog.start();
 
-        List<CurseForgeFile> files = dialog.getReturnValue();
+        List<CurseForgeFile> files = dialog.getReturnValue().left();
+        pack.curseForgeProjectDescription = dialog.getReturnValue().right();
 
         if (files == null || files.size() == 0) {
             // TODO: this still throws an exception, fix at some point

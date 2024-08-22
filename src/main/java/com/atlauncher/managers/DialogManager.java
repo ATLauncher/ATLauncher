@@ -187,13 +187,43 @@ public final class DialogManager {
 
     public int show() {
         try {
-            return JOptionPane.showOptionDialog(this.getParent(), this.content, this.title, this.lookAndFeel, this.type,
-                    this.icon, this.getOptions(), this.defaultOption);
+            Object[] options = this.getOptions();
+
+            JOptionPane jop = new JOptionPane(this.content, this.type, this.lookAndFeel, this.icon, options,
+                    this.defaultOption);
+
+            jop.setInitialValue(this.defaultOption);
+            jop.setComponentOrientation(this.getParent().getComponentOrientation());
+
+            JDialog dialog = jop.createDialog(this.getParent(), this.title);
+            dialog.setAlwaysOnTop(true);
+            dialog.setVisible(true);
+
+            Object selectedValue = jop.getValue();
+
+            if (selectedValue == null) {
+                return CLOSED_OPTION;
+            }
+
+            if (options == null) {
+                if (selectedValue instanceof Integer) {
+                    return ((Integer) selectedValue).intValue();
+                }
+                return CLOSED_OPTION;
+            }
+
+            for (int counter = 0, maxCounter = options.length; counter < maxCounter; counter++) {
+                if (options[counter].equals(selectedValue)) {
+                    return counter;
+                }
+            }
+
+            return CLOSED_OPTION;
         } catch (Exception e) {
             LogManager.logStackTrace(e, false);
         }
 
-        return -1;
+        return CLOSED_OPTION;
     }
 
     public int showWithFileMonitoring(File firstFile, File secondFile, int size, int returnValue) {
