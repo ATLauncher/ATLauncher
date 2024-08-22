@@ -181,12 +181,40 @@ public class CurseForgeApi {
                 modLoaderTypes, sort, categoryIdParam);
     }
 
+    public static List<CurseForgeProject> searchModsForForgeOrFabric(String gameVersion, String query, int page,
+            String sort,
+            String categoryId) {
+        Integer categoryIdParam = categoryId == null ? null : Integer.parseInt(categoryId);
+        List<Integer> modLoaderTypes = Arrays.asList(Constants.CURSEFORGE_FORGE_MODLOADER_ID,
+                Constants.CURSEFORGE_FABRIC_MODLOADER_ID);
+
+        return searchCurseForge(gameVersion, Constants.CURSEFORGE_MODS_SECTION_ID, query, page,
+                modLoaderTypes, sort, categoryIdParam);
+    }
+
     public static List<CurseForgeProject> searchModsForNeoForge(String gameVersion, String query, int page, String sort,
             String categoryId) {
         Integer categoryIdParam = categoryId == null ? null : Integer.parseInt(categoryId);
 
-        List<Integer> modLoaderTypes = new ArrayList<>();
-        modLoaderTypes.add(Constants.CURSEFORGE_NEOFORGE_MODLOADER_ID);
+        List<Integer> modLoaderTypes = Arrays.asList(Constants.CURSEFORGE_FORGE_MODLOADER_ID);
+
+        List<String> neoForgeForgeCompatabilityVersions = ConfigManager
+                .getConfigItem("loaders.neoforge.forgeCompatibleMinecraftVersions", new ArrayList<String>());
+        if (neoForgeForgeCompatabilityVersions.contains(gameVersion)) {
+            modLoaderTypes.add(Constants.CURSEFORGE_FORGE_MODLOADER_ID);
+        }
+
+        return searchCurseForge(gameVersion, Constants.CURSEFORGE_MODS_SECTION_ID, query, page,
+                modLoaderTypes, sort, categoryIdParam);
+    }
+
+    public static List<CurseForgeProject> searchModsForNeoForgeOrFabric(String gameVersion, String query, int page,
+            String sort,
+            String categoryId) {
+        Integer categoryIdParam = categoryId == null ? null : Integer.parseInt(categoryId);
+
+        List<Integer> modLoaderTypes = Arrays.asList(Constants.CURSEFORGE_FORGE_MODLOADER_ID,
+                Constants.CURSEFORGE_FABRIC_MODLOADER_ID);
 
         List<String> neoForgeForgeCompatabilityVersions = ConfigManager
                 .getConfigItem("loaders.neoforge.forgeCompatibleMinecraftVersions", new ArrayList<String>());

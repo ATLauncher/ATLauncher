@@ -231,7 +231,16 @@ public class CurseForgeProjectFileSelectorDialog extends JDialog {
         if (selectedFile.dependencies.size() != 0) {
             // check to see which required ones we don't already have
             List<CurseForgeFileDependency> dependencies = selectedFile.dependencies.stream()
-                    .filter(dependency -> dependency.isRequired() && instance.launcher.mods.stream()
+                    .filter(dependency -> dependency.isRequired())
+                    .filter(dependency -> {
+                        if (dependency.modId != Constants.CURSEFORGE_FABRIC_MOD_ID) {
+                            return true;
+                        }
+
+                        // We shouldn't install Fabric API when using Sinytra Connector
+                        return !instance.isForgeLikeAndHasInstalledSinytraConnector();
+                    })
+                    .filter(dependency -> instance.launcher.mods.stream()
                             .noneMatch(installedMod -> {
                                 if (instance.getLoaderVersion().isQuilt()
                                         && dependency.modId == Constants.CURSEFORGE_FABRIC_MOD_ID) {
@@ -253,6 +262,14 @@ public class CurseForgeProjectFileSelectorDialog extends JDialog {
                                         && installedMod.isFromModrinth()
                                         && installedMod.modrinthProject.id
                                                 .equals(Constants.MODRINTH_LEGACY_FABRIC_MOD_ID)) {
+                                    return true;
+                                }
+
+                                // don't show CurseForge dependency when grabbed from Modrinth
+                                if (dependency.modId == Constants.CURSEFORGE_FORGIFIED_FABRIC_API_MOD_ID
+                                        && installedMod.isFromModrinth()
+                                        && installedMod.modrinthProject.id
+                                                .equals(Constants.MODRINTH_FORGIFIED_FABRIC_API_MOD_ID)) {
                                     return true;
                                 }
 
@@ -292,7 +309,8 @@ public class CurseForgeProjectFileSelectorDialog extends JDialog {
         Runnable r = () -> {
             LoaderVersion loaderVersion = this.instance.launcher.loaderVersion;
 
-            Stream<CurseForgeFile> curseForgeFilesStream = CurseForgeApi.getFilesForProject(mod.id).stream()
+            List<CurseForgeFile> projectFiles = CurseForgeApi.getFilesForProject(mod.id);
+            Stream<CurseForgeFile> curseForgeFilesStream = projectFiles.stream()
                     .sorted(Comparator.comparingInt((CurseForgeFile file) -> file.id).reversed());
 
             if (App.settings.addModRestriction == AddModRestriction.STRICT) {
@@ -315,13 +333,23 @@ public class CurseForgeProjectFileSelectorDialog extends JDialog {
 
             List<String> neoForgeForgeCompatabilityVersions = ConfigManager
                     .getConfigItem("loaders.neoforge.forgeCompatibleMinecraftVersions", new ArrayList<String>());
+            boolean hasNeoForgeVersion = projectFiles.stream()
+                    .anyMatch(v -> v.gameVersions.contains("NeoForge")
+                            || (neoForgeForgeCompatabilityVersions.contains(this.instance.id)
+                                    && v.gameVersions.contains("Forge")));
+            boolean hasForgeVersion = projectFiles.stream().anyMatch(v -> v.gameVersions.contains("Forge"));
 
             // filter out files not for our loader (if browsing mods)
             if (mod.getRootCategoryId() == Constants.CURSEFORGE_MODS_SECTION_ID) {
                 curseForgeFilesStream = curseForgeFilesStream.filter(cf -> {
                     if (cf.gameVersions.contains("Fabric") && loaderVersion != null
                             && (loaderVersion.isFabric() || loaderVersion.isLegacyFabric()
-                                    || loaderVersion.isQuilt())) {
+                                    || loaderVersion.isQuilt()
+                                    || (this.instance.isForgeLikeAndHasInstalledSinytraConnector()
+                                            && this.instance.launcher.loaderVersion.isForge() && !hasForgeVersion)
+                                    || (this.instance.isForgeLikeAndHasInstalledSinytraConnector()
+                                            && this.instance.launcher.loaderVersion.isNeoForge()
+                                            && !hasNeoForgeVersion))) {
                         return true;
                     }
 

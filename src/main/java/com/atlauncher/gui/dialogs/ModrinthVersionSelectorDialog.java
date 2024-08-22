@@ -148,36 +148,52 @@ public class ModrinthVersionSelectorDialog extends JDialog {
         if (dependencies.size() != 0) {
             // check to see which required ones we don't already have
             List<ModrinthDependency> dependenciesNeeded = dependencies.stream()
-                    .filter(dependency -> dependency.dependencyType == ModrinthDependencyType.REQUIRED
-                            && instance.launcher.mods.stream()
-                                    .noneMatch(installedMod -> {
-                                        // don't show Modrinth dependency when grabbed from CurseForge
-                                        if (dependency.projectId.equals(Constants.MODRINTH_FABRIC_MOD_ID)
-                                                && installedMod.isFromCurseForge()
-                                                && installedMod
-                                                        .getCurseForgeFileId() == Constants.CURSEFORGE_FABRIC_MOD_ID) {
-                                            return true;
-                                        }
+                    .filter(dependency -> dependency.dependencyType == ModrinthDependencyType.REQUIRED)
+                    .filter(dependency -> {
+                        if (!dependency.projectId.equals(Constants.MODRINTH_FABRIC_MOD_ID)) {
+                            return true;
+                        }
 
-                                        // don't show Modrinth dependency when grabbed from CurseForge
-                                        if (dependency.projectId.equals(Constants.MODRINTH_LEGACY_FABRIC_MOD_ID)
-                                                && installedMod.isFromCurseForge()
-                                                && installedMod
-                                                        .getCurseForgeFileId() == Constants.CURSEFORGE_LEGACY_FABRIC_MOD_ID) {
-                                            return true;
-                                        }
+                        // We shouldn't install Fabric API when using Sinytra Connector
+                        return !instance.isForgeLikeAndHasInstalledSinytraConnector();
+                    })
+                    .filter(dependency -> instance.launcher.mods.stream()
+                            .noneMatch(installedMod -> {
+                                // don't show Modrinth dependency when grabbed from CurseForge
+                                if (dependency.projectId.equals(Constants.MODRINTH_FABRIC_MOD_ID)
+                                        && installedMod.isFromCurseForge()
+                                        && installedMod
+                                                .getCurseForgeFileId() == Constants.CURSEFORGE_FABRIC_MOD_ID) {
+                                    return true;
+                                }
 
-                                        // don't show Fabric dependency when QSL is installed
-                                        if (dependency.projectId.equals(Constants.MODRINTH_FABRIC_MOD_ID)
-                                                && installedMod.isFromModrinth()
-                                                && installedMod.modrinthProject.id
-                                                        .equals(Constants.MODRINTH_QSL_MOD_ID)) {
-                                            return true;
-                                        }
+                                // don't show Modrinth dependency when grabbed from CurseForge
+                                if (dependency.projectId.equals(Constants.MODRINTH_LEGACY_FABRIC_MOD_ID)
+                                        && installedMod.isFromCurseForge()
+                                        && installedMod
+                                                .getCurseForgeFileId() == Constants.CURSEFORGE_LEGACY_FABRIC_MOD_ID) {
+                                    return true;
+                                }
 
-                                        return installedMod.isFromModrinth()
-                                                && installedMod.modrinthProject.id.equals(dependency.projectId);
-                                    }))
+                                // don't show Fabric dependency when QSL is installed
+                                if (dependency.projectId.equals(Constants.MODRINTH_FABRIC_MOD_ID)
+                                        && installedMod.isFromModrinth()
+                                        && installedMod.modrinthProject.id
+                                                .equals(Constants.MODRINTH_QSL_MOD_ID)) {
+                                    return true;
+                                }
+
+                                // don't show Modrinth dependency when grabbed from CurseForge
+                                if (dependency.projectId.equals(Constants.MODRINTH_FORGIFIED_FABRIC_API_MOD_ID)
+                                        && installedMod.isFromCurseForge()
+                                        && installedMod
+                                                .getCurseForgeFileId() == Constants.CURSEFORGE_FORGIFIED_FABRIC_API_MOD_ID) {
+                                    return true;
+                                }
+
+                                return installedMod.isFromModrinth()
+                                        && installedMod.modrinthProject.id.equals(dependency.projectId);
+                            }))
                     .collect(Collectors.toList());
 
             if (dependenciesNeeded.size() != 0) {
@@ -370,10 +386,19 @@ public class ModrinthVersionSelectorDialog extends JDialog {
                     && mod.projectType == ModrinthProjectType.MOD) {
                 List<String> neoForgeForgeCompatabilityVersions = ConfigManager
                         .getConfigItem("loaders.neoforge.forgeCompatibleMinecraftVersions", new ArrayList<String>());
+                boolean hasNeoForgeVersion = this.versionsData.stream()
+                        .anyMatch(v -> v.loaders.contains("neoforge")
+                                || (neoForgeForgeCompatabilityVersions.contains(this.instance.id)
+                                        && v.loaders.contains("forge")));
+                boolean hasForgeVersion = this.versionsData.stream().anyMatch(v -> v.loaders.contains("forge"));
                 modrinthVersionsStream = modrinthVersionsStream.filter(v -> {
                     if (v.loaders.contains("fabric") && (this.instance.launcher.loaderVersion.isFabric()
                             || this.instance.launcher.loaderVersion.isLegacyFabric()
-                            || this.instance.launcher.loaderVersion.isQuilt())) {
+                            || this.instance.launcher.loaderVersion.isQuilt()
+                            || (this.instance.isForgeLikeAndHasInstalledSinytraConnector()
+                                    && this.instance.launcher.loaderVersion.isForge() && !hasForgeVersion)
+                            || (this.instance.isForgeLikeAndHasInstalledSinytraConnector()
+                                    && this.instance.launcher.loaderVersion.isNeoForge() && !hasNeoForgeVersion))) {
                         return true;
                     }
 

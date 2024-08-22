@@ -3641,4 +3641,17 @@ public class Instance extends MinecraftVersion {
         // #. {0} is the name of a mod that was removed
         App.TOASTER.pop(GetText.tr("{0} Removed", foundMod.name));
     }
+
+    public boolean isForgeLikeAndHasInstalledSinytraConnector() {
+        if (launcher.loaderVersion == null || !(launcher.loaderVersion.isForge()
+                || launcher.loaderVersion.isNeoForge())) {
+            return false;
+        }
+
+        return launcher.mods.stream().anyMatch(m -> (m.isFromCurseForge()
+                && m.getCurseForgeModId() == Constants.CURSEFORGE_SINYTRA_CONNECTOR_MOD_ID)
+                || m.isFromModrinth()
+                        && m.modrinthProject.id.equalsIgnoreCase(Constants.MODRINTH_SINYTRA_CONNECTOR_MOD_ID))
+                && App.settings.showFabricModsWhenSinytraInstalled;
+    }
 }

@@ -12,6 +12,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Add prompt to update outdated Java [#930]
 - Try to get support links for CurseForge packs from description and from overrides
 - Prompt to visit last instance that crashed when trying to visit ATLauncher Discord
+- Allow installing Fabric mods to Forge and NeoForge instances when Sinytra Connector is installed [#942]
 
 ### Fixes
 - Issue exporting/disabling/deleting worlds downloaded from CurseForge [#927]
