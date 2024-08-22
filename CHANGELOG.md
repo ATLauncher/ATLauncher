@@ -18,6 +18,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Issue installing Modrinth pack with invalid filename [#923]
 - Issue with launching servers with a space in the name not removing Java path correctly on Windows
 - Remove warnings on too much memory being allocated
+- Attempt to fix popup dialogs causing other application windows to not be responsive [#715]
 
 ### Misc
 - Speed up CreatePackTab [#933]
