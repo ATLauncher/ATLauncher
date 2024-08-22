@@ -10,6 +10,8 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Use NeoForge server start jar to allow launching servers using our scripts (partially) [#921]
 - Add a readme file when creating servers using our scripts
 - Add prompt to update outdated Java [#930]
+- Try to get support links for CurseForge packs from description and from overrides
+- Prompt to visit last instance that crashed when trying to visit ATLauncher Discord
 
 ### Fixes
 - Issue exporting/disabling/deleting worlds downloaded from CurseForge [#927]

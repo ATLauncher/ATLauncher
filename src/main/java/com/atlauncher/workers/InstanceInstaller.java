@@ -2144,6 +2144,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
             instanceLauncher.requiredPermGen = this.packVersion.permGen;
             instanceLauncher.assetsMapToResources = this.assetsMapToResources;
             instanceLauncher.curseForgeProject = this.pack.curseForgeProject;
+            instanceLauncher.curseForgeProjectDescription = this.pack.curseForgeProjectDescription;
             instanceLauncher.curseForgeFile = this.version._curseForgeFile;
             instanceLauncher.multiMCManifest = multiMCManifest;
             instanceLauncher.modrinthProject = this.pack.modrinthProject;

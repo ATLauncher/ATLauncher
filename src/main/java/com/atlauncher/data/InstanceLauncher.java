@@ -87,6 +87,7 @@ public class InstanceLauncher {
     public CurseForgeManifest curseForgeManifest;
 
     public CurseForgeProject curseForgeProject;
+    public String curseForgeProjectDescription = null;
     public CurseForgeFile curseForgeFile;
     public MultiMCManifest multiMCManifest;
     public ModrinthProject modrinthProject;
