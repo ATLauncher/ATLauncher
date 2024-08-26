@@ -196,7 +196,8 @@ public class CurseForgeApi {
             String categoryId) {
         Integer categoryIdParam = categoryId == null ? null : Integer.parseInt(categoryId);
 
-        List<Integer> modLoaderTypes = Arrays.asList(Constants.CURSEFORGE_FORGE_MODLOADER_ID);
+        List<Integer> modLoaderTypes = new ArrayList<>();
+        modLoaderTypes.add(Constants.CURSEFORGE_NEOFORGE_MODLOADER_ID);
 
         List<String> neoForgeForgeCompatabilityVersions = ConfigManager
                 .getConfigItem("loaders.neoforge.forgeCompatibleMinecraftVersions", new ArrayList<String>());
@@ -213,8 +214,9 @@ public class CurseForgeApi {
             String categoryId) {
         Integer categoryIdParam = categoryId == null ? null : Integer.parseInt(categoryId);
 
-        List<Integer> modLoaderTypes = Arrays.asList(Constants.CURSEFORGE_FORGE_MODLOADER_ID,
-                Constants.CURSEFORGE_FABRIC_MODLOADER_ID);
+        List<Integer> modLoaderTypes = new ArrayList<>();
+        modLoaderTypes.add(Constants.CURSEFORGE_NEOFORGE_MODLOADER_ID);
+        modLoaderTypes.add(Constants.CURSEFORGE_FABRIC_MODLOADER_ID);
 
         List<String> neoForgeForgeCompatabilityVersions = ConfigManager
                 .getConfigItem("loaders.neoforge.forgeCompatibleMinecraftVersions", new ArrayList<String>());

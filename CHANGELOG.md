@@ -8,5 +8,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 ### New Features
 
 ### Fixes
+- Issue with searching for NeoForge mods on 1.20.1
 
 ### Misc
