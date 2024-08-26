@@ -62,6 +62,7 @@ public class Pack {
     public boolean hasDiscordImage;
     public String description;
     public CurseForgeProject curseForgeProject;
+    public String curseForgeProjectDescription = null;
     public ModpacksChPackManifest modpacksChPack;
     public ModrinthProject modrinthProject;
     public TechnicModpack technicModpack;

@@ -3,7 +3,7 @@
 This changelog only contains the changes that are unreleased. For changes for individual releases, please visit the
 [releases](https://github.com/ATLauncher/ATLauncher/releases) page on GitHub.
 
-## 3.4.37.0
+## 3.4.38.0
 
 ### New Features
 - Add AboutTab [#568]
@@ -11,8 +11,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Add version option for CLI [#915]
 
 ### Fixes
-- Issue exporting/disabling/deleting worlds downloaded from CurseForge [#927]
-- Issue installing Modrinth pack with invalid filename [#923]
 
 ### Misc
 - Update gradle wrapper version from 8.2 to 8.9 [#886]

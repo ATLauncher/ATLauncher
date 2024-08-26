@@ -20,15 +20,23 @@ package com.atlauncher.gui.components;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.util.Date;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.UIManager;
 
+import org.mini2Dx.gettext.GetText;
+
+import com.atlauncher.App;
+import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.evnt.listener.ThemeListener;
 import com.atlauncher.evnt.manager.ThemeManager;
+import com.atlauncher.managers.DialogManager;
 import com.atlauncher.managers.LogManager;
+import com.atlauncher.network.Analytics;
+import com.atlauncher.network.analytics.AnalyticsEvent;
 import com.atlauncher.utils.OS;
 
 public abstract class BottomBar extends JPanel implements ThemeListener {
@@ -67,6 +75,24 @@ public abstract class BottomBar extends JPanel implements ThemeListener {
             OS.openWebBrowser("https://atl.pw/nodecraft-from-launcher");
         });
         discordIcon.addActionListener(e -> {
+            if (App.launcher.lastInstanceCrashTime != null && App.launcher.lastInstanceCrash != null
+                    && new Date().getTime() - App.launcher.lastInstanceCrashTime.getTime() < 300000
+                    && App.launcher.lastInstanceCrash.getDiscordInviteUrl() != null) {
+                int ret = DialogManager.yesNoDialog(false).setTitle(GetText.tr("Visit Modpack Discord?"))
+                        .setContent(new HTMLBuilder().center().text(GetText.tr(
+                                "Would you like to open the Discord server for the last instance that crashed?"))
+                                .build())
+                        .setType(DialogManager.QUESTION).show();
+
+                if (ret == DialogManager.YES_OPTION) {
+                    Analytics.trackEvent(AnalyticsEvent.forInstanceEvent("instance_crashed_discord_button",
+                            App.launcher.lastInstanceCrash));
+                    LogManager.info("Opening Up Discord for Modpack");
+                    OS.openWebBrowser(App.launcher.lastInstanceCrash.getDiscordInviteUrl());
+                    return;
+                }
+            }
+
             LogManager.info("Opening Up ATLauncher Discord");
             OS.openWebBrowser("https://atl.pw/discord");
         });

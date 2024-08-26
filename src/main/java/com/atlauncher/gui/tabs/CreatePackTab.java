@@ -42,6 +42,7 @@ import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
+import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
 
@@ -53,9 +54,7 @@ import com.atlauncher.constants.UIConstants;
 import com.atlauncher.data.MCVersionRow;
 import com.atlauncher.data.minecraft.loaders.LoaderType;
 import com.atlauncher.data.minecraft.loaders.LoaderVersion;
-import com.atlauncher.evnt.listener.RelocalizationListener;
-import com.atlauncher.evnt.manager.RelocalizationManager;
-import com.atlauncher.gui.components.PreservingCaretTextSetter;
+import com.atlauncher.gui.components.LockingPreservingCaretTextSetter;
 import com.atlauncher.gui.panels.HierarchyPanel;
 import com.atlauncher.listener.StatefulTextKeyAdapter;
 import com.atlauncher.managers.DialogManager;
@@ -144,9 +143,13 @@ public class CreatePackTab extends HierarchyPanel implements Tab {
         gbc.gridx++;
         gbc.insets = UIConstants.FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-        PreservingCaretTextSetter nameFieldSetter = new PreservingCaretTextSetter(nameField);
-        addDisposable(viewModel.name().subscribe((it) -> nameFieldSetter.setText(it.orElse(null))));
-        nameField.addKeyListener(new StatefulTextKeyAdapter((e) -> viewModel.setName(nameField.getText())));
+        LockingPreservingCaretTextSetter nameFieldSetter = new LockingPreservingCaretTextSetter(nameField);
+        viewModel.name().subscribe((it) -> nameFieldSetter.setText(it.orElse(null)));
+        nameField.addKeyListener(new StatefulTextKeyAdapter(
+            (e) -> viewModel.setName(nameField.getText()),
+            (e) -> nameFieldSetter.setLocked(true),
+            (e) -> SwingUtilities.invokeLater(() -> nameFieldSetter.setLocked(false))
+        ));
         mainPanel.add(nameField, gbc);
 
         // Description
@@ -164,10 +167,14 @@ public class CreatePackTab extends HierarchyPanel implements Tab {
         descriptionScrollPane.setPreferredSize(new Dimension(450, 80));
         descriptionScrollPane.setViewportView(descriptionField);
 
-        PreservingCaretTextSetter descriptionFieldSetter = new PreservingCaretTextSetter(descriptionField);
-        addDisposable(viewModel.description().subscribe((it) -> descriptionFieldSetter.setText(it.orElse(null))));
-        descriptionField.addKeyListener(
-                new StatefulTextKeyAdapter((e) -> viewModel.setDescription(descriptionField.getText())));
+        descriptionField.setLineWrap(true);
+        LockingPreservingCaretTextSetter descriptionFieldSetter = new LockingPreservingCaretTextSetter(descriptionField);
+        viewModel.description().subscribe((it) -> descriptionFieldSetter.setText(it.orElse(null)));
+        descriptionField.addKeyListener(new StatefulTextKeyAdapter(
+            (e) -> viewModel.setDescription(descriptionField.getText()),
+            (e) -> descriptionFieldSetter.setLocked(true),
+            (e) -> SwingUtilities.invokeLater(() -> descriptionFieldSetter.setLocked(false))
+        ));
         mainPanel.add(descriptionScrollPane, gbc);
 
         // Minecraft Version

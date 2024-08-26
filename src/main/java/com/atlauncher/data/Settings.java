@@ -55,6 +55,7 @@ public class Settings {
     public boolean ignoreJavaOptionsWarning = false;
     public boolean seenCurseForgeProjectDistributionDialog = false;
     public int seenBundledJrePromptVersion = 0;
+    public int seenOutdatedJavaPromptVersion = 0;
 
     // Window settings
     public boolean rememberWindowSizePosition = false;
@@ -88,6 +89,7 @@ public class Settings {
     public ModPlatform defaultModPlatform = ModPlatform.CURSEFORGE;
     public AddModRestriction addModRestriction = AddModRestriction.STRICT;
     public boolean enableAddedModsByDefault = true;
+    public boolean showFabricModsWhenSinytraInstalled = true;
     public boolean allowCurseForgeAlphaBetaFiles = false;
     public boolean dontCheckModsOnCurseForge = false;
     public boolean dontCheckModsOnModrinth = false;

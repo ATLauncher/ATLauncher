@@ -156,6 +156,7 @@ import com.atlauncher.utils.ArchiveUtils;
 import com.atlauncher.utils.ComboItem;
 import com.atlauncher.utils.CommandExecutor;
 import com.atlauncher.utils.CurseForgeApi;
+import com.atlauncher.utils.CurseForgeUtils;
 import com.atlauncher.utils.FileUtils;
 import com.atlauncher.utils.Hashing;
 import com.atlauncher.utils.Java;
@@ -1065,6 +1066,7 @@ public class Instance extends MinecraftVersion {
                 BufferedReader br = new BufferedReader(isr);
                 String line;
                 int detectedError = 0;
+                boolean crashedWithoutKnownResolution = false;
 
                 String replaceUUID = account.uuid.replace("-", "");
 
@@ -1092,6 +1094,10 @@ public class Instance extends MinecraftVersion {
                     if (line.contains(
                             "class jdk.internal.loader.ClassLoaders$AppClassLoader cannot be cast to class")) {
                         detectedError = MinecraftError.USING_NEWER_JAVA_THAN_8;
+                    }
+
+                    if (line.contains("Crash report saved to") || line.contains("Minecraft Crash Report")) {
+                        crashedWithoutKnownResolution = true;
                     }
 
                     if (!LogManager.showDebug) {
@@ -1150,7 +1156,9 @@ public class Instance extends MinecraftVersion {
                     App.console.setVisible(false); // Hide the console to pretend we've closed
                 }
 
-                if (exitValue != 0) {
+                if (exitValue != 0 || crashedWithoutKnownResolution) {
+                    App.launcher.setLastInstanceCrash(this);
+
                     LogManager.error(
                             "Oh no. Minecraft crashed. Please check the logs for any errors and provide these logs when asking for support.");
 
@@ -1159,23 +1167,10 @@ public class Instance extends MinecraftVersion {
                                 "The Use Java Provided By Minecraft option has been disabled. Please enable this option again.");
                     }
 
-                    if (this.getPack() != null && !this.getPack().system) {
-                        LogManager.info("Checking for modifications to the pack since installation.");
-                        this.launcher.mods.forEach(mod -> {
-                            if (!mod.userAdded && mod.wasSelected && mod.disabled) {
-                                LogManager.warn("The mod " + mod.name + " (" + mod.file + ") has been disabled.");
-                            }
-                        });
-
-                        Files.list(
-                                this.ROOT.resolve("mods")).filter(
-                                        file -> Files.isRegularFile(file)
-                                                && this.launcher.mods.stream()
-                                                        .noneMatch(m -> m.type == Type.mods && !m.userAdded
-                                                                && m.getFile(this).toPath().equals(file)))
-                                .forEach(newMod ->
-                                    LogManager.warn("The mod " + newMod.getFileName().toString() + " has been added.")
-                                );
+                    if (this.getDiscordInviteUrl() != null) {
+                        LogManager.error(String.format(
+                                "If you're having issues, please visit the Discord server for the modpack at %s",
+                                this.getDiscordInviteUrl()));
                     }
                 }
 
@@ -3173,7 +3168,8 @@ public class Instance extends MinecraftVersion {
 
     public List<String> getSinglePlayerWorldNamesFromFilesystem() {
         File[] folders = ROOT.resolve("saves").toFile().listFiles((dir, name) -> new File(dir, name).isDirectory());
-        if (folders == null) return new ArrayList<>();
+        if (folders == null)
+            return new ArrayList<>();
         return Arrays.stream(folders).map(File::getName).collect(Collectors.toList());
     }
 
@@ -3182,9 +3178,8 @@ public class Instance extends MinecraftVersion {
             return false;
         }
         return arguments.game.stream().anyMatch(
-            argumentRule -> argumentRule.value instanceof List &&
-                ((List<?>) argumentRule.value).contains(quickPlayOption.argumentRuleValue)
-        );
+                argumentRule -> argumentRule.value instanceof List &&
+                        ((List<?>) argumentRule.value).contains(quickPlayOption.argumentRuleValue));
     }
 
     private List<Path> getModPathsFromFilesystem() {
@@ -3465,6 +3460,37 @@ public class Instance extends MinecraftVersion {
             return launcher.modrinthProject.discordUrl;
         }
 
+        if (isCurseForgePack()) {
+            if (launcher.curseForgeProjectDescription != null) {
+                String discordLinkFromDescription = CurseForgeUtils
+                        .parseDescriptionForDiscordInvite(launcher.curseForgeProjectDescription);
+                if (discordLinkFromDescription != null) {
+                    return discordLinkFromDescription;
+                }
+            }
+
+            // allow overriding the discord link from ATLauncher's side
+            String overriddenDiscordLink = ConfigManager
+                    .<String>getConfigItem(
+                            "discordLinkMatching.curseForgeProjectIdsToDiscordLink." + launcher.curseForgeProject.id,
+                            null);
+            if (overriddenDiscordLink != null) {
+                return overriddenDiscordLink;
+            }
+
+            // allow overriding the discord link from ATLauncher's side for an author
+            if (launcher.curseForgeProject.authors != null && !launcher.curseForgeProject.authors.isEmpty()) {
+                String overriddenDiscordLinkForAuthor = ConfigManager
+                        .<String>getConfigItem(
+                                "discordLinkMatching.curseForgeAuthorIdsToDiscordLink."
+                                        + launcher.curseForgeProject.authors.get(0).id,
+                                null);
+                if (overriddenDiscordLinkForAuthor != null) {
+                    return overriddenDiscordLinkForAuthor;
+                }
+            }
+        }
+
         return null;
     }
 
@@ -3547,5 +3573,18 @@ public class Instance extends MinecraftVersion {
 
         // #. {0} is the name of a mod that was removed
         App.TOASTER.pop(GetText.tr("{0} Removed", foundMod.name));
+    }
+
+    public boolean isForgeLikeAndHasInstalledSinytraConnector() {
+        if (launcher.loaderVersion == null || !(launcher.loaderVersion.isForge()
+                || launcher.loaderVersion.isNeoForge())) {
+            return false;
+        }
+
+        return launcher.mods.stream().anyMatch(m -> (m.isFromCurseForge()
+                && m.getCurseForgeModId() == Constants.CURSEFORGE_SINYTRA_CONNECTOR_MOD_ID)
+                || m.isFromModrinth()
+                        && m.modrinthProject.id.equalsIgnoreCase(Constants.MODRINTH_SINYTRA_CONNECTOR_MOD_ID))
+                && App.settings.showFabricModsWhenSinytraInstalled;
     }
 }

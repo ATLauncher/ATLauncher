@@ -45,7 +45,7 @@ import com.atlauncher.network.analytics.AnalyticsEvent;
 import com.atlauncher.utils.OS;
 
 public class TechnicPackCard extends JPanel implements RelocalizationListener {
-    private final JButton newInstanceButton = new JButton(GetText.tr("New Instance"));
+    private final JButton newInstanceButton = new JButton(GetText.tr("Install"));
     private final JButton websiteButton = new JButton(GetText.tr("Website"));
 
     public TechnicPackCard(final TechnicModpackSlim pack) {

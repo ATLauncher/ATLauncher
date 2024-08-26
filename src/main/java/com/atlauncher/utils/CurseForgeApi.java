@@ -182,12 +182,40 @@ public class CurseForgeApi {
                 modLoaderTypes, sort, categoryIdParam);
     }
 
+    public static List<CurseForgeProject> searchModsForForgeOrFabric(String gameVersion, String query, int page,
+            String sort,
+            String categoryId) {
+        Integer categoryIdParam = categoryId == null ? null : Integer.parseInt(categoryId);
+        List<Integer> modLoaderTypes = Arrays.asList(Constants.CURSEFORGE_FORGE_MODLOADER_ID,
+                Constants.CURSEFORGE_FABRIC_MODLOADER_ID);
+
+        return searchCurseForge(gameVersion, Constants.CURSEFORGE_MODS_SECTION_ID, query, page,
+                modLoaderTypes, sort, categoryIdParam);
+    }
+
     public static List<CurseForgeProject> searchModsForNeoForge(String gameVersion, String query, int page, String sort,
             String categoryId) {
         Integer categoryIdParam = categoryId == null ? null : Integer.parseInt(categoryId);
 
-        List<Integer> modLoaderTypes = new ArrayList<>();
-        modLoaderTypes.add(Constants.CURSEFORGE_NEOFORGE_MODLOADER_ID);
+        List<Integer> modLoaderTypes = Arrays.asList(Constants.CURSEFORGE_FORGE_MODLOADER_ID);
+
+        List<String> neoForgeForgeCompatabilityVersions = ConfigManager
+                .getConfigItem("loaders.neoforge.forgeCompatibleMinecraftVersions", new ArrayList<String>());
+        if (neoForgeForgeCompatabilityVersions.contains(gameVersion)) {
+            modLoaderTypes.add(Constants.CURSEFORGE_FORGE_MODLOADER_ID);
+        }
+
+        return searchCurseForge(gameVersion, Constants.CURSEFORGE_MODS_SECTION_ID, query, page,
+                modLoaderTypes, sort, categoryIdParam);
+    }
+
+    public static List<CurseForgeProject> searchModsForNeoForgeOrFabric(String gameVersion, String query, int page,
+            String sort,
+            String categoryId) {
+        Integer categoryIdParam = categoryId == null ? null : Integer.parseInt(categoryId);
+
+        List<Integer> modLoaderTypes = Arrays.asList(Constants.CURSEFORGE_FORGE_MODLOADER_ID,
+                Constants.CURSEFORGE_FABRIC_MODLOADER_ID);
 
         List<String> neoForgeForgeCompatabilityVersions = ConfigManager
                 .getConfigItem("loaders.neoforge.forgeCompatibleMinecraftVersions", new ArrayList<>());
@@ -229,6 +257,25 @@ public class CurseForgeApi {
         }.getType();
 
         CurseForgeCoreApiResponse<CurseForgeFile> response = download.asType(type);
+
+        if (response != null) {
+            return response.data;
+        }
+
+        return null;
+    }
+
+    public static String getProjectDescription(int projectId) {
+        String url = String.format(Locale.ENGLISH, "%s/mods/%d/description?raw=true", Constants.CURSEFORGE_CORE_API_URL,
+                projectId);
+
+        Download download = Download.build().setUrl(url).header("x-api-key", Constants.CURSEFORGE_CORE_API_KEY)
+                .cached(new CacheControl.Builder().maxStale(1, TimeUnit.HOURS).build());
+
+        java.lang.reflect.Type type = new TypeToken<CurseForgeCoreApiResponse<String>>() {
+        }.getType();
+
+        CurseForgeCoreApiResponse<String> response = download.asType(type);
 
         if (response != null) {
             return response.data;

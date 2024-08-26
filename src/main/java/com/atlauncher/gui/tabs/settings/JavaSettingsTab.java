@@ -45,7 +45,6 @@ import com.atlauncher.App;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.constants.UIConstants;
 import com.atlauncher.data.CheckState;
-import com.atlauncher.data.MaxRamWarning;
 import com.atlauncher.data.ScreenResolution;
 import com.atlauncher.gui.components.JLabelWithHover;
 import com.atlauncher.listener.DelayedSavingKeyListener;
@@ -159,34 +158,7 @@ public class JavaSettingsTab extends AbstractSettingsTab {
         JSpinner maximumMemory = new JSpinner(maximumMemoryModel);
         ((JSpinner.DefaultEditor) maximumMemory.getEditor()).getTextField().setColumns(5);
         maximumMemory.addChangeListener(e -> {
-            MaxRamWarning warning = viewModel.setMaxRam((Integer) maximumMemory.getValue());
-            if (warning == null) return;
-
-            switch (warning) {
-                case ABOVE_8GB:
-                    viewModel.setMaximumMemoryEightGBWarningShown();
-                    int ret = DialogManager.okDialog()
-                        .setTitle(GetText.tr("Warning"))
-                        .setType(DialogManager.WARNING)
-                        .setContent(GetText.tr(
-                            "Setting maximum memory above 8GB is not recommended for most modpacks and can cause issues."))
-                        .addOption(GetText.tr("More Explanation"))
-                        .show();
-
-                    if (ret == 1) {
-                        OS.openWebBrowser("https://atl.pw/allocatetoomuchram");
-                    }
-                    break;
-                case ABOVE_HALF:
-                    viewModel.setMaximumMemoryHalfWarningShown();
-                    DialogManager.okDialog()
-                        .setTitle(GetText.tr("Warning"))
-                        .setType(DialogManager.WARNING)
-                        .setContent(GetText.tr(
-                            "Setting maximum memory to more than half of your systems total memory is not recommended and can cause issues in some cases. Are you sure you want to do this?"))
-                        .show();
-                    break;
-            }
+            viewModel.setMaxRam((Integer) maximumMemory.getValue());
         });
         addDisposable(viewModel.getMaxRam().subscribe(maximumMemory::setValue));
         add(maximumMemory, gbc);

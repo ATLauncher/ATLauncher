@@ -128,6 +128,15 @@ public class ModrinthApi {
                 ModrinthProjectType.MOD);
     }
 
+    public static ModrinthSearchResult searchModsForForgeOrFabric(List<String> gameVersions, String query, int page,
+            String sort, String category) {
+        List<List<String>> categories = category == null ? Arrays.asList(Arrays.asList("forge", "fabric"))
+                : Arrays.asList(Arrays.asList(category), Arrays.asList("forge", "fabric"));
+
+        return searchModrinth(gameVersions, query, page, sort, categories,
+                ModrinthProjectType.MOD);
+    }
+
     public static ModrinthSearchResult searchModsForNeoForge(List<String> gameVersions, String query, int page,
             String sort, String category) {
         List<List<String>> categories = new ArrayList<>();
@@ -142,6 +151,25 @@ public class ModrinthApi {
             categories.add(Arrays.asList("neoforge", "forge"));
         } else {
             categories.add(Collections.singletonList("neoforge"));
+        }
+
+        return searchModrinth(gameVersions, query, page, sort, categories, ModrinthProjectType.MOD);
+    }
+
+    public static ModrinthSearchResult searchModsForNeoForgeOrFabric(List<String> gameVersions, String query, int page,
+            String sort, String category) {
+        List<List<String>> categories = new ArrayList<>();
+
+        if (category != null) {
+            categories.add(Arrays.asList(category));
+        }
+
+        List<String> neoForgeForgeCompatabilityVersions = ConfigManager
+                .getConfigItem("loaders.neoforge.forgeCompatibleMinecraftVersions", new ArrayList<String>());
+        if (gameVersions.stream().anyMatch(gv -> neoForgeForgeCompatabilityVersions.contains(gv))) {
+            categories.add(Arrays.asList("neoforge", "forge", "fabric"));
+        } else {
+            categories.add(Arrays.asList("neoforge", "fabric"));
         }
 
         return searchModrinth(gameVersions, query, page, sort, categories, ModrinthProjectType.MOD);

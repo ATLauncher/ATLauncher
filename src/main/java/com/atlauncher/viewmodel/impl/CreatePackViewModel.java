@@ -786,9 +786,18 @@ public class CreatePackViewModel implements SettingsListener, ICreatePackViewMod
                                         selectedLoaderType.getValue().orElse(null))));
     }
 
+    /**
+     * Separate thread to check if the name is dirty or not.
+     * This is because setName needs to be as fast as possible.
+     */
+    private Thread nameCheckDirtyThread = null;
+
     public void setName(String name) {
         this.name.onNext(Optional.of(name));
-        nameDirty = isNameDirty();
+        if (nameCheckDirtyThread == null || !nameCheckDirtyThread.isAlive()) {
+            nameCheckDirtyThread = new Thread(() -> nameDirty = isNameDirty());
+            nameCheckDirtyThread.start();
+        }
     }
 
     private boolean isDescriptionDirty() {
@@ -801,9 +810,18 @@ public class CreatePackViewModel implements SettingsListener, ICreatePackViewMod
                                         selectedLoaderType.getValue().orElse(null))));
     }
 
+    /**
+     * Separate thread to check if the description is dirty or not.
+     * This is because setDescription needs to be as fast as possible.
+     */
+    private Thread descCheckDirtyThread = null;
+
     public void setDescription(String description) {
-        descriptionDirty = isDescriptionDirty();
         this.description.onNext(Optional.of(description));
+        if (descCheckDirtyThread == null || !descCheckDirtyThread.isAlive()) {
+            descCheckDirtyThread = new Thread(() -> descriptionDirty = isDescriptionDirty());
+            descCheckDirtyThread.start();
+        }
     }
 
     public void setReleaseSelected(Boolean b) {

@@ -95,6 +95,8 @@ public class Constants {
     public static final int CURSEFORGE_FABRIC_MOD_ID = 306612;
     public static final int CURSEFORGE_LEGACY_FABRIC_MOD_ID = 400281;
     public static final int CURSEFORGE_JUMPLOADER_MOD_ID = 361988;
+    public static final int CURSEFORGE_SINYTRA_CONNECTOR_MOD_ID = 890127;
+    public static final int CURSEFORGE_FORGIFIED_FABRIC_API_MOD_ID = 889079;
     public static final int CURSEFORGE_MODS_SECTION_ID = 6;
     public static final int CURSEFORGE_MODPACKS_SECTION_ID = 4471;
     public static final int CURSEFORGE_RESOURCE_PACKS_SECTION_ID = 12;
@@ -107,6 +109,8 @@ public class Constants {
     public static final String MODRINTH_FABRIC_MOD_ID = "P7dR8mSH";
     public static final String MODRINTH_LEGACY_FABRIC_MOD_ID = "9CJED7xi";
     public static final String MODRINTH_QSL_MOD_ID = "qvIfYCYJ";
+    public static final String MODRINTH_SINYTRA_CONNECTOR_MOD_ID = "u58R1TMW";
+    public static final String MODRINTH_FORGIFIED_FABRIC_API_MOD_ID = "Aqlf1Shp";
     public static final int MODRINTH_PAGINATION_SIZE = 20;
 
     // Modpacks.ch domains, endpoints, config, etc

@@ -134,6 +134,26 @@ public class ModsSettingsTab extends AbstractSettingsTab {
         addDisposable(viewModel.getEnableAddedModsByDefault().subscribe(enableAddedModsByDefault::setSelected));
         add(enableAddedModsByDefault, gbc);
 
+        // Show Fabric Mods When Sinytra Installed
+
+        gbc.gridx = 0;
+        gbc.gridy++;
+        gbc.insets = UIConstants.LABEL_INSETS;
+        gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
+        JLabelWithHover showFabricModsWhenSinytraInstalledLabel = new JLabelWithHover(GetText.tr("Show Fabric Mods When Sinytra Installed?"),
+                HELP_ICON, new HTMLBuilder().center().split(100)
+                        .text(GetText.tr("When Sinytra Connector is installed, should Fabric mods be shown?")).build());
+        add(showFabricModsWhenSinytraInstalledLabel, gbc);
+
+        gbc.gridx++;
+        gbc.insets = UIConstants.CHECKBOX_FIELD_INSETS;
+        gbc.anchor = GridBagConstraints.BASELINE_LEADING;
+        JCheckBox showFabricModsWhenSinytraInstalled = new JCheckBox();
+        showFabricModsWhenSinytraInstalled.addItemListener(itemEvent ->
+            viewModel.setShowFabricModsWhenSinytraInstalled(itemEvent.getStateChange() == ItemEvent.SELECTED));
+        addDisposable(viewModel.getShowFabricModsWhenSinytraInstalled().subscribe(showFabricModsWhenSinytraInstalled::setSelected));
+        add(showFabricModsWhenSinytraInstalled, gbc);
+
         // Allow CurseForge Alpha/Beta CurseForge files
 
         gbc.gridx = 0;

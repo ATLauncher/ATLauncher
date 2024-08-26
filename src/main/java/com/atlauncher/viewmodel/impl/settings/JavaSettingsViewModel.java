@@ -33,7 +33,6 @@ import org.jetbrains.annotations.NotNull;
 import com.atlauncher.App;
 import com.atlauncher.constants.Constants;
 import com.atlauncher.data.CheckState;
-import com.atlauncher.data.MaxRamWarning;
 import com.atlauncher.data.ScreenResolution;
 import com.atlauncher.evnt.listener.SettingsListener;
 import com.atlauncher.evnt.manager.SettingsManager;
@@ -49,47 +48,41 @@ import io.reactivex.rxjava3.subjects.BehaviorSubject;
 
 /**
  * @since 2022 / 06 / 16
- * <p>
- * View model for {@link JavaSettingsTab}
+ *        <p>
+ *        View model for {@link JavaSettingsTab}
  */
 public class JavaSettingsViewModel implements SettingsListener {
     private static final long javaPathCheckDelay = 2000;
     private static final Logger LOG = LogManager.getLogger();
     private static final long javaParamCheckDelay = 2000;
 
-    private final BehaviorSubject<Integer>
-        _initialRam = BehaviorSubject.create(),
-        _maxRam = BehaviorSubject.create(),
-        _metaspace = BehaviorSubject.create(),
-        _width = BehaviorSubject.create(),
-        _height = BehaviorSubject.create();
+    private final BehaviorSubject<Integer> _initialRam = BehaviorSubject.create(),
+            _maxRam = BehaviorSubject.create(),
+            _metaspace = BehaviorSubject.create(),
+            _width = BehaviorSubject.create(),
+            _height = BehaviorSubject.create();
 
-    private final BehaviorSubject<String>
-        _javaPath = BehaviorSubject.create(),
-        _javaParams = BehaviorSubject.create(),
-        baseJavaInstallFolder = BehaviorSubject.create();
+    private final BehaviorSubject<String> _javaPath = BehaviorSubject.create(),
+            _javaParams = BehaviorSubject.create(),
+            baseJavaInstallFolder = BehaviorSubject.create();
 
-    private final BehaviorSubject<Boolean>
-        _maximizeMinecraft = BehaviorSubject.create(),
-        _ignoreJavaOnInstanceLaunch = BehaviorSubject.create(),
-        _useJavaProvidedByMinecraft = BehaviorSubject.create(),
-        _disableLegacyLaunching = BehaviorSubject.create(),
-        _useSystemGlfw = BehaviorSubject.create(),
-        _useSystemOpenAl = BehaviorSubject.create();
+    private final BehaviorSubject<Boolean> _maximizeMinecraft = BehaviorSubject.create(),
+            _ignoreJavaOnInstanceLaunch = BehaviorSubject.create(),
+            _useJavaProvidedByMinecraft = BehaviorSubject.create(),
+            _disableLegacyLaunching = BehaviorSubject.create(),
+            _useSystemGlfw = BehaviorSubject.create(),
+            _useSystemOpenAl = BehaviorSubject.create();
 
-    private final BehaviorSubject<CheckState>
-        javaPathCheckState = BehaviorSubject.create(),
-        javaParamCheckState = BehaviorSubject.create();
+    private final BehaviorSubject<CheckState> javaPathCheckState = BehaviorSubject.create(),
+            javaParamCheckState = BehaviorSubject.create();
 
-    private Integer
-        systemRam = -1,
-        recommendSize;
+    private Integer systemRam = -1,
+            recommendSize;
 
-    private boolean
-        initialMemoryWarningShown = false,
-        maximumMemoryHalfWarningShown = false,
-        maximumMemoryEightGBWarningShown = false,
-        permgenWarningShown = false;
+    private boolean initialMemoryWarningShown = false,
+            maximumMemoryHalfWarningShown = false,
+            maximumMemoryEightGBWarningShown = false,
+            permgenWarningShown = false;
     private List<String> javaPaths;
 
     private long javaPathLastChange = 0;
@@ -153,8 +146,7 @@ public class JavaSettingsViewModel implements SettingsListener {
                         javaParamCheckState.onNext(CheckState.Checking);
 
                         String params = App.settings.javaParameters;
-                        boolean valid =
-                            (useInitialMemoryOption() || !params.contains("-Xms")) &&
+                        boolean valid = (useInitialMemoryOption() || !params.contains("-Xms")) &&
                                 !params.contains("-Xmx") &&
                                 !params.contains("-XX:PermSize") &&
                                 !params.contains("-XX:MetaspaceSize");
@@ -164,7 +156,8 @@ public class JavaSettingsViewModel implements SettingsListener {
 
                         if (!valid) {
                             LOG.debug("javaParamCheckThread: Check thread reporting check fail");
-                        } else SettingsManager.post();
+                        } else
+                            SettingsManager.post();
                     }
                 }
             }
@@ -268,10 +261,8 @@ public class JavaSettingsViewModel implements SettingsListener {
      * Set the maximum ram
      *
      * @param maxRam max ram value
-     * @return null if no warning, else handle the warning
      */
-    @Nullable
-    public MaxRamWarning setMaxRam(int maxRam) {
+    public void setMaxRam(int maxRam) {
         App.settings.maximumMemory = maxRam;
         // if initial memory is larger than maximum memory, make initial memory match
         if (useInitialMemoryOption() && App.settings.initialMemory > maxRam) {
@@ -279,16 +270,6 @@ public class JavaSettingsViewModel implements SettingsListener {
         }
 
         SettingsManager.post();
-
-        if (maxRam > 8192 && !isMaximumMemoryEightGBWarningShown())
-            return MaxRamWarning.ABOVE_8GB;
-
-        if ((OS.getMaximumRam() != 0 && OS.getMaximumRam() < 16384)
-            && maxRam > (OS.getMaximumRam() / 2)
-            && !isMaximumMemoryHalfWarningShown())
-            return MaxRamWarning.ABOVE_HALF;
-
-        return null;
     }
 
     public Observable<Integer> getMaxRam() {
@@ -340,8 +321,8 @@ public class JavaSettingsViewModel implements SettingsListener {
 
     public List<ScreenResolution> getScreenResolutions() {
         return Arrays.stream(Constants.SCREEN_RESOLUTIONS)
-            .filter((it) -> it.width <= OS.getMaximumWindowWidth() && it.height <= OS.getMaximumWindowHeight())
-            .collect(Collectors.toList());
+                .filter((it) -> it.width <= OS.getMaximumWindowWidth() && it.height <= OS.getMaximumWindowHeight())
+                .collect(Collectors.toList());
     }
 
     public void setScreenResolution(ScreenResolution resolution) {
@@ -353,8 +334,8 @@ public class JavaSettingsViewModel implements SettingsListener {
     public List<String> getJavaPaths() {
         if (javaPaths == null)
             javaPaths = Java.getInstalledJavas().stream()
-                .map(javaInfo -> javaInfo.rootPath)
-                .collect(Collectors.toList());
+                    .map(javaInfo -> javaInfo.rootPath)
+                    .collect(Collectors.toList());
 
         return javaPaths;
     }
@@ -380,8 +361,7 @@ public class JavaSettingsViewModel implements SettingsListener {
     public void setJavaPath(String path) {
         setJavaPathPending();
         App.settings.javaPath = path;
-        App.settings.usingCustomJavaPath =
-            !path.equalsIgnoreCase(OS.getDefaultJavaPath());
+        App.settings.usingCustomJavaPath = !path.equalsIgnoreCase(OS.getDefaultJavaPath());
         javaPathLastChange = System.currentTimeMillis();
         javaPathChanged = true;
         if (!javaPathCheckThread.isAlive())
@@ -434,7 +414,6 @@ public class JavaSettingsViewModel implements SettingsListener {
     public Observable<Boolean> getMaximizeMinecraft() {
         return _maximizeMinecraft.observeOn(SwingSchedulers.edt());
     }
-
 
     public void setIgnoreJavaChecks(Boolean b) {
         App.settings.ignoreJavaOnInstanceLaunch = b;

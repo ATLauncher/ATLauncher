@@ -47,6 +47,7 @@ public class ModsSettingsViewModel implements SettingsListener {
 
     private final BehaviorSubject<Boolean>
         _enableAddedModsByDefault = BehaviorSubject.create(),
+        _showFabricModsWhenSinytraInstalled = BehaviorSubject.create(),
         _doNotCheckModsOnCurseForge = BehaviorSubject.create(),
         _doNotCheckModsOnModrinth = BehaviorSubject.create(),
         allowCurseForgeAlphaBetaFiles = BehaviorSubject.create();
@@ -63,6 +64,7 @@ public class ModsSettingsViewModel implements SettingsListener {
         _defaultExportFormat.onNext(App.settings.defaultExportFormat.ordinal());
 
         _enableAddedModsByDefault.onNext(App.settings.enableAddedModsByDefault);
+        _showFabricModsWhenSinytraInstalled.onNext(App.settings.showFabricModsWhenSinytraInstalled);
         _doNotCheckModsOnCurseForge.onNext(App.settings.dontCheckModsOnCurseForge);
         _doNotCheckModsOnModrinth.onNext(App.settings.dontCheckModsOnModrinth);
         allowCurseForgeAlphaBetaFiles.onNext(App.settings.allowCurseForgeAlphaBetaFiles);
@@ -92,6 +94,15 @@ public class ModsSettingsViewModel implements SettingsListener {
 
     public void setEnableAddedModsByDefault(Boolean b) {
         App.settings.enableAddedModsByDefault = b;
+        SettingsManager.post();
+    }
+
+    public Observable<Boolean> getShowFabricModsWhenSinytraInstalled() {
+        return _showFabricModsWhenSinytraInstalled.observeOn(SwingSchedulers.edt());
+    }
+
+    public void setShowFabricModsWhenSinytraInstalled(Boolean b) {
+        App.settings.showFabricModsWhenSinytraInstalled = b;
         SettingsManager.post();
     }
 
