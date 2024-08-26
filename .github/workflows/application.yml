@@ -177,32 +177,32 @@ jobs:
           cat fixed-changelog.md >> $GITHUB_ENV
           echo 'EOF' >> $GITHUB_ENV
 
-      - name: Create ATLauncher Version
-        uses: ATLauncher/release-atlauncher-action@master
-        timeout-minutes: 30
-        with:
-          api-key: ${{ secrets.ATLAUNCHER_API_KEY }}
-          version: ${{ needs.package.outputs.clean-version }}
-          changelog: ${{ env.cleaned-changelog }}
-          files: |
-            ./ATLauncher/ATLauncher-${{ needs.package.outputs.clean-version }}.exe
-            ./ATLauncher/ATLauncher-${{ needs.package.outputs.clean-version }}.zip
-            ./ATLauncher/ATLauncher-${{ needs.package.outputs.clean-version }}.jar
+      # - name: Create ATLauncher Version
+      #   uses: ATLauncher/release-atlauncher-action@master
+      #   timeout-minutes: 30
+      #   with:
+      #     api-key: ${{ secrets.ATLAUNCHER_API_KEY }}
+      #     version: ${{ needs.package.outputs.clean-version }}
+      #     changelog: ${{ env.cleaned-changelog }}
+      #     files: |
+      #       ./ATLauncher/ATLauncher-${{ needs.package.outputs.clean-version }}.exe
+      #       ./ATLauncher/ATLauncher-${{ needs.package.outputs.clean-version }}.zip
+      #       ./ATLauncher/ATLauncher-${{ needs.package.outputs.clean-version }}.jar
 
-      - name: Create GitHub Release
-        uses: softprops/action-gh-release@v1
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          tag_name: v${{ needs.package.outputs.clean-version }}
-          target_commitish: master
-          name: ${{ needs.package.outputs.clean-version }}
-          body: ${{ env.cleaned-changelog }}
-          prerelease: false
-          draft: false
-          files: |
-            ./ATLauncher/ATLauncher-${{ needs.package.outputs.clean-version }}.exe
-            ./ATLauncher/ATLauncher-${{ needs.package.outputs.clean-version }}.zip
-            ./ATLauncher/ATLauncher-${{ needs.package.outputs.clean-version }}.jar
+      # - name: Create GitHub Release
+      #   uses: softprops/action-gh-release@v1
+      #   with:
+      #     token: ${{ secrets.GITHUB_TOKEN }}
+      #     tag_name: v${{ needs.package.outputs.clean-version }}
+      #     target_commitish: master
+      #     name: ${{ needs.package.outputs.clean-version }}
+      #     body: ${{ env.cleaned-changelog }}
+      #     prerelease: false
+      #     draft: false
+      #     files: |
+      #       ./ATLauncher/ATLauncher-${{ needs.package.outputs.clean-version }}.exe
+      #       ./ATLauncher/ATLauncher-${{ needs.package.outputs.clean-version }}.zip
+      #       ./ATLauncher/ATLauncher-${{ needs.package.outputs.clean-version }}.jar
 
       - name: Create Sentry release
         uses: getsentry/action-release@v1
