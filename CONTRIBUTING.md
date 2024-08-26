@@ -31,22 +31,16 @@ looked after in a timely and sensitive manner.
 
 ## Branching Structure
 
-We essentially use trunk based development.
+We use trunk based development.
 
-* **master** is the main branch and contains all the code that is released to the public.
-* **develop** is where all in development work is merged to and is considered the main branch in the sense that all pull
-    requests should be sent to the develop branch
-* **feature/\*** will contain single issues being developed. Once developed they're merged into develop. They should
+* **master** is the main branch and contains all the code. All pull requests should be sent to the master branch
+* **feature/\*** will contain single issues being developed. Once developed they're merged into master. They should
     be named 'feature/22-some-brief-description' as an example
-
-Once a release is ready to go, a release branch will be created from the develop branch and merged into master.
-
-For any hotfixes, a hotfix branch will be created from the master branch and merged into master.
 
 All tags are done on the **master** branch only and should be in format **v(version number)**. Most versioning and
 tagging is done automatically, so please check before doing so manually.
 
-Feature branches are deleted once merged into develop. Any issues that come up after the features branch has been
+Feature branches are deleted once merged into master. Any issues that come up after the features branch has been
 merged should be resolved by creating a new issue and feature branch.
 
 An example of a good name for a feature branch is say there is an issue (#44) which is about not being able to delete a
