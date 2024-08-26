@@ -10,6 +10,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Add version option for CLI [#915]
 
 ### Fixes
+- Issue with searching for NeoForge mods on 1.20.1
 
 ### Misc
 - Update gradle wrapper version from 8.2 to 8.9 [#886]
