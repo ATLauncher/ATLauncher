@@ -182,7 +182,7 @@ public final class DialogManager {
             return App.launcher.getParent();
         }
 
-        return null;
+        return JOptionPane.getRootFrame();
     }
 
     public int show() {
