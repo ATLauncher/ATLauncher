@@ -10,7 +10,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Add version option for CLI [#915]
 
 ### Fixes
-- Issue with dialogs not showing early on in application process
 
 ### Misc
 - Update gradle wrapper version from 8.2 to 8.9 [#886]
