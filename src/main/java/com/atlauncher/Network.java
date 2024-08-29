@@ -19,15 +19,12 @@ package com.atlauncher;
 
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLSession;
 import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
@@ -52,7 +49,8 @@ import okhttp3.tls.HandshakeCertificates;
 public final class Network {
     public static Cache CACHE = new Cache(FileSystem.CACHE.toFile(), 100 * 1024 * 1024); // 100MB cache
 
-    public static OkHttpClient CLIENT = new OkHttpClient.Builder().protocols(Collections.singletonList(Protocol.HTTP_1_1))
+    public static OkHttpClient CLIENT = new OkHttpClient.Builder()
+            .protocols(Collections.singletonList(Protocol.HTTP_1_1))
             .addNetworkInterceptor(new UserAgentInterceptor()).addInterceptor(new DebugLoggingInterceptor())
             .addNetworkInterceptor(new ErrorReportingInterceptor())
             .connectTimeout(App.settings.connectionTimeout, TimeUnit.SECONDS)
@@ -106,10 +104,9 @@ public final class Network {
         };
 
         return Network.CLIENT.newBuilder().addNetworkInterceptor(chain -> {
-            try (Response originalResponse = chain.proceed(chain.request())) {
-                return originalResponse.newBuilder()
+            Response originalResponse = chain.proceed(chain.request());
+            return originalResponse.newBuilder()
                     .body(new ProgressResponseBody(originalResponse.body(), progressListener)).build();
-            }
         }).build();
     }
 
