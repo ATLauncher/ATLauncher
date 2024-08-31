@@ -6,7 +6,6 @@ gson = "2.11.0"
 google-guava = "33.2.0-jre"
 xz = "1.9"
 base64 = "2.3.9"
-discord-rpc = "1.6.2"
 jopt-simple = "5.0.4"
 zt-zip = "1.17"
 okhttp = "4.12.0"
@@ -51,7 +50,6 @@ gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
 google-guava = { module = "com.google.guava:guava", version.ref = "google-guava" }
 xz = { module = "org.tukaani:xz", version.ref = "xz" }
 base64 = { module = "net.iharder:base64", version.ref = "base64" }
-discord-rpc = { module = "com.github.Vatuu:discord-rpc", version.ref = "discord-rpc" }
 jopt-simple = { module = "net.sf.jopt-simple:jopt-simple", version.ref = "jopt-simple" }
 zt-zip = { module = "org.zeroturnaround:zt-zip", version.ref = "zt-zip" }
 okhttp = { module = "com.squareup.okhttp3:okhttp", version.ref = "okhttp" }

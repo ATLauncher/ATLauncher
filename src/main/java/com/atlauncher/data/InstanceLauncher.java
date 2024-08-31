@@ -68,7 +68,6 @@ public class InstanceLauncher {
     public String javaArguments;
     public String javaRuntimeOverride = null;
     public String account;
-    public Boolean enableDiscordIntegration = null;
     public QuickPlay quickPlay = QuickPlay.getDefault();
     public Boolean useJavaProvidedByMinecraft = null;
     public Boolean disableLegacyLaunching = null;

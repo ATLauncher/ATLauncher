@@ -48,7 +48,6 @@ dependencies {
     implementation(libs.google.guava)
     implementation(libs.xz)
     implementation(libs.base64)
-    implementation(libs.discord.rpc)
     implementation(libs.jopt.simple)
     implementation(libs.zt.zip)
     implementation(libs.okhttp)

@@ -72,7 +72,6 @@ import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 
-import net.arikia.dev.drpc.DiscordRPC;
 import okhttp3.OkHttpClient;
 
 public class Launcher {
@@ -161,7 +160,7 @@ public class Launcher {
 
     public boolean launcherHasUpdate() {
         try (InputStreamReader fileReader = new InputStreamReader(
-            Files.newInputStream(FileSystem.JSON.resolve("version.json")), StandardCharsets.UTF_8)) {
+                Files.newInputStream(FileSystem.JSON.resolve("version.json")), StandardCharsets.UTF_8)) {
             this.latestLauncherVersion = Gsons.DEFAULT.fromJson(fileReader, LauncherVersion.class);
         } catch (JsonSyntaxException | JsonIOException | IOException e) {
             LogManager.logStackTrace("Exception when loading latest launcher version!", e);
@@ -480,10 +479,6 @@ public class Launcher {
     public void killMinecraft() {
         if (this.minecraftProcess != null) {
             LogManager.error("Killing Minecraft");
-
-            if (App.discordInitialized) {
-                DiscordRPC.discordClearPresence();
-            }
 
             this.minecraftProcess.destroy();
             this.minecraftProcess = null;

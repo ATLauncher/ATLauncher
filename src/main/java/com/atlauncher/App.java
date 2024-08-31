@@ -88,8 +88,6 @@ import com.formdev.flatlaf.extras.FlatUIDefaultsInspector;
 import io.github.asyncronous.toast.Toaster;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
-import net.arikia.dev.drpc.DiscordEventHandlers;
-import net.arikia.dev.drpc.DiscordRPC;
 import oshi.SystemInfo;
 import oshi.hardware.CentralProcessor;
 import oshi.hardware.GraphicsCard;
@@ -137,8 +135,6 @@ public class App {
      * issues in which the user may have to fix.
      */
     public static boolean justUpdatedBundledJre = false;
-
-    public static boolean discordInitialized = false;
 
     /**
      * This allows skipping the setup dialog on first run. This is mainly used for
@@ -540,23 +536,6 @@ public class App {
         }
     }
 
-    public static void ensureDiscordIsInitialized() {
-        if (!OS.isArm() && !discordInitialized) {
-            try {
-                DiscordEventHandlers handlers = new DiscordEventHandlers.Builder().build();
-                DiscordRPC.discordInitialize(Constants.DISCORD_CLIENT_ID, handlers, true);
-                DiscordRPC.discordRegister(Constants.DISCORD_CLIENT_ID, "");
-
-                discordInitialized = true;
-
-                Runtime.getRuntime().addShutdownHook(new Thread(DiscordRPC::discordShutdown));
-            } catch (Throwable e) {
-                LogManager.logStackTrace("Failed to initialize Discord integration", e);
-                discordInitialized = false;
-            }
-        }
-    }
-
     private static void logSystemInformation(String[] args) {
         LogManager.info(Constants.LAUNCHER_NAME + " Version: " + Constants.VERSION);
 
@@ -866,7 +845,7 @@ public class App {
 
         if (Files.exists(FileSystem.LAUNCHER_CONFIG)) {
             try (InputStreamReader fileReader = new InputStreamReader(
-                Files.newInputStream(FileSystem.LAUNCHER_CONFIG), StandardCharsets.UTF_8)) {
+                    Files.newInputStream(FileSystem.LAUNCHER_CONFIG), StandardCharsets.UTF_8)) {
                 Properties properties = new Properties();
                 properties.load(fileReader);
                 settings.convert(properties);
@@ -1048,9 +1027,9 @@ public class App {
                 .ofType(String.class);
         parser.acceptsAll(Arrays.asList("help", "?"), "Shows help for the arguments for the application.").forHelp();
         parser
-            .acceptsAll(Arrays.asList("version", "v"), "Shows the launcher version")
-            .withOptionalArg()
-            .ofType(Boolean.class);
+                .acceptsAll(Arrays.asList("version", "v"), "Shows the launcher version")
+                .withOptionalArg()
+                .ofType(Boolean.class);
 
         OptionSet options = parser.parse(args);
         autoLaunch = options.has("launch") ? (String) options.valueOf("launch") : null;

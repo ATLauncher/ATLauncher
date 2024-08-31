@@ -8,6 +8,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 ### New Features
 - Add AboutTab [#568]
 - Add version option for CLI [#915]
+- Removed Discord RPC
 
 ### Fixes
 

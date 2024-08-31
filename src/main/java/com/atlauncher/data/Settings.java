@@ -76,7 +76,6 @@ public class Settings {
     public boolean keepLauncherOpen = true;
     public boolean enableConsole = true;
     public boolean enableTrayMenu = true;
-    public boolean enableDiscordIntegration = !OS.isArm();
     public boolean enableFeralGamemode = OS.isLinux() && Utils.executableInPath("gamemoderun");
     private boolean disableAddModRestrictions = false;
     public boolean disableCustomFonts = false;
@@ -167,11 +166,6 @@ public class Settings {
         String importedEnableTrayMenu = properties.getProperty("enabletrayicon");
         if (importedEnableTrayMenu != null) {
             enableTrayMenu = Boolean.parseBoolean(importedEnableTrayMenu);
-        }
-
-        String importedEnableDiscordIntegration = properties.getProperty("enablediscordintegration");
-        if (importedEnableDiscordIntegration != null) {
-            enableDiscordIntegration = Boolean.parseBoolean(importedEnableDiscordIntegration);
         }
 
         String importedEnableFeralGamemode = properties.getProperty("enableferalgamemode");
