@@ -112,7 +112,8 @@ public class GeneralSettingsViewModel implements SettingsListener {
      * @return languages
      */
     public String[] getLanguages() {
-        return Language.locales.stream().map(Locale::getDisplayName).toArray(String[]::new);
+        return Language.locales.stream().filter(l -> l == Locale.ENGLISH || Language.languages.containsValue(l))
+                .map(Locale::getDisplayName).toArray(String[]::new);
     }
 
     /**

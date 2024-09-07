@@ -49,8 +49,6 @@ import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.constants.Constants;
 import com.atlauncher.constants.UIConstants;
 import com.atlauncher.data.Contributor;
-import com.atlauncher.evnt.listener.RelocalizationListener;
-import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.gui.components.BackgroundImageLabel;
 import com.atlauncher.gui.panels.HierarchyPanel;
 import com.atlauncher.managers.LogManager;
@@ -66,7 +64,7 @@ import com.atlauncher.viewmodel.impl.AboutTabViewModel;
  * the current state of ATLauncher, and some other basic diagnostic information
  * to let users more easily report errors.
  */
-public class AboutTab extends HierarchyPanel implements Tab, RelocalizationListener {
+public class AboutTab extends HierarchyPanel implements Tab {
 
     /**
      * Copies [textInfo] to the users clipboard
@@ -209,8 +207,6 @@ public class AboutTab extends HierarchyPanel implements Tab, RelocalizationListe
             licensePanel.add(scrollPane);
             add(licensePanel);
         }
-
-        onRelocalization();
     }
 
     @Override
