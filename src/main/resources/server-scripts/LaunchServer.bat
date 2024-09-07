@@ -43,8 +43,7 @@ echo Java path is %javapath%
 echo.
 
 set finaljavaargs=-Xmx%maxmemory% %jvmargs% %%ARGUMENTS%% %%LOG4SHELLARGUMENTS%%
-set finaljavaargs=%finaljavaargs:   =%
-set finaljavaargs=%finaljavaargs:  =%
+for /l %%i in (1,1,31) do set finaljavaargs=!finaljavaargs:  = !
 
 IF EXIST "%~dp0server.jar" (
     echo Using NeoForge ServerStarterJar, resetting user_jvm_args.txt contents
