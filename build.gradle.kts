@@ -177,6 +177,7 @@ tasks.shadowJar {
         exclude(dependency("com.github.jnr:.*:.*"))
         exclude(dependency("com.github.hypfvieh:.*:.*"))
         exclude(dependency("org.apache.commons:commons-compress:.*"))
+        exclude(dependency("net.java.dev.jna:jna:.*"))
     }
 
     // these are included by dbus-java which is only used on Linux
