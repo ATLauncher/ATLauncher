@@ -41,6 +41,7 @@ import com.atlauncher.gui.components.JLabelWithHover;
 import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.utils.ComboItem;
+import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
 import com.atlauncher.utils.ValidationUtils;
 
@@ -48,9 +49,9 @@ public class GeneralInstanceSettingsTab extends JPanel {
     private final Instance instance;
 
     private JComboBox<ComboItem<String>> account;
+    private JComboBox<ComboItem<Boolean>> enableDiscordIntegration;
 
-    // TODO: We might want to add a Swing component that hold both the label and the
-    // input (text field or dropdown etc...)
+    // TODO: We might want to add a Swing component that hold both the label and the input (text field or dropdown etc...)
 
     private JComboBox<ComboItem<QuickPlayOption>> quickPlayType;
 
@@ -80,7 +81,7 @@ public class GeneralInstanceSettingsTab extends JPanel {
     /**
      * Prepares [GridBagConstraints] for adding a new label component.
      * it should be called before adding the label to the panel
-     */
+     * */
     void prepareLabelConstraints() {
         gbc.gridx = 0;
         gbc.gridy++;
@@ -91,7 +92,7 @@ public class GeneralInstanceSettingsTab extends JPanel {
     /**
      * Prepares [GridBagConstraints] for adding a component after a label.
      * it should be called before adding the component to the panel
-     */
+     * */
     void prepareAfterLabelComponentConstraints() {
         gbc.gridx++;
         gbc.insets = UIConstants.FIELD_INSETS;
@@ -128,6 +129,32 @@ public class GeneralInstanceSettingsTab extends JPanel {
 
         add(account, gbc);
 
+        // Enable Discord Integration
+
+        prepareLabelConstraints();
+        JLabelWithHover enableDiscordIntegrationLabel = new JLabelWithHover(
+                GetText.tr("Enable Discord Integration") + "?", HELP_ICON,
+                GetText.tr("This will enable showing which pack you're playing in Discord."));
+        add(enableDiscordIntegrationLabel, gbc);
+
+        prepareAfterLabelComponentConstraints();
+        enableDiscordIntegration = new JComboBox<>();
+        enableDiscordIntegration.addItem(new ComboItem<>(null, GetText.tr("Use Launcher Default")));
+        enableDiscordIntegration.addItem(new ComboItem<>(true, GetText.tr("Yes")));
+        enableDiscordIntegration.addItem(new ComboItem<>(false, GetText.tr("No")));
+
+        enableDiscordIntegration.setEnabled(!OS.isArm());
+
+        if (instance.launcher.enableDiscordIntegration == null) {
+            enableDiscordIntegration.setSelectedIndex(0);
+        } else if (instance.launcher.enableDiscordIntegration) {
+            enableDiscordIntegration.setSelectedIndex(1);
+        } else {
+            enableDiscordIntegration.setSelectedIndex(2);
+        }
+
+        add(enableDiscordIntegration, gbc);
+
         // Quick play section
 
         QuickPlay quickPlay = instance.launcher.quickPlay;
@@ -138,20 +165,23 @@ public class GeneralInstanceSettingsTab extends JPanel {
 
         // Quick Play Feature components
         JLabelWithHover quickPlayTypeLabel = new JLabelWithHover(
-                GetText.tr("Quick Play Type") + ":", HELP_ICON,
-                GetText.tr(
-                        "Select the type of the Quick Play feature, default to disabled."));
+            GetText.tr("Quick Play Type") + ":", HELP_ICON,
+            GetText.tr(
+                "Select the type of the Quick Play feature, default to disabled."
+            )
+        );
 
         add(quickPlayTypeLabel, gbc);
 
         prepareAfterLabelComponentConstraints();
 
         quickPlayType = new JComboBox<>();
-        Arrays.stream(QuickPlayOption.compatibleValues(instance))
-                .forEach(option -> quickPlayType.addItem(new ComboItem<>(option, option.label)));
+        Arrays.stream(QuickPlayOption.compatibleValues(instance)).forEach(option ->
+            quickPlayType.addItem(new ComboItem<>(option, option.label))
+        );
         quickPlayType.setSelectedIndex(
-                Arrays.asList(QuickPlayOption.compatibleValues(instance))
-                        .indexOf(quickPlay.getSelectedQuickPlayOption()));
+            Arrays.asList(QuickPlayOption.compatibleValues(instance)).indexOf(quickPlay.getSelectedQuickPlayOption())
+        );
 
         // Code that is responsible for changing the input
         quickPlayType.addActionListener(e -> showInputForTheSelectedQuickPlayOption());
@@ -160,24 +190,24 @@ public class GeneralInstanceSettingsTab extends JPanel {
 
         // Quick play server address
 
-        // TODO: Allow to select the list of the servers in the game using dropdown as a
-        // value for this text input
+        // TODO: Allow to select the list of the servers in the game using dropdown as a value for this text input
 
         prepareLabelConstraints();
 
         quickPlayServerAddressLabel = new JLabelWithHover(
-                GetText.tr("Server address") + ":", HELP_ICON,
-                GetText.tr(
-                        "The server address that is used to connect to Minecraft server in multiplayer after" +
-                                " launching the game."));
+            GetText.tr("Server address") + ":", HELP_ICON,
+            GetText.tr(
+                "The server address that is used to connect to Minecraft server in multiplayer after" +
+                    " launching the game."
+            )
+        );
 
         add(quickPlayServerAddressLabel, gbc);
 
         prepareAfterLabelComponentConstraints();
         quickPlayServerAddress = new JTextField(13);
         quickPlayServerAddress.putClientProperty("JTextField.showClearButton", true);
-        quickPlayServerAddress.putClientProperty("JTextField.clearCallback",
-                (Runnable) () -> quickPlayServerAddress.setText(""));
+        quickPlayServerAddress.putClientProperty("JTextField.clearCallback", (Runnable) () -> quickPlayServerAddress.setText(""));
         quickPlayServerAddress.setText(quickPlay.serverAddress);
 
         add(quickPlayServerAddress, gbc);
@@ -186,29 +216,36 @@ public class GeneralInstanceSettingsTab extends JPanel {
 
         prepareLabelConstraints();
         quickPlaySinglePlayerWorldLabel = new JLabelWithHover(
-                GetText.tr("Single Player World") + ":", HELP_ICON,
-                GetText.tr(
-                        "Select the single player world to load after launching the game."));
+            GetText.tr("Single Player World") + ":", HELP_ICON,
+            GetText.tr(
+                "Select the single player world to load after launching the game."
+            )
+        );
         add(quickPlaySinglePlayerWorldLabel, gbc);
 
         prepareAfterLabelComponentConstraints();
         quickPlaySinglePlayerWorld = new JComboBox<>();
         List<String> worldNames = instance.getSinglePlayerWorldNamesFromFilesystem();
-        worldNames.forEach(saveName -> quickPlaySinglePlayerWorld.addItem(new ComboItem<>(saveName, saveName)));
+        worldNames.forEach(saveName ->
+            quickPlaySinglePlayerWorld.addItem(new ComboItem<>(saveName, saveName)
+        ));
 
         if (!worldNames.isEmpty()) {
             final int selectedWorldFolderNameIndex = worldNames.indexOf(quickPlay.worldName);
             quickPlaySinglePlayerWorld.setSelectedIndex(
-                    selectedWorldFolderNameIndex != -1 ? selectedWorldFolderNameIndex : 0);
+                selectedWorldFolderNameIndex != -1 ? selectedWorldFolderNameIndex : 0
+            );
         }
 
         add(quickPlaySinglePlayerWorld, gbc);
 
         prepareLabelConstraints();
         quickPlayRealmIdLabel = new JLabelWithHover(
-                GetText.tr("Minecraft Realm") + ":", HELP_ICON,
-                GetText.tr(
-                        "Type the id of the realm to join after launching the game."));
+            GetText.tr("Minecraft Realm") + ":", HELP_ICON,
+            GetText.tr(
+                "Type the id of the realm to join after launching the game."
+            )
+        );
         add(quickPlayRealmIdLabel, gbc);
 
         // TODO: We might want to make this as dropdown to all the realms
@@ -226,7 +263,7 @@ public class GeneralInstanceSettingsTab extends JPanel {
 
     /**
      * A helper method to set the correct visibility for all the quick play inputs
-     */
+     * */
     public void showInputForTheSelectedQuickPlayOption() {
         QuickPlayOption quickPlayOption = ((ComboItem<QuickPlayOption>) quickPlayType.getSelectedItem()).getValue();
         switch (quickPlayOption) {
@@ -249,13 +286,13 @@ public class GeneralInstanceSettingsTab extends JPanel {
     }
 
     /**
-     * A helper method to set the visibility for different quick play inputs
-     * (multiplayer, single player, realms)
-     */
+     * A helper method to set the visibility for different quick play inputs (multiplayer, single player, realms)
+     * */
     public void setQuickPlayInputsVisibility(
-            boolean serverAddress,
-            boolean singlePlayerWorld,
-            boolean realmId) {
+        boolean serverAddress,
+        boolean singlePlayerWorld,
+        boolean realmId
+    ) {
         quickPlayServerAddressLabel.setVisible(serverAddress);
         quickPlayServerAddress.setVisible(serverAddress);
         quickPlaySinglePlayerWorldLabel.setVisible(singlePlayerWorld);
@@ -266,44 +303,44 @@ public class GeneralInstanceSettingsTab extends JPanel {
 
     public boolean isValidQuickPlayOptionValue() {
         QuickPlayOption quickPlayOption = ((ComboItem<QuickPlayOption>) quickPlayType.getSelectedItem()).getValue();
-        switch (quickPlayOption) {
+        switch(quickPlayOption) {
             case disabled:
                 return true;
             case singlePlayer:
                 if (quickPlaySinglePlayerWorld.getSelectedItem() == null) {
                     DialogManager.okDialog().setTitle(GetText.tr("Invalid Input"))
-                            .setContent(new HTMLBuilder().center()
-                                    .text(GetText.tr("You don't have any single player worlds yet on this instance."))
-                                    .build())
-                            .setType(DialogManager.ERROR).show();
+                        .setContent(new HTMLBuilder().center()
+                            .text(GetText.tr("You don't have any single player worlds yet on this instance."))
+                            .build())
+                        .setType(DialogManager.ERROR).show();
                     return false;
                 }
                 return true;
             case multiPlayer:
                 if (quickPlayServerAddress.getText().isEmpty()) {
                     DialogManager.okDialog().setTitle(GetText.tr("Invalid Input"))
-                            .setContent(new HTMLBuilder().center()
-                                    .text(GetText.tr("The server address is empty."))
-                                    .build())
-                            .setType(DialogManager.ERROR).show();
+                        .setContent(new HTMLBuilder().center()
+                            .text(GetText.tr("The server address is empty."))
+                            .build())
+                        .setType(DialogManager.ERROR).show();
                     return false;
                 }
                 if (!ValidationUtils.isValidMinecraftServerAddress(quickPlayServerAddress.getText())) {
                     DialogManager.okDialog().setTitle(GetText.tr("Invalid Input"))
-                            .setContent(new HTMLBuilder().center()
-                                    .text(GetText.tr("The entered server address is invalid."))
-                                    .build())
-                            .setType(DialogManager.ERROR).show();
+                        .setContent(new HTMLBuilder().center()
+                            .text(GetText.tr("The entered server address is invalid."))
+                            .build())
+                        .setType(DialogManager.ERROR).show();
                     return false;
                 }
                 return true;
             case realm:
                 if (quickPlayRealmId.getText().isEmpty()) {
                     DialogManager.okDialog().setTitle(GetText.tr("Invalid Input"))
-                            .setContent(new HTMLBuilder().center()
-                                    .text(GetText.tr("The realm id is empty."))
-                                    .build())
-                            .setType(DialogManager.ERROR).show();
+                        .setContent(new HTMLBuilder().center()
+                            .text(GetText.tr("The realm id is empty."))
+                            .build())
+                        .setType(DialogManager.ERROR).show();
                     return false;
                 }
                 return true;
@@ -313,13 +350,15 @@ public class GeneralInstanceSettingsTab extends JPanel {
 
     public void saveSettings() {
         this.instance.launcher.account = ((ComboItem<String>) account.getSelectedItem()).getValue();
+        this.instance.launcher.enableDiscordIntegration = ((ComboItem<Boolean>) enableDiscordIntegration
+            .getSelectedItem()).getValue();
         QuickPlayOption quickPlayOption = ((ComboItem<QuickPlayOption>) quickPlayType.getSelectedItem()).getValue();
         this.instance.launcher.quickPlay = new QuickPlay(
-                quickPlayOption == QuickPlayOption.multiPlayer ? quickPlayServerAddress.getText() : null,
-                quickPlayOption == QuickPlayOption.singlePlayer
-                        ? ((ComboItem<String>) quickPlaySinglePlayerWorld.getSelectedItem()).getValue()
-                        : null,
-                quickPlayOption == QuickPlayOption.realm ? quickPlayRealmId.getText() : null);
+            quickPlayOption == QuickPlayOption.multiPlayer ? quickPlayServerAddress.getText() : null,
+            quickPlayOption == QuickPlayOption.singlePlayer ?
+                ((ComboItem<String>) quickPlaySinglePlayerWorld.getSelectedItem()).getValue() : null,
+            quickPlayOption == QuickPlayOption.realm ? quickPlayRealmId.getText() : null
+        );
     }
 
 }

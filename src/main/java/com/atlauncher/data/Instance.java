@@ -170,6 +170,8 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonObject;
 
+import net.arikia.dev.drpc.DiscordRPC;
+import net.arikia.dev.drpc.DiscordRichPresence;
 import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 
@@ -967,7 +969,7 @@ public class Instance extends MinecraftVersion {
                 if (!offline) {
                     LogManager.info("Logging into Minecraft!");
                     ProgressDialog<Boolean> loginDialog = new ProgressDialog<>(GetText.tr("Logging Into Minecraft"),
-                            0, GetText.tr("Logging Into Minecraft"), "Aborted login to Minecraft!");
+                        0, GetText.tr("Logging Into Minecraft"), "Aborted login to Minecraft!");
                     loginDialog.addThread(new Thread(() -> {
                         loginDialog.setReturnValue(account.ensureAccessTokenValid());
                         loginDialog.close();
@@ -977,14 +979,14 @@ public class Instance extends MinecraftVersion {
                     if (!(Boolean) loginDialog.getReturnValue()) {
                         LogManager.error("Failed to login");
                         Analytics.trackEvent(
-                                AnalyticsEvent.forInstanceLaunchFailed(this, offline, "microsoft_login_failure"));
+                            AnalyticsEvent.forInstanceLaunchFailed(this, offline, "microsoft_login_failure"));
                         App.launcher.setMinecraftLaunched(false);
                         if (App.launcher.getParent() != null) {
                             App.launcher.getParent().setVisible(true);
                         }
                         DialogManager.okDialog().setTitle(GetText.tr("Error Logging In"))
-                                .setContent(GetText.tr("Couldn't login with Microsoft account"))
-                                .setType(DialogManager.ERROR).show();
+                            .setContent(GetText.tr("Couldn't login with Microsoft account"))
+                            .setType(DialogManager.ERROR).show();
                         return;
                     }
                 }
@@ -994,7 +996,7 @@ public class Instance extends MinecraftVersion {
                         LogManager.error("Failed to execute pre-launch command");
 
                         Analytics.trackEvent(
-                                AnalyticsEvent.forInstanceLaunchFailed(this, offline, "pre_launch_failure"));
+                            AnalyticsEvent.forInstanceLaunchFailed(this, offline, "pre_launch_failure"));
                         App.launcher.setMinecraftLaunched(false);
 
                         if (App.launcher.getParent() != null) {
@@ -1006,8 +1008,8 @@ public class Instance extends MinecraftVersion {
                 }
 
                 process = MCLauncher.launch(account, this, nativesTempDir,
-                        LWJGLManager.shouldUseLegacyLWJGL(this) ? lwjglNativesTempDir : null,
-                        wrapperCommand, username);
+                    LWJGLManager.shouldUseLegacyLWJGL(this) ? lwjglNativesTempDir : null,
+                    wrapperCommand, username);
 
                 if (process == null) {
                     Analytics.trackEvent(AnalyticsEvent.forInstanceLaunchFailed(this, offline, "no_process"));
@@ -1030,6 +1032,31 @@ public class Instance extends MinecraftVersion {
                         || (!App.settings.keepLauncherOpen && !App.settings.enableLogs)) {
                     Analytics.endSession();
                     System.exit(0);
+                }
+
+                try {
+                    if (!OS.isArm() && Optional.ofNullable(this.launcher.enableDiscordIntegration)
+                            .orElse(App.settings.enableDiscordIntegration)) {
+                        App.ensureDiscordIsInitialized();
+
+                        String playing = this.launcher.pack
+                                + (this.launcher.multiMCManifest != null ? " (" + this.launcher.version + ")" : "");
+
+                        DiscordRichPresence.Builder presence = new DiscordRichPresence.Builder("");
+                        presence.setDetails(playing);
+                        presence.setStartTimestamps(System.currentTimeMillis());
+
+                        if (this.getPack() != null && this.getPack().hasDiscordImage()) {
+                            presence.setBigImage(this.getPack().getSafeName().toLowerCase(Locale.ENGLISH), playing);
+                            presence.setSmallImage("atlauncher", "ATLauncher");
+                        } else {
+                            presence.setBigImage("atlauncher", playing);
+                        }
+
+                        DiscordRPC.discordUpdatePresence(presence.build());
+                    }
+                } catch (Throwable t) {
+                    // ignored
                 }
 
                 App.launcher.showKillMinecraft(process);
@@ -1112,6 +1139,13 @@ public class Instance extends MinecraftVersion {
                     App.launcher.getParent().setVisible(true);
                 }
                 long end = System.currentTimeMillis();
+                if (!OS.isArm() && App.discordInitialized) {
+                    try {
+                        DiscordRPC.discordClearPresence();
+                    } catch (Throwable t) {
+                        // ignored
+                    }
+                }
                 int exitValue = 0; // Assume we exited fine
                 try {
                     exitValue = process.exitValue(); // Try to get the real exit value
@@ -1815,7 +1849,7 @@ public class Instance extends MinecraftVersion {
 
         // create mmc-pack.json
         try (OutputStreamWriter fileWriter = new OutputStreamWriter(
-                Files.newOutputStream(tempDir.resolve("mmc-pack.json")), StandardCharsets.UTF_8)) {
+            Files.newOutputStream(tempDir.resolve("mmc-pack.json")), StandardCharsets.UTF_8)) {
             Gsons.DEFAULT.toJson(manifest, fileWriter);
         } catch (JsonIOException | IOException e) {
             LogManager.logStackTrace("Failed to save mmc-pack.json", e);
@@ -1844,7 +1878,7 @@ public class Instance extends MinecraftVersion {
 
             // create net.fabricmc.intermediary.json
             try (OutputStreamWriter fileWriter = new OutputStreamWriter(
-                    Files.newOutputStream(tempDir.resolve("net.fabricmc.intermediary.json")),
+                Files.newOutputStream(tempDir.resolve("net.fabricmc.intermediary.json")),
                     StandardCharsets.UTF_8)) {
                 Gsons.DEFAULT.toJson(patch, fileWriter);
             } catch (JsonIOException | IOException e) {
@@ -2084,7 +2118,7 @@ public class Instance extends MinecraftVersion {
 
         // create manifest.json
         try (OutputStreamWriter fileWriter = new OutputStreamWriter(
-                Files.newOutputStream(tempDir.resolve("manifest.json")), StandardCharsets.UTF_8)) {
+            Files.newOutputStream(tempDir.resolve("manifest.json")), StandardCharsets.UTF_8)) {
             Gsons.DEFAULT.toJson(manifest, fileWriter);
         } catch (JsonIOException | IOException e) {
             LogManager.logStackTrace("Failed to save manifest.json", e);
@@ -2114,7 +2148,7 @@ public class Instance extends MinecraftVersion {
         sb.append("</ul>");
 
         try (OutputStreamWriter fileWriter = new OutputStreamWriter(
-                Files.newOutputStream(tempDir.resolve("modlist.html")), StandardCharsets.UTF_8)) {
+            Files.newOutputStream(tempDir.resolve("modlist.html")), StandardCharsets.UTF_8)) {
             fileWriter.write(sb.toString());
         } catch (JsonIOException | IOException e) {
             LogManager.logStackTrace("Failed to save modlist.html", e);
@@ -2382,7 +2416,7 @@ public class Instance extends MinecraftVersion {
 
     public void save() {
         try (OutputStreamWriter fileWriter = new OutputStreamWriter(
-                Files.newOutputStream(this.getRoot().resolve("instance.json")), StandardCharsets.UTF_8)) {
+            Files.newOutputStream(this.getRoot().resolve("instance.json")), StandardCharsets.UTF_8)) {
             Gsons.DEFAULT.toJson(this, fileWriter);
         } catch (JsonIOException | IOException e) {
             LogManager.logStackTrace(e);
@@ -2936,8 +2970,9 @@ public class Instance extends MinecraftVersion {
             Optional<LoaderVersion> recommendedVersion = loaderVersions.stream().filter(lv -> lv.recommended)
                     .findFirst();
 
-            recommendedVersion.ifPresent(
-                    loaderVersion -> loaderVersionsDropDown.setSelectedIndex(loaderVersions.indexOf(loaderVersion)));
+            recommendedVersion.ifPresent(loaderVersion ->
+                loaderVersionsDropDown.setSelectedIndex(loaderVersions.indexOf(loaderVersion))
+            );
         }
 
         if (launcher.loaderVersion != null) {
