@@ -235,8 +235,10 @@ public class CreatePackViewModel implements SettingsListener, ICreatePackViewMod
 
     // was null
     private final BehaviorSubject<Optional<String>> selectedMinecraftVersionFlow = BehaviorSubject.create();
+    private final BehaviorSubject<Boolean> isVersionTableLoading = BehaviorSubject.createDefault(true);
 
     public final Observable<Integer> selectedMinecraftVersionIndex = combineLatest(
+        combineLatest(
             minecraftVersions,
             selectedMinecraftVersionFlow,
             (versions, version) -> {
@@ -253,7 +255,14 @@ public class CreatePackViewModel implements SettingsListener, ICreatePackViewMod
                 if (index == -1)
                     return 0;
                 return index;
-            }).subscribeOn(Schedulers.computation());
+            }),
+        isVersionTableLoading,
+        Pair::new
+    ).mapOptional((pair)-> {
+        // if the table is not loading, we can provide the index
+        // read mapOptional documentation ofc
+        if (!pair.right()) return Optional.of(pair.left()); else return Optional.empty();
+    } ).subscribeOn(Schedulers.computation());
 
     private final BehaviorSubject<Optional<LoaderType>> selectedLoaderType = BehaviorSubject.create();
 
@@ -897,6 +906,11 @@ public class CreatePackViewModel implements SettingsListener, ICreatePackViewMod
     @Override
     public Boolean warnUserAboutServer() {
         return InstanceManager.getInstances().isEmpty();
+    }
+
+    @Override
+    public void setVersionTableLoading(boolean isLoading) {
+        isVersionTableLoading.onNext(isLoading);
     }
 
     private List<LoaderVersion> apolloLoad(

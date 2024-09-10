@@ -468,6 +468,8 @@ public class CreatePackTab extends HierarchyPanel implements Tab {
             }
         });
         addDisposable(viewModel.minecraftVersions().subscribe((minecraftVersions) -> {
+            viewModel.setVersionTableLoading(true);
+
             // remove all rows
             int rowCount = 0;
             if (minecraftVersionTableModel != null)
@@ -493,6 +495,8 @@ public class CreatePackTab extends HierarchyPanel implements Tab {
             // refresh the table
             if (minecraftVersionTable != null)
                 minecraftVersionTable.revalidate();
+
+            viewModel.setVersionTableLoading(false);
         }));
         addDisposable(viewModel.selectedMinecraftVersionIndex().subscribe(it -> {
             if (minecraftVersionTable != null) {
