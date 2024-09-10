@@ -23,6 +23,7 @@ import java.util.List;
 import javax.swing.SwingUtilities;
 
 import com.atlauncher.evnt.listener.SettingsListener;
+import com.atlauncher.managers.LogManager;
 
 public final class SettingsManager {
     private static final List<SettingsListener> listeners = new LinkedList<>();
@@ -36,6 +37,7 @@ public final class SettingsManager {
     }
 
     public static synchronized void post() {
+        LogManager.debug("Settings Post");
         SwingUtilities.invokeLater(() -> {
             for (SettingsListener listener : listeners) {
                 listener.onSettingsSaved();
