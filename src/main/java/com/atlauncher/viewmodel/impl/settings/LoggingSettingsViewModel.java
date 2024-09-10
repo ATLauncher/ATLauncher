@@ -52,6 +52,7 @@ public class LoggingSettingsViewModel implements SettingsListener {
     }
 
     public void setLoggingLevel(String level) {
+        if (App.settings.forgeLoggingLevel.equals(level)) return;
         App.settings.forgeLoggingLevel = level;
         SettingsManager.post();
     }

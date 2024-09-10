@@ -93,6 +93,7 @@ public class ModsSettingsViewModel implements SettingsListener {
     }
 
     public void setEnableAddedModsByDefault(Boolean b) {
+        if (App.settings.enableAddedModsByDefault == b) return;
         App.settings.enableAddedModsByDefault = b;
         SettingsManager.post();
     }
@@ -102,6 +103,7 @@ public class ModsSettingsViewModel implements SettingsListener {
     }
 
     public void setShowFabricModsWhenSinytraInstalled(Boolean b) {
+        if (App.settings.showFabricModsWhenSinytraInstalled == b) return;
         App.settings.showFabricModsWhenSinytraInstalled = b;
         SettingsManager.post();
     }

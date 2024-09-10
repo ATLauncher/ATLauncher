@@ -184,6 +184,7 @@ public class GeneralSettingsViewModel implements SettingsListener {
      * @param theme Theme id as provided in {@link LauncherTheme}
      */
     public void setSelectedTheme(String theme) {
+        if (App.settings.theme.equals(theme)) return;
         Analytics.trackEvent(AnalyticsEvent.forThemeChange(App.THEME.getName()));
         App.settings.theme = theme;
         SettingsManager.post();
@@ -232,6 +233,7 @@ public class GeneralSettingsViewModel implements SettingsListener {
      * @param format date format
      */
     public void setDateFormat(String format) {
+        if (App.settings.dateFormat.equals(format)) return;
         App.settings.dateFormat = format;
         SettingsManager.post();
     }
@@ -258,6 +260,7 @@ public class GeneralSettingsViewModel implements SettingsListener {
      * @param format instance title format
      */
     public void setInstanceTitleFormat(String format) {
+        if (App.settings.instanceTitleFormat.equals(format)) return;
         App.settings.instanceTitleFormat = format;
         SettingsManager.post();
     }
@@ -372,6 +375,7 @@ public class GeneralSettingsViewModel implements SettingsListener {
      * @param b keep launcher open or not
      */
     public void setKeepLauncherOpen(boolean b) {
+        if (App.settings.keepLauncherOpen == b) return;
         App.settings.keepLauncherOpen = b;
         SettingsManager.post();
     }
@@ -389,6 +393,7 @@ public class GeneralSettingsViewModel implements SettingsListener {
      * @param b console enabled?
      */
     public void setEnableConsole(boolean b) {
+        if (App.settings.enableConsole == b) return;
         App.settings.enableConsole = b;
         SettingsManager.post();
     }
@@ -399,6 +404,7 @@ public class GeneralSettingsViewModel implements SettingsListener {
      * @param b enabled?
      */
     public void setEnableTrayMenuOpen(boolean b) {
+        if (App.settings.enableTrayMenu == b) return;
         App.settings.enableTrayMenu = b;
         SettingsManager.post();
     }
@@ -415,6 +421,7 @@ public class GeneralSettingsViewModel implements SettingsListener {
     }
 
     public void setEnableDiscordIntegration(boolean b) {
+        if (App.settings.enableDiscordIntegration == b) return;
         App.settings.enableDiscordIntegration = b;
         SettingsManager.post();
     }
@@ -437,6 +444,7 @@ public class GeneralSettingsViewModel implements SettingsListener {
     }
 
     public void setEnableFeralGameMode(boolean b) {
+        if (App.settings.enableFeralGamemode == b) return;
         App.settings.enableFeralGamemode = b;
         SettingsManager.post();
     }
@@ -487,6 +495,7 @@ public class GeneralSettingsViewModel implements SettingsListener {
     }
 
     public void setUseRecycleBin(boolean b) {
+        if (App.settings.useRecycleBin == b) return;
         App.settings.useRecycleBin = b;
         SettingsManager.post();
     }
