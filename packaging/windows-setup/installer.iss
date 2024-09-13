@@ -60,8 +60,64 @@ Type: filesandordirs; Name: "{app}\jre"; Components: java
 Type: filesandordirs; Name: "{app}\jre"; Components: java
 
 [Code]
+#include "lib/JsonHelpers.pas"
+
 var
   DownloadPage: TDownloadWizardPage;
+
+procedure GetJreInfo(
+  Out URL : WideString;
+  Out HASH : WideString
+  );
+  var
+    WinHttpReq: Variant;
+    Json, OS, FallbackUrl, FallbackHash: string;
+    JsonParser: TJsonParser;
+    JsonRoot, BundledJreObject, OSObject: TJsonObject;
+begin
+  if IsWin64 then 
+    begin
+      OS := 'windowsx64'
+      FallbackUrl := 'https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.9%2B9.1/OpenJDK17U-jre_x64_windows_hotspot_17.0.9_9.zip'
+      FallbackHash := '6c491d6f8c28c6f451f08110a30348696a04b009f8c58592191046e0fab1477b'
+    end
+  else
+    begin
+      OS := 'windowsx86'
+      FallbackUrl := 'https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.9%2B9.1/OpenJDK17U-jre_x86-32_windows_hotspot_17.0.9_9.zip'
+      FallbackHash := '2f9fe8b587400e89cd3ef33b71e0517ab99a12a5ee623382cbe9f5078bf2b435'
+  end;
+  WinHttpReq := CreateOleObject('WinHttp.WinHttpRequest.5.1');
+  WinHttpReq.Open('GET', 'https://download.nodecdn.net/containers/atl/launcher/json/config.json', False);
+  WinHttpReq.Send('');
+  if WinHttpReq.Status <> 200 then
+  begin
+    Log('HTTP Error: ' + IntToStr(WinHttpReq.Status) + ' ' +
+        WinHttpReq.StatusText);
+  end
+    else
+  begin
+  Json := WinHttpReq.ResponseText
+  if ParseJsonAndLogErrors(JsonParser, Json) then
+    begin
+      JsonRoot := GetJsonRoot(JsonParser.Output);
+      if FindJsonObject(JsonParser.Output, JsonRoot, 'bundledJre', BundledJreObject) and
+        FindJsonObject(JsonParser.Output, BundledJreObject, OS, OSObject) and
+        FindJsonString(JsonParser.Output, OSObject, 'url', URL) and
+        FindJsonString(JsonParser.Output, OSObject, 'hash', HASH) then
+        begin
+          MsgBox(URL, mbInformation, MB_OK)
+          MsgBox(HASH, mbInformation, MB_OK)
+        end
+         else
+        begin
+          URL := FallbackUrl
+          HASH := FallbackHash
+        end;
+        ClearJsonParser(JsonParser);
+    end;
+  end;
+end;
 
 procedure InitializeWizard;
 begin
@@ -81,6 +137,8 @@ begin
 end;
 
 function NextButtonClick(CurPageID: Integer): Boolean;
+var
+  URL, HASH : WideString;
 begin
   if (CurPageID = wpSelectComponents) and not WizardIsComponentSelected('java') then
   begin
@@ -91,11 +149,8 @@ begin
     DownloadPage.Add('https://download.nodecdn.net/containers/atl/ATLauncher.exe', '{#MyAppName}.exe', '');
 
     if WizardIsComponentSelected('java') then begin
-      if IsWin64 then begin
-        DownloadPage.Add('https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.3%2B7/OpenJDK17U-jre_x64_windows_hotspot_17.0.3_7.zip', 'jre.zip', 'd77745fdb57b51116f7b8fabd7d251067edbe3c94ea18fa224f64d9584b41a97');
-      end else begin
-        DownloadPage.Add('https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.3%2B7/OpenJDK17U-jre_x86-32_windows_hotspot_17.0.3_7.zip', 'jre.zip', 'e29e311e4200a32438ef65637a75eb8eb09f73a37cef3877f08d02b6355cd221');
-      end;
+      GetJreInfo(URL,HASH)
+      DownloadPage.Add(URL, 'jre.zip', HASH);
     end;
 
     DownloadPage.Show;
