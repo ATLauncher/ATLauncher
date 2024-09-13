@@ -1,5 +1,6 @@
 //Taken from Martin Prikryl's answer for https://stackoverflow.com/questions/34290115/how-to-parse-a-json-string-in-inno-setup
 #include "JsonParser.pas"
+
 function GetJsonRoot(Output: TJsonParserOutput): TJsonObject;
 begin
   Result := Output.Objects[0];
