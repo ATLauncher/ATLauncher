@@ -1,3 +1,4 @@
+//Sourced from https://github.com/koldev/JsonParser
 type
   TJsonNumber = Double;
   TJsonString = WideString;

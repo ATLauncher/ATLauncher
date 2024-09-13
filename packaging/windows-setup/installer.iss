@@ -92,7 +92,7 @@ begin
   WinHttpReq := CreateOleObject('WinHttp.WinHttpRequest.5.1');
   WinHttpReq.Open('GET', 'https://download.nodecdn.net/containers/atl/launcher/json/config.json', False);
   WinHttpReq.Send('');
-  if WinHttpReq.Status == 200 then
+  if WinHttpReq.Status = 200 then
   begin
   Json := WinHttpReq.ResponseText
   if ParseJsonAndLogErrors(JsonParser, Json) then
