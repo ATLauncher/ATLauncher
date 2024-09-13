@@ -6,7 +6,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 ## 3.4.37.4
 
 ### New Features
-
+Dynaimc fetching of JRE information from nodecdn
 ### Fixes
 
 ### Misc
