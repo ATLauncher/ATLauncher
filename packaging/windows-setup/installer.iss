@@ -64,14 +64,16 @@ Type: filesandordirs; Name: "{app}\jre"; Components: java
 
 var
   DownloadPage: TDownloadWizardPage;
+  FallbackUrl, FallbackHash, URL, HASH: WideString;
 
 procedure GetJreInfo(
   Out URL : WideString;
-  Out HASH : WideString
+  Out HASH : WideString;
+  Out FOLDER : WideString
   );
   var
     WinHttpReq: Variant;
-    Json, OS, FallbackUrl, FallbackHash: string;
+    Json, OS: string;
     JsonParser: TJsonParser;
     JsonRoot, BundledJreObject, OSObject: TJsonObject;
 begin
@@ -90,12 +92,7 @@ begin
   WinHttpReq := CreateOleObject('WinHttp.WinHttpRequest.5.1');
   WinHttpReq.Open('GET', 'https://download.nodecdn.net/containers/atl/launcher/json/config.json', False);
   WinHttpReq.Send('');
-  if WinHttpReq.Status <> 200 then
-  begin
-    Log('HTTP Error: ' + IntToStr(WinHttpReq.Status) + ' ' +
-        WinHttpReq.StatusText);
-  end
-    else
+  if WinHttpReq.Status == 200 then
   begin
   Json := WinHttpReq.ResponseText
   if ParseJsonAndLogErrors(JsonParser, Json) then
@@ -104,7 +101,8 @@ begin
       if FindJsonObject(JsonParser.Output, JsonRoot, 'bundledJre', BundledJreObject) and
         FindJsonObject(JsonParser.Output, BundledJreObject, OS, OSObject) and
         FindJsonString(JsonParser.Output, OSObject, 'url', URL) and
-        FindJsonString(JsonParser.Output, OSObject, 'hash', HASH) then
+        FindJsonString(JsonParser.Output, OSObject, 'hash', HASH) and 
+        FindJsonString(JsonParser.Output, OSObject, 'folcer',FOLDER) then
         begin
           MsgBox(URL, mbInformation, MB_OK)
           MsgBox(HASH, mbInformation, MB_OK)
@@ -113,6 +111,7 @@ begin
         begin
           URL := FallbackUrl
           HASH := FallbackHash
+          FOLDER := 'jdk-17.0.9+9-jre'
         end;
         ClearJsonParser(JsonParser);
     end;
@@ -137,8 +136,6 @@ begin
 end;
 
 function NextButtonClick(CurPageID: Integer): Boolean;
-var
-  URL, HASH : WideString;
 begin
   if (CurPageID = wpSelectComponents) and not WizardIsComponentSelected('java') then
   begin
@@ -150,7 +147,7 @@ begin
 
     if WizardIsComponentSelected('java') then begin
       GetJreInfo(URL,HASH)
-      DownloadPage.Add(URL, 'jre.zip', HASH);
+      DownloadPage.Add(URL,'jre.zip',HASH);
     end;
 
     DownloadPage.Show;
