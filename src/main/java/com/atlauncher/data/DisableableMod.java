@@ -394,14 +394,14 @@ public class DisableableMod implements Serializable {
 
                         curseForgeFilesStream = curseForgeFilesStream.filter(
                                 file -> file.gameVersions.stream()
-                                        .anyMatch(gv -> minecraftVersionsToSearch.contains(gv)));
+                                        .anyMatch(minecraftVersionsToSearch::contains));
                     } catch (InvalidMinecraftVersion e) {
                         LogManager.logStackTrace(e);
                     }
                 }
 
                 List<String> neoForgeForgeCompatabilityVersions = ConfigManager
-                        .getConfigItem("loaders.neoforge.forgeCompatibleMinecraftVersions", new ArrayList<String>());
+                        .getConfigItem("loaders.neoforge.forgeCompatibleMinecraftVersions", new ArrayList<>());
 
                 // filter out files not for our loader
                 curseForgeFilesStream = curseForgeFilesStream.filter(cf -> {
@@ -430,12 +430,8 @@ public class DisableableMod implements Serializable {
                     }
 
                     // if there's no loaders, assume the mod is untagged so we should show it
-                    if (!cf.gameVersions.contains("Fabric") && !cf.gameVersions.contains("NeoForge")
-                            && !cf.gameVersions.contains("Forge") && !cf.gameVersions.contains("Quilt")) {
-                        return true;
-                    }
-
-                    return false;
+                    return !cf.gameVersions.contains("Fabric") && !cf.gameVersions.contains("NeoForge")
+                        && !cf.gameVersions.contains("Forge") && !cf.gameVersions.contains("Quilt");
                 });
 
                 if (curseForgeFilesStream.noneMatch(file -> file.id > curseForgeFileId)) {
@@ -450,7 +446,7 @@ public class DisableableMod implements Serializable {
             dialog.start();
 
             if (dialog.getReturnValue() instanceof Boolean) {
-                return ((Boolean) dialog.getReturnValue()) == true;
+                return ((Boolean) dialog.getReturnValue());
             }
 
             if (dialog.getReturnValue() == null) {
@@ -493,7 +489,7 @@ public class DisableableMod implements Serializable {
                     return;
                 }
 
-                dialog.setReturnValue(new Pair<ModrinthProject, List<ModrinthVersion>>(mod, versions));
+                dialog.setReturnValue(new Pair<>(mod, versions));
                 dialog.close();
             }));
             dialog.start();
@@ -567,13 +563,13 @@ public class DisableableMod implements Serializable {
         if (mcMod != null) {
             mod.name = Optional.ofNullable(mcMod.name).orElse(file.getName());
             mod.version = Optional.ofNullable(mcMod.version).orElse("Unknown");
-            mod.description = Optional.ofNullable(mcMod.description).orElse(null);
+            mod.description = mcMod.description;
         } else {
             FabricMod fabricMod = Utils.getFabricModForFile(file);
             if (fabricMod != null) {
                 mod.name = Optional.ofNullable(fabricMod.name).orElse(file.getName());
                 mod.version = Optional.ofNullable(fabricMod.version).orElse("Unknown");
-                mod.description = Optional.ofNullable(fabricMod.description).orElse(null);
+                mod.description = fabricMod.description;
             }
         }
         return mod;

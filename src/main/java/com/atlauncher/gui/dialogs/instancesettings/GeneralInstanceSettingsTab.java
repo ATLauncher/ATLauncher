@@ -45,7 +45,6 @@ import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
 import com.atlauncher.utils.ValidationUtils;
 
-@SuppressWarnings("serial")
 public class GeneralInstanceSettingsTab extends JPanel {
     private final Instance instance;
 

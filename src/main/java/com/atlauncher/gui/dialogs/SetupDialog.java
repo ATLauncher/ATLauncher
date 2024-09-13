@@ -127,9 +127,7 @@ public class SetupDialog extends JDialog implements RelocalizationListener {
         enableAnalyticsPanel.add(enableAnalytics);
 
         JButton privacyPolicyButton = new JButton(GetText.tr("Open Privacy Policy"));
-        privacyPolicyButton.addActionListener(e -> {
-            OS.openWebBrowser("https://atlauncher.com/privacy-policy");
-        });
+        privacyPolicyButton.addActionListener(e -> OS.openWebBrowser("https://atlauncher.com/privacy-policy"));
         enableAnalyticsPanel.add(privacyPolicyButton);
 
         middle.add(enableAnalyticsPanel, gbc);

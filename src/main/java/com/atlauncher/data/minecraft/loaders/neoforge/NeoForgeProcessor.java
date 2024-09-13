@@ -63,7 +63,7 @@ public class NeoForgeProcessor {
     }
 
     public boolean hasOutputs() {
-        return this.outputs != null && this.outputs.size() != 0;
+        return this.outputs != null && !this.outputs.isEmpty();
     }
 
     public void process(NeoForgeInstallProfile installProfile, File extractedDir, InstanceInstaller instanceInstaller)

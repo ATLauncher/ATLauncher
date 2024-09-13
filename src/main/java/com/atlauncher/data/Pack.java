@@ -189,28 +189,21 @@ public class Pack {
     }
 
     public boolean hasVersions() {
-        return this.versions.size() != 0;
+        return !this.versions.isEmpty();
     }
 
     public boolean hasDevVersions() {
-        return this.devVersions.size() != 0;
+        return !this.devVersions.isEmpty();
     }
 
     public boolean canInstall() {
         if (this.type == PackType.PRIVATE) {
-            if (isTester() || (hasVersions() && isAllowedPlayer())) {
-                return true;
-            }
+            return isTester() || (hasVersions() && isAllowedPlayer());
         } else if (this.type == PackType.SEMIPUBLIC && this.code != null) {
-            if (isTester() || (hasVersions() && PackManager.canViewSemiPublicPackByCode(this.code))) {
-                return true;
-            }
+            return isTester() || (hasVersions() && PackManager.canViewSemiPublicPackByCode(this.code));
         } else {
-            if (isTester() || hasVersions()) {
-                return true;
-            }
+            return isTester() || hasVersions();
         }
-        return false;
     }
 
     public boolean isAllowedPlayer() {
@@ -238,7 +231,7 @@ public class Pack {
     }
 
     public PackVersion getDevVersionByName(String name) {
-        if (this.devVersions.size() == 0) {
+        if (this.devVersions.isEmpty()) {
             return null;
         }
 
@@ -252,7 +245,7 @@ public class Pack {
     }
 
     public PackVersion getVersionByName(String name) {
-        if (this.versions.size() == 0) {
+        if (this.versions.isEmpty()) {
             return null;
         }
 
@@ -266,21 +259,21 @@ public class Pack {
     }
 
     public PackVersion getLatestVersion() {
-        if (this.versions.size() == 0) {
+        if (this.versions.isEmpty()) {
             return null;
         }
         return this.versions.get(0);
     }
 
     public PackVersion getLatestDevVersion() {
-        if (this.devVersions.size() == 0) {
+        if (this.devVersions.isEmpty()) {
             return null;
         }
         return this.devVersions.get(0);
     }
 
     public boolean isLatestVersionNoUpdate() {
-        if (this.versions.size() == 0) {
+        if (this.versions.isEmpty()) {
             return false;
         }
         if (!getLatestVersion().canUpdate) {
@@ -316,7 +309,7 @@ public class Pack {
     }
 
     public void addInstall(String version) {
-        if (ConfigManager.getConfigItem("useGraphql.packActions", false) == true) {
+        if (ConfigManager.getConfigItem("useGraphql.packActions", false)) {
             GraphqlClient
                     .mutateAndWait(
                             new AddPackActionMutation(AddPackActionInput.builder().packId(Integer.toString(
@@ -335,7 +328,7 @@ public class Pack {
     }
 
     public void addServerInstall(String version) {
-        if (ConfigManager.getConfigItem("useGraphql.packActions", false) == true) {
+        if (ConfigManager.getConfigItem("useGraphql.packActions", false)) {
             GraphqlClient
                     .mutateAndWait(
                             new AddPackActionMutation(AddPackActionInput.builder().packId(Integer.toString(
@@ -354,7 +347,7 @@ public class Pack {
     }
 
     public void addUpdate(String version) {
-        if (ConfigManager.getConfigItem("useGraphql.packActions", false) == true) {
+        if (ConfigManager.getConfigItem("useGraphql.packActions", false)) {
             GraphqlClient
                     .mutateAndWait(
                             new AddPackActionMutation(AddPackActionInput.builder().packId(Integer.toString(

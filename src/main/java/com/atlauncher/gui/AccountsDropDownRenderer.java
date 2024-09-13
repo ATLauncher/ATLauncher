@@ -27,7 +27,6 @@ import javax.swing.ListCellRenderer;
 
 import com.atlauncher.data.AbstractAccount;
 
-@SuppressWarnings("serial")
 public class AccountsDropDownRenderer extends JLabel implements ListCellRenderer<AbstractAccount> {
     public AccountsDropDownRenderer() {
         setOpaque(true);

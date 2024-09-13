@@ -121,7 +121,7 @@ public class TechnicModpackUpdateManager {
      * Updates observables.
      */
     public static void checkForUpdates() {
-        if (ConfigManager.getConfigItem("platforms.technic.modpacksEnabled", true) == false) {
+        if (!ConfigManager.getConfigItem("platforms.technic.modpacksEnabled", true)) {
             return;
         }
 

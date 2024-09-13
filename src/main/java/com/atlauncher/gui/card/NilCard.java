@@ -44,7 +44,6 @@ import com.atlauncher.utils.Utils;
 /**
  * Class for displaying packs in the Pack Tab.
  */
-@SuppressWarnings("serial")
 public class NilCard extends JPanel implements RelocalizationListener {
     private static final Image defaultImage = Utils.getIconImage("/assets/image/default-image.png").getImage();
 

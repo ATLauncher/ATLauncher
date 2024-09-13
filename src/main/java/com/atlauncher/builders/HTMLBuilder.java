@@ -47,7 +47,7 @@ public final class HTMLBuilder {
 
         char[] chars = text.toCharArray();
         StringBuilder sb = new StringBuilder();
-        char spaceChar = " ".charAt(0);
+        char spaceChar = ' ';
         int count = 0;
         for (char character : chars) {
             if (count >= split && character == spaceChar) {

@@ -89,7 +89,7 @@ public abstract class Installable {
                     .text(GetText.tr("An instance already exists with that name.<br/><br/>Rename it and try again."))
                     .build()).setType(DialogManager.ERROR).show();
             return false;
-        } else if (!isReinstall && !isServer && instanceName.replaceAll("[^A-Za-z0-9]", "").length() == 0) {
+        } else if (!isReinstall && !isServer && instanceName.replaceAll("[^A-Za-z0-9]", "").isEmpty()) {
             DialogManager.okDialog().setTitle(GetText.tr("Error"))
                     .setContent(new HTMLBuilder().center()
                             .text(GetText.tr("Instance name is invalid. It must contain at least 1 letter or number."))
@@ -101,7 +101,7 @@ public abstract class Installable {
                     .text(GetText.tr("A server already exists with that name.<br/><br/>Rename it and try again."))
                     .build()).setType(DialogManager.ERROR).show();
             return false;
-        } else if (!isReinstall && isServer && instanceName.replaceAll("[^A-Za-z0-9]", "").length() == 0) {
+        } else if (!isReinstall && isServer && instanceName.replaceAll("[^A-Za-z0-9]", "").isEmpty()) {
             DialogManager.okDialog().setTitle(GetText.tr("Error"))
                     .setContent(new HTMLBuilder().center()
                             .text(GetText.tr("Server name is invalid. It must contain at least 1 letter or number."))

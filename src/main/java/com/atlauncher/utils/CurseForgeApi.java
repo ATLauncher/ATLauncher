@@ -22,6 +22,7 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -78,7 +79,7 @@ public class CurseForgeApi {
                     sortDescending ? "desc" : "asc",
                     Constants.CURSEFORGE_PAGINATION_SIZE, page * Constants.CURSEFORGE_PAGINATION_SIZE);
 
-            if (modLoaderTypes != null && modLoaderTypes.size() != 0) {
+            if (modLoaderTypes != null && !modLoaderTypes.isEmpty()) {
                 url += "&modLoaderTypes=" + Gsons.DEFAULT.toJson(modLoaderTypes);
             }
 
@@ -156,7 +157,7 @@ public class CurseForgeApi {
     public static List<CurseForgeProject> searchModsForFabric(String gameVersion, String query, int page, String sort,
             String categoryId) {
         Integer categoryIdParam = categoryId == null ? null : Integer.parseInt(categoryId);
-        List<Integer> modLoaderTypes = Arrays.asList(Constants.CURSEFORGE_FABRIC_MODLOADER_ID);
+        List<Integer> modLoaderTypes = Collections.singletonList(Constants.CURSEFORGE_FABRIC_MODLOADER_ID);
 
         return searchCurseForge(gameVersion, Constants.CURSEFORGE_MODS_SECTION_ID, query, page,
                 modLoaderTypes, sort, categoryIdParam);
@@ -175,7 +176,7 @@ public class CurseForgeApi {
     public static List<CurseForgeProject> searchModsForForge(String gameVersion, String query, int page, String sort,
             String categoryId) {
         Integer categoryIdParam = categoryId == null ? null : Integer.parseInt(categoryId);
-        List<Integer> modLoaderTypes = Arrays.asList(Constants.CURSEFORGE_FORGE_MODLOADER_ID);
+        List<Integer> modLoaderTypes = Collections.singletonList(Constants.CURSEFORGE_FORGE_MODLOADER_ID);
 
         return searchCurseForge(gameVersion, Constants.CURSEFORGE_MODS_SECTION_ID, query, page,
                 modLoaderTypes, sort, categoryIdParam);
@@ -219,7 +220,7 @@ public class CurseForgeApi {
         modLoaderTypes.add(Constants.CURSEFORGE_FABRIC_MODLOADER_ID);
 
         List<String> neoForgeForgeCompatabilityVersions = ConfigManager
-                .getConfigItem("loaders.neoforge.forgeCompatibleMinecraftVersions", new ArrayList<String>());
+                .getConfigItem("loaders.neoforge.forgeCompatibleMinecraftVersions", new ArrayList<>());
         if (neoForgeForgeCompatabilityVersions.contains(gameVersion)) {
             modLoaderTypes.add(Constants.CURSEFORGE_FORGE_MODLOADER_ID);
         }
@@ -328,7 +329,7 @@ public class CurseForgeApi {
 
         CurseForgeCoreApiResponse<List<CurseForgeProject>> response = download.asType(type);
 
-        if (response != null && response.data.size() != 0) {
+        if (response != null && !response.data.isEmpty()) {
             return response.data.get(0);
         }
 
