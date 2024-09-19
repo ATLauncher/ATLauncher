@@ -41,7 +41,6 @@ import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
 import com.atlauncher.workers.BackgroundImageWorker;
 
-@SuppressWarnings("serial")
 public final class CurseForgeProjectCard extends JPanel {
     private final CurseForgeProject mod;
     private final Instance instance;
@@ -99,9 +98,9 @@ public final class CurseForgeProjectCard extends JPanel {
         add(buttonsPanel, BorderLayout.SOUTH);
 
         Optional<CurseForgeAttachment> attachment = mod.getLogo();
-        if (attachment.isPresent()) {
-            new BackgroundImageWorker(icon, attachment.get().thumbnailUrl, 60, 60).execute();
-        }
+        attachment.ifPresent(curseForgeAttachment ->
+            new BackgroundImageWorker(icon, curseForgeAttachment.thumbnailUrl, 60, 60).execute()
+        );
 
         updateInstalledStatus();
     }

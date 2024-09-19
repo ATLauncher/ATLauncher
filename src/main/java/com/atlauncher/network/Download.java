@@ -72,7 +72,7 @@ public final class Download {
     private OkHttpClient httpClient = Network.CLIENT;
     private RequestBody post = null;
     private CacheControl cacheControl = null;
-    private final Map<String, String> headers = new HashMap<String, String>();
+    private final Map<String, String> headers = new HashMap<>();
 
     // generated on/after request
     public Response response;
@@ -317,7 +317,7 @@ public final class Download {
             builder.post(this.post);
         }
 
-        if (this.headers.size() != 0) {
+        if (!this.headers.isEmpty()) {
             builder.headers(Headers.of(this.headers));
         }
 
@@ -456,9 +456,7 @@ public final class Download {
             }
 
             // if no hash, but filesizes match, then no need to download
-            if ((this.hash == null || this.hash.equals("-")) && this.to.toFile().length() == this.getFilesize()) {
-                return false;
-            }
+            return (this.hash != null && !this.hash.equals("-")) || this.to.toFile().length() != this.getFilesize();
         }
 
         return true;

@@ -26,11 +26,11 @@ import javax.swing.JPanel;
 import javax.swing.border.Border;
 
 import com.atlauncher.App;
+import com.atlauncher.gui.panels.HierarchyPanel;
 import com.atlauncher.gui.tabs.Tab;
 import com.atlauncher.utils.Utils;
 
-@SuppressWarnings("serial")
-public abstract class AbstractSettingsTab extends JPanel implements Tab {
+public abstract class AbstractSettingsTab extends HierarchyPanel implements Tab {
     final ImageIcon HELP_ICON = Utils.getIconImage(App.THEME.getIconPath("question"));
     final ImageIcon ERROR_ICON = Utils.getIconImage(App.THEME.getIconPath("error"));
     final ImageIcon WARNING_ICON = Utils.getIconImage(App.THEME.getIconPath("warning"));

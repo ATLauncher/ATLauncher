@@ -42,7 +42,6 @@ import com.atlauncher.network.Analytics;
 import com.atlauncher.network.analytics.AnalyticsEvent;
 import com.atlauncher.thread.PasteUpload;
 
-@SuppressWarnings("serial")
 public class ConsoleBottomBar extends BottomBar implements RelocalizationListener {
 
     public final JPanel leftSide = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 13));

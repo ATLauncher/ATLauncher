@@ -34,8 +34,8 @@ public class StatefulTextKeyAdapter extends KeyAdapter {
     /**
      * Consumer to feed events
      */
-    @Nonnull
-    private final Consumer<KeyEvent> consumer;
+    @Nullable
+    private Consumer<KeyEvent> consumer;
 
     /**
      * Consumer to feed garbage events too
@@ -68,6 +68,23 @@ public class StatefulTextKeyAdapter extends KeyAdapter {
         this.consumer = consumer;
         this.ignoredReceiver = ignoredReceiver;
         this.postIgnoredReceiver = postIgnoredReceiver;
+    }
+
+    /**
+     * Empty constructor.
+     * Use `setConsumer`
+     */
+    public StatefulTextKeyAdapter() {
+        ignoredReceiver = null;
+        postIgnoredReceiver = null;
+    }
+
+    /**
+     * Used as per the empty constructor.
+     * @param consumer Consumer to receive events with.
+     */
+    public void setConsumer(@Nullable Consumer<KeyEvent> consumer) {
+        this.consumer = consumer;
     }
 
     @Override

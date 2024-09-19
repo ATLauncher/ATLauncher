@@ -19,14 +19,12 @@ package com.atlauncher;
 
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLSession;
 import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
@@ -51,7 +49,8 @@ import okhttp3.tls.HandshakeCertificates;
 public final class Network {
     public static Cache CACHE = new Cache(FileSystem.CACHE.toFile(), 100 * 1024 * 1024); // 100MB cache
 
-    public static OkHttpClient CLIENT = new OkHttpClient.Builder().protocols(Arrays.asList(Protocol.HTTP_1_1))
+    public static OkHttpClient CLIENT = new OkHttpClient.Builder()
+            .protocols(Collections.singletonList(Protocol.HTTP_1_1))
             .addNetworkInterceptor(new UserAgentInterceptor()).addInterceptor(new DebugLoggingInterceptor())
             .addNetworkInterceptor(new ErrorReportingInterceptor())
             .connectTimeout(App.settings.connectionTimeout, TimeUnit.SECONDS)
@@ -151,30 +150,15 @@ public final class Network {
             final SSLSocketFactory sslSocketFactory = sslContext.getSocketFactory();
 
             CLIENT = CLIENT.newBuilder().sslSocketFactory(sslSocketFactory, (X509TrustManager) trustAllCerts[0])
-                    .hostnameVerifier(new HostnameVerifier() {
-                        @Override
-                        public boolean verify(String hostname, SSLSession session) {
-                            return true;
-                        }
-                    }).build();
+                    .hostnameVerifier((hostname, session) -> true).build();
 
             GRAPHQL_CLIENT = GRAPHQL_CLIENT.newBuilder()
                     .sslSocketFactory(sslSocketFactory, (X509TrustManager) trustAllCerts[0])
-                    .hostnameVerifier(new HostnameVerifier() {
-                        @Override
-                        public boolean verify(String hostname, SSLSession session) {
-                            return true;
-                        }
-                    }).build();
+                    .hostnameVerifier((hostname, session) -> true).build();
 
             CACHED_CLIENT = CACHED_CLIENT.newBuilder()
                     .sslSocketFactory(sslSocketFactory, (X509TrustManager) trustAllCerts[0])
-                    .hostnameVerifier(new HostnameVerifier() {
-                        @Override
-                        public boolean verify(String hostname, SSLSession session) {
-                            return true;
-                        }
-                    }).build();
+                    .hostnameVerifier((hostname, session) -> true).build();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

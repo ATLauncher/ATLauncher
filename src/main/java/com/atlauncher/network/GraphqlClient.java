@@ -24,6 +24,7 @@ import java.util.Date;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Consumer;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -104,12 +105,17 @@ public class GraphqlClient {
 
     public static <D extends Operation.Data, T, V extends Operation.Variables> T callAndWait(
             @NotNull Query<D, T, V> query) {
+        return callAndWait(query, 5, TimeUnit.MINUTES);
+    }
+
+    public static <D extends Operation.Data, T, V extends Operation.Variables> T callAndWait(
+            @NotNull Query<D, T, V> query, int cachePeriod, TimeUnit timeUnit) {
         final CountDownLatch latch = new CountDownLatch(1);
         AtomicReference<T> data = new AtomicReference<>(null);
 
         apolloClient.query(query)
                 .toBuilder()
-                .httpCachePolicy(new HttpCachePolicy.Policy(FetchStrategy.CACHE_FIRST, 5, TimeUnit.MINUTES, false))
+                .httpCachePolicy(new HttpCachePolicy.Policy(FetchStrategy.CACHE_FIRST, cachePeriod, timeUnit, false))
                 .build()
                 .enqueue(new ApolloCall.Callback<T>() {
                     @Override
@@ -133,6 +139,32 @@ public class GraphqlClient {
         }
 
         return data.get();
+    }
+
+    /**
+     *
+     * @param query The query to execute
+     * @param cachePeriod How long to cache, unit determined by [timeUnit]
+     * @param timeUnit The time unit used by [cachePeriod]
+     * @param onResponse Called when a response is made
+     */
+    public static <D extends Operation.Data, T, V extends Operation.Variables> void call(
+        @NotNull Query<D, T, V> query, int cachePeriod, TimeUnit timeUnit, Consumer<T> onResponse) {
+        apolloClient.query(query)
+            .toBuilder()
+            .httpCachePolicy(new HttpCachePolicy.Policy(FetchStrategy.CACHE_FIRST, cachePeriod, timeUnit, false))
+            .build()
+            .enqueue(new ApolloCall.Callback<T>() {
+                @Override
+                public void onResponse(@NotNull Response<T> response) {
+                    onResponse.accept(response.getData());
+                }
+
+                @Override
+                public void onFailure(@NotNull ApolloException e) {
+                    LogManager.logStackTrace("Error on GraphQL query", e);
+                }
+            });
     }
 
     public static <D extends Operation.Data, T, V extends Operation.Variables> T mutateAndWait(

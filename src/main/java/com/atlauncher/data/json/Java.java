@@ -33,11 +33,7 @@ public class Java {
     }
 
     public boolean conforms(int javaVersion) {
-        boolean conforms = true;
-
-        if (this.min != 0 && javaVersion < this.min) {
-            conforms = false;
-        }
+        boolean conforms = this.min == 0 || javaVersion >= this.min;
 
         if (this.max != 0 && javaVersion > this.max) {
             conforms = false;
@@ -66,7 +62,7 @@ public class Java {
         }
 
         if (this.max != 0) {
-            string += (string.length() != 0 ? " up to, and including, " : "Nothing newer than ") + "Java " + this.max;
+            string += (!string.isEmpty() ? " up to, and including, " : "Nothing newer than ") + "Java " + this.max;
         }
 
         return string;

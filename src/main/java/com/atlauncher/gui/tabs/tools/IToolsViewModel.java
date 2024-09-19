@@ -17,8 +17,6 @@
  */
 package com.atlauncher.gui.tabs.tools;
 
-import com.atlauncher.interfaces.NetworkProgressable;
-
 import java.util.function.Consumer;
 
 /**

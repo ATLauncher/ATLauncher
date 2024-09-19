@@ -17,7 +17,6 @@
  */
 package com.atlauncher.viewmodel.base;
 
-import com.atlauncher.data.AbstractAccount;
 import com.atlauncher.data.MicrosoftAccount;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -42,7 +41,7 @@ public interface IAccountsViewModel {
      *
      * @param onAccountSelected function to call
      */
-    void onAccountSelected(Consumer<AbstractAccount> onAccountSelected);
+    void onAccountSelected(Consumer<MicrosoftAccount> onAccountSelected);
 
     /**
      * Get the count of accounts in the launcher
@@ -107,84 +106,7 @@ public interface IAccountsViewModel {
      * @return the currently selected account
      */
     @NotNull
-    AbstractAccount getSelectedAccount();
-
-    /**
-     * Get the selected account as a Microsoft account
-     *
-     * @return the currently selected microsoft account, otherwise null
-     */
-    @Nullable
-    MicrosoftAccount getSelectedAccountAs();
-
-    /**
-     * @return Is the login username field filled
-     */
-    boolean isLoginUsernameSet();
-
-    /**
-     * @return current value set as login username
-     */
-    @Nullable
-    String getLoginUsername();
-
-    /**
-     * Set the login username
-     *
-     * @param username the new username to save
-     */
-    void setLoginUsername(String username);
-
-    /**
-     * @return Is the login passwords field filled
-     */
-    boolean isLoginPasswordSet();
-
-    /**
-     * Set the login password
-     *
-     * @param password the new password to set
-     */
-    void setLoginPassword(String password);
-
-    /**
-     * Set if the password should be remembered
-     *
-     * @param rememberLogin If the password should be remembered
-     */
-    void setRememberLogin(boolean rememberLogin);
-
-    /**
-     * Run the login pre-check
-     *
-     * @return the result of the pre-check, if null ignore
-     */
-    @Nullable
-    LoginPreCheckResult loginPreCheck();
-
-    /**
-     * Check the login with HQ
-     */
-    void login();
-
-    /**
-     * Finalize the login
-     *
-     * @return The result of the login
-     */
-    @NotNull
-    LoginPostResult loginPost();
-
-    /**
-     * Pre-check result for login
-     */
-    abstract class LoginPreCheckResult {
-        /**
-         * The account already exists
-         */
-        public static class Exists extends LoginPreCheckResult {
-        }
-    }
+    MicrosoftAccount getSelectedAccount();
 
     /**
      * Post result for login

@@ -55,5 +55,5 @@ public enum LoaderType {
         public String toString() {
             return "Quilt";
         }
-    },;
+    },
 }

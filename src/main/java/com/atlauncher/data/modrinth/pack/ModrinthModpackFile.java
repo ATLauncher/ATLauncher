@@ -58,8 +58,8 @@ public class ModrinthModpackFile {
         String serverEnv = "required";
 
         if (env != null) {
-            clientEnv = env.containsKey("client") ? env.get("client") : "required";
-            serverEnv = env.containsKey("server") ? env.get("server") : "required";
+            clientEnv = env.getOrDefault("client", "required");
+            serverEnv = env.getOrDefault("server", "required");
         }
 
         int lastIndexOfSlash = path.contains("\\") ? path.lastIndexOf("\\") : path.lastIndexOf("/");

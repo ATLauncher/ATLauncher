@@ -68,7 +68,6 @@ public final class FileSystem {
     public static final Path TEMP = BASE_DIR.resolve("temp");
     public static final Path FAILED_DOWNLOADS = BASE_DIR.resolve("faileddownloads");
 
-    public static final Path USER_DATA = CONFIGS.resolve("userdata");
     public static final Path LAUNCHER_CONFIG = CONFIGS.resolve(Constants.LAUNCHER_NAME + ".conf");
     public static final Path SETTINGS = CONFIGS.resolve(Constants.LAUNCHER_NAME + ".json");
     public static final Path ACCOUNTS = CONFIGS.resolve("accounts.json");
@@ -161,10 +160,11 @@ public final class FileSystem {
 
                 for (String line : output.split("\\r?\\n")) {
                     if (line.contains("REG_EXPAND_SZ")) {
-                        String downloadsFolderPath = line.substring(line.indexOf("REG_EXPAND_SZ") + 13).trim();
+                        Path downloadsFolderPath =
+                            Paths.get(line.substring(line.indexOf("REG_EXPAND_SZ") + 13).trim());
 
-                        if (Files.exists(Paths.get(downloadsFolderPath))) {
-                            CACHED_USER_DOWNLOADS = Paths.get(downloadsFolderPath);
+                        if (Files.exists(downloadsFolderPath)) {
+                            CACHED_USER_DOWNLOADS = downloadsFolderPath;
                             return CACHED_USER_DOWNLOADS;
                         }
                     }
@@ -207,12 +207,9 @@ public final class FileSystem {
         }
 
         try {
-            boolean needToMove = false;
+            boolean needToMove = !Files.exists(to) || (Files.exists(to) && !Files.isSameFile(from, to));
 
             // case sensitive file systems
-            if (!Files.exists(to) || (Files.exists(to) && !Files.isSameFile(from, to))) {
-                needToMove = true;
-            }
 
             // case insensitive file systems
             if (Files.exists(to) && Files.isSameFile(from, to)
