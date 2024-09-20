@@ -8,6 +8,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 ### New Features
 - Add AboutTab [#568]
 - Add version option for CLI [#915]
+- Dynaimc fetching of JRE information from nodecdn [#958]
 
 ### Fixes
 - Java parameters field not being scrollable
