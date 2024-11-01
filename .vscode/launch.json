@@ -9,7 +9,10 @@
             "projectName": "ATLauncher",
             "cwd": "${workspaceFolder}/testLauncher",
             "preLaunchTask": "createTestLauncherDir",
-            "args": "--debug --debug-level=5 --disable-error-reporting --no-launcher-update --config-override \"{'neoForgeServerStarterJar':{'enabled': true}}\""
+            "args": "--debug --debug-level=5 --disable-error-reporting --no-launcher-update",
+            "linux": {
+                "args": "--debug --debug-level=5 --disable-error-reporting --no-launcher-update --working-dir=${workspaceFolder}/testLauncher"
+            }
         },
         {
             "type": "java",
@@ -19,7 +22,10 @@
             "projectName": "ATLauncher",
             "cwd": "${workspaceFolder}/testLauncher/dev",
             "preLaunchTask": "createTestLauncherDir",
-            "args": "--debug --disable-error-reporting --no-launcher-update --base-launcher-domain=https://atlauncher.test --base-cdn-domain=files.atlauncher.test --base-cdn-path=/ --allow-all-ssl-certs"
+            "args": "--debug --disable-error-reporting --no-launcher-update --base-launcher-domain=https://atlauncher.test --base-cdn-domain=files.atlauncher.test --base-cdn-path=/ --allow-all-ssl-certs",
+            "linux": {
+                "args": "--debug --disable-error-reporting --no-launcher-update --base-launcher-domain=https://atlauncher.test --base-cdn-domain=files.atlauncher.test --base-cdn-path=/ --allow-all-ssl-certs --working-dir=${workspaceFolder}/testLauncher/dev"
+            }
         }
     ]
 }
