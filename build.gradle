@@ -88,6 +88,8 @@ dependencies {
     implementation 'com.apollographql.apollo:apollo-http-cache:2.5.14'
     implementation 'com.apollographql.apollo:apollo-rx3-support:2.5.14'
     implementation 'com.github.MCRcortex:nekodetector:Version-1.1-pre'
+    implementation 'com.twelvemonkeys.imageio:imageio-webp:3.12.0'
+
 
     // RxJava
     implementation("io.reactivex.rxjava3:rxjava:3.1.6")
@@ -193,6 +195,7 @@ shadowJar {
         exclude(dependency('com.github.jnr:.*:.*'))
         exclude(dependency('com.github.hypfvieh:.*:.*'))
         exclude(dependency('org.apache.commons:commons-compress:.*'))
+        exclude(dependency('com.twelvemonkeys.imageio:imageio-webp:.*'))
     }
 
     // these are included by dbus-java which is only used on Linux

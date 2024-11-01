@@ -8,5 +8,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 ### New Features
 
 ### Fixes
+- Icons from Modrinth not working when in webp format [#959]
 
 ### Misc
