@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.atlauncher.data.modpacksch;
+package com.atlauncher.data.ftb;
 
 import java.util.List;
 
@@ -23,22 +23,23 @@ import com.atlauncher.data.json.DownloadType;
 import com.atlauncher.data.json.Mod;
 import com.atlauncher.data.json.ModType;
 
-public class ModpacksChPackVersionManifestFile {
+public class FTBPackVersionManifestFile {
     public String version;
     public String path;
     public String url;
     public List<String> mirrors;
     public String sha1;
+    public FTBPackVersionManifestFileHashes hashes;
     public int size;
     public List<Object> tags;
     public boolean clientonly;
     public boolean serveronly;
     public boolean optional;
-    public int id;
+    public long id;
     public String name;
-    public ModpacksChPackVersionManifestFileType type;
+    public FTBPackVersionManifestFileType type;
     public int updated;
-    public ModpacksChPackVersionManifestFileCurseForge curseforge;
+    public FTBPackVersionManifestFileCurseForge curseforge;
 
     public ModType getType() {
         return ModType.mods;
@@ -53,14 +54,14 @@ public class ModpacksChPackVersionManifestFile {
         mod.file = name;
         mod.path = path.substring(0, 2).equalsIgnoreCase("./") ? path.substring(2) : path;
         mod.filesize = size;
-        mod.sha1 = sha1;
+        mod.sha1 = sha1 != null ? sha1 : hashes.sha1;
         mod.name = name;
         mod.url = url;
         mod.type = getType();
         mod.version = version;
         mod.optional = optional;
 
-        // modpacks.ch have wrong hashes quite often
+        // FTB have wrong hashes quite often
         mod.ignoreFailures = true;
 
         return mod;

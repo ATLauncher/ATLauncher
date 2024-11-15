@@ -40,6 +40,7 @@ import com.atlauncher.evnt.listener.SettingsListener;
 import com.atlauncher.evnt.manager.SettingsManager;
 import com.atlauncher.gui.models.InstanceUIModel;
 import com.atlauncher.managers.CurseForgeUpdateManager;
+import com.atlauncher.managers.FTBUpdateManager;
 import com.atlauncher.managers.InstanceManager;
 import com.atlauncher.managers.ModrinthModpackUpdateManager;
 import com.atlauncher.managers.TechnicModpackUpdateManager;
@@ -213,7 +214,10 @@ public class InstancesTabViewModel implements IInstancesTabViewModel, SettingsLi
             // must be reinstalled
             return BehaviorSubject.createDefault(false);
         } else if (instance.isExternalPack()) {
-            if (instance.isCurseForgePack()) {
+            if (instance.isFTBPack()) {
+                return FTBUpdateManager.getObservable(instance).map(latestVersion -> latestVersion.isPresent()
+                        && latestVersion.get().id != instance.launcher.ftbPackVersionManifest.id);
+            } else if (instance.isCurseForgePack()) {
                 return CurseForgeUpdateManager.getObservable(instance).map(latestVersion -> latestVersion.isPresent()
                         && latestVersion.get().id != instance.launcher.curseForgeFile.id);
             } else if (instance.isTechnicPack()) {

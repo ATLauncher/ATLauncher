@@ -15,10 +15,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.atlauncher.data.modpacksch;
+package com.atlauncher.data.ftb;
 
-public class ModpacksChPackVersionSpecs {
-    public int id;
-    public int minimum;
-    public int recommended;
+public class FTBPackVersionManifestFileHashes {
+    public String sha1;
+    public String sha256;
+    public String sha512;
+    public long murmur;
+    public long cfMurmur;
 }

@@ -133,7 +133,7 @@ public class ToolsViewModel implements IToolsViewModel, SettingsListener {
             Constants.DOWNLOAD_HOST, Constants.FABRIC_HOST, Constants.LEGACY_FABRIC_HOST, Constants.NEOFORGE_HOST,
             Constants.FORGE_HOST,
             Constants.QUILT_HOST, Constants.CURSEFORGE_CORE_API_HOST, Constants.MODRINTH_HOST,
-            Constants.MODPACKS_CH_HOST };
+            Constants.FTB_HOST };
 
     @Override
     public int hostsLength() {
@@ -182,13 +182,13 @@ public class ToolsViewModel implements IToolsViewModel, SettingsListener {
                 .append(Utils.traceRoute(Constants.MODRINTH_HOST)).append("\n\n----------------\n\n");
         onTaskComplete.accept(null);
 
-        // Connection to Modpacks.ch API
-        results.append("Ping results to " + Constants.MODPACKS_CH_HOST + " was ")
-                .append(Utils.pingAddress(Constants.MODPACKS_CH_HOST));
+        // Connection to FTB API
+        results.append("Ping results to " + Constants.FTB_HOST + " was ")
+                .append(Utils.pingAddress(Constants.FTB_HOST));
         onTaskComplete.accept(null);
 
-        results.append("Tracert to " + Constants.MODPACKS_CH_HOST + " was ")
-                .append(Utils.traceRoute(Constants.MODPACKS_CH_HOST)).append("\n\n----------------\n\n");
+        results.append("Tracert to " + Constants.FTB_HOST + " was ")
+                .append(Utils.traceRoute(Constants.FTB_HOST)).append("\n\n----------------\n\n");
         onTaskComplete.accept(null);
 
         // Connection to Fabric CDN

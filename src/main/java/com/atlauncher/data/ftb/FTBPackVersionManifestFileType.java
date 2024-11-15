@@ -15,17 +15,20 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.atlauncher.data.modpacksch;
+package com.atlauncher.data.ftb;
 
-public class ModpacksChPackRating {
-    public int id;
-    public boolean configured;
-    public boolean verified;
-    public int age;
-    public boolean gambling;
-    public boolean frightening;
-    public boolean alcoholdrugs;
-    public boolean nuditysexual;
-    public boolean sterotypeshate;
-    public boolean languageviolence;
+import com.google.gson.annotations.SerializedName;
+
+public enum FTBPackVersionManifestFileType {
+    @SerializedName("config")
+    CONFIG,
+
+    @SerializedName("mod")
+    MOD,
+
+    @SerializedName("resource")
+    RESOURCE,
+
+    @SerializedName("script")
+    SCRIPT
 }

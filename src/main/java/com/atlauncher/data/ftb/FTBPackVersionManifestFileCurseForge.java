@@ -15,17 +15,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.atlauncher.data.modpacksch;
+package com.atlauncher.data.ftb;
 
-import com.google.gson.annotations.SerializedName;
-
-public enum ModpacksChPackArtType {
-    @SerializedName("splash")
-    SPLASH,
-
-    @SerializedName("square")
-    SQUARE,
-
-    @SerializedName("logo")
-    LOGO
+public class FTBPackVersionManifestFileCurseForge {
+    public Integer project;
+    public Integer file;
 }

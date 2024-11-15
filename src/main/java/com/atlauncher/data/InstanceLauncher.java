@@ -25,11 +25,11 @@ import com.atlauncher.annot.Json;
 import com.atlauncher.data.curseforge.CurseForgeFile;
 import com.atlauncher.data.curseforge.CurseForgeProject;
 import com.atlauncher.data.curseforge.pack.CurseForgeManifest;
+import com.atlauncher.data.ftb.FTBPackManifest;
+import com.atlauncher.data.ftb.FTBPackVersionManifest;
 import com.atlauncher.data.json.Java;
 import com.atlauncher.data.json.QuickPlay;
 import com.atlauncher.data.minecraft.loaders.LoaderVersion;
-import com.atlauncher.data.modpacksch.ModpacksChPackManifest;
-import com.atlauncher.data.modpacksch.ModpacksChPackVersionManifest;
 import com.atlauncher.data.modrinth.ModrinthProject;
 import com.atlauncher.data.modrinth.ModrinthVersion;
 import com.atlauncher.data.modrinth.pack.ModrinthModpackManifest;
@@ -93,8 +93,10 @@ public class InstanceLauncher {
     public ModrinthProject modrinthProject;
     public ModrinthVersion modrinthVersion;
     public ModrinthModpackManifest modrinthManifest;
-    public ModpacksChPackManifest modpacksChPackManifest;
-    public ModpacksChPackVersionManifest modpacksChPackVersionManifest;
+    @SerializedName(value = "ftbPackManifest", alternate = { "modpacksChPackManifest" })
+    public FTBPackManifest ftbPackManifest;
+    @SerializedName(value = "ftbPackVersionManifest", alternate = { "modpacksChPackVersionManifest" })
+    public FTBPackVersionManifest ftbPackVersionManifest;
     public TechnicModpack technicModpack;
 
     public boolean checkForUpdates = true;

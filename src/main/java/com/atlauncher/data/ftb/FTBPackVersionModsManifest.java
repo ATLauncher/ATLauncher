@@ -15,9 +15,24 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.atlauncher.data.modpacksch;
+package com.atlauncher.data.ftb;
 
-public class ModpacksChPackTag {
+import java.util.List;
+
+public class FTBPackVersionModsManifest {
+    public FTBPackVersionSpecs specs;
+    public List<FTBPackVersionManifestTarget> targets;
+    public int installs;
+    public int plays;
+    public int refreshed;
+    public String changelog;
+    public int parent;
+    public String notification;
+    public List<Object> links;
+    public String status;
     public int id;
     public String name;
+    public String type;
+    public int updated;
+    public List<FTBPackVersionManifestMod> mods;
 }

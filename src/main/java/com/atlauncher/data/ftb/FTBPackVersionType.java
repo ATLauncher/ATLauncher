@@ -15,9 +15,17 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.atlauncher.data.modpacksch;
+package com.atlauncher.data.ftb;
 
-public class ModpacksChPackVersionManifestFileCurseForge {
-    public Integer project;
-    public Integer file;
+import com.google.gson.annotations.SerializedName;
+
+public enum FTBPackVersionType {
+    @SerializedName(value = "alpha", alternate = { "Alpha" })
+    ALPHA,
+
+    @SerializedName(value = "beta", alternate = { "Beta" })
+    BETA,
+
+    @SerializedName(value = "release", alternate = { "Release" })
+    RELEASE
 }

@@ -15,14 +15,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.atlauncher.data.modpacksch;
+package com.atlauncher.data.installables;
 
-import com.google.gson.annotations.SerializedName;
+import com.atlauncher.data.Pack;
+import com.atlauncher.data.PackVersion;
+import com.atlauncher.data.minecraft.loaders.LoaderVersion;
 
-public enum ModpacksChPackVersionManifestTargetType {
-    @SerializedName("modloader")
-    MODLOADER,
-
-    @SerializedName("game")
-    GAME
+public class FTBInstallable extends ATLauncherFormatInstallable {
+    public FTBInstallable(Pack pack, PackVersion packVersion, LoaderVersion loaderVersion) {
+        super(pack, packVersion, loaderVersion);
+    }
 }

@@ -15,12 +15,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.atlauncher.data.modpacksch;
+package com.atlauncher.data.ftb;
 
-public class ModpacksChPackAuthor {
-    public int id;
-    public String website;
-    public String name;
-    public ModpacksChPackAuthorType type;
-    public int updated;
+import com.google.gson.annotations.SerializedName;
+
+public enum FTBPackAuthorType {
+    @SerializedName("team")
+    TEAM
 }

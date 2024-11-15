@@ -54,6 +54,7 @@ import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.ConfigManager;
 import com.atlauncher.managers.CurseForgeUpdateManager;
 import com.atlauncher.managers.DialogManager;
+import com.atlauncher.managers.FTBUpdateManager;
 import com.atlauncher.managers.InstanceManager;
 import com.atlauncher.managers.LWJGLManager;
 import com.atlauncher.managers.LogManager;
@@ -334,6 +335,9 @@ public class Launcher {
         }
 
         updateThread = new Thread(() -> {
+            if (InstanceManager.getInstances().stream().anyMatch(i -> i.isFTBPack())) {
+                FTBUpdateManager.checkForUpdates();
+            }
             if (InstanceManager.getInstances().stream().anyMatch(i -> i.isCurseForgePack())) {
                 CurseForgeUpdateManager.checkForUpdates();
             }

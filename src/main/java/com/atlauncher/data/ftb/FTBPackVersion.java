@@ -15,13 +15,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.atlauncher.data.modpacksch;
+package com.atlauncher.data.ftb;
 
-import java.util.List;
-
-public class ModpacksChPackList {
-    public List<Integer> packs;
-    public int total;
-    public String status;
+public class FTBPackVersion {
+    public int id;
+    public FTBPackVersionSpecs specs;
+    public String name;
+    public FTBPackVersionType type;
     public int updated;
 }

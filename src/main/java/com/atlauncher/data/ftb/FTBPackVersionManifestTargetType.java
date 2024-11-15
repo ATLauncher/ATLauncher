@@ -15,12 +15,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.atlauncher.data.modpacksch;
+package com.atlauncher.data.ftb;
 
-public class ModpacksChPackVersion {
-    public int id;
-    public ModpacksChPackVersionSpecs specs;
-    public String name;
-    public ModpacksChPackVersionType type;
-    public int updated;
+import com.google.gson.annotations.SerializedName;
+
+public enum FTBPackVersionManifestTargetType {
+    @SerializedName("modloader")
+    MODLOADER,
+
+    @SerializedName("game")
+    GAME
 }

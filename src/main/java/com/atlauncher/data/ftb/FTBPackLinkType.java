@@ -15,11 +15,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.atlauncher.data.modpacksch;
+package com.atlauncher.data.ftb;
 
 import com.google.gson.annotations.SerializedName;
 
-public enum ModpacksChPackLinkType {
+public enum FTBPackLinkType {
     @SerializedName("website")
     WEBSITE,
 

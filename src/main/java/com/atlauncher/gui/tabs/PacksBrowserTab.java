@@ -55,6 +55,7 @@ import com.atlauncher.evnt.manager.TabChangeManager;
 import com.atlauncher.evnt.manager.ThemeManager;
 import com.atlauncher.gui.panels.packbrowser.ATLauncherPacksPanel;
 import com.atlauncher.gui.panels.packbrowser.CurseForgePacksPanel;
+import com.atlauncher.gui.panels.packbrowser.FTBPacksPanel;
 import com.atlauncher.gui.panels.packbrowser.ModrinthPacksPanel;
 import com.atlauncher.gui.panels.packbrowser.PackBrowserPlatformPanel;
 import com.atlauncher.gui.panels.packbrowser.PacksBrowserTabTitlePanel;
@@ -100,6 +101,7 @@ public final class PacksBrowserTab extends JPanel
     private final PackBrowserPlatformPanel unifiedPacksPanel = new UnifiedPacksPanel();
     private final PackBrowserPlatformPanel atlauncherPacksPanel = new ATLauncherPacksPanel();
     private final PackBrowserPlatformPanel curseForgePacksPanel = new CurseForgePacksPanel();
+    private final PackBrowserPlatformPanel ftbPacksPanel = new FTBPacksPanel();
     private final PackBrowserPlatformPanel modrinthPacksPanel = new ModrinthPacksPanel();
     private final PackBrowserPlatformPanel technicPacksPanel = new TechnicPacksPanel();
 
@@ -284,6 +286,11 @@ public final class PacksBrowserTab extends JPanel
         if (ConfigManager.getConfigItem("platforms.curseforge.modpacksEnabled", true) == true) {
             platformTabbedPane.add(curseForgePacksPanel);
             platformTabbedPane.setTabComponentAt(index++, new PacksBrowserTabTitlePanel("CurseForge"));
+        }
+
+        if (ConfigManager.getConfigItem("platforms.ftb.modpacksEnabled", true) == true) {
+            platformTabbedPane.add(ftbPacksPanel);
+            platformTabbedPane.setTabComponentAt(index++, new PacksBrowserTabTitlePanel("FTB"));
         }
 
         if (ConfigManager.getConfigItem("platforms.modrinth.modpacksEnabled", true) == true) {

@@ -36,7 +36,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import javax.swing.BorderFactory;
@@ -53,6 +55,7 @@ import org.mini2Dx.gettext.GetText;
 import com.atlauncher.App;
 import com.atlauncher.Gsons;
 import com.atlauncher.builders.HTMLBuilder;
+import com.atlauncher.constants.Constants;
 import com.atlauncher.constants.UIConstants;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.Pack;
@@ -60,9 +63,14 @@ import com.atlauncher.data.PackVersion;
 import com.atlauncher.data.curseforge.CurseForgeFile;
 import com.atlauncher.data.curseforge.CurseForgeProject;
 import com.atlauncher.data.curseforge.pack.CurseForgeManifest;
+import com.atlauncher.data.ftb.FTBPackLink;
+import com.atlauncher.data.ftb.FTBPackLinkType;
+import com.atlauncher.data.ftb.FTBPackManifest;
+import com.atlauncher.data.ftb.FTBPackVersion;
 import com.atlauncher.data.installables.ATLauncherInstallable;
 import com.atlauncher.data.installables.CurseForgeInstallable;
 import com.atlauncher.data.installables.CurseForgeManifestInstallable;
+import com.atlauncher.data.installables.FTBInstallable;
 import com.atlauncher.data.installables.Installable;
 import com.atlauncher.data.installables.ModrinthInstallable;
 import com.atlauncher.data.installables.ModrinthManifestInstallable;
@@ -99,11 +107,14 @@ import com.atlauncher.managers.PackManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.ComboItem;
 import com.atlauncher.utils.CurseForgeApi;
+import com.atlauncher.utils.FTBApi;
 import com.atlauncher.utils.ModrinthApi;
 import com.atlauncher.utils.Pair;
 import com.atlauncher.utils.TechnicApi;
 import com.atlauncher.utils.Utils;
 import com.atlauncher.utils.WindowUtils;
+
+import okhttp3.CacheControl;
 
 public class InstanceInstallerDialog extends JDialog {
     private static final long serialVersionUID = -6984886874482721558L;
@@ -118,6 +129,7 @@ public class InstanceInstallerDialog extends JDialog {
     private CurseForgeProject curseForgeProject = null;
     private ModrinthProject modrinthProject = null;
     private ModrinthVersion preselectedModrinthVersion = null;
+    private FTBPackManifest ftbPackManifest = null;
     private MultiMCManifest multiMCManifest = null;
     private TechnicModpack technicModpack = null;
     private UnifiedModPackResultsFragment unifiedModpackResult = null;
@@ -204,6 +216,8 @@ public class InstanceInstallerDialog extends JDialog {
             handlePackInstall(object);
         } else if (object instanceof CurseForgeProject) {
             handleCurseForgeInstall(object);
+        } else if (object instanceof FTBPackManifest) {
+            handleFTBInstall(object);
         } else if (object instanceof ModrinthSearchHit || object instanceof ModrinthProject) {
             handleModrinthInstall(object);
         } else if (object instanceof TechnicModpackSlim || object instanceof TechnicModpack) {
@@ -357,6 +371,10 @@ public class InstanceInstallerDialog extends JDialog {
 
                     installable.modrinthManifest = modrinthManifest;
                     installable.modrinthExtractedPath = extractedPath;
+                } else if (ftbPackManifest != null) {
+                    installable = new FTBInstallable(pack, packVersion, loaderVersion);
+
+                    installable.ftbPackManifest = ftbPackManifest;
                 } else if (multiMCManifest != null) {
                     installable = new MultiMCInstallable(pack, packVersion, loaderVersion);
 
@@ -556,6 +574,42 @@ public class InstanceInstallerDialog extends JDialog {
 
                     return packVersion;
                 }).collect(Collectors.toList());
+    }
+
+    private void handleFTBInstall(Object object) {
+        ftbPackManifest = (FTBPackManifest) object;
+
+        pack = new Pack();
+        pack.externalId = ftbPackManifest.id;
+        pack.name = ftbPackManifest.name;
+        pack.description = ftbPackManifest.description;
+
+        if (ftbPackManifest.links != null) {
+            FTBPackLink link = ftbPackManifest.links.stream()
+                    .filter(l -> l.type == FTBPackLinkType.WEBSITE).findFirst().orElse(null);
+
+            if (link != null) {
+                pack.websiteURL = link.link;
+            }
+        }
+
+        pack.ftbPack = ftbPackManifest;
+
+        pack.versions = ftbPackManifest.versions.stream()
+                .sorted(Comparator.comparingInt((FTBPackVersion version) -> version.updated).reversed())
+                .map(v -> {
+                    PackVersion packVersion = new PackVersion();
+                    packVersion.version = v.name;
+                    packVersion.hasLoader = true;
+                    packVersion._ftbId = v.id;
+                    packVersion._ftbType = v.type;
+                    return packVersion;
+                }).filter(pv -> pv != null).collect(Collectors.toList());
+
+        isReinstall = false;
+
+        // #. {0} is the name of the pack the user is installing
+        setTitle(GetText.tr("Installing {0}", ftbPackManifest.name));
     }
 
     private void handleModrinthInstall(Object object) {
@@ -854,6 +908,29 @@ public class InstanceInstallerDialog extends JDialog {
                 handleCurseForgeInstall(curseForgeProject);
                 return;
             }
+            case FTB: {
+                final ProgressDialog<FTBPackManifest> ftbPackManifestLookupDialog = new ProgressDialog<>(
+                        GetText.tr("Getting Modpack Details"), 0, GetText.tr("Getting Modpack Details"),
+                        "Aborting Getting Modpack Details");
+
+                ftbPackManifestLookupDialog.addThread(new Thread(() -> {
+                    ftbPackManifestLookupDialog
+                            .setReturnValue(FTBApi.getModpackManifest(unifiedModpackResult.id()));
+
+                    ftbPackManifestLookupDialog.close();
+                }));
+
+                ftbPackManifestLookupDialog.start();
+                FTBPackManifest ftbPackManifest = ftbPackManifestLookupDialog.getReturnValue();
+
+                if (ftbPackManifest == null) {
+                    LogManager.error("Failed to get FTB manifest");
+                    return;
+                }
+
+                handleFTBInstall(ftbPackManifest);
+                return;
+            }
             case TECHNIC: {
                 final ProgressDialog<TechnicModpack> technicModpackLookupDialog = new ProgressDialog<>(
                         GetText.tr("Getting Modpack Details"), 0, GetText.tr("Getting Modpack Details"),
@@ -883,7 +960,29 @@ public class InstanceInstallerDialog extends JDialog {
     private void handleInstanceInstall(Object object) {
         instance = (Instance) object;
 
-        if (instance.isCurseForgePack()) {
+        if (instance.isFTBPack()) {
+            final ProgressDialog<FTBPackManifest> dialog = new ProgressDialog<>(
+                    GetText.tr("Downloading Pack Manifest"), 0, GetText.tr("Downloading Pack Manifest"),
+                    "Cancelled downloading FTB pack manifest", this);
+            dialog.addThread(new Thread(() -> {
+                FTBPackManifest packManifest = com.atlauncher.network.Download.build()
+                        .setUrl(String.format(Locale.ENGLISH, "%s/modpack/%d", Constants.FTB_API_URL,
+                                instance.launcher.ftbPackManifest.id))
+                        .cached(new CacheControl.Builder().maxStale(10, TimeUnit.MINUTES).build())
+                        .asClass(FTBPackManifest.class);
+                dialog.setReturnValue(packManifest);
+                dialog.close();
+            }));
+            dialog.start();
+
+            if (dialog.wasClosed) {
+                setVisible(false);
+                dispose();
+                return;
+            }
+
+            handleFTBInstall(dialog.getReturnValue());
+        } else if (instance.isCurseForgePack()) {
             handleCurseForgeInstall(instance.launcher.curseForgeProject);
         } else if (instance.isTechnicPack()) {
             handleTechnicInstall(instance.launcher.technicModpack);

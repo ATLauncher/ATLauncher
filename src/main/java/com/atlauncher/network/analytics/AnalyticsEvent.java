@@ -26,9 +26,9 @@ import com.atlauncher.data.PackVersion;
 import com.atlauncher.data.Server;
 import com.atlauncher.data.curseforge.CurseForgeFile;
 import com.atlauncher.data.curseforge.CurseForgeProject;
+import com.atlauncher.data.ftb.FTBPackManifest;
 import com.atlauncher.data.minecraft.loaders.LoaderType;
 import com.atlauncher.data.minecraft.loaders.LoaderVersion;
-import com.atlauncher.data.modpacksch.ModpacksChPackManifest;
 import com.atlauncher.data.modrinth.ModrinthProject;
 import com.atlauncher.data.modrinth.ModrinthSearchHit;
 import com.atlauncher.data.modrinth.ModrinthVersion;
@@ -250,8 +250,8 @@ public class AnalyticsEvent {
             case CURSEFORGE:
                 platform = "CurseForge";
                 break;
-            case MODPACKSCH:
-                platform = "ModpacksCh";
+            case FTB:
+                platform = "FTB";
                 break;
             case MODRINTH:
                 platform = "Modrinth";
@@ -293,8 +293,8 @@ public class AnalyticsEvent {
         return AnalyticsEvent.forPackInstall(project.name, "CurseForge", server);
     }
 
-    public static AnalyticsEvent forPackInstall(ModpacksChPackManifest pack) {
-        return AnalyticsEvent.forPackInstall(pack.name, "ModpacksCh", false);
+    public static AnalyticsEvent forPackInstall(FTBPackManifest pack) {
+        return AnalyticsEvent.forPackInstall(pack.name, "FTB", false);
     }
 
     public static AnalyticsEvent forPackInstall(Pack pack) {

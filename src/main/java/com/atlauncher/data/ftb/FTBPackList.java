@@ -15,20 +15,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.atlauncher.data.modpacksch;
+package com.atlauncher.data.ftb;
 
-import com.google.gson.annotations.SerializedName;
+import java.util.List;
 
-public enum ModpacksChPackVersionManifestFileType {
-    @SerializedName("config")
-    CONFIG,
-
-    @SerializedName("mod")
-    MOD,
-
-    @SerializedName("resource")
-    RESOURCE,
-
-    @SerializedName("script")
-    SCRIPT
+public class FTBPackList {
+    public List<Integer> packs;
+    public int total;
+    public String status;
+    public int updated;
 }

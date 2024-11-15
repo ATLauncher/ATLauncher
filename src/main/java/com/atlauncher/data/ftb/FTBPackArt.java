@@ -15,11 +15,16 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.atlauncher.data.modpacksch;
+package com.atlauncher.data.ftb;
 
-public class ModpacksChPackLink {
+public class FTBPackArt {
+    public int width;
+    public int height;
+    public boolean compressed;
+    public String url;
+    public String sha1;
+    public long size;
     public int id;
-    public String name;
-    public String link;
-    public ModpacksChPackLinkType type;
+    public FTBPackArtType type;
+    public int updated;
 }

@@ -139,6 +139,7 @@ import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.ConfigManager;
 import com.atlauncher.managers.CurseForgeUpdateManager;
 import com.atlauncher.managers.DialogManager;
+import com.atlauncher.managers.FTBUpdateManager;
 import com.atlauncher.managers.InstanceManager;
 import com.atlauncher.managers.LWJGLManager;
 import com.atlauncher.managers.LogManager;
@@ -338,7 +339,9 @@ public class Instance extends MinecraftVersion {
         if (launcher.vanillaInstance) {
             return;
         } else if (isExternalPack()) {
-            if (isCurseForgePack()) {
+            if (isFTBPack()) {
+                version = Integer.toString(FTBUpdateManager.getLatestVersion(this).id);
+            } else if (isCurseForgePack()) {
                 version = Integer.toString(CurseForgeUpdateManager.getLatestVersion(this).id);
             } else if (isTechnicPack()) {
                 if (isTechnicSolderPack()) {
@@ -376,7 +379,9 @@ public class Instance extends MinecraftVersion {
         }
 
         if (isExternalPack()) {
-            if (isCurseForgePack()) {
+            if (isFTBPack()) {
+                return hasUpdateBeenIgnored(Integer.toString(FTBUpdateManager.getLatestVersion(this).id));
+            } else if (isCurseForgePack()) {
                 return hasUpdateBeenIgnored(Integer.toString(CurseForgeUpdateManager.getLatestVersion(this).id));
             } else if (isTechnicPack()) {
                 if (isTechnicSolderPack()) {
@@ -2598,8 +2603,8 @@ public class Instance extends MinecraftVersion {
         return launcher.multiMCManifest != null;
     }
 
-    public boolean isModpacksChPack() {
-        return launcher.modpacksChPackManifest != null && launcher.modpacksChPackVersionManifest != null;
+    public boolean isFTBPack() {
+        return launcher.ftbPackManifest != null && launcher.ftbPackVersionManifest != null;
     }
 
     public boolean isModrinthPack() {
@@ -2620,13 +2625,15 @@ public class Instance extends MinecraftVersion {
     }
 
     public boolean isExternalPack() {
-        return isOldCurseForgePack() || isCurseForgePack() || isModpacksChPack() || isModrinthImport()
+        return isOldCurseForgePack() || isCurseForgePack() || isFTBPack() || isModrinthImport()
                 || isMultiMcImport() || isTechnicPack() || isModrinthPack();
     }
 
     public boolean isUpdatableExternalPack() {
         return isExternalPack() && ((isCurseForgePack()
                 && ConfigManager.getConfigItem("platforms.curseforge.modpacksEnabled", true) == true)
+                || (isFTBPack()
+                        && ConfigManager.getConfigItem("platforms.ftb.modpacksEnabled", true) == true)
                 || (isTechnicPack() && ConfigManager.getConfigItem("platforms.technic.modpacksEnabled", true) == true)
                 || (isModrinthPack()
                         && ConfigManager.getConfigItem("platforms.modrinth.modpacksEnabled", true) == true));
@@ -2637,8 +2644,8 @@ public class Instance extends MinecraftVersion {
             return "CurseForge";
         }
 
-        if (isModpacksChPack()) {
-            return "ModpacksCh";
+        if (isFTBPack()) {
+            return "FTB";
         }
 
         if (isTechnicSolderPack()) {
@@ -2673,8 +2680,8 @@ public class Instance extends MinecraftVersion {
             return "CurseForgeInstance";
         }
 
-        if (isModpacksChPack()) {
-            return "ModpacksChInstance";
+        if (isFTBPack()) {
+            return "FTBInstance";
         }
 
         if (isTechnicSolderPack()) {
@@ -3582,8 +3589,8 @@ public class Instance extends MinecraftVersion {
             return launcher.curseForgeProject.hasWebsiteUrl();
         }
 
-        if (isModpacksChPack()) {
-            return launcher.modpacksChPackManifest.hasTag("FTB");
+        if (isFTBPack()) {
+            return launcher.ftbPackManifest.hasTag("FTB");
         }
 
         return isModrinthPack() || isTechnicPack();
@@ -3594,8 +3601,8 @@ public class Instance extends MinecraftVersion {
             return launcher.curseForgeProject.getWebsiteUrl();
         }
 
-        if (isModpacksChPack() && launcher.modpacksChPackManifest.hasTag("FTB")) {
-            return launcher.modpacksChPackManifest.getWebsiteUrl();
+        if (isFTBPack() && launcher.ftbPackManifest.hasTag("FTB")) {
+            return launcher.ftbPackManifest.getWebsiteUrl();
         }
 
         if (isModrinthPack()) {

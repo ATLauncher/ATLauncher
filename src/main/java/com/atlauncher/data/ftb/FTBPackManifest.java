@@ -15,24 +15,44 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.atlauncher.data.modpacksch;
+package com.atlauncher.data.ftb;
 
 import java.util.List;
+import java.util.Locale;
 
-public class ModpacksChPackVersionModsManifest {
-    public ModpacksChPackVersionSpecs specs;
-    public List<ModpacksChPackVersionManifestTarget> targets;
+public class FTBPackManifest {
+    public String synopsis;
+    public String description;
+    public List<FTBPackArt> art;
+    public List<FTBPackLink> links;
+    public List<FTBPackAuthor> authors;
+    public List<FTBPackVersion> versions;
     public int installs;
     public int plays;
+    public boolean featured;
     public int refreshed;
-    public String changelog;
-    public int parent;
     public String notification;
-    public List<Object> links;
+    public FTBPackRating rating;
     public String status;
     public int id;
     public String name;
     public String type;
     public int updated;
-    public List<ModpacksChPackVersionManifestMod> mods;
+    public List<FTBPackTag> tags;
+
+    public boolean hasTag(String tag) {
+        if (tags == null) {
+            return false;
+        }
+
+        return tags.stream().map(t -> t.name).anyMatch(tag::equals);
+    }
+
+    public String getWebsiteUrl() {
+        return String.format(Locale.ENGLISH, "https://feed-the-beast.com/modpacks/%d-%s", id, getSlug());
+    }
+
+    public String getSlug() {
+        return name.replace("+", " Plus").toLowerCase(Locale.ROOT).replaceAll("\\W", "-").replaceAll("-{2,}", "-");
+    }
 }

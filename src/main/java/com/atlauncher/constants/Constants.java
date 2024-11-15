@@ -112,10 +112,10 @@ public class Constants {
     public static final String MODRINTH_FORGIFIED_FABRIC_API_MOD_ID = "Aqlf1Shp";
     public static final int MODRINTH_PAGINATION_SIZE = 20;
 
-    // Modpacks.ch domains, endpoints, config, etc
-    public static final String MODPACKS_CH_API_URL = "https://api.modpacks.ch/public";
-    public static final String MODPACKS_CH_HOST = "api.modpacks.ch";
-    public static final int MODPACKS_CH_PAGINATION_SIZE = 20;
+    // FTB domains, endpoints, config, etc
+    public static final String FTB_API_URL = "https://api.feed-the-beast.com/v1/modpacks/public";
+    public static final String FTB_HOST = "api.feed-the-beast.com";
+    public static final int FTB_PAGINATION_SIZE = 20;
 
     // Technic domains, endpoints, config, etc
     public static final String TECHNIC_API_URL = "https://api.technicpack.net";

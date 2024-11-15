@@ -15,17 +15,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.atlauncher.data.modpacksch;
+package com.atlauncher.data.ftb;
 
-import com.google.gson.annotations.SerializedName;
-
-public enum ModpacksChPackVersionType {
-    @SerializedName(value = "alpha", alternate = { "Alpha" })
-    ALPHA,
-
-    @SerializedName(value = "beta", alternate = { "Beta" })
-    BETA,
-
-    @SerializedName(value = "release", alternate = { "Release" })
-    RELEASE
+public class FTBPackAuthor {
+    public int id;
+    public String website;
+    public String name;
+    public FTBPackAuthorType type;
+    public int updated;
 }

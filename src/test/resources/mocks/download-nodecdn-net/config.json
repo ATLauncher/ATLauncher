@@ -66,8 +66,11 @@
       "modsEnabled": true,
       "modpacksEnabled": true
     },
+    "ftb": {
+        "modpacksEnabled": true
+    },
     "modpacksch": {
-      "modpacksEnabled": true
+        "modpacksEnabled": false
     },
     "modrinth": {
       "modsEnabled": true,

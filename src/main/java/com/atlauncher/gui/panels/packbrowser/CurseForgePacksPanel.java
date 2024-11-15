@@ -96,7 +96,7 @@ public class CurseForgePacksPanel extends PackBrowserPlatformPanel {
         List<CurseForgeProject> packs = CurseForgeApi.searchModPacks(search, page - 1, sort, sortDescending, category,
                 minecraftVersion);
 
-        hasMorePages = packs != null && packs.size() == Constants.MODPACKS_CH_PAGINATION_SIZE;
+        hasMorePages = packs != null && packs.size() == Constants.FTB_PAGINATION_SIZE;
 
         if (packs != null) {
             for (CurseForgeProject pack : packs) {
