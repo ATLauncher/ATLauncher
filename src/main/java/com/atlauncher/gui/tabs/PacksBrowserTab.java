@@ -315,6 +315,7 @@ public final class PacksBrowserTab extends JPanel
             }
 
             afterTabChange();
+            System.gc();
         });
 
         TabChangeManager.addListener(this);

@@ -17,10 +17,12 @@
  */
 package com.atlauncher.workers;
 
-import java.awt.Image;
+import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
+import java.io.BufferedInputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.concurrent.ExecutionException;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
@@ -58,13 +60,43 @@ public class BackgroundImageWorker extends SwingWorker<ImageIcon, Object> {
         }
 
         if (Files.exists(path)) {
-            BufferedImage image = ImageIO.read(path.toFile());
-            label.setIcon(new ImageIcon(image.getScaledInstance(width, height, Image.SCALE_SMOOTH)));
-        }
+            try (BufferedInputStream inputStream = new BufferedInputStream(Files.newInputStream(path))) {
+                BufferedImage sourceImage = ImageIO.read(inputStream);
+                if (sourceImage != null) {
+                    int newWidth = width;
+                    int newHeight = height;
 
-        label.setVisible(true);
+                    // Compute scales to maintain the aspect ratio
+                    if (sourceImage.getWidth() > sourceImage.getHeight()) {
+                        newHeight = (sourceImage.getHeight() * width) / sourceImage.getWidth();
+                    } else {
+                        newWidth = (sourceImage.getWidth() * height) / sourceImage.getHeight();
+                    }
+
+                    BufferedImage scaledImage = new BufferedImage(newWidth, newHeight, BufferedImage.TYPE_INT_ARGB);
+                    Graphics2D g2d = scaledImage.createGraphics();
+                    g2d.drawImage(sourceImage, 0, 0, newWidth, newHeight, null);
+                    g2d.dispose();
+                    sourceImage.flush(); // Immediately discard large source image buffer
+                    return new ImageIcon(scaledImage);
+                }
+            }
+        }
 
         return null;
     }
 
+    @Override
+    protected void done() {
+        try {
+            ImageIcon icon = get();
+            if (icon != null) {
+                label.setIcon(icon);
+            }
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        } finally {
+            label.setVisible(true);
+        }
+    }
 }

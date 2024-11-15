@@ -36,7 +36,7 @@ import okhttp3.CacheControl;
  */
 public class FTBApi {
     public static List<FTBPackManifest> searchModPacks(String query, int page) {
-        String url = String.format("%s/modpack/search/50", Constants.FTB_API_URL);
+        String url = String.format("%s/modpack/search/1000", Constants.FTB_API_URL);
 
         if (query != null && !query.isEmpty()) {
             url += String.format("?term=%s", query);
@@ -60,7 +60,7 @@ public class FTBApi {
 
     public static List<FTBPackManifest> getModPacks(int page, String sort) {
         FTBPackList packList = Download.build()
-                .setUrl(String.format("%s/modpack/%s/50", Constants.FTB_API_URL, sort))
+                .setUrl(String.format("%s/modpack/%s/1000", Constants.FTB_API_URL, sort))
                 .asType(FTBPackList.class);
 
         if (packList == null || (packList.status != null && packList.status.equals("error"))) {

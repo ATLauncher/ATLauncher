@@ -17,11 +17,34 @@
  */
 package com.atlauncher.utils;
 
+import java.util.Collections;
+import java.util.Set;
+
+import org.commonmark.node.Image;
 import org.commonmark.node.Node;
 import org.commonmark.parser.Parser;
+import org.commonmark.renderer.html.CoreHtmlNodeRenderer;
+import org.commonmark.renderer.html.HtmlNodeRendererContext;
 import org.commonmark.renderer.html.HtmlRenderer;
 
 public class Markdown {
+    private static class NoImageNodeRenderer extends CoreHtmlNodeRenderer {
+        public NoImageNodeRenderer(HtmlNodeRendererContext context) {
+            super(context);
+        }
+
+        @Override
+        public Set<Class<? extends Node>> getNodeTypes() {
+            // Return node types that should be rendered by this renderer
+            return Collections.singleton(Image.class);
+        }
+
+        @Override
+        public void render(Node node) {
+            // Do nothing for Image nodes
+        }
+    }
+
     public static String render(String text) {
         if (text == null) {
             return "";
@@ -29,7 +52,12 @@ public class Markdown {
 
         Parser parser = Parser.builder().build();
         Node document = parser.parse(text);
-        HtmlRenderer renderer = HtmlRenderer.builder().sanitizeUrls(true).escapeHtml(true).build();
+
+        HtmlRenderer renderer = HtmlRenderer.builder()
+                .sanitizeUrls(true)
+                .escapeHtml(true)
+                .nodeRendererFactory(NoImageNodeRenderer::new)
+                .build();
 
         return renderer.render(document);
     }
