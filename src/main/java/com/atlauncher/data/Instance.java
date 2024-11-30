@@ -100,10 +100,8 @@ import com.atlauncher.data.minecraft.JavaRuntimeManifest;
 import com.atlauncher.data.minecraft.JavaRuntimeManifestFileType;
 import com.atlauncher.data.minecraft.JavaRuntimes;
 import com.atlauncher.data.minecraft.Library;
-import com.atlauncher.data.minecraft.LoggingFile;
 import com.atlauncher.data.minecraft.MinecraftVersion;
 import com.atlauncher.data.minecraft.MojangAssetIndex;
-import com.atlauncher.data.minecraft.VersionManifestVersion;
 import com.atlauncher.data.minecraft.VersionManifestVersionType;
 import com.atlauncher.data.minecraft.loaders.LoaderType;
 import com.atlauncher.data.minecraft.loaders.LoaderVersion;
@@ -436,31 +434,6 @@ public class Instance extends MinecraftVersion {
         PerformanceManager.start();
         OkHttpClient httpClient = Network.createProgressClient(progressDialog);
 
-        // make sure latest manifest is being used
-        PerformanceManager.start("Grabbing Latest Manifest");
-        try {
-            progressDialog.setLabel(GetText.tr("Grabbing Latest Manifest"));
-            VersionManifestVersion minecraftVersionManifest = MinecraftManager
-                    .getMinecraftVersion(id);
-
-            com.atlauncher.network.Download download = com.atlauncher.network.Download.build()
-                    .setUrl(minecraftVersionManifest.url).hash(minecraftVersionManifest.sha1)
-                    .size(minecraftVersionManifest.size)
-                    .downloadTo(FileSystem.MINECRAFT_VERSIONS_JSON.resolve(minecraftVersionManifest.id + ".json"))
-                    .withHttpClient(httpClient);
-
-            MinecraftVersion minecraftVersion = download.asClass(MinecraftVersion.class);
-
-            if (minecraftVersion != null) {
-                setUpdatedValues(minecraftVersion);
-                save();
-            }
-        } catch (Exception e) {
-            // ignored
-        }
-        progressDialog.doneTask();
-        PerformanceManager.end("Grabbing Latest Manifest");
-
         PerformanceManager.start("Downloading Minecraft");
         try {
             progressDialog.setLabel(GetText.tr("Downloading Minecraft"));
@@ -481,35 +454,6 @@ public class Instance extends MinecraftVersion {
             return false;
         }
         PerformanceManager.end("Downloading Minecraft");
-
-        if (logging != null) {
-            PerformanceManager.start("Downloading Logging Config");
-            try {
-                progressDialog.setLabel(GetText.tr("Downloading Logging Config"));
-
-                LoggingFile loggingFile = logging.client.file;
-
-                com.atlauncher.network.Download loggerDownload = com.atlauncher.network.Download.build()
-                        .setUrl(loggingFile.url).hash(loggingFile.sha1)
-                        .size(loggingFile.size).downloadTo(FileSystem.RESOURCES_LOG_CONFIGS.resolve(loggingFile.id))
-                        .withHttpClient(httpClient);
-
-                if (loggerDownload.needToDownload()) {
-                    progressDialog.setTotalBytes(loggingFile.size);
-                    loggerDownload.downloadFile();
-                }
-
-                progressDialog.doneTask();
-            } catch (IOException e) {
-                LogManager.logStackTrace(e);
-                PerformanceManager.end("Downloading Logging Config");
-                PerformanceManager.end();
-                return false;
-            }
-            PerformanceManager.end("Downloading Logging Config");
-        } else {
-            progressDialog.doneTask();
-        }
 
         // download libraries
         PerformanceManager.start("Downloading Libraries");
@@ -931,7 +875,7 @@ public class Instance extends MinecraftVersion {
         }
 
         ProgressDialog<Boolean> prepareDialog = new ProgressDialog<>(GetText.tr("Preparing For Launch"),
-                9,
+                7,
                 GetText.tr("Preparing For Launch"));
         prepareDialog.addThread(new Thread(() -> {
             LogManager.info("Preparing for launch!");
