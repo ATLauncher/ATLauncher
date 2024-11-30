@@ -1568,8 +1568,9 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                     .findFirst();
             Optional<Library> fabricLibrary = versionJson.libraries.stream()
                     .filter(l -> l.name.startsWith("net.fabricmc:fabric-loader:")).findFirst();
+            boolean isNeoForge = versionJson.id.startsWith("neoforge-");
 
-            if (forgeLibrary.isPresent() || fabricLibrary.isPresent()) {
+            if (forgeLibrary.isPresent() || fabricLibrary.isPresent() || isNeoForge) {
                 packVersion.loader = new com.atlauncher.data.json.Loader();
 
                 if (forgeLibrary.isPresent()) {
@@ -1668,6 +1669,22 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                     } else {
                         packVersion.loader.className = "com.atlauncher.data.minecraft.loaders.fabric.FabricLoader";
                     }
+                } else if (isNeoForge) {
+                    String neoForgeVersionString = versionJson.id.substring(versionJson.id.lastIndexOf("-") + 1);
+
+                    GetNeoForgeLoaderVersionQuery.Data neoForgeVersionResponse = GraphqlClient
+                            .callAndWait(new GetNeoForgeLoaderVersionQuery(neoForgeVersionString));
+
+                    if (neoForgeVersionResponse == null || neoForgeVersionResponse.neoForgeVersion() == null) {
+                        throw new Exception("Failed to find loader version for " + neoForgeVersionString);
+                    }
+
+                    Map<String, Object> loaderMeta = new HashMap<>();
+                    loaderMeta.put("minecraft", packVersion.minecraft);
+                    loaderMeta.put("version", neoForgeVersionResponse.neoForgeVersion().version());
+                    loaderMeta.put("rawVersion", neoForgeVersionResponse.neoForgeVersion().rawVersion());
+                    packVersion.loader.metadata = loaderMeta;
+                    packVersion.loader.className = "com.atlauncher.data.minecraft.loaders.neoforge.NeoForgeLoader";
                 }
             }
         }

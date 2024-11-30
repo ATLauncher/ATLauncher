@@ -9,5 +9,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 
 ### Fixes
 - Renaming an instance doesn't update the view [#974]
+- Modpacks from Technic using NeoForge not working [#973]
 
 ### Misc
