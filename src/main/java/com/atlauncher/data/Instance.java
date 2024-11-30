@@ -2479,6 +2479,7 @@ public class Instance extends MinecraftVersion {
         File newDir = getRoot().toFile();
         if (oldDir.renameTo(newDir)) {
             this.save();
+            InstanceManager.updateInstance(this);
             return true;
         } else {
             this.launcher.name = oldName;

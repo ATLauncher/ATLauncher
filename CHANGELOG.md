@@ -8,5 +8,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 ### New Features
 
 ### Fixes
+- Renaming an instance doesn't update the view [#974]
 
 ### Misc
