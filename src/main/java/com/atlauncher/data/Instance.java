@@ -1417,7 +1417,7 @@ public class Instance extends MinecraftVersion {
                 File downloadsFolderFile2 = new File(FileSystem.getUserDownloadsPath().toFile(), filename2);
                 if (downloadsFolderFile.exists()) {
                     Utils.moveFile(downloadsFolderFile, fileLocation, true);
-                } else if (downloadsFolderFile.exists()) {
+                } else if (downloadsFolderFile2.exists()) {
                     Utils.moveFile(downloadsFolderFile2, fileLocation, true);
                 }
 
