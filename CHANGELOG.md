@@ -12,3 +12,4 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Modpacks from Technic using NeoForge not working [#973]
 
 ### Misc
+- Remove Forge Logging Level settings [#969]

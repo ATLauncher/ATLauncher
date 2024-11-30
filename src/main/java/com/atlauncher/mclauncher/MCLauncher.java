@@ -346,8 +346,6 @@ public class MCLauncher {
             System.out.println("Okay you can look again, you saw NOTHING!");
         }
 
-        arguments.add("-Dfml.log.level=" + App.settings.forgeLoggingLevel);
-
         if (instance.logging != null && instance.logging.client != null) {
             LoggingClient loggingClient = instance.logging.client;
 

@@ -20,7 +20,6 @@ package com.atlauncher.gui.tabs.settings;
 import java.awt.GridBagConstraints;
 
 import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
 
 import org.mini2Dx.gettext.GetText;
 
@@ -31,37 +30,11 @@ import com.atlauncher.gui.components.JLabelWithHover;
 
 @SuppressWarnings("serial")
 public class LoggingSettingsTab extends AbstractSettingsTab {
-    private final JComboBox<String> forgeLoggingLevel;
-
     private final JCheckBox enableLogs;
 
     private final JCheckBox enableAnalytics;
 
     public LoggingSettingsTab() {
-        // Forge Logging Level
-        gbc.gridx = 0;
-        gbc.gridy++;
-        gbc.insets = UIConstants.LABEL_INSETS;
-        gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        JLabelWithHover forgeLoggingLevelLabel = new JLabelWithHover(GetText.tr("Forge Logging Level") + ":", HELP_ICON,
-                "<html>" + GetText.tr("This determines the type of logging that Forge should report back to you.")
-                        + "</html>");
-        add(forgeLoggingLevelLabel, gbc);
-
-        gbc.gridx++;
-        gbc.insets = UIConstants.FIELD_INSETS;
-        gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-        forgeLoggingLevel = new JComboBox<>();
-        forgeLoggingLevel.addItem("SEVERE");
-        forgeLoggingLevel.addItem("WARNING");
-        forgeLoggingLevel.addItem("INFO");
-        forgeLoggingLevel.addItem("CONFIG");
-        forgeLoggingLevel.addItem("FINE");
-        forgeLoggingLevel.addItem("FINER");
-        forgeLoggingLevel.addItem("FINEST");
-        forgeLoggingLevel.setSelectedItem(App.settings.forgeLoggingLevel);
-        add(forgeLoggingLevel, gbc);
-
         // Enable Logging
 
         gbc.gridx = 0;
@@ -107,7 +80,6 @@ public class LoggingSettingsTab extends AbstractSettingsTab {
     }
 
     public void save() {
-        App.settings.forgeLoggingLevel = (String) forgeLoggingLevel.getSelectedItem();
         App.settings.enableLogs = enableLogs.isSelected();
         App.settings.enableAnalytics = enableAnalytics.isSelected();
     }

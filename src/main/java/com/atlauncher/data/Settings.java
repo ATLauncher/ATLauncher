@@ -122,7 +122,6 @@ public class Settings {
     public transient Proxy proxy;
 
     // Logging
-    public String forgeLoggingLevel = "INFO";
     public boolean enableLogs = true;
     public boolean enableAnalytics = true;
     public String analyticsClientId = UUID.randomUUID().toString();
@@ -200,11 +199,6 @@ public class Settings {
         String importedFirstTimeRun = properties.getProperty("firsttimerun");
         if (importedFirstTimeRun != null) {
             firstTimeRun = Boolean.parseBoolean(importedFirstTimeRun);
-        }
-
-        String importedForgeLoggingLevel = properties.getProperty("forgelogginglevel");
-        if (importedForgeLoggingLevel != null) {
-            forgeLoggingLevel = importedForgeLoggingLevel;
         }
 
         String importedInitialMemory = properties.getProperty("initialmemory");
