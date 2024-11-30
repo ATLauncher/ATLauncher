@@ -134,5 +134,17 @@ public class NilCard extends JPanel implements RelocalizationListener {
                     GetText.tr("Download Pack"),
                     e -> App.navigate(UIConstants.LAUNCHER_PACKS_TAB));
         }
+
+        public static Action createCreateServerAction() {
+            return new NilCard.Action(
+                    GetText.tr("Create Server"),
+                    e -> App.navigate(UIConstants.LAUNCHER_CREATE_PACK_TAB));
+        }
+
+        public static Action createDownloadServerAction() {
+            return new NilCard.Action(
+                    GetText.tr("Download Server"),
+                    e -> App.navigate(UIConstants.LAUNCHER_PACKS_TAB));
+        }
     }
 }
