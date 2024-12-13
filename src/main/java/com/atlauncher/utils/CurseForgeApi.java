@@ -22,6 +22,7 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -336,6 +337,10 @@ public class CurseForgeApi {
     }
 
     public static Map<Integer, CurseForgeProject> getProjectsAsMap(int[] addonIds) {
+        if (addonIds == null || addonIds.length == 0) {
+            return Collections.emptyMap();
+        }
+
         try {
             List<CurseForgeProject> projects = getProjects(addonIds);
 
@@ -351,6 +356,10 @@ public class CurseForgeApi {
     }
 
     public static List<CurseForgeProject> getProjects(int[] projectIds) {
+        if (projectIds == null || projectIds.length == 0) {
+            return Collections.emptyList();
+        }
+
         Download download = Download.build();
 
         String url = String.format("%s/mods", Constants.CURSEFORGE_CORE_API_URL);
@@ -378,6 +387,10 @@ public class CurseForgeApi {
     }
 
     public static List<CurseForgeFile> getFiles(int[] fileIds) {
+        if (fileIds == null || fileIds.length == 0) {
+            return Collections.emptyList();
+        }
+
         Map<String, int[]> body = new HashMap<>();
         body.put("fileIds", fileIds);
 
