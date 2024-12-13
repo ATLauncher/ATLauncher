@@ -25,7 +25,7 @@ import com.atlauncher.data.json.ModType;
 
 public class FTBPackVersionManifestFile {
     public String version;
-    public String path;
+    private String path;
     public String url;
     public List<String> mirrors;
     public String sha1;
@@ -41,6 +41,22 @@ public class FTBPackVersionManifestFile {
     public int updated;
     public FTBPackVersionManifestFileCurseForge curseforge;
 
+    /**
+     * This ensures that the path returned always ends with a / so that filenames
+     * can be appended safely
+     *
+     * @return String
+     */
+    public String getPath() {
+        String cleanPath = path.substring(0, 2).equalsIgnoreCase("./") ? path.substring(2)
+                : path;
+        if (!cleanPath.isEmpty() && !cleanPath.endsWith("/")) {
+            cleanPath += "/";
+        }
+
+        return cleanPath;
+    }
+
     public ModType getType() {
         return ModType.mods;
     }
@@ -52,7 +68,7 @@ public class FTBPackVersionManifestFile {
         mod.server = !clientonly;
         mod.download = DownloadType.direct;
         mod.file = name;
-        mod.path = path.substring(0, 2).equalsIgnoreCase("./") ? path.substring(2) : path;
+        mod.path = getPath();
         mod.filesize = size;
         mod.sha1 = sha1 != null ? sha1 : hashes.sha1;
         mod.name = name;

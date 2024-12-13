@@ -3498,9 +3498,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                     .filter(f -> f.type != FTBPackVersionManifestFileType.MOD).map(file -> {
                         com.atlauncher.network.Download download = com.atlauncher.network.Download.build()
                                 .setUrl(file.url).size((long) file.size).hash(file.sha1).ignoreFailures()
-                                .downloadTo(root.resolve(
-                                        (file.path.substring(0, 2).equalsIgnoreCase("./") ? file.path.substring(2)
-                                                : file.path) + file.name))
+                                .downloadTo(root.resolve(file.getPath() + file.name))
                                 .withInstanceInstaller(this).withHttpClient(Network.createProgressClient(this));
 
                         return download;
@@ -3510,8 +3508,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
 
             ftbPackVersionManifest.files.stream()
                     .filter(f -> f.type != FTBPackVersionManifestFileType.MOD)
-                    .map(file -> root.resolve(
-                            file.path.substring(0, 2).equalsIgnoreCase("./") ? file.path.substring(2) : file.path))
+                    .map(file -> root.resolve(file.getPath()))
                     .forEach(path -> {
                         if (!Files.exists(path)) {
                             try {
@@ -3947,9 +3944,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
             if (isReinstall && instance != null && instance.isFTBPack()) {
                 instance.launcher.ftbPackVersionManifest.files.stream()
                         .filter(f -> f.type != FTBPackVersionManifestFileType.MOD)
-                        .map(file -> instance.ROOT.resolve(
-                                (file.path.substring(0, 2).equalsIgnoreCase("./") ? file.path.substring(2) : file.path)
-                                        + file.name))
+                        .map(file -> instance.ROOT.resolve(file.getPath() + file.name))
                         .forEach(path -> {
                             if (Files.exists(path) && !Files.isDirectory(path)) {
                                 try {
@@ -3963,8 +3958,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                 // now delete all the empty directories left over to cleanup
                 instance.launcher.ftbPackVersionManifest.files.stream()
                         .filter(f -> f.type != FTBPackVersionManifestFileType.MOD)
-                        .map(file -> instance.ROOT.resolve(
-                                file.path.substring(0, 2).equalsIgnoreCase("./") ? file.path.substring(2) : file.path))
+                        .map(file -> instance.ROOT.resolve(file.getPath()))
                         .distinct().sorted(Comparator.comparingInt(Path::getNameCount).reversed()).forEach(path -> {
                             try {
                                 if (Files.exists(path) && FileUtils.directoryIsEmpty(path)) {

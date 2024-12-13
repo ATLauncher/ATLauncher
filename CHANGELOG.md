@@ -14,6 +14,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Rename the buttons when there are no servers in the servers tab [#950]
 - The instance.json file being overwritten on launch [#967]
 - Check arrays aren't empty before trying to call CurseForge api causing 400 errors
+- Issues installing newer versions of FTB modpacks
 
 ### Misc
 - Remove Forge Logging Level settings [#969]
