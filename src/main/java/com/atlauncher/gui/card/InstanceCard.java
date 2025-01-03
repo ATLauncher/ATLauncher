@@ -17,7 +17,6 @@
  */
 package com.atlauncher.gui.card;
 
-import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dimension;
@@ -28,11 +27,10 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
-import javax.swing.JButton;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
-import javax.swing.JSplitPane;
+import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.border.EmptyBorder;
 
@@ -68,27 +66,22 @@ import com.atlauncher.utils.OS;
  */
 @SuppressWarnings("serial")
 public class InstanceCard extends CollapsiblePanel implements RelocalizationListener {
+
     private final Instance instance;
     private final JTextArea descArea = new JTextArea();
     private final ImagePanel image;
-    private final JButton updateButton = new JButton(GetText.tr("Update"));
-    private final JButton deleteButton = new JButton(GetText.tr("Delete"));
-    private final JButton exportButton = new JButton(GetText.tr("Export"));
-    private final JButton addButton = new JButton(GetText.tr("Add Mods"));
-    private final JButton editButton = new JButton(GetText.tr("Edit Mods"));
-    private final JButton serversButton = new JButton(GetText.tr("Servers"));
-    private final JButton openWebsite = new JButton(GetText.tr("Open Website"));
-    private final JButton settingsButton = new JButton(GetText.tr("Settings"));
+
+    // private final JButton settingsButton = new JButton(GetText.tr("Settings"));
 
     private final JPopupMenu openPopupMenu = new JPopupMenu();
-    private final JMenuItem openResourceMenuItem = new JMenuItem(GetText.tr("Open Resources"));
-    private final DropDownButton openButton = new DropDownButton(GetText.tr("Open Folder"), openPopupMenu, true,
-            new MouseAdapter() {
-                @Override
-                public void mousePressed(MouseEvent e) {
-                    OS.openFileExplorer(instance.getRoot());
-                }
-            });
+    // private final DropDownButton openButton = new DropDownButton(GetText.tr("Open
+    // Folder"), openPopupMenu, true,
+    // new MouseAdapter() {
+    // @Override
+    // public void mousePressed(MouseEvent e) {
+    // OS.openFileExplorer(instance.getRoot());
+    // }
+    // });
 
     private final JPopupMenu playPopupMenu = new JPopupMenu();
     private final JMenuItem playOnlinePlayMenuItem = new JMenuItem(GetText.tr("Play Online"));
@@ -101,19 +94,45 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
                 }
             });
 
-    private final JPopupMenu backupPopupMenu = new JPopupMenu();
+    private final JPopupMenu settingsPopupMenu = new JPopupMenu();
+    private final JMenuItem exportItem = new JMenuItem(GetText.tr("Export"));
     private final JMenuItem normalBackupMenuItem = new JMenuItem(GetText.tr("Normal Backup"));
     private final JMenuItem normalPlusModsBackupMenuItem = new JMenuItem(GetText.tr("Normal + Mods Backup"));
     private final JMenuItem fullBackupMenuItem = new JMenuItem(GetText.tr("Full Backup"));
-    private final DropDownButton backupButton = new DropDownButton(GetText.tr("Backup"), backupPopupMenu);
+    private final JMenuItem openFolderItem = new JMenuItem(GetText.tr("Open Folder"));
+    private final JMenuItem openResourceMenuItem = new JMenuItem(GetText.tr("Open Resources"));
+    private final DropDownButton settingsButton = new DropDownButton(GetText.tr("Settings"), settingsPopupMenu, true,
+            new MouseAdapter() {
+                @Override
+                public void mousePressed(MouseEvent e) {
+                    Analytics.trackEvent(AnalyticsEvent.forInstanceEvent("instance_settings", instance));
+                    new InstanceSettingsDialog(instance);
+                }
+            });
 
-    private final JPopupMenu getHelpPopupMenu = new JPopupMenu();
+    private final JPopupMenu backupPopupMenu = new JPopupMenu();
+
+    private final JPopupMenu modingPopupMenu = new JPopupMenu();
+    private final JMenuItem addModsItem = new JMenuItem(GetText.tr("Add Mods"));
+    private final JMenuItem editModsItem = new JMenuItem(GetText.tr("Edit Mods"));
+    private final DropDownButton modingButton = new DropDownButton(GetText.tr("Moding"), modingPopupMenu);
+
+    private final JPopupMenu otherPopupMenu = new JPopupMenu();
     private final JMenuItem discordLinkMenuItem = new JMenuItem(GetText.tr("Discord"));
     private final JMenuItem supportLinkMenuItem = new JMenuItem(GetText.tr("Support"));
     private final JMenuItem websiteLinkMenuItem = new JMenuItem(GetText.tr("Website"));
     private final JMenuItem wikiLinkMenuItem = new JMenuItem(GetText.tr("Wiki"));
     private final JMenuItem sourceLinkMenuItem = new JMenuItem(GetText.tr("Source"));
-    private final DropDownButton getHelpButton = new DropDownButton(GetText.tr("Get Help"), getHelpPopupMenu);
+    private final JMenuItem updateItem = new JMenuItem(GetText.tr("Update"));
+    private final JMenuItem serversItem = new JMenuItem(GetText.tr("Servers"));
+    private final JMenuItem websiteItem = new JMenuItem(GetText.tr("Open Website"));
+    private final DropDownButton othersButton = new DropDownButton("...", otherPopupMenu);
+
+    // trransfer the following to other drop menu
+    // exportButton = new JButton(GetText.tr("Export")),
+    // serversButton = new JButton(GetText.tr("Servers")),
+    // openWebsite = new JButton(GetText.tr("Open Website")),
+    // updateButton = new JButton(GetText.tr("Update")),
 
     private final JPopupMenu editInstancePopupMenu = new JPopupMenu();
     private final JMenuItem reinstallMenuItem = new JMenuItem(GetText.tr("Reinstall"));
@@ -121,6 +140,8 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
     private final JMenuItem renameMenuItem = new JMenuItem(GetText.tr("Rename"));
     private final JMenuItem changeDescriptionMenuItem = new JMenuItem(GetText.tr("Change Description"));
     private final JMenuItem changeImageMenuItem = new JMenuItem(GetText.tr("Change Image"));
+    private final JMenuItem deleteInstanceItem = new JMenuItem(GetText.tr("Delete"));
+
     // #. {0} is the loader (Forge/Fabric/Quilt)
     private final JMenuItem addFabricMenuItem = new JMenuItem(GetText.tr("Add {0}", "Fabric"));
     // #. {0} is the loader (Forge/Fabric/Quilt)
@@ -164,9 +185,10 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
         this.image = new ImagePanel(() -> instance.getImage().getImage());
         this.hasUpdate = hasUpdate;
 
-        JPanel mainPanel = new JPanel();
-        JSplitPane splitter = new JSplitPane(JSplitPane.VERTICAL_SPLIT, image, mainPanel);
-        splitter.setEnabled(false);
+        // modingButton.add(addModsItem);
+        // modingButton.add(editModsItem);
+        editModsItem.setEnabled(false);
+        addModsItem.setEnabled(false);
 
         descArea.setText(instance.getPackDescription());
         descArea.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0));
@@ -187,109 +209,70 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
                 }
             });
         }
-
-        JPanel top = new JPanel(new FlowLayout(FlowLayout.CENTER, 3, 3));
-        JPanel bottom = new JPanel(new FlowLayout(FlowLayout.CENTER, 3, 3));
-
-        JSplitPane optionButtons = new JSplitPane(JSplitPane.VERTICAL_SPLIT, top, bottom);
-        optionButtons.setEnabled(false);
-        // as.setBorder(BorderFactory.createEmptyBorder(100, 0, 90, 0));
+        image.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         JPanel buttonGrid = new JPanel(new GridLayout(0, 2, 8, 6));
         buttonGrid.setBorder(new EmptyBorder(10, 10, 10, 10));
-        image.setAlignmentX(Component.CENTER_ALIGNMENT);
-        image.setMinimumSize(new Dimension(100, 100));
-        JSplitPane pep = new JSplitPane(JSplitPane.VERTICAL_SPLIT, image, buttonGrid);
-        pep.setEnabled(false);
-        pep.setBorder(new EmptyBorder(10, 10, 10, 10));
-        pep.setResizeWeight(0.5d);
         buttonGrid.add(this.playButton);
-        buttonGrid.add(this.editInstanceButton);
-        buttonGrid.add(this.backupButton);
         buttonGrid.add(this.settingsButton);
-        buttonGrid.add(this.deleteButton);
-        buttonGrid.add(this.openButton);
-
-        // top.add(this.playButton);
-        // top.add(this.updateButton);
-        // top.add(this.getHelpButton);
-        // top.add(this.editInstanceButton);
-        // top.add(this.backupButton);
-        // top.add(this.settingsButton);
-
-        // bottom.add(this.deleteButton);
-        // bottom.add(this.exportButton);
+        if (instance.launcher.enableCurseForgeIntegration
+                && (ConfigManager.getConfigItem("platforms.curseforge.modsEnabled", true) == true
+                        || (ConfigManager.getConfigItem("platforms.modrinth.modsEnabled", true) == true
+                                && this.instance.launcher.loaderVersion != null))) {
+            addModsItem.setEnabled(true);
+        }
+        if (instance.launcher.enableEditingMods) {
+            editModsItem.setEnabled(true);
+        }
+        buttonGrid.add(modingButton);
+        buttonGrid.add(editInstanceButton);
+        JPanel upper = new JPanel();
+        upper.setLayout(new FlowLayout(FlowLayout.LEFT));
+        upper.add(othersButton);
+        upper.add(this.mainTitile);
+        add(upper, 0);
 
         setupPlayPopupMenus();
         setupOpenPopupMenus();
         setupButtonPopupMenus();
 
-        if (instance.launcher.enableCurseForgeIntegration
-                && (ConfigManager.getConfigItem("platforms.curseforge.modsEnabled", true) == true
-                        || (ConfigManager.getConfigItem("platforms.modrinth.modsEnabled", true) == true
-                                && this.instance.launcher.loaderVersion != null))) {
-            // bottom.add(this.addButton);
-            buttonGrid.add(this.addButton);
-        }
-
-        if (instance.launcher.enableEditingMods) {
-            // bottom.add(this.editButton);
-            buttonGrid.add(this.editButton);
-        }
-        buttonGrid.add(this.getHelpButton);
-        buttonGrid.add(this.serversButton);
-        buttonGrid.add(this.exportButton);
-        buttonGrid.add(this.updateButton);
-        buttonGrid.add(this.openWebsite);
         // check it can be exported
-        this.exportButton.setVisible(instance.canBeExported());
+        exportItem.setEnabled(instance.canBeExported());
 
-        this.getHelpButton.setVisible(instance.showGetHelpButton());
+        // this.getHelpButton.setVisible(instance.showGetHelpButton());
+        // this.getHelpButton.setEnabled(instance.showGetHelpButton());
 
         if (!instance.isUpdatable()) {
-            this.updateButton.setVisible(instance.isUpdatable());
+            // this.updateButton.setVisible(instance.isUpdatable());
+            updateItem.setEnabled(instance.isUpdatable());
         }
 
         if (instance.isExternalPack() || instance.launcher.vanillaInstance) {
-            this.serversButton.setVisible(false);
+            // this.serversButton.setVisible(false);
+            serversItem.setEnabled(false);
         }
 
         if (instance.getPack() != null && instance.getPack().system) {
-            this.serversButton.setVisible(false);
+            // this.serversButton.setVisible(false);
+            serversItem.setEnabled(false);
         }
 
-        this.openWebsite.setVisible(instance.hasWebsite());
+        // this.openWebsite.setVisible(instance.hasWebsite());
+        websiteItem.setEnabled(instance.hasWebsite());
 
-        // bottom.add(this.serversButton);
-        // bottom.add(this.openWebsite);
-        // bottom.add(this.openButton);
-
-        mainPanel.setLayout(new BorderLayout());
-        // mainPanel.setPreferredSize(new Dimension(mainPanel.getPreferredSize().width,
-        // 155));
-        // mainPanel.add(new JScrollPane(this.descArea,
-        // JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-        // JScrollPane.HORIZONTAL_SCROLLBAR_NEVER), BorderLayout.CENTER);
-        // mainPanel.add(descArea);
-        mainPanel.add(optionButtons);
-
-        // this.getContentPane().setLayout(new BorderLayout());
-        this.getContentPane().setLayout(new GridLayout(1, 0));
-        // this.getContentPane().add(splitter, BorderLayout.CENTER);
-        // getContentPane().add(image);
-        // JPanel finalPanel = new JPanel();
-        // finalPanel.setLayout();
-        // finalPanel.add(image);
-        // finalPanel.add(descArea);
-        // finalPanel.add(buttonGrid);
-        // finalPanel.setLayout(new BoxLayout(finalPanel, BoxLayout.Y_AXIS));
-        // getContentPane().setMinimumSize(new Dimension(400, 400));
-        getContentPane().add(pep, BorderLayout.CENTER);
+        JScrollPane desc = new JScrollPane(this.descArea, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+                JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        desc.setPreferredSize(new Dimension(getPreferredSize().width, 50));
+        desc.setBorder(new EmptyBorder(2, 2, 2, 2));
+        add(image);
+        add(desc);
+        add(buttonGrid);
 
         RelocalizationManager.addListener(this);
 
         if (!hasUpdate) {
-            this.updateButton.setVisible(false);
+            // this.updateButton.setVisible(false);
+            updateItem.setEnabled(false);
         }
 
         this.addActionListeners();
@@ -319,42 +302,70 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
     }
 
     private void setupButtonPopupMenus() {
+        // others drop menu
+        otherPopupMenu.add(updateItem);
+        otherPopupMenu.add(serversItem);
+        otherPopupMenu.add(websiteItem);
+        // settings drop menu
+        settingsPopupMenu.add(exportItem);
+
         if (instance.showGetHelpButton()) {
+            otherPopupMenu.addSeparator();
             if (instance.getDiscordInviteUrl() != null) {
                 discordLinkMenuItem.addActionListener(e -> OS.openWebBrowser(instance.getDiscordInviteUrl()));
-                getHelpPopupMenu.add(discordLinkMenuItem);
+                otherPopupMenu.add(discordLinkMenuItem);
             }
 
             if (instance.getSupportUrl() != null) {
                 supportLinkMenuItem.addActionListener(e -> OS.openWebBrowser(instance.getSupportUrl()));
-                getHelpPopupMenu.add(supportLinkMenuItem);
+                otherPopupMenu.add(supportLinkMenuItem);
             }
 
             if (instance.getWebsiteUrl() != null) {
                 websiteLinkMenuItem.addActionListener(e -> OS.openWebBrowser(instance.getWebsiteUrl()));
-                getHelpPopupMenu.add(websiteLinkMenuItem);
+                otherPopupMenu.add(websiteLinkMenuItem);
             }
 
             if (instance.getWikiUrl() != null) {
                 wikiLinkMenuItem.addActionListener(e -> OS.openWebBrowser(instance.getWikiUrl()));
-                getHelpPopupMenu.add(wikiLinkMenuItem);
+                otherPopupMenu.add(wikiLinkMenuItem);
             }
 
             if (instance.getSourceUrl() != null) {
                 sourceLinkMenuItem.addActionListener(e -> OS.openWebBrowser(instance.getSourceUrl()));
-                getHelpPopupMenu.add(sourceLinkMenuItem);
+                otherPopupMenu.add(sourceLinkMenuItem);
             }
         }
-
+        settingsPopupMenu.addSeparator();
         normalBackupMenuItem.addActionListener(e -> instance.backup(BackupMode.NORMAL));
-        backupPopupMenu.add(normalBackupMenuItem);
+        settingsPopupMenu.add(normalBackupMenuItem);
 
         normalPlusModsBackupMenuItem.addActionListener(e -> instance.backup(BackupMode.NORMAL_PLUS_MODS));
-        backupPopupMenu.add(normalPlusModsBackupMenuItem);
+        settingsPopupMenu.add(normalPlusModsBackupMenuItem);
 
         fullBackupMenuItem.addActionListener(e -> instance.backup(BackupMode.FULL));
-        backupPopupMenu.add(fullBackupMenuItem);
+        settingsPopupMenu.add(fullBackupMenuItem);
 
+        settingsPopupMenu.addSeparator();
+        settingsPopupMenu.add(openFolderItem);
+        settingsPopupMenu.add(openResourceMenuItem);
+
+        openFolderItem.addActionListener(e -> {
+            OS.openFileExplorer(instance.getRoot());
+        });
+
+        addModsItem.addActionListener(e -> {
+            Analytics.trackEvent(AnalyticsEvent.forInstanceEvent("instance_add_mods", instance));
+            new AddModsDialog(instance);
+            exportItem.setEnabled(instance.canBeExported());
+        });
+        editModsItem.addActionListener(e -> {
+            Analytics.trackEvent(AnalyticsEvent.forInstanceEvent("instance_edit_mods", instance));
+            new EditModsDialog(instance);
+            exportItem.setEnabled(instance.canBeExported());
+        });
+        modingPopupMenu.add(addModsItem);
+        modingPopupMenu.add(editModsItem);
         setupEditInstanceButton();
     }
 
@@ -364,6 +375,8 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
         editInstancePopupMenu.add(renameMenuItem);
         editInstancePopupMenu.add(changeDescriptionMenuItem);
         editInstancePopupMenu.add(changeImageMenuItem);
+        editInstancePopupMenu.add(deleteInstanceItem);
+
         editInstancePopupMenu.addSeparator();
 
         if (ConfigManager.getConfigItem("loaders.fabric.enabled", true) == true
@@ -524,7 +537,7 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
     }
 
     private void addActionListeners() {
-        this.updateButton.addActionListener(e -> {
+        updateItem.addActionListener(e -> {
             if (AccountManager.getSelectedAccount() == null) {
                 DialogManager.okDialog().setTitle(GetText.tr("No Account Selected"))
                         .setContent(GetText.tr("Cannot update pack as you have no account selected."))
@@ -535,25 +548,21 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
             Analytics.trackEvent(AnalyticsEvent.forInstanceEvent("instance_update", instance));
             instance.update();
         });
-        this.addButton.addActionListener(e -> {
+        addModsItem.addActionListener(e -> {
             Analytics.trackEvent(AnalyticsEvent.forInstanceEvent("instance_add_mods", instance));
             new AddModsDialog(instance);
-            exportButton.setVisible(instance.canBeExported());
+            exportItem.setEnabled(instance.canBeExported());
         });
-        this.editButton.addActionListener(e -> {
+        editModsItem.addActionListener(e -> {
             Analytics.trackEvent(AnalyticsEvent.forInstanceEvent("instance_edit_mods", instance));
             new EditModsDialog(instance);
-            exportButton.setVisible(instance.canBeExported());
+            exportItem.setEnabled(instance.canBeExported());
         });
-        this.serversButton.addActionListener(e -> OS.openWebBrowser(
+        serversItem.addActionListener(e -> OS.openWebBrowser(
                 String.format("%s/%s?utm_source=launcher&utm_medium=button&utm_campaign=instance_v2_button",
                         Constants.SERVERS_LIST_PACK, instance.getSafePackName())));
-        this.openWebsite.addActionListener(e -> OS.openWebBrowser(instance.getWebsiteUrl()));
-        this.settingsButton.addActionListener(e -> {
-            Analytics.trackEvent(AnalyticsEvent.forInstanceEvent("instance_settings", instance));
-            new InstanceSettingsDialog(instance);
-        });
-        this.deleteButton.addActionListener(e -> {
+        websiteItem.addActionListener(e -> OS.openWebBrowser(instance.getWebsiteUrl()));
+        deleteInstanceItem.addActionListener(e -> {
             int ret = DialogManager.yesNoDialog(false).setTitle(GetText.tr("Delete Instance"))
                     .setContent(
                             GetText.tr("Are you sure you want to delete the instance \"{0}\"?", instance.launcher.name))
@@ -571,7 +580,7 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
                 dialog.start();
             }
         });
-        this.exportButton.addActionListener(e -> {
+        exportItem.addActionListener(e -> {
             Analytics.trackEvent(AnalyticsEvent.forInstanceEvent("instance_export", instance));
             new InstanceExportDialog(instance);
         });
@@ -723,27 +732,28 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
     @Override
     public void onRelocalization() {
         this.playButton.setText(GetText.tr("Play"));
-        this.updateButton.setText(GetText.tr("Update"));
-        this.backupButton.setText(GetText.tr("Backup"));
-        this.deleteButton.setText(GetText.tr("Delete"));
-        this.addButton.setText(GetText.tr("Add Mods"));
-        this.editButton.setText(GetText.tr("Edit Mods"));
-        this.serversButton.setText(GetText.tr("Servers"));
-        this.openWebsite.setText(GetText.tr("Open Website"));
-        this.openButton.setText(GetText.tr("Open Folder"));
+        this.updateItem.setText(GetText.tr("Update"));
+        this.deleteInstanceItem.setText(GetText.tr("Delete"));
+        this.addModsItem.setText(GetText.tr("Add Mods"));
+        this.editModsItem.setText(GetText.tr("Edit Mods"));
+        this.serversItem.setText(GetText.tr("Servers"));
+        this.websiteItem.setText(GetText.tr("Open Website"));
+        this.openFolderItem.setText(GetText.tr("Open Folder"));
         this.openResourceMenuItem.setText(GetText.tr("Open Resources"));
         this.settingsButton.setText(GetText.tr("Settings"));
 
         this.normalBackupMenuItem.setText(GetText.tr("Normal Backup"));
         this.normalPlusModsBackupMenuItem.setText(GetText.tr("Normal + Mods Backup"));
         this.fullBackupMenuItem.setText(GetText.tr("Full Backup"));
-        this.backupButton.setText(GetText.tr("Backup"));
+
+        this.modingButton.setText(GetText.tr("Moding"));
+        this.addModsItem.setText(GetText.tr("Add Mods"));
+        this.editModsItem.setText(GetText.tr("Edit Mods"));
 
         this.discordLinkMenuItem.setText(GetText.tr("Discord"));
         this.supportLinkMenuItem.setText(GetText.tr("Support"));
         this.websiteLinkMenuItem.setText(GetText.tr("Website"));
         this.wikiLinkMenuItem.setText(GetText.tr("Wiki"));
         this.sourceLinkMenuItem.setText(GetText.tr("Source"));
-        this.getHelpButton.setText(GetText.tr("Get Help"));
     }
 }

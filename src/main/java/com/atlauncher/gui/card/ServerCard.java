@@ -17,10 +17,9 @@
  */
 package com.atlauncher.gui.card;
 
-import java.awt.BorderLayout;
 import java.awt.Cursor;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
+import java.awt.GridLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
@@ -30,8 +29,8 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
-import javax.swing.JSplitPane;
 import javax.swing.JTextArea;
+import javax.swing.border.EmptyBorder;
 
 import org.mini2Dx.gettext.GetText;
 
@@ -74,11 +73,6 @@ public class ServerCard extends CollapsiblePanel implements RelocalizationListen
         super(server);
         this.server = server;
         this.image = new ImagePanel(() -> server.getImage().getImage());
-        JSplitPane splitter = new JSplitPane();
-        splitter.setLeftComponent(this.image);
-        JPanel rightPanel = new JPanel();
-        splitter.setRightComponent(rightPanel);
-        splitter.setEnabled(false);
 
         descArea.setText(server.getPackDescription());
         descArea.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 5));
@@ -98,24 +92,19 @@ public class ServerCard extends CollapsiblePanel implements RelocalizationListen
             }
         });
 
-        JPanel top = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 2));
-        JPanel bottom = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 2));
+        JPanel buttonGrid = new JPanel(new GridLayout(0, 2, 8, 6));
+        buttonGrid.setBorder(new EmptyBorder(10, 10, 10, 10));
 
-        JSplitPane as = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
-        as.setEnabled(false);
-        as.setTopComponent(top);
-        as.setBottomComponent(bottom);
-        as.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0));
-
-        top.add(this.launchButton);
-        top.add(this.launchAndCloseButton);
-        top.add(this.launchWithGui);
-        top.add(this.launchWithGuiAndClose);
-        bottom.add(this.backupButton);
-        bottom.add(this.deleteButton);
-        bottom.add(this.getHelpButton);
-        bottom.add(this.openButton);
-
+        buttonGrid.add(this.launchButton);
+        buttonGrid.add(this.launchAndCloseButton);
+        buttonGrid.add(this.launchWithGui);
+        buttonGrid.add(this.launchWithGuiAndClose);
+        buttonGrid.add(this.backupButton);
+        buttonGrid.add(this.deleteButton);
+        buttonGrid.add(this.getHelpButton);
+        buttonGrid.add(this.openButton);
+        buttonGrid.setPreferredSize(
+                new Dimension(buttonGrid.getPreferredSize().width - 100, buttonGrid.getPreferredSize().height));
         this.getHelpButton.setVisible(server.showGetHelpButton());
 
         // unfortunately OSX doesn't allow us to pass arguments with open and Terminal
@@ -124,14 +113,12 @@ public class ServerCard extends CollapsiblePanel implements RelocalizationListen
             this.launchAndCloseButton.setVisible(false);
         }
 
-        rightPanel.setLayout(new BorderLayout());
-        rightPanel.setPreferredSize(new Dimension(rightPanel.getPreferredSize().width, 155));
-        rightPanel.add(new JScrollPane(descArea, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-                JScrollPane.HORIZONTAL_SCROLLBAR_NEVER), BorderLayout.CENTER);
-        rightPanel.add(as, BorderLayout.SOUTH);
-
-        this.getContentPane().setLayout(new BorderLayout());
-        this.getContentPane().add(splitter, BorderLayout.CENTER);
+        JScrollPane desc = new JScrollPane(this.descArea, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+                JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        desc.setPreferredSize(new Dimension(getPreferredSize().width, 50));
+        add(image);
+        add(desc);
+        add(buttonGrid);
 
         setupButtonPopupMenus();
 

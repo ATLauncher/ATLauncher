@@ -17,8 +17,6 @@
  */
 package com.atlauncher.gui.tabs.instances;
 
-import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.util.stream.Collectors;
 
 import org.mini2Dx.gettext.GetText;
@@ -27,6 +25,7 @@ import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.gui.card.InstanceCard;
 import com.atlauncher.gui.card.NilCard;
+import com.atlauncher.gui.layouts.WrapLayout;
 import com.atlauncher.gui.panels.HierarchyPanel;
 import com.atlauncher.gui.tabs.InstancesTab;
 import com.atlauncher.managers.PerformanceManager;
@@ -46,7 +45,7 @@ public final class InstancesListPanel extends HierarchyPanel
             });
 
     public InstancesListPanel(InstancesTab instancesTab, final IInstancesTabViewModel viewModel) {
-        super(new FlowLayout(FlowLayout.LEFT, 16, 16)); // Create a grid with 3
+        super(new WrapLayout(WrapLayout.LEFT));
         // columns and gaps
         this.instancesTab = instancesTab;
         this.viewModel = viewModel;
@@ -75,9 +74,9 @@ public final class InstancesListPanel extends HierarchyPanel
                         this.add(this.nilCard);
                     } else {
                         PerformanceManager.start("Render cards");
-
                         instances.forEach(instance -> {
-                            instance.setPreferredSize(new Dimension(150, 150)); // Ensure square shape
+                            // JPanel container = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
+                            // container.add(instance);
                             this.add(instance);
                         });
 
