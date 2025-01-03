@@ -71,18 +71,6 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
     private final JTextArea descArea = new JTextArea();
     private final ImagePanel image;
 
-    // private final JButton settingsButton = new JButton(GetText.tr("Settings"));
-
-    private final JPopupMenu openPopupMenu = new JPopupMenu();
-    // private final DropDownButton openButton = new DropDownButton(GetText.tr("Open
-    // Folder"), openPopupMenu, true,
-    // new MouseAdapter() {
-    // @Override
-    // public void mousePressed(MouseEvent e) {
-    // OS.openFileExplorer(instance.getRoot());
-    // }
-    // });
-
     private final JPopupMenu playPopupMenu = new JPopupMenu();
     private final JMenuItem playOnlinePlayMenuItem = new JMenuItem(GetText.tr("Play Online"));
     private final JMenuItem playOfflinePlayMenuItem = new JMenuItem(GetText.tr("Play Offline"));
@@ -110,8 +98,6 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
                 }
             });
 
-    private final JPopupMenu backupPopupMenu = new JPopupMenu();
-
     private final JPopupMenu modingPopupMenu = new JPopupMenu();
     private final JMenuItem addModsItem = new JMenuItem(GetText.tr("Add Mods"));
     private final JMenuItem editModsItem = new JMenuItem(GetText.tr("Edit Mods"));
@@ -127,12 +113,6 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
     private final JMenuItem serversItem = new JMenuItem(GetText.tr("Servers"));
     private final JMenuItem websiteItem = new JMenuItem(GetText.tr("Open Website"));
     private final DropDownButton othersButton = new DropDownButton("...", otherPopupMenu);
-
-    // trransfer the following to other drop menu
-    // exportButton = new JButton(GetText.tr("Export")),
-    // serversButton = new JButton(GetText.tr("Servers")),
-    // openWebsite = new JButton(GetText.tr("Open Website")),
-    // updateButton = new JButton(GetText.tr("Update")),
 
     private final JPopupMenu editInstancePopupMenu = new JPopupMenu();
     private final JMenuItem reinstallMenuItem = new JMenuItem(GetText.tr("Reinstall"));
@@ -185,8 +165,6 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
         this.image = new ImagePanel(() -> instance.getImage().getImage());
         this.hasUpdate = hasUpdate;
 
-        // modingButton.add(addModsItem);
-        // modingButton.add(editModsItem);
         editModsItem.setEnabled(false);
         addModsItem.setEnabled(false);
 
@@ -239,25 +217,18 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
         // check it can be exported
         exportItem.setEnabled(instance.canBeExported());
 
-        // this.getHelpButton.setVisible(instance.showGetHelpButton());
-        // this.getHelpButton.setEnabled(instance.showGetHelpButton());
-
         if (!instance.isUpdatable()) {
-            // this.updateButton.setVisible(instance.isUpdatable());
             updateItem.setEnabled(instance.isUpdatable());
         }
 
         if (instance.isExternalPack() || instance.launcher.vanillaInstance) {
-            // this.serversButton.setVisible(false);
             serversItem.setEnabled(false);
         }
 
         if (instance.getPack() != null && instance.getPack().system) {
-            // this.serversButton.setVisible(false);
             serversItem.setEnabled(false);
         }
 
-        // this.openWebsite.setVisible(instance.hasWebsite());
         websiteItem.setEnabled(instance.hasWebsite());
 
         JScrollPane desc = new JScrollPane(this.descArea, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
@@ -271,7 +242,6 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
         RelocalizationManager.addListener(this);
 
         if (!hasUpdate) {
-            // this.updateButton.setVisible(false);
             updateItem.setEnabled(false);
         }
 
@@ -298,7 +268,6 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
                     .setType(DialogManager.WARNING).show();
             OS.openFileExplorer(instance.getMinecraftJarLibraryPath());
         });
-        openPopupMenu.add(openResourceMenuItem);
     }
 
     private void setupButtonPopupMenus() {
