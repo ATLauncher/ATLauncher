@@ -17,14 +17,13 @@
  */
 package com.atlauncher.gui.tabs.instances;
 
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.util.stream.Collectors;
 
 import org.mini2Dx.gettext.GetText;
 
 import com.atlauncher.builders.HTMLBuilder;
-import com.atlauncher.constants.UIConstants;
 import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.gui.card.InstanceCard;
 import com.atlauncher.gui.card.NilCard;
@@ -32,23 +31,23 @@ import com.atlauncher.gui.panels.HierarchyPanel;
 import com.atlauncher.gui.tabs.InstancesTab;
 import com.atlauncher.managers.PerformanceManager;
 import com.atlauncher.viewmodel.base.IInstancesTabViewModel;
-import com.google.common.collect.Lists;
 
 public final class InstancesListPanel extends HierarchyPanel
-    implements RelocalizationListener {
+        implements RelocalizationListener {
 
     private final InstancesTab instancesTab;
     private final IInstancesTabViewModel viewModel;
 
     private final NilCard nilCard = new NilCard(
-        getNilMessage(),
-        new NilCard.Action[]{
-            NilCard.Action.createCreatePackAction(),
-            NilCard.Action.createDownloadPackAction()
-        });
+            getNilMessage(),
+            new NilCard.Action[] {
+                    NilCard.Action.createCreatePackAction(),
+                    NilCard.Action.createDownloadPackAction()
+            });
 
     public InstancesListPanel(InstancesTab instancesTab, final IInstancesTabViewModel viewModel) {
-        super(new GridBagLayout());
+        super(new FlowLayout(FlowLayout.LEFT, 16, 16)); // Create a grid with 3
+        // columns and gaps
         this.instancesTab = instancesTab;
         this.viewModel = viewModel;
         PerformanceManager.start("Displaying Instances");
@@ -56,66 +55,51 @@ public final class InstancesListPanel extends HierarchyPanel
 
     private static String getNilMessage() {
         return new HTMLBuilder()
-            .text(GetText.tr("There are no instances to display.<br/><br/>Install one from the Packs tab."))
-            .build();
+                .text(GetText.tr("There are no instances to display.<br/><br/>Install one from the Packs tab."))
+                .build();
     }
 
     @Override
     protected void onShow() {
         addDisposable(viewModel.getInstancesList()
-            .map(instancesList -> {
+                .map(instancesList -> {
                     viewModel.setIsLoading(true);
-                    return instancesList.instances.stream().map(instance ->
-                        new InstanceCard(
+                    return instancesList.instances.stream().map(instance -> new InstanceCard(
                             instance.instance,
                             instance.hasUpdate,
-                            instancesList.instanceTitleFormat
-                        )
-                    ).collect(Collectors.toList());
-                }
-            ).subscribe(instances -> {
-                final GridBagConstraints gbc = new GridBagConstraints();
-                gbc.gridx = gbc.gridy = 0;
-                gbc.weightx = 1.0;
-                gbc.insets = UIConstants.FIELD_INSETS;
-                gbc.fill = GridBagConstraints.BOTH;
+                            instancesList.instanceTitleFormat)).collect(Collectors.toList());
+                }).subscribe(instances -> {
+                    removeAll();
 
-                removeAll();
+                    if (instances.isEmpty()) {
+                        this.add(this.nilCard);
+                    } else {
+                        PerformanceManager.start("Render cards");
 
-                if (instances.isEmpty()) {
-                    this.add(this.nilCard, gbc);
-                } else {
-                    PerformanceManager.start("Render cards");
-                    // Portion up into chunks of 10, to make rendering easier
-                    Lists.partition(instances, 10).forEach(subInstances -> {
                         instances.forEach(instance -> {
-                            this.add(
-                                instance,
-                                gbc
-                            );
-                            gbc.gridy++;
+                            instance.setPreferredSize(new Dimension(150, 150)); // Ensure square shape
+                            this.add(instance);
                         });
 
                         validate();
                         repaint();
-                    });
-                    PerformanceManager.end("Render cards");
-                }
+                        PerformanceManager.end("Render cards");
+                    }
 
-                viewModel.setIsLoading(false); // Broken, reason above
+                    viewModel.setIsLoading(false);
 
-                // After repainting is done, let scroll view resume
-                invokeLater(() -> instancesTab.setScroll(viewModel.getScroll()));
-                PerformanceManager.end("Displaying Instances");
-            }));
+                    // After repainting is done, let scroll view resume
+                    invokeLater(() -> instancesTab.setScroll(viewModel.getScroll()));
+                    PerformanceManager.end("Displaying Instances");
+                }));
     }
 
     @Override
     public void onRelocalization() {
         this.nilCard.setMessage(getNilMessage());
-        nilCard.setActions(new NilCard.Action[]{
-            NilCard.Action.createCreatePackAction(),
-            NilCard.Action.createDownloadPackAction()
+        nilCard.setActions(new NilCard.Action[] {
+                NilCard.Action.createCreatePackAction(),
+                NilCard.Action.createDownloadPackAction()
         });
     }
 

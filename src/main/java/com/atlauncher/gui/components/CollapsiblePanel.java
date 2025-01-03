@@ -20,7 +20,6 @@ package com.atlauncher.gui.components;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Insets;
@@ -32,6 +31,7 @@ import java.awt.event.ItemListener;
 import javax.swing.AbstractAction;
 import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -40,6 +40,7 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.UIManager;
 import javax.swing.border.Border;
+import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
 
 import com.atlauncher.App;
@@ -190,9 +191,15 @@ public class CollapsiblePanel extends JPanel implements ThemeListener, Relocaliz
      * the container, all constructors have this procedure in common.
      */
     private void commonConstructor() {
-        setLayout(new BorderLayout());
+        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+        setBorder(new EmptyBorder(8, 8, 8, 8));
+        arrow.setAlignmentX(Component.CENTER_ALIGNMENT);
+        // Dimension dim = new Dimension(getPreferredSize().width + 1000,
+        // getPreferredSize().height + 1000);
+        // setMinimumSize(dim);
+        // setMaximumSize(dim);
+        // setPreferredSize(dim);
         panel = new JPanel();
-        panel.setLayout(new BorderLayout());
         add(titleComponent, BorderLayout.CENTER);
         add(panel, BorderLayout.CENTER);
         setCollapsed(collapsed);
@@ -200,6 +207,11 @@ public class CollapsiblePanel extends JPanel implements ThemeListener, Relocaliz
 
         ThemeManager.addListener(this);
         RelocalizationManager.addListener(this);
+    }
+
+    @Override
+    public Dimension getPreferredSize() {
+        return new Dimension(300, 300);
     }
 
     /**
@@ -235,12 +247,12 @@ public class CollapsiblePanel extends JPanel implements ThemeListener, Relocaliz
         if (collapse) {
             // collapse the panel, remove content and set border to empty border
             remove(panel);
-            arrow.setIcon(iconArrow[COLLAPSED]);
+            // arrow.setIcon(iconArrow[COLLAPSED]);
             border = new CollapsibleTitledBorder(collapsedBorderLine, titleComponent);
         } else {
             // expand the panel, add content and set border to titled border
             add(panel, BorderLayout.NORTH);
-            arrow.setIcon(iconArrow[EXPANDED]);
+            // arrow.setIcon(iconArrow[EXPANDED]);
             border = new CollapsibleTitledBorder(expandedBorderLine, titleComponent);
         }
         setBorder(border);
@@ -270,17 +282,17 @@ public class CollapsiblePanel extends JPanel implements ThemeListener, Relocaliz
      * Returns a button with an arrow icon and a collapse/expand action listener.
      */
     private JButton createArrowButton() {
-        JButton button = new JButton("arrow", iconArrow[COLLAPSED]);
-        button.setBorder(BorderFactory.createEmptyBorder(0, 1, 5, 1));
-        button.setVerticalTextPosition(AbstractButton.CENTER);
-        button.setHorizontalTextPosition(AbstractButton.LEFT);
+        JButton button = new JButton();
+        // button.setBorder(BorderFactory.createEmptyBorder(0, 1, 5, 1));
+        // button.setVerticalTextPosition(AbstractButton.CENTER);
+        // button.setHorizontalTextPosition(AbstractButton.LEFT);
 
         // Use the same font as that used in the titled border font
         button.setFont(App.THEME.getBoldFont().deriveFont(15f));
         button.setFocusable(false);
         button.setContentAreaFilled(false);
-        button.addActionListener(new CollapsiblePanel.ExpandAndCollapseAction());
-        button.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        // button.addActionListener(new CollapsiblePanel.ExpandAndCollapseAction());
+        // button.setCursor(new Cursor(Cursor.HAND_CURSOR));
         return button;
     }
 

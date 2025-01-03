@@ -18,9 +18,11 @@
 package com.atlauncher.gui.card;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.GridLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -30,9 +32,9 @@ import javax.swing.JButton;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
-import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTextArea;
+import javax.swing.border.EmptyBorder;
 
 import org.mini2Dx.gettext.GetText;
 
@@ -157,26 +159,25 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
 
     public InstanceCard(Instance instance, boolean hasUpdate, String instanceTitleFormat) {
         super(instance, instanceTitleFormat);
+
         this.instance = instance;
         this.image = new ImagePanel(() -> instance.getImage().getImage());
         this.hasUpdate = hasUpdate;
 
-        JSplitPane splitter = new JSplitPane();
-        splitter.setLeftComponent(this.image);
-        JPanel rightPanel = new JPanel();
-        splitter.setRightComponent(rightPanel);
+        JPanel mainPanel = new JPanel();
+        JSplitPane splitter = new JSplitPane(JSplitPane.VERTICAL_SPLIT, image, mainPanel);
         splitter.setEnabled(false);
 
-        this.descArea.setText(instance.getPackDescription());
-        this.descArea.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 5));
-        this.descArea.setEditable(false);
-        this.descArea.setHighlighter(null);
-        this.descArea.setLineWrap(true);
-        this.descArea.setWrapStyleWord(true);
-        this.descArea.setEditable(false);
+        descArea.setText(instance.getPackDescription());
+        descArea.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0));
+        descArea.setEditable(false);
+        descArea.setHighlighter(null);
+        descArea.setLineWrap(true);
+        descArea.setWrapStyleWord(true);
+        descArea.setEditable(false);
 
         if (instance.canChangeDescription()) {
-            this.descArea.addMouseListener(new MouseAdapter() {
+            descArea.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseClicked(MouseEvent e) {
                     if (e.getClickCount() == 2) {
@@ -187,29 +188,59 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
             });
         }
 
-        JPanel top = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 2));
-        JPanel bottom = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 2));
+        JPanel top = new JPanel(new FlowLayout(FlowLayout.CENTER, 3, 3));
+        JPanel bottom = new JPanel(new FlowLayout(FlowLayout.CENTER, 3, 3));
 
-        JSplitPane as = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
-        as.setEnabled(false);
-        as.setTopComponent(top);
-        as.setBottomComponent(bottom);
-        as.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0));
+        JSplitPane optionButtons = new JSplitPane(JSplitPane.VERTICAL_SPLIT, top, bottom);
+        optionButtons.setEnabled(false);
+        // as.setBorder(BorderFactory.createEmptyBorder(100, 0, 90, 0));
 
-        top.add(this.playButton);
-        top.add(this.updateButton);
-        top.add(this.getHelpButton);
-        top.add(this.editInstanceButton);
-        top.add(this.backupButton);
-        top.add(this.settingsButton);
+        JPanel buttonGrid = new JPanel(new GridLayout(0, 2, 8, 6));
+        buttonGrid.setBorder(new EmptyBorder(10, 10, 10, 10));
+        image.setAlignmentX(Component.CENTER_ALIGNMENT);
+        image.setMinimumSize(new Dimension(100, 100));
+        JSplitPane pep = new JSplitPane(JSplitPane.VERTICAL_SPLIT, image, buttonGrid);
+        pep.setEnabled(false);
+        pep.setBorder(new EmptyBorder(10, 10, 10, 10));
+        pep.setResizeWeight(0.5d);
+        buttonGrid.add(this.playButton);
+        buttonGrid.add(this.editInstanceButton);
+        buttonGrid.add(this.backupButton);
+        buttonGrid.add(this.settingsButton);
+        buttonGrid.add(this.deleteButton);
+        buttonGrid.add(this.openButton);
 
-        bottom.add(this.deleteButton);
-        bottom.add(this.exportButton);
+        // top.add(this.playButton);
+        // top.add(this.updateButton);
+        // top.add(this.getHelpButton);
+        // top.add(this.editInstanceButton);
+        // top.add(this.backupButton);
+        // top.add(this.settingsButton);
+
+        // bottom.add(this.deleteButton);
+        // bottom.add(this.exportButton);
 
         setupPlayPopupMenus();
         setupOpenPopupMenus();
         setupButtonPopupMenus();
 
+        if (instance.launcher.enableCurseForgeIntegration
+                && (ConfigManager.getConfigItem("platforms.curseforge.modsEnabled", true) == true
+                        || (ConfigManager.getConfigItem("platforms.modrinth.modsEnabled", true) == true
+                                && this.instance.launcher.loaderVersion != null))) {
+            // bottom.add(this.addButton);
+            buttonGrid.add(this.addButton);
+        }
+
+        if (instance.launcher.enableEditingMods) {
+            // bottom.add(this.editButton);
+            buttonGrid.add(this.editButton);
+        }
+        buttonGrid.add(this.getHelpButton);
+        buttonGrid.add(this.serversButton);
+        buttonGrid.add(this.exportButton);
+        buttonGrid.add(this.updateButton);
+        buttonGrid.add(this.openWebsite);
         // check it can be exported
         this.exportButton.setVisible(instance.canBeExported());
 
@@ -229,29 +260,31 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
 
         this.openWebsite.setVisible(instance.hasWebsite());
 
-        if (instance.launcher.enableCurseForgeIntegration
-                && (ConfigManager.getConfigItem("platforms.curseforge.modsEnabled", true) == true
-                        || (ConfigManager.getConfigItem("platforms.modrinth.modsEnabled", true) == true
-                                && this.instance.launcher.loaderVersion != null))) {
-            bottom.add(this.addButton);
-        }
+        // bottom.add(this.serversButton);
+        // bottom.add(this.openWebsite);
+        // bottom.add(this.openButton);
 
-        if (instance.launcher.enableEditingMods) {
-            bottom.add(this.editButton);
-        }
+        mainPanel.setLayout(new BorderLayout());
+        // mainPanel.setPreferredSize(new Dimension(mainPanel.getPreferredSize().width,
+        // 155));
+        // mainPanel.add(new JScrollPane(this.descArea,
+        // JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+        // JScrollPane.HORIZONTAL_SCROLLBAR_NEVER), BorderLayout.CENTER);
+        // mainPanel.add(descArea);
+        mainPanel.add(optionButtons);
 
-        bottom.add(this.serversButton);
-        bottom.add(this.openWebsite);
-        bottom.add(this.openButton);
-
-        rightPanel.setLayout(new BorderLayout());
-        rightPanel.setPreferredSize(new Dimension(rightPanel.getPreferredSize().width, 155));
-        rightPanel.add(new JScrollPane(this.descArea, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-                JScrollPane.HORIZONTAL_SCROLLBAR_NEVER), BorderLayout.CENTER);
-        rightPanel.add(as, BorderLayout.SOUTH);
-
-        this.getContentPane().setLayout(new BorderLayout());
-        this.getContentPane().add(splitter, BorderLayout.CENTER);
+        // this.getContentPane().setLayout(new BorderLayout());
+        this.getContentPane().setLayout(new GridLayout(1, 0));
+        // this.getContentPane().add(splitter, BorderLayout.CENTER);
+        // getContentPane().add(image);
+        // JPanel finalPanel = new JPanel();
+        // finalPanel.setLayout();
+        // finalPanel.add(image);
+        // finalPanel.add(descArea);
+        // finalPanel.add(buttonGrid);
+        // finalPanel.setLayout(new BoxLayout(finalPanel, BoxLayout.Y_AXIS));
+        // getContentPane().setMinimumSize(new Dimension(400, 400));
+        getContentPane().add(pep, BorderLayout.CENTER);
 
         RelocalizationManager.addListener(this);
 
