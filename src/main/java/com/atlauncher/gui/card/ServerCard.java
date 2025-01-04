@@ -19,12 +19,12 @@ package com.atlauncher.gui.card;
 
 import java.awt.Cursor;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 import javax.swing.BorderFactory;
-import javax.swing.JButton;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
@@ -52,22 +52,32 @@ import com.atlauncher.utils.OS;
 public class ServerCard extends CollapsiblePanel implements RelocalizationListener {
     private final Server server;
     private final ImagePanel image;
-    private final JButton launchButton = new JButton(GetText.tr("Launch"));
-    private final JButton launchAndCloseButton = new JButton(GetText.tr("Launch & Close"));
-    private final JButton launchWithGui = new JButton(GetText.tr("Launch With GUI"));
-    private final JButton launchWithGuiAndClose = new JButton(GetText.tr("Launch With GUI & Close"));
-    private final JButton backupButton = new JButton(GetText.tr("Backup"));
-    private final JButton deleteButton = new JButton(GetText.tr("Delete"));
-    private final JButton openButton = new JButton(GetText.tr("Open Folder"));
-    private final JTextArea descArea = new JTextArea();
 
-    private final JPopupMenu getHelpPopupMenu = new JPopupMenu();
+    private final JPopupMenu launchPopMenu = new JPopupMenu();
+    private final JMenuItem launchAndCloseButton = new JMenuItem(GetText.tr("Launch & Close"));
+    private final JMenuItem launchWithGui = new JMenuItem(GetText.tr("Launch With GUI"));
+    private final JMenuItem launchWithGuiAndClose = new JMenuItem(GetText.tr("Launch With GUI & Close"));
+    private final DropDownButton launchButton = new DropDownButton(GetText.tr("Launch"), launchPopMenu, true,
+            new MouseAdapter() {
+                @Override
+                public void mousePressed(MouseEvent e) {
+                    server.launch("nogui", false);
+                }
+            });
+
+    private final JPopupMenu morePopupMenu = new JPopupMenu();
+    private final JMenuItem backupButton = new JMenuItem(GetText.tr("Backup"));
+    private final JMenuItem deleteButton = new JMenuItem(GetText.tr("Delete"));
+    private final JMenuItem openButton = new JMenuItem(GetText.tr("Open Folder"));
+    // seaprator
     private final JMenuItem discordLinkMenuItem = new JMenuItem(GetText.tr("Discord"));
     private final JMenuItem supportLinkMenuItem = new JMenuItem(GetText.tr("Support"));
     private final JMenuItem websiteLinkMenuItem = new JMenuItem(GetText.tr("Website"));
     private final JMenuItem wikiLinkMenuItem = new JMenuItem(GetText.tr("Wiki"));
     private final JMenuItem sourceLinkMenuItem = new JMenuItem(GetText.tr("Source"));
-    private final DropDownButton getHelpButton = new DropDownButton(GetText.tr("Get Help"), getHelpPopupMenu);
+    private final DropDownButton moreButton = new DropDownButton("More", morePopupMenu);
+
+    private final JTextArea descArea = new JTextArea();
 
     public ServerCard(Server server) {
         super(server);
@@ -96,16 +106,16 @@ public class ServerCard extends CollapsiblePanel implements RelocalizationListen
         buttonGrid.setBorder(new EmptyBorder(10, 10, 10, 10));
 
         buttonGrid.add(this.launchButton);
-        buttonGrid.add(this.launchAndCloseButton);
-        buttonGrid.add(this.launchWithGui);
-        buttonGrid.add(this.launchWithGuiAndClose);
-        buttonGrid.add(this.backupButton);
-        buttonGrid.add(this.deleteButton);
-        buttonGrid.add(this.getHelpButton);
-        buttonGrid.add(this.openButton);
+        launchPopMenu.add(this.launchAndCloseButton);
+        launchPopMenu.add(this.launchWithGui);
+        launchPopMenu.add(this.launchWithGuiAndClose);
+
+        morePopupMenu.add(this.openButton);
+        morePopupMenu.add(this.backupButton);
+        morePopupMenu.add(this.deleteButton);
+        buttonGrid.add(moreButton);
         buttonGrid.setPreferredSize(
                 new Dimension(buttonGrid.getPreferredSize().width - 100, buttonGrid.getPreferredSize().height));
-        this.getHelpButton.setVisible(server.showGetHelpButton());
 
         // unfortunately OSX doesn't allow us to pass arguments with open and Terminal
         if (OS.isMac()) {
@@ -116,6 +126,12 @@ public class ServerCard extends CollapsiblePanel implements RelocalizationListen
         JScrollPane desc = new JScrollPane(this.descArea, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
                 JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         desc.setPreferredSize(new Dimension(getPreferredSize().width, 50));
+
+        JPanel upper = new JPanel();
+        upper.setLayout(new FlowLayout(FlowLayout.LEFT));
+        // upper.add(othersButton);
+        upper.add(this.mainTitile);
+        add(upper, 0);
         add(image);
         add(desc);
         add(buttonGrid);
@@ -129,7 +145,7 @@ public class ServerCard extends CollapsiblePanel implements RelocalizationListen
     }
 
     private void addActionListeners() {
-        this.launchButton.addActionListener(e -> server.launch("nogui", false));
+        // this.launchButton.addActionListener(e -> );
         this.launchAndCloseButton.addActionListener(e -> server.launch("nogui", true));
         this.launchWithGui.addActionListener(e -> server.launch(false));
         this.launchWithGuiAndClose.addActionListener(e -> server.launch(true));
@@ -203,29 +219,30 @@ public class ServerCard extends CollapsiblePanel implements RelocalizationListen
 
     private void setupButtonPopupMenus() {
         if (server.showGetHelpButton()) {
+            morePopupMenu.addSeparator();
             if (server.getDiscordInviteUrl() != null) {
                 discordLinkMenuItem.addActionListener(e -> OS.openWebBrowser(server.getDiscordInviteUrl()));
-                getHelpPopupMenu.add(discordLinkMenuItem);
+                morePopupMenu.add(discordLinkMenuItem);
             }
 
             if (server.getSupportUrl() != null) {
                 supportLinkMenuItem.addActionListener(e -> OS.openWebBrowser(server.getSupportUrl()));
-                getHelpPopupMenu.add(supportLinkMenuItem);
+                morePopupMenu.add(supportLinkMenuItem);
             }
 
             if (server.getWebsiteUrl() != null) {
                 websiteLinkMenuItem.addActionListener(e -> OS.openWebBrowser(server.getWebsiteUrl()));
-                getHelpPopupMenu.add(websiteLinkMenuItem);
+                morePopupMenu.add(websiteLinkMenuItem);
             }
 
             if (server.getWikiUrl() != null) {
                 wikiLinkMenuItem.addActionListener(e -> OS.openWebBrowser(server.getWikiUrl()));
-                getHelpPopupMenu.add(wikiLinkMenuItem);
+                morePopupMenu.add(wikiLinkMenuItem);
             }
 
             if (server.getSourceUrl() != null) {
                 sourceLinkMenuItem.addActionListener(e -> OS.openWebBrowser(server.getSourceUrl()));
-                getHelpPopupMenu.add(sourceLinkMenuItem);
+                morePopupMenu.add(sourceLinkMenuItem);
             }
         }
     }

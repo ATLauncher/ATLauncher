@@ -20,17 +20,17 @@ package com.atlauncher.gui.card;
 import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
-import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
 import javax.swing.JTextArea;
 import javax.swing.border.EmptyBorder;
 
@@ -169,12 +169,11 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
         addModsItem.setEnabled(false);
 
         descArea.setText(instance.getPackDescription());
-        descArea.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0));
         descArea.setEditable(false);
         descArea.setHighlighter(null);
         descArea.setLineWrap(true);
         descArea.setWrapStyleWord(true);
-        descArea.setEditable(false);
+        descArea.setForeground(getBackground().brighter().brighter().brighter());
 
         if (instance.canChangeDescription()) {
             descArea.addMouseListener(new MouseAdapter() {
@@ -190,7 +189,7 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
         image.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         JPanel buttonGrid = new JPanel(new GridLayout(0, 2, 8, 6));
-        buttonGrid.setBorder(new EmptyBorder(10, 10, 10, 10));
+        buttonGrid.setBorder(new EmptyBorder(2, 10, 2, 10));
         buttonGrid.add(this.playButton);
         buttonGrid.add(this.settingsButton);
         if (instance.launcher.enableCurseForgeIntegration
@@ -204,11 +203,6 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
         }
         buttonGrid.add(modingButton);
         buttonGrid.add(editInstanceButton);
-        JPanel upper = new JPanel();
-        upper.setLayout(new FlowLayout(FlowLayout.LEFT));
-        upper.add(othersButton);
-        upper.add(this.mainTitile);
-        add(upper, 0);
 
         setupPlayPopupMenus();
         setupOpenPopupMenus();
@@ -233,11 +227,22 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
 
         JScrollPane desc = new JScrollPane(this.descArea, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
                 JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-        desc.setPreferredSize(new Dimension(getPreferredSize().width, 50));
-        desc.setBorder(new EmptyBorder(2, 2, 2, 2));
+        desc.setPreferredSize(new Dimension(getPreferredSize().width, 32));
+        // desc.setBorder(new EmptyBorder(10, 10, 10, 10));
+
         add(image);
-        add(desc);
-        add(buttonGrid);
+        JPanel upper = new JPanel();
+        upper.setLayout(new BoxLayout(upper, BoxLayout.Y_AXIS));
+        // upper.add(othersButton);
+        upper.add(this.mainTitile);
+        upper.add(desc);
+
+        JSplitPane subSplitter = new JSplitPane(JSplitPane.VERTICAL_SPLIT, upper, buttonGrid);
+        JSplitPane mainSpitter = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, image, subSplitter);
+        mainSpitter.setEnabled(false);
+        subSplitter.setEnabled(false);
+        add(mainSpitter);
+        // add(buttonGrid);
 
         RelocalizationManager.addListener(this);
 

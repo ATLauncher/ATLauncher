@@ -25,16 +25,14 @@ import java.awt.Image;
 import java.util.concurrent.Callable;
 
 import javax.annotation.Nonnull;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
 import com.atlauncher.managers.LogManager;
-import com.atlauncher.utils.Utils;
 
 public final class ImagePanel extends JPanel {
     private static final Cursor HAND = new Cursor(Cursor.HAND_CURSOR);
-    private static final int DEFAULT_WIDTH = 300, DEFAULT_HEIGHT = 150;
+    private static final int DEFAULT_WIDTH = 100, DEFAULT_HEIGHT = 100;
 
     private volatile Image image;
 
@@ -44,7 +42,6 @@ public final class ImagePanel extends JPanel {
     public ImagePanel(@Nonnull Callable<Image> imageToLoad) {
         this.setCursor(HAND);
         setPreferredSize(new Dimension(DEFAULT_WIDTH, DEFAULT_HEIGHT));
-
         // Launch a separate thread to load the image
         new Thread(() -> {
             try {
@@ -59,11 +56,9 @@ public final class ImagePanel extends JPanel {
         this.image = img;
 
         this.setPreferredSize(
-            new Dimension(
-                Math.min(image.getWidth(null), DEFAULT_WIDTH),
-                Math.min(image.getWidth(null), DEFAULT_HEIGHT)
-            )
-        );
+                new Dimension(
+                        Math.min(image.getWidth(null), DEFAULT_WIDTH),
+                        Math.min(image.getWidth(null), DEFAULT_HEIGHT)));
 
         // Repaint on the event thread
         SwingUtilities.invokeLater(this::repaint);
@@ -74,7 +69,12 @@ public final class ImagePanel extends JPanel {
         super.paintComponent(g);
         if (image != null) {
             Graphics2D g2 = (Graphics2D) g;
-            g2.drawImage(this.image, 0, (this.getHeight() - 150) / 2, 300, 150, null);
+            // crpp the image if not suqare or 1:1
+            if (image.getWidth(null) != image.getHeight(null)) {
+                g2.drawImage(this.image, 0, 0, 100, 100, 0, 0, 100, image.getHeight(null), null);
+            } else {
+                g2.drawImage(this.image, 0, 0, 100, 100, null);
+            }
         }
     }
 }

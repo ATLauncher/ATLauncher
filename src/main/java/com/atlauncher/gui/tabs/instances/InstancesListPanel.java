@@ -45,7 +45,7 @@ public final class InstancesListPanel extends HierarchyPanel
             });
 
     public InstancesListPanel(InstancesTab instancesTab, final IInstancesTabViewModel viewModel) {
-        super(new WrapLayout(WrapLayout.LEFT));
+        super(new WrapLayout(WrapLayout.LEFT, 8, 8));
         // columns and gaps
         this.instancesTab = instancesTab;
         this.viewModel = viewModel;

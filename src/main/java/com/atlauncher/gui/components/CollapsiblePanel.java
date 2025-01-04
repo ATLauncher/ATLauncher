@@ -24,7 +24,6 @@ import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.UIManager;
-import javax.swing.border.EmptyBorder;
 
 import com.atlauncher.App;
 import com.atlauncher.data.Instance;
@@ -61,10 +60,12 @@ public class CollapsiblePanel extends JPanel implements ThemeListener, Relocaliz
         }
 
         if (instance.launcher.isPlayable) {
-            mainTitile.setText(title);
+            mainTitile.setText(title.substring(0, 16) + "...");
+            mainTitile.setToolTipText(title);
             mainTitile.setForeground(UIManager.getColor("CollapsiblePanel.normal"));
         } else {
-            mainTitile.setText(title + " - " + "Corrupted)");
+            mainTitile.setText(title.substring(0, 12) + "..." + " - " + "Corrupted)");
+            mainTitile.setToolTipText(title + " - " + "Corrupted)");
             mainTitile.setForeground(UIManager.getColor("CollapsiblePanel.error"));
         }
         commonConstructor();
@@ -84,11 +85,10 @@ public class CollapsiblePanel extends JPanel implements ThemeListener, Relocaliz
      * the container, all constructors have this procedure in common.
      */
     private void commonConstructor() {
-        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-        mainTitile.setAlignmentX(Component.CENTER_ALIGNMENT);
-        mainTitile.setBorder(new EmptyBorder(8, 0, 8, 0));
-        setBorder(BorderFactory.createLineBorder(getBackground().brighter(), 4));
-        // add(mainTitile);
+        mainTitile.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
+        setBorder(BorderFactory.createLineBorder(getBackground().brighter(), 2));
         ThemeManager.addListener(this);
         RelocalizationManager.addListener(this);
     }
