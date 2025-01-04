@@ -55,10 +55,7 @@ public final class ImagePanel extends JPanel {
     public void setImage(@Nonnull Image img) {
         this.image = img;
 
-        this.setPreferredSize(
-                new Dimension(
-                        Math.min(image.getWidth(null), DEFAULT_WIDTH),
-                        Math.min(image.getWidth(null), DEFAULT_HEIGHT)));
+        this.setPreferredSize(new Dimension(DEFAULT_WIDTH, DEFAULT_HEIGHT));
 
         // Repaint on the event thread
         SwingUtilities.invokeLater(this::repaint);

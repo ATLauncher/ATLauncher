@@ -19,16 +19,17 @@ package com.atlauncher.gui.card;
 
 import java.awt.Cursor;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
 import javax.swing.JTextArea;
 import javax.swing.border.EmptyBorder;
 
@@ -114,8 +115,6 @@ public class ServerCard extends CollapsiblePanel implements RelocalizationListen
         morePopupMenu.add(this.backupButton);
         morePopupMenu.add(this.deleteButton);
         buttonGrid.add(moreButton);
-        buttonGrid.setPreferredSize(
-                new Dimension(buttonGrid.getPreferredSize().width - 100, buttonGrid.getPreferredSize().height));
 
         // unfortunately OSX doesn't allow us to pass arguments with open and Terminal
         if (OS.isMac()) {
@@ -127,14 +126,26 @@ public class ServerCard extends CollapsiblePanel implements RelocalizationListen
                 JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         desc.setPreferredSize(new Dimension(getPreferredSize().width, 50));
 
-        JPanel upper = new JPanel();
-        upper.setLayout(new FlowLayout(FlowLayout.LEFT));
+        // JPanel upper = new JPanel();
+        // upper.setLayout(new FlowLayout(FlowLayout.LEFT));
         // upper.add(othersButton);
-        upper.add(this.mainTitile);
-        add(upper, 0);
+        // upper.add(this.mainTitile);
+        // add(upper, 0);
+        // add(image);
+        // add(desc);
+        // add(buttonGrid);
         add(image);
-        add(desc);
-        add(buttonGrid);
+        JPanel upper = new JPanel();
+        upper.setLayout(new BoxLayout(upper, BoxLayout.Y_AXIS));
+
+        upper.add(mainTitile);
+        upper.add(desc);
+
+        JSplitPane subSplitter = new JSplitPane(JSplitPane.VERTICAL_SPLIT, upper, buttonGrid);
+        JSplitPane mainSpitter = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, image, subSplitter);
+        mainSpitter.setEnabled(false);
+        subSplitter.setEnabled(false);
+        add(mainSpitter);
 
         setupButtonPopupMenus();
 

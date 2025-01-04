@@ -17,8 +17,6 @@
  */
 package com.atlauncher.gui.card;
 
-import java.awt.Component;
-import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.MouseAdapter;
@@ -103,7 +101,7 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
     private final JMenuItem editModsItem = new JMenuItem(GetText.tr("Edit Mods"));
     private final DropDownButton modingButton = new DropDownButton(GetText.tr("Moding"), modingPopupMenu);
 
-    private final JPopupMenu otherPopupMenu = new JPopupMenu();
+    private final JPopupMenu morePopupMenu = new JPopupMenu();
     private final JMenuItem discordLinkMenuItem = new JMenuItem(GetText.tr("Discord"));
     private final JMenuItem supportLinkMenuItem = new JMenuItem(GetText.tr("Support"));
     private final JMenuItem websiteLinkMenuItem = new JMenuItem(GetText.tr("Website"));
@@ -112,7 +110,7 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
     private final JMenuItem updateItem = new JMenuItem(GetText.tr("Update"));
     private final JMenuItem serversItem = new JMenuItem(GetText.tr("Servers"));
     private final JMenuItem websiteItem = new JMenuItem(GetText.tr("Open Website"));
-    private final DropDownButton othersButton = new DropDownButton("...", otherPopupMenu);
+    private final DropDownButton moreButton = new DropDownButton("...", morePopupMenu);
 
     private final JPopupMenu editInstancePopupMenu = new JPopupMenu();
     private final JMenuItem reinstallMenuItem = new JMenuItem(GetText.tr("Reinstall"));
@@ -175,6 +173,15 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
         descArea.setWrapStyleWord(true);
         descArea.setForeground(getBackground().brighter().brighter().brighter());
 
+        moreButton.setBackground(null);
+        moreButton.setBorder(new EmptyBorder(1, 1, 1, 1));
+
+        setupPlayPopupMenus();
+        setupSettingsPopupMenu();
+        setupModingPopupMenu();
+        setupEditInstanceMenu();
+        setupMorePopupMenu();
+
         if (instance.canChangeDescription()) {
             descArea.addMouseListener(new MouseAdapter() {
                 @Override
@@ -186,7 +193,6 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
                 }
             });
         }
-        image.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         JPanel buttonGrid = new JPanel(new GridLayout(0, 2, 8, 6));
         buttonGrid.setBorder(new EmptyBorder(2, 10, 2, 10));
@@ -203,10 +209,6 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
         }
         buttonGrid.add(modingButton);
         buttonGrid.add(editInstanceButton);
-
-        setupPlayPopupMenus();
-        setupOpenPopupMenus();
-        setupButtonPopupMenus();
 
         // check it can be exported
         exportItem.setEnabled(instance.canBeExported());
@@ -233,8 +235,10 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
         add(image);
         JPanel upper = new JPanel();
         upper.setLayout(new BoxLayout(upper, BoxLayout.Y_AXIS));
-        // upper.add(othersButton);
-        upper.add(this.mainTitile);
+
+        JSplitPane headerSplitter = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, mainTitile, moreButton);
+        headerSplitter.setResizeWeight(.85);
+        upper.add(headerSplitter);
         upper.add(desc);
 
         JSplitPane subSplitter = new JSplitPane(JSplitPane.VERTICAL_SPLIT, upper, buttonGrid);
@@ -250,8 +254,6 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
             updateItem.setEnabled(false);
         }
 
-        this.addActionListeners();
-        this.addMouseListeners();
     }
 
     private void setupPlayPopupMenus() {
@@ -266,51 +268,15 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
         playPopupMenu.add(playOfflinePlayMenuItem);
     }
 
-    private void setupOpenPopupMenus() {
-        openResourceMenuItem.addActionListener(e -> {
-            DialogManager.okDialog().setTitle(GetText.tr("Reminder"))
-                    .setContent(GetText.tr("You may not distribute ANY resources."))
-                    .setType(DialogManager.WARNING).show();
-            OS.openFileExplorer(instance.getMinecraftJarLibraryPath());
+    private void setupSettingsPopupMenu() {
+        exportItem.addActionListener(e -> {
+            Analytics.trackEvent(AnalyticsEvent.forInstanceEvent("instance_export", instance));
+            new InstanceExportDialog(instance);
         });
-    }
-
-    private void setupButtonPopupMenus() {
-        // others drop menu
-        otherPopupMenu.add(updateItem);
-        otherPopupMenu.add(serversItem);
-        otherPopupMenu.add(websiteItem);
-        // settings drop menu
         settingsPopupMenu.add(exportItem);
 
-        if (instance.showGetHelpButton()) {
-            otherPopupMenu.addSeparator();
-            if (instance.getDiscordInviteUrl() != null) {
-                discordLinkMenuItem.addActionListener(e -> OS.openWebBrowser(instance.getDiscordInviteUrl()));
-                otherPopupMenu.add(discordLinkMenuItem);
-            }
-
-            if (instance.getSupportUrl() != null) {
-                supportLinkMenuItem.addActionListener(e -> OS.openWebBrowser(instance.getSupportUrl()));
-                otherPopupMenu.add(supportLinkMenuItem);
-            }
-
-            if (instance.getWebsiteUrl() != null) {
-                websiteLinkMenuItem.addActionListener(e -> OS.openWebBrowser(instance.getWebsiteUrl()));
-                otherPopupMenu.add(websiteLinkMenuItem);
-            }
-
-            if (instance.getWikiUrl() != null) {
-                wikiLinkMenuItem.addActionListener(e -> OS.openWebBrowser(instance.getWikiUrl()));
-                otherPopupMenu.add(wikiLinkMenuItem);
-            }
-
-            if (instance.getSourceUrl() != null) {
-                sourceLinkMenuItem.addActionListener(e -> OS.openWebBrowser(instance.getSourceUrl()));
-                otherPopupMenu.add(sourceLinkMenuItem);
-            }
-        }
         settingsPopupMenu.addSeparator();
+        // backup options section in settings drop menu
         normalBackupMenuItem.addActionListener(e -> instance.backup(BackupMode.NORMAL));
         settingsPopupMenu.add(normalBackupMenuItem);
 
@@ -321,34 +287,130 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
         settingsPopupMenu.add(fullBackupMenuItem);
 
         settingsPopupMenu.addSeparator();
+        // open section in settings drop menu
+        openFolderItem.addActionListener(e -> OS.openFileExplorer(instance.getRoot()));
         settingsPopupMenu.add(openFolderItem);
-        settingsPopupMenu.add(openResourceMenuItem);
 
-        openFolderItem.addActionListener(e -> {
-            OS.openFileExplorer(instance.getRoot());
+        openResourceMenuItem.addActionListener(e -> {
+            DialogManager.okDialog().setTitle(GetText.tr("Reminder"))
+                    .setContent(GetText.tr("You may not distribute ANY resources."))
+                    .setType(DialogManager.WARNING).show();
+            OS.openFileExplorer(instance.getMinecraftJarLibraryPath());
         });
+        settingsPopupMenu.add(openResourceMenuItem);
+    }
 
+    private void setupModingPopupMenu() {
         addModsItem.addActionListener(e -> {
             Analytics.trackEvent(AnalyticsEvent.forInstanceEvent("instance_add_mods", instance));
             new AddModsDialog(instance);
             exportItem.setEnabled(instance.canBeExported());
         });
+        modingPopupMenu.add(addModsItem);
+
         editModsItem.addActionListener(e -> {
             Analytics.trackEvent(AnalyticsEvent.forInstanceEvent("instance_edit_mods", instance));
             new EditModsDialog(instance);
             exportItem.setEnabled(instance.canBeExported());
         });
-        modingPopupMenu.add(addModsItem);
+
         modingPopupMenu.add(editModsItem);
-        setupEditInstanceButton();
     }
 
-    private void setupEditInstanceButton() {
+    private void setupMorePopupMenu() {
+        // more button drop menu
+        updateItem.addActionListener(e -> {
+            if (AccountManager.getSelectedAccount() == null) {
+                DialogManager.okDialog().setTitle(GetText.tr("No Account Selected"))
+                        .setContent(GetText.tr("Cannot update pack as you have no account selected."))
+                        .setType(DialogManager.ERROR).show();
+                return;
+            }
+
+            Analytics.trackEvent(AnalyticsEvent.forInstanceEvent("instance_update", instance));
+            instance.update();
+        });
+        morePopupMenu.add(updateItem);
+
+        serversItem.addActionListener(e -> OS.openWebBrowser(
+                String.format("%s/%s?utm_source=launcher&utm_medium=button&utm_campaign=instance_v2_button",
+                        Constants.SERVERS_LIST_PACK, instance.getSafePackName())));
+        morePopupMenu.add(serversItem);
+
+        websiteItem.addActionListener(e -> OS.openWebBrowser(instance.getWebsiteUrl()));
+        morePopupMenu.add(websiteItem);
+        // settings drop menu
+
+        if (instance.showGetHelpButton()) {
+            morePopupMenu.addSeparator();
+            if (instance.getDiscordInviteUrl() != null) {
+                discordLinkMenuItem.addActionListener(e -> OS.openWebBrowser(instance.getDiscordInviteUrl()));
+                morePopupMenu.add(discordLinkMenuItem);
+            }
+
+            if (instance.getSupportUrl() != null) {
+                supportLinkMenuItem.addActionListener(e -> OS.openWebBrowser(instance.getSupportUrl()));
+                morePopupMenu.add(supportLinkMenuItem);
+            }
+
+            if (instance.getWebsiteUrl() != null) {
+                websiteLinkMenuItem.addActionListener(e -> OS.openWebBrowser(instance.getWebsiteUrl()));
+                morePopupMenu.add(websiteLinkMenuItem);
+            }
+
+            if (instance.getWikiUrl() != null) {
+                wikiLinkMenuItem.addActionListener(e -> OS.openWebBrowser(instance.getWikiUrl()));
+                morePopupMenu.add(wikiLinkMenuItem);
+            }
+
+            if (instance.getSourceUrl() != null) {
+                sourceLinkMenuItem.addActionListener(e -> OS.openWebBrowser(instance.getSourceUrl()));
+                morePopupMenu.add(sourceLinkMenuItem);
+            }
+        }
+    }
+
+    private void setupEditInstanceMenu() {
+
+        reinstallMenuItem.addActionListener(e -> instance.startReinstall());
         editInstancePopupMenu.add(reinstallMenuItem);
+
+        cloneMenuItem.addActionListener(e -> instance.startClone());
         editInstancePopupMenu.add(cloneMenuItem);
+
+        renameMenuItem.addActionListener(e -> instance.startRename());
         editInstancePopupMenu.add(renameMenuItem);
+
+        changeDescriptionMenuItem.addActionListener(e -> {
+            instance.startChangeDescription();
+            descArea.setText(instance.launcher.description);
+        });
         editInstancePopupMenu.add(changeDescriptionMenuItem);
+
+        changeImageMenuItem.addActionListener(e -> {
+            instance.startChangeImage();
+            image.setImage(instance.getImage().getImage());
+        });
         editInstancePopupMenu.add(changeImageMenuItem);
+
+        deleteInstanceItem.addActionListener(e -> {
+            int ret = DialogManager.yesNoDialog(false).setTitle(GetText.tr("Delete Instance"))
+                    .setContent(
+                            GetText.tr("Are you sure you want to delete the instance \"{0}\"?", instance.launcher.name))
+                    .setType(DialogManager.ERROR).show();
+
+            if (ret == DialogManager.YES_OPTION) {
+                Analytics.trackEvent(AnalyticsEvent.forInstanceEvent("instance_delete", instance));
+                final ProgressDialog dialog = new ProgressDialog(GetText.tr("Deleting Instance"), 0,
+                        GetText.tr("Deleting Instance. Please wait..."), null, App.launcher.getParent());
+                dialog.addThread(new Thread(() -> {
+                    InstanceManager.removeInstance(instance);
+                    dialog.close();
+                    App.TOASTER.pop(GetText.tr("Deleted Instance Successfully"));
+                }));
+                dialog.start();
+            }
+        });
         editInstancePopupMenu.add(deleteInstanceItem);
 
         editInstancePopupMenu.addSeparator();
@@ -394,20 +456,6 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
             editInstancePopupMenu.add(changeQuiltVersionMenuItem);
         }
         editInstancePopupMenu.add(removeQuiltMenuItem);
-
-        setEditInstanceMenuItemVisbility();
-
-        reinstallMenuItem.addActionListener(e -> instance.startReinstall());
-        cloneMenuItem.addActionListener(e -> instance.startClone());
-        renameMenuItem.addActionListener(e -> instance.startRename());
-        changeDescriptionMenuItem.addActionListener(e -> {
-            instance.startChangeDescription();
-            descArea.setText(instance.launcher.description);
-        });
-        changeImageMenuItem.addActionListener(e -> {
-            instance.startChangeImage();
-            image.setImage(instance.getImage().getImage());
-        });
 
         // loader things
         addFabricMenuItem.addActionListener(e -> {
@@ -472,6 +520,7 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
             instance.removeLoader();
             setEditInstanceMenuItemVisbility();
         });
+        setEditInstanceMenuItemVisbility();
     }
 
     private void setEditInstanceMenuItemVisbility() {
@@ -508,56 +557,6 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
                         instance.launcher.loaderVersion != null && instance.launcher.loaderVersion.isNeoForge());
         removeQuiltMenuItem
                 .setVisible(instance.launcher.loaderVersion != null && instance.launcher.loaderVersion.isQuilt());
-    }
-
-    private void addActionListeners() {
-        updateItem.addActionListener(e -> {
-            if (AccountManager.getSelectedAccount() == null) {
-                DialogManager.okDialog().setTitle(GetText.tr("No Account Selected"))
-                        .setContent(GetText.tr("Cannot update pack as you have no account selected."))
-                        .setType(DialogManager.ERROR).show();
-                return;
-            }
-
-            Analytics.trackEvent(AnalyticsEvent.forInstanceEvent("instance_update", instance));
-            instance.update();
-        });
-        addModsItem.addActionListener(e -> {
-            Analytics.trackEvent(AnalyticsEvent.forInstanceEvent("instance_add_mods", instance));
-            new AddModsDialog(instance);
-            exportItem.setEnabled(instance.canBeExported());
-        });
-        editModsItem.addActionListener(e -> {
-            Analytics.trackEvent(AnalyticsEvent.forInstanceEvent("instance_edit_mods", instance));
-            new EditModsDialog(instance);
-            exportItem.setEnabled(instance.canBeExported());
-        });
-        serversItem.addActionListener(e -> OS.openWebBrowser(
-                String.format("%s/%s?utm_source=launcher&utm_medium=button&utm_campaign=instance_v2_button",
-                        Constants.SERVERS_LIST_PACK, instance.getSafePackName())));
-        websiteItem.addActionListener(e -> OS.openWebBrowser(instance.getWebsiteUrl()));
-        deleteInstanceItem.addActionListener(e -> {
-            int ret = DialogManager.yesNoDialog(false).setTitle(GetText.tr("Delete Instance"))
-                    .setContent(
-                            GetText.tr("Are you sure you want to delete the instance \"{0}\"?", instance.launcher.name))
-                    .setType(DialogManager.ERROR).show();
-
-            if (ret == DialogManager.YES_OPTION) {
-                Analytics.trackEvent(AnalyticsEvent.forInstanceEvent("instance_delete", instance));
-                final ProgressDialog dialog = new ProgressDialog(GetText.tr("Deleting Instance"), 0,
-                        GetText.tr("Deleting Instance. Please wait..."), null, App.launcher.getParent());
-                dialog.addThread(new Thread(() -> {
-                    InstanceManager.removeInstance(instance);
-                    dialog.close();
-                    App.TOASTER.pop(GetText.tr("Deleted Instance Successfully"));
-                }));
-                dialog.start();
-            }
-        });
-        exportItem.addActionListener(e -> {
-            Analytics.trackEvent(AnalyticsEvent.forInstanceEvent("instance_export", instance));
-            new InstanceExportDialog(instance);
-        });
     }
 
     private void play(boolean offline) {
@@ -619,86 +618,6 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
         }
     }
 
-    private void addMouseListeners() {
-        this.image.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() >= 2) {
-                    play(false);
-                } else if (e.getButton() == MouseEvent.BUTTON3) {
-                    JPopupMenu rightClickMenu = new JPopupMenu();
-
-                    JMenuItem playOnlineButton = new JMenuItem(GetText.tr("Play Online"));
-                    playOnlineButton.addActionListener(l -> {
-                        play(false);
-                    });
-                    rightClickMenu.add(playOnlineButton);
-
-                    JMenuItem playOfflineButton = new JMenuItem(GetText.tr("Play Offline"));
-                    playOfflineButton.addActionListener(l -> {
-                        play(true);
-                    });
-                    rightClickMenu.add(playOnlineButton);
-
-                    if (instance.isUpdatable()) {
-                        rightClickMenu.addSeparator();
-                    }
-
-                    JMenuItem reinstallItem = new JMenuItem(GetText.tr("Reinstall"));
-                    reinstallItem.addActionListener(l -> instance.startReinstall());
-                    reinstallItem.setVisible(instance.isUpdatable());
-                    rightClickMenu.add(reinstallItem);
-
-                    JMenuItem updateItem = new JMenuItem(GetText.tr("Update"));
-                    updateItem.addActionListener(l -> instance.update());
-                    updateItem.setVisible(instance.isUpdatable());
-                    updateItem.setEnabled(hasUpdate && instance.launcher.isPlayable);
-                    rightClickMenu.add(updateItem);
-
-                    rightClickMenu.addSeparator();
-
-                    JMenuItem renameItem = new JMenuItem(GetText.tr("Rename"));
-                    renameMenuItem.addActionListener(l -> instance.startRename());
-                    rightClickMenu.add(renameItem);
-
-                    JMenuItem changeDescriptionItem = new JMenuItem(GetText.tr("Change Description"));
-                    changeDescriptionItem.addActionListener(l -> {
-                        instance.startChangeDescription();
-                        descArea.setText(instance.launcher.description);
-                    });
-                    changeDescriptionItem.setVisible(instance.canChangeDescription());
-                    rightClickMenu.add(changeDescriptionItem);
-
-                    JMenuItem changeImageItem = new JMenuItem(GetText.tr("Change Image"));
-                    changeImageItem.addActionListener(l -> {
-                        instance.startChangeImage();
-                        image.setImage(instance.getImage().getImage());
-                    });
-                    rightClickMenu.add(changeImageItem);
-
-                    JMenuItem cloneItem = new JMenuItem(GetText.tr("Clone"));
-                    cloneItem.addActionListener(l -> {
-                        instance.startClone();
-                    });
-                    rightClickMenu.add(cloneItem);
-                    rightClickMenu.show(image, e.getX(), e.getY());
-                }
-            }
-
-            @Override
-            public void mouseEntered(MouseEvent e) {
-                super.mouseEntered(e);
-                setCursor(new Cursor(Cursor.HAND_CURSOR));
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
-                super.mouseExited(e);
-                setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-            }
-        });
-    }
-
     public Instance getInstance() {
         return instance;
     }
@@ -708,8 +627,6 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
         this.playButton.setText(GetText.tr("Play"));
         this.updateItem.setText(GetText.tr("Update"));
         this.deleteInstanceItem.setText(GetText.tr("Delete"));
-        this.addModsItem.setText(GetText.tr("Add Mods"));
-        this.editModsItem.setText(GetText.tr("Edit Mods"));
         this.serversItem.setText(GetText.tr("Servers"));
         this.websiteItem.setText(GetText.tr("Open Website"));
         this.openFolderItem.setText(GetText.tr("Open Folder"));

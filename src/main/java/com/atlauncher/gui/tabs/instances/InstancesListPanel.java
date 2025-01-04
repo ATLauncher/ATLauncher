@@ -75,8 +75,6 @@ public final class InstancesListPanel extends HierarchyPanel
                     } else {
                         PerformanceManager.start("Render cards");
                         instances.forEach(instance -> {
-                            // JPanel container = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
-                            // container.add(instance);
                             this.add(instance);
                         });
 

@@ -86,7 +86,6 @@ public class CollapsiblePanel extends JPanel implements ThemeListener, Relocaliz
      */
     private void commonConstructor() {
         mainTitile.setAlignmentX(Component.LEFT_ALIGNMENT);
-
         setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
         setBorder(BorderFactory.createLineBorder(getBackground().brighter(), 2));
         ThemeManager.addListener(this);
