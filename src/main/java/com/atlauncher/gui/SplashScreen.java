@@ -17,8 +17,12 @@
  */
 package com.atlauncher.gui;
 
+import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.SystemTray;
+import java.awt.Toolkit;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
@@ -59,7 +63,21 @@ public class SplashScreen extends JWindow {
 
     @Override
     public void paint(Graphics g) {
-        g.drawImage(img, 0, 0, this.getWidth(), this.getHeight(), null);
+
+        // Enable high-quality rendering
+        Graphics2D g2d = (Graphics2D) g;
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+        g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+
+        Dimension screenDim = Toolkit.getDefaultToolkit().getScreenSize();
+
+        int calcW = img.getWidth() / 4;
+        int calcH = img.getHeight() / 4;
+        int centerX = ((int) screenDim.getWidth()) / 2 - calcW / 2;
+        int centerY = ((int) screenDim.getHeight()) / 2 - calcH;
+
+        g2d.drawImage(img, centerX, centerY, calcW, calcH, null);
     }
 
     /**
