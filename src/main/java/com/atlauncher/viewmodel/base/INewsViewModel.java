@@ -17,17 +17,23 @@
  */
 package com.atlauncher.viewmodel.base;
 
-import io.reactivex.rxjava3.core.Observable;
+import java.util.function.Consumer;
 
 /**
- * View model for NewsTab
+ * 14 / 06 / 2022
  *
- * @since 2022 / 06 / 14
+ * View model for NewsTab
  */
 public interface INewsViewModel {
 
     /**
-     * Observable of news HTML to display
+     * React to reload events
+     * @param onReload function to be called
      */
-    Observable<String> getNewsHTML();
+    void addOnReloadListener(Consumer<String> onReload);
+
+    /**
+     * Reload news
+     */
+    void reload();
 }

@@ -22,6 +22,7 @@ import java.awt.Image;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
@@ -164,7 +165,7 @@ public class Server {
             Map<String, List<JavaRuntime>> runtimesForSystem = Data.JAVA_RUNTIMES.getForSystem();
 
             if (runtimesForSystem.containsKey(javaVersion.component)
-                    && !runtimesForSystem.get(javaVersion.component).isEmpty()) {
+                    && runtimesForSystem.get(javaVersion.component).size() != 0) {
                 Path runtimeDirectory = FileSystem.MINECRAFT_RUNTIMES.resolve(javaVersion.component)
                         .resolve(JavaRuntimes.getSystem()).resolve(javaVersion.component);
 
@@ -209,49 +210,59 @@ public class Server {
                     arguments.add("x-terminal-emulator");
                     arguments.add("-e");
 
-                    arguments.add(getRoot().resolve(serverScript)
+                    arguments.add(getRoot().resolve(serverScript).toString()
                             + (isATLauncherLaunchScript && javaPath != null ? String.format(" ATLcustomjava %s",
                                     javaPath + "/bin/java ") : " ")
                             + args);
+                } else if (Utils.executableInPath("exo-open")) {
+                    arguments.add("exo-open");
+                    arguments.add("--launch");
+                    arguments.add("TerminalEmulator");
+                    arguments.add("--working-directory");
+                    arguments.add(getRoot().toAbsolutePath().toString());
+                    arguments.add(String.format(
+                            "./%s %s%s", serverScript, (isATLauncherLaunchScript && javaPath != null
+                                    ? String.format(" ATLcustomjava %s",
+                                            javaPath + "/bin/java ")
+                                    : ""),
+                            args));
+                } else if (Utils.executableInPath("kitty")) {
+                    arguments.add("kitty");
+                    arguments.addAll(Arrays.asList(String.format(
+                            "./%s %s%s", serverScript, (isATLauncherLaunchScript && javaPath != null
+                                    ? String.format(" ATLcustomjava %s",
+                                            javaPath + "/bin/java ")
+                                    : ""),
+                            args)
+                            .split(" ")));
+                } else if (Utils.executableInPath("alacritty")) {
+                    arguments.add("alacritty");
+                    arguments.add("-e");
+                    arguments.addAll(Arrays.asList(String.format(
+                            "./%s %s%s", serverScript, (isATLauncherLaunchScript && javaPath != null
+                                    ? String.format(" ATLcustomjava %s",
+                                            javaPath + "/bin/java ")
+                                    : ""),
+                            args)
+                            .split(" ")));
+                } else if (Utils.executableInPath("gnome-terminal")) {
+                    arguments.add("gnome-terminal");
+                    arguments.add("--");
+                    arguments.addAll(Arrays.asList(String.format(
+                            "./%s %s%s", serverScript, (isATLauncherLaunchScript && javaPath != null
+                                    ? String.format(" ATLcustomjava %s",
+                                            javaPath + "/bin/java ")
+                                    : ""),
+                            args)
+                            .split(" ")));
                 } else {
-                    String format = String.format(
-                        "./%s %s%s",
-                        serverScript,
-                        (isATLauncherLaunchScript && javaPath != null ?
-                            String.format(" ATLcustomjava %s", javaPath + "/bin/java ") : ""),
-                        args
-                    );
-
-                    if (Utils.executableInPath("exo-open")) {
-                        arguments.add("exo-open");
-                        arguments.add("--launch");
-                        arguments.add("TerminalEmulator");
-                        arguments.add("--working-directory");
-                        arguments.add(getRoot().toAbsolutePath().toString());
-                        arguments.add(format);
-                    } else if (Utils.executableInPath("kitty")) {
-                        arguments.add("kitty");
-                        arguments.addAll(Arrays.asList(format
-                                .split(" ")));
-                    } else if (Utils.executableInPath("alacritty")) {
-                        arguments.add("alacritty");
-                        arguments.add("-e");
-                        arguments.addAll(Arrays.asList(format
-                                .split(" ")));
-                    } else if (Utils.executableInPath("gnome-terminal")) {
-                        arguments.add("gnome-terminal");
-                        arguments.add("--");
-                        arguments.addAll(Arrays.asList(format
-                                .split(" ")));
-                    } else {
-                        DialogManager.okDialog().setTitle(GetText.tr("Failed To Launch Server"))
-                                .setContent(new HTMLBuilder().center().text(GetText.tr(
-                                        "The server couldn't be launched as we don't know how to launch it.<br/><br/>Please open the server folder and run the {0} file manually.",
-                                        serverScript))
-                                        .build())
-                                .setType(DialogManager.ERROR).show();
-                        return;
-                    }
+                    DialogManager.okDialog().setTitle(GetText.tr("Failed To Launch Server"))
+                            .setContent(new HTMLBuilder().center().text(GetText.tr(
+                                    "The server couldn't be launched as we don't know how to launch it.<br/><br/>Please open the server folder and run the {0} file manually.",
+                                    serverScript))
+                                    .build())
+                            .setType(DialogManager.ERROR).show();
+                    return;
                 }
             } else if (OS.isMac()) {
                 String launchCommand = serverScript;
@@ -272,7 +283,7 @@ public class Server {
                     launchScript.add("; rm -f ./.launcherrun.sh");
 
                     Path tempLaunchFile = getRoot().resolve(".launcherrun.sh");
-                    Files.write(tempLaunchFile, String.join(" ", launchScript).getBytes(),
+                    Files.write(tempLaunchFile, String.join(" ", launchScript).toString().getBytes(),
                             StandardOpenOption.CREATE,
                             StandardOpenOption.TRUNCATE_EXISTING);
                     tempLaunchFile.toFile().setExecutable(true);
@@ -413,7 +424,9 @@ public class Server {
 
             if (this.isDev && (this.hash != null)) {
                 PackVersion devVersion = pack.getDevVersionByName(this.version);
-                return devVersion != null && !devVersion.hashMatches(this.hash);
+                if (devVersion != null && !devVersion.hashMatches(this.hash)) {
+                    return true;
+                }
             }
         }
 
@@ -628,7 +641,7 @@ public class Server {
 
     public void save() {
         try (OutputStreamWriter fileWriter = new OutputStreamWriter(
-            Files.newOutputStream(this.getRoot().resolve("server.json")), StandardCharsets.UTF_8)) {
+                new FileOutputStream(this.getRoot().resolve("server.json").toFile()), StandardCharsets.UTF_8)) {
             Gsons.DEFAULT.toJson(this, fileWriter);
         } catch (JsonIOException | IOException e) {
             LogManager.logStackTrace(e);

@@ -33,7 +33,7 @@ public class Launcher extends Applet implements AppletStub {
     private final Map<String, String> params;
 
     public Launcher(Applet applet) {
-        params = new TreeMap<>();
+        params = new TreeMap<String, String>();
 
         this.setLayout(new BorderLayout());
         this.add(applet, "Center");

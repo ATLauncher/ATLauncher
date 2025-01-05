@@ -117,7 +117,9 @@ public final class Analytics {
     private static Map<String, Object> getEventProps(AnalyticsEvent event) {
         Map<String, Object> props = new HashMap<>();
 
-        props.putAll(event.payload);
+        for (Entry<String, Object> payloadSet : event.payload.entrySet()) {
+            props.put(payloadSet.getKey(), payloadSet.getValue());
+        }
 
         props.put("session_id", sessionId);
         props.put("distinct_id", App.settings.analyticsClientId);
@@ -171,7 +173,7 @@ public final class Analytics {
 
             trackEvent(new AnalyticsEvent("$session_end"));
 
-            if (!events.isEmpty()) {
+            if (events.size() != 0) {
                 sendAllStoredEvents(true);
             }
 
@@ -184,7 +186,7 @@ public final class Analytics {
             return false;
         }
 
-        if (ConfigManager.getConfigItem("analytics.enabledForAll", false)) {
+        if (ConfigManager.getConfigItem("analytics.enabledForAll", false) == true) {
             return true;
         }
 

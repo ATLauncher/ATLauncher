@@ -336,7 +336,7 @@ public class Mod {
     }
 
     public boolean hasDepends() {
-        return this.depends != null && !this.depends.isEmpty();
+        return this.depends != null && this.depends.size() != 0;
     }
 
     public boolean isADependancy(Mod mod) {

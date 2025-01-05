@@ -17,10 +17,10 @@
  */
 package com.atlauncher.managers;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -76,15 +76,15 @@ public class InstanceManager {
 
         for (String folder : Optional.of(FileSystem.INSTANCES.toFile().list(Utils.getInstanceFileFilter()))
                 .orElse(new String[0])) {
-            Path instanceDir = FileSystem.INSTANCES.resolve(folder);
+            File instanceDir = FileSystem.INSTANCES.resolve(folder).toFile();
 
             Instance instance = null;
 
             try {
                 try (InputStreamReader fileReader = new InputStreamReader(
-                    Files.newInputStream(instanceDir.resolve("instance.json")), StandardCharsets.UTF_8)) {
+                        new FileInputStream(new File(instanceDir, "instance.json")), StandardCharsets.UTF_8)) {
                     instance = Gsons.DEFAULT.fromJson(fileReader, Instance.class);
-                    instance.ROOT = instanceDir;
+                    instance.ROOT = instanceDir.toPath();
                     LogManager.debug("Loaded instance from " + instanceDir);
 
                     if (instance.launcher == null) {
@@ -132,6 +132,7 @@ public class InstanceManager {
                 newInstances.add(instance);
             } catch (Exception e2) {
                 LogManager.logStackTrace("Failed to load instance in the folder " + instanceDir, e2);
+                continue;
             }
         }
 

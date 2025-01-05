@@ -47,6 +47,7 @@ import com.atlauncher.utils.Utils;
  * hover tooltip for a mods description, as well as giving pack developers a way
  * to colour mod's names.
  */
+@SuppressWarnings("serial")
 public class ModsJCheckBox extends JCheckBox {
     /**
      * The mod this object will use to display it's data. Will be type {@link Mod},
@@ -179,7 +180,7 @@ public class ModsJCheckBox extends JCheckBox {
 
             contextMenu.add(new JPopupMenu.Separator());
 
-            if (modrinthMod.donationUrls != null && !modrinthMod.donationUrls.isEmpty()) {
+            if (modrinthMod.donationUrls != null && modrinthMod.donationUrls.size() != 0) {
                 for (ModrinthDonationUrl donation : modrinthMod.donationUrls) {
                     // #. {0} is the name of the platform used for donations (Patreon, paypal, etc)
                     JMenuItem openDonationLink = new JMenuItem(GetText.tr("Donate ({0})", donation.platform));

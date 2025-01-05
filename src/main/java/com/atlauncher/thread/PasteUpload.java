@@ -36,7 +36,7 @@ import com.atlauncher.managers.LogManager;
 public final class PasteUpload implements Callable<String> {
     @Override
     public String call() {
-        String log = App.console.getLog().replace(System.lineSeparator(), "\n");
+        String log = App.console.getLog().replace(System.getProperty("line.separator"), "\n");
         String urlParameters = "";
         try {
             urlParameters += "title=" + URLEncoder.encode(Constants.LAUNCHER_NAME + " - Log", "UTF-8") + "&";

@@ -17,10 +17,10 @@
  */
 package com.atlauncher.managers;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -61,15 +61,15 @@ public class ServerManager {
 
         for (String folder : Optional.of(FileSystem.SERVERS.toFile().list(Utils.getServerFileFilter()))
             .orElse(new String[0])) {
-            Path serverDir = FileSystem.SERVERS.resolve(folder);
+            File serverDir = FileSystem.SERVERS.resolve(folder).toFile();
 
             Server server;
 
             try (InputStreamReader fileReader = new InputStreamReader(
-                Files.newInputStream(serverDir.resolve( "server.json")),
+                new FileInputStream(new File(serverDir, "server.json")),
                 StandardCharsets.UTF_8)) {
                 server = Gsons.DEFAULT.fromJson(fileReader, Server.class);
-                server.ROOT = serverDir;
+                server.ROOT = serverDir.toPath();
                 LogManager.debug("Loaded server from " + serverDir);
             } catch (Exception e) {
                 LogManager.logStackTrace("Failed to load server in the folder " + serverDir, e);

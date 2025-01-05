@@ -57,6 +57,7 @@ import com.atlauncher.utils.OS;
 import net.freeutils.httpserver.HTTPServer;
 import net.freeutils.httpserver.HTTPServer.VirtualHost;
 
+@SuppressWarnings("serial")
 public final class LoginWithMicrosoftDialog extends JDialog {
     private static final HTTPServer server = new HTTPServer(Constants.MICROSOFT_LOGIN_REDIRECT_PORT);
     private static final VirtualHost host = server.getVirtualHost(null);
@@ -85,9 +86,12 @@ public final class LoginWithMicrosoftDialog extends JDialog {
         linkPanel.add(linkTextField, BorderLayout.SOUTH);
 
         JButton linkCopyButton = new JButton("Copy");
-        linkCopyButton.addActionListener(e -> {
-            linkTextField.selectAll();
-            OS.copyToClipboard(Constants.MICROSOFT_LOGIN_URL);
+        linkCopyButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                linkTextField.selectAll();
+                OS.copyToClipboard(Constants.MICROSOFT_LOGIN_URL);
+            }
         });
         linkPanel.add(linkCopyButton);
 
@@ -166,7 +170,7 @@ public final class LoginWithMicrosoftDialog extends JDialog {
     private void addAccount(OauthTokenResponse oauthTokenResponse, XboxLiveAuthResponse xstsAuthResponse,
             LoginResponse loginResponse, Profile profile) throws Exception {
         if (account != null || AccountManager.isAccountByName(loginResponse.username)) {
-            MicrosoftAccount account = AccountManager.getAccountByName(loginResponse.username);
+            MicrosoftAccount account = (MicrosoftAccount) AccountManager.getAccountByName(loginResponse.username);
 
             if (account == null) {
                 return;

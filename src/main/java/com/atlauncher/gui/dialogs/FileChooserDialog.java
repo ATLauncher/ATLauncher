@@ -51,6 +51,7 @@ import com.atlauncher.dbus.DBusUtils;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
 
+@SuppressWarnings("serial")
 public class FileChooserDialog extends JDialog {
 
     private final JTextField textField;

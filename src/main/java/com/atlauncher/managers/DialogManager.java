@@ -166,7 +166,7 @@ public final class DialogManager {
     }
 
     public Object[] getOptions() {
-        if (this.options.isEmpty()) {
+        if (this.options.size() == 0) {
             return null;
         }
 
@@ -272,7 +272,7 @@ public final class DialogManager {
 
             if (options == null) {
                 if (selectedValue instanceof Integer) {
-                    return (Integer) selectedValue;
+                    return ((Integer) selectedValue).intValue();
                 }
                 return CLOSED_OPTION;
             }

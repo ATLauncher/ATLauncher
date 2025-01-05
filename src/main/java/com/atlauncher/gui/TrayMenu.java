@@ -37,6 +37,7 @@ import com.atlauncher.network.Analytics;
 import com.atlauncher.network.analytics.AnalyticsEvent;
 import com.atlauncher.utils.OS;
 
+@SuppressWarnings("serial")
 public final class TrayMenu extends JPopupMenu {
 
     private final JMenuItem killMinecraftButton = new JMenuItem(GetText.tr("Kill Minecraft"));

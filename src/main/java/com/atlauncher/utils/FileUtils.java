@@ -71,7 +71,7 @@ public class FileUtils {
         com.sun.jna.platform.FileUtils fileUtils = com.sun.jna.platform.FileUtils.getInstance();
         if (fileUtils.hasTrash()) {
             try {
-                fileUtils.moveToTrash(path.toFile());
+                fileUtils.moveToTrash(new File[] { path.toFile() });
                 return true;
             } catch (IOException e) {
                 return delete(path, false);

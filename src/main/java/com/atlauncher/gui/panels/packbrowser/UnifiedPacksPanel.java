@@ -56,7 +56,7 @@ public class UnifiedPacksPanel extends PackBrowserPlatformPanel {
         }
 
         List<UnifiedModPackResultsFragment> items = new ArrayList<>();
-        if (search.isEmpty()) {
+        if (search.isEmpty() || search.length() == 0) {
             UnifiedModPackHomeQuery.Data response = GraphqlClient
                     .callAndWait(new UnifiedModPackHomeQuery());
 
@@ -77,7 +77,7 @@ public class UnifiedPacksPanel extends PackBrowserPlatformPanel {
             }
         }
 
-        if (items.isEmpty()) {
+        if (items.size() == 0) {
             contentPanel.removeAll();
             contentPanel.add(
                     new NilCard(new HTMLBuilder().text(GetText
@@ -94,7 +94,7 @@ public class UnifiedPacksPanel extends PackBrowserPlatformPanel {
         gbc.fill = GridBagConstraints.BOTH;
 
         List<UnifiedPackCard> cards = items.stream()
-                .map(UnifiedPackCard::new)
+                .map(p -> new UnifiedPackCard(p))
                 .collect(Collectors.toList());
 
         contentPanel.removeAll();

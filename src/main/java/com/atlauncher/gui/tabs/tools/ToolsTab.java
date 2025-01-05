@@ -25,24 +25,20 @@ import javax.swing.JPanel;
 
 import org.mini2Dx.gettext.GetText;
 
-import com.atlauncher.gui.panels.HierarchyPanel;
 import com.atlauncher.gui.tabs.Tab;
 
-public class ToolsTab extends HierarchyPanel implements Tab {
-
-    private IToolsViewModel viewModel;
+@SuppressWarnings("serial")
+public class ToolsTab extends JPanel implements Tab {
 
     public ToolsTab() {
-        super(new BorderLayout());
+        setLayout(new BorderLayout());
         setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-    }
 
-    @Override
-    protected void onShow() {
         JPanel mainPanel = new JPanel();
 
         mainPanel.setLayout(new GridLayout(3, 2, 10, 10));
 
+        final IToolsViewModel viewModel = new ToolsViewModel();
         mainPanel.add(new NetworkCheckerToolPanel(viewModel));
         mainPanel.add(new LogClearerToolPanel(viewModel));
         mainPanel.add(new DebugModePanel(viewModel));
@@ -61,15 +57,5 @@ public class ToolsTab extends HierarchyPanel implements Tab {
     @Override
     public String getAnalyticsScreenViewName() {
         return "Tools";
-    }
-
-    @Override
-    protected void createViewModel() {
-        viewModel = new ToolsViewModel();
-    }
-
-    @Override
-    protected void onDestroy() {
-        removeAll();
     }
 }

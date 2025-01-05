@@ -54,33 +54,34 @@ import com.atlauncher.constants.UIConstants;
 import com.atlauncher.data.MCVersionRow;
 import com.atlauncher.data.minecraft.loaders.LoaderType;
 import com.atlauncher.data.minecraft.loaders.LoaderVersion;
+import com.atlauncher.evnt.listener.RelocalizationListener;
+import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.gui.components.LockingPreservingCaretTextSetter;
-import com.atlauncher.gui.panels.HierarchyPanel;
 import com.atlauncher.listener.StatefulTextKeyAdapter;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.utils.ComboItem;
 import com.atlauncher.viewmodel.base.ICreatePackViewModel;
 import com.atlauncher.viewmodel.impl.CreatePackViewModel;
 
-public class CreatePackTab extends HierarchyPanel implements Tab {
-    private JTextField nameField;
-    private JTextArea descriptionField;
-    private JCheckBox minecraftVersionReleasesFilterCheckbox;
-    private JCheckBox minecraftVersionExperimentsFilterCheckbox;
-    private JCheckBox minecraftVersionSnapshotsFilterCheckbox;
-    private JCheckBox minecraftVersionBetasFilterCheckbox;
-    private JCheckBox minecraftVersionAlphasFilterCheckbox;
-    private ButtonGroup loaderTypeButtonGroup;
-    private JRadioButton loaderTypeNoneRadioButton;
-    private JRadioButton loaderTypeFabricRadioButton;
-    private JRadioButton loaderTypeForgeRadioButton;
-    private JRadioButton loaderTypeLegacyFabricRadioButton;
-    private JRadioButton loaderTypeNeoForgeRadioButton;
-    private JRadioButton loaderTypeQuiltRadioButton;
-    private JComboBox<ComboItem<LoaderVersion>> loaderVersionsDropDown;
-    private JButton createServerButton;
-    private JButton createInstanceButton;
-    private ICreatePackViewModel viewModel;
+public class CreatePackTab extends JPanel implements Tab, RelocalizationListener {
+    private final JTextField nameField = new JTextField(32);
+    private final JTextArea descriptionField = new JTextArea(2, 40);
+    private final JCheckBox minecraftVersionReleasesFilterCheckbox = new JCheckBox(getReleasesText());
+    private final JCheckBox minecraftVersionExperimentsFilterCheckbox = new JCheckBox(getExperimentsText());
+    private final JCheckBox minecraftVersionSnapshotsFilterCheckbox = new JCheckBox(getSnapshotsText());
+    private final JCheckBox minecraftVersionBetasFilterCheckbox = new JCheckBox(getBetasText());
+    private final JCheckBox minecraftVersionAlphasFilterCheckbox = new JCheckBox(getAlphasText());
+    private final ButtonGroup loaderTypeButtonGroup = new ButtonGroup();
+    private final JRadioButton loaderTypeNoneRadioButton = new JRadioButton(getNoneText());
+    private final JRadioButton loaderTypeFabricRadioButton = new JRadioButton("Fabric");
+    private final JRadioButton loaderTypeForgeRadioButton = new JRadioButton("Forge");
+    private final JRadioButton loaderTypeLegacyFabricRadioButton = new JRadioButton("Legacy Fabric");
+    private final JRadioButton loaderTypeNeoForgeRadioButton = new JRadioButton("NeoForge");
+    private final JRadioButton loaderTypeQuiltRadioButton = new JRadioButton("Quilt");
+    private final JComboBox<ComboItem<LoaderVersion>> loaderVersionsDropDown = new JComboBox<>();
+    private final JButton createServerButton = new JButton(getCreateServerText());
+    private final JButton createInstanceButton = new JButton(getCreateInstanceText());
+    private final ICreatePackViewModel viewModel = new CreatePackViewModel();
     /**
      * Last time the loaderVersion has been changed.
      * <p>
@@ -95,6 +96,9 @@ public class CreatePackTab extends HierarchyPanel implements Tab {
     public CreatePackTab() {
         super(new BorderLayout());
         setName("createPackPanel");
+        setupMainPanel();
+        setupBottomPanel();
+        RelocalizationManager.addListener(this);
     }
 
     private String getReleasesText() {
@@ -190,7 +194,7 @@ public class CreatePackTab extends HierarchyPanel implements Tab {
         JPanel minecraftVersionFilterPanel = new JPanel();
         minecraftVersionFilterPanel.setLayout(new BoxLayout(minecraftVersionFilterPanel, BoxLayout.Y_AXIS));
         JLabel minecraftVersionFilterLabel = new JLabel(GetText.tr("Filter"));
-        addDisposable(viewModel.font().subscribe(minecraftVersionFilterLabel::setFont));
+        viewModel.font().subscribe(minecraftVersionFilterLabel::setFont);
         minecraftVersionFilterPanel.add(minecraftVersionFilterLabel);
 
         // Release checkbox
@@ -257,9 +261,9 @@ public class CreatePackTab extends HierarchyPanel implements Tab {
         gbc.gridx++;
         gbc.insets = UIConstants.FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-        addDisposable(viewModel.loaderVersionsDropDownEnabled().subscribe(loaderVersionsDropDown::setEnabled));
+        viewModel.loaderVersionsDropDownEnabled().subscribe(loaderVersionsDropDown::setEnabled);
 
-        addDisposable(viewModel.loaderVersions().subscribe((loaderVersionsOptional) -> {
+        viewModel.loaderVersions().subscribe((loaderVersionsOptional) -> {
             loaderVersionsDropDown.removeAllItems();
             if (!loaderVersionsOptional.isPresent()) {
                 setEmpty();
@@ -275,7 +279,7 @@ public class CreatePackTab extends HierarchyPanel implements Tab {
                             getFontMetrics(App.THEME.getNormalFont())
                                     .stringWidth(version.toString()) + 25);
 
-                    loaderVersionsDropDown.addItem(new ComboItem<>(version, version.toString()));
+                    loaderVersionsDropDown.addItem(new ComboItem(version, version.toString()));
                 }
 
                 // ensures that the dropdown is at least 200 px wide
@@ -286,13 +290,13 @@ public class CreatePackTab extends HierarchyPanel implements Tab {
                 loaderVersionsDropDown.setPreferredSize(new Dimension(loaderVersionLength, 23));
 
             }
-        }));
-        addDisposable(viewModel.selectedLoaderVersionIndex().subscribe((index) -> {
+        });
+        viewModel.selectedLoaderVersionIndex().subscribe((index) -> {
             if (loaderVersionsDropDown.getItemAt(index) != null) {
                 loaderVersionLastChange = System.currentTimeMillis();
                 loaderVersionsDropDown.setSelectedIndex(index);
             }
-        }));
+        });
         loaderVersionsDropDown.addActionListener((e) -> {
             // A user cannot change the loader version in under 100 ms. It is physically
             // impossible.
@@ -309,14 +313,14 @@ public class CreatePackTab extends HierarchyPanel implements Tab {
             }
         });
 
-        addDisposable(viewModel.loaderLoading().subscribe((it) -> {
+        viewModel.loaderLoading().subscribe((it) -> {
             loaderVersionsDropDown.removeAllItems();
             if (it) {
                 loaderVersionsDropDown.addItem(new ComboItem<>(null, GetText.tr("Getting Loader Versions")));
             } else {
                 setEmpty();
             }
-        }));
+        });
         mainPanel.add(loaderVersionsDropDown, gbc);
         add(mainPanel, BorderLayout.CENTER);
     }
@@ -326,19 +330,21 @@ public class CreatePackTab extends HierarchyPanel implements Tab {
     }
 
     private void setupLoaderQuiltButton(JPanel loaderTypePanel) {
-        addDisposable(viewModel.loaderTypeQuiltSelected().subscribe(loaderTypeQuiltRadioButton::setSelected));
-        addDisposable(viewModel.loaderTypeQuiltEnabled().subscribe(loaderTypeQuiltRadioButton::setEnabled));
-        addDisposable(viewModel.isQuiltVisible().subscribe(loaderTypeQuiltRadioButton::setVisible));
-        loaderTypeQuiltRadioButton.addActionListener((e) -> viewModel.setLoaderType(LoaderType.QUILT));
+        viewModel.loaderTypeQuiltSelected().subscribe(loaderTypeQuiltRadioButton::setSelected);
+        viewModel.loaderTypeQuiltEnabled().subscribe(loaderTypeQuiltRadioButton::setEnabled);
+        viewModel.isQuiltVisible().subscribe(loaderTypeQuiltRadioButton::setVisible);
+        loaderTypeQuiltRadioButton.addActionListener((e) -> {
+            viewModel.setLoaderType(LoaderType.QUILT);
+        });
         if (viewModel.showQuiltOption()) {
             loaderTypePanel.add(loaderTypeQuiltRadioButton);
         }
     }
 
     private void setupLoaderForgeButton(JPanel loaderTypePanel) {
-        addDisposable(viewModel.loaderTypeForgeSelected().subscribe(loaderTypeForgeRadioButton::setSelected));
-        addDisposable(viewModel.loaderTypeForgeEnabled().subscribe(loaderTypeForgeRadioButton::setEnabled));
-        addDisposable(viewModel.isForgeVisible().subscribe(loaderTypeForgeRadioButton::setVisible));
+        viewModel.loaderTypeForgeSelected().subscribe(loaderTypeForgeRadioButton::setSelected);
+        viewModel.loaderTypeForgeEnabled().subscribe(loaderTypeForgeRadioButton::setEnabled);
+        viewModel.isForgeVisible().subscribe(loaderTypeForgeRadioButton::setVisible);
         loaderTypeForgeRadioButton.addActionListener((e) -> viewModel.setLoaderType(LoaderType.FORGE));
         if (viewModel.showForgeOption()) {
             loaderTypePanel.add(loaderTypeForgeRadioButton);
@@ -346,9 +352,9 @@ public class CreatePackTab extends HierarchyPanel implements Tab {
     }
 
     private void setupLoaderLegacyFabricButton(JPanel loaderTypePanel) {
-        addDisposable(viewModel.loaderTypeLegacyFabricSelected().subscribe(loaderTypeLegacyFabricRadioButton::setSelected));
-        addDisposable(viewModel.loaderTypeLegacyFabricEnabled().subscribe(loaderTypeLegacyFabricRadioButton::setEnabled));
-        addDisposable(viewModel.isLegacyFabricVisible().subscribe(loaderTypeLegacyFabricRadioButton::setVisible));
+        viewModel.loaderTypeLegacyFabricSelected().subscribe(loaderTypeLegacyFabricRadioButton::setSelected);
+        viewModel.loaderTypeLegacyFabricEnabled().subscribe(loaderTypeLegacyFabricRadioButton::setEnabled);
+        viewModel.isLegacyFabricVisible().subscribe(loaderTypeLegacyFabricRadioButton::setVisible);
         loaderTypeLegacyFabricRadioButton.addActionListener(
                 e -> viewModel.setLoaderType(
                         LoaderType.LEGACY_FABRIC));
@@ -358,9 +364,9 @@ public class CreatePackTab extends HierarchyPanel implements Tab {
     }
 
     private void setupLoaderNeoForgeButton(JPanel loaderTypePanel) {
-        addDisposable(viewModel.loaderTypeNeoForgeSelected().subscribe(loaderTypeNeoForgeRadioButton::setSelected));
-        addDisposable(viewModel.loaderTypeNeoForgeEnabled().subscribe(loaderTypeNeoForgeRadioButton::setEnabled));
-        addDisposable(viewModel.isNeoForgeVisible().subscribe(loaderTypeNeoForgeRadioButton::setVisible));
+        viewModel.loaderTypeNeoForgeSelected().subscribe(loaderTypeNeoForgeRadioButton::setSelected);
+        viewModel.loaderTypeNeoForgeEnabled().subscribe(loaderTypeNeoForgeRadioButton::setEnabled);
+        viewModel.isNeoForgeVisible().subscribe(loaderTypeNeoForgeRadioButton::setVisible);
         loaderTypeNeoForgeRadioButton.addActionListener(
                 e -> viewModel.setLoaderType(
                         LoaderType.NEOFORGE));
@@ -370,9 +376,9 @@ public class CreatePackTab extends HierarchyPanel implements Tab {
     }
 
     private void setupLoaderFabricButton(JPanel loaderTypePanel) {
-        addDisposable(viewModel.loaderTypeFabricSelected().subscribe(loaderTypeFabricRadioButton::setSelected));
-        addDisposable(viewModel.loaderTypeFabricEnabled().subscribe(loaderTypeFabricRadioButton::setEnabled));
-        addDisposable(viewModel.isFabricVisible().subscribe(loaderTypeFabricRadioButton::setVisible));
+        viewModel.loaderTypeFabricSelected().subscribe(loaderTypeFabricRadioButton::setSelected);
+        viewModel.loaderTypeFabricEnabled().subscribe(loaderTypeFabricRadioButton::setEnabled);
+        viewModel.isFabricVisible().subscribe(loaderTypeFabricRadioButton::setVisible);
         loaderTypeFabricRadioButton.addActionListener(
                 e -> viewModel.setLoaderType(
                         LoaderType.FABRIC));
@@ -382,15 +388,17 @@ public class CreatePackTab extends HierarchyPanel implements Tab {
     }
 
     private void setupLoaderNoneButton(JPanel loaderTypePanel) {
-        addDisposable(viewModel.loaderTypeNoneSelected().subscribe(loaderTypeNoneRadioButton::setSelected));
-        addDisposable(viewModel.loaderTypeNoneEnabled().subscribe(loaderTypeNoneRadioButton::setEnabled));
-        loaderTypeNoneRadioButton.addActionListener((e) -> viewModel.setLoaderType(null));
+        viewModel.loaderTypeNoneSelected().subscribe(loaderTypeNoneRadioButton::setSelected);
+        viewModel.loaderTypeNoneEnabled().subscribe(loaderTypeNoneRadioButton::setEnabled);
+        loaderTypeNoneRadioButton.addActionListener((e) -> {
+            viewModel.setLoaderType(null);
+        });
         loaderTypePanel.add(loaderTypeNoneRadioButton);
     }
 
     private void setupOldAlphasCheckbox(JPanel minecraftVersionFilterPanel) {
-        addDisposable(viewModel.oldAlphaSelected().subscribe(minecraftVersionAlphasFilterCheckbox::setSelected));
-        addDisposable(viewModel.oldAlphaEnabled().subscribe(minecraftVersionAlphasFilterCheckbox::setEnabled));
+        viewModel.oldAlphaSelected().subscribe(minecraftVersionAlphasFilterCheckbox::setSelected);
+        viewModel.oldAlphaEnabled().subscribe(minecraftVersionAlphasFilterCheckbox::setEnabled);
         minecraftVersionAlphasFilterCheckbox.addActionListener(
                 it -> viewModel.setOldAlphaSelected(minecraftVersionAlphasFilterCheckbox.isSelected()));
         if (viewModel.showOldAlphaOption()) {
@@ -399,8 +407,8 @@ public class CreatePackTab extends HierarchyPanel implements Tab {
     }
 
     private void setupOldBetasCheckbox(JPanel minecraftVersionFilterPanel) {
-        addDisposable(viewModel.oldBetaSelected().subscribe(minecraftVersionBetasFilterCheckbox::setSelected));
-        addDisposable(viewModel.oldBetaEnabled().subscribe(minecraftVersionBetasFilterCheckbox::setEnabled));
+        viewModel.oldBetaSelected().subscribe(minecraftVersionBetasFilterCheckbox::setSelected);
+        viewModel.oldBetaEnabled().subscribe(minecraftVersionBetasFilterCheckbox::setEnabled);
         minecraftVersionBetasFilterCheckbox.addActionListener(
                 it -> viewModel.setOldBetaSelected(minecraftVersionBetasFilterCheckbox.isSelected()));
         if (viewModel.showOldBetaOption()) {
@@ -409,8 +417,8 @@ public class CreatePackTab extends HierarchyPanel implements Tab {
     }
 
     private void setupSnapshotsCheckbox(JPanel minecraftVersionFilterPanel) {
-        addDisposable(viewModel.snapshotSelected().subscribe(minecraftVersionSnapshotsFilterCheckbox::setSelected));
-        addDisposable(viewModel.snapshotEnabled().subscribe(minecraftVersionSnapshotsFilterCheckbox::setEnabled));
+        viewModel.snapshotSelected().subscribe(minecraftVersionSnapshotsFilterCheckbox::setSelected);
+        viewModel.snapshotEnabled().subscribe(minecraftVersionSnapshotsFilterCheckbox::setEnabled);
         minecraftVersionSnapshotsFilterCheckbox.addActionListener(
                 it -> viewModel.setSnapshotSelected(minecraftVersionSnapshotsFilterCheckbox.isSelected()));
         if (viewModel.showSnapshotOption()) {
@@ -419,8 +427,8 @@ public class CreatePackTab extends HierarchyPanel implements Tab {
     }
 
     private void setupExperimentsCheckbox(JPanel minecraftVersionFilterPanel) {
-        addDisposable(viewModel.experimentSelected().subscribe(minecraftVersionExperimentsFilterCheckbox::setSelected));
-        addDisposable(viewModel.experimentEnabled().subscribe(minecraftVersionExperimentsFilterCheckbox::setEnabled));
+        viewModel.experimentSelected().subscribe(minecraftVersionExperimentsFilterCheckbox::setSelected);
+        viewModel.experimentEnabled().subscribe(minecraftVersionExperimentsFilterCheckbox::setEnabled);
         minecraftVersionExperimentsFilterCheckbox.addActionListener(
                 it -> viewModel.setExperimentSelected(minecraftVersionExperimentsFilterCheckbox.isSelected()));
         if (viewModel.showExperimentOption()) {
@@ -429,8 +437,8 @@ public class CreatePackTab extends HierarchyPanel implements Tab {
     }
 
     private void setupReleaseCheckbox(JPanel minecraftVersionFilterPanel) {
-        addDisposable(viewModel.releaseSelected().subscribe(minecraftVersionReleasesFilterCheckbox::setSelected));
-        addDisposable(viewModel.releaseEnabled().subscribe(minecraftVersionReleasesFilterCheckbox::setEnabled));
+        viewModel.releaseSelected().subscribe(minecraftVersionReleasesFilterCheckbox::setSelected);
+        viewModel.releaseEnabled().subscribe(minecraftVersionReleasesFilterCheckbox::setEnabled);
         minecraftVersionReleasesFilterCheckbox.setSelected(true);
         minecraftVersionReleasesFilterCheckbox.addActionListener(
                 it -> viewModel.setReleaseSelected(minecraftVersionReleasesFilterCheckbox.isSelected()));
@@ -467,9 +475,7 @@ public class CreatePackTab extends HierarchyPanel implements Tab {
                 }
             }
         });
-        addDisposable(viewModel.minecraftVersions().subscribe((minecraftVersions) -> {
-            viewModel.setVersionTableLoading(true);
-
+        viewModel.minecraftVersions().subscribe((minecraftVersions) -> {
             // remove all rows
             int rowCount = 0;
             if (minecraftVersionTableModel != null)
@@ -495,10 +501,8 @@ public class CreatePackTab extends HierarchyPanel implements Tab {
             // refresh the table
             if (minecraftVersionTable != null)
                 minecraftVersionTable.revalidate();
-
-            viewModel.setVersionTableLoading(false);
-        }));
-        addDisposable(viewModel.selectedMinecraftVersionIndex().subscribe(it -> {
+        });
+        viewModel.selectedMinecraftVersionIndex().subscribe(it -> {
             if (minecraftVersionTable != null) {
                 int rowCount = minecraftVersionTable.getRowCount();
 
@@ -507,7 +511,7 @@ public class CreatePackTab extends HierarchyPanel implements Tab {
                     minecraftVersionTable.revalidate();
                 }
             }
-        }));
+        });
 
         TableColumnModel cm = minecraftVersionTable.getColumnModel();
         cm.getColumn(0).setResizable(false);
@@ -538,10 +542,12 @@ public class CreatePackTab extends HierarchyPanel implements Tab {
             }
             viewModel.createServer();
         });
-        addDisposable(viewModel.createInstanceEnabled().subscribe(createInstanceButton::setEnabled));
-        addDisposable(viewModel.createServerEnabled().subscribe(createServerButton::setEnabled));
+        viewModel.createInstanceEnabled().subscribe(createInstanceButton::setEnabled);
+        viewModel.createServerEnabled().subscribe(createServerButton::setEnabled);
         bottomPanel.add(createInstanceButton);
-        createInstanceButton.addActionListener((event) -> viewModel.createInstance());
+        createInstanceButton.addActionListener((event) -> {
+            viewModel.createInstance();
+        });
         add(bottomPanel, BorderLayout.SOUTH);
     }
 
@@ -556,53 +562,15 @@ public class CreatePackTab extends HierarchyPanel implements Tab {
     }
 
     @Override
-    protected void createViewModel() {
-        viewModel = new CreatePackViewModel();
+    public void onRelocalization() {
+        minecraftVersionReleasesFilterCheckbox.setText(getReleasesText());
+        minecraftVersionExperimentsFilterCheckbox.setText(getExperimentsText());
+        minecraftVersionSnapshotsFilterCheckbox.setText(getSnapshotsText());
+        minecraftVersionBetasFilterCheckbox.setText(getBetasText());
+        minecraftVersionAlphasFilterCheckbox.setText(getAlphasText());
+        loaderTypeNoneRadioButton.setText(getNoneText());
+        createServerButton.setText(getCreateServerText());
+        createInstanceButton.setText(getCreateInstanceText());
     }
 
-    @Override
-    protected void onShow() {
-        nameField = new JTextField(32);
-        descriptionField = new JTextArea(2, 40);
-        minecraftVersionReleasesFilterCheckbox = new JCheckBox(getReleasesText());
-        minecraftVersionExperimentsFilterCheckbox = new JCheckBox(getExperimentsText());
-        minecraftVersionSnapshotsFilterCheckbox = new JCheckBox(getSnapshotsText());
-        minecraftVersionBetasFilterCheckbox = new JCheckBox(getBetasText());
-        minecraftVersionAlphasFilterCheckbox = new JCheckBox(getAlphasText());
-        loaderTypeButtonGroup = new ButtonGroup();
-        loaderTypeNoneRadioButton = new JRadioButton(getNoneText());
-        loaderTypeFabricRadioButton = new JRadioButton("Fabric");
-        loaderTypeForgeRadioButton = new JRadioButton("Forge");
-        loaderTypeLegacyFabricRadioButton = new JRadioButton("Legacy Fabric");
-        loaderTypeNeoForgeRadioButton = new JRadioButton("NeoForge");
-        loaderTypeQuiltRadioButton = new JRadioButton("Quilt");
-        loaderVersionsDropDown = new JComboBox<>();
-        createServerButton = new JButton(getCreateServerText());
-        createInstanceButton = new JButton(getCreateInstanceText());
-
-        setupMainPanel();
-        setupBottomPanel();
-    }
-
-    @Override
-    protected void onDestroy() {
-        removeAll();
-        nameField = null;
-        descriptionField = null;
-        minecraftVersionReleasesFilterCheckbox = null;
-        minecraftVersionExperimentsFilterCheckbox = null;
-        minecraftVersionSnapshotsFilterCheckbox = null;
-        minecraftVersionBetasFilterCheckbox = null;
-        minecraftVersionAlphasFilterCheckbox = null;
-        loaderTypeButtonGroup = null;
-        loaderTypeNoneRadioButton = null;
-        loaderTypeFabricRadioButton = null;
-        loaderTypeForgeRadioButton = null;
-        loaderTypeLegacyFabricRadioButton = null;
-        loaderTypeNeoForgeRadioButton = null;
-        loaderTypeQuiltRadioButton = null;
-        loaderVersionsDropDown = null;
-        createServerButton = null;
-        createInstanceButton = null;
-    }
 }

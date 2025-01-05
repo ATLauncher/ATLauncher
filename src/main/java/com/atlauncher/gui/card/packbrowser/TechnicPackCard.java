@@ -44,6 +44,7 @@ import com.atlauncher.network.Analytics;
 import com.atlauncher.network.analytics.AnalyticsEvent;
 import com.atlauncher.utils.OS;
 
+@SuppressWarnings("serial")
 public class TechnicPackCard extends JPanel implements RelocalizationListener {
     private final JButton newInstanceButton = new JButton(GetText.tr("Install"));
     private final JButton websiteButton = new JButton(GetText.tr("Website"));
@@ -75,7 +76,7 @@ public class TechnicPackCard extends JPanel implements RelocalizationListener {
                         .setContent(GetText.tr("Cannot create instance as you have no account selected."))
                         .setType(DialogManager.ERROR).show();
 
-                if (AccountManager.getAccounts().isEmpty()) {
+                if (AccountManager.getAccounts().size() == 0) {
                     App.navigate(UIConstants.LAUNCHER_ACCOUNTS_TAB);
                 }
             } else {

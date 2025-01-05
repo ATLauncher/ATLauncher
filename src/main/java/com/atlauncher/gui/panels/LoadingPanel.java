@@ -28,6 +28,7 @@ import org.mini2Dx.gettext.GetText;
 
 import com.atlauncher.utils.Utils;
 
+@SuppressWarnings("serial")
 public class LoadingPanel extends JPanel {
     public LoadingPanel() {
         this(GetText.tr("Loading..."));

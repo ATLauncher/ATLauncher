@@ -116,7 +116,7 @@ public class ArchiveUtils {
         try {
             InputStream is = createInputStream(archivePath);
             try (
-                ArchiveInputStream<ArchiveEntry> ais = new ArchiveStreamFactory().createArchiveInputStream("ZIP", is)) {
+                    ArchiveInputStream ais = new ArchiveStreamFactory().createArchiveInputStream("ZIP", is)) {
                 ArchiveEntry entry = null;
                 while ((entry = ais.getNextEntry()) != null) {
                     if (!ais.canReadEntryData(entry)) {
@@ -217,7 +217,7 @@ public class ArchiveUtils {
         // it would be optimal to be aware the below line will cause problems
         // once dbus is setup for export as well
         try (OutputStream os = Files.newOutputStream(archivePath);
-             ArchiveOutputStream<ArchiveEntry> aos = new ArchiveStreamFactory().createArchiveOutputStream("ZIP", os)) {
+                ArchiveOutputStream aos = new ArchiveStreamFactory().createArchiveOutputStream("ZIP", os)) {
 
             Files.walkFileTree(pathToCompress, new SimpleFileVisitor<Path>() {
                 @Override

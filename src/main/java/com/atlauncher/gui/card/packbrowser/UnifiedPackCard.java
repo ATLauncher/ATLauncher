@@ -53,6 +53,7 @@ import com.atlauncher.utils.Markdown;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
 
+@SuppressWarnings("serial")
 public class UnifiedPackCard extends JPanel implements RelocalizationListener {
     private final JButton newInstanceButton = new JButton(GetText.tr("Install"));
     private final JButton createServerButton = new JButton(GetText.tr("Create Server"));
@@ -99,7 +100,7 @@ public class UnifiedPackCard extends JPanel implements RelocalizationListener {
                         .setContent(GetText.tr("Cannot create instance as you have no account selected."))
                         .setType(DialogManager.ERROR).show();
 
-                if (AccountManager.getAccounts().isEmpty()) {
+                if (AccountManager.getAccounts().size() == 0) {
                     App.navigate(UIConstants.LAUNCHER_ACCOUNTS_TAB);
                 }
             } else {
@@ -111,7 +112,7 @@ public class UnifiedPackCard extends JPanel implements RelocalizationListener {
 
         createServerButton.addActionListener(e -> {
             // user has no instances, they may not be aware this is not how to play
-            if (InstanceManager.getInstances().isEmpty()) {
+            if (InstanceManager.getInstances().size() == 0) {
                 int ret = DialogManager.yesNoDialog().setTitle(GetText.tr("Are you sure you want to create a server?"))
                         .setContent(new HTMLBuilder().center().text(GetText.tr(
                                 "Creating a server won't allow you play Minecraft, it's for letting others play together.<br/><br/>If you just want to play Minecraft, you don't want to create a server, and instead will want to create an instance.<br/><br/>Are you sure you want to create a server?"))
@@ -128,7 +129,7 @@ public class UnifiedPackCard extends JPanel implements RelocalizationListener {
                         .setContent(GetText.tr("Cannot create server as you have no account selected."))
                         .setType(DialogManager.ERROR).show();
 
-                if (AccountManager.getAccounts().isEmpty()) {
+                if (AccountManager.getAccounts().size() == 0) {
                     App.navigate(UIConstants.LAUNCHER_ACCOUNTS_TAB);
                 }
             } else {

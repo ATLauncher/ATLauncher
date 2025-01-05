@@ -297,7 +297,11 @@ public class MicrosoftAccount extends AbstractAccount {
             new LoginWithMicrosoftDialog(this);
         }
 
-        return !hasCancelled;
+        if (hasCancelled) {
+            return false;
+        }
+
+        return true;
     }
 
     public boolean ensureAccessTokenValid() {

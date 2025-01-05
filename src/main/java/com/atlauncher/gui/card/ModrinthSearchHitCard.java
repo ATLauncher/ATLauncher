@@ -90,7 +90,9 @@ public final class ModrinthSearchHitCard extends JPanel {
             removeAl.actionPerformed(e);
             updateInstalledStatus();
         });
-        viewButton.addActionListener(e -> OS.openWebBrowser(String.format("https://modrinth.com/mod/%s", mod.slug)));
+        viewButton.addActionListener(e -> {
+            OS.openWebBrowser(String.format("https://modrinth.com/mod/%s", mod.slug));
+        });
 
         add(summaryPanel, BorderLayout.CENTER);
         add(buttonsPanel, BorderLayout.SOUTH);

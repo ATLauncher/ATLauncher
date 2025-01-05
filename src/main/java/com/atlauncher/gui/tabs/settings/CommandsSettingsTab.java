@@ -19,7 +19,8 @@ package com.atlauncher.gui.tabs.settings;
 
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
-import java.awt.event.ItemEvent;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
@@ -31,22 +32,15 @@ import org.mini2Dx.gettext.GetText;
 import com.atlauncher.App;
 import com.atlauncher.constants.UIConstants;
 import com.atlauncher.gui.components.JLabelWithHover;
-import com.atlauncher.listener.DelayedSavingKeyListener;
-import com.atlauncher.viewmodel.impl.settings.CommandsSettingsViewModel;
 
-public class CommandsSettingsTab extends AbstractSettingsTab {
-    private final CommandsSettingsViewModel viewModel;
-    private JTextField preLaunchCommand;
-    private JTextField postExitCommand;
-    private JTextField wrapperCommand;
-    private JCheckBox enableCommands;
+public class CommandsSettingsTab extends AbstractSettingsTab implements ActionListener {
+    private final JTextField preLaunchCommand;
+    private final JTextField postExitCommand;
+    private final JTextField wrapperCommand;
 
-    public CommandsSettingsTab(CommandsSettingsViewModel viewModel) {
-        this.viewModel = viewModel;
-    }
+    private final JCheckBox enableCommands;
 
-    @Override
-    protected void onShow() {
+    public CommandsSettingsTab() {
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.gridwidth = 1;
@@ -55,7 +49,7 @@ public class CommandsSettingsTab extends AbstractSettingsTab {
 
         // region Enable Checkbox
         JLabel enableCommandsLabel = new JLabelWithHover(GetText.tr("Enable commands") + "?", HELP_ICON,
-            GetText.tr("This allows you to turn launch/exit commands on or off."));
+                GetText.tr("This allows you to turn launch/exit commands on or off."));
         add(enableCommandsLabel, gbc);
 
         nextColumn();
@@ -63,7 +57,7 @@ public class CommandsSettingsTab extends AbstractSettingsTab {
 
         enableCommands = new JCheckBox();
         enableCommands.setSelected(App.settings.enableCommands);
-        enableCommands.addItemListener(e -> viewModel.setEnableCommands(e.getStateChange() == ItemEvent.SELECTED));
+        enableCommands.addActionListener(this);
         add(enableCommands, gbc);
 
         nextRow();
@@ -71,22 +65,14 @@ public class CommandsSettingsTab extends AbstractSettingsTab {
 
         // region Pre-launch command
         JLabelWithHover preLaunchCommandLabel = new JLabelWithHover(GetText.tr("Pre-launch command") + ":", HELP_ICON,
-            GetText.tr(
-                "This command will be run before the instance launches. The game will not run until the command has finished."));
+                GetText.tr(
+                        "This command will be run before the instance launches. The game will not run until the command has finished."));
         add(preLaunchCommandLabel, gbc);
 
         nextColumn();
 
         preLaunchCommand = new JTextField(App.settings.preLaunchCommand, 32);
         preLaunchCommand.setPreferredSize(new Dimension(516, 24));
-        preLaunchCommand.addKeyListener(
-            new DelayedSavingKeyListener(
-                100,
-                () -> viewModel.setPreLaunchCommand(preLaunchCommand.getText()),
-                viewModel::setPreLaunchCommandPending
-            )
-        );
-        addDisposable(viewModel.getPreLaunchCommand().subscribe(preLaunchCommand::setText));
         add(preLaunchCommand, gbc);
 
         nextRow();
@@ -94,22 +80,14 @@ public class CommandsSettingsTab extends AbstractSettingsTab {
 
         // region Post-exit command
         JLabelWithHover postExitCommandLabel = new JLabelWithHover(GetText.tr("Post-exit command") + ":", HELP_ICON,
-            GetText.tr(
-                "This command will be run after the instance exits. It will run even if the instance is killed or if it crashes and exits."));
+                GetText.tr(
+                        "This command will be run after the instance exits. It will run even if the instance is killed or if it crashes and exits."));
         add(postExitCommandLabel, gbc);
 
         nextColumn();
 
         postExitCommand = new JTextField(App.settings.postExitCommand, 32);
         postExitCommand.setPreferredSize(new Dimension(516, 24));
-        postExitCommand.addKeyListener(
-            new DelayedSavingKeyListener(
-                100,
-                () -> viewModel.setPostExitCommand(postExitCommand.getText()),
-                viewModel::setPostExitCommandPending
-            )
-        );
-        addDisposable(viewModel.getPostExitCommand().subscribe(postExitCommand::setText));
         add(postExitCommand, gbc);
 
         nextRow();
@@ -117,22 +95,14 @@ public class CommandsSettingsTab extends AbstractSettingsTab {
 
         // region Wrapper command
         JLabelWithHover wrapperCommandLabel = new JLabelWithHover(GetText.tr("Wrapper command") + ":", HELP_ICON,
-            GetText.tr(
-                "Wrapper command allow launcher using an extra wrapper program (like 'prime-run' on Linux)\nUse %command% to substitute launch command\n%\"command\"% to substitute launch as a whole string (like 'bash -c' on Linux)"));
+                GetText.tr(
+                        "Wrapper command allow launcher using an extra wrapper program (like 'prime-run' on Linux)\nUse %command% to substitute launch command\n%\"command\"% to substitute launch as a whole string (like 'bash -c' on Linux)"));
         add(wrapperCommandLabel, gbc);
 
         nextColumn();
 
         wrapperCommand = new JTextField(App.settings.wrapperCommand, 32);
         wrapperCommand.setPreferredSize(new Dimension(516, 24));
-        wrapperCommand.addKeyListener(
-            new DelayedSavingKeyListener(
-                100,
-                () -> viewModel.setWrapperCommand(wrapperCommand.getText()),
-                viewModel::setWrapperCommandPending
-            )
-        );
-        addDisposable(viewModel.getWrapperCommand().subscribe(wrapperCommand::setText));
         add(wrapperCommand, gbc);
 
         nextRow();
@@ -144,40 +114,26 @@ public class CommandsSettingsTab extends AbstractSettingsTab {
 
         JTextPane parameterInformation = new JTextPane();
         parameterInformation
-            .setText(GetText.tr("Commands will be run in the directory of the instance that is launched/exited.")
-                + System.lineSeparator() + GetText.tr("The following variables are available for each command")
-                + ":" + System.lineSeparator() + "$INST_NAME: " + GetText.tr("The name of the instance")
-                + System.lineSeparator() + "$INST_ID: "
-                + GetText.tr("The name of the instance's root directory") + System.lineSeparator()
-                + "$INST_DIR: " + GetText.tr("The absolute path to the instance directory")
-                + System.lineSeparator() + "$INST_MC_DIR: " + GetText.tr("Alias for") + " $INST_DIR"
-                + System.lineSeparator() + "$INST_JAVA: "
-                + GetText.tr("The absolute path to the java executable used for launch")
-                + System.lineSeparator() + "$INST_JAVA_ARGS: "
-                + GetText.tr("The JVM parameters used for launch") + System.lineSeparator());
+                .setText(GetText.tr("Commands will be run in the directory of the instance that is launched/exited.")
+                        + System.lineSeparator() + GetText.tr("The following variables are available for each command")
+                        + ":" + System.lineSeparator() + "$INST_NAME: " + GetText.tr("The name of the instance")
+                        + System.lineSeparator() + "$INST_ID: "
+                        + GetText.tr("The name of the instance's root directory") + System.lineSeparator()
+                        + "$INST_DIR: " + GetText.tr("The absolute path to the instance directory")
+                        + System.lineSeparator() + "$INST_MC_DIR: " + GetText.tr("Alias for") + " $INST_DIR"
+                        + System.lineSeparator() + "$INST_JAVA: "
+                        + GetText.tr("The absolute path to the java executable used for launch")
+                        + System.lineSeparator() + "$INST_JAVA_ARGS: "
+                        + GetText.tr("The JVM parameters used for launch") + System.lineSeparator());
         parameterInformation.setEditable(false);
 
         add(parameterInformation, gbc);
         // endregion
 
-        addDisposable(
-            viewModel.getEnableCommands().subscribe(it -> {
-                if (it) {
-                    enableCommands();
-                } else {
-                    disableCommands();
-                }
-            })
-        );
-    }
-
-    @Override
-    protected void onDestroy() {
-        removeAll();
-        preLaunchCommand = null;
-        postExitCommand = null;
-        wrapperCommand = null;
-        enableCommands = null;
+        if (enableCommands.isSelected())
+            enableCommands();
+        else
+            disableCommands();
     }
 
     private void disableCommands() {
@@ -215,7 +171,26 @@ public class CommandsSettingsTab extends AbstractSettingsTab {
         return "Commands";
     }
 
+    public void save() {
+        App.settings.enableCommands = enableCommands.isSelected();
+        App.settings.preLaunchCommand = nullIfEmpty(preLaunchCommand.getText());
+        App.settings.postExitCommand = nullIfEmpty(postExitCommand.getText());
+        App.settings.wrapperCommand = nullIfEmpty(wrapperCommand.getText());
+    }
+
+    private String nullIfEmpty(String str) {
+        if (str.isEmpty())
+            return null;
+        else
+            return str;
+    }
+
     @Override
-    protected void createViewModel() {
+    public void actionPerformed(ActionEvent e) {
+        if (enableCommands.isSelected()) {
+            enableCommands();
+        } else {
+            disableCommands();
+        }
     }
 }

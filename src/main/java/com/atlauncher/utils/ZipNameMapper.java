@@ -39,7 +39,9 @@ public class ZipNameMapper {
         return null;
     };
 
-    public static final NameMapper FULL_BACKUP = name -> name;
+    public static final NameMapper FULL_BACKUP = name -> {
+        return name;
+    };
 
     public static NameMapper getMapperForBackupMode(BackupMode backupMode) {
         if (backupMode == BackupMode.NORMAL) {

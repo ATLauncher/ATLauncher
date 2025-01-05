@@ -84,7 +84,7 @@ public class LegacyFabricLoader implements Loader {
     }
 
     private LegacyFabricMetaProfile getLoader(String version) {
-        if (ConfigManager.getConfigItem("useGraphql.loaderVersionsNonForge", false)) {
+        if (ConfigManager.getConfigItem("useGraphql.loaderVersionsNonForge", false) == true) {
             GetLegacyFabricLoaderVersionQuery.Data response = GraphqlClient
                     .callAndWait(GetLegacyFabricLoaderVersionQuery.builder().legacyFabricVersion(version)
                             .minecraftVersion(this.minecraft).includeClientJson(
@@ -112,12 +112,12 @@ public class LegacyFabricLoader implements Loader {
     }
 
     public String getLatestVersion() {
-        if (ConfigManager.getConfigItem("useGraphql.loaderVersionsNonForge", false)) {
+        if (ConfigManager.getConfigItem("useGraphql.loaderVersionsNonForge", false) == true) {
             GetLatestLegacyFabricLoaderVersionQuery.Data response = GraphqlClient
                     .callAndWait(new GetLatestLegacyFabricLoaderVersionQuery());
 
             if (response == null || response.legacyFabricLoaderVersions() == null
-                    || response.legacyFabricLoaderVersions().isEmpty()) {
+                    || response.legacyFabricLoaderVersions().size() == 0) {
                 return null;
             }
 
@@ -131,7 +131,7 @@ public class LegacyFabricLoader implements Loader {
                 .setUrl(String.format("https://meta.legacyfabric.net/v2/versions/loader/%s?limit=1", this.minecraft))
                 .asType(type);
 
-        if (loaders == null || loaders.isEmpty()) {
+        if (loaders == null || loaders.size() == 0) {
             return null;
         }
 
@@ -140,7 +140,11 @@ public class LegacyFabricLoader implements Loader {
 
     @Override
     public List<Library> getLibraries() {
-        return new ArrayList<>(this.version.libraries);
+        List<Library> libraries = new ArrayList<>();
+
+        libraries.addAll(this.version.libraries);
+
+        return libraries;
     }
 
     private List<File> getLibraryFiles() {
@@ -280,15 +284,15 @@ public class LegacyFabricLoader implements Loader {
         try {
             List<String> disabledVersions = ConfigManager.getConfigItem(
                     "loaders.legacyfabric.disabledVersions",
-                new ArrayList<>());
+                    new ArrayList<String>());
 
-            if (ConfigManager.getConfigItem("useGraphql.loaderVersionsNonForge", false)) {
+            if (ConfigManager.getConfigItem("useGraphql.loaderVersionsNonForge", false) == true) {
                 GetLegacyFabricLoaderVersionsForMinecraftVersionQuery.Data response = GraphqlClient
                         .callAndWait(new GetLegacyFabricLoaderVersionsForMinecraftVersionQuery(minecraft));
 
                 if (response == null || response.loaderVersions() == null
                         || response.loaderVersions().legacyfabric() == null
-                        || response.loaderVersions().legacyfabric().isEmpty()) {
+                        || response.loaderVersions().legacyfabric().size() == 0) {
                     return null;
                 }
 

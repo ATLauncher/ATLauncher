@@ -17,24 +17,29 @@
  */
 package com.atlauncher.evnt.manager;
 
-import javax.annotation.Nonnull;
+import java.util.LinkedList;
+import java.util.List;
+
+import javax.swing.SwingUtilities;
 
 import com.atlauncher.evnt.listener.SettingsListener;
-import com.atlauncher.managers.LogManager;
-
-import io.reactivex.rxjava3.disposables.Disposable;
-import io.reactivex.rxjava3.subjects.PublishSubject;
 
 public final class SettingsManager {
-    private static final PublishSubject<Object> emission = PublishSubject.create();
+    private static final List<SettingsListener> listeners = new LinkedList<>();
 
-    @Nonnull
-    public static synchronized Disposable addListener(SettingsListener listener) {
-        return emission.subscribe((e) -> listener.onSettingsSaved());
+    public static synchronized void addListener(SettingsListener listener) {
+        listeners.add(listener);
+    }
+
+    public static synchronized void removeListener(SettingsListener listener) {
+        listeners.remove(listener);
     }
 
     public static synchronized void post() {
-        LogManager.debug("Settings Post");
-        emission.onNext(0);
+        SwingUtilities.invokeLater(() -> {
+            for (SettingsListener listener : listeners) {
+                listener.onSettingsSaved();
+            }
+        });
     }
 }

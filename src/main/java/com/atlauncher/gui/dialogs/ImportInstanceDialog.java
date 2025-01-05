@@ -56,6 +56,7 @@ import com.atlauncher.utils.ImportPackUtils;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
 
+@SuppressWarnings("serial")
 public class ImportInstanceDialog extends JDialog {
 
     private final JTextField url;
@@ -146,12 +147,15 @@ public class ImportInstanceDialog extends JDialog {
                 }
             } else if (App.settings.useNativeFilePicker) {
                 FileDialog fileDialog = new FileDialog(this, GetText.tr("Select file/s"), FileDialog.LOAD);
-                fileDialog.setFilenameFilter((f, name) -> {
-                    if (f.isDirectory()) {
-                        return true;
-                    }
+                fileDialog.setFilenameFilter(new FilenameFilter() {
+                    @Override
+                    public boolean accept(File f, String name) {
+                        if (f.isDirectory()) {
+                            return true;
+                        }
 
-                    return f.getName().endsWith(".zip");
+                        return f.getName().endsWith(".zip");
+                    }
                 });
                 fileDialog.setVisible(true);
 
@@ -202,7 +206,7 @@ public class ImportInstanceDialog extends JDialog {
                         .setContent(GetText.tr("Cannot create instance as you have no account selected."))
                         .setType(DialogManager.ERROR).show();
 
-                if (AccountManager.getAccounts().isEmpty()) {
+                if (AccountManager.getAccounts().size() == 0) {
                     App.navigate(UIConstants.LAUNCHER_ACCOUNTS_TAB);
                 }
                 return;

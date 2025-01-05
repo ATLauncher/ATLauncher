@@ -107,12 +107,10 @@ public class ForgeLibraryTypeAdapter implements JsonDeserializer<ForgeLibrary> {
                             try {
                                 Request.Builder headRequestBuilder = new Request.Builder()
                                         .url(Constants.DOWNLOAD_SERVER + "/maven/" + artifact.path).head();
-                                try (
-                                    Response headResponse = Network.CLIENT.newCall(headRequestBuilder.build()).execute()
-                                ) {
-                                    if (headResponse.code() == 200) {
-                                        url = Constants.DOWNLOAD_SERVER + "/maven/";
-                                    }
+                                Response headResponse = Network.CLIENT.newCall(headRequestBuilder.build()).execute();
+
+                                if (headResponse.code() == 200) {
+                                    url = Constants.DOWNLOAD_SERVER + "/maven/";
                                 }
                             } catch (IOException ignored) {
                             }

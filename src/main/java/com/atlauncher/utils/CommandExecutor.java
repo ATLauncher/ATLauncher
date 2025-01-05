@@ -179,7 +179,7 @@ public class CommandExecutor {
                     .orElse(instance.javaVersion.component);
 
             if (runtimesForSystem.containsKey(runtimeToUse)
-                    && !runtimesForSystem.get(runtimeToUse).isEmpty()) {
+                    && runtimesForSystem.get(runtimeToUse).size() != 0) {
                 Path runtimeDirectory = FileSystem.MINECRAFT_RUNTIMES.resolve(runtimeToUse)
                         .resolve(JavaRuntimes.getSystem()).resolve(runtimeToUse);
 

@@ -22,7 +22,6 @@ import java.awt.Insets;
 public class UIConstants {
     public static final int SPACING_SMALL = 3;
     public static final int SPACING_LARGE = 5;
-    public static final int SPACING_XLARGE = 10;
 
     public static final Insets LABEL_INSETS = new Insets(SPACING_LARGE, 0, SPACING_LARGE, SPACING_LARGE * 2);
     public static final Insets FIELD_INSETS = new Insets(SPACING_LARGE, 0, SPACING_LARGE, 0);
@@ -50,7 +49,6 @@ public class UIConstants {
     public static final int LAUNCHER_ACCOUNTS_TAB = 5;
     public static final int LAUNCHER_TOOLS_TAB = 6;
     public static final int LAUNCHER_SETTINGS_TAB = 7;
-    public static final int LAUNCHER_ABOUT_TAB = 8;
 
     public static final String getInitialTabName(int initialTab) {
         switch (initialTab) {
@@ -70,8 +68,6 @@ public class UIConstants {
                 return "Tools";
             case UIConstants.LAUNCHER_SETTINGS_TAB:
                 return "Settings";
-            case UIConstants.LAUNCHER_ABOUT_TAB:
-                return "About";
         }
 
         return "Unknown";

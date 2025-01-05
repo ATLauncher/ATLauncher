@@ -23,10 +23,12 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
@@ -36,6 +38,7 @@ import javax.swing.UIManager;
 import org.mini2Dx.gettext.GetText;
 
 import com.atlauncher.App;
+import com.atlauncher.Gsons;
 import com.atlauncher.data.json.Mod;
 import com.atlauncher.gui.components.ModsJCheckBox;
 import com.atlauncher.managers.DialogManager;
@@ -43,6 +46,9 @@ import com.atlauncher.managers.LogManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.Utils;
 import com.atlauncher.workers.InstanceInstaller;
+import com.google.gson.reflect.TypeToken;
+
+import io.github.asyncronous.toast.Toaster;
 
 public class ModsChooser extends JDialog {
     private static final long serialVersionUID = -5309108183485463434L;

@@ -54,6 +54,7 @@ import com.atlauncher.utils.ComboItem;
 import com.atlauncher.utils.MojangAPIUtils;
 import com.atlauncher.utils.Utils;
 
+@SuppressWarnings("serial")
 public class ChangeSkinDialog extends JDialog {
     private JTextField skinPath;
     private JComboBox<ComboItem<String>> skinType;
@@ -219,7 +220,9 @@ public class ChangeSkinDialog extends JDialog {
         bottom.add(uploadButton);
 
         JButton cancelButton = new JButton(GetText.tr("Cancel"));
-        cancelButton.addActionListener(e -> close());
+        cancelButton.addActionListener(e -> {
+            close();
+        });
         bottom.add(cancelButton);
 
         add(top, BorderLayout.NORTH);

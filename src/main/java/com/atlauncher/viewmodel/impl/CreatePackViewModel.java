@@ -235,10 +235,8 @@ public class CreatePackViewModel implements SettingsListener, ICreatePackViewMod
 
     // was null
     private final BehaviorSubject<Optional<String>> selectedMinecraftVersionFlow = BehaviorSubject.create();
-    private final BehaviorSubject<Boolean> isVersionTableLoading = BehaviorSubject.createDefault(true);
 
     public final Observable<Integer> selectedMinecraftVersionIndex = combineLatest(
-        combineLatest(
             minecraftVersions,
             selectedMinecraftVersionFlow,
             (versions, version) -> {
@@ -255,14 +253,7 @@ public class CreatePackViewModel implements SettingsListener, ICreatePackViewMod
                 if (index == -1)
                     return 0;
                 return index;
-            }),
-        isVersionTableLoading,
-        Pair::new
-    ).mapOptional((pair)-> {
-        // if the table is not loading, we can provide the index
-        // read mapOptional documentation ofc
-        if (!pair.right()) return Optional.of(pair.left()); else return Optional.empty();
-    } ).subscribeOn(Schedulers.computation());
+            }).subscribeOn(Schedulers.computation());
 
     private final BehaviorSubject<Optional<LoaderType>> selectedLoaderType = BehaviorSubject.create();
 
@@ -728,17 +719,22 @@ public class CreatePackViewModel implements SettingsListener, ICreatePackViewMod
 
     private void install(Boolean isServer) {
         if (AccountManager.getSelectedAccount() == null) {
-            DialogManager dialog = DialogManager.okDialog().setTitle(GetText.tr("No Account Selected"));
-
             if (isServer) {
-                dialog.setContent(GetText.tr("Cannot create server as you have no account selected."));
-            } else {
-                dialog.setContent(GetText.tr("Cannot create instance as you have no account selected."));
-            }
+                DialogManager.okDialog().setTitle(GetText.tr("No Account Selected"))
+                        .setContent(GetText.tr("Cannot create server as you have no account selected."))
+                        .setType(DialogManager.ERROR).show();
 
-            dialog.setType(DialogManager.ERROR).show();
-            if (AccountManager.getAccounts().isEmpty()) {
-                App.navigate(UIConstants.LAUNCHER_ACCOUNTS_TAB);
+                if (AccountManager.getAccounts().size() == 0) {
+                    App.navigate(UIConstants.LAUNCHER_ACCOUNTS_TAB);
+                }
+            } else {
+                DialogManager.okDialog().setTitle(GetText.tr("No Account Selected"))
+                        .setContent(GetText.tr("Cannot create instance as you have no account selected."))
+                        .setType(DialogManager.ERROR).show();
+
+                if (AccountManager.getAccounts().size() == 0) {
+                    App.navigate(UIConstants.LAUNCHER_ACCOUNTS_TAB);
+                }
             }
             return;
         }
@@ -905,12 +901,7 @@ public class CreatePackViewModel implements SettingsListener, ICreatePackViewMod
 
     @Override
     public Boolean warnUserAboutServer() {
-        return InstanceManager.getInstances().isEmpty();
-    }
-
-    @Override
-    public void setVersionTableLoading(boolean isLoading) {
-        isVersionTableLoading.onNext(isLoading);
+        return InstanceManager.getInstances().size() == 0;
     }
 
     private List<LoaderVersion> apolloLoad(
@@ -997,7 +988,7 @@ public class CreatePackViewModel implements SettingsListener, ICreatePackViewMod
                                 .collect(Collectors.toList()));
                         break;
                 }
-            if (loaderVersionsList.isEmpty()) {
+            if (loaderVersionsList.size() == 0) {
                 setLoaderGroupEnabled(false);
                 return singletonList(noLoaderVersions);
             }
@@ -1050,7 +1041,7 @@ public class CreatePackViewModel implements SettingsListener, ICreatePackViewMod
                 break;
         }
 
-        if (loaderVersionsList.isEmpty()) {
+        if (loaderVersionsList.size() == 0) {
             setLoaderGroupEnabled(false);
             return singletonList(noLoaderVersions);
         }

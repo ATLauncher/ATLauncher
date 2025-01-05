@@ -25,6 +25,7 @@ import javax.swing.JPanel;
 
 import org.mini2Dx.gettext.GetText;
 
+@SuppressWarnings("serial")
 public class NoCurseModsPanel extends JPanel {
     public NoCurseModsPanel(boolean hasSearch) {
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));

@@ -91,7 +91,7 @@ public class JavaFinder {
                     } catch (Exception ignored) {
                     }
 
-                    if (!foundPaths.isEmpty()) {
+                    if (foundPaths.size() != 0) {
                         javaExecs.addAll(foundPaths);
                     }
                 }
@@ -129,7 +129,7 @@ public class JavaFinder {
                     } catch (Exception ignored) {
                     }
 
-                    if (!foundPaths.isEmpty()) {
+                    if (foundPaths.size() != 0) {
                         javaExecs.addAll(foundPaths);
                     }
                 }

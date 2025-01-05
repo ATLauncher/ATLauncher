@@ -18,10 +18,10 @@
 package com.atlauncher.utils;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Locale;
 import java.util.Optional;
@@ -191,14 +191,16 @@ public class ImportPackUtils {
             } else if (fileLocation2.exists()) {
                 FileUtils.moveFile(fileLocation2.toPath(), tempZip, true);
             }
+
+            return loadCurseForgeFormat(tempZip.toFile(), projectId, fileId);
         } else {
             try {
                 Download download = new Download().setUrl(curseFile.downloadUrl).downloadTo(tempZip)
                         .size(curseFile.fileLength);
 
-                Optional<CurseForgeFileHash> md5Hash = curseFile.hashes.stream().filter(CurseForgeFileHash::isMd5)
+                Optional<CurseForgeFileHash> md5Hash = curseFile.hashes.stream().filter(h -> h.isMd5())
                         .findFirst();
-                Optional<CurseForgeFileHash> sha1Hash = curseFile.hashes.stream().filter(CurseForgeFileHash::isSha1)
+                Optional<CurseForgeFileHash> sha1Hash = curseFile.hashes.stream().filter(h -> h.isSha1())
                         .findFirst();
 
                 if (md5Hash.isPresent()) {
@@ -214,9 +216,9 @@ public class ImportPackUtils {
                 LogManager.error("Failed to download modpack file from CurseForge");
                 return false;
             }
-        }
 
-        return loadCurseForgeFormat(tempZip.toFile(), projectId, fileId);
+            return loadCurseForgeFormat(tempZip.toFile(), projectId, fileId);
+        }
     }
 
     public static boolean loadFromModrinthUrl(String url) {
@@ -258,7 +260,7 @@ public class ImportPackUtils {
     public static boolean loadFromFile(File file) {
         try {
             Path tmpDir = FileSystem.TEMP
-                    .resolve("multimcimport" + file.getName().toLowerCase(Locale.ENGLISH));
+                    .resolve("multimcimport" + file.getName().toString().toLowerCase(Locale.ENGLISH));
 
             ArchiveUtils.extract(file.toPath(), tmpDir);
 
@@ -296,7 +298,7 @@ public class ImportPackUtils {
         }
 
         Path tmpDir = FileSystem.TEMP
-                .resolve("curseforgeimport" + file.getName().toLowerCase(Locale.ENGLISH));
+                .resolve("curseforgeimport" + file.getName().toString().toLowerCase(Locale.ENGLISH));
 
         try {
             CurseForgeManifest manifest = Gsons.DEFAULT.fromJson(ArchiveUtils.getFile(file.toPath(), "manifest.json"),
@@ -353,7 +355,7 @@ public class ImportPackUtils {
             }
         }
 
-        Path tmpDir = FileSystem.TEMP.resolve("modrinthimport" + file.getName().toLowerCase(Locale.ENGLISH));
+        Path tmpDir = FileSystem.TEMP.resolve("modrinthimport" + file.getName().toString().toLowerCase(Locale.ENGLISH));
 
         try {
             ModrinthModpackManifest manifest = Gsons.DEFAULT
@@ -389,10 +391,10 @@ public class ImportPackUtils {
 
     public static boolean loadMultiMCFormat(Path extractedPath) {
         try (InputStreamReader fileReader = new InputStreamReader(
-            Files.newInputStream(extractedPath.resolve("mmc-pack.json")),
+                new FileInputStream(extractedPath.resolve("mmc-pack.json").toFile()),
                 StandardCharsets.UTF_8);
                 InputStreamReader instanceCfgStream = new InputStreamReader(
-                    Files.newInputStream(extractedPath.resolve("instance.cfg")),
+                        new FileInputStream(extractedPath.resolve("instance.cfg").toFile()),
                         StandardCharsets.UTF_8)) {
             MultiMCManifest manifest = Gsons.DEFAULT.fromJson(fileReader, MultiMCManifest.class);
 

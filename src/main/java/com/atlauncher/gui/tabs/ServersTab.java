@@ -19,8 +19,6 @@ package com.atlauncher.gui.tabs;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
@@ -33,18 +31,19 @@ import org.mini2Dx.gettext.GetText;
 
 import com.atlauncher.App;
 import com.atlauncher.builders.HTMLBuilder;
-import com.atlauncher.constants.UIConstants;
 import com.atlauncher.evnt.listener.RelocalizationListener;
+import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.gui.card.NilCard;
 import com.atlauncher.gui.card.ServerCard;
-import com.atlauncher.gui.panels.HierarchyPanel;
+import com.atlauncher.gui.layouts.WrapLayout;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.network.analytics.AnalyticsEvent;
 import com.atlauncher.viewmodel.base.IServersTabViewModel;
 import com.atlauncher.viewmodel.impl.ServersTabViewModel;
 import com.formdev.flatlaf.icons.FlatSearchIcon;
 
-public class ServersTab extends HierarchyPanel implements Tab, RelocalizationListener {
+@SuppressWarnings("serial")
+public class ServersTab extends JPanel implements Tab, RelocalizationListener {
     private JTextField searchBox;
 
     private JPanel panel;
@@ -57,20 +56,20 @@ public class ServersTab extends HierarchyPanel implements Tab, RelocalizationLis
                     NilCard.Action.createDownloadServerAction()
             });
 
-    private IServersTabViewModel viewModel;
+    private final IServersTabViewModel viewModel = new ServersTabViewModel();
 
     public ServersTab() {
-        super(new BorderLayout());
+        setLayout(new BorderLayout());
+        createView();
+        RelocalizationManager.addListener(this);
     }
 
-    @Override
-    protected void onShow() {
+    public void createView() {
         JPanel topPanel = new JPanel();
         topPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
 
         searchBox = new JTextField(16);
-        addDisposable(
-                viewModel.getSearchObservable().subscribe(it -> searchBox.setText(it.orElse(null))));
+        viewModel.getSearchObservable().subscribe(it -> searchBox.setText(it.orElse(null)));
         searchBox.addKeyListener(new KeyAdapter() {
             public void keyReleased(KeyEvent e) {
                 if (e.getKeyChar() == KeyEvent.VK_ENTER) {
@@ -83,7 +82,10 @@ public class ServersTab extends HierarchyPanel implements Tab, RelocalizationLis
         searchBox.putClientProperty("JTextField.placeholderText", GetText.tr("Search"));
         searchBox.putClientProperty("JTextField.leadingIcon", new FlatSearchIcon());
         searchBox.putClientProperty("JTextField.showClearButton", true);
-        searchBox.putClientProperty("JTextField.clearCallback", (Runnable) () -> viewModel.setSearchSubject(""));
+        searchBox.putClientProperty("JTextField.clearCallback", (Runnable) () -> {
+            viewModel.setSearchSubject("");
+        });
+
         topPanel.add(searchBox);
 
         add(topPanel, BorderLayout.NORTH);
@@ -94,15 +96,9 @@ public class ServersTab extends HierarchyPanel implements Tab, RelocalizationLis
         scrollPane.getVerticalScrollBar().setUnitIncrement(16);
         add(scrollPane, BorderLayout.CENTER);
 
-        panel.setLayout(new GridBagLayout());
-
-        addDisposable(viewModel.getServersObservable().subscribe(servers -> {
-            GridBagConstraints gbc = new GridBagConstraints();
-            gbc.gridx = gbc.gridy = 0;
-            gbc.weightx = 1.0;
-            gbc.insets = UIConstants.FIELD_INSETS_SMALL;
-            gbc.fill = GridBagConstraints.BOTH;
-
+        viewModel.getServersObservable().subscribe(servers -> {
+            viewModel.setViewPosition(scrollPane.getVerticalScrollBar().getValue());
+            panel.setLayout(new WrapLayout(WrapLayout.LEFT, 8, 8));
             panel.removeAll();
 
             servers.forEach(server -> {
@@ -117,10 +113,8 @@ public class ServersTab extends HierarchyPanel implements Tab, RelocalizationLis
             validate();
             repaint();
             searchBox.requestFocus();
-        }));
-
-        addDisposable(
-                viewModel.getViewPosition().subscribe(scrollPane.getVerticalScrollBar()::setValue));
+        });
+        viewModel.getViewPosition().subscribe(scrollPane.getVerticalScrollBar()::setValue);
     }
 
     @Override
@@ -140,16 +134,12 @@ public class ServersTab extends HierarchyPanel implements Tab, RelocalizationLis
     }
 
     @Override
-    protected void createViewModel() {
-        viewModel = new ServersTabViewModel();
-    }
-
-    @Override
-    protected void onDestroy() {
-        viewModel.setViewPosition(scrollPane.getVerticalScrollBar().getValue());
-        removeAll();
-        searchBox = null;
-        panel = null;
-        scrollPane = null;
+    public void onRelocalization() {
+        searchBox.putClientProperty("JTextField.placeholderText", GetText.tr("Search"));
+        nilCard.setMessage(getNilMessage());
+        nilCard.setActions(new NilCard.Action[] {
+                NilCard.Action.createCreateServerAction(),
+                NilCard.Action.createDownloadServerAction()
+        });
     }
 }

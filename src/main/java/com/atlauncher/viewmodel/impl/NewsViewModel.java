@@ -17,42 +17,55 @@
  */
 package com.atlauncher.viewmodel.impl;
 
-import java.util.List;
+import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
 
-import com.atlauncher.data.AbstractNews;
+import org.jetbrains.annotations.NotNull;
+
+import com.apollographql.apollo.ApolloCall;
+import com.apollographql.apollo.api.Response;
+import com.apollographql.apollo.api.cache.http.HttpCachePolicy;
+import com.apollographql.apollo.api.cache.http.HttpCachePolicy.FetchStrategy;
+import com.apollographql.apollo.exception.ApolloException;
+import com.atlauncher.graphql.GetNewsQuery;
+import com.atlauncher.managers.ConfigManager;
+import com.atlauncher.managers.LogManager;
 import com.atlauncher.managers.NewsManager;
+import com.atlauncher.network.GraphqlClient;
 import com.atlauncher.viewmodel.base.INewsViewModel;
-import com.gitlab.doomsdayrs.lib.rxswing.schedulers.SwingSchedulers;
-
-import io.reactivex.rxjava3.core.Observable;
 
 public class NewsViewModel implements INewsViewModel {
-    private final Observable<String> newsHTML = NewsManager
-        .getNews()
-        .map(NewsViewModel::newsAsHTML)
-        .observeOn(SwingSchedulers.edt());
+    private Consumer<String> _onReload;
 
     @Override
-    public Observable<String> getNewsHTML() {
-        return newsHTML;
+    public void addOnReloadListener(Consumer<String> onReload) {
+        _onReload = onReload;
     }
 
-    /**
-     * Takes a list of news items from GraphQL query and transforms into HTML.
-     *
-     * @return The HTML for displaying on the News Panel
-     */
-    static String newsAsHTML(List<AbstractNews> newsItems) {
-        StringBuilder news = new StringBuilder("<html>");
+    @Override
+    public void reload() {
+        // Ignore reloads if nothing is waiting for the content
+        if (_onReload == null) return;
 
-        for (AbstractNews newsItem : newsItems) {
-            news.append(newsItem.htmlEntry).append("<hr/>");
+        if (ConfigManager.getConfigItem("useGraphql.news", false)) {
+            GraphqlClient.apolloClient.query(new GetNewsQuery(10))
+                .toBuilder()
+                .httpCachePolicy(new HttpCachePolicy.Policy(FetchStrategy.CACHE_FIRST, 30, TimeUnit.MINUTES, false))
+                .build()
+                .enqueue(new ApolloCall.Callback<GetNewsQuery.Data>() {
+                    @Override
+                    public void onResponse(@NotNull Response<GetNewsQuery.Data> response) {
+                        _onReload.accept(NewsManager.getNewsHTML(response.getData().generalNews()));
+                    }
+
+                    @Override
+                    public void onFailure(@NotNull ApolloException e) {
+                        LogManager.logStackTrace("Error fetching news", e);
+                        _onReload.accept(NewsManager.getNewsHTML());
+                    }
+                });
+        } else {
+            _onReload.accept(NewsManager.getNewsHTML());
         }
-
-        // remove the last <hr/>
-        news = new StringBuilder(news.substring(0, news.length() - 5));
-        news.append("</html>");
-
-        return news.toString();
     }
 }

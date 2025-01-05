@@ -33,6 +33,7 @@ import javax.swing.JPanel;
 
 import com.atlauncher.App;
 
+@SuppressWarnings("serial")
 public class FileTypeDialog extends JDialog {
 
     private final JComboBox<String> selector;

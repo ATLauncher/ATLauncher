@@ -17,6 +17,8 @@
  */
 package com.atlauncher.utils;
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
@@ -93,7 +95,7 @@ public class SecurityUtils {
     private static void loadFractureiserScannedHashes() {
         if (!hasLoadedFractureiserScannedHashes && Files.exists(FileSystem.FRACTURISER_SCANNED_HASHES)) {
             try (InputStreamReader fileReader = new InputStreamReader(
-                Files.newInputStream(FileSystem.FRACTURISER_SCANNED_HASHES), StandardCharsets.UTF_8)) {
+                    new FileInputStream(FileSystem.FRACTURISER_SCANNED_HASHES.toFile()), StandardCharsets.UTF_8)) {
                 Type stringListType = new TypeToken<List<String>>() {
                 }.getType();
                 List<String> scannedHashes = Gsons.DEFAULT.fromJson(fileReader, stringListType);
@@ -109,7 +111,7 @@ public class SecurityUtils {
 
     private static void saveFractureiserScannedHashes() {
         try (OutputStreamWriter fileWriter = new OutputStreamWriter(
-            Files.newOutputStream(FileSystem.FRACTURISER_SCANNED_HASHES), StandardCharsets.UTF_8)) {
+                new FileOutputStream(FileSystem.FRACTURISER_SCANNED_HASHES.toFile()), StandardCharsets.UTF_8)) {
             Type stringListType = new TypeToken<List<String>>() {
             }.getType();
             Gsons.DEFAULT.toJson(FRACTURISER_SCANNED_HASHES, stringListType, fileWriter);

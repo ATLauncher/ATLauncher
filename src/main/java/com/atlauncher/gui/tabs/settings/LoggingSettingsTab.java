@@ -18,56 +18,23 @@
 package com.atlauncher.gui.tabs.settings;
 
 import java.awt.GridBagConstraints;
-import java.awt.event.ItemEvent;
 
 import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
 
 import org.mini2Dx.gettext.GetText;
 
+import com.atlauncher.App;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.constants.UIConstants;
 import com.atlauncher.gui.components.JLabelWithHover;
-import com.atlauncher.viewmodel.impl.settings.LoggingSettingsViewModel;
 
+@SuppressWarnings("serial")
 public class LoggingSettingsTab extends AbstractSettingsTab {
+    private final JCheckBox enableLogs;
 
-    private final LoggingSettingsViewModel viewModel;
+    private final JCheckBox enableAnalytics;
 
-    public LoggingSettingsTab(LoggingSettingsViewModel viewModel) {
-        this.viewModel = viewModel;
-    }
-
-    @Override
-    protected void onShow() {
-        // Forge Logging Level
-        gbc.gridx = 0;
-        gbc.gridy++;
-        gbc.insets = UIConstants.LABEL_INSETS;
-        gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        JLabelWithHover forgeLoggingLevelLabel = new JLabelWithHover(GetText.tr("Forge Logging Level") + ":", HELP_ICON,
-                "<html>" + GetText.tr("This determines the type of logging that Forge should report back to you.")
-                        + "</html>");
-        add(forgeLoggingLevelLabel, gbc);
-
-        gbc.gridx++;
-        gbc.insets = UIConstants.FIELD_INSETS;
-        gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-        JComboBox<String> forgeLoggingLevel = new JComboBox<>();
-        forgeLoggingLevel.addItem("SEVERE");
-        forgeLoggingLevel.addItem("WARNING");
-        forgeLoggingLevel.addItem("INFO");
-        forgeLoggingLevel.addItem("CONFIG");
-        forgeLoggingLevel.addItem("FINE");
-        forgeLoggingLevel.addItem("FINER");
-        forgeLoggingLevel.addItem("FINEST");
-        forgeLoggingLevel.addItemListener(itemEvent -> {
-            if (itemEvent.getStateChange() == ItemEvent.SELECTED)
-                viewModel.setLoggingLevel((String) itemEvent.getItem());
-        });
-        addDisposable(viewModel.getForgeLoggingLevel().subscribe(forgeLoggingLevel::setSelectedItem));
-        add(forgeLoggingLevel, gbc);
-
+    public LoggingSettingsTab() {
         // Enable Logging
 
         gbc.gridx = 0;
@@ -83,9 +50,10 @@ public class LoggingSettingsTab extends AbstractSettingsTab {
         gbc.gridx++;
         gbc.insets = UIConstants.CHECKBOX_FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-        JCheckBox enableLogs = new JCheckBox();
-        enableLogs.addActionListener(e -> viewModel.setEnableLogging(enableLogs.isSelected()));
-        addDisposable(viewModel.getEnableLogging().subscribe(enableLogs::setSelected));
+        enableLogs = new JCheckBox();
+        if (App.settings.enableLogs) {
+            enableLogs.setSelected(true);
+        }
         add(enableLogs, gbc);
 
         // Enable Analytics
@@ -104,10 +72,16 @@ public class LoggingSettingsTab extends AbstractSettingsTab {
         gbc.gridx++;
         gbc.insets = UIConstants.CHECKBOX_FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-        JCheckBox enableAnalytics = new JCheckBox();
-        enableAnalytics.addActionListener(e -> viewModel.setEnableAnalytics(enableAnalytics.isSelected()));
-        addDisposable(viewModel.getEnableAnalytics().subscribe(enableAnalytics::setSelected));
+        enableAnalytics = new JCheckBox();
+        if (App.settings.enableAnalytics) {
+            enableAnalytics.setSelected(true);
+        }
         add(enableAnalytics, gbc);
+    }
+
+    public void save() {
+        App.settings.enableLogs = enableLogs.isSelected();
+        App.settings.enableAnalytics = enableAnalytics.isSelected();
     }
 
     @Override
@@ -118,14 +92,5 @@ public class LoggingSettingsTab extends AbstractSettingsTab {
     @Override
     public String getAnalyticsScreenViewName() {
         return "Logging";
-    }
-
-    @Override
-    protected void createViewModel() {
-    }
-
-    @Override
-    protected void onDestroy() {
-        removeAll();
     }
 }

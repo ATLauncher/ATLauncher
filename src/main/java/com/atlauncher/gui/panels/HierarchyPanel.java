@@ -41,7 +41,7 @@ import io.reactivex.rxjava3.disposables.Disposable;
  * <p>
  * If child class subscribes to Observables, use addDisposable to manage subscriptions.
  */
-public abstract class HierarchyPanel extends JPanel implements HierarchyListener, RelocalizationListener {
+public abstract class HierarchyPanel extends JPanel implements HierarchyListener {
     private final CompositeDisposable disposablePool = new CompositeDisposable();
     /**
      * Used to keep track of the view model lifecycle.
@@ -55,14 +55,6 @@ public abstract class HierarchyPanel extends JPanel implements HierarchyListener
      */
     private boolean isViewCreated = false;
 
-    public HierarchyPanel() {
-        super();
-        addNotify();
-        addHierarchyListener(this);
-
-        RelocalizationManager.addListener(this);
-    }
-
     public HierarchyPanel(LayoutManager layout) {
         super(layout);
         addNotify();
@@ -70,19 +62,17 @@ public abstract class HierarchyPanel extends JPanel implements HierarchyListener
 
         // If the child is a child of RelocalizationListener
         // We can handle relocalization for them
-        RelocalizationManager.addListener(this);
+        if (this instanceof RelocalizationListener) {
+            RelocalizationManager.addListener(this::tryReLocalization);
+        }
     }
-
 
     /**
      * Will only re-localize the view if it is showing.
      */
-    @Override
-    public final void onRelocalization() {
+    private void tryReLocalization() {
         if (isShowing()) {
-            final String className = getClass().getSimpleName();
-            destroy(className);
-            create(className);
+            ((RelocalizationListener) this).onRelocalization();
         }
     }
 
@@ -99,42 +89,34 @@ public abstract class HierarchyPanel extends JPanel implements HierarchyListener
 
         if ((e.getChangeFlags() & HierarchyEvent.SHOWING_CHANGED) != 0) {
             if (isShowing()) {
-                create(className);
+                if (!isViewModelCreated) {
+                    LogManager.debug("Creating view-model for: " + className);
+                    PerformanceManager.start(className + ":ViewModel:Create");
+                    createViewModel();
+                    isViewModelCreated = true;
+                    PerformanceManager.end(className + ":ViewModel:Create");
+                }
+                LogManager.debug("Showing UI for: " + className);
+                PerformanceManager.start(className + ":View:Create");
+                onShow();
+                // Mark view as created for invokeLater to work properly
+                isViewCreated = true;
+                PerformanceManager.end(className + ":View:Create");
             } else {
-                destroy(className);
+                // A little trick here. We can guess the UI has not been created yet if the view model hasn't.
+                // Thus, no need to destroy.
+                if (!isViewModelCreated) return;
+                LogManager.debug("Destroying UI for: " + className);
+                PerformanceManager.start(className + ":View:Destroy");
+                // Stop processes
+                disposablePool.clear();
+                // Destroy layer so the UI can hurry on
+                onDestroy();
+                isViewCreated = false;
+                System.gc(); // Run GC to clear out any now stale data
+                PerformanceManager.end(className + ":View:Destroy");
             }
         }
-    }
-
-    private void create(String className) {
-        if (!isViewModelCreated) {
-            LogManager.debug("Creating view-model for: " + className);
-            PerformanceManager.start(className + ":ViewModel:Create");
-            createViewModel();
-            isViewModelCreated = true;
-            PerformanceManager.end(className + ":ViewModel:Create");
-        }
-        LogManager.debug("Showing UI for: " + className);
-        PerformanceManager.start(className + ":View:Create");
-        onShow();
-        // Mark view as created for invokeLater to work properly
-        isViewCreated = true;
-        PerformanceManager.end(className + ":View:Create");
-    }
-
-    private void destroy(String className) {
-        // A little trick here. We can guess the UI has not been created yet if the view model hasn't.
-        // Thus, no need to destroy.
-        if (!isViewModelCreated) return;
-        LogManager.debug("Destroying UI for: " + className);
-        PerformanceManager.start(className + ":View:Destroy");
-        // Stop processes
-        disposablePool.clear();
-        // Destroy layer so the UI can hurry on
-        onDestroy();
-        isViewCreated = false;
-        System.gc(); // Run GC to clear out any now stale data
-        PerformanceManager.end(className + ":View:Destroy");
     }
 
     /**
@@ -172,5 +154,6 @@ public abstract class HierarchyPanel extends JPanel implements HierarchyListener
                 runnable.run();
             }
         });
+        ;
     }
 }

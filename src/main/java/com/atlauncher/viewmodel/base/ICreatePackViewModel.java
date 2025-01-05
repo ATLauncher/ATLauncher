@@ -407,9 +407,4 @@ public interface ICreatePackViewModel {
      */
     @NotNull
     Boolean warnUserAboutServer();
-
-    /**
-     * @param isLoading is the table loading or not
-     */
-    void setVersionTableLoading(boolean isLoading);
 }

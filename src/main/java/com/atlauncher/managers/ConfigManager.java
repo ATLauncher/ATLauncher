@@ -18,11 +18,11 @@
 package com.atlauncher.managers;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -153,9 +153,9 @@ public class ConfigManager {
         }.getType();
 
         try {
-            Path fileDir = FileSystem.JSON.resolve("config.json");
+            File fileDir = FileSystem.JSON.resolve("config.json").toFile();
             BufferedReader in = new BufferedReader(
-                    new InputStreamReader(Files.newInputStream(fileDir), StandardCharsets.UTF_8));
+                    new InputStreamReader(new FileInputStream(fileDir), StandardCharsets.UTF_8));
 
             Data.CONFIG = Gsons.DEFAULT.fromJson(in, type);
             in.close();
@@ -178,10 +178,10 @@ public class ConfigManager {
     }
 
     private static void afterConfigLoaded() {
-        if (!App.disableErrorReporting && ConfigManager.getConfigItem("errorReporting.enabled", true)) {
+        if (!App.disableErrorReporting && ConfigManager.getConfigItem("errorReporting.enabled", true) == true) {
             ErrorReporting.ignoredMessages.clear();
             ErrorReporting.ignoredMessages
-                    .addAll(ConfigManager.getConfigItem("errorReporting.ignoredMessages", new ArrayList<>()));
+                    .addAll(ConfigManager.getConfigItem("errorReporting.ignoredMessages", new ArrayList<String>()));
 
             // not initiated, so start it up
             if (!ErrorReporting.sentryInitialised) {
@@ -190,7 +190,7 @@ public class ConfigManager {
         }
 
         // error reporting disabled, but we have a client initated, so close it
-        if (!ConfigManager.getConfigItem("errorReporting.enabled", true) && ErrorReporting.sentryInitialised) {
+        if (ConfigManager.getConfigItem("errorReporting.enabled", true) == false && ErrorReporting.sentryInitialised) {
             ErrorReporting.disable();
         }
     }

@@ -57,6 +57,7 @@ import com.atlauncher.utils.Hashing;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
 
+@SuppressWarnings("serial")
 public final class BrowserDownloadDialog extends JDialog {
     private final List<Mod> browserDownloadMods;
     public final List<Mod> modsDownloaded = new ArrayList<>();
@@ -207,6 +208,7 @@ public final class BrowserDownloadDialog extends JDialog {
                         && Hashing.sha512(finalLocation).equals(Hashing.toHashCode(mod.sha512))) {
                     modsDownloaded.add(mod);
                     reloadMainPanel = true;
+                    continue;
                 }
             }
         }
@@ -255,7 +257,9 @@ public final class BrowserDownloadDialog extends JDialog {
         this.bottomPanel.add(skipRemainingButton);
         this.bottomPanel.add(cancelInstallButton);
 
-        openFolderButton.addActionListener(l -> OS.openFileExplorer(downloadPath));
+        openFolderButton.addActionListener(l -> {
+            OS.openFileExplorer(downloadPath);
+        });
 
         openAllButton.addActionListener(l -> {
             for (Mod mod : browserDownloadMods) {
@@ -348,11 +352,15 @@ public final class BrowserDownloadDialog extends JDialog {
                 JPanel buttonPanel = new JPanel(new FlowLayout());
                 JButton openButton = new JButton(GetText.tr("Open"));
                 buttonPanel.add(openButton, gbc);
-                openButton.addActionListener(l -> OS.openWebBrowser(mod.url));
+                openButton.addActionListener(l -> {
+                    OS.openWebBrowser(mod.url);
+                });
 
                 JButton copyLinkButton = new JButton(GetText.tr("Copy Link"));
                 buttonPanel.add(copyLinkButton, gbc);
-                copyLinkButton.addActionListener(l -> OS.copyToClipboard(mod.url));
+                copyLinkButton.addActionListener(l -> {
+                    OS.copyToClipboard(mod.url);
+                });
                 this.mainPanel.add(buttonPanel, gbc);
             }
         }

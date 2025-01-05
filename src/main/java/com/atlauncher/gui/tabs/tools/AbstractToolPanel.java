@@ -29,6 +29,7 @@ import org.mini2Dx.gettext.GetText;
 
 import com.atlauncher.App;
 
+@SuppressWarnings("serial")
 public abstract class AbstractToolPanel extends JPanel {
     protected final JPanel MIDDLE_PANEL = new JPanel();
     protected final JPanel BOTTOM_PANEL = new JPanel(new FlowLayout());

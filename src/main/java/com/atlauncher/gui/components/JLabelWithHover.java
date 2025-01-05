@@ -24,6 +24,7 @@ import javax.swing.border.Border;
 
 import com.atlauncher.gui.HoverLineBorder;
 
+@SuppressWarnings("serial")
 public class JLabelWithHover extends JLabel {
     public JLabelWithHover(Icon icon, String tooltipText, Border border) {
         super();

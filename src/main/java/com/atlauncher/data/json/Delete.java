@@ -36,9 +36,11 @@ public class Delete {
 
     public boolean isAllowed() {
         if (this.base.equalsIgnoreCase("root")) {
-            return !this.target.startsWith("world") && !this.target.startsWith("DIM") && !this.target.startsWith("saves")
-                && !this.target.startsWith("instance.json") && !this.target.contains("./")
-                && !this.target.contains(".\\") && !this.target.contains("~/") && !this.target.contains("~\\");
+            if (this.target.startsWith("world") || this.target.startsWith("DIM") || this.target.startsWith("saves")
+                    || this.target.startsWith("instance.json") || this.target.contains("./")
+                    || this.target.contains(".\\") || this.target.contains("~/") || this.target.contains("~\\")) {
+                return false;
+            }
         }
 
         return true;

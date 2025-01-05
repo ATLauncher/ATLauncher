@@ -93,7 +93,9 @@ public class DBusUtils {
 
             Optional<String[]> selectedFiles = queue.take();
             if (selectedFiles.isPresent()) {
-                return Arrays.stream(selectedFiles.get()).map(File::new).toArray(size -> new File[selectedFiles.get().length]);
+                return Arrays.stream(selectedFiles.get()).map(f -> {
+                    return new File(f);
+                }).toArray(size -> new File[selectedFiles.get().length]);
             }
         } catch (Throwable t) {
             LogManager.logStackTrace("Error selecting files using DBus", t);

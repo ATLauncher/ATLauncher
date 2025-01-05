@@ -21,13 +21,13 @@ import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
 import java.net.Proxy.Type;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -393,7 +393,7 @@ public class Settings {
         boolean needToSave = false;
         int systemMemory = OS.getMaximumRam();
 
-        if (!ConfigManager.getConfigItem("removeInitialMemoryOption", false)) {
+        if (ConfigManager.getConfigItem("removeInitialMemoryOption", false) == false) {
             if (systemMemory != 0 && initialMemory > systemMemory) {
                 LogManager.warn("Tried to allocate " + initialMemory + "MB for initial memory but only " + systemMemory
                         + "MB is available to use!");
@@ -527,7 +527,7 @@ public class Settings {
 
     public void save() {
         try (OutputStreamWriter fileWriter = new OutputStreamWriter(
-            Files.newOutputStream(FileSystem.SETTINGS), StandardCharsets.UTF_8)) {
+                new FileOutputStream(FileSystem.SETTINGS.toFile()), StandardCharsets.UTF_8)) {
             Gsons.DEFAULT.toJson(this, fileWriter);
         } catch (IOException e) {
             LogManager.logStackTrace("Error saving settings", e);

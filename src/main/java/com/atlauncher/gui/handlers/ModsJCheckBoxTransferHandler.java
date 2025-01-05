@@ -76,7 +76,7 @@ public class ModsJCheckBoxTransferHandler extends TransferHandler {
         try {
             @SuppressWarnings("unchecked")
             final List<File> data = (List<File>) ts.getTransferable().getTransferData(DataFlavor.javaFileListFlavor);
-            if (data.isEmpty()) {
+            if (data.size() < 1) {
                 return false;
             }
 
@@ -125,18 +125,19 @@ public class ModsJCheckBoxTransferHandler extends TransferHandler {
                 instanceFile = dialog.instance.ROOT.resolve("mods").toFile();
             }
 
-            final ProgressDialog<Object> progressDialog = new ProgressDialog<>(GetText.tr("Copying Mods"), 0,
+            final ProgressDialog progressDialog = new ProgressDialog(GetText.tr("Copying Mods"), 0,
                     GetText.tr("Copying Mods"), dialog);
 
             progressDialog.addThread(new Thread(() -> {
                 List<DisableableMod> modsAdded = new ArrayList<>();
 
-                for (File item : data) {
+                for (Object item : data) {
+                    File file = (File) item;
                     File copyTo = instanceFile;
 
-                    if (!Utils.isAcceptedModFile(item)) {
+                    if (!Utils.isAcceptedModFile(file)) {
                         DialogManager.okDialog().setTitle(GetText.tr("Invalid File")).setContent(GetText
-                                .tr("Skipping file {0}. Only zip, jar and litemod files can be added.", item.getName()))
+                                .tr("Skipping file {0}. Only zip, jar and litemod files can be added.", file.getName()))
                                 .setType(DialogManager.ERROR).show();
                         continue;
                     }
@@ -149,24 +150,24 @@ public class ModsJCheckBoxTransferHandler extends TransferHandler {
                     mod.disabled = this.disabled;
                     mod.userAdded = true;
                     mod.wasSelected = true;
-                    mod.file = item.getName();
+                    mod.file = file.getName();
                     mod.type = type;
                     mod.optional = true;
-                    mod.name = item.getName();
+                    mod.name = file.getName();
                     mod.version = "Unknown";
                     mod.description = null;
 
-                    MCMod mcMod = Utils.getMCModForFile(item);
+                    MCMod mcMod = Utils.getMCModForFile(file);
                     if (mcMod != null) {
-                        mod.name = Optional.ofNullable(mcMod.name).orElse(item.getName());
+                        mod.name = Optional.ofNullable(mcMod.name).orElse(file.getName());
                         mod.version = Optional.ofNullable(mcMod.version).orElse("Unknown");
-                        mod.description = mcMod.description;
+                        mod.description = Optional.ofNullable(mcMod.description).orElse(null);
                     } else {
-                        FabricMod fabricMod = Utils.getFabricModForFile(item);
+                        FabricMod fabricMod = Utils.getFabricModForFile(file);
                         if (fabricMod != null) {
-                            mod.name = Optional.ofNullable(fabricMod.name).orElse(item.getName());
+                            mod.name = Optional.ofNullable(fabricMod.name).orElse(file.getName());
                             mod.version = Optional.ofNullable(fabricMod.version).orElse("Unknown");
-                            mod.description = fabricMod.description;
+                            mod.description = Optional.ofNullable(fabricMod.description).orElse(null);
                         }
                     }
 
@@ -174,7 +175,7 @@ public class ModsJCheckBoxTransferHandler extends TransferHandler {
                         copyTo.mkdirs();
                     }
 
-                    if (Utils.copyFile(item, copyTo)) {
+                    if (Utils.copyFile(file, copyTo)) {
                         modsAdded.add(mod);
                     }
                 }
@@ -194,7 +195,7 @@ public class ModsJCheckBoxTransferHandler extends TransferHandler {
                                 }
                             });
 
-                    if (!murmurHashes.isEmpty()) {
+                    if (murmurHashes.size() != 0) {
                         CurseForgeFingerprint fingerprintResponse = CurseForgeApi
                                 .checkFingerprints(murmurHashes.keySet().stream().toArray(Long[]::new));
 
@@ -254,12 +255,12 @@ public class ModsJCheckBoxTransferHandler extends TransferHandler {
                                 }
                             });
 
-                    if (!sha1Hashes.isEmpty()) {
+                    if (sha1Hashes.size() != 0) {
                         Set<String> keys = sha1Hashes.keySet();
                         Map<String, ModrinthVersion> modrinthVersions = ModrinthApi
                                 .getVersionsFromSha1Hashes(keys.toArray(new String[keys.size()]));
 
-                        if (modrinthVersions != null && !modrinthVersions.isEmpty()) {
+                        if (modrinthVersions != null && modrinthVersions.size() != 0) {
                             String[] projectIdsFound = modrinthVersions.values().stream().map(mv -> mv.projectId)
                                     .toArray(String[]::new);
 

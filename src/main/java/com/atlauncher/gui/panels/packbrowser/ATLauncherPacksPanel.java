@@ -182,13 +182,14 @@ public class ATLauncherPacksPanel extends PackBrowserPlatformPanel {
     public List<VersionManifestVersion> getSupportedMinecraftVersionsForFiltering() {
         List<VersionManifestVersion> minecraftVersions = new ArrayList<>();
 
-        PackManager.getPacks().forEach(p -> minecraftVersions
-                .addAll(p.versions.stream().map(v -> v.minecraftVersion).distinct().collect(Collectors.toList()))
-        );
+        PackManager.getPacks().stream().forEach(p -> {
+            minecraftVersions
+                    .addAll(p.versions.stream().map(v -> v.minecraftVersion).distinct().collect(Collectors.toList()));
+        });
 
-        return minecraftVersions.stream().distinct().sorted(Comparator.comparingLong((VersionManifestVersion mv) ->
-                ISODateTimeFormat.dateTimeParser().parseDateTime(mv.releaseTime).getMillis() / 1000
-        ).reversed()).collect(Collectors.toList());
+        return minecraftVersions.stream().distinct().sorted(Comparator.comparingLong((VersionManifestVersion mv) -> {
+            return ISODateTimeFormat.dateTimeParser().parseDateTime(mv.releaseTime).getMillis() / 1000;
+        }).reversed()).collect(Collectors.toList());
     }
 
     public boolean supportsManualAdding() {
@@ -206,7 +207,11 @@ public class ATLauncherPacksPanel extends PackBrowserPlatformPanel {
     @Override
     public boolean hasMorePages() {
         // already loaded in all the cards possible, so don't navigate
-        return this.packs.isEmpty() || this.cards.isEmpty() || this.packs.size() != this.cards.size();
+        if (this.packs.size() != 0 && this.cards.size() != 0 && this.packs.size() == this.cards.size()) {
+            return false;
+        }
+
+        return true;
     }
 
     @Override

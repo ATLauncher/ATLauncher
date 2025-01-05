@@ -24,6 +24,7 @@ import org.mini2Dx.gettext.GetText;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.managers.DialogManager;
 
+@SuppressWarnings("serial")
 public class LibrariesDeleterToolPanel extends AbstractToolPanel {
 
     public LibrariesDeleterToolPanel(IToolsViewModel viewModel) {

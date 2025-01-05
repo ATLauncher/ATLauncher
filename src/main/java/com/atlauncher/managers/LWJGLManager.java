@@ -17,6 +17,7 @@
  */
 package com.atlauncher.managers;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
@@ -53,7 +54,7 @@ public class LWJGLManager {
 
         if (Files.exists(lwjglPath)) {
             try (InputStreamReader fileReader = new InputStreamReader(
-                Files.newInputStream(lwjglPath), StandardCharsets.UTF_8)) {
+                    new FileInputStream(lwjglPath.toFile()), StandardCharsets.UTF_8)) {
                 Data.LWJGL_VERSIONS = Gsons.DEFAULT.fromJson(fileReader, LWJGLVersions.class);
             } catch (JsonSyntaxException | IOException | JsonIOException e1) {
                 LogManager.logStackTrace(e1);
@@ -71,7 +72,7 @@ public class LWJGLManager {
         Optional<LWJGLMajorVersion> version = Data.LWJGL_VERSIONS.versions.stream().filter(v -> v.version == 2)
                 .findFirst();
 
-        if (!version.isPresent() || version.get().versions.isEmpty()) {
+        if (!version.isPresent() || version.get().versions.size() == 0) {
             return null;
         }
 
@@ -84,8 +85,11 @@ public class LWJGLManager {
         Optional<LWJGLLibrary> library = Optional
                 .ofNullable(lwjglVersion.libraries.get("lwjgl").get(OS.getLWJGLClassifier()));
 
-        return library.orElse(null);
+        if (!library.isPresent()) {
+            return null;
+        }
 
+        return library.get();
     }
 
     public static Library getReplacementLWJGL3Library(MinecraftVersion minecraftVersion, Library library) {
@@ -98,7 +102,7 @@ public class LWJGLManager {
         Optional<LWJGLMajorVersion> version = Data.LWJGL_VERSIONS.versions.stream().filter(v -> v.version == 3)
                 .findFirst();
 
-        if (!version.isPresent() || version.get().versions.isEmpty()) {
+        if (!version.isPresent() || version.get().versions.size() == 0) {
             LogManager.debug(String.format("Not replacing library %s as major version 3 not found",
                     library.name));
             return library;
@@ -124,7 +128,7 @@ public class LWJGLManager {
 
         // 1.19-pre1 and onwards removed natives/classifiers, but we're worried about
         // the base library, no natives library here
-        if ((library.natives == null || library.natives.isEmpty()) && !library.name.contains(":natives-")) {
+        if ((library.natives == null || library.natives.size() == 0) && !library.name.contains(":natives-")) {
             Optional<LWJGLLibrary> lwjglLibrary = Optional
                     .ofNullable(lwjglVersion.get().libraries.get(libraryName).get("*"));
 
@@ -153,7 +157,7 @@ public class LWJGLManager {
         }
 
         // now worry about 1.19-pre1 format natives
-        if ((library.natives == null || library.natives.isEmpty()) && library.name.contains(":natives-")) {
+        if ((library.natives == null || library.natives.size() == 0) && library.name.contains(":natives-")) {
             Optional<LWJGLLibrary> lwjglLibrary = Optional
                     .ofNullable(lwjglVersion.get().libraries.get(libraryName).get(OS.getLWJGLClassifier()));
 
@@ -183,7 +187,7 @@ public class LWJGLManager {
         }
 
         // now the old version natives format
-        if (library.natives != null && !library.natives.isEmpty()) {
+        if (library.natives != null && library.natives.size() != 0) {
             Optional<LWJGLLibrary> lwjglLibrary = Optional
                     .ofNullable(lwjglVersion.get().libraries.get(libraryName).get(OS.getLWJGLClassifier()));
 
@@ -217,7 +221,7 @@ public class LWJGLManager {
      * We only replace LWJGL 2 if the user is on linux ARM
      */
     public static boolean shouldUseLegacyLWJGL(MinecraftVersion minecraftVersion) {
-        return ConfigManager.getConfigItem("useLwjglReplacement", false) && App.settings.enableArmSupport
+        return ConfigManager.getConfigItem("useLwjglReplacement", false) == true && App.settings.enableArmSupport
                 && usesLegacyLWJGL(minecraftVersion) && OS.isArm() && OS.isLinux();
     }
 
@@ -226,7 +230,7 @@ public class LWJGLManager {
      * Minecraft provides natives for it already)
      */
     public static boolean shouldReplaceLWJGL3(MinecraftVersion minecraftVersion) {
-        return ConfigManager.getConfigItem("useLwjglReplacement", false) && App.settings.enableArmSupport
+        return ConfigManager.getConfigItem("useLwjglReplacement", false) == true && App.settings.enableArmSupport
                 && !usesLegacyLWJGL(minecraftVersion)
                 && (OS.isArm() && (!OS.isMacArm() || !minecraftVersion.libraries.stream().anyMatch(
                         l -> l.name.startsWith("org.lwjgl:lwjgl") && l.name.endsWith("natives-macos-arm64"))));

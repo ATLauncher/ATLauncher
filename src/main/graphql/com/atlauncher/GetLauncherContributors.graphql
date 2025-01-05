@@ -1,9 +1,0 @@
-query GetLauncherContributors {
-    about {
-        contributors {
-            name
-            url
-            avatarUrl
-        }
-    }
-}

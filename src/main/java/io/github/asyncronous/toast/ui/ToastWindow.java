@@ -23,6 +23,7 @@ import io.github.asyncronous.toast.thread.ToastAnimator;
 /**
  * Main Toaster Notification class
  */
+@SuppressWarnings("serial")
 public final class ToastWindow extends JWindow {
     private final JLabel ICON = new JLabel();
     private final JTextArea MESSAGE = new JTextArea();

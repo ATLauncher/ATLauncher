@@ -17,20 +17,29 @@
  */
 package com.atlauncher.evnt.manager;
 
-import com.atlauncher.evnt.listener.RelocalizationListener;
-import com.gitlab.doomsdayrs.lib.rxswing.schedulers.SwingSchedulers;
+import java.util.LinkedList;
+import java.util.List;
 
-import io.reactivex.rxjava3.disposables.Disposable;
-import io.reactivex.rxjava3.subjects.PublishSubject;
+import javax.swing.SwingUtilities;
+
+import com.atlauncher.evnt.listener.RelocalizationListener;
 
 public final class RelocalizationManager {
-    private static final PublishSubject<Object> emission = PublishSubject.create();
+    private static final List<RelocalizationListener> listeners = new LinkedList<>();
 
-    public static synchronized Disposable addListener(RelocalizationListener listener) {
-        return emission.observeOn(SwingSchedulers.edt()).subscribe((e) -> listener.onRelocalization());
+    public static synchronized void addListener(RelocalizationListener listener) {
+        listeners.add(listener);
+    }
+
+    public static synchronized void removeListener(RelocalizationListener listener) {
+        listeners.remove(listener);
     }
 
     public static synchronized void post() {
-        emission.onNext(0);
+        SwingUtilities.invokeLater(() -> {
+            for (RelocalizationListener listener : listeners) {
+                listener.onRelocalization();
+            }
+        });
     }
 }

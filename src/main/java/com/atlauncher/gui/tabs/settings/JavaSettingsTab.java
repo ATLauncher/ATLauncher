@@ -22,79 +22,112 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.io.File;
+import java.util.List;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
-import javax.swing.ScrollPaneConstants;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingUtilities;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import org.mini2Dx.gettext.GetText;
 
 import com.atlauncher.App;
 import com.atlauncher.builders.HTMLBuilder;
+import com.atlauncher.constants.Constants;
 import com.atlauncher.constants.UIConstants;
-import com.atlauncher.data.CheckState;
-import com.atlauncher.data.ScreenResolution;
+import com.atlauncher.evnt.listener.RelocalizationListener;
+import com.atlauncher.evnt.listener.SettingsListener;
+import com.atlauncher.evnt.manager.RelocalizationManager;
+import com.atlauncher.evnt.manager.SettingsManager;
 import com.atlauncher.gui.components.JLabelWithHover;
-import com.atlauncher.listener.DelayedSavingKeyListener;
-import com.atlauncher.listener.StatefulTextKeyAdapter;
+import com.atlauncher.managers.ConfigManager;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.utils.ComboItem;
+import com.atlauncher.utils.Java;
 import com.atlauncher.utils.OS;
-import com.atlauncher.utils.Utils;
-import com.atlauncher.viewmodel.impl.settings.JavaSettingsViewModel;
+import com.atlauncher.utils.javafinder.JavaInfo;
 
-public class JavaSettingsTab extends AbstractSettingsTab {
-    private final JavaSettingsViewModel viewModel;
+@SuppressWarnings("serial")
+public class JavaSettingsTab extends AbstractSettingsTab implements RelocalizationListener, SettingsListener {
+    private JLabelWithHover initialMemoryLabel;
+    private JSpinner initialMemory;
+    private JLabelWithHover initialMemoryLabelWarning;
 
+    private final JLabelWithHover maximumMemoryLabel;
+    private final JSpinner maximumMemory;
+
+    private final JLabelWithHover permGenLabel;
+    private final JSpinner permGen;
+
+    private final JLabelWithHover windowSizeLabel;
+    private final JSpinner widthField;
+    private final JSpinner heightField;
+    private final JComboBox<String> commonScreenSizes;
+    private final JLabelWithHover javaPathLabel;
     private JTextField javaPath;
-    private JLabelWithHover javaPathChecker;
-    private JLabelWithHover javaParamChecker;
-    private JTextArea javaParameters;
+    private final JComboBox<ComboItem<JavaInfo>> installedJavasComboBox;
+    private final JButton javaPathResetButton;
+    private final JButton javaBrowseButton;
+    private final JLabelWithHover javaParametersLabel;
+    private final JTextArea javaParameters;
+    private final JButton javaParametersResetButton;
+    private final JLabelWithHover startMinecraftMaximisedLabel;
+    private final JCheckBox startMinecraftMaximised;
+    private final JLabelWithHover ignoreJavaOnInstanceLaunchLabel;
+    private final JCheckBox ignoreJavaOnInstanceLaunch;
+    private final JLabelWithHover useJavaProvidedByMinecraftLabel;
+    private final JCheckBox useJavaProvidedByMinecraft;
+    private final JTextField baseJavaInstallFolder;
+    private final JLabelWithHover disableLegacyLaunchingLabel;
+    private final JCheckBox disableLegacyLaunching;
+    private final JLabelWithHover useSystemGlfwLabel;
+    private final JCheckBox useSystemGlfw;
+    private final JLabelWithHover useSystemOpenAlLabel;
+    private final JCheckBox useSystemOpenAl;
 
-    public JavaSettingsTab(JavaSettingsViewModel viewModel) {
-        this.viewModel = viewModel;
-    }
+    private boolean initialMemoryWarningShown = false;
+    private boolean permgenWarningShown = false;
 
-    @Override
-    protected void onShow() {
-        Integer systemRam = viewModel.getSystemRam();
-        Integer maximumSystemRamForSpinnerModels = systemRam == null || systemRam == 0 ? null : systemRam;
+    public JavaSettingsTab() {
+        int systemRam = OS.getSystemRam();
 
-        if (viewModel.useInitialMemoryOption()) {
+        RelocalizationManager.addListener(this);
+        SettingsManager.addListener(this);
+
+        if (ConfigManager.getConfigItem("removeInitialMemoryOption", false) == false) {
             // Initial Memory Settings
             gbc.gridx = 0;
             gbc.gridy++;
             gbc.insets = UIConstants.LABEL_INSETS;
             gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
 
-            JLabelWithHover initialMemoryLabelWarning = new JLabelWithHover(WARNING_ICON,
+            initialMemoryLabelWarning = new JLabelWithHover(WARNING_ICON,
                     new HTMLBuilder().center().split(100).text(GetText
                             .tr("You're running a 32 bit Java and therefore cannot use more than 1GB of Ram. Please see http://atl.pw/32bit for help."))
                             .build(),
                     RESTART_BORDER);
 
-            JLabelWithHover initialMemoryLabel = new JLabelWithHover(GetText.tr("Initial Memory/Ram") + ":", HELP_ICON,
+            initialMemoryLabel = new JLabelWithHover(GetText.tr("Initial Memory/Ram") + ":", HELP_ICON,
                     new HTMLBuilder().center().split(100).text(GetText.tr(
                             "Initial memory/ram is the starting amount of memory/ram to use when starting Minecraft. This should be left at the default of 512 MB unless you know what your doing."))
                             .build());
 
             JPanel initialMemoryPanel = new JPanel();
             initialMemoryPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 0, 0));
-            if (viewModel.isJava32Bit()) {
+            if (!Java.is64Bit()) {
                 initialMemoryPanel.add(initialMemoryLabelWarning);
             }
             initialMemoryPanel.add(initialMemoryLabel);
@@ -106,27 +139,33 @@ public class JavaSettingsTab extends AbstractSettingsTab {
             gbc.anchor = GridBagConstraints.BASELINE_LEADING;
             SpinnerNumberModel initialMemoryModel = new SpinnerNumberModel(App.settings.initialMemory, null, null, 128);
             initialMemoryModel.setMinimum(128);
-            initialMemoryModel.setMaximum(maximumSystemRamForSpinnerModels);
-            JSpinner initialMemory = new JSpinner(initialMemoryModel);
+            initialMemoryModel.setMaximum((systemRam == 0 ? null : systemRam));
+            initialMemory = new JSpinner(initialMemoryModel);
             ((JSpinner.DefaultEditor) initialMemory.getEditor()).getTextField().setColumns(5);
-            initialMemory.addChangeListener(e -> {
-                boolean result = viewModel.setInitialRam((Integer) initialMemory.getValue());
+            initialMemory.addChangeListener(new ChangeListener() {
+                @Override
+                public void stateChanged(ChangeEvent e) {
+                    JSpinner s = (JSpinner) e.getSource();
+                    // if initial memory is larger than maximum memory, make maximum memory match
+                    if ((Integer) s.getValue() > (Integer) maximumMemory.getValue()) {
+                        maximumMemory.setValue((Integer) s.getValue());
+                    }
 
-                if (result) {
-                    viewModel.setInitialMemoryWarningShown();
-                    int ret = DialogManager.yesNoDialog().setTitle(GetText.tr("Warning"))
-                            .setType(DialogManager.WARNING)
-                            .setContent(GetText.tr(
-                                    "Setting initial memory above 512MB is not recommended and can cause issues. Are you sure you want to do this?"))
-                            .show();
+                    if ((Integer) s.getValue() > 512 && !initialMemoryWarningShown) {
+                        initialMemoryWarningShown = true;
+                        int ret = DialogManager.yesNoDialog().setTitle(GetText.tr("Warning"))
+                                .setType(DialogManager.WARNING)
+                                .setContent(GetText.tr(
+                                        "Setting initial memory above 512MB is not recommended and can cause issues. Are you sure you want to do this?"))
+                                .show();
 
-                    if (ret != 0) {
-                        viewModel.setInitialRam(512);
+                        if (ret != 0) {
+                            initialMemory.setValue(512);
+                        }
                     }
                 }
             });
             add(initialMemory, gbc);
-            addDisposable(viewModel.getInitialRam().subscribe(initialMemory::setValue));
         }
 
         // Maximum Memory Settings
@@ -135,7 +174,7 @@ public class JavaSettingsTab extends AbstractSettingsTab {
         gbc.gridy++;
         gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        JLabelWithHover maximumMemoryLabel = new JLabelWithHover(GetText.tr("Maximum Memory/Ram") + ":", HELP_ICON,
+        maximumMemoryLabel = new JLabelWithHover(GetText.tr("Maximum Memory/Ram") + ":", HELP_ICON,
                 new HTMLBuilder().center().split(100)
                         .text(GetText.tr("The maximum amount of memory/ram to allocate when starting Minecraft."))
                         .build());
@@ -143,7 +182,7 @@ public class JavaSettingsTab extends AbstractSettingsTab {
 
         JPanel maximumMemoryPanel = new JPanel();
         maximumMemoryPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 0, 0));
-        if (viewModel.isJava32Bit()) {
+        if (!Java.is64Bit()) {
             maximumMemoryPanel.add(new JLabelWithHover(WARNING_ICON, new HTMLBuilder().center().split(100).text(GetText
                     .tr("You're running a 32 bit Java and therefore cannot use more than 1GB of Ram. Please see http://atl.pw/32bit for help."))
                     .build(), RESTART_BORDER));
@@ -157,13 +196,21 @@ public class JavaSettingsTab extends AbstractSettingsTab {
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         SpinnerNumberModel maximumMemoryModel = new SpinnerNumberModel(App.settings.maximumMemory, null, null, 512);
         maximumMemoryModel.setMinimum(512);
-        maximumMemoryModel.setMaximum(maximumSystemRamForSpinnerModels);
-        JSpinner maximumMemory = new JSpinner(maximumMemoryModel);
+        maximumMemoryModel.setMaximum((systemRam == 0 ? null : systemRam));
+        maximumMemory = new JSpinner(maximumMemoryModel);
         ((JSpinner.DefaultEditor) maximumMemory.getEditor()).getTextField().setColumns(5);
-        maximumMemory.addChangeListener(e -> {
-            viewModel.setMaxRam((Integer) maximumMemory.getValue());
+        maximumMemory.addChangeListener(new ChangeListener() {
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                JSpinner s = (JSpinner) e.getSource();
+                if (ConfigManager.getConfigItem("removeInitialMemoryOption", false) == false) {
+                    // if initial memory is larger than maximum memory, make initial memory match
+                    if ((Integer) initialMemory.getValue() > (Integer) s.getValue()) {
+                        initialMemory.setValue(s.getValue());
+                    }
+                }
+            }
         });
-        addDisposable(viewModel.getMaxRam().subscribe(maximumMemory::setValue));
         add(maximumMemory, gbc);
 
         // Perm Gen Settings
@@ -171,7 +218,7 @@ public class JavaSettingsTab extends AbstractSettingsTab {
         gbc.gridy++;
         gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        JLabelWithHover permGenLabel = new JLabelWithHover(GetText.tr("PermGen Size") + ":", HELP_ICON,
+        permGenLabel = new JLabelWithHover(GetText.tr("PermGen Size") + ":", HELP_ICON,
                 GetText.tr("The PermGen Size for java to use when launching Minecraft in MB."));
         add(permGenLabel, gbc);
 
@@ -180,27 +227,30 @@ public class JavaSettingsTab extends AbstractSettingsTab {
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         SpinnerNumberModel permGenModel = new SpinnerNumberModel(App.settings.metaspace, null, null, 32);
         permGenModel.setMinimum(32);
-        permGenModel.setMaximum(maximumSystemRamForSpinnerModels);
-        JSpinner permGen = new JSpinner(permGenModel);
+        permGenModel.setMaximum((systemRam == 0 ? null : systemRam));
+        permGen = new JSpinner(permGenModel);
         ((JSpinner.DefaultEditor) permGen.getEditor()).getTextField().setColumns(3);
-        permGen.addChangeListener(e -> {
-            boolean result = viewModel.setPermGen((Integer) permGen.getValue());
+        permGen.addChangeListener(new ChangeListener() {
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                JSpinner s = (JSpinner) e.getSource();
+                int permGenMaxRecommendedSize = (OS.is64Bit() ? 256 : 128);
 
-            if (result) {
-                viewModel.setPermgenWarningShown();
-                int ret = DialogManager.yesNoDialog().setTitle(GetText.tr("Warning"))
-                        .setType(DialogManager.WARNING)
-                        .setContent(GetText.tr(
-                                "Setting PermGen size above {0}MB is not recommended and can cause issues. Are you sure you want to do this?",
-                                viewModel.getPermGenMaxRecommendSize()))
-                        .show();
+                if ((Integer) s.getValue() > permGenMaxRecommendedSize && !permgenWarningShown) {
+                    permgenWarningShown = true;
+                    int ret = DialogManager.yesNoDialog().setTitle(GetText.tr("Warning"))
+                            .setType(DialogManager.WARNING)
+                            .setContent(GetText.tr(
+                                    "Setting PermGen size above {0}MB is not recommended and can cause issues. Are you sure you want to do this?",
+                                    permGenMaxRecommendedSize))
+                            .show();
 
-                if (ret != 0) {
-                    permGen.setValue(viewModel.getPermGenMaxRecommendSize());
+                    if (ret != 0) {
+                        permGen.setValue(permGenMaxRecommendedSize);
+                    }
                 }
             }
         });
-        addDisposable(viewModel.getMetaspace().subscribe(permGen::setValue));
         add(permGen, gbc);
 
         // Window Size
@@ -209,7 +259,7 @@ public class JavaSettingsTab extends AbstractSettingsTab {
         gbc.gridwidth = 1;
         gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BELOW_BASELINE_TRAILING;
-        JLabelWithHover windowSizeLabel = new JLabelWithHover(GetText.tr("Window Size") + ":", HELP_ICON,
+        windowSizeLabel = new JLabelWithHover(GetText.tr("Window Size") + ":", HELP_ICON,
                 GetText.tr("The size that the Minecraft window should open as, Width x Height, in pixels."));
         add(windowSizeLabel, gbc);
 
@@ -222,36 +272,31 @@ public class JavaSettingsTab extends AbstractSettingsTab {
 
         SpinnerNumberModel widthModel = new SpinnerNumberModel(App.settings.windowWidth, 1, OS.getMaximumWindowWidth(),
                 1);
-        JSpinner widthField = new JSpinner(widthModel);
+        widthField = new JSpinner(widthModel);
         widthField.setEditor(new JSpinner.NumberEditor(widthField, "#"));
-        widthField.addChangeListener(e -> viewModel.setWidth((Integer) widthModel.getValue()));
-        addDisposable(viewModel.getWidth().subscribe(widthModel::setValue));
 
         SpinnerNumberModel heightModel = new SpinnerNumberModel(App.settings.windowHeight, 1,
                 OS.getMaximumWindowHeight(), 1);
-        JSpinner heightField = new JSpinner(heightModel);
+        heightField = new JSpinner(heightModel);
         heightField.setEditor(new JSpinner.NumberEditor(heightField, "#"));
-        heightField.addChangeListener(e -> viewModel.setHeight((Integer) heightField.getValue()));
-        addDisposable(viewModel.getHeight().subscribe(heightField::setValue));
 
-        JComboBox<ComboItem<ScreenResolution>> commonScreenSizes = new JComboBox<>();
-        commonScreenSizes.addItem(new ComboItem<>(null, "Select An Option"));
+        commonScreenSizes = new JComboBox<>();
+        commonScreenSizes.addItem("Select An Option");
 
-        for (ScreenResolution resolution : viewModel.getScreenResolutions()) {
-            commonScreenSizes.addItem(new ComboItem<>(resolution, resolution.toString()));
+        for (String screenSize : Constants.SCREEN_RESOLUTIONS) {
+            String[] size = screenSize.split("x");
+            if (OS.getMaximumWindowWidth() >= Integer.parseInt(size[0])
+                    && OS.getMaximumWindowHeight() >= Integer.parseInt(size[1])) {
+                commonScreenSizes.addItem(screenSize);
+            }
         }
         commonScreenSizes.addActionListener(e -> {
-            Object selectedItem = commonScreenSizes.getSelectedItem();
-            if (selectedItem == null)
-                return;
-
-            @SuppressWarnings("unchecked")
-            ComboItem<ScreenResolution> selected = (ComboItem<ScreenResolution>) selectedItem;
-
-            ScreenResolution screenResolution = selected.getValue();
-
-            if (screenResolution != null)
-                viewModel.setScreenResolution(screenResolution);
+            String selected = (String) commonScreenSizes.getSelectedItem();
+            if (selected.contains("x")) {
+                String[] parts = selected.split("x");
+                widthField.setValue(Integer.parseInt(parts[0]));
+                heightField.setValue(Integer.parseInt(parts[1]));
+            }
         });
         commonScreenSizes.setPreferredSize(new Dimension(commonScreenSizes.getPreferredSize().width + 10,
                 commonScreenSizes.getPreferredSize().height));
@@ -273,7 +318,7 @@ public class JavaSettingsTab extends AbstractSettingsTab {
         gbc.gridwidth = 1;
         gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        JLabelWithHover javaPathLabel = new JLabelWithHover(GetText.tr("Java Path") + ":", HELP_ICON,
+        javaPathLabel = new JLabelWithHover(GetText.tr("Java Path") + ":", HELP_ICON,
                 new HTMLBuilder().center().split(100).text(GetText.tr(
                         "This setting allows you to specify where your Java Path is. Where possible the launcher will use a version of Java provided by Minecraft to launch the instance, but in cases where one isn't available, this path will be used."))
                         .build());
@@ -291,45 +336,37 @@ public class JavaSettingsTab extends AbstractSettingsTab {
         JPanel javaPathPanelBottom = new JPanel();
         javaPathPanelBottom.setLayout(new BoxLayout(javaPathPanelBottom, BoxLayout.X_AXIS));
 
-        JComboBox<ComboItem<String>> installedJavasComboBox = new JComboBox<>();
+        installedJavasComboBox = new JComboBox<>();
         installedJavasComboBox.setPreferredSize(new Dimension(516, 24));
+        List<JavaInfo> installedJavas = Java.getInstalledJavas();
 
-        installedJavasComboBox.addItem(new ComboItem<String>(null, GetText.tr("Select Java Path To Autofill")));
+        installedJavasComboBox.addItem(new ComboItem<JavaInfo>(null, GetText.tr("Select Java Path To Autofill")));
 
-        for (String javaInfo : viewModel.getJavaPaths()) {
-            installedJavasComboBox.addItem(new ComboItem<>(javaInfo, javaInfo));
+        for (JavaInfo javaInfo : installedJavas) {
+            installedJavasComboBox.addItem(new ComboItem<JavaInfo>(javaInfo, javaInfo.toString()));
         }
 
         if (installedJavasComboBox.getItemCount() != 1) {
             installedJavasComboBox.addActionListener(e -> {
-                ComboItem<String> path = ((ComboItem<String>) installedJavasComboBox.getSelectedItem());
-                String value = path.getValue();
-                if (value != null)
-                    viewModel.setJavaPath(value);
+                JavaInfo selectedItem = ((ComboItem<JavaInfo>) installedJavasComboBox.getSelectedItem())
+                        .getValue();
+
+                if (selectedItem != null) {
+                    javaPath.setText(selectedItem.rootPath);
+                }
+                installedJavasComboBox.setSelectedIndex(0);
             });
             javaPathPanelTop.add(installedJavasComboBox);
         }
 
         javaPath = new JTextField(32);
-        javaPathChecker = new JLabelWithHover("", null, null);
-        javaPath.addKeyListener(new DelayedSavingKeyListener(
-                500,
-                () -> viewModel.setJavaPath(javaPath.getText()),
-                viewModel::setJavaPathPending));
-
-        addDisposable(viewModel.getJavaPathObservable().subscribe(path -> {
-            if (!javaPath.getText().equals(path))
-                javaPath.setText(path);
-        }));
         javaPath.setText(App.settings.javaPath);
-        addDisposable(viewModel.getJavaPathChecker().subscribe(this::setJavaPathCheckState));
-
-        JButton javaPathResetButton = new JButton(GetText.tr("Reset"));
+        javaPathResetButton = new JButton(GetText.tr("Reset"));
         javaPathResetButton.addActionListener(e -> {
-            viewModel.resetJavaPath();
-            resetJavaPathCheckLabel();
+            javaPath.setText(OS.getDefaultJavaPath());
+            installedJavasComboBox.setSelectedIndex(0);
         });
-        JButton javaBrowseButton = new JButton(GetText.tr("Browse"));
+        javaBrowseButton = new JButton(GetText.tr("Browse"));
         javaBrowseButton.addActionListener(e -> {
             JFileChooser chooser = new JFileChooser();
             chooser.setCurrentDirectory(new File(javaPath.getText()));
@@ -345,17 +382,15 @@ public class JavaSettingsTab extends AbstractSettingsTab {
 
                 // user selected the bin dir
                 if (!jPath.exists() && (javaExe.exists() || javaExecutable.exists())) {
-                    viewModel.setJavaPath(selectedPath.getParent());
+                    javaPath.setText(selectedPath.getParent().toString());
                 } else {
-                    viewModel.setJavaPath(selectedPath.getAbsolutePath());
+                    javaPath.setText(selectedPath.getAbsolutePath());
                 }
-                viewModel.setJavaPathPending();
+                installedJavasComboBox.setSelectedIndex(0);
             }
         });
 
         javaPathPanelBottom.add(javaPath);
-        javaPathPanelBottom.add(Box.createHorizontalStrut(5));
-        javaPathPanelBottom.add(javaPathChecker, gbc);
         javaPathPanelBottom.add(Box.createHorizontalStrut(5));
         javaPathPanelBottom.add(javaPathResetButton);
         javaPathPanelBottom.add(Box.createHorizontalStrut(5));
@@ -374,7 +409,7 @@ public class JavaSettingsTab extends AbstractSettingsTab {
         gbc.gridwidth = 1;
         gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.FIRST_LINE_END;
-        JLabelWithHover javaParametersLabel = new JLabelWithHover(GetText.tr("Java Parameters") + ":", HELP_ICON,
+        javaParametersLabel = new JLabelWithHover(GetText.tr("Java Parameters") + ":", HELP_ICON,
                 GetText.tr("Extra Java command line paramaters can be added here."));
         add(javaParametersLabel, gbc);
 
@@ -386,34 +421,19 @@ public class JavaSettingsTab extends AbstractSettingsTab {
         javaParametersPanel.setLayout(new BoxLayout(javaParametersPanel, BoxLayout.X_AXIS));
         javaParametersPanel.setAlignmentY(Component.TOP_ALIGNMENT);
 
-        JScrollPane javaParametersScrollPane =
-            new JScrollPane(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-        javaParametersScrollPane.setMaximumSize(new Dimension(1000, 200));
         javaParameters = new JTextArea(6, 40);
-        javaParamChecker = new JLabelWithHover("", null, null);
+        javaParameters.setText(App.settings.javaParameters);
         javaParameters.setLineWrap(true);
         javaParameters.setWrapStyleWord(true);
-        javaParameters.addKeyListener(new DelayedSavingKeyListener(
-                500,
-                () -> viewModel.setJavaParams(javaParameters.getText()),
-                viewModel::setJavaParamsPending));
-        addDisposable(viewModel.getJavaParams().subscribe(params -> {
-            if (!javaParameters.getText().equals(params))
-                javaParameters.setText(params);
-        }));
-        addDisposable(viewModel.getJavaParamsChecker().subscribe(this::setJavaParamCheckState));
 
-        JButton javaParametersResetButton = new JButton(GetText.tr("Reset"));
-        javaParametersResetButton.addActionListener(e -> viewModel.resetJavaParams());
+        javaParametersResetButton = new JButton(GetText.tr("Reset"));
+        javaParametersResetButton.addActionListener(e -> javaParameters.setText(Constants.DEFAULT_JAVA_PARAMETERS));
 
-        javaParametersScrollPane.setViewportView(javaParameters);
-        javaParametersPanel.add(javaParametersScrollPane);
+        javaParametersPanel.add(javaParameters);
         javaParametersPanel.add(Box.createHorizontalStrut(5));
 
         Box paramsResetBox = Box.createVerticalBox();
         paramsResetBox.add(javaParametersResetButton);
-        paramsResetBox.add(Box.createVerticalGlue());
-        paramsResetBox.add(javaParamChecker, gbc);
         paramsResetBox.add(Box.createVerticalGlue());
         javaParametersPanel.add(paramsResetBox);
 
@@ -439,18 +459,12 @@ public class JavaSettingsTab extends AbstractSettingsTab {
         JPanel baseJavaInstallFolderPanel = new JPanel();
         baseJavaInstallFolderPanel.setLayout(new BoxLayout(baseJavaInstallFolderPanel, BoxLayout.X_AXIS));
 
-        JTextField baseJavaInstallFolder = new JTextField(32);
+        baseJavaInstallFolder = new JTextField(32);
         baseJavaInstallFolder.setText(App.settings.baseJavaInstallFolder);
-        baseJavaInstallFolder.addKeyListener(new StatefulTextKeyAdapter(
-                (e) -> viewModel.setBaseInstallFolder(baseJavaInstallFolder.getText())));
-        addDisposable(viewModel.getBaseInstallFolder().subscribe(folder -> {
-            if (!baseJavaInstallFolder.getText().equals(folder))
-                baseJavaInstallFolder.setText(folder);
-        }));
-
         JButton baseJavaInstallFolderResetButton = new JButton(GetText.tr("Reset"));
-        baseJavaInstallFolderResetButton.addActionListener(e -> viewModel.resetBaseInstallFolder());
-
+        baseJavaInstallFolderResetButton.addActionListener(e -> {
+            baseJavaInstallFolder.setText("");
+        });
         JButton baseJavaInstallFolderBrowseButton = new JButton(GetText.tr("Browse"));
         baseJavaInstallFolderBrowseButton.addActionListener(e -> {
             JFileChooser chooser = new JFileChooser();
@@ -460,7 +474,7 @@ public class JavaSettingsTab extends AbstractSettingsTab {
             chooser.setAcceptAllFileFilterUsed(false);
 
             if (chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
-                viewModel.setBaseInstallFolder(chooser.getSelectedFile().getAbsolutePath());
+                baseJavaInstallFolder.setText(chooser.getSelectedFile().getAbsolutePath());
             }
         });
 
@@ -478,8 +492,7 @@ public class JavaSettingsTab extends AbstractSettingsTab {
         gbc.gridy++;
         gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        JLabelWithHover startMinecraftMaximisedLabel = new JLabelWithHover(
-                GetText.tr("Start Minecraft Maximised") + "?", HELP_ICON,
+        startMinecraftMaximisedLabel = new JLabelWithHover(GetText.tr("Start Minecraft Maximised") + "?", HELP_ICON,
                 GetText.tr(
                         "Enabling this will start Minecraft maximised so that it takes up the full size of your screen."));
         add(startMinecraftMaximisedLabel, gbc);
@@ -487,10 +500,10 @@ public class JavaSettingsTab extends AbstractSettingsTab {
         gbc.gridx++;
         gbc.insets = UIConstants.CHECKBOX_FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-        JCheckBox startMinecraftMaximised = new JCheckBox();
-        startMinecraftMaximised.addItemListener(
-                itemEvent -> viewModel.setStartMinecraftMax(itemEvent.getStateChange() == ItemEvent.SELECTED));
-        addDisposable(viewModel.getMaximizeMinecraft().subscribe(startMinecraftMaximised::setSelected));
+        startMinecraftMaximised = new JCheckBox();
+        if (App.settings.maximiseMinecraft) {
+            startMinecraftMaximised.setSelected(true);
+        }
         add(startMinecraftMaximised, gbc);
 
         // Ignore Java checks On Launch
@@ -499,8 +512,7 @@ public class JavaSettingsTab extends AbstractSettingsTab {
         gbc.gridy++;
         gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        JLabelWithHover ignoreJavaOnInstanceLaunchLabel = new JLabelWithHover(
-                GetText.tr("Ignore Java Checks On Launch") + "?",
+        ignoreJavaOnInstanceLaunchLabel = new JLabelWithHover(GetText.tr("Ignore Java Checks On Launch") + "?",
                 HELP_ICON, GetText.tr(
                         "This enables ignoring errors when launching a pack that you don't have a compatible Java version for."));
         add(ignoreJavaOnInstanceLaunchLabel, gbc);
@@ -508,10 +520,10 @@ public class JavaSettingsTab extends AbstractSettingsTab {
         gbc.gridx++;
         gbc.insets = UIConstants.CHECKBOX_FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-        JCheckBox ignoreJavaOnInstanceLaunch = new JCheckBox();
-        ignoreJavaOnInstanceLaunch.addItemListener(
-                itemEvent -> viewModel.setIgnoreJavaChecks(itemEvent.getStateChange() == ItemEvent.SELECTED));
-        addDisposable(viewModel.getIgnoreJavaOnInstanceLaunch().subscribe(ignoreJavaOnInstanceLaunch::setSelected));
+        ignoreJavaOnInstanceLaunch = new JCheckBox();
+        if (App.settings.ignoreJavaOnInstanceLaunch) {
+            ignoreJavaOnInstanceLaunch.setSelected(true);
+        }
         add(ignoreJavaOnInstanceLaunch, gbc);
 
         // Use Java Provided By Minecraft
@@ -520,8 +532,7 @@ public class JavaSettingsTab extends AbstractSettingsTab {
         gbc.gridy++;
         gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        JLabelWithHover useJavaProvidedByMinecraftLabel = new JLabelWithHover(
-                GetText.tr("Use Java Provided By Minecraft") + "?",
+        useJavaProvidedByMinecraftLabel = new JLabelWithHover(GetText.tr("Use Java Provided By Minecraft") + "?",
                 HELP_ICON,
                 new HTMLBuilder().center().text(GetText.tr(
                         "This allows you to enable/disable using the version of Java provided by the version of Minecraft you're running.<br/><br/>It's highly recommended to not disable this, unless you know what you're doing."))
@@ -531,27 +542,26 @@ public class JavaSettingsTab extends AbstractSettingsTab {
         gbc.gridx++;
         gbc.insets = UIConstants.CHECKBOX_FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-        JCheckBox useJavaProvidedByMinecraft = new JCheckBox();
-        useJavaProvidedByMinecraft.setSelected(viewModel.getUseJavaFromMinecraftEnabled());
-        useJavaProvidedByMinecraft.addItemListener(e -> {
-            boolean enabled = e.getStateChange() == ItemEvent.SELECTED;
-            viewModel.setJavaFromMinecraft(enabled);
-
-            if (!enabled) {
+        useJavaProvidedByMinecraft = new JCheckBox();
+        useJavaProvidedByMinecraft.setSelected(App.settings.useJavaProvidedByMinecraft);
+        useJavaProvidedByMinecraft.addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
                 SwingUtilities.invokeLater(() -> {
-                    int ret = DialogManager.yesNoDialog().setTitle(GetText.tr("Warning"))
-                            .setType(DialogManager.WARNING)
-                            .setContent(GetText.tr(
-                                    "Unchecking this is not recommended and may cause Minecraft to no longer run. Are you sure you want to do this?"))
-                            .show();
+                    if (!useJavaProvidedByMinecraft.isSelected()) {
+                        int ret = DialogManager.yesNoDialog().setTitle(GetText.tr("Warning"))
+                                .setType(DialogManager.WARNING)
+                                .setContent(GetText.tr(
+                                        "Unchecking this is not recommended and may cause Minecraft to no longer run. Are you sure you want to do this?"))
+                                .show();
 
-                    if (ret != 0) {
-                        useJavaProvidedByMinecraft.setSelected(true);
+                        if (ret != 0) {
+                            useJavaProvidedByMinecraft.setSelected(true);
+                        }
                     }
                 });
             }
         });
-        addDisposable(viewModel.getUseJavaProvidedByMinecraft().subscribe(useJavaProvidedByMinecraft::setEnabled));
         add(useJavaProvidedByMinecraft, gbc);
 
         // Disable Legacy Launching
@@ -560,8 +570,7 @@ public class JavaSettingsTab extends AbstractSettingsTab {
         gbc.gridy++;
         gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        JLabelWithHover disableLegacyLaunchingLabel = new JLabelWithHover(GetText.tr("Disable Legacy Launching") + "?",
-                HELP_ICON,
+        disableLegacyLaunchingLabel = new JLabelWithHover(GetText.tr("Disable Legacy Launching") + "?", HELP_ICON,
                 new HTMLBuilder().center().text(GetText.tr(
                         "This allows you to disable legacy launching for Minecraft < 1.6.<br/><br/>It's highly recommended to not disable this, unless you're having issues launching older Minecraft versions."))
                         .build());
@@ -570,11 +579,8 @@ public class JavaSettingsTab extends AbstractSettingsTab {
         gbc.gridx++;
         gbc.insets = UIConstants.CHECKBOX_FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-        JCheckBox disableLegacyLaunching = new JCheckBox();
-        disableLegacyLaunching.addItemListener(
-                itemEvent -> viewModel.setDisableLegacyLaunching(itemEvent.getStateChange() == ItemEvent.SELECTED));
-        addDisposable(
-                viewModel.getDisableLegacyLaunching().subscribe(disableLegacyLaunching::setSelected));
+        disableLegacyLaunching = new JCheckBox();
+        disableLegacyLaunching.setSelected(App.settings.disableLegacyLaunching);
         add(disableLegacyLaunching, gbc);
 
         // Use System GLFW
@@ -583,18 +589,15 @@ public class JavaSettingsTab extends AbstractSettingsTab {
         gbc.gridy++;
         gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        JLabelWithHover useSystemGlfwLabel = new JLabelWithHover(GetText.tr("Use System GLFW") + "?", HELP_ICON,
-                new HTMLBuilder()
-                        .center().text(GetText.tr("Use the systems install for GLFW native library.")).build());
+        useSystemGlfwLabel = new JLabelWithHover(GetText.tr("Use System GLFW") + "?", HELP_ICON, new HTMLBuilder()
+                .center().text(GetText.tr("Use the systems install for GLFW native library.")).build());
         add(useSystemGlfwLabel, gbc);
 
         gbc.gridx++;
         gbc.insets = UIConstants.CHECKBOX_FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-        JCheckBox useSystemGlfw = new JCheckBox();
-        useSystemGlfw.addItemListener(
-                itemEvent -> viewModel.setSystemGLFW(itemEvent.getStateChange() == ItemEvent.SELECTED));
-        addDisposable(viewModel.getSystemGLFW().subscribe(useSystemGlfw::setSelected));
+        useSystemGlfw = new JCheckBox();
+        useSystemGlfw.setSelected(App.settings.useSystemGlfw);
         add(useSystemGlfw, gbc);
 
         // Use System OpenAL
@@ -603,47 +606,62 @@ public class JavaSettingsTab extends AbstractSettingsTab {
         gbc.gridy++;
         gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        JLabelWithHover useSystemOpenAlLabel = new JLabelWithHover(GetText.tr("Use System OpenAL") + "?", HELP_ICON,
-                new HTMLBuilder()
-                        .center().text(GetText.tr("Use the systems install for OpenAL native library.")).build());
+        useSystemOpenAlLabel = new JLabelWithHover(GetText.tr("Use System OpenAL") + "?", HELP_ICON, new HTMLBuilder()
+                .center().text(GetText.tr("Use the systems install for OpenAL native library.")).build());
         add(useSystemOpenAlLabel, gbc);
 
         gbc.gridx++;
         gbc.insets = UIConstants.CHECKBOX_FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-        JCheckBox useSystemOpenAl = new JCheckBox();
-        useSystemOpenAl.addItemListener(
-                itemEvent -> viewModel.setSystemOpenAL(itemEvent.getStateChange() == ItemEvent.SELECTED));
-        addDisposable(viewModel.getSystemOpenAL().subscribe(useSystemOpenAl::setSelected));
+        useSystemOpenAl = new JCheckBox();
+        useSystemOpenAl.setSelected(App.settings.useSystemOpenAl);
         add(useSystemOpenAl, gbc);
     }
 
-    private void showJavaPathWarning() {
-        DialogManager.okDialog()
-                .setTitle(GetText.tr("Help"))
-                .setContent(
-                        new HTMLBuilder()
-                                .center()
-                                .text(
-                                        GetText.tr(
-                                                "The Java Path you set is incorrect.<br/><br/>Please verify it points to the folder where the bin folder is and try again."))
-                                .build())
-                .setType(DialogManager.ERROR)
-                .show();
+    public boolean isValidJavaPath() {
+        File jPath = new File(javaPath.getText(), "bin");
+        if (!jPath.exists()) {
+            DialogManager.okDialog().setTitle(GetText.tr("Help")).setContent(new HTMLBuilder().center().text(GetText.tr(
+                    "The Java Path you set is incorrect.<br/><br/>Please verify it points to the folder where the bin folder is and try again."))
+                    .build()).setType(DialogManager.ERROR).show();
+            return false;
+        }
+        return true;
     }
 
-    private void showJavaParamWarning() {
-        DialogManager.okDialog()
-                .setTitle(GetText.tr("Help"))
-                .setContent(
-                        new HTMLBuilder()
-                                .center()
-                                .text(
-                                        GetText.tr(
-                                                "The entered Java Parameters were incorrect.<br/><br/>Please remove any references to Xmx, Xms or XX:PermSize."))
-                                .build())
-                .setType(DialogManager.ERROR)
-                .show();
+    public boolean isValidJavaParamaters() {
+        if ((ConfigManager.getConfigItem("removeInitialMemoryOption", false) == false
+                && javaParameters.getText().contains("-Xms")) || javaParameters.getText().contains("-Xmx")
+                || javaParameters.getText().contains("-XX:PermSize")
+                || javaParameters.getText().contains("-XX:MetaspaceSize")) {
+            DialogManager.okDialog().setTitle(GetText.tr("Help")).setContent(new HTMLBuilder().center().text(GetText.tr(
+                    "The entered Java Parameters were incorrect.<br/><br/>Please remove any references to Xmx, Xms or XX:PermSize."))
+                    .build()).setType(DialogManager.ERROR).show();
+            return false;
+        }
+        return true;
+    }
+
+    public void save() {
+        if (ConfigManager.getConfigItem("removeInitialMemoryOption", false) == false) {
+            App.settings.initialMemory = (Integer) initialMemory.getValue();
+        }
+
+        App.settings.maximumMemory = (Integer) maximumMemory.getValue();
+        App.settings.metaspace = (Integer) permGen.getValue();
+        App.settings.windowWidth = (Integer) widthField.getValue();
+        App.settings.windowHeight = (Integer) heightField.getValue();
+        App.settings.javaPath = javaPath.getText();
+        App.settings.usingCustomJavaPath = !javaPath.getText().equalsIgnoreCase(OS.getDefaultJavaPath());
+        App.settings.javaParameters = javaParameters.getText();
+        App.settings.maximiseMinecraft = startMinecraftMaximised.isSelected();
+        App.settings.ignoreJavaOnInstanceLaunch = ignoreJavaOnInstanceLaunch.isSelected();
+        App.settings.useJavaProvidedByMinecraft = useJavaProvidedByMinecraft.isSelected();
+        App.settings.baseJavaInstallFolder = baseJavaInstallFolder.getText().isEmpty() ? null
+                : baseJavaInstallFolder.getText();
+        App.settings.disableLegacyLaunching = disableLegacyLaunching.isSelected();
+        App.settings.useSystemGlfw = useSystemGlfw.isSelected();
+        App.settings.useSystemOpenAl = useSystemOpenAl.isSelected();
     }
 
     @Override
@@ -657,76 +675,65 @@ public class JavaSettingsTab extends AbstractSettingsTab {
     }
 
     @Override
-    protected void createViewModel() {
-    }
+    public void onRelocalization() {
+        if (ConfigManager.getConfigItem("removeInitialMemoryOption", false) == false) {
+            this.initialMemoryLabelWarning.setToolTipText(new HTMLBuilder().center().split(100).text(GetText.tr(
+                    "You're running a 32 bit Java and therefore cannot use more than 1GB of Ram. Please see http://atl.pw/32bit for help."))
+                    .build());
 
-    private void setLabelState(JLabelWithHover label, String tooltip, String path) {
-        try {
-            label.setToolTipText(tooltip);
-            ImageIcon icon = Utils.getIconImage(path);
-            if (icon != null) {
-                label.setIcon(icon);
-                icon.setImageObserver(label);
-            }
-        } catch (NullPointerException ignored) {
+            this.initialMemoryLabel.setText(GetText.tr("Initial Memory/Ram") + ":");
+            this.initialMemoryLabel.setToolTipText(new HTMLBuilder().center().split(100).text(GetText.tr(
+                    "Initial memory/ram is the starting amount of memory/ram to use when starting Minecraft. This should be left at the default of 512 MB unless you know what your doing."))
+                    .build());
         }
-    }
 
-    private void resetJavaPathCheckLabel() {
-        setLabelState(javaPathChecker, "Visualize java path checker", "/assets/icon/question.png");
-    }
+        this.maximumMemoryLabel.setText(GetText.tr("Maximum Memory/Ram") + ":");
+        this.maximumMemoryLabel.setToolTipText(new HTMLBuilder().center().split(100)
+                .text(GetText.tr("The maximum amount of memory/ram to allocate when starting Minecraft.")).build());
 
-    private void setJavaPathCheckState(CheckState state) {
-        if (state == CheckState.NotChecking) {
-            resetJavaPathCheckLabel();
-        } else if (state == CheckState.CheckPending) {
-            setLabelState(javaPathChecker, "Java path change pending", "/assets/icon/warning.png");
-        } else if (state == CheckState.Checking) {
-            setLabelState(javaPathChecker, "Checking java path", "/assets/image/loading-bars-small.gif");
+        this.permGenLabel.setText(GetText.tr("PermGen Size") + ":");
+        this.permGenLabel
+                .setToolTipText(GetText.tr("The PermGen Size for java to use when launching Minecraft in MB."));
 
-            javaPath.setEnabled(false);
-        } else if (state instanceof CheckState.Checked) {
-            if (((CheckState.Checked) state).valid) {
-                resetJavaPathCheckLabel();
-            } else {
-                setLabelState(javaPathChecker, "Invalid!", "/assets/icon/error.png");
-                showJavaPathWarning();
-            }
-            javaPath.setEnabled(true);
-        }
-    }
+        this.windowSizeLabel.setText(GetText.tr("Window Size") + ":");
+        this.windowSizeLabel.setToolTipText(
+                GetText.tr("The size that the Minecraft window should open as, Width x Height, in pixels."));
 
-    private void resetJavaParamCheckLabel() {
-        setLabelState(javaParamChecker, "Visualize java param checker", "/assets/icon/question.png");
+        this.javaPathLabel.setText(GetText.tr("Java Path") + ":");
+        this.javaPathLabel.setToolTipText(new HTMLBuilder().center().split(100).text(GetText.tr(
+                "This setting allows you to specify where your Java Path is. This should be left as default, but if you know what your doing just set this to the path where the bin folder is for the version of Java you want to use If you mess up, click the Reset button to go back to the default"))
+                .build());
 
-    }
+        this.javaPathResetButton.setText(GetText.tr("Reset"));
 
-    private void setJavaParamCheckState(CheckState state) {
-        if (state == CheckState.NotChecking) {
-            resetJavaParamCheckLabel();
-        } else if (state == CheckState.CheckPending) {
-            setLabelState(javaParamChecker, "Java params change pending", "/assets/icon/warning.png");
-        } else if (state == CheckState.Checking) {
-            setLabelState(javaParamChecker, "Checking java params", "/assets/image/loading-bars-small.gif");
+        this.javaBrowseButton.setText(GetText.tr("Browse"));
 
-            javaParameters.setEnabled(false);
-        } else if (state instanceof CheckState.Checked) {
-            if (((CheckState.Checked) state).valid) {
-                resetJavaParamCheckLabel();
-            } else {
-                setLabelState(javaParamChecker, "Invalid!", "/assets/icon/error.png");
-                showJavaParamWarning();
-            }
-            javaParameters.setEnabled(true);
-        }
+        this.javaParametersLabel.setText(GetText.tr("Java Parameters") + ":");
+        this.javaParametersLabel.setToolTipText(GetText.tr("Extra Java command line paramaters can be added here."));
+
+        this.javaParametersResetButton.setText(GetText.tr("Reset"));
+
+        this.startMinecraftMaximisedLabel.setText(GetText.tr("Start Minecraft Maximised") + "?");
+        this.startMinecraftMaximisedLabel.setToolTipText(GetText
+                .tr("Enabling this will start Minecraft maximised so that it takes up the full size of your screen."));
+
+        this.ignoreJavaOnInstanceLaunchLabel.setText(GetText.tr("Ignore Java Checks On Launch") + "?");
+        this.ignoreJavaOnInstanceLaunchLabel.setToolTipText(GetText.tr(
+                "This enables ignoring errors when launching a pack that you don't have a compatible Java version for."));
+
+        this.useJavaProvidedByMinecraftLabel.setText(GetText.tr("Use Java Provided By Minecraft") + "?");
+        this.useJavaProvidedByMinecraftLabel.setToolTipText(new HTMLBuilder().center().text(GetText.tr(
+                "This allows you to enable/disable using the version of Java provided by the version of Minecraft you're running.<br/><br/>It's highly recommended to not disable this, unless you know what you're doing."))
+                .build());
+
+        this.disableLegacyLaunchingLabel.setText(GetText.tr("Disable Legacy Launching") + "?");
+        this.disableLegacyLaunchingLabel.setToolTipText(new HTMLBuilder().center().text(GetText.tr(
+                "This allows you to disable legacy launching for Minecraft < 1.6.<br/><br/>It's highly recommended to not disable this, unless you're having issues launching older Minecraft versions."))
+                .build());
     }
 
     @Override
-    protected void onDestroy() {
-        removeAll();
-        javaPath = null;
-        javaPathChecker = null;
-        javaParamChecker = null;
-        javaParameters = null;
+    public void onSettingsSaved() {
+        javaPath.setText(App.settings.javaPath);
     }
 }

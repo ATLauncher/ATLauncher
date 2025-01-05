@@ -23,7 +23,6 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.Locale;
 
-import javax.annotation.Nullable;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -37,6 +36,7 @@ import com.atlauncher.interfaces.NetworkProgressable;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.utils.Utils;
 
+@SuppressWarnings("serial")
 public class ProgressDialog<T> extends JDialog implements NetworkProgressable {
     private final String labelText; // The text to add to the JLabel
     private final JProgressBar progressBar; // The Progress Bar
@@ -150,7 +150,6 @@ public class ProgressDialog<T> extends JDialog implements NetworkProgressable {
         this.returnValue = returnValue;
     }
 
-    @Nullable
     public T getReturnValue() {
         return this.returnValue;
     }

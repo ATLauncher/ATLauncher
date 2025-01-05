@@ -28,6 +28,7 @@ import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.managers.DialogManager;
 
+@SuppressWarnings("serial")
 public class SkinUpdaterToolPanel extends AbstractToolPanel implements ActionListener {
 
     private final IToolsViewModel viewModel;

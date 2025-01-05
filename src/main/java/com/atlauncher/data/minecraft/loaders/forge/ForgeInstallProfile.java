@@ -19,7 +19,6 @@ package com.atlauncher.data.minecraft.loaders.forge;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 import com.atlauncher.annot.Json;
@@ -45,7 +44,7 @@ public class ForgeInstallProfile {
 
     public List<ForgeLibrary> getLibraries() {
         if (this.versionInfo != null) { // in <= 1.12.3
-            return this.versionInfo.getLibraries().stream().filter(Objects::nonNull).collect(Collectors.toList());
+            return this.versionInfo.getLibraries().stream().filter(l -> l != null).collect(Collectors.toList());
         }
 
         return this.libraries;

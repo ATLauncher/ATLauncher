@@ -42,6 +42,7 @@ import com.atlauncher.data.json.Mod;
 import com.atlauncher.gui.card.ModCard;
 import com.atlauncher.network.Analytics;
 
+@SuppressWarnings("serial")
 public final class ViewModsDialog extends JDialog {
     private final JPanel contentPanel = new JPanel(new GridBagLayout());
     private final JTextField searchField = new JTextField(16);

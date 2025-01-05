@@ -77,15 +77,14 @@ This will print a report to the console about any dependencies which have update
 
 ## Updating new GraphQL queries/mutations
 
-When new GraphQL queries/mutations are added into the `src/main/graphql` directory, you must first download the JSON
-schema from <https://studio.apollographql.com/public/ATLauncher/variant/current/schema/sdl> and then run the
-`generateApolloSources` task to generate the Java files:
+When new GraphQL queries/mutations are added into the `src/main/graphql` directory, you must run the below 2 commands:
 
 ```sh
+./gradlew downloadApolloSchema --endpoint="https://api.atlauncher.com/v2/graphql" --schema="src/main/graphql/com/atlauncher/schema.json"
 ./gradlew generateApolloSources
 ```
 
-This will codegen the java files so you can use the query/mutation.
+This will fetch the latest schema and then codegen the java files so you can use the query/mutation.
 
 ## Updating license headers in all files
 

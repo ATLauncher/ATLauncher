@@ -102,7 +102,8 @@ public class LegacyMCLauncher {
     public static Field getMCPathField(Class<?> mc) {
         Field[] fields = mc.getDeclaredFields();
 
-        for (Field f : fields) {
+        for (int i = 0; i < fields.length; i++) {
+            Field f = fields[i];
             if (f.getType() != File.class) {
                 // Has to be File
                 continue;

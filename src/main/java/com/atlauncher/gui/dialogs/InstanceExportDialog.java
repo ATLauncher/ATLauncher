@@ -57,6 +57,7 @@ import com.atlauncher.utils.Pair;
 import com.atlauncher.utils.Utils;
 import com.atlauncher.utils.WindowUtils;
 
+@SuppressWarnings("serial")
 public class InstanceExportDialog extends JDialog {
     private final Instance instance;
     private final List<String> overrides = new ArrayList<>();
@@ -220,7 +221,9 @@ public class InstanceExportDialog extends JDialog {
         });
 
         JButton resetButton = new JButton(GetText.tr("Reset"));
-        resetButton.addActionListener(e -> saveTo.setText(instance.getRoot().toAbsolutePath().toString()));
+        resetButton.addActionListener(e -> {
+            saveTo.setText(instance.getRoot().toAbsolutePath().toString());
+        });
 
         saveToPanel.add(saveTo);
         saveToPanel.add(Box.createHorizontalStrut(5));
@@ -299,7 +302,7 @@ public class InstanceExportDialog extends JDialog {
         exportButton.addActionListener(arg0 -> {
             instance.scanMissingMods(this);
 
-            final ProgressDialog<Object> dialog = new ProgressDialog<>(GetText.tr("Exporting Instance"), 0,
+            final ProgressDialog dialog = new ProgressDialog(GetText.tr("Exporting Instance"), 0,
                     GetText.tr("Exporting Instance. Please wait..."), null, this);
 
             dialog.addThread(new Thread(() -> {
@@ -341,7 +344,9 @@ public class InstanceExportDialog extends JDialog {
         bottomPanel.add(exportButton);
 
         JButton cancelButton = new JButton(GetText.tr("Cancel"));
-        cancelButton.addActionListener(arg0 -> close());
+        cancelButton.addActionListener(arg0 -> {
+            close();
+        });
         bottomPanel.add(cancelButton);
 
         add(topPanel, BorderLayout.CENTER);

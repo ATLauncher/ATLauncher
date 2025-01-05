@@ -42,6 +42,7 @@ import com.atlauncher.utils.ModrinthApi;
 import com.atlauncher.utils.Utils;
 import com.atlauncher.workers.BackgroundImageWorker;
 
+@SuppressWarnings("serial")
 public final class ModrinthProjectDependencyCard extends JPanel {
     private final ModrinthVersionSelectorDialog parent;
     private final ModrinthDependency dependency;
