@@ -40,6 +40,7 @@ import com.atlauncher.constants.Constants;
 import com.atlauncher.data.BackupMode;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.minecraft.loaders.LoaderType;
+import com.atlauncher.data.minecraft.loaders.LoaderVersion;
 import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.gui.components.CollapsiblePanel;
@@ -163,76 +164,27 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
         this.image = new ImagePanel(() -> instance.getImage().getImage());
         this.hasUpdate = hasUpdate;
 
-        editModsItem.setEnabled(false);
-        addModsItem.setEnabled(false);
-
-        descArea.setText(instance.getPackDescription());
-        descArea.setEditable(false);
-        descArea.setHighlighter(null);
-        descArea.setLineWrap(true);
-        descArea.setWrapStyleWord(true);
-        descArea.setForeground(getBackground().brighter().brighter().brighter());
-
-        moreButton.setBackground(null);
-        moreButton.setBorder(new EmptyBorder(1, 1, 1, 1));
-
+        setupDescription();
         setupPlayPopupMenus();
         setupSettingsPopupMenu();
         setupModingPopupMenu();
         setupEditInstanceMenu();
         setupMorePopupMenu();
 
-        if (instance.canChangeDescription()) {
-            descArea.addMouseListener(new MouseAdapter() {
-                @Override
-                public void mouseClicked(MouseEvent e) {
-                    if (e.getClickCount() == 2) {
-                        instance.startChangeDescription();
-                        descArea.setText(instance.getPackDescription());
-                    }
-                }
-            });
-        }
-
+        // button grid setup block
         JPanel buttonGrid = new JPanel(new GridLayout(0, 2, 8, 6));
         buttonGrid.setBorder(new EmptyBorder(2, 10, 2, 10));
         buttonGrid.add(this.playButton);
         buttonGrid.add(this.settingsButton);
-        if (instance.launcher.enableCurseForgeIntegration
-                && (ConfigManager.getConfigItem("platforms.curseforge.modsEnabled", true) == true
-                        || (ConfigManager.getConfigItem("platforms.modrinth.modsEnabled", true) == true
-                                && this.instance.launcher.loaderVersion != null))) {
-            addModsItem.setEnabled(true);
-        }
-        if (instance.launcher.enableEditingMods) {
-            editModsItem.setEnabled(true);
-        }
         buttonGrid.add(modingButton);
         buttonGrid.add(editInstanceButton);
+        // button grid setup end block
 
-        // check it can be exported
-        exportItem.setEnabled(instance.canBeExported());
-
-        if (!instance.isUpdatable()) {
-            updateItem.setEnabled(instance.isUpdatable());
-        }
-
-        if (instance.isExternalPack() || instance.launcher.vanillaInstance) {
-            serversItem.setEnabled(false);
-        }
-
-        if (instance.getPack() != null && instance.getPack().system) {
-            serversItem.setEnabled(false);
-        }
-
-        websiteItem.setEnabled(instance.hasWebsite());
-
-        JScrollPane desc = new JScrollPane(this.descArea, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+        // card main forming
+        JScrollPane desc = new JScrollPane(descArea, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
                 JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         desc.setPreferredSize(new Dimension(getPreferredSize().width, 32));
-        // desc.setBorder(new EmptyBorder(10, 10, 10, 10));
 
-        add(image);
         JPanel upper = new JPanel();
         upper.setLayout(new BoxLayout(upper, BoxLayout.Y_AXIS));
 
@@ -242,17 +194,14 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
         upper.add(desc);
 
         JSplitPane subSplitter = new JSplitPane(JSplitPane.VERTICAL_SPLIT, upper, buttonGrid);
+        subSplitter.setEnabled(false);
+
         JSplitPane mainSpitter = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, image, subSplitter);
         mainSpitter.setEnabled(false);
-        subSplitter.setEnabled(false);
+
         add(mainSpitter);
-        // add(buttonGrid);
 
         RelocalizationManager.addListener(this);
-
-        if (!hasUpdate) {
-            updateItem.setEnabled(false);
-        }
 
     }
 
@@ -269,14 +218,17 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
     }
 
     private void setupSettingsPopupMenu() {
+        // export block
         exportItem.addActionListener(e -> {
             Analytics.trackEvent(AnalyticsEvent.forInstanceEvent("instance_export", instance));
             new InstanceExportDialog(instance);
         });
         settingsPopupMenu.add(exportItem);
+        exportItem.setEnabled(instance.canBeExported());
+        // export end block
 
         settingsPopupMenu.addSeparator();
-        // backup options section in settings drop menu
+        // backup block
         normalBackupMenuItem.addActionListener(e -> instance.backup(BackupMode.NORMAL));
         settingsPopupMenu.add(normalBackupMenuItem);
 
@@ -285,9 +237,11 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
 
         fullBackupMenuItem.addActionListener(e -> instance.backup(BackupMode.FULL));
         settingsPopupMenu.add(fullBackupMenuItem);
+        // backup end block
 
         settingsPopupMenu.addSeparator();
-        // open section in settings drop menu
+
+        // open folder block
         openFolderItem.addActionListener(e -> OS.openFileExplorer(instance.getRoot()));
         settingsPopupMenu.add(openFolderItem);
 
@@ -298,27 +252,44 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
             OS.openFileExplorer(instance.getMinecraftJarLibraryPath());
         });
         settingsPopupMenu.add(openResourceMenuItem);
+        // open folder end block
     }
 
     private void setupModingPopupMenu() {
+        // add mods block
         addModsItem.addActionListener(e -> {
             Analytics.trackEvent(AnalyticsEvent.forInstanceEvent("instance_add_mods", instance));
             new AddModsDialog(instance);
             exportItem.setEnabled(instance.canBeExported());
         });
         modingPopupMenu.add(addModsItem);
+        addModsItem.setEnabled(false);
+        if (instance.launcher.enableCurseForgeIntegration
+                && (ConfigManager.getConfigItem("platforms.curseforge.modsEnabled", true) == true
+                        || (ConfigManager.getConfigItem("platforms.modrinth.modsEnabled", true) == true
+                                && this.instance.launcher.loaderVersion != null))) {
+            addModsItem.setEnabled(true);
+        }
+        // add mods end block
 
+        // edit mod block
         editModsItem.addActionListener(e -> {
             Analytics.trackEvent(AnalyticsEvent.forInstanceEvent("instance_edit_mods", instance));
             new EditModsDialog(instance);
             exportItem.setEnabled(instance.canBeExported());
         });
-
         modingPopupMenu.add(editModsItem);
+        editModsItem.setEnabled(false);
+        if (instance.launcher.enableEditingMods) {
+            editModsItem.setEnabled(true);
+        }
+        // edit mod end block
     }
 
     private void setupMorePopupMenu() {
-        // more button drop menu
+        moreButton.setBackground(null);
+        moreButton.setBorder(new EmptyBorder(1, 1, 1, 1));
+        // update block
         updateItem.addActionListener(e -> {
             if (AccountManager.getSelectedAccount() == null) {
                 DialogManager.okDialog().setTitle(GetText.tr("No Account Selected"))
@@ -331,16 +302,35 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
             instance.update();
         });
         morePopupMenu.add(updateItem);
+        if (!instance.isUpdatable()) {
+            updateItem.setEnabled(instance.isUpdatable());
+        }
+        if (!hasUpdate) {
+            updateItem.setEnabled(false);
+        }
+        // update end block
 
+        // server item block
         serversItem.addActionListener(e -> OS.openWebBrowser(
                 String.format("%s/%s?utm_source=launcher&utm_medium=button&utm_campaign=instance_v2_button",
                         Constants.SERVERS_LIST_PACK, instance.getSafePackName())));
         morePopupMenu.add(serversItem);
+        if (instance.isExternalPack() || instance.launcher.vanillaInstance) {
+            serversItem.setEnabled(false);
+        }
 
+        if (instance.getPack() != null && instance.getPack().system) {
+            serversItem.setEnabled(false);
+        }
+        // server end block
+
+        // website block
         websiteItem.addActionListener(e -> OS.openWebBrowser(instance.getWebsiteUrl()));
         morePopupMenu.add(websiteItem);
-        // settings drop menu
+        websiteItem.setEnabled(instance.hasWebsite());
+        // website end block
 
+        // extra buttons in more popup menu
         if (instance.showGetHelpButton()) {
             morePopupMenu.addSeparator();
             if (instance.getDiscordInviteUrl() != null) {
@@ -368,6 +358,18 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
                 morePopupMenu.add(sourceLinkMenuItem);
             }
         }
+
+    }
+
+    void addLoaderItem(String key, JMenuItem add, JMenuItem change, JMenuItem remove, boolean enabled) {
+        if (ConfigManager.getConfigItem("loaders." + key + "enabled", true) == enabled
+                && !ConfigManager
+                        .getConfigItem("loaders." + key + ".disabledMinecraftVersions", new ArrayList<String>())
+                        .contains(instance.id)) {
+            editInstancePopupMenu.add(add);
+            editInstancePopupMenu.add(change);
+        }
+        editInstancePopupMenu.add(remove);
     }
 
     private void setupEditInstanceMenu() {
@@ -385,8 +387,8 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
             instance.startChangeDescription();
             descArea.setText(instance.launcher.description);
         });
-        editInstancePopupMenu.add(changeDescriptionMenuItem);
 
+        editInstancePopupMenu.add(changeDescriptionMenuItem);
         changeImageMenuItem.addActionListener(e -> {
             instance.startChangeImage();
             image.setImage(instance.getImage().getImage());
@@ -415,148 +417,122 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
 
         editInstancePopupMenu.addSeparator();
 
-        if (ConfigManager.getConfigItem("loaders.fabric.enabled", true) == true
-                && !ConfigManager.getConfigItem("loaders.fabric.disabledMinecraftVersions", new ArrayList<String>())
-                        .contains(instance.id)) {
-            editInstancePopupMenu.add(addFabricMenuItem);
-            editInstancePopupMenu.add(changeFabricVersionMenuItem);
-        }
-        editInstancePopupMenu.add(removeFabricMenuItem);
-
-        if (ConfigManager.getConfigItem("loaders.forge.enabled", true) == true
-                && !ConfigManager.getConfigItem("loaders.forge.disabledMinecraftVersions", new ArrayList<String>())
-                        .contains(instance.id)) {
-            editInstancePopupMenu.add(addForgeMenuItem);
-            editInstancePopupMenu.add(changeForgeVersionMenuItem);
-        }
-        editInstancePopupMenu.add(removeForgeMenuItem);
-
-        if (ConfigManager.getConfigItem("loaders.legacyfabric.enabled", true) == true
-                && !ConfigManager
-                        .getConfigItem("loaders.legacyfabric.disabledMinecraftVersions", new ArrayList<String>())
-                        .contains(instance.id)) {
-            editInstancePopupMenu.add(addLegacyFabricMenuItem);
-            editInstancePopupMenu.add(changeLegacyFabricVersionMenuItem);
-        }
-        editInstancePopupMenu.add(removeLegacyFabricMenuItem);
-
-        if (ConfigManager.getConfigItem("loaders.neoforge.enabled", true) == true
-                && !ConfigManager
-                        .getConfigItem("loaders.neoforge.disabledMinecraftVersions", new ArrayList<String>())
-                        .contains(instance.id)) {
-            editInstancePopupMenu.add(addNeoForgeMenuItem);
-            editInstancePopupMenu.add(changeNeoForgeVersionMenuItem);
-        }
-        editInstancePopupMenu.add(removeNeoForgeMenuItem);
-
-        if (ConfigManager.getConfigItem("loaders.quilt.enabled", false) == true
-                && !ConfigManager.getConfigItem("loaders.quilt.disabledMinecraftVersions", new ArrayList<String>())
-                        .contains(instance.id)) {
-            editInstancePopupMenu.add(addQuiltMenuItem);
-            editInstancePopupMenu.add(changeQuiltVersionMenuItem);
-        }
-        editInstancePopupMenu.add(removeQuiltMenuItem);
+        addLoaderItem("fabric", addFabricMenuItem, changeFabricVersionMenuItem, removeFabricMenuItem, true);
+        addLoaderItem("forge", addForgeMenuItem, changeForgeVersionMenuItem, removeForgeMenuItem, true);
+        addLoaderItem("legacyfabric", addLegacyFabricMenuItem, changeLegacyFabricVersionMenuItem,
+                removeLegacyFabricMenuItem, true);
+        addLoaderItem("neoforge", addNeoForgeMenuItem, changeNeoForgeVersionMenuItem, removeNeoForgeMenuItem, true);
+        addLoaderItem("quilt", addQuiltMenuItem, changeQuiltVersionMenuItem, removeQuiltMenuItem, false);
 
         // loader things
         addFabricMenuItem.addActionListener(e -> {
             instance.addLoader(LoaderType.FABRIC);
-            setEditInstanceMenuItemVisbility();
+            setEditInstanceMenuItemVisibility();
         });
         addForgeMenuItem.addActionListener(e -> {
             instance.addLoader(LoaderType.FORGE);
-            setEditInstanceMenuItemVisbility();
+            setEditInstanceMenuItemVisibility();
         });
         addLegacyFabricMenuItem.addActionListener(e -> {
             instance.addLoader(LoaderType.LEGACY_FABRIC);
-            setEditInstanceMenuItemVisbility();
+            setEditInstanceMenuItemVisibility();
         });
         addNeoForgeMenuItem.addActionListener(e -> {
             instance.addLoader(LoaderType.NEOFORGE);
-            setEditInstanceMenuItemVisbility();
+            setEditInstanceMenuItemVisibility();
         });
         addQuiltMenuItem.addActionListener(e -> {
             instance.addLoader(LoaderType.QUILT);
-            setEditInstanceMenuItemVisbility();
+            setEditInstanceMenuItemVisibility();
         });
 
         changeFabricVersionMenuItem.addActionListener(e -> {
             instance.changeLoaderVersion();
-            setEditInstanceMenuItemVisbility();
+            setEditInstanceMenuItemVisibility();
         });
         changeForgeVersionMenuItem.addActionListener(e -> {
             instance.changeLoaderVersion();
-            setEditInstanceMenuItemVisbility();
+            setEditInstanceMenuItemVisibility();
         });
         changeLegacyFabricVersionMenuItem.addActionListener(e -> {
             instance.changeLoaderVersion();
-            setEditInstanceMenuItemVisbility();
+            setEditInstanceMenuItemVisibility();
         });
         changeNeoForgeVersionMenuItem.addActionListener(e -> {
             instance.changeLoaderVersion();
-            setEditInstanceMenuItemVisbility();
+            setEditInstanceMenuItemVisibility();
         });
         changeQuiltVersionMenuItem.addActionListener(e -> {
             instance.changeLoaderVersion();
-            setEditInstanceMenuItemVisbility();
+            setEditInstanceMenuItemVisibility();
         });
 
         removeFabricMenuItem.addActionListener(e -> {
             instance.removeLoader();
-            setEditInstanceMenuItemVisbility();
+            setEditInstanceMenuItemVisibility();
         });
         removeForgeMenuItem.addActionListener(e -> {
             instance.removeLoader();
-            setEditInstanceMenuItemVisbility();
+            setEditInstanceMenuItemVisibility();
         });
         removeLegacyFabricMenuItem.addActionListener(e -> {
             instance.removeLoader();
-            setEditInstanceMenuItemVisbility();
+            setEditInstanceMenuItemVisibility();
         });
         removeNeoForgeMenuItem.addActionListener(e -> {
             instance.removeLoader();
-            setEditInstanceMenuItemVisbility();
+            setEditInstanceMenuItemVisibility();
         });
         removeQuiltMenuItem.addActionListener(e -> {
             instance.removeLoader();
-            setEditInstanceMenuItemVisbility();
+            setEditInstanceMenuItemVisibility();
         });
-        setEditInstanceMenuItemVisbility();
+        setEditInstanceMenuItemVisibility();
     }
 
-    private void setEditInstanceMenuItemVisbility() {
+    private void setEditInstanceMenuItemVisibility() {
         reinstallMenuItem.setVisible(instance.isUpdatable());
 
-        addFabricMenuItem.setVisible(instance.launcher.loaderVersion == null);
-        addForgeMenuItem.setVisible(instance.launcher.loaderVersion == null);
-        addLegacyFabricMenuItem.setVisible(instance.launcher.loaderVersion == null);
-        addNeoForgeMenuItem.setVisible(instance.launcher.loaderVersion == null);
-        addQuiltMenuItem.setVisible(instance.launcher.loaderVersion == null);
+        final boolean loaderVersionIsNull = instance.launcher.loaderVersion == null;
+        final LoaderVersion loaderVersion = instance.launcher.loaderVersion;
 
-        changeFabricVersionMenuItem
-                .setVisible(instance.launcher.loaderVersion != null && instance.launcher.loaderVersion.isFabric());
-        changeForgeVersionMenuItem
-                .setVisible(instance.launcher.loaderVersion != null && instance.launcher.loaderVersion.isForge());
-        changeLegacyFabricVersionMenuItem
-                .setVisible(
-                        instance.launcher.loaderVersion != null && instance.launcher.loaderVersion.isLegacyFabric());
-        changeNeoForgeVersionMenuItem
-                .setVisible(
-                        instance.launcher.loaderVersion != null && instance.launcher.loaderVersion.isNeoForge());
-        changeQuiltVersionMenuItem
-                .setVisible(instance.launcher.loaderVersion != null && instance.launcher.loaderVersion.isQuilt());
+        addFabricMenuItem.setVisible(loaderVersionIsNull);
+        addForgeMenuItem.setVisible(loaderVersionIsNull);
+        addLegacyFabricMenuItem.setVisible(loaderVersionIsNull);
+        addNeoForgeMenuItem.setVisible(loaderVersionIsNull);
+        addQuiltMenuItem.setVisible(loaderVersionIsNull);
 
-        removeFabricMenuItem
-                .setVisible(instance.launcher.loaderVersion != null && instance.launcher.loaderVersion.isFabric());
-        removeForgeMenuItem
-                .setVisible(instance.launcher.loaderVersion != null && instance.launcher.loaderVersion.isForge());
-        removeLegacyFabricMenuItem
-                .setVisible(
-                        instance.launcher.loaderVersion != null && instance.launcher.loaderVersion.isLegacyFabric());
-        removeNeoForgeMenuItem
-                .setVisible(
-                        instance.launcher.loaderVersion != null && instance.launcher.loaderVersion.isNeoForge());
-        removeQuiltMenuItem
-                .setVisible(instance.launcher.loaderVersion != null && instance.launcher.loaderVersion.isQuilt());
+        changeFabricVersionMenuItem.setVisible(!loaderVersionIsNull && loaderVersion.isFabric());
+        changeForgeVersionMenuItem.setVisible(!loaderVersionIsNull && loaderVersion.isForge());
+        changeLegacyFabricVersionMenuItem.setVisible(!loaderVersionIsNull && loaderVersion.isLegacyFabric());
+        changeNeoForgeVersionMenuItem.setVisible(!loaderVersionIsNull && loaderVersion.isNeoForge());
+        changeQuiltVersionMenuItem.setVisible(!loaderVersionIsNull && loaderVersion.isQuilt());
+
+        removeFabricMenuItem.setVisible(!loaderVersionIsNull && loaderVersion.isFabric());
+        removeForgeMenuItem.setVisible(!loaderVersionIsNull && loaderVersion.isForge());
+        removeLegacyFabricMenuItem.setVisible(!loaderVersionIsNull && loaderVersion.isLegacyFabric());
+        removeNeoForgeMenuItem.setVisible(!loaderVersionIsNull && loaderVersion.isNeoForge());
+        removeQuiltMenuItem.setVisible(!loaderVersionIsNull && loaderVersion.isQuilt());
+    }
+
+    private void setupDescription() {
+        descArea.setText(instance.getPackDescription());
+        descArea.setEditable(false);
+        descArea.setHighlighter(null);
+        descArea.setLineWrap(true);
+        descArea.setWrapStyleWord(true);
+        descArea.setForeground(getBackground().brighter().brighter().brighter());
+        if (instance.canChangeDescription()) {
+            descArea.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    if (e.getClickCount() == 2) {
+                        instance.startChangeDescription();
+                        descArea.setText(instance.getPackDescription());
+                    }
+                }
+            });
+        }
     }
 
     private void play(boolean offline) {
