@@ -79,11 +79,9 @@ public class CurseForgeProject {
         Optional<CurseForgeCategory> primaryCategory = categories.stream().filter(c -> c.id == primaryCategoryId)
                 .findFirst();
 
-        if (primaryCategory.isPresent()) {
-            return primaryCategory.get().classId;
-        }
-
-        return Constants.CURSEFORGE_MODS_SECTION_ID;
+        return primaryCategory
+            .map(curseForgeCategory -> curseForgeCategory.classId)
+            .orElse(Constants.CURSEFORGE_MODS_SECTION_ID);
     }
 
     public Optional<CurseForgeAttachment> getLogo() {

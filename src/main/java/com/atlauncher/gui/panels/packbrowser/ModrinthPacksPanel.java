@@ -65,7 +65,7 @@ public class ModrinthPacksPanel extends PackBrowserPlatformPanel {
 
         hasMorePages = searchResult != null && searchResult.offset + searchResult.hits.size() < searchResult.totalHits;
 
-        if (searchResult == null || searchResult.hits.size() == 0) {
+        if (searchResult == null || searchResult.hits.isEmpty()) {
             contentPanel.removeAll();
             contentPanel.add(
                     new NilCard(new HTMLBuilder().text(GetText
@@ -81,7 +81,7 @@ public class ModrinthPacksPanel extends PackBrowserPlatformPanel {
         gbc.insets = UIConstants.FIELD_INSETS;
         gbc.fill = GridBagConstraints.BOTH;
 
-        List<ModrinthPackCard> cards = searchResult.hits.stream().map(p -> new ModrinthPackCard(p))
+        List<ModrinthPackCard> cards = searchResult.hits.stream().map(ModrinthPackCard::new)
                 .collect(Collectors.toList());
 
         contentPanel.removeAll();
@@ -249,7 +249,7 @@ public class ModrinthPacksPanel extends PackBrowserPlatformPanel {
                     .setContent(GetText.tr("Cannot create instance as you have no account selected."))
                     .setType(DialogManager.ERROR).show();
 
-            if (AccountManager.getAccounts().size() == 0) {
+            if (AccountManager.getAccounts().isEmpty()) {
                 App.navigate(UIConstants.LAUNCHER_ACCOUNTS_TAB);
             }
         } else {

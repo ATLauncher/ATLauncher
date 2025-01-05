@@ -21,7 +21,6 @@ import java.awt.Dialog.ModalityType;
 import java.awt.FlowLayout;
 import java.awt.Window;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URLDecoder;
@@ -49,12 +48,10 @@ import com.atlauncher.graphql.type.AddLauncherLaunchInput;
 import com.atlauncher.graphql.type.LauncherJavaVersionInput;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.gui.tabs.PacksBrowserTab;
-import com.atlauncher.gui.tabs.news.NewsTab;
 import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.ConfigManager;
 import com.atlauncher.managers.CurseForgeUpdateManager;
 import com.atlauncher.managers.DialogManager;
-import com.atlauncher.managers.FTBUpdateManager;
 import com.atlauncher.managers.InstanceManager;
 import com.atlauncher.managers.LWJGLManager;
 import com.atlauncher.managers.LogManager;
@@ -85,7 +82,6 @@ public class Launcher {
 
     // UI things
     private JFrame parent; // Parent JFrame of the actual Launcher
-    private NewsTab newsPanel; // The news panel
     private PacksBrowserTab packsBrowserPanel; // The packs browser panel
 
     // Update thread
@@ -109,20 +105,18 @@ public class Launcher {
 
         NewsManager.loadNews(); // Load the news
 
-        if (App.settings.enableAnalytics && ConfigManager.getConfigItem("useGraphql.launcherLaunch", false) == true) {
-            App.TASKPOOL.execute(() -> {
-                GraphqlClient.mutate(new AddLauncherLaunchMutation(
-                        AddLauncherLaunchInput.builder().version(Constants.VERSION.toStringForLogging())
-                                .hash(Constants.VERSION.getSha1Revision().toString())
-                                .installMethod(OS.getInstallMethod())
-                                .javaVersion(LauncherJavaVersionInput.builder().raw(Java.getLauncherJavaVersion())
-                                        .majorVersion(Integer.toString(Java.getLauncherJavaVersionNumber()))
-                                        .bitness(Java.is64Bit() ? 64 : 32)
-                                        .usingJreDir(OS.isWindows() && OS.usingExe()
-                                                && Files.exists(FileSystem.BASE_DIR.resolve("jre")))
-                                        .build())
-                                .build()));
-            });
+        if (App.settings.enableAnalytics && ConfigManager.getConfigItem("useGraphql.launcherLaunch", false)) {
+            App.TASKPOOL.execute(() -> GraphqlClient.mutate(new AddLauncherLaunchMutation(
+                    AddLauncherLaunchInput.builder().version(Constants.VERSION.toStringForLogging())
+                            .hash(Constants.VERSION.getSha1Revision().toString())
+                            .installMethod(OS.getInstallMethod())
+                            .javaVersion(LauncherJavaVersionInput.builder().raw(Java.getLauncherJavaVersion())
+                                    .majorVersion(Integer.toString(Java.getLauncherJavaVersionNumber()))
+                                    .bitness(Java.is64Bit() ? 64 : 32)
+                                    .usingJreDir(OS.isWindows() && OS.usingExe()
+                                            && Files.exists(FileSystem.BASE_DIR.resolve("jre")))
+                                    .build())
+                            .build())));
         }
 
         MinecraftManager.loadMinecraftVersions(); // Load info about the different Minecraft versions
@@ -167,7 +161,7 @@ public class Launcher {
 
     public boolean launcherHasUpdate() {
         try (InputStreamReader fileReader = new InputStreamReader(
-                new FileInputStream(FileSystem.JSON.resolve("version.json").toFile()), StandardCharsets.UTF_8)) {
+                Files.newInputStream(FileSystem.JSON.resolve("version.json")), StandardCharsets.UTF_8)) {
             this.latestLauncherVersion = Gsons.DEFAULT.fromJson(fileReader, LauncherVersion.class);
         } catch (JsonSyntaxException | JsonIOException | IOException e) {
             LogManager.logStackTrace("Exception when loading latest launcher version!", e);
@@ -284,7 +278,7 @@ public class Launcher {
     }
 
     public void downloadUpdatedFiles() {
-        ProgressDialog progressDialog = new ProgressDialog(GetText.tr("Downloading Updates"), 1,
+        ProgressDialog<Object> progressDialog = new ProgressDialog<>(GetText.tr("Downloading Updates"), 1,
                 GetText.tr("Downloading Updates"));
         progressDialog.addThread(new Thread(() -> {
             DownloadPool pool = new DownloadPool();
@@ -307,9 +301,7 @@ public class Launcher {
     public boolean checkForUpdatedFiles() {
         this.launcherFiles = null;
 
-        App.TASKPOOL.execute(() -> {
-            checkForExternalPackUpdates();
-        });
+        App.TASKPOOL.execute(this::checkForExternalPackUpdates);
 
         return hasUpdatedFiles();
     }
@@ -335,16 +327,13 @@ public class Launcher {
         }
 
         updateThread = new Thread(() -> {
-            if (InstanceManager.getInstances().stream().anyMatch(i -> i.isFTBPack())) {
-                FTBUpdateManager.checkForUpdates();
-            }
-            if (InstanceManager.getInstances().stream().anyMatch(i -> i.isCurseForgePack())) {
+            if (InstanceManager.getInstances().stream().anyMatch(Instance::isCurseForgePack)) {
                 CurseForgeUpdateManager.checkForUpdates();
             }
-            if (InstanceManager.getInstances().stream().anyMatch(i -> i.isTechnicPack())) {
+            if (InstanceManager.getInstances().stream().anyMatch(Instance::isTechnicPack)) {
                 TechnicModpackUpdateManager.checkForUpdates();
             }
-            if (InstanceManager.getInstances().stream().anyMatch(i -> i.isModrinthPack())) {
+            if (InstanceManager.getInstances().stream().anyMatch(Instance::isModrinthPack)) {
                 ModrinthModpackUpdateManager.checkForUpdates();
             }
         });
@@ -381,7 +370,6 @@ public class Launcher {
 
             ConfigManager.loadConfig(); // Load the config
             NewsManager.loadNews(); // Load the news
-            reloadNewsPanel(); // Reload news panel
             PackManager.loadPacks(); // Load the Packs available in the Launcher
             reloadPacksBrowserPanel();// Reload packs browser panel
             PackManager.loadUsers(); // Load the Testers and Allowed Players for the packs
@@ -462,22 +450,6 @@ public class Launcher {
      */
     public void setPacksBrowserPanel(PacksBrowserTab packsBrowserPanel) {
         this.packsBrowserPanel = packsBrowserPanel;
-    }
-
-    /**
-     * Sets the panel used for News
-     *
-     * @param newsPanel News Panel
-     */
-    public void setNewsPanel(NewsTab newsPanel) {
-        this.newsPanel = newsPanel;
-    }
-
-    /**
-     * Reloads the panel used for News
-     */
-    public void reloadNewsPanel() {
-        this.newsPanel.reload(); // Reload the news panel
     }
 
     /**

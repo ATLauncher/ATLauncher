@@ -41,7 +41,6 @@ import com.atlauncher.utils.Utils;
  * The splash screen which shows when the launcher is started up and is loading
  * it's stuff.
  */
-@SuppressWarnings("serial")
 public class SplashScreen extends JWindow {
     private static final BufferedImage img = Utils.getImage("splash-screen.png");
     private final ContextMenu CONTEXT_MENU = new ContextMenu();

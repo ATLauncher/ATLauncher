@@ -92,15 +92,6 @@ public final class InstancesListPanel extends HierarchyPanel
     }
 
     @Override
-    public void onRelocalization() {
-        this.nilCard.setMessage(getNilMessage());
-        nilCard.setActions(new NilCard.Action[] {
-                NilCard.Action.createCreatePackAction(),
-                NilCard.Action.createDownloadPackAction()
-        });
-    }
-
-    @Override
     protected void createViewModel() {
     }
 

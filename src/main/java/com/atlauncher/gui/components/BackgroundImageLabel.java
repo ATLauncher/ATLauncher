@@ -25,7 +25,6 @@ import javax.swing.JLabel;
 import com.atlauncher.utils.Utils;
 import com.atlauncher.workers.BackgroundImageWorker;
 
-@SuppressWarnings("serial")
 public final class BackgroundImageLabel extends JLabel {
     public BackgroundImageLabel(String url, int width, int height) {
         setIcon(Utils.getIconImage("/assets/image/no-icon.png"));

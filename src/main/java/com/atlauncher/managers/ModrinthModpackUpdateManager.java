@@ -78,7 +78,7 @@ public class ModrinthModpackUpdateManager {
      * Updates observables.
      */
     public static void checkForUpdates() {
-        if (ConfigManager.getConfigItem("platforms.modrinth.modpacksEnabled", true) == false) {
+        if (!ConfigManager.getConfigItem("platforms.modrinth.modpacksEnabled", true)) {
             return;
         }
 

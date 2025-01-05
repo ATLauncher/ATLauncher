@@ -79,7 +79,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ScrollPaneConstants;
 
-import org.apache.commons.io.IOUtils;
+import org.apache.commons.compress.utils.IOUtils;
 import org.tukaani.xz.LZMAInputStream;
 import org.tukaani.xz.XZInputStream;
 
@@ -760,7 +760,7 @@ public class Utils {
                 line = line.replace(replaceThis, withThis);
             }
             fileWriter.write(line);
-            fileWriter.write(System.getProperty("line.separator"));
+            fileWriter.write(System.lineSeparator());
             line = br.readLine();
         }
         fileWriter.flush();
@@ -785,7 +785,7 @@ public class Utils {
         String line = br.readLine();
         while (line != null) {
             fileWriter.write(line);
-            fileWriter.write(System.getProperty("line.separator"));
+            fileWriter.write(System.lineSeparator());
             line = br.readLine();
         }
         fileWriter.flush();
@@ -1096,7 +1096,7 @@ public class Utils {
 
             while (line != null) {
                 sb.append(line);
-                sb.append(System.getProperty("line.separator"));
+                sb.append(System.lineSeparator());
                 line = br.readLine();
             }
             contents = sb.toString();
@@ -1126,7 +1126,7 @@ public class Utils {
     public static String splitMultilinedString(String string, int maxLineLength, String lineSeparator) {
         char[] chars = string.toCharArray();
         StringBuilder sb = new StringBuilder();
-        char spaceChar = " ".charAt(0);
+        char spaceChar = ' ';
         int count = 0;
         for (char character : chars) {
             if (count >= maxLineLength && character == spaceChar) {
@@ -1587,12 +1587,8 @@ public class Utils {
             return true;
         }
 
-        if (!lessThan && versionParts[0].equals(matchedParts[0])
-                && Integer.parseInt(versionParts[1].split("-")[0]) > Integer.parseInt(matchedParts[1].split("-")[0])) {
-            return true;
-        }
-
-        return false;
+        return !lessThan && versionParts[0].equals(matchedParts[0])
+            && Integer.parseInt(versionParts[1].split("-")[0]) > Integer.parseInt(matchedParts[1].split("-")[0]);
     }
 
     public static boolean matchWholeVersion(String version, String matches, boolean equal) {
@@ -1618,7 +1614,7 @@ public class Utils {
 
             List<MCMod> mods = Gsons.DEFAULT.fromJson(ArchiveUtils.getFile(file.toPath(), "mcmod.info"), type);
 
-            if (mods.size() != 0 && mods.get(0) != null) {
+            if (!mods.isEmpty() && mods.get(0) != null) {
                 return mods.get(0);
             }
         } catch (Exception ignored) {

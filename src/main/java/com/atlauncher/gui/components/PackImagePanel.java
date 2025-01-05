@@ -26,7 +26,6 @@ import javax.swing.JPanel;
 
 import com.atlauncher.data.Pack;
 
-@SuppressWarnings("serial")
 public final class PackImagePanel extends JPanel {
     private final Image image;
 

@@ -65,7 +65,6 @@ import com.atlauncher.utils.OS;
  * <p/>
  * Class for displaying instances in the Instance Tab
  */
-@SuppressWarnings("serial")
 public class InstanceCard extends CollapsiblePanel implements RelocalizationListener {
 
     private final Instance instance;
@@ -209,14 +208,10 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
     }
 
     private void setupPlayPopupMenus() {
-        playOnlinePlayMenuItem.addActionListener(e -> {
-            play(false);
-        });
+        playOnlinePlayMenuItem.addActionListener(e -> play(false));
         playPopupMenu.add(playOnlinePlayMenuItem);
 
-        playOfflinePlayMenuItem.addActionListener(e -> {
-            play(true);
-        });
+        playOfflinePlayMenuItem.addActionListener(e -> play(true));
         playPopupMenu.add(playOfflinePlayMenuItem);
     }
 
@@ -408,7 +403,7 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
 
             if (ret == DialogManager.YES_OPTION) {
                 Analytics.trackEvent(AnalyticsEvent.forInstanceEvent("instance_delete", instance));
-                final ProgressDialog dialog = new ProgressDialog(GetText.tr("Deleting Instance"), 0,
+                final ProgressDialog<Object> dialog = new ProgressDialog<>(GetText.tr("Deleting Instance"), 0,
                         GetText.tr("Deleting Instance. Please wait..."), null, App.launcher.getParent());
                 dialog.addThread(new Thread(() -> {
                     InstanceManager.removeInstance(instance);
