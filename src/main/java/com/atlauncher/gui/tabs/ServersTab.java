@@ -66,7 +66,7 @@ public class ServersTab extends JPanel implements Tab, RelocalizationListener {
 
     public void createView() {
         JPanel topPanel = new JPanel();
-        topPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
+        topPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
 
         searchBox = new JTextField(16);
         viewModel.getSearchObservable().subscribe(it -> searchBox.setText(it.orElse(null)));
@@ -85,6 +85,7 @@ public class ServersTab extends JPanel implements Tab, RelocalizationListener {
         searchBox.putClientProperty("JTextField.clearCallback", (Runnable) () -> {
             viewModel.setSearchSubject("");
         });
+
         topPanel.add(searchBox);
 
         add(topPanel, BorderLayout.NORTH);
@@ -97,7 +98,7 @@ public class ServersTab extends JPanel implements Tab, RelocalizationListener {
 
         viewModel.getServersObservable().subscribe(servers -> {
             viewModel.setViewPosition(scrollPane.getVerticalScrollBar().getValue());
-            panel.setLayout(new WrapLayout(WrapLayout.LEFT));
+            panel.setLayout(new WrapLayout(WrapLayout.LEFT, 8, 8));
             panel.removeAll();
 
             servers.forEach(server -> {

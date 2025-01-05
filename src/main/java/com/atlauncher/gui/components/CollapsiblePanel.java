@@ -74,7 +74,8 @@ public class CollapsiblePanel extends JPanel implements ThemeListener, Relocaliz
 
     public CollapsiblePanel(Server server) {
         this.server = server;
-        mainTitile.setText(server.name + " (" + server.pack + " " + server.version + ")");
+        mainTitile.setText(server.name.substring(0, 8) + "..." + " (" + server.pack + " " + server.version + ")");
+        mainTitile.setToolTipText(server.name + " (" + server.pack + " " + server.version + ")");
         mainTitile.setForeground(UIManager.getColor("CollapsiblePanel.normal"));
         commonConstructor();
 

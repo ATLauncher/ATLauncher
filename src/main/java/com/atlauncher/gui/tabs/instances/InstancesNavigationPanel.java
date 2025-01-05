@@ -55,16 +55,17 @@ public final class InstancesNavigationPanel extends JPanel implements Relocaliza
 
         this.setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
         this.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-        this.add(importButton);
-        this.add(Box.createHorizontalGlue());
         JLabel iconLabel = new JLabel(Utils.getIconImage("/assets/image/loading-bars-small.gif"));
         iconLabel.setText(GetText.tr("Loading..."));
         tab.addDisposable(viewModel.getIsLoading().subscribe(iconLabel::setVisible));
-        this.add(iconLabel);
         this.add(Box.createHorizontalStrut(5));
         this.add(searchField);
         this.add(Box.createHorizontalStrut(5));
         this.add(this.sortingBox);
+        this.add(iconLabel);
+        this.add(Box.createHorizontalGlue());
+        this.add(importButton);
+
         this.addListeners();
 
         RelocalizationManager.addListener(this);

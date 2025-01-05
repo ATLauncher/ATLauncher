@@ -22,7 +22,9 @@ import java.awt.GridLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.List;
 
+import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
@@ -86,8 +88,6 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
     private final JMenuItem normalBackupMenuItem = new JMenuItem(GetText.tr("Normal Backup"));
     private final JMenuItem normalPlusModsBackupMenuItem = new JMenuItem(GetText.tr("Normal + Mods Backup"));
     private final JMenuItem fullBackupMenuItem = new JMenuItem(GetText.tr("Full Backup"));
-    private final JMenuItem openFolderItem = new JMenuItem(GetText.tr("Open Folder"));
-    private final JMenuItem openResourceMenuItem = new JMenuItem(GetText.tr("Open Resources"));
     private final DropDownButton settingsButton = new DropDownButton(GetText.tr("Settings"), settingsPopupMenu, true,
             new MouseAdapter() {
                 @Override
@@ -103,6 +103,8 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
     private final DropDownButton modingButton = new DropDownButton(GetText.tr("Moding"), modingPopupMenu);
 
     private final JPopupMenu morePopupMenu = new JPopupMenu();
+    private final JMenuItem openFolderItem = new JMenuItem(GetText.tr("Open Folder"));
+    private final JMenuItem openResourceMenuItem = new JMenuItem(GetText.tr("Open Resources"));
     private final JMenuItem discordLinkMenuItem = new JMenuItem(GetText.tr("Discord"));
     private final JMenuItem supportLinkMenuItem = new JMenuItem(GetText.tr("Support"));
     private final JMenuItem websiteLinkMenuItem = new JMenuItem(GetText.tr("Website"));
@@ -174,9 +176,9 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
         // button grid setup block
         JPanel buttonGrid = new JPanel(new GridLayout(0, 2, 8, 6));
         buttonGrid.setBorder(new EmptyBorder(2, 10, 2, 10));
-        buttonGrid.add(this.playButton);
-        buttonGrid.add(this.settingsButton);
+        buttonGrid.add(playButton);
         buttonGrid.add(modingButton);
+        buttonGrid.add(settingsButton);
         buttonGrid.add(editInstanceButton);
         // button grid setup end block
 
@@ -191,6 +193,7 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
         JSplitPane headerSplitter = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, mainTitile, moreButton);
         headerSplitter.setResizeWeight(.85);
         upper.add(headerSplitter);
+        upper.add(Box.createHorizontalGlue());
         upper.add(desc);
 
         JSplitPane subSplitter = new JSplitPane(JSplitPane.VERTICAL_SPLIT, upper, buttonGrid);
@@ -239,20 +242,6 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
         settingsPopupMenu.add(fullBackupMenuItem);
         // backup end block
 
-        settingsPopupMenu.addSeparator();
-
-        // open folder block
-        openFolderItem.addActionListener(e -> OS.openFileExplorer(instance.getRoot()));
-        settingsPopupMenu.add(openFolderItem);
-
-        openResourceMenuItem.addActionListener(e -> {
-            DialogManager.okDialog().setTitle(GetText.tr("Reminder"))
-                    .setContent(GetText.tr("You may not distribute ANY resources."))
-                    .setType(DialogManager.WARNING).show();
-            OS.openFileExplorer(instance.getMinecraftJarLibraryPath());
-        });
-        settingsPopupMenu.add(openResourceMenuItem);
-        // open folder end block
     }
 
     private void setupModingPopupMenu() {
@@ -289,6 +278,22 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
     private void setupMorePopupMenu() {
         moreButton.setBackground(null);
         moreButton.setBorder(new EmptyBorder(1, 1, 1, 1));
+
+        // open folder block
+        openFolderItem.addActionListener(e -> OS.openFileExplorer(instance.getRoot()));
+        morePopupMenu.add(openFolderItem);
+
+        openResourceMenuItem.addActionListener(e -> {
+            DialogManager.okDialog().setTitle(GetText.tr("Reminder"))
+                    .setContent(GetText.tr("You may not distribute ANY resources."))
+                    .setType(DialogManager.WARNING).show();
+            OS.openFileExplorer(instance.getMinecraftJarLibraryPath());
+        });
+        morePopupMenu.add(openResourceMenuItem);
+        // open folder end block
+
+        morePopupMenu.addSeparator();
+
         // update block
         updateItem.addActionListener(e -> {
             if (AccountManager.getSelectedAccount() == null) {
@@ -445,48 +450,28 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
             instance.addLoader(LoaderType.QUILT);
             setEditInstanceMenuItemVisibility();
         });
-
-        changeFabricVersionMenuItem.addActionListener(e -> {
-            instance.changeLoaderVersion();
-            setEditInstanceMenuItemVisibility();
-        });
-        changeForgeVersionMenuItem.addActionListener(e -> {
-            instance.changeLoaderVersion();
-            setEditInstanceMenuItemVisibility();
-        });
-        changeLegacyFabricVersionMenuItem.addActionListener(e -> {
-            instance.changeLoaderVersion();
-            setEditInstanceMenuItemVisibility();
-        });
-        changeNeoForgeVersionMenuItem.addActionListener(e -> {
-            instance.changeLoaderVersion();
-            setEditInstanceMenuItemVisibility();
-        });
-        changeQuiltVersionMenuItem.addActionListener(e -> {
-            instance.changeLoaderVersion();
-            setEditInstanceMenuItemVisibility();
-        });
-
-        removeFabricMenuItem.addActionListener(e -> {
-            instance.removeLoader();
-            setEditInstanceMenuItemVisibility();
-        });
-        removeForgeMenuItem.addActionListener(e -> {
-            instance.removeLoader();
-            setEditInstanceMenuItemVisibility();
-        });
-        removeLegacyFabricMenuItem.addActionListener(e -> {
-            instance.removeLoader();
-            setEditInstanceMenuItemVisibility();
-        });
-        removeNeoForgeMenuItem.addActionListener(e -> {
-            instance.removeLoader();
-            setEditInstanceMenuItemVisibility();
-        });
-        removeQuiltMenuItem.addActionListener(e -> {
-            instance.removeLoader();
-            setEditInstanceMenuItemVisibility();
-        });
+        List.of(changeFabricVersionMenuItem,
+                changeForgeVersionMenuItem,
+                changeLegacyFabricVersionMenuItem,
+                changeNeoForgeVersionMenuItem,
+                changeQuiltVersionMenuItem)
+                .forEach(item -> {
+                    item.addActionListener(e -> {
+                        instance.changeLoaderVersion();
+                        setEditInstanceMenuItemVisibility();
+                    });
+                });
+        List.of(removeFabricMenuItem,
+                removeForgeMenuItem,
+                removeLegacyFabricMenuItem,
+                removeNeoForgeMenuItem,
+                removeQuiltMenuItem)
+                .forEach(item -> {
+                    item.addActionListener(e -> {
+                        instance.removeLoader();
+                        setEditInstanceMenuItemVisibility();
+                    });
+                });
         setEditInstanceMenuItemVisibility();
     }
 
@@ -521,7 +506,7 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
         descArea.setHighlighter(null);
         descArea.setLineWrap(true);
         descArea.setWrapStyleWord(true);
-        descArea.setForeground(getBackground().brighter().brighter().brighter());
+        descArea.setForeground(getBackground().brighter().brighter().brighter().brighter());
         if (instance.canChangeDescription()) {
             descArea.addMouseListener(new MouseAdapter() {
                 @Override

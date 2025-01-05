@@ -91,7 +91,7 @@ public class ServerCard extends CollapsiblePanel implements RelocalizationListen
         descArea.setHighlighter(null);
         descArea.setLineWrap(true);
         descArea.setWrapStyleWord(true);
-        descArea.setEditable(false);
+        descArea.setForeground(getBackground().brighter().brighter().brighter().brighter());
 
         descArea.addMouseListener(new MouseAdapter() {
             @Override
@@ -126,14 +126,6 @@ public class ServerCard extends CollapsiblePanel implements RelocalizationListen
                 JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         desc.setPreferredSize(new Dimension(getPreferredSize().width, 50));
 
-        // JPanel upper = new JPanel();
-        // upper.setLayout(new FlowLayout(FlowLayout.LEFT));
-        // upper.add(othersButton);
-        // upper.add(this.mainTitile);
-        // add(upper, 0);
-        // add(image);
-        // add(desc);
-        // add(buttonGrid);
         add(image);
         JPanel upper = new JPanel();
         upper.setLayout(new BoxLayout(upper, BoxLayout.Y_AXIS));
