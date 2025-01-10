@@ -173,6 +173,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
     public TechnicSolderModpackManifest technicSolderModpackManifest;
     public Path technicModpackExtractedPath;
     public List<Mod> technicSolderModsToDownload = new ArrayList<>();
+    private List<String> overridePaths = new ArrayList<>();
 
     public boolean isReinstall;
     public boolean isServer;
@@ -2575,6 +2576,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
             instanceLauncher.ftbPackVersionManifest = ftbPackVersionManifest;
             instanceLauncher.technicModpack = technicModpack;
             instanceLauncher.vanillaInstance = this.pack.vanillaInstance;
+            instanceLauncher.overridePaths = overridePaths;
 
             if (multiMCManifest != null) {
                 if (multiMCManifest.config.preLaunchCommand != null
@@ -3469,6 +3471,19 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                     .resolve(Optional.ofNullable(curseForgeManifest.overrides).orElse("overrides")))) {
                 fireSubProgressUnknown();
                 fireTask(GetText.tr("Copying Overrides"));
+
+                try (Stream<Path> stream = Files.walk(this.curseForgeExtractedPath
+                        .resolve(Optional.ofNullable(curseForgeManifest.overrides).orElse("overrides")))) {
+                    stream.filter(Files::isRegularFile).forEach(path -> overridePaths.add(this.curseForgeExtractedPath
+                            .resolve(Optional.ofNullable(curseForgeManifest.overrides)
+                                    .orElse("overrides"))
+                            .relativize(
+                                    path)
+                            .toString()));
+                } catch (IOException e) {
+                    LogManager.logStackTrace(e);
+                }
+
                 Utils.copyDirectory(this.curseForgeExtractedPath
                         .resolve(Optional.ofNullable(curseForgeManifest.overrides).orElse("overrides")).toFile(),
                         this.root.toFile(), false);
@@ -3477,6 +3492,15 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
             if (Files.exists(this.modrinthExtractedPath.resolve("overrides"))) {
                 fireSubProgressUnknown();
                 fireTask(GetText.tr("Copying Overrides"));
+
+                try (Stream<Path> stream = Files.walk(this.modrinthExtractedPath.resolve("overrides"))) {
+                    stream.filter(Files::isRegularFile).forEach(path -> overridePaths.add(
+                            this.modrinthExtractedPath.resolve("overrides").relativize(
+                                    path).toString()));
+                } catch (IOException e) {
+                    LogManager.logStackTrace(e);
+                }
+
                 Utils.copyDirectory(this.modrinthExtractedPath.resolve("overrides").toFile(), this.root.toFile(),
                         false);
 
@@ -3496,6 +3520,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
 
             List<com.atlauncher.network.Download> filesToDownload = ftbPackVersionManifest.files.parallelStream()
                     .filter(f -> f.type != FTBPackVersionManifestFileType.MOD).map(file -> {
+                        overridePaths.add(file.getPath() + file.name);
+
                         com.atlauncher.network.Download download = com.atlauncher.network.Download.build()
                                 .setUrl(file.url).size((long) file.size).hash(file.sha1).ignoreFailures()
                                 .downloadTo(root.resolve(file.getPath() + file.name))
@@ -3570,8 +3596,19 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
             fireSubProgressUnknown();
             fireTask(GetText.tr("Extracting Configs"));
 
+            Path configsExtractedPath = this.temp.resolve("configs");
             ArchiveUtils.extract(configs.toPath(), this.root);
+            ArchiveUtils.extract(configs.toPath(), configsExtractedPath);
             Utils.delete(configs);
+
+            // Read the config files and add them to the override paths
+            try (Stream<Path> stream = Files.walk(configsExtractedPath)) {
+                stream.filter(Files::isRegularFile)
+                        .forEach(path2 -> overridePaths.add(configsExtractedPath.relativize(path2).toString()));
+            } catch (IOException e) {
+                LogManager.logStackTrace(e);
+            }
+            FileUtils.deleteDirectory(configsExtractedPath);
         }
     }
 
@@ -3867,8 +3904,10 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                 FileUtils.deleteDirectory(this.root.resolve("bin"));
             }
 
+            // only delete the config folder if the overridePaths list is empty
             if (Files.isDirectory(this.root.resolve("config")) && (instance == null
-                    || !instance.launcher.vanillaInstance)) {
+                    || this.instance.launcher.overridePaths == null
+                    || this.instance.launcher.overridePaths.isEmpty())) {
                 FileUtils.deleteDirectory(this.root.resolve("config"));
             }
 
@@ -3889,6 +3928,30 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
 
                     Utils.deleteWithFilter(this.root.resolve("jarmods").toFile(),
                             instance.getPackMods(com.atlauncher.data.Type.forge), true);
+                }
+
+                if (this.instance.launcher.overridePaths != null && !this.instance.launcher.overridePaths.isEmpty()) {
+                    this.instance.launcher.overridePaths.forEach(path -> {
+                        if (Files.exists(this.root.resolve(path))) {
+                            FileUtils.delete(this.root.resolve(path));
+
+                            // delete empty parent directories recursively up to root
+                            try {
+                                Path parentDir = this.root.resolve(path).getParent();
+                                while (parentDir != null && parentDir.startsWith(this.root)
+                                        && !parentDir.equals(this.root)
+                                        && Files.isDirectory(parentDir)) {
+                                    if (Files.list(parentDir).count() == 0) {
+                                        FileUtils.deleteDirectory(parentDir);
+                                        parentDir = parentDir.getParent();
+                                    } else {
+                                        break;
+                                    }
+                                }
+                            } catch (IOException ignored) {
+                            }
+                        }
+                    });
                 }
             } else {
                 if (Files.isDirectory(this.root.resolve("mods"))) {

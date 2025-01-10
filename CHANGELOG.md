@@ -8,5 +8,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 ### New Features
 
 ### Fixes
+- Fix overrides/configs not being deleted/not deleted correctly when reinstalling/updating instances [#704]
 
 ### Misc

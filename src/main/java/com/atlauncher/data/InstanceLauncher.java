@@ -98,6 +98,7 @@ public class InstanceLauncher {
     @SerializedName(value = "ftbPackVersionManifest", alternate = { "modpacksChPackVersionManifest" })
     public FTBPackVersionManifest ftbPackVersionManifest;
     public TechnicModpack technicModpack;
+    public List<String> overridePaths = new ArrayList<>();
 
     public boolean checkForUpdates = true;
 
