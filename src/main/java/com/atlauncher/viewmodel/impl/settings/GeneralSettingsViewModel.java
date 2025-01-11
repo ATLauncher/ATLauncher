@@ -50,33 +50,31 @@ import io.reactivex.rxjava3.subjects.BehaviorSubject;
 
 /**
  * @since 2022 / 06 / 15
- * <p>
- * View model for {@link GeneralSettingsTab}
+ *        <p>
+ *        View model for {@link GeneralSettingsTab}
  */
 public class GeneralSettingsViewModel implements SettingsListener {
-    private final BehaviorSubject<Integer>
-        _addOnSelectedLanguage = BehaviorSubject.create(),
-        _selectedTheme = BehaviorSubject.create(),
-        _dateFormat = BehaviorSubject.create(),
-        _addOnInstanceFormat = BehaviorSubject.create(),
-        _addOnSelectedTabOnStartup = BehaviorSubject.create(),
-        _addInstanceSorting = BehaviorSubject.create();
+    private final BehaviorSubject<Integer> _addOnSelectedLanguage = BehaviorSubject.create(),
+            _selectedTheme = BehaviorSubject.create(),
+            _dateFormat = BehaviorSubject.create(),
+            _addOnInstanceFormat = BehaviorSubject.create(),
+            _addOnSelectedTabOnStartup = BehaviorSubject.create(),
+            _addInstanceSorting = BehaviorSubject.create();
 
-    private final BehaviorSubject<String>
-        _addOnCustomsDownloadPath = BehaviorSubject.create();
+    private final BehaviorSubject<String> _addOnCustomsDownloadPath = BehaviorSubject.create();
 
-    private final BehaviorSubject<Boolean>
-        _keepLauncherOpen = BehaviorSubject.create(),
-        _enableConsole = BehaviorSubject.create(),
-        _enableTrayMenu = BehaviorSubject.create(),
-        _enableDiscordIntegration = BehaviorSubject.create(),
-        _enableFeralGameMode = BehaviorSubject.create(),
-        _disableCustomFonts = BehaviorSubject.create(),
-        _rememberWindowSizePosition = BehaviorSubject.create(),
-        _useNativeFilePicker = BehaviorSubject.create(),
-        _useRecycleBin = BehaviorSubject.create(),
-        enableArmSupport = BehaviorSubject.create(),
-        scanModsOnLaunch = BehaviorSubject.create();
+    private final BehaviorSubject<Boolean> _keepLauncherOpen = BehaviorSubject.create(),
+            _enableConsole = BehaviorSubject.create(),
+            _enableTrayMenu = BehaviorSubject.create(),
+            _enableDiscordIntegration = BehaviorSubject.create(),
+            _enableFeralGameMode = BehaviorSubject.create(),
+            _disableCustomFonts = BehaviorSubject.create(),
+            _rememberWindowSizePosition = BehaviorSubject.create(),
+            _useNativeFilePicker = BehaviorSubject.create(),
+            _useRecycleBin = BehaviorSubject.create(),
+            enableArmSupport = BehaviorSubject.create(),
+            scanModsOnLaunch = BehaviorSubject.create(),
+            _newDesignLayout = BehaviorSubject.create();
 
     private List<LauncherTheme> themes = null;
 
@@ -95,7 +93,7 @@ public class GeneralSettingsViewModel implements SettingsListener {
         pushInstanceSorting();
 
         _addOnCustomsDownloadPath.onNext(Optional.ofNullable(App.settings.customDownloadsPath)
-            .orElse(FileSystem.getUserDownloadsPath(false).toString()));
+                .orElse(FileSystem.getUserDownloadsPath(false).toString()));
 
         _keepLauncherOpen.onNext(App.settings.keepLauncherOpen);
         _enableConsole.onNext(App.settings.enableConsole);
@@ -106,13 +104,14 @@ public class GeneralSettingsViewModel implements SettingsListener {
         _rememberWindowSizePosition.onNext(App.settings.rememberWindowSizePosition);
         _useNativeFilePicker.onNext(App.settings.useNativeFilePicker);
         _useRecycleBin.onNext(App.settings.useRecycleBin);
+        _newDesignLayout.onNext(App.settings.enableNewDesginLayout);
     }
 
     /**
      * Get the languages to have as options.
      * <p>
      * TODO Upon implementation of translations, ensure the returned value is
-     *  cached in the view model to avoid extra processing.
+     * cached in the view model to avoid extra processing.
      *
      * @return languages
      */
@@ -156,18 +155,17 @@ public class GeneralSettingsViewModel implements SettingsListener {
     public List<LauncherTheme> getThemes() {
         if (themes == null)
             themes = Arrays.asList(
-                new LauncherTheme("com.atlauncher.themes.Dark", "ATLauncher Dark (default)"),
-                new LauncherTheme("com.atlauncher.themes.Light", "ATLauncher Light"),
-                new LauncherTheme("com.atlauncher.themes.MonokaiPro", "Monokai Pro"),
-                new LauncherTheme("com.atlauncher.themes.DraculaContrast", "Dracula Contrast"),
-                new LauncherTheme("com.atlauncher.themes.HiberbeeDark", "Hiberbee Dark"),
-                new LauncherTheme("com.atlauncher.themes.Vuesion", "Vuesion"),
-                new LauncherTheme("com.atlauncher.themes.MaterialPalenightContrast", "Material Palenight Contrast"),
-                new LauncherTheme("com.atlauncher.themes.ArcOrange", "Arc Orange"),
-                new LauncherTheme("com.atlauncher.themes.CyanLight", "Cyan Light"),
-                new LauncherTheme("com.atlauncher.themes.HighTechDarkness", "High Tech Darkness"),
-                new LauncherTheme("com.atlauncher.themes.OneDark", "One Dark")
-            );
+                    new LauncherTheme("com.atlauncher.themes.Dark", "ATLauncher Dark (default)"),
+                    new LauncherTheme("com.atlauncher.themes.Light", "ATLauncher Light"),
+                    new LauncherTheme("com.atlauncher.themes.MonokaiPro", "Monokai Pro"),
+                    new LauncherTheme("com.atlauncher.themes.DraculaContrast", "Dracula Contrast"),
+                    new LauncherTheme("com.atlauncher.themes.HiberbeeDark", "Hiberbee Dark"),
+                    new LauncherTheme("com.atlauncher.themes.Vuesion", "Vuesion"),
+                    new LauncherTheme("com.atlauncher.themes.MaterialPalenightContrast", "Material Palenight Contrast"),
+                    new LauncherTheme("com.atlauncher.themes.ArcOrange", "Arc Orange"),
+                    new LauncherTheme("com.atlauncher.themes.CyanLight", "Cyan Light"),
+                    new LauncherTheme("com.atlauncher.themes.HighTechDarkness", "High Tech Darkness"),
+                    new LauncherTheme("com.atlauncher.themes.OneDark", "One Dark"));
         return themes;
     }
 
@@ -184,7 +182,8 @@ public class GeneralSettingsViewModel implements SettingsListener {
      * @param theme Theme id as provided in {@link LauncherTheme}
      */
     public void setSelectedTheme(String theme) {
-        if (App.settings.theme.equals(theme)) return;
+        if (App.settings.theme.equals(theme))
+            return;
         Analytics.trackEvent(AnalyticsEvent.forThemeChange(App.THEME.getName()));
         App.settings.theme = theme;
         SettingsManager.post();
@@ -233,7 +232,8 @@ public class GeneralSettingsViewModel implements SettingsListener {
      * @param format date format
      */
     public void setDateFormat(String format) {
-        if (App.settings.dateFormat.equals(format)) return;
+        if (App.settings.dateFormat.equals(format))
+            return;
         App.settings.dateFormat = format;
         SettingsManager.post();
     }
@@ -260,7 +260,8 @@ public class GeneralSettingsViewModel implements SettingsListener {
      * @param format instance title format
      */
     public void setInstanceTitleFormat(String format) {
-        if (App.settings.instanceTitleFormat.equals(format)) return;
+        if (App.settings.instanceTitleFormat.equals(format))
+            return;
         App.settings.instanceTitleFormat = format;
         SettingsManager.post();
     }
@@ -294,6 +295,23 @@ public class GeneralSettingsViewModel implements SettingsListener {
     public void setSelectedTabOnStartup(int tab) {
         App.settings.selectedTabOnStartup = tab;
         SettingsManager.post();
+    }
+
+    /**
+     * Set the new design layout
+     *
+     * @param enabled true or false
+     */
+    public void setNewDesignLayout(boolean enabled) {
+        App.settings.enableNewDesginLayout = enabled;
+        SettingsManager.post();
+    }
+
+    /**
+     * Listen to new design layout being enabled
+     */
+    public Observable<Boolean> getNewDesignLayout() {
+        return _newDesignLayout.observeOn(SwingSchedulers.edt());
     }
 
     /**
@@ -375,7 +393,8 @@ public class GeneralSettingsViewModel implements SettingsListener {
      * @param b keep launcher open or not
      */
     public void setKeepLauncherOpen(boolean b) {
-        if (App.settings.keepLauncherOpen == b) return;
+        if (App.settings.keepLauncherOpen == b)
+            return;
         App.settings.keepLauncherOpen = b;
         SettingsManager.post();
     }
@@ -393,7 +412,8 @@ public class GeneralSettingsViewModel implements SettingsListener {
      * @param b console enabled?
      */
     public void setEnableConsole(boolean b) {
-        if (App.settings.enableConsole == b) return;
+        if (App.settings.enableConsole == b)
+            return;
         App.settings.enableConsole = b;
         SettingsManager.post();
     }
@@ -404,7 +424,8 @@ public class GeneralSettingsViewModel implements SettingsListener {
      * @param b enabled?
      */
     public void setEnableTrayMenuOpen(boolean b) {
-        if (App.settings.enableTrayMenu == b) return;
+        if (App.settings.enableTrayMenu == b)
+            return;
         App.settings.enableTrayMenu = b;
         SettingsManager.post();
     }
@@ -421,7 +442,8 @@ public class GeneralSettingsViewModel implements SettingsListener {
     }
 
     public void setEnableDiscordIntegration(boolean b) {
-        if (App.settings.enableDiscordIntegration == b) return;
+        if (App.settings.enableDiscordIntegration == b)
+            return;
         App.settings.enableDiscordIntegration = b;
         SettingsManager.post();
     }
@@ -444,11 +466,11 @@ public class GeneralSettingsViewModel implements SettingsListener {
     }
 
     public void setEnableFeralGameMode(boolean b) {
-        if (App.settings.enableFeralGamemode == b) return;
+        if (App.settings.enableFeralGamemode == b)
+            return;
         App.settings.enableFeralGamemode = b;
         SettingsManager.post();
     }
-
 
     public Observable<Boolean> getDisableCustomFonts() {
         return _disableCustomFonts.observeOn(SwingSchedulers.edt());
@@ -458,7 +480,6 @@ public class GeneralSettingsViewModel implements SettingsListener {
         App.settings.disableCustomFonts = b;
         SettingsManager.post();
     }
-
 
     public void setRememberWindowStuff(boolean remember) {
         App.settings.rememberWindowSizePosition = remember;
@@ -484,7 +505,6 @@ public class GeneralSettingsViewModel implements SettingsListener {
         return _useNativeFilePicker.observeOn(SwingSchedulers.edt());
     }
 
-
     public void setUseNativeFilePicker(boolean b) {
         App.settings.useNativeFilePicker = b;
         SettingsManager.post();
@@ -495,11 +515,11 @@ public class GeneralSettingsViewModel implements SettingsListener {
     }
 
     public void setUseRecycleBin(boolean b) {
-        if (App.settings.useRecycleBin == b) return;
+        if (App.settings.useRecycleBin == b)
+            return;
         App.settings.useRecycleBin = b;
         SettingsManager.post();
     }
-
 
     public boolean showArmSupport() {
         return ConfigManager.getConfigItem("useLwjglReplacement", false);

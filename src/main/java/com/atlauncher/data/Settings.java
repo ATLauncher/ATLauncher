@@ -84,6 +84,7 @@ public class Settings {
     public boolean useRecycleBin = true;
     public boolean enableArmSupport = true;
     public boolean scanModsOnLaunch = true;
+    public boolean enableNewDesginLayout = false; // false = default instance layout, true = new design layout
 
     // Mods
     public ModPlatform defaultModPlatform = ModPlatform.CURSEFORGE;
@@ -285,6 +286,11 @@ public class Settings {
         String importedAnalyticsClientId = properties.getProperty("analyticsclientid");
         if (importedAnalyticsClientId != null) {
             analyticsClientId = importedAnalyticsClientId;
+        }
+
+        String importedEnableNewLayout = properties.getProperty("enablenewlayout");
+        if (importedEnableNewLayout != null) {
+            enableConsole = Boolean.parseBoolean(importedEnableNewLayout);
         }
 
         // validate everything
@@ -533,7 +539,7 @@ public class Settings {
 
     public void save() {
         try (OutputStreamWriter fileWriter = new OutputStreamWriter(
-            Files.newOutputStream(FileSystem.SETTINGS), StandardCharsets.UTF_8)) {
+                Files.newOutputStream(FileSystem.SETTINGS), StandardCharsets.UTF_8)) {
             Gsons.DEFAULT.toJson(this, fileWriter);
         } catch (IOException e) {
             LogManager.logStackTrace("Error saving settings", e);
