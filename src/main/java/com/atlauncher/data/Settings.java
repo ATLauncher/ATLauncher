@@ -84,7 +84,7 @@ public class Settings {
     public boolean useRecycleBin = true;
     public boolean enableArmSupport = true;
     public boolean scanModsOnLaunch = true;
-    public boolean enableNewDesginLayout = false; // false = default instance layout, true = new design layout
+    public int selectDesignLayout = 0; // 0 = default instance layout, 1 = new design layout ... more if added
 
     // Mods
     public ModPlatform defaultModPlatform = ModPlatform.CURSEFORGE;

@@ -24,6 +24,7 @@ import javax.swing.JScrollPane;
 import org.mini2Dx.gettext.GetText;
 
 import com.atlauncher.App;
+import com.atlauncher.constants.UIConstants;
 import com.atlauncher.gui.panels.HierarchyPanel;
 import com.atlauncher.gui.tabs.instances.InstancesListPanel;
 import com.atlauncher.gui.tabs.instances.InstancesNavigationPanel;
@@ -64,10 +65,10 @@ public class InstancesTab extends HierarchyPanel implements Tab {
     protected void onShow() {
         navigationPanel = new InstancesNavigationPanel(this, viewModel);
         this.add(this.navigationPanel, BorderLayout.NORTH);
-        if (App.settings.enableNewDesginLayout) {
-            instancesListPanel = new NewDesignInstancesListPanel(this, viewModel);
-        } else {
+        if (App.settings.selectDesignLayout == UIConstants.LAYOUT_DEFAULT) {
             instancesListPanel = new InstancesListPanel(this, viewModel);
+        } else if (App.settings.selectDesignLayout == UIConstants.LAYOUT_GRID) {
+            instancesListPanel = new NewDesignInstancesListPanel(this, viewModel);
         }
 
         scrollPane = Utils.wrapInVerticalScroller(this.instancesListPanel, 16);

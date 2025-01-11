@@ -295,6 +295,37 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
 
         add(customDownloadsPathPanel, gbc);
 
+        
+                // region change design layout
+
+                gbc.gridx = 0;
+                gbc.gridy++;
+                gbc.insets = UIConstants.LABEL_INSETS;
+                gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
+
+                JLabelWithHover selectedDesignLayoutLabel = new JLabelWithHover(GetText.tr("Design Layout") + ":",
+                                HELP_ICON,
+                                GetText.tr("change instances/server tab layout"));
+
+                add(selectedDesignLayoutLabel, gbc);
+
+                gbc.gridx++;
+                gbc.insets = UIConstants.FIELD_INSETS;
+                gbc.anchor = GridBagConstraints.BASELINE_LEADING;
+                JComboBox<ComboItem<Integer>> selectDesginLayout = new JComboBox<>();
+                selectDesginLayout.addItem(new ComboItem<>(UIConstants.LAYOUT_DEFAULT, GetText.tr("Default")));
+                selectDesginLayout.addItem(new ComboItem<>(UIConstants.LAYOUT_GRID, GetText.tr("Grid")));
+
+                addDisposable(viewModel.getDesignLayout().subscribe(selectDesginLayout::setSelectedIndex));
+
+                selectDesginLayout.addItemListener(itemEvent -> {
+                        if (itemEvent.getStateChange() == ItemEvent.SELECTED)
+                                viewModel.setDesignLayout(((ComboItem<Integer>) itemEvent.getItem()).getValue());
+                });
+
+                add(selectDesginLayout, gbc);
+
+
         // Keep Launcher Open
 
         gbc.gridx = 0;
@@ -545,14 +576,6 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         JLabelWithHover newDesignLabel = new JLabelWithHover(GetText.tr("Enable New Layout") + "?", HELP_ICON,
                 GetText.tr("enable this option to try the new redesigned instances/server ui"));
         add(newDesignLabel, gbc);
-        // region new layout
-        gbc.gridx++;
-        gbc.insets = UIConstants.CHECKBOX_FIELD_INSETS;
-        gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-        JCheckBox newDesginEnabled = new JCheckBox();
-        newDesginEnabled.addItemListener(e -> viewModel.setNewDesignLayout(e.getStateChange() == ItemEvent.SELECTED));
-        addDisposable(viewModel.getNewDesignLayout().subscribe(newDesginEnabled::setSelected));
-        add(newDesginEnabled, gbc);
     }
 
     @Override

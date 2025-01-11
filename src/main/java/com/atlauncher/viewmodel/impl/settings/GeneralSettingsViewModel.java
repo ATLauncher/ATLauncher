@@ -59,7 +59,8 @@ public class GeneralSettingsViewModel implements SettingsListener {
             _dateFormat = BehaviorSubject.create(),
             _addOnInstanceFormat = BehaviorSubject.create(),
             _addOnSelectedTabOnStartup = BehaviorSubject.create(),
-            _addInstanceSorting = BehaviorSubject.create();
+            _addInstanceSorting = BehaviorSubject.create(),
+            _designLayout = BehaviorSubject.create();
 
     private final BehaviorSubject<String> _addOnCustomsDownloadPath = BehaviorSubject.create();
 
@@ -73,8 +74,7 @@ public class GeneralSettingsViewModel implements SettingsListener {
             _useNativeFilePicker = BehaviorSubject.create(),
             _useRecycleBin = BehaviorSubject.create(),
             enableArmSupport = BehaviorSubject.create(),
-            scanModsOnLaunch = BehaviorSubject.create(),
-            _newDesignLayout = BehaviorSubject.create();
+            scanModsOnLaunch = BehaviorSubject.create();
 
     private List<LauncherTheme> themes = null;
 
@@ -104,7 +104,7 @@ public class GeneralSettingsViewModel implements SettingsListener {
         _rememberWindowSizePosition.onNext(App.settings.rememberWindowSizePosition);
         _useNativeFilePicker.onNext(App.settings.useNativeFilePicker);
         _useRecycleBin.onNext(App.settings.useRecycleBin);
-        _newDesignLayout.onNext(App.settings.enableNewDesginLayout);
+        _designLayout.onNext(App.settings.selectDesignLayout);
     }
 
     /**
@@ -302,16 +302,16 @@ public class GeneralSettingsViewModel implements SettingsListener {
      *
      * @param enabled true or false
      */
-    public void setNewDesignLayout(boolean enabled) {
-        App.settings.enableNewDesginLayout = enabled;
+    public void setDesignLayout(int layout) {
+        App.settings.selectDesignLayout = layout;
         SettingsManager.post();
     }
 
     /**
      * Listen to new design layout being enabled
      */
-    public Observable<Boolean> getNewDesignLayout() {
-        return _newDesignLayout.observeOn(SwingSchedulers.edt());
+    public Observable<Integer> getDesignLayout() {
+        return _designLayout.observeOn(SwingSchedulers.edt());
     }
 
     /**

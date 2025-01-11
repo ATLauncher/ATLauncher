@@ -67,7 +67,7 @@ public class ServersTab extends HierarchyPanel implements Tab, RelocalizationLis
 
     @Override
     protected void onShow() {
-        if (App.settings.enableNewDesginLayout) {
+        if (App.settings.selectDesignLayout == UIConstants.LAYOUT_GRID) {
             JPanel topPanel = new JPanel();
             topPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
 
@@ -118,7 +118,7 @@ public class ServersTab extends HierarchyPanel implements Tab, RelocalizationLis
                 searchBox.requestFocus();
             });
             viewModel.getViewPosition().subscribe(scrollPane.getVerticalScrollBar()::setValue);
-        } else {
+        } else if (App.settings.selectDesignLayout == UIConstants.LAYOUT_DEFAULT) {
             JPanel topPanel = new JPanel();
             topPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
 
