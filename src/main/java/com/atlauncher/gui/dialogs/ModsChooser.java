@@ -22,13 +22,13 @@ import java.awt.Dimension;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
@@ -38,7 +38,6 @@ import javax.swing.UIManager;
 import org.mini2Dx.gettext.GetText;
 
 import com.atlauncher.App;
-import com.atlauncher.Gsons;
 import com.atlauncher.data.json.Mod;
 import com.atlauncher.gui.components.ModsJCheckBox;
 import com.atlauncher.managers.DialogManager;
@@ -46,9 +45,6 @@ import com.atlauncher.managers.LogManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.Utils;
 import com.atlauncher.workers.InstanceInstaller;
-import com.google.gson.reflect.TypeToken;
-
-import io.github.asyncronous.toast.Toaster;
 
 public class ModsChooser extends JDialog {
     private static final long serialVersionUID = -5309108183485463434L;
@@ -193,9 +189,12 @@ public class ModsChooser extends JDialog {
         int count1 = 0;
         int count2 = 0;
 
-        for (int i = 0; i < installer.allMods.size();) {
+        List<Mod> orderedMods = installer.allMods.stream().sorted(Comparator.comparing(Mod::getName))
+                .collect(Collectors.toList());
+
+        for (int i = 0; i < orderedMods.size();) {
             boolean skip = false;
-            final Mod mod = installer.allMods.get(i);
+            final Mod mod = orderedMods.get(i);
             if (installer.isServer && !mod.installOnServer()) {
                 continue;
             }

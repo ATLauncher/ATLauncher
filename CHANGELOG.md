@@ -12,3 +12,4 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Issue with mods that require manual download from CurseForge packs not keeping their optional status [#984]
 
 ### Misc
+- Sort the mods chooser to be alphabetical to make it easier to browse
