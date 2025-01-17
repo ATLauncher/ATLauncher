@@ -9,5 +9,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 
 ### Fixes
 - Fix overrides/configs not being deleted/not deleted correctly when reinstalling/updating instances [#704]
+- Issue with mods that require manual download from CurseForge packs not keeping their optional status [#984]
 
 ### Misc

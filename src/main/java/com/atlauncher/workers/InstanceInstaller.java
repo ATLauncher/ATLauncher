@@ -847,6 +847,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                         modToAdd.url = modrinthVersion.getFileBySha1(sha1Hash.get().value).url;
                         modToAdd.modrinthProject = modrinthProjects.get(modrinthVersion.projectId);
                         modToAdd.modrinthVersion = modrinthVersion;
+                        modToAdd.optional = !file.required;
 
                         LogManager.debug("Found matching mod from Modrinth called " + modToAdd.modrinthProject.title);
 
@@ -860,6 +861,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                 modToAdd.download = DownloadType.browser;
                 modToAdd.url = curseForgeProject.getBrowserDownloadUrl(curseForgeFile);
                 modToAdd.file = curseForgeFile.fileName;
+                modToAdd.optional = !file.required;
                 return modToAdd;
             }
 
