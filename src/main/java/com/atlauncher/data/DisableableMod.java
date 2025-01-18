@@ -21,6 +21,7 @@ import java.awt.Color;
 import java.awt.Window;
 import java.io.File;
 import java.io.Serializable;
+import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -50,6 +51,7 @@ import com.atlauncher.managers.MinecraftManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.network.analytics.AnalyticsEvent;
 import com.atlauncher.utils.CurseForgeApi;
+import com.atlauncher.utils.FileUtils;
 import com.atlauncher.utils.ModrinthApi;
 import com.atlauncher.utils.Pair;
 import com.atlauncher.utils.Utils;
@@ -252,6 +254,10 @@ public class DisableableMod implements Serializable {
 
     public boolean disable(Instance instance) {
         if (!this.disabled) {
+            if (!Files.isDirectory(instance.getRoot().resolve("disabledmods"))) {
+                FileUtils.createDirectory(instance.getRoot().resolve("disabledmods"));
+            }
+
             if (Utils.moveFile(getFile(instance), getDisabledFile(instance), true)) {
                 this.disabled = true;
                 return true;
