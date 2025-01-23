@@ -83,6 +83,11 @@ public class MCLauncher {
         processBuilder.directory(instance.getRootDirectory());
         processBuilder.redirectErrorStream(true);
         processBuilder.environment().remove("_JAVA_OPTIONS"); // Remove any _JAVA_OPTIONS, they are a PAIN
+
+        for (Map.Entry<String, String> entry : getLaunchEnvironmentVariables(instance).entrySet()) {
+            processBuilder.environment().put(entry.getKey(), entry.getValue());
+        }
+
         return processBuilder.start();
     }
 
@@ -127,6 +132,19 @@ public class MCLauncher {
             }
         } catch (IOException ignored) {
         }
+    }
+
+    private static Map<String, String> getLaunchEnvironmentVariables(Instance instance) {
+        Map<String, String> variables = new LinkedHashMap<>();
+
+        if (OS.isLinux()
+                && Optional.ofNullable(instance.launcher.useDedicatedGpu).orElse(App.settings.useDedicatedGpu)) {
+            variables.put("DRI_PRIME", "1");
+            variables.put("__NV_PRIME_RENDER_OFFLOAD", "1");
+            variables.put("__GLX_VENDOR_LIBRARY_NAME", "nvidia");
+        }
+
+        return variables;
     }
 
     private static List<String> wrapArguments(String wrapperCommand, List<String> args) {
