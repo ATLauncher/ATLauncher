@@ -9,7 +9,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Add AboutTab [#568]
 - Add version option for CLI [#915]
 - Dynaimc fetching of JRE information from nodecdn [#958]
-- Add `useDedicatedGpu' setting to support dedicated GPU's on linux [#986]
+- Add `useDedicatedGpu' setting to support dedicated GPU's on linux [#676]
 
 ### Fixes
 - Java parameters field not being scrollable
