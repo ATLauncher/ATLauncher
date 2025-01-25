@@ -32,12 +32,12 @@ import java.util.List;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
-import javax.swing.JButton;
 import javax.swing.JEditorPane;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
+import javax.swing.JTabbedPane;
 import javax.swing.JTextPane;
 import javax.swing.SwingUtilities;
 import javax.swing.event.HyperlinkEvent;
@@ -65,13 +65,7 @@ import com.atlauncher.viewmodel.impl.AboutTabViewModel;
  * to let users more easily report errors.
  */
 public class AboutTab extends HierarchyPanel implements Tab {
-
-    /**
-     * Copies [textInfo] to the users clipboard
-     */
-    private JButton copyButton;
-
-    private JLabel contributorsLabel, licenseLabel;
+    private JLabel contributorsLabel;
     private JScrollPane contributorsScrollPane;
     private JPanel authorsList;
 
@@ -117,7 +111,11 @@ public class AboutTab extends HierarchyPanel implements Tab {
                 box.add(Box.createHorizontalGlue());
                 add(box);
 
-                add(new JSeparator());
+                add(new JSeparator() {
+                    {
+                        setMaximumSize(new Dimension(Integer.MAX_VALUE, 3));
+                    }
+                });
             }
 
             JPanel info = new JPanel();
@@ -133,32 +131,35 @@ public class AboutTab extends HierarchyPanel implements Tab {
                 JTextPane textInfo = new JTextPane();
                 textInfo.setText(viewModel.getInfo());
                 textInfo.setEditable(false);
+                textInfo.setFocusable(false);
                 info.add(textInfo);
-            }
-
-            // Add copy button
-            {
-                copyButton = new JButton();
-                copyButton.addActionListener(e -> OS.copyToClipboard(viewModel.getCopyInfo()));
-                info.add(copyButton);
             }
 
             // Add to layout
             add(info);
         }
 
+        add(Box.createVerticalStrut(5));
+
         // Contributors panel
         {
             // Header
             {
-                contributorsLabel = new JLabel();
+                contributorsLabel = new JLabel(GetText.tr("Contributors"));
                 contributorsLabel.setFont(ATLauncherLaf.getInstance().getTitleFont());
-                contributorsLabel.setBorder(BorderFactory.createEmptyBorder(UIConstants.SPACING_XLARGE, UIConstants.SPACING_LARGE, 0, 0));
+                contributorsLabel.setBorder(
+                        BorderFactory.createEmptyBorder(UIConstants.SPACING_XLARGE, UIConstants.SPACING_LARGE, 0, 0));
+
                 Box box = Box.createHorizontalBox();
                 box.add(contributorsLabel);
                 box.add(Box.createHorizontalGlue());
                 add(box);
-                add(new JSeparator());
+                add(new JSeparator() {
+                    {
+                        setMaximumSize(new Dimension(Integer.MAX_VALUE, 3));
+                    }
+                });
+                add(Box.createVerticalStrut(5));
             }
             // Content
             {
@@ -171,33 +172,40 @@ public class AboutTab extends HierarchyPanel implements Tab {
 
                 // Create scroll panel
                 contributorsScrollPane = new JScrollPane(authorsList);
+                contributorsScrollPane.getHorizontalScrollBar().setUnitIncrement(16);
                 contributorsScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-                contributorsScrollPane.setPreferredSize(new Dimension(0, 80));
+                contributorsScrollPane.setPreferredSize(new Dimension(0, 100));
+                contributorsScrollPane.setMaximumSize(new Dimension(Integer.MAX_VALUE, 100));
                 add(contributorsScrollPane);
             }
         }
 
-        // License
+        add(Box.createVerticalStrut(5));
+
+        JTabbedPane tabbedPane = new JTabbedPane();
+
+        // License Panel
         {
             JPanel licensePanel = new JPanel();
-            licensePanel.setLayout(new BoxLayout(licensePanel, BoxLayout.PAGE_AXIS));
-            licenseLabel = new JLabel();
-            licenseLabel.setFont(ATLauncherLaf.getInstance().getTitleFont());
-            licenseLabel.setBorder(BorderFactory.createEmptyBorder(UIConstants.SPACING_XLARGE, UIConstants.SPACING_LARGE, 0, 0));
-            Box box = Box.createHorizontalBox();
-            box.add(licenseLabel);
-            box.add(Box.createHorizontalGlue());
-            licensePanel.add(box);
-            licensePanel.add(new JSeparator());
+            licensePanel.setLayout(new BoxLayout(licensePanel, BoxLayout.Y_AXIS));
+
             JEditorPane license = new JEditorPane("text/html", "");
             license.setEditable(false);
+            license.setFocusable(false);
             license.addHyperlinkListener(e -> {
                 if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
                     OS.openWebBrowser(e.getURL());
                 }
             });
             try {
-                license.setText(new HTMLBuilder().text(String.join("<br/>", Files.readAllLines(Paths.get(App.class.getResource("/LICENSE").toURI()))).replace("%YEAR%", new SimpleDateFormat("yyyy").format(new Date()))).build());
+                license.setText(
+                        new HTMLBuilder()
+                                .text(String
+                                        .join("<br/>",
+                                                Files.readAllLines(
+                                                        Paths.get(App.class.getResource("/LICENSE").toURI())))
+                                        .replace("%YEAR%", new SimpleDateFormat("yyyy").format(new Date())))
+                                .build());
             } catch (Exception e) {
                 LogManager.logStackTrace(e);
             }
@@ -205,7 +213,46 @@ public class AboutTab extends HierarchyPanel implements Tab {
             scrollPane.setPreferredSize(new Dimension(0, 220));
             SwingUtilities.invokeLater(() -> scrollPane.getVerticalScrollBar().setValue(0));
             licensePanel.add(scrollPane);
-            add(licensePanel);
+
+            tabbedPane.addTab("License", licensePanel);
+        }
+
+        {
+            // Third Party Libraries Panel
+            {
+                JPanel thirdPartyLibrariesPanel = new JPanel();
+                thirdPartyLibrariesPanel.setLayout(new BoxLayout(thirdPartyLibrariesPanel, BoxLayout.Y_AXIS));
+
+                JEditorPane thirdPartyLibraries = new JEditorPane("text/html", "");
+                thirdPartyLibraries.setEditable(false);
+                thirdPartyLibraries.setFocusable(false);
+                thirdPartyLibraries.addHyperlinkListener(e -> {
+                    if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+                        OS.openWebBrowser(e.getURL());
+                    }
+                });
+                try {
+                    thirdPartyLibraries.setText(
+                            new HTMLBuilder()
+                                    .text(String
+                                            .join("<br/>",
+                                                    Files.readAllLines(
+                                                            Paths.get(App.class.getResource("/THIRDPARTYLIBRARIES")
+                                                                    .toURI())))
+                                            .replace("%YEAR%", new SimpleDateFormat("yyyy").format(new Date())))
+                                    .build());
+                } catch (Exception e) {
+                    LogManager.logStackTrace(e);
+                }
+                JScrollPane scrollPane = new JScrollPane(thirdPartyLibraries);
+                scrollPane.setPreferredSize(new Dimension(0, 220));
+                SwingUtilities.invokeLater(() -> scrollPane.getVerticalScrollBar().setValue(0));
+                thirdPartyLibrariesPanel.add(scrollPane);
+
+                tabbedPane.addTab("Third Party Libraries", thirdPartyLibrariesPanel);
+            }
+
+            add(tabbedPane);
         }
     }
 
@@ -213,9 +260,7 @@ public class AboutTab extends HierarchyPanel implements Tab {
     protected void onDestroy() {
         removeAll();
 
-        copyButton = null;
         contributorsLabel = null;
-        licenseLabel = null;
         authorsList = null;
         contributorsScrollPane = null;
     }
@@ -229,7 +274,9 @@ public class AboutTab extends HierarchyPanel implements Tab {
         for (Contributor contributor : contributors) {
             JPanel panel = new JPanel();
             panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-            panel.setBorder(BorderFactory.createEmptyBorder(0, UIConstants.SPACING_XLARGE, 0, UIConstants.SPACING_XLARGE));
+            panel.setBorder(
+                    BorderFactory.createEmptyBorder(0, UIConstants.SPACING_XLARGE, 0, UIConstants.SPACING_XLARGE));
+            // panel.setSize(new Dimension(120, 0));
 
             BackgroundImageLabel icon = new BackgroundImageLabel(contributor.avatarUrl, 64, 64);
             icon.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -255,8 +302,12 @@ public class AboutTab extends HierarchyPanel implements Tab {
             });
             panel.add(icon);
 
-            JEditorPane contributorName = new JEditorPane("text/html", "<html><center><a href=\"" + contributor.url + "\">" + contributor.name + "</a></center></html>");
+            JEditorPane contributorName = new JEditorPane("text/html",
+                    "<html><p style=\"padding: 0\" align=\"center\"><a href=\"" + contributor.url + "\">"
+                            + contributor.name
+                            + "</a></p></html>");
             contributorName.setEditable(false);
+            contributorName.setFocusable(false);
             contributorName.addHyperlinkListener(e -> {
                 if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
                     OS.openWebBrowser(e.getURL());

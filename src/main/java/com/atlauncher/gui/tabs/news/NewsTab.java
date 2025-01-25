@@ -63,7 +63,6 @@ public class NewsTab extends HierarchyPanel implements Tab {
         super(new BorderLayout());
     }
 
-
     @Override
     protected void createViewModel() {
         viewModel = new NewsViewModel();
@@ -76,7 +75,7 @@ public class NewsTab extends HierarchyPanel implements Tab {
         createNewsPane();
 
         JScrollPane scrollPane = new JScrollPane(this.NEWS_PANE, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-            JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+                JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scrollPane.getVerticalScrollBar().setUnitIncrement(16);
         this.add(scrollPane, BorderLayout.CENTER);
 
@@ -101,14 +100,14 @@ public class NewsTab extends HierarchyPanel implements Tab {
                 StyleSheet styleSheet = new StyleSheet();
 
                 styleSheet.addRule(String.format("a { color: %s; }",
-                    Integer.toHexString(UIManager.getColor("News.linkColor").getRGB()).substring(2)));
+                        Integer.toHexString(UIManager.getColor("News.linkColor").getRGB()).substring(2)));
 
                 styleSheet.addRule(String.format(
-                    "h2 { padding-left: 7px; padding-top: 8px; font-weight: bold; font-size: 14px; color: %s; }",
-                    Integer.toHexString(UIManager.getColor("News.headerColor").getRGB()).substring(2)));
+                        "h2 { padding-left: 7px; padding-top: 8px; font-weight: bold; font-size: 14px; color: %s; }",
+                        Integer.toHexString(UIManager.getColor("News.headerColor").getRGB()).substring(2)));
 
                 styleSheet.addRule(
-                    "p { font-size: 10px; padding-left: 8px; padding-right: 8px; padding-top: 8px; padding-bottom: 8px; }");
+                        "p { font-size: 10px; padding-left: 8px; padding-right: 8px; padding-top: 8px; padding-bottom: 8px; }");
 
                 this.setStyleSheet(styleSheet);
             }
@@ -120,6 +119,7 @@ public class NewsTab extends HierarchyPanel implements Tab {
             {
                 this.setEditable(false);
                 this.setEditorKit(NEWS_KIT);
+                this.setFocusable(false);
                 this.addHyperlinkListener(e -> {
                     if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
                         OS.openWebBrowser(e.getURL());

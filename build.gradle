@@ -296,6 +296,28 @@ task createMacApp(type: Zip) {
     archiveFileName = "${project.name}-${project.version}.zip"
 }
 
+task generateThirdPartyLibraries {
+    doLast {
+        def output = new StringBuilder()
+        output.append("<h2>Build Dependencies</h2>\n")
+        // Build dependencies
+        buildscript.configurations.classpath.dependencies.each { dep ->
+            output.append("${dep.group}:${dep.name.replace(".gradle.plugin", "")} version ${dep.version}\n")
+        }
+
+        output.append("<h2>Application Dependencies</h2>\n")
+        // Application dependencies
+        configurations.implementation.dependencies.each { dep ->
+            if (dep.group && dep.version) {
+                output.append("${dep.group}:${dep.name} version ${dep.version}\n")
+            }
+        }
+
+        def resourcesDir = new File(projectDir, "src/main/resources")
+        new File(resourcesDir, "THIRDPARTYLIBRARIES").text = output.toString()
+    }
+}
+
 copyArtifacts.finalizedBy {
     println 'ATLauncher has been built. Distribution files are located in the dist directory.'
 }

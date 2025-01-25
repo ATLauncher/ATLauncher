@@ -9,6 +9,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Add AboutTab [#568]
 - Add version option for CLI [#915]
 - Removed Discord RPC
+- Mojang Account support completely removed [#907]
 
 ### Fixes
 
@@ -19,9 +20,8 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Implement HierarchyPanel in AccountsTab [#838]
 - Implement HierarchyPanel in ServersTab [#839]
 - Implement HierarchyPanel in ToolsTab [#840]
-- Mojang Account support completely removed [#907]
+- Implement HierarchyPanel to CreatePackTab [#816]
 - Update versions of Java tested in GitHub workflows
 - Recreate UI on re-localization [#912]
 - Squash a ton of warnings [#918]
 - Implement architecture for all settings tabs [#910]
-- Implement HierarchyPanel to CreatePackTab [#816]

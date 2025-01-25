@@ -80,17 +80,18 @@ public class AccountsTab extends HierarchyPanel implements Tab, RelocalizationLi
 
         JEditorPane infoTextPane = new JEditorPane("text/html", new HTMLBuilder().center().text(GetText.tr(
                 "In order to login and use ATLauncher modpacks, " +
-                    "you must authenticate with your existing " +
-                    "Minecraft/Mojang account. You must own and have paid " +
-                    "for the Minecraft Java edition " +
-                    "(not the Windows 10 edition) and use the same " +
-                    "login here.<br><br>If you don't have an existing " +
-                    "account, you can get one " +
-                    "<a href=\"https://atl.pw/create-account\">by buying " +
-                    "Minecraft here</a>. ATLauncher doesn't work with cracked" +
-                    " accounts."))
-            .build());
+                        "you must authenticate with your existing " +
+                        "Minecraft/Mojang account. You must own and have paid " +
+                        "for the Minecraft Java edition " +
+                        "(not the Windows 10 edition) and use the same " +
+                        "login here.<br><br>If you don't have an existing " +
+                        "account, you can get one " +
+                        "<a href=\"https://atl.pw/create-account\">by buying " +
+                        "Minecraft here</a>. ATLauncher doesn't work with cracked" +
+                        " accounts."))
+                .build());
         infoTextPane.setEditable(false);
+        infoTextPane.setFocusable(false);
         infoTextPane.addHyperlinkListener(e -> {
             if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
                 OS.openWebBrowser(e.getURL());
@@ -134,11 +135,11 @@ public class AccountsTab extends HierarchyPanel implements Tab, RelocalizationLi
         deleteButton.setVisible(false);
         deleteButton.addActionListener(e -> {
             int ret = DialogManager
-                .yesNoDialog()
-                .setTitle(GetText.tr("Delete"))
-                .setContent(GetText.tr("Are you sure you want " +
-                    "to delete this account?"))
-                .setType(DialogManager.WARNING).show();
+                    .yesNoDialog()
+                    .setTitle(GetText.tr("Delete"))
+                    .setContent(GetText.tr("Are you sure you want " +
+                            "to delete this account?"))
+                    .setType(DialogManager.WARNING).show();
             if (ret == DialogManager.YES_OPTION) {
                 viewModel.deleteAccount();
             }
@@ -209,7 +210,7 @@ public class AccountsTab extends HierarchyPanel implements Tab, RelocalizationLi
             }
         });
         userSkin.setBorder(
-            BorderFactory.createEmptyBorder(0, 60, 0, 0));
+                BorderFactory.createEmptyBorder(0, 60, 0, 0));
         add(infoPanel, BorderLayout.NORTH);
         add(userSkin, BorderLayout.WEST);
         add(rightPanel, BorderLayout.CENTER);
@@ -228,10 +229,10 @@ public class AccountsTab extends HierarchyPanel implements Tab, RelocalizationLi
             return;
 
         final ProgressDialog<Boolean> dialog = new ProgressDialog<>(
-            GetText.tr("Refreshing Access Token For {0}", account.minecraftUsername),
-            0,
-            GetText.tr("Refreshing Access Token For {0}", account.minecraftUsername),
-            "Aborting refreshing access token for " + account.minecraftUsername);
+                GetText.tr("Refreshing Access Token For {0}", account.minecraftUsername),
+                0,
+                GetText.tr("Refreshing Access Token For {0}", account.minecraftUsername),
+                "Aborting refreshing access token for " + account.minecraftUsername);
 
         dialog.addThread(new Thread(() -> {
             boolean success = viewModel.refreshAccessToken();
@@ -244,19 +245,19 @@ public class AccountsTab extends HierarchyPanel implements Tab, RelocalizationLi
 
         if (success) {
             DialogManager
-                .okDialog()
-                .setTitle(GetText.tr("Access Token Refreshed"))
-                .setContent(
-                    GetText.tr("Access token refreshed successfully"))
-                .setType(DialogManager.INFO)
-                .show();
+                    .okDialog()
+                    .setTitle(GetText.tr("Access Token Refreshed"))
+                    .setContent(
+                            GetText.tr("Access token refreshed successfully"))
+                    .setType(DialogManager.INFO)
+                    .show();
         } else {
             DialogManager
-                .okDialog()
-                .setTitle(GetText.tr("Failed To Refresh Access Token"))
-                .setContent(GetText.tr("Failed to refresh accessToken. Please login again."))
-                .setType(DialogManager.ERROR)
-                .show();
+                    .okDialog()
+                    .setTitle(GetText.tr("Failed To Refresh Access Token"))
+                    .setContent(GetText.tr("Failed to refresh accessToken. Please login again."))
+                    .setType(DialogManager.ERROR)
+                    .show();
 
             new LoginWithMicrosoftDialog(account);
         }
@@ -275,9 +276,9 @@ public class AccountsTab extends HierarchyPanel implements Tab, RelocalizationLi
             } else {
                 deleteButton.setVisible(true);
                 loginWithMicrosoftButton.setVisible(
-                    account instanceof MicrosoftAccount);
+                        account instanceof MicrosoftAccount);
                 refreshAccessTokenMenuItem.setVisible(
-                    account instanceof MicrosoftAccount);
+                        account instanceof MicrosoftAccount);
 
                 deleteButton.setText(GetText.tr("Delete"));
                 userSkin.setIcon(account.getMinecraftSkin());
@@ -286,9 +287,9 @@ public class AccountsTab extends HierarchyPanel implements Tab, RelocalizationLi
         viewModel.onAccountsNamesChanged(accounts -> {
             accountsComboBox.removeAllItems();
             accountsComboBox.addItem(
-                new ComboItem<>(
-                    null,
-                    GetText.tr("Add An Account")));
+                    new ComboItem<>(
+                            null,
+                            GetText.tr("Add An Account")));
             for (String account : accounts) {
                 accountsComboBox.addItem(new ComboItem<>(null, account));
             }

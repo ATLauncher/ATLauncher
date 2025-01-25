@@ -367,7 +367,7 @@ public class CurseForgeProjectFileSelectorDialog extends JDialog {
 
                     // if there's no loaders, assume the mod is untagged so we should show it
                     return !cf.gameVersions.contains("Fabric") && !cf.gameVersions.contains("NeoForge")
-                        && !cf.gameVersions.contains("Forge") && !cf.gameVersions.contains("Quilt");
+                            && !cf.gameVersions.contains("Forge") && !cf.gameVersions.contains("Quilt");
                 });
             }
 
