@@ -91,6 +91,14 @@ public class ATLauncherLaf extends FlatLaf {
         }
     }
 
+    public Font getTitleFont(){
+        if (useBaseFont()) {
+            return Resources.makeFont("sansserif").deriveFont(Font.BOLD, 18f);
+        } else {
+            return Resources.makeFont(defaultFontName).deriveFont(Font.BOLD, 18f);
+        }
+    }
+
     public Font getConsoleFont() {
         if (useBaseFont()) {
             return Resources.makeFont("sansserif").deriveFont(Font.PLAIN, 12f);

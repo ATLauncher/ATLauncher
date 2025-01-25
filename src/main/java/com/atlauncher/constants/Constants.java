@@ -24,6 +24,7 @@ import java.util.stream.Collectors;
 
 import com.atlauncher.App;
 import com.atlauncher.data.LauncherVersion;
+import com.atlauncher.data.ScreenResolution;
 import com.atlauncher.utils.OS;
 
 public class Constants {
@@ -50,7 +51,6 @@ public class Constants {
     public static final String LAUNCHER_NAME = "ATLauncher";
     public static final String LAUNCHER_WEBSITE = "https://atlauncher.com";
     public static final String DEFAULT_THEME_CLASS = "com.atlauncher.themes.Dark";
-    public static final String DISCORD_CLIENT_ID = "589393213723246592";
     public static final String GA_TRACKING_ID = "UA-88820616-7";
     public static final String CROWDIN_URL = "https://crowdin.com/project/atlauncher";
     public static final String SENTRY_DSN = "https://499c3bbc55cb434dad42a3ac670e2c91@sentry.io/1498519";
@@ -162,8 +162,18 @@ public class Constants {
             "dd-MM-yyyy", "MM-dd-yyyy", "yyyy-MM-dd" };
     // instance name, pack name, pack version, minecraft version
     public static final String[] INSTANCE_TITLE_FORMATS = { "%1$s (%2$s %3$s)", "%1$s", "%1$s (%4$s)", "%1$s (%3$s)" };
-    public static final String[] SCREEN_RESOLUTIONS = { "854x480", "1280x720", "1366x768", "1600x900", "1920x1080",
-            "2560x1440", "3440x1440", "3840x2160" };
+
+    public static final ScreenResolution[] SCREEN_RESOLUTIONS = {
+        new ScreenResolution(854, 480),
+        new ScreenResolution(1280, 720),
+        new ScreenResolution(1366, 768),
+        new ScreenResolution(1600, 900),
+        new ScreenResolution(1920, 1080),
+        new ScreenResolution(2560, 1440),
+        new ScreenResolution(3440, 1440),
+        new ScreenResolution(3840, 2160)
+    };
+
     public static final String DEFAULT_JAVA_PARAMETERS = "-XX:+UnlockExperimentalVMOptions -XX:+UseG1GC -XX:G1NewSizePercent=20 -XX:G1ReservePercent=20 -XX:MaxGCPauseMillis=50 -XX:G1HeapRegionSize=32M";
 
     // Custom for ATLauncher Microsoft login constants

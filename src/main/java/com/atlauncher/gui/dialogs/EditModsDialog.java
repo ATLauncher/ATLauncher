@@ -208,7 +208,7 @@ public class EditModsDialog extends JDialog {
                 return;
             }
 
-            final ProgressDialog progressDialog = new ProgressDialog(GetText.tr("Copying Mods"), 0,
+            final ProgressDialog<Object> progressDialog = new ProgressDialog<>(GetText.tr("Copying Mods"), 0,
                     GetText.tr("Copying Mods"), this);
 
             progressDialog.addThread(new Thread(() -> {
@@ -274,8 +274,8 @@ public class EditModsDialog extends JDialog {
         bottomPanel.add(addButton);
 
         if (instance.launcher.enableCurseForgeIntegration) {
-            if (ConfigManager.getConfigItem("platforms.curseforge.modsEnabled", true) == true
-                    || (ConfigManager.getConfigItem("platforms.modrinth.modsEnabled", true) == true
+            if (ConfigManager.getConfigItem("platforms.curseforge.modsEnabled", true)
+                    || (ConfigManager.getConfigItem("platforms.modrinth.modsEnabled", true)
                             && this.instance.launcher.loaderVersion != null)) {
                 JButton browseMods = new JButton(GetText.tr("Browse Mods"));
                 browseMods.addActionListener(e -> {
@@ -377,17 +377,17 @@ public class EditModsDialog extends JDialog {
             reinstallButton.setEnabled(hasSelectedACurseForgeOrModrinthMod);
         }
 
-        removeButton.setEnabled((disabledMods.size() != 0 && disabledMods.stream().anyMatch(AbstractButton::isSelected))
-                || (enabledMods.size() != 0 && enabledMods.stream().anyMatch(AbstractButton::isSelected)));
-        enableButton.setEnabled(disabledMods.size() != 0 && disabledMods.stream().anyMatch(AbstractButton::isSelected));
-        disableButton.setEnabled(enabledMods.size() != 0 && enabledMods.stream().anyMatch(AbstractButton::isSelected));
+        removeButton.setEnabled((!disabledMods.isEmpty() && disabledMods.stream().anyMatch(AbstractButton::isSelected))
+                || (!enabledMods.isEmpty() && enabledMods.stream().anyMatch(AbstractButton::isSelected)));
+        enableButton.setEnabled(!disabledMods.isEmpty() && disabledMods.stream().anyMatch(AbstractButton::isSelected));
+        disableButton.setEnabled(!enabledMods.isEmpty() && enabledMods.stream().anyMatch(AbstractButton::isSelected));
         refreshMetadataButton
-                .setEnabled(enabledMods.size() != 0 && enabledMods.stream().anyMatch(AbstractButton::isSelected));
+                .setEnabled(!enabledMods.isEmpty() && enabledMods.stream().anyMatch(AbstractButton::isSelected));
 
         selectAllEnabledModsCheckbox
-                .setSelected(enabledMods.size() != 0 && enabledMods.stream().allMatch(AbstractButton::isSelected));
+                .setSelected(!enabledMods.isEmpty() && enabledMods.stream().allMatch(AbstractButton::isSelected));
         selectAllDisabledModsCheckbox
-                .setSelected(disabledMods.size() != 0 && disabledMods.stream().allMatch(AbstractButton::isSelected));
+                .setSelected(!disabledMods.isEmpty() && disabledMods.stream().allMatch(AbstractButton::isSelected));
     }
 
     private void checkForUpdates() {
@@ -515,7 +515,7 @@ public class EditModsDialog extends JDialog {
                             }
                         });
 
-                if (murmurHashes.size() != 0) {
+                if (!murmurHashes.isEmpty()) {
                     CurseForgeFingerprint fingerprintResponse = CurseForgeApi
                             .checkFingerprints(murmurHashes.keySet().stream().toArray(Long[]::new));
 
@@ -572,12 +572,12 @@ public class EditModsDialog extends JDialog {
                             }
                         });
 
-                if (sha1Hashes.size() != 0) {
+                if (!sha1Hashes.isEmpty()) {
                     Set<String> keys = sha1Hashes.keySet();
                     Map<String, ModrinthVersion> modrinthVersions = ModrinthApi
                             .getVersionsFromSha1Hashes(keys.toArray(new String[keys.size()]));
 
-                    if (modrinthVersions != null && modrinthVersions.size() != 0) {
+                    if (modrinthVersions != null && !modrinthVersions.isEmpty()) {
                         String[] projectIdsFound = modrinthVersions.values().stream().map(mv -> mv.projectId)
                                 .toArray(String[]::new);
 

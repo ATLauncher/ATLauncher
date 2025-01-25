@@ -37,7 +37,6 @@ import javax.swing.text.ViewFactory;
 
 import com.atlauncher.App;
 
-@SuppressWarnings("serial")
 public final class Console extends JTextPane {
     private final SimpleAttributeSet attrs = new SimpleAttributeSet();
 

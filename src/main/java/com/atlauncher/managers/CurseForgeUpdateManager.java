@@ -79,7 +79,7 @@ public class CurseForgeUpdateManager {
      * Updates observables.
      */
     public static void checkForUpdates() {
-        if (ConfigManager.getConfigItem("platforms.curseforge.modpacksEnabled", true) == false) {
+        if (!ConfigManager.getConfigItem("platforms.curseforge.modpacksEnabled", true)) {
             return;
         }
 

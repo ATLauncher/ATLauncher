@@ -25,12 +25,10 @@ import java.awt.Image;
 import java.util.concurrent.Callable;
 
 import javax.annotation.Nonnull;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
 import com.atlauncher.managers.LogManager;
-import com.atlauncher.utils.Utils;
 
 public final class ImagePanel extends JPanel {
     private static final Cursor HAND = new Cursor(Cursor.HAND_CURSOR);

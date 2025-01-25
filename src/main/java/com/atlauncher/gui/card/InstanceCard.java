@@ -64,7 +64,6 @@ import com.atlauncher.utils.OS;
  * <p/>
  * Class for displaying instances in the Instance Tab
  */
-@SuppressWarnings("serial")
 public class InstanceCard extends CollapsiblePanel implements RelocalizationListener {
     private final Instance instance;
     private final JTextArea descArea = new JTextArea();
@@ -230,8 +229,8 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
         this.openWebsite.setVisible(instance.hasWebsite());
 
         if (instance.launcher.enableCurseForgeIntegration
-                && (ConfigManager.getConfigItem("platforms.curseforge.modsEnabled", true) == true
-                        || (ConfigManager.getConfigItem("platforms.modrinth.modsEnabled", true) == true
+                && (ConfigManager.getConfigItem("platforms.curseforge.modsEnabled", true)
+                        || (ConfigManager.getConfigItem("platforms.modrinth.modsEnabled", true)
                                 && this.instance.launcher.loaderVersion != null))) {
             bottom.add(this.addButton);
         }
@@ -264,14 +263,10 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
     }
 
     private void setupPlayPopupMenus() {
-        playOnlinePlayMenuItem.addActionListener(e -> {
-            play(false);
-        });
+        playOnlinePlayMenuItem.addActionListener(e -> play(false));
         playPopupMenu.add(playOnlinePlayMenuItem);
 
-        playOfflinePlayMenuItem.addActionListener(e -> {
-            play(true);
-        });
+        playOfflinePlayMenuItem.addActionListener(e -> play(true));
         playPopupMenu.add(playOfflinePlayMenuItem);
     }
 
@@ -333,7 +328,7 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
         editInstancePopupMenu.add(changeImageMenuItem);
         editInstancePopupMenu.addSeparator();
 
-        if (ConfigManager.getConfigItem("loaders.fabric.enabled", true) == true
+        if (ConfigManager.getConfigItem("loaders.fabric.enabled", true)
                 && !ConfigManager.getConfigItem("loaders.fabric.disabledMinecraftVersions", new ArrayList<String>())
                         .contains(instance.id)) {
             editInstancePopupMenu.add(addFabricMenuItem);
@@ -341,7 +336,7 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
         }
         editInstancePopupMenu.add(removeFabricMenuItem);
 
-        if (ConfigManager.getConfigItem("loaders.forge.enabled", true) == true
+        if (ConfigManager.getConfigItem("loaders.forge.enabled", true)
                 && !ConfigManager.getConfigItem("loaders.forge.disabledMinecraftVersions", new ArrayList<String>())
                         .contains(instance.id)) {
             editInstancePopupMenu.add(addForgeMenuItem);
@@ -349,7 +344,7 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
         }
         editInstancePopupMenu.add(removeForgeMenuItem);
 
-        if (ConfigManager.getConfigItem("loaders.legacyfabric.enabled", true) == true
+        if (ConfigManager.getConfigItem("loaders.legacyfabric.enabled", true)
                 && !ConfigManager
                         .getConfigItem("loaders.legacyfabric.disabledMinecraftVersions", new ArrayList<String>())
                         .contains(instance.id)) {
@@ -358,7 +353,7 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
         }
         editInstancePopupMenu.add(removeLegacyFabricMenuItem);
 
-        if (ConfigManager.getConfigItem("loaders.neoforge.enabled", true) == true
+        if (ConfigManager.getConfigItem("loaders.neoforge.enabled", true)
                 && !ConfigManager
                         .getConfigItem("loaders.neoforge.disabledMinecraftVersions", new ArrayList<String>())
                         .contains(instance.id)) {
@@ -367,7 +362,7 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
         }
         editInstancePopupMenu.add(removeNeoForgeMenuItem);
 
-        if (ConfigManager.getConfigItem("loaders.quilt.enabled", false) == true
+        if (ConfigManager.getConfigItem("loaders.quilt.enabled", false)
                 && !ConfigManager.getConfigItem("loaders.quilt.disabledMinecraftVersions", new ArrayList<String>())
                         .contains(instance.id)) {
             editInstancePopupMenu.add(addQuiltMenuItem);
@@ -528,7 +523,7 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
 
             if (ret == DialogManager.YES_OPTION) {
                 Analytics.trackEvent(AnalyticsEvent.forInstanceEvent("instance_delete", instance));
-                final ProgressDialog dialog = new ProgressDialog(GetText.tr("Deleting Instance"), 0,
+                final ProgressDialog<Object> dialog = new ProgressDialog<>(GetText.tr("Deleting Instance"), 0,
                         GetText.tr("Deleting Instance. Please wait..."), null, App.launcher.getParent());
                 dialog.addThread(new Thread(() -> {
                     InstanceManager.removeInstance(instance);
@@ -613,15 +608,11 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
                     JPopupMenu rightClickMenu = new JPopupMenu();
 
                     JMenuItem playOnlineButton = new JMenuItem(GetText.tr("Play Online"));
-                    playOnlineButton.addActionListener(l -> {
-                        play(false);
-                    });
+                    playOnlineButton.addActionListener(l -> play(false));
                     rightClickMenu.add(playOnlineButton);
 
                     JMenuItem playOfflineButton = new JMenuItem(GetText.tr("Play Offline"));
-                    playOfflineButton.addActionListener(l -> {
-                        play(true);
-                    });
+                    playOfflineButton.addActionListener(l -> play(true));
                     rightClickMenu.add(playOnlineButton);
 
                     if (instance.isUpdatable()) {
@@ -661,9 +652,7 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
                     rightClickMenu.add(changeImageItem);
 
                     JMenuItem cloneItem = new JMenuItem(GetText.tr("Clone"));
-                    cloneItem.addActionListener(l -> {
-                        instance.startClone();
-                    });
+                    cloneItem.addActionListener(l -> instance.startClone());
                     rightClickMenu.add(cloneItem);
                     rightClickMenu.show(image, e.getX(), e.getY());
                 }

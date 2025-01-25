@@ -18,6 +18,7 @@
 package com.atlauncher.gui.tabs.settings;
 
 import java.awt.GridBagConstraints;
+import java.awt.event.ItemEvent;
 
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -32,19 +33,17 @@ import com.atlauncher.data.InstanceExportFormat;
 import com.atlauncher.data.ModPlatform;
 import com.atlauncher.gui.components.JLabelWithHover;
 import com.atlauncher.utils.ComboItem;
+import com.atlauncher.viewmodel.impl.settings.ModsSettingsViewModel;
 
-@SuppressWarnings("serial")
 public class ModsSettingsTab extends AbstractSettingsTab {
-    private final JComboBox<ComboItem<ModPlatform>> defaultModPlatform;
-    private final JComboBox<ComboItem<AddModRestriction>> addModRestriction;
-    private final JCheckBox enableAddedModsByDefault;
-    private final JCheckBox showFabricModsWhenSinytraInstalled;
-    private final JCheckBox allowCurseForgeAlphaBetaFiles;
-    private final JCheckBox dontCheckModsOnCurseForge;
-    private final JCheckBox dontCheckModsOnModrinth;
-    private final JComboBox<ComboItem<InstanceExportFormat>> defaultExportFormat;
+    private final ModsSettingsViewModel viewModel;
 
-    public ModsSettingsTab() {
+    public ModsSettingsTab(ModsSettingsViewModel viewModel) {
+        this.viewModel = viewModel;
+    }
+
+    @Override
+    protected void onShow() {
         // Default mod platform
 
         gbc.gridx = 0;
@@ -53,26 +52,29 @@ public class ModsSettingsTab extends AbstractSettingsTab {
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
 
         JLabelWithHover defaultModPlatformLabel = new JLabelWithHover(GetText.tr("Default Mod Platform") + ":",
-                HELP_ICON, GetText.tr(
-                        "The default mod platform to use when adding mods to instances, as well as the platform to use when updating/reinstalling mods on multiple platforms."));
+            HELP_ICON, GetText.tr(
+            "The default mod platform to use when adding mods to instances, as well as the platform to use when updating/reinstalling mods on multiple platforms."));
 
         add(defaultModPlatformLabel, gbc);
 
         gbc.gridx++;
         gbc.insets = UIConstants.FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-        defaultModPlatform = new JComboBox<>();
+        JComboBox<ComboItem<ModPlatform>> defaultModPlatform = new JComboBox<>();
         defaultModPlatform.addItem(new ComboItem<>(ModPlatform.CURSEFORGE, "CurseForge"));
         defaultModPlatform.addItem(new ComboItem<>(ModPlatform.MODRINTH, "Modrinth"));
 
-        for (int i = 0; i < defaultModPlatform.getItemCount(); i++) {
-            ComboItem<ModPlatform> item = defaultModPlatform.getItemAt(i);
 
-            if (item.getValue() == App.settings.defaultModPlatform) {
-                defaultModPlatform.setSelectedIndex(i);
-                break;
+        defaultModPlatform.addItemListener(itemEvent -> {
+            if (itemEvent.getStateChange() == ItemEvent.SELECTED) {
+                @SuppressWarnings("unchecked")
+                ComboItem<ModPlatform> item =
+                    (ComboItem<ModPlatform>) itemEvent.getItem();
+
+                viewModel.setDefaultModPlatform(item.getValue());
             }
-        }
+        });
+        addDisposable(viewModel.getDefaultModPlatform().subscribe(defaultModPlatform::setSelectedIndex));
 
         add(defaultModPlatform, gbc);
 
@@ -84,29 +86,31 @@ public class ModsSettingsTab extends AbstractSettingsTab {
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
 
         JLabelWithHover addModRestrictionsLabel = new JLabelWithHover(GetText.tr("Add Mod Restrictions") + ":",
-                HELP_ICON, GetText.tr("What restrictions should be in place when adding mods from a mod platform."));
+            HELP_ICON, GetText.tr("What restrictions should be in place when adding mods from a mod platform."));
 
         add(addModRestrictionsLabel, gbc);
 
         gbc.gridx++;
         gbc.insets = UIConstants.FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-        addModRestriction = new JComboBox<>();
+        JComboBox<ComboItem<AddModRestriction>> addModRestriction = new JComboBox<>();
         addModRestriction.addItem(
-                new ComboItem<>(AddModRestriction.STRICT, GetText.tr("Only show mods for current Minecraft version")));
+            new ComboItem<>(AddModRestriction.STRICT, GetText.tr("Only show mods for current Minecraft version")));
         addModRestriction.addItem(new ComboItem<>(AddModRestriction.LAX,
-                GetText.tr("Show mods for the current major Minecraft version (eg: 1.16.x)")));
+            GetText.tr("Show mods for the current major Minecraft version (eg: 1.16.x)")));
         addModRestriction
-                .addItem(new ComboItem<>(AddModRestriction.NONE, GetText.tr("Show mods for all Minecraft versions")));
+            .addItem(new ComboItem<>(AddModRestriction.NONE, GetText.tr("Show mods for all Minecraft versions")));
 
-        for (int i = 0; i < addModRestriction.getItemCount(); i++) {
-            ComboItem<AddModRestriction> item = addModRestriction.getItemAt(i);
+        addModRestriction.addItemListener(itemEvent -> {
+            if (itemEvent.getStateChange() == ItemEvent.SELECTED) {
+                @SuppressWarnings("unchecked")
+                ComboItem<AddModRestriction> item =
+                    (ComboItem<AddModRestriction>) itemEvent.getItem();
 
-            if (item.getValue() == App.settings.addModRestriction) {
-                addModRestriction.setSelectedIndex(i);
-                break;
+                viewModel.setAddModRestrictions(item.getValue());
             }
-        }
+        });
+        addDisposable(viewModel.getAddModRestriction().subscribe(addModRestriction::setSelectedIndex));
 
         add(addModRestriction, gbc);
 
@@ -117,15 +121,17 @@ public class ModsSettingsTab extends AbstractSettingsTab {
         gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         JLabelWithHover enableAddedModsByDefaultLabel = new JLabelWithHover(GetText.tr("Enable Added Mods By Default?"),
-                HELP_ICON, new HTMLBuilder().center().split(100)
-                        .text(GetText.tr("When adding mods manually, should they be enabled automatically?")).build());
+            HELP_ICON, new HTMLBuilder().center().split(100)
+            .text(GetText.tr("When adding mods manually, should they be enabled automatically?")).build());
         add(enableAddedModsByDefaultLabel, gbc);
 
         gbc.gridx++;
         gbc.insets = UIConstants.CHECKBOX_FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-        enableAddedModsByDefault = new JCheckBox();
-        enableAddedModsByDefault.setSelected(App.settings.enableAddedModsByDefault);
+        JCheckBox enableAddedModsByDefault = new JCheckBox();
+        enableAddedModsByDefault.addItemListener(itemEvent ->
+            viewModel.setEnableAddedModsByDefault(itemEvent.getStateChange() == ItemEvent.SELECTED));
+        addDisposable(viewModel.getEnableAddedModsByDefault().subscribe(enableAddedModsByDefault::setSelected));
         add(enableAddedModsByDefault, gbc);
 
         // Show Fabric Mods When Sinytra Installed
@@ -142,8 +148,10 @@ public class ModsSettingsTab extends AbstractSettingsTab {
         gbc.gridx++;
         gbc.insets = UIConstants.CHECKBOX_FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-        showFabricModsWhenSinytraInstalled = new JCheckBox();
-        showFabricModsWhenSinytraInstalled.setSelected(App.settings.showFabricModsWhenSinytraInstalled);
+        JCheckBox showFabricModsWhenSinytraInstalled = new JCheckBox();
+        showFabricModsWhenSinytraInstalled.addItemListener(itemEvent ->
+            viewModel.setShowFabricModsWhenSinytraInstalled(itemEvent.getStateChange() == ItemEvent.SELECTED));
+        addDisposable(viewModel.getShowFabricModsWhenSinytraInstalled().subscribe(showFabricModsWhenSinytraInstalled::setSelected));
         add(showFabricModsWhenSinytraInstalled, gbc);
 
         // Allow CurseForge Alpha/Beta CurseForge files
@@ -153,18 +161,21 @@ public class ModsSettingsTab extends AbstractSettingsTab {
         gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         JLabelWithHover allowCurseForgeAlphaBetaFilesLabel = new JLabelWithHover(
-                GetText.tr("Allow CurseForge Alpha/Beta Files?"),
-                HELP_ICON, new HTMLBuilder().center().split(100)
-                        .text(GetText.tr(
-                                "This will enable using Alpha/Beta files from CurseForge by default when installing modpacks as well as updating to Alpha/Beta versions from stable release versions."))
-                        .build());
+            GetText.tr("Allow CurseForge Alpha/Beta Files?"),
+            HELP_ICON, new HTMLBuilder().center().split(100)
+            .text(GetText.tr(
+                "This will enable using Alpha/Beta files from CurseForge by default when installing modpacks as well as updating to Alpha/Beta versions from stable release versions."))
+            .build());
         add(allowCurseForgeAlphaBetaFilesLabel, gbc);
 
         gbc.gridx++;
         gbc.insets = UIConstants.CHECKBOX_FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-        allowCurseForgeAlphaBetaFiles = new JCheckBox();
+        JCheckBox allowCurseForgeAlphaBetaFiles = new JCheckBox();
         allowCurseForgeAlphaBetaFiles.setSelected(App.settings.allowCurseForgeAlphaBetaFiles);
+        allowCurseForgeAlphaBetaFiles.addItemListener(itemEvent ->
+            viewModel.setAllowCurseForgeAlphaBetaFiles(itemEvent.getStateChange() == ItemEvent.SELECTED));
+        addDisposable(viewModel.getAllowCurseForgeAlphaBetaFiles().subscribe(allowCurseForgeAlphaBetaFiles::setSelected));
         add(allowCurseForgeAlphaBetaFiles, gbc);
 
         // Dont check mods on CurseForge
@@ -174,20 +185,22 @@ public class ModsSettingsTab extends AbstractSettingsTab {
         gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         JLabelWithHover dontCheckModsOnCurseForgeLabel = new JLabelWithHover(
-                // #. {0} is the platform (e.g. CurseForge/Modrinth)
-                GetText.tr("Don't Check Mods On {0}?", "CurseForge"), HELP_ICON,
-                // #. {0} is the platform (e.g. CurseForge/Modrinth)
-                new HTMLBuilder().center().split(100).text(GetText.tr(
-                        "When installing packs or adding mods manually to instances, we check for the file on {0} to show more information about the mod as well as make updating easier. Disabling this will mean you won't be able to update manually added mods from within the launcher.",
-                        "CurseForge"))
-                        .build());
+            // #. {0} is the platform (e.g. CurseForge/Modrinth)
+            GetText.tr("Don't Check Mods On {0}?", "CurseForge"), HELP_ICON,
+            // #. {0} is the platform (e.g. CurseForge/Modrinth)
+            new HTMLBuilder().center().split(100).text(GetText.tr(
+                    "When installing packs or adding mods manually to instances, we check for the file on {0} to show more information about the mod as well as make updating easier. Disabling this will mean you won't be able to update manually added mods from within the launcher.",
+                    "CurseForge"))
+                .build());
         add(dontCheckModsOnCurseForgeLabel, gbc);
 
         gbc.gridx++;
         gbc.insets = UIConstants.CHECKBOX_FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-        dontCheckModsOnCurseForge = new JCheckBox();
-        dontCheckModsOnCurseForge.setSelected(App.settings.dontCheckModsOnCurseForge);
+        JCheckBox dontCheckModsOnCurseForge = new JCheckBox();
+        dontCheckModsOnCurseForge.addItemListener(itemEvent ->
+            viewModel.setDoNotCheckModsOnCurseForge(itemEvent.getStateChange() == ItemEvent.SELECTED));
+        addDisposable(viewModel.getDoNotCheckModsOnCurseForge().subscribe(dontCheckModsOnCurseForge::setSelected));
         add(dontCheckModsOnCurseForge, gbc);
 
         // Dont check mods on Modrinth
@@ -197,20 +210,22 @@ public class ModsSettingsTab extends AbstractSettingsTab {
         gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         JLabelWithHover dontCheckModsOnModrinthLabel = new JLabelWithHover(
-                // #. {0} is the platform (e.g. CurseForge/Modrinth)
-                GetText.tr("Don't Check Mods On {0}?", "Modrinth"), HELP_ICON,
-                // #. {0} is the platform (e.g. CurseForge/Modrinth)
-                new HTMLBuilder().center().split(100).text(GetText.tr(
-                        "When installing packs or adding mods manually to instances, we check for the file on {0} to show more information about the mod as well as make updating easier. Disabling this will mean you won't be able to update manually added mods from within the launcher.",
-                        "Modrinth"))
-                        .build());
+            // #. {0} is the platform (e.g. CurseForge/Modrinth)
+            GetText.tr("Don't Check Mods On {0}?", "Modrinth"), HELP_ICON,
+            // #. {0} is the platform (e.g. CurseForge/Modrinth)
+            new HTMLBuilder().center().split(100).text(GetText.tr(
+                    "When installing packs or adding mods manually to instances, we check for the file on {0} to show more information about the mod as well as make updating easier. Disabling this will mean you won't be able to update manually added mods from within the launcher.",
+                    "Modrinth"))
+                .build());
         add(dontCheckModsOnModrinthLabel, gbc);
 
         gbc.gridx++;
         gbc.insets = UIConstants.CHECKBOX_FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-        dontCheckModsOnModrinth = new JCheckBox();
-        dontCheckModsOnModrinth.setSelected(App.settings.dontCheckModsOnModrinth);
+        JCheckBox dontCheckModsOnModrinth = new JCheckBox();
+        dontCheckModsOnModrinth.addItemListener(itemEvent ->
+            viewModel.setDoNotCheckModsOnModrinth(itemEvent.getStateChange() == ItemEvent.SELECTED));
+        addDisposable(viewModel.getDoNotCheckModsOnModrinth().subscribe(dontCheckModsOnModrinth::setSelected));
         add(dontCheckModsOnModrinth, gbc);
 
         // Default export format
@@ -221,49 +236,33 @@ public class ModsSettingsTab extends AbstractSettingsTab {
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
 
         JLabelWithHover defaultExportFormatLabel = new JLabelWithHover(GetText.tr("Default Export Format") + ":",
-                HELP_ICON, GetText.tr(
-                        "The default format to export instances to. Can also be changed at time of export."));
+            HELP_ICON, GetText.tr(
+            "The default format to export instances to. Can also be changed at time of export."));
 
         add(defaultExportFormatLabel, gbc);
 
         gbc.gridx++;
         gbc.insets = UIConstants.FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-        defaultExportFormat = new JComboBox<>();
+        JComboBox<ComboItem<InstanceExportFormat>> defaultExportFormat = new JComboBox<>();
         defaultExportFormat.addItem(new ComboItem<>(InstanceExportFormat.CURSEFORGE, "CurseForge"));
         defaultExportFormat.addItem(new ComboItem<>(InstanceExportFormat.MODRINTH, "Modrinth"));
         defaultExportFormat
-                .addItem(new ComboItem<>(InstanceExportFormat.CURSEFORGE_AND_MODRINTH, "CurseForge & Modrinth"));
+            .addItem(new ComboItem<>(InstanceExportFormat.CURSEFORGE_AND_MODRINTH, "CurseForge & Modrinth"));
         defaultExportFormat.addItem(new ComboItem<>(InstanceExportFormat.MULTIMC, "MultiMC"));
 
-        for (int i = 0; i < defaultExportFormat.getItemCount(); i++) {
-            ComboItem<InstanceExportFormat> item = defaultExportFormat.getItemAt(i);
+        defaultExportFormat.addItemListener(itemEvent -> {
+            if (itemEvent.getStateChange() == ItemEvent.SELECTED) {
+                @SuppressWarnings("unchecked")
+                ComboItem<InstanceExportFormat> item =
+                    (ComboItem<InstanceExportFormat>) itemEvent.getItem();
 
-            if (item.getValue() == App.settings.defaultExportFormat) {
-                defaultExportFormat.setSelectedIndex(i);
-                break;
+                viewModel.setDefaultExportFormat(item.getValue());
             }
-        }
+        });
+        addDisposable(viewModel.getDefaultExportFormat().subscribe(defaultExportFormat::setSelectedIndex));
 
         add(defaultExportFormat, gbc);
-    }
-
-    public boolean needToCheckForExternalPackUpdates() {
-        return App.settings.allowCurseForgeAlphaBetaFiles != allowCurseForgeAlphaBetaFiles.isSelected();
-    }
-
-    @SuppressWarnings("unchecked")
-    public void save() {
-        App.settings.defaultModPlatform = ((ComboItem<ModPlatform>) defaultModPlatform.getSelectedItem()).getValue();
-        App.settings.addModRestriction = ((ComboItem<AddModRestriction>) addModRestriction.getSelectedItem())
-                .getValue();
-        App.settings.enableAddedModsByDefault = enableAddedModsByDefault.isSelected();
-        App.settings.showFabricModsWhenSinytraInstalled = showFabricModsWhenSinytraInstalled.isSelected();
-        App.settings.allowCurseForgeAlphaBetaFiles = allowCurseForgeAlphaBetaFiles.isSelected();
-        App.settings.dontCheckModsOnCurseForge = dontCheckModsOnCurseForge.isSelected();
-        App.settings.dontCheckModsOnModrinth = dontCheckModsOnModrinth.isSelected();
-        App.settings.defaultExportFormat = ((ComboItem<InstanceExportFormat>) defaultExportFormat.getSelectedItem())
-                .getValue();
     }
 
     @Override
@@ -274,5 +273,14 @@ public class ModsSettingsTab extends AbstractSettingsTab {
     @Override
     public String getAnalyticsScreenViewName() {
         return "Mods";
+    }
+
+    @Override
+    protected void createViewModel() {
+    }
+
+    @Override
+    protected void onDestroy() {
+        removeAll();
     }
 }

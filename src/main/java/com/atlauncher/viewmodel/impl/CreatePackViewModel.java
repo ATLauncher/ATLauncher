@@ -719,22 +719,17 @@ public class CreatePackViewModel implements SettingsListener, ICreatePackViewMod
 
     private void install(Boolean isServer) {
         if (AccountManager.getSelectedAccount() == null) {
+            DialogManager dialog = DialogManager.okDialog().setTitle(GetText.tr("No Account Selected"));
+
             if (isServer) {
-                DialogManager.okDialog().setTitle(GetText.tr("No Account Selected"))
-                        .setContent(GetText.tr("Cannot create server as you have no account selected."))
-                        .setType(DialogManager.ERROR).show();
-
-                if (AccountManager.getAccounts().size() == 0) {
-                    App.navigate(UIConstants.LAUNCHER_ACCOUNTS_TAB);
-                }
+                dialog.setContent(GetText.tr("Cannot create server as you have no account selected."));
             } else {
-                DialogManager.okDialog().setTitle(GetText.tr("No Account Selected"))
-                        .setContent(GetText.tr("Cannot create instance as you have no account selected."))
-                        .setType(DialogManager.ERROR).show();
+                dialog.setContent(GetText.tr("Cannot create instance as you have no account selected."));
+            }
 
-                if (AccountManager.getAccounts().size() == 0) {
-                    App.navigate(UIConstants.LAUNCHER_ACCOUNTS_TAB);
-                }
+            dialog.setType(DialogManager.ERROR).show();
+            if (AccountManager.getAccounts().isEmpty()) {
+                App.navigate(UIConstants.LAUNCHER_ACCOUNTS_TAB);
             }
             return;
         }
@@ -901,7 +896,7 @@ public class CreatePackViewModel implements SettingsListener, ICreatePackViewMod
 
     @Override
     public Boolean warnUserAboutServer() {
-        return InstanceManager.getInstances().size() == 0;
+        return InstanceManager.getInstances().isEmpty();
     }
 
     private List<LoaderVersion> apolloLoad(
@@ -988,7 +983,7 @@ public class CreatePackViewModel implements SettingsListener, ICreatePackViewMod
                                 .collect(Collectors.toList()));
                         break;
                 }
-            if (loaderVersionsList.size() == 0) {
+            if (loaderVersionsList.isEmpty()) {
                 setLoaderGroupEnabled(false);
                 return singletonList(noLoaderVersions);
             }
@@ -1041,7 +1036,7 @@ public class CreatePackViewModel implements SettingsListener, ICreatePackViewMod
                 break;
         }
 
-        if (loaderVersionsList.size() == 0) {
+        if (loaderVersionsList.isEmpty()) {
             setLoaderGroupEnabled(false);
             return singletonList(noLoaderVersions);
         }
