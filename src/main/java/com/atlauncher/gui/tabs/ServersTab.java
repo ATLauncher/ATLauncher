@@ -24,17 +24,21 @@ import java.awt.GridBagLayout;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 
 import org.mini2Dx.gettext.GetText;
 
+import com.atlauncher.App;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.constants.UIConstants;
 import com.atlauncher.evnt.listener.RelocalizationListener;
+import com.atlauncher.gui.card.NewDesignServerCard;
 import com.atlauncher.gui.card.NilCard;
 import com.atlauncher.gui.card.ServerCard;
+import com.atlauncher.gui.layouts.WrapLayout;
 import com.atlauncher.gui.panels.HierarchyPanel;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.network.analytics.AnalyticsEvent;
@@ -63,65 +67,116 @@ public class ServersTab extends HierarchyPanel implements Tab, RelocalizationLis
 
     @Override
     protected void onShow() {
-        JPanel topPanel = new JPanel();
-        topPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
+        if (App.settings.selectDesignLayout == UIConstants.LAYOUT_GRID) {
+            JPanel topPanel = new JPanel();
+            topPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
 
-        searchBox = new JTextField(16);
-        addDisposable(
-            viewModel.getSearchObservable().subscribe(it -> searchBox.setText(it.orElse(null)))
-        );
-        searchBox.addKeyListener(new KeyAdapter() {
-            public void keyReleased(KeyEvent e) {
-                if (e.getKeyChar() == KeyEvent.VK_ENTER) {
-                    String text = searchBox.getText();
-                    Analytics.trackEvent(AnalyticsEvent.forSearchEvent("servers", text));
-                    viewModel.setSearchSubject(text);
+            searchBox = new JTextField(16);
+            viewModel.getSearchObservable().subscribe(it -> searchBox.setText(it.orElse(null)));
+            searchBox.addKeyListener(new KeyAdapter() {
+                public void keyReleased(KeyEvent e) {
+                    if (e.getKeyChar() == KeyEvent.VK_ENTER) {
+                        String text = searchBox.getText();
+                        Analytics.trackEvent(AnalyticsEvent.forSearchEvent("servers", text));
+                        viewModel.setSearchSubject(text);
+                    }
                 }
-            }
-        });
-        searchBox.putClientProperty("JTextField.placeholderText", GetText.tr("Search"));
-        searchBox.putClientProperty("JTextField.leadingIcon", new FlatSearchIcon());
-        searchBox.putClientProperty("JTextField.showClearButton", true);
-        searchBox.putClientProperty("JTextField.clearCallback", (Runnable) () -> viewModel.setSearchSubject(""));
-        topPanel.add(searchBox);
-
-        add(topPanel, BorderLayout.NORTH);
-
-        panel = new JPanel();
-        scrollPane = new JScrollPane(panel, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-            JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-        scrollPane.getVerticalScrollBar().setUnitIncrement(16);
-        add(scrollPane, BorderLayout.CENTER);
-
-        panel.setLayout(new GridBagLayout());
-
-        addDisposable(viewModel.getServersObservable().subscribe(servers -> {
-            GridBagConstraints gbc = new GridBagConstraints();
-            gbc.gridx = gbc.gridy = 0;
-            gbc.weightx = 1.0;
-            gbc.insets = UIConstants.FIELD_INSETS_SMALL;
-            gbc.fill = GridBagConstraints.BOTH;
-
-            panel.removeAll();
-            gbc.gridy = 0;
-
-            servers.forEach(server -> {
-                panel.add(new ServerCard(server), gbc);
-                gbc.gridy++;
+            });
+            searchBox.putClientProperty("JTextField.placeholderText", GetText.tr("Search"));
+            searchBox.putClientProperty("JTextField.leadingIcon", new FlatSearchIcon());
+            searchBox.putClientProperty("JTextField.showClearButton", true);
+            searchBox.putClientProperty("JTextField.clearCallback", (Runnable) () -> {
+                viewModel.setSearchSubject("");
             });
 
-            if (panel.getComponentCount() == 0) {
-                panel.add(nilCard, gbc);
-            }
+            topPanel.add(searchBox);
 
-            validate();
-            repaint();
-            searchBox.requestFocus();
-        }));
+            add(topPanel, BorderLayout.NORTH);
 
-        addDisposable(
-            viewModel.getViewPosition().subscribe(scrollPane.getVerticalScrollBar()::setValue)
-        );
+            panel = new JPanel();
+            scrollPane = new JScrollPane(panel, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+                    JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+            scrollPane.getVerticalScrollBar().setUnitIncrement(16);
+            add(scrollPane, BorderLayout.CENTER);
+
+            viewModel.getServersObservable().subscribe(servers -> {
+                viewModel.setViewPosition(scrollPane.getVerticalScrollBar().getValue());
+                panel.setLayout(new WrapLayout(WrapLayout.LEFT, 8, 8));
+                panel.removeAll();
+
+                servers.forEach(server -> {
+                    panel.add(new NewDesignServerCard(server));
+                });
+                if (servers.size() <= 0) {
+                    JLabel nothing = new JLabel("Nothing here");
+                    panel.setLayout(new FlowLayout(FlowLayout.CENTER));
+                    nothing.setFont(App.THEME.getBoldFont().deriveFont(24f));
+                    panel.add(nothing, BorderLayout.CENTER);
+                }
+                validate();
+                repaint();
+                searchBox.requestFocus();
+            });
+            viewModel.getViewPosition().subscribe(scrollPane.getVerticalScrollBar()::setValue);
+        } else if (App.settings.selectDesignLayout == UIConstants.LAYOUT_DEFAULT) {
+            JPanel topPanel = new JPanel();
+            topPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
+
+            searchBox = new JTextField(16);
+            addDisposable(
+                    viewModel.getSearchObservable().subscribe(it -> searchBox.setText(it.orElse(null))));
+            searchBox.addKeyListener(new KeyAdapter() {
+                public void keyReleased(KeyEvent e) {
+                    if (e.getKeyChar() == KeyEvent.VK_ENTER) {
+                        String text = searchBox.getText();
+                        Analytics.trackEvent(AnalyticsEvent.forSearchEvent("servers", text));
+                        viewModel.setSearchSubject(text);
+                    }
+                }
+            });
+            searchBox.putClientProperty("JTextField.placeholderText", GetText.tr("Search"));
+            searchBox.putClientProperty("JTextField.leadingIcon", new FlatSearchIcon());
+            searchBox.putClientProperty("JTextField.showClearButton", true);
+            searchBox.putClientProperty("JTextField.clearCallback", (Runnable) () -> viewModel.setSearchSubject(""));
+            topPanel.add(searchBox);
+
+            add(topPanel, BorderLayout.NORTH);
+
+            panel = new JPanel();
+            scrollPane = new JScrollPane(panel, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+                    JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+            scrollPane.getVerticalScrollBar().setUnitIncrement(16);
+            add(scrollPane, BorderLayout.CENTER);
+
+            panel.setLayout(new GridBagLayout());
+
+            addDisposable(viewModel.getServersObservable().subscribe(servers -> {
+                GridBagConstraints gbc = new GridBagConstraints();
+                gbc.gridx = gbc.gridy = 0;
+                gbc.weightx = 1.0;
+                gbc.insets = UIConstants.FIELD_INSETS_SMALL;
+                gbc.fill = GridBagConstraints.BOTH;
+
+                panel.removeAll();
+                gbc.gridy = 0;
+
+                servers.forEach(server -> {
+                    panel.add(new ServerCard(server), gbc);
+                    gbc.gridy++;
+                });
+
+                if (panel.getComponentCount() == 0) {
+                    panel.add(nilCard, gbc);
+                }
+
+                validate();
+                repaint();
+                searchBox.requestFocus();
+            }));
+
+            addDisposable(
+                    viewModel.getViewPosition().subscribe(scrollPane.getVerticalScrollBar()::setValue));
+        }
     }
 
     @Override

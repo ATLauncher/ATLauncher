@@ -52,6 +52,10 @@ public class UIConstants {
     public static final int LAUNCHER_SETTINGS_TAB = 7;
     public static final int LAUNCHER_ABOUT_TAB = 8;
 
+    // design layout options
+    public static final int LAYOUT_DEFAULT = 0;
+    public static final int LAYOUT_GRID = 1;
+
     public static final String getInitialTabName(int initialTab) {
         switch (initialTab) {
             case UIConstants.LAUNCHER_NEWS_TAB:
