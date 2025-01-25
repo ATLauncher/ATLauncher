@@ -386,8 +386,8 @@ public class JavaSettingsTab extends AbstractSettingsTab {
         javaParametersPanel.setLayout(new BoxLayout(javaParametersPanel, BoxLayout.X_AXIS));
         javaParametersPanel.setAlignmentY(Component.TOP_ALIGNMENT);
 
-        JScrollPane javaParametersScrollPane =
-            new JScrollPane(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        JScrollPane javaParametersScrollPane = new JScrollPane(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
+                ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         javaParametersScrollPane.setMaximumSize(new Dimension(1000, 200));
         javaParameters = new JTextArea(6, 40);
         javaParamChecker = new JLabelWithHover("", null, null);
@@ -616,6 +616,27 @@ public class JavaSettingsTab extends AbstractSettingsTab {
                 itemEvent -> viewModel.setSystemOpenAL(itemEvent.getStateChange() == ItemEvent.SELECTED));
         addDisposable(viewModel.getSystemOpenAL().subscribe(useSystemOpenAl::setSelected));
         add(useSystemOpenAl, gbc);
+
+        // Use Dedicated GPU
+
+        gbc.gridx = 0;
+        gbc.gridy++;
+        gbc.insets = UIConstants.LABEL_INSETS;
+        gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
+        JLabelWithHover useDedicatedGpuLabel = new JLabelWithHover(GetText.tr("Use Dedicated GPU (linux)") + "?",
+                HELP_ICON,
+                new HTMLBuilder().center()
+                        .text(GetText.tr("Use the dedicated GPU for Minecraft, only relevant for linux.")).build());
+        add(useDedicatedGpuLabel, gbc);
+
+        gbc.gridx++;
+        gbc.insets = UIConstants.CHECKBOX_FIELD_INSETS;
+        gbc.anchor = GridBagConstraints.BASELINE_LEADING;
+        JCheckBox useDedicatedGpu = new JCheckBox();
+        useDedicatedGpu.addItemListener(
+                itemEvent -> viewModel.setDedicatedGPU(itemEvent.getStateChange() == ItemEvent.SELECTED));
+        addDisposable(viewModel.getDedicatedGPU().subscribe(useDedicatedGpu::setSelected));
+        add(useDedicatedGpu, gbc);
     }
 
     private void showJavaPathWarning() {
