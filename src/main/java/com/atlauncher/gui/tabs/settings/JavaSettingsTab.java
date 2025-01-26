@@ -97,6 +97,8 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
     private final JCheckBox useSystemGlfw;
     private final JLabelWithHover useSystemOpenAlLabel;
     private final JCheckBox useSystemOpenAl;
+    private JLabelWithHover useDedicatedGpuLabel;
+    private JCheckBox useDedicatedGpu;
 
     private boolean initialMemoryWarningShown = false;
     private boolean permgenWarningShown = false;
@@ -616,6 +618,24 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         useSystemOpenAl = new JCheckBox();
         useSystemOpenAl.setSelected(App.settings.useSystemOpenAl);
         add(useSystemOpenAl, gbc);
+
+        // Use Dedicated GPU
+        if (OS.isLinux()) {
+            gbc.gridx = 0;
+            gbc.gridy++;
+            gbc.insets = UIConstants.LABEL_INSETS;
+            gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
+            useDedicatedGpuLabel = new JLabelWithHover(GetText.tr("Use Dedicated GPU") + "?", HELP_ICON,
+                    new HTMLBuilder().center().text(GetText.tr("Use the dedicated GPU for rendering.")).build());
+            add(useDedicatedGpuLabel, gbc);
+
+            gbc.gridx++;
+            gbc.insets = UIConstants.CHECKBOX_FIELD_INSETS;
+            gbc.anchor = GridBagConstraints.BASELINE_LEADING;
+            useDedicatedGpu = new JCheckBox();
+            useDedicatedGpu.setSelected(App.settings.useDedicatedGpu);
+            add(useDedicatedGpu, gbc);
+        }
     }
 
     public boolean isValidJavaPath() {
@@ -662,6 +682,10 @@ public class JavaSettingsTab extends AbstractSettingsTab implements Relocalizati
         App.settings.disableLegacyLaunching = disableLegacyLaunching.isSelected();
         App.settings.useSystemGlfw = useSystemGlfw.isSelected();
         App.settings.useSystemOpenAl = useSystemOpenAl.isSelected();
+
+        if (OS.isLinux()) {
+            App.settings.useDedicatedGpu = useDedicatedGpu.isSelected();
+        }
     }
 
     @Override

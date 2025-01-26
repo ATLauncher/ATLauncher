@@ -110,6 +110,7 @@ public class Settings {
     public boolean disableLegacyLaunching = false;
     public boolean useSystemGlfw = false;
     public boolean useSystemOpenAl = false;
+    public boolean useDedicatedGpu = true;
 
     // Network
     public int concurrentConnections = 8;
