@@ -10,6 +10,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Add version option for CLI [#915]
 - Removed Discord RPC
 - Mojang Account support completely removed [#907]
+- Dedicated GPU support for Linux [#986]
 
 ### Fixes
 
