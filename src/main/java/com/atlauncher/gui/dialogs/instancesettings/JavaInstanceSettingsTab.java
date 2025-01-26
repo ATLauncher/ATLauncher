@@ -673,10 +673,8 @@ public class JavaInstanceSettingsTab extends JPanel {
         Integer permGen = (Integer) this.permGen.getValue();
         String javaPath = this.javaPath.getText();
         String javaParameters = this.javaParameters.getText();
-        String javaRuntimeOverrideVal = ((ComboItem<String>) javaRuntimeOverride.getSelectedItem())
-            .getValue();
-        Boolean useJavaProvidedByMinecraftVal = ((ComboItem<Boolean>) useJavaProvidedByMinecraft.getSelectedItem())
-            .getValue();
+        String javaRuntimeOverrideVal = ((ComboItem<String>) javaRuntimeOverride.getSelectedItem()).getValue();
+        Boolean useJavaProvidedByMinecraftVal = ((ComboItem<Boolean>) useJavaProvidedByMinecraft.getSelectedItem()).getValue();
         Boolean disableLegacyLaunchingVal = ((ComboItem<Boolean>) disableLegacyLaunching.getSelectedItem()).getValue();
         Boolean useSystemGlfwVal = ((ComboItem<Boolean>) useSystemGlfw.getSelectedItem()).getValue();
         Boolean useSystemOpenAlVal = ((ComboItem<Boolean>) useSystemOpenAl.getSelectedItem()).getValue();
@@ -684,15 +682,13 @@ public class JavaInstanceSettingsTab extends JPanel {
         this.instance.launcher.maximumMemory = (maximumMemory == App.settings.maximumMemory ? null : maximumMemory);
         this.instance.launcher.permGen = (permGen == App.settings.metaspace ? null : permGen);
 
-        boolean instanceWillUseMinecraftProvidedJava = Optional.ofNullable(useJavaProvidedByMinecraftVal)
-            .orElse(App.settings.useJavaProvidedByMinecraft);
+        boolean instanceWillUseMinecraftProvidedJava = Optional.ofNullable(useJavaProvidedByMinecraftVal).orElse(App.settings.useJavaProvidedByMinecraft);
 
         if (!instanceWillUseMinecraftProvidedJava || instance.javaVersion == null) {
             this.instance.launcher.javaPath = (javaPath.equals(App.settings.javaPath) ? null : javaPath);
         }
 
-        this.instance.launcher.javaArguments = (javaParameters.equals(App.settings.javaParameters) ? null
-            : javaParameters);
+        this.instance.launcher.javaArguments = (javaParameters.equals(App.settings.javaParameters) ? null : javaParameters);
 
         this.instance.launcher.useJavaProvidedByMinecraft = useJavaProvidedByMinecraftVal;
         this.instance.launcher.disableLegacyLaunching = disableLegacyLaunchingVal;
