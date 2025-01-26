@@ -33,12 +33,10 @@ import javax.swing.event.HyperlinkEvent;
 import javax.swing.text.html.HTMLEditorKit;
 import javax.swing.text.html.StyleSheet;
 
-import org.apache.logging.log4j.Logger;
 import org.mini2Dx.gettext.GetText;
 
 import com.atlauncher.gui.panels.HierarchyPanel;
 import com.atlauncher.gui.tabs.Tab;
-import com.atlauncher.managers.LogManager;
 import com.atlauncher.utils.OS;
 import com.atlauncher.viewmodel.base.INewsViewModel;
 import com.atlauncher.viewmodel.impl.NewsViewModel;
@@ -47,7 +45,6 @@ import com.atlauncher.viewmodel.impl.NewsViewModel;
  * This class extends {@link JPanel} and provides a Panel for displaying the
  * latest news.
  */
-@SuppressWarnings("serial")
 public class NewsTab extends HierarchyPanel implements Tab {
     private HTMLEditorKit NEWS_KIT;
     private ContextMenu NEWS_MENU;
@@ -66,7 +63,6 @@ public class NewsTab extends HierarchyPanel implements Tab {
         super(new BorderLayout());
     }
 
-
     @Override
     protected void createViewModel() {
         viewModel = new NewsViewModel();
@@ -79,20 +75,15 @@ public class NewsTab extends HierarchyPanel implements Tab {
         createNewsPane();
 
         JScrollPane scrollPane = new JScrollPane(this.NEWS_PANE, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-            JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+                JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scrollPane.getVerticalScrollBar().setUnitIncrement(16);
         this.add(scrollPane, BorderLayout.CENTER);
 
-        viewModel.addOnReloadListener(html -> {
-            // Because reload() is a public function, we need to ensure it
-            // does not trigger setting the UI when the UI is hidden
-            if (isShowing()) {
-                this.NEWS_PANE.setText("");
-                this.NEWS_PANE.setText(html);
-                this.NEWS_PANE.setCaretPosition(0);
-            }
-        });
-        reload();
+        addDisposable(viewModel.getNewsHTML().subscribe(html -> {
+            this.NEWS_PANE.setText("");
+            this.NEWS_PANE.setText(html);
+            this.NEWS_PANE.setCaretPosition(0);
+        }));
     }
 
     @Override
@@ -101,7 +92,6 @@ public class NewsTab extends HierarchyPanel implements Tab {
         NEWS_MENU = null;
         NEWS_PANE = null;
         removeAll();
-        viewModel.addOnReloadListener(null);
     }
 
     private void createNewsKit() {
@@ -110,14 +100,14 @@ public class NewsTab extends HierarchyPanel implements Tab {
                 StyleSheet styleSheet = new StyleSheet();
 
                 styleSheet.addRule(String.format("a { color: %s; }",
-                    Integer.toHexString(UIManager.getColor("News.linkColor").getRGB()).substring(2)));
+                        Integer.toHexString(UIManager.getColor("News.linkColor").getRGB()).substring(2)));
 
                 styleSheet.addRule(String.format(
-                    "h2 { padding-left: 7px; padding-top: 8px; font-weight: bold; font-size: 14px; color: %s; }",
-                    Integer.toHexString(UIManager.getColor("News.headerColor").getRGB()).substring(2)));
+                        "h2 { padding-left: 7px; padding-top: 8px; font-weight: bold; font-size: 14px; color: %s; }",
+                        Integer.toHexString(UIManager.getColor("News.headerColor").getRGB()).substring(2)));
 
                 styleSheet.addRule(
-                    "p { font-size: 10px; padding-left: 8px; padding-right: 8px; padding-top: 8px; padding-bottom: 8px; }");
+                        "p { font-size: 10px; padding-left: 8px; padding-right: 8px; padding-top: 8px; padding-bottom: 8px; }");
 
                 this.setStyleSheet(styleSheet);
             }
@@ -129,6 +119,7 @@ public class NewsTab extends HierarchyPanel implements Tab {
             {
                 this.setEditable(false);
                 this.setEditorKit(NEWS_KIT);
+                this.setFocusable(false);
                 this.addHyperlinkListener(e -> {
                     if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
                         OS.openWebBrowser(e.getURL());
@@ -146,14 +137,6 @@ public class NewsTab extends HierarchyPanel implements Tab {
                 });
             }
         };
-    }
-
-    /**
-     * Reloads the panel with updated news.
-     */
-    public void reload() {
-        if (viewModel != null)
-            viewModel.reload();
     }
 
     @Override

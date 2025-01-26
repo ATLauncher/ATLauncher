@@ -27,7 +27,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.management.ManagementFactory;
@@ -42,6 +41,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
@@ -88,8 +88,6 @@ import com.formdev.flatlaf.extras.FlatUIDefaultsInspector;
 import io.github.asyncronous.toast.Toaster;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
-import net.arikia.dev.drpc.DiscordEventHandlers;
-import net.arikia.dev.drpc.DiscordRPC;
 import oshi.SystemInfo;
 import oshi.hardware.CentralProcessor;
 import oshi.hardware.GraphicsCard;
@@ -137,8 +135,6 @@ public class App {
      * issues in which the user may have to fix.
      */
     public static boolean justUpdatedBundledJre = false;
-
-    public static boolean discordInitialized = false;
 
     /**
      * This allows skipping the setup dialog on first run. This is mainly used for
@@ -416,7 +412,7 @@ public class App {
     }
 
     private static void checkIfNeedToUpdateBundledJre() {
-        if (ConfigManager.getConfigItem("bundledJre.promptToUpdate", false) == true
+        if (ConfigManager.getConfigItem("bundledJre.promptToUpdate", false)
                 && Java.shouldPromptToUpdateBundledJre()) {
             String dialogTitle;
             String dialogText;
@@ -540,23 +536,6 @@ public class App {
         }
     }
 
-    public static void ensureDiscordIsInitialized() {
-        if (!OS.isArm() && !discordInitialized) {
-            try {
-                DiscordEventHandlers handlers = new DiscordEventHandlers.Builder().build();
-                DiscordRPC.discordInitialize(Constants.DISCORD_CLIENT_ID, handlers, true);
-                DiscordRPC.discordRegister(Constants.DISCORD_CLIENT_ID, "");
-
-                discordInitialized = true;
-
-                Runtime.getRuntime().addShutdownHook(new Thread(DiscordRPC::discordShutdown));
-            } catch (Throwable e) {
-                LogManager.logStackTrace("Failed to initialize Discord integration", e);
-                discordInitialized = false;
-            }
-        }
-    }
-
     private static void logSystemInformation(String[] args) {
         LogManager.info(Constants.LAUNCHER_NAME + " Version: " + Constants.VERSION);
 
@@ -598,7 +577,7 @@ public class App {
             HardwareAbstractionLayer hal = systemInfo.getHardware();
 
             List<GraphicsCard> cards = hal.getGraphicsCards();
-            if (cards.size() != 0) {
+            if (!cards.isEmpty()) {
                 for (GraphicsCard card : cards) {
                     LogManager.info("GPU: " + card.getName() + " (" + card.getVendor() + ") " + card.getVersionInfo()
                             + " " + (card.getVRam() / 1048576) + "MB VRAM");
@@ -853,7 +832,7 @@ public class App {
     private static void loadSettings() {
         // load the users settings or load defaults if settings file doesn't exist
         if (Files.exists(FileSystem.SETTINGS)) {
-            try (InputStreamReader fileReader = new InputStreamReader(new FileInputStream(FileSystem.SETTINGS.toFile()),
+            try (InputStreamReader fileReader = new InputStreamReader(Files.newInputStream(FileSystem.SETTINGS),
                     StandardCharsets.UTF_8)) {
                 settings = Gsons.DEFAULT.fromJson(fileReader, Settings.class);
             } catch (Throwable t) {
@@ -866,7 +845,7 @@ public class App {
 
         if (Files.exists(FileSystem.LAUNCHER_CONFIG)) {
             try (InputStreamReader fileReader = new InputStreamReader(
-                    new FileInputStream(FileSystem.LAUNCHER_CONFIG.toFile()), StandardCharsets.UTF_8)) {
+                    Files.newInputStream(FileSystem.LAUNCHER_CONFIG), StandardCharsets.UTF_8)) {
                 Properties properties = new Properties();
                 properties.load(fileReader);
                 settings.convert(properties);
@@ -1047,6 +1026,10 @@ public class App {
         parser.accepts("config-override", "A JSON string to override the launchers config.").withRequiredArg()
                 .ofType(String.class);
         parser.acceptsAll(Arrays.asList("help", "?"), "Shows help for the arguments for the application.").forHelp();
+        parser
+                .acceptsAll(Arrays.asList("version", "v"), "Shows the launcher version")
+                .withOptionalArg()
+                .ofType(Boolean.class);
 
         OptionSet options = parser.parse(args);
         autoLaunch = options.has("launch") ? (String) options.valueOf("launch") : null;
@@ -1058,6 +1041,11 @@ public class App {
                 e1.printStackTrace();
             }
 
+            System.exit(0);
+        }
+
+        if (options.has("version")) {
+            System.out.printf("%s %s\n", Constants.LAUNCHER_NAME, Constants.VERSION.toStringForLogging());
             System.exit(0);
         }
 
@@ -1163,7 +1151,7 @@ public class App {
             ProxySelector.setDefault(new ProxySelector() {
                 @Override
                 public List<java.net.Proxy> select(URI uri) {
-                    return Arrays.asList(proxy);
+                    return Collections.singletonList(proxy);
                 }
 
                 @Override

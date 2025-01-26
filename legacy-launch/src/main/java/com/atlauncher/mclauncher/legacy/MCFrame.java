@@ -44,18 +44,15 @@ public class MCFrame extends Frame {
 
         this.addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent windowEvent) {
-                new Thread() {
-                    @Override
-                    public void run() {
-                        try {
-                            Thread.sleep(30000L);
-                        } catch (InterruptedException ignored) {
-                            Thread.currentThread().interrupt();
-                            return;
-                        }
-                        System.exit(0);
+                new Thread(() -> {
+                    try {
+                        Thread.sleep(30000L);
+                    } catch (InterruptedException ignored) {
+                        Thread.currentThread().interrupt();
+                        return;
                     }
-                }.start();
+                    System.exit(0);
+                }).start();
 
                 if (appletWrap != null) {
                     appletWrap.stop();

@@ -187,7 +187,7 @@ public class Java {
                 .collect(Collectors.toList());
 
         JavaInfo systemJava = new JavaInfo(Java.getPathToSystemJavaExecutable());
-        if (javas.size() == 0
+        if (javas.isEmpty()
                 || javas.stream().noneMatch(java -> java.rootPath.equalsIgnoreCase(systemJava.rootPath))) {
             javas.add(systemJava);
         }
