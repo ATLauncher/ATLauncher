@@ -77,6 +77,7 @@ public class JavaInstanceSettingsTab extends JPanel {
     private JComboBox<ComboItem<Boolean>> disableLegacyLaunching;
     private JComboBox<ComboItem<Boolean>> useSystemGlfw;
     private JComboBox<ComboItem<Boolean>> useSystemOpenAl;
+    private JComboBox<ComboItem<Boolean>> useDedicatedGpu;
 
     private boolean initialMemoryWarningShown = false;
     private boolean permgenWarningShown = false;
@@ -605,6 +606,36 @@ public class JavaInstanceSettingsTab extends JPanel {
         }
 
         add(useSystemOpenAl, gbc);
+
+        if (OS.isLinux()) {
+            // Use Dedicated GPU
+            gbc.gridx = 0;
+            gbc.gridy++;
+            gbc.insets = UIConstants.LABEL_INSETS;
+            gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
+            JLabelWithHover useDedicatedGpuLabel = new JLabelWithHover(GetText.tr("Use Dedicated GPU") + "?", HELP_ICON,
+                new HTMLBuilder().center().text(GetText.tr("Use the dedicated GPU for rendering."))
+                    .build());
+            add(useDedicatedGpuLabel, gbc);
+
+            gbc.gridx++;
+            gbc.insets = UIConstants.LABEL_INSETS;
+            gbc.anchor = GridBagConstraints.FIRST_LINE_START;
+            useDedicatedGpu = new JComboBox<>();
+            useDedicatedGpu.addItem(new ComboItem<>(null, GetText.tr("Use Launcher Default")));
+            useDedicatedGpu.addItem(new ComboItem<>(true, GetText.tr("Yes")));
+            useDedicatedGpu.addItem(new ComboItem<>(false, GetText.tr("No")));
+
+            if (instance.launcher.useDedicatedGpu == null) {
+                useDedicatedGpu.setSelectedIndex(0);
+            } else if (instance.launcher.useDedicatedGpu) {
+                useDedicatedGpu.setSelectedIndex(1);
+            } else {
+                useDedicatedGpu.setSelectedIndex(2);
+            }
+
+            add(useDedicatedGpu, gbc);
+        }
     }
 
     private Integer getIfNotNull(Integer value, Integer defaultValue) {
@@ -659,9 +690,9 @@ public class JavaInstanceSettingsTab extends JPanel {
         String javaPath = this.javaPath.getText();
         String javaParameters = this.javaParameters.getText();
         String javaRuntimeOverrideVal = ((ComboItem<String>) javaRuntimeOverride.getSelectedItem())
-                .getValue();
+            .getValue();
         Boolean useJavaProvidedByMinecraftVal = ((ComboItem<Boolean>) useJavaProvidedByMinecraft.getSelectedItem())
-                .getValue();
+            .getValue();
         Boolean disableLegacyLaunchingVal = ((ComboItem<Boolean>) disableLegacyLaunching.getSelectedItem()).getValue();
         Boolean useSystemGlfwVal = ((ComboItem<Boolean>) useSystemGlfw.getSelectedItem()).getValue();
         Boolean useSystemOpenAlVal = ((ComboItem<Boolean>) useSystemOpenAl.getSelectedItem()).getValue();
@@ -670,20 +701,23 @@ public class JavaInstanceSettingsTab extends JPanel {
         this.instance.launcher.permGen = (permGen == App.settings.metaspace ? null : permGen);
 
         boolean instanceWillUseMinecraftProvidedJava = Optional.ofNullable(useJavaProvidedByMinecraftVal)
-                .orElse(App.settings.useJavaProvidedByMinecraft);
+            .orElse(App.settings.useJavaProvidedByMinecraft);
 
         if (!instanceWillUseMinecraftProvidedJava || instance.javaVersion == null) {
             this.instance.launcher.javaPath = (javaPath.equals(App.settings.javaPath) ? null : javaPath);
         }
 
         this.instance.launcher.javaArguments = (javaParameters.equals(App.settings.javaParameters) ? null
-                : javaParameters);
+            : javaParameters);
 
         this.instance.launcher.useJavaProvidedByMinecraft = useJavaProvidedByMinecraftVal;
         this.instance.launcher.disableLegacyLaunching = disableLegacyLaunchingVal;
         this.instance.launcher.javaRuntimeOverride = javaRuntimeOverrideVal;
         this.instance.launcher.useSystemGlfw = useSystemGlfwVal;
         this.instance.launcher.useSystemOpenAl = useSystemOpenAlVal;
-    }
 
+        if (OS.isLinux()) {
+            this.instance.launcher.useDedicatedGpu = ((ComboItem<Boolean>) useDedicatedGpu.getSelectedItem()).getValue();
+        }
+    }
 }
