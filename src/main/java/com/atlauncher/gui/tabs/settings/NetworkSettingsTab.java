@@ -246,7 +246,9 @@ public class NetworkSettingsTab extends AbstractSettingsTab {
     }
 
     private void resetProxyCheck() {
-        setLabelState("Visualize proxy checker", "/assets/icon/question.png");
+        proxyCheckIndicator.setText("");
+        proxyCheckIndicator.setIcon(null);
+        proxyCheckIndicator.setToolTipText(null);
     }
 
     private void setProxyCheckState(CheckState state) {

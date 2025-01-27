@@ -11,8 +11,11 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Removed Discord RPC
 - Mojang Account support completely removed [#907]
 - Dedicated GPU support for Linux [#986]
+- Add option to open instance.json file for an instance
+- Add checking of Java install location setting before saving
 
 ### Fixes
+- Invalid Java install location causing issues starting the launcher
 
 ### Misc
 - Update gradle wrapper version from 8.2 to 8.9 [#886]

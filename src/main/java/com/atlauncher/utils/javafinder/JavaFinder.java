@@ -35,6 +35,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.atlauncher.App;
+import com.atlauncher.managers.LogManager;
 import com.atlauncher.managers.PerformanceManager;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
@@ -66,10 +67,14 @@ public class JavaFinder {
                                 Paths.get(System.getenv("programfiles"), "Eclipse Adoptium"),
                                 Paths.get(System.getenv("programfiles"), "Eclipse Foundation")));
 
-                if (App.settings.baseJavaInstallFolder != null
-                        && Files.exists(Paths.get(App.settings.baseJavaInstallFolder))
-                        && Files.isDirectory(Paths.get(App.settings.baseJavaInstallFolder))) {
-                    pathsToSearch.add(Paths.get(App.settings.baseJavaInstallFolder));
+                try {
+                    if (App.settings.javaInstallLocation != null
+                            && Files.exists(Paths.get(App.settings.javaInstallLocation))
+                            && Files.isDirectory(Paths.get(App.settings.javaInstallLocation))) {
+                        pathsToSearch.add(Paths.get(App.settings.javaInstallLocation));
+                    }
+                } catch (Exception e) {
+                    LogManager.logStackTrace("Error parsing base java install folder", e);
                 }
 
                 for (Path searchPath : pathsToSearch) {
@@ -104,10 +109,14 @@ public class JavaFinder {
                         Arrays.asList(Paths.get("/usr/java"), Paths.get("/usr/lib/jvm"),
                                 Paths.get("/usr/lib32/jvm")));
 
-                if (App.settings.baseJavaInstallFolder != null
-                        && Files.exists(Paths.get(App.settings.baseJavaInstallFolder))
-                        && Files.isDirectory(Paths.get(App.settings.baseJavaInstallFolder))) {
-                    pathsToSearch.add(Paths.get(App.settings.baseJavaInstallFolder));
+                try {
+                    if (App.settings.javaInstallLocation != null
+                            && Files.exists(Paths.get(App.settings.javaInstallLocation))
+                            && Files.isDirectory(Paths.get(App.settings.javaInstallLocation))) {
+                        pathsToSearch.add(Paths.get(App.settings.javaInstallLocation));
+                    }
+                } catch (Exception e) {
+                    LogManager.logStackTrace("Error parsing base java install folder", e);
                 }
 
                 for (Path searchPath : pathsToSearch) {
@@ -116,6 +125,7 @@ public class JavaFinder {
                     try {
                         Files.walkFileTree(searchPath, EnumSet.noneOf(FileVisitOption.class), 10,
                                 new SimpleFileVisitor<Path>() {
+
                                     @Override
                                     public FileVisitResult visitFile(Path path, BasicFileAttributes attrs)
                                             throws IOException {

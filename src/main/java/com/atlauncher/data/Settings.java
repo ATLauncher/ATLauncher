@@ -28,6 +28,8 @@ import java.net.Proxy;
 import java.net.Proxy.Type;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -43,6 +45,7 @@ import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Timestamper;
 import com.atlauncher.utils.Utils;
 import com.atlauncher.utils.sort.InstanceSortingStrategies;
+import com.google.gson.annotations.SerializedName;
 
 public class Settings {
     // Launcher things
@@ -102,7 +105,8 @@ public class Settings {
     public int windowHeight = 480;
     public String javaPath;
     public String javaParameters = Constants.DEFAULT_JAVA_PARAMETERS;
-    public String baseJavaInstallFolder = null;
+    @SerializedName(value = "javaInstallLocation", alternate = { "baseJavaInstallFolder" })
+    public String javaInstallLocation = null;
     public boolean maximiseMinecraft = false;
     public boolean ignoreJavaOnInstanceLaunch = false;
     public boolean useJavaProvidedByMinecraft = true;
@@ -293,6 +297,7 @@ public class Settings {
         validateDisableAddModRestrictions();
         validateDefaultModPlatform();
 
+        validateJavaInstallLocation();
         validateJavaPath();
 
         validateMemory();
@@ -369,6 +374,23 @@ public class Settings {
         if (defaultModPlatform == null
                 || !(defaultModPlatform == ModPlatform.CURSEFORGE || defaultModPlatform == ModPlatform.MODRINTH)) {
             defaultModPlatform = ModPlatform.CURSEFORGE;
+        }
+    }
+
+    public void validateJavaInstallLocation() {
+        if (javaInstallLocation != null) {
+            try {
+                Path javaInstallLocationPath = Paths.get(javaInstallLocation);
+
+                // set to null if path is not a directory that exists
+                if (!Files.exists(javaInstallLocationPath) || !Files.isDirectory(javaInstallLocationPath)) {
+                    LogManager.warn("Java Install Location Is Incorrect! Deleting setting!");
+                    javaInstallLocation = null;
+                }
+            } catch (Exception e) {
+                LogManager.warn("Java Install Location Is Incorrect! Deleting setting!");
+                javaInstallLocation = null;
+            }
         }
     }
 
@@ -522,7 +544,7 @@ public class Settings {
 
     public void save() {
         try (OutputStreamWriter fileWriter = new OutputStreamWriter(
-            Files.newOutputStream(FileSystem.SETTINGS), StandardCharsets.UTF_8)) {
+                Files.newOutputStream(FileSystem.SETTINGS), StandardCharsets.UTF_8)) {
             Gsons.DEFAULT.toJson(this, fileWriter);
         } catch (IOException e) {
             LogManager.logStackTrace("Error saving settings", e);
