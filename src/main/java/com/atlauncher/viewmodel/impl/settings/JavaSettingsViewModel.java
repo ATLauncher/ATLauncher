@@ -70,7 +70,8 @@ public class JavaSettingsViewModel implements SettingsListener {
             _useJavaProvidedByMinecraft = BehaviorSubject.create(),
             _disableLegacyLaunching = BehaviorSubject.create(),
             _useSystemGlfw = BehaviorSubject.create(),
-            _useSystemOpenAl = BehaviorSubject.create();
+            _useSystemOpenAl = BehaviorSubject.create(),
+            _useDedicatedGpu = BehaviorSubject.create();
 
     private final BehaviorSubject<CheckState> javaPathCheckState = BehaviorSubject.create(),
             javaInstallLocationCheckState = BehaviorSubject.create(),
@@ -218,6 +219,10 @@ public class JavaSettingsViewModel implements SettingsListener {
         _disableLegacyLaunching.onNext(App.settings.disableLegacyLaunching);
         _useSystemGlfw.onNext(App.settings.useSystemGlfw);
         _useSystemOpenAl.onNext(App.settings.useSystemOpenAl);
+
+        if (OS.isLinux()) {
+            _useDedicatedGpu.onNext(App.settings.useDedicatedGpu);
+        }
     }
 
     /**
@@ -499,6 +504,15 @@ public class JavaSettingsViewModel implements SettingsListener {
 
     public void setSystemOpenAL(Boolean b) {
         App.settings.useSystemOpenAl = b;
+        SettingsManager.post();
+    }
+
+    public Observable<Boolean> getDedicatedGpu() {
+        return _useDedicatedGpu.observeOn(SwingSchedulers.edt());
+    }
+
+    public void setDedicatedGpu(Boolean b) {
+        App.settings.useDedicatedGpu = b;
         SettingsManager.post();
     }
 

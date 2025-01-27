@@ -617,6 +617,28 @@ public class JavaSettingsTab extends AbstractSettingsTab {
                 itemEvent -> viewModel.setSystemOpenAL(itemEvent.getStateChange() == ItemEvent.SELECTED));
         addDisposable(viewModel.getSystemOpenAL().subscribe(useSystemOpenAl::setSelected));
         add(useSystemOpenAl, gbc);
+
+        // Use Dedicated GPU
+
+        if (OS.isLinux()) {
+            gbc.gridx = 0;
+            gbc.gridy++;
+            gbc.insets = UIConstants.LABEL_INSETS;
+            gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
+            JLabelWithHover useDedicatedGpuLabel = new JLabelWithHover(GetText.tr("Use Dedicated GPU") + "?", HELP_ICON,
+                new HTMLBuilder()
+                    .center().text(GetText.tr("Use the dedicated GPU for Minecraft.")).build());
+            add(useDedicatedGpuLabel, gbc);
+
+            gbc.gridx++;
+            gbc.insets = UIConstants.CHECKBOX_FIELD_INSETS;
+            gbc.anchor = GridBagConstraints.BASELINE_LEADING;
+            JCheckBox useDedicatedGpu = new JCheckBox();
+            useDedicatedGpu.addItemListener(
+                itemEvent -> viewModel.setDedicatedGpu(itemEvent.getStateChange() == ItemEvent.SELECTED));
+            addDisposable(viewModel.getDedicatedGpu().subscribe(useDedicatedGpu::setSelected));
+            add(useDedicatedGpu, gbc);
+        }
     }
 
     private void showJavaPathWarning() {
