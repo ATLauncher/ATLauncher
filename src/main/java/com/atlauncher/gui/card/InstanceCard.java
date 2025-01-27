@@ -79,6 +79,7 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
 
     private final JPopupMenu openPopupMenu = new JPopupMenu();
     private final JMenuItem openResourceMenuItem = new JMenuItem(GetText.tr("Open Resources"));
+    private final JMenuItem openInstanceJsonMenuItem = new JMenuItem(GetText.tr("Open instance.json"));
     private final DropDownButton openButton = new DropDownButton(GetText.tr("Open Folder"), openPopupMenu, true,
             new MouseAdapter() {
                 @Override
@@ -278,6 +279,11 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
             OS.openFileExplorer(instance.getMinecraftJarLibraryPath());
         });
         openPopupMenu.add(openResourceMenuItem);
+
+        openInstanceJsonMenuItem.addActionListener(e -> {
+            OS.openFile(instance.getRoot().resolve("instance.json"));
+        });
+        openPopupMenu.add(openInstanceJsonMenuItem);
     }
 
     private void setupButtonPopupMenus() {
@@ -688,6 +694,7 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
         this.openWebsite.setText(GetText.tr("Open Website"));
         this.openButton.setText(GetText.tr("Open Folder"));
         this.openResourceMenuItem.setText(GetText.tr("Open Resources"));
+        this.openInstanceJsonMenuItem.setText(GetText.tr("Open instance.json"));
         this.settingsButton.setText(GetText.tr("Settings"));
 
         this.normalBackupMenuItem.setText(GetText.tr("Normal Backup"));

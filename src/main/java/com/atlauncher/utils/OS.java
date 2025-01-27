@@ -218,6 +218,21 @@ public enum OS {
         }
     }
 
+    public static void openFile(Path path) {
+        try {
+            if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.OPEN)) {
+                Desktop.getDesktop().open(path.toFile());
+            } else if (getOS() == LINUX && (Files.exists(Paths.get("/usr/bin/xdg-open"))
+                    || Files.exists(Paths.get("/usr/local/bin/xdg-open")))) {
+                Runtime.getRuntime().exec("xdg-open " + path.toString());
+            } else {
+                LogManager.error("Cannot open file as no supported methods were found");
+            }
+        } catch (Exception e) {
+            LogManager.logStackTrace("Error opening file!", e);
+        }
+    }
+
     /**
      * Os slash.
      *

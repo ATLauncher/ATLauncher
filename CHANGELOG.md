@@ -10,6 +10,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Add version option for CLI [#915]
 - Removed Discord RPC
 - Mojang Account support completely removed [#907]
+- Add option to open instance.json file for an instance
 
 ### Fixes
 
