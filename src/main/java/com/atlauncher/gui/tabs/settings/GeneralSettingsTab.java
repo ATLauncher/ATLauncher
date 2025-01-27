@@ -25,6 +25,7 @@ import java.util.Date;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -38,16 +39,20 @@ import com.atlauncher.App;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.constants.Constants;
 import com.atlauncher.constants.UIConstants;
+import com.atlauncher.data.CheckState;
 import com.atlauncher.data.LauncherTheme;
 import com.atlauncher.gui.components.JLabelWithHover;
 import com.atlauncher.listener.DelayedSavingKeyListener;
+import com.atlauncher.managers.DialogManager;
 import com.atlauncher.utils.ComboItem;
 import com.atlauncher.utils.OS;
+import com.atlauncher.utils.Utils;
 import com.atlauncher.utils.sort.InstanceSortingStrategies;
 import com.atlauncher.viewmodel.impl.settings.GeneralSettingsViewModel;
 
 public class GeneralSettingsTab extends AbstractSettingsTab {
     private final GeneralSettingsViewModel viewModel;
+    private JLabelWithHover customDownloadsPathChecker;
 
     public GeneralSettingsTab(GeneralSettingsViewModel generalSettingsViewModel) {
         this.viewModel = generalSettingsViewModel;
@@ -261,17 +266,21 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         customDownloadsPathPanel.setLayout(new BoxLayout(customDownloadsPathPanel, BoxLayout.X_AXIS));
 
         JTextField customDownloadsPath = new JTextField(16);
+        customDownloadsPathChecker = new JLabelWithHover("", null, null);
         addDisposable(viewModel.getCustomsDownloadPath().subscribe(customDownloadsPath::setText));
         customDownloadsPath.addKeyListener(
                 new DelayedSavingKeyListener(
-                        100,
+                        500,
                         () -> viewModel.setCustomsDownloadPath(customDownloadsPath.getText()),
                         viewModel::setCustomsDownloadPathPending));
+        addDisposable(viewModel.getCustomDownloadsPathChecker().subscribe(this::setCustomDownloadsPathCheckState));
 
         JButton customDownloadsPathResetButton = new JButton(GetText.tr("Reset"));
 
-        customDownloadsPathResetButton.addActionListener(
-                e -> viewModel.resetCustomDownloadPath());
+        customDownloadsPathResetButton.addActionListener(e -> {
+            viewModel.resetCustomDownloadPath();
+            resetCustomDownloadsPathCheckLabel();
+        });
 
         JButton customDownloadsPathBrowseButton = new JButton(GetText.tr("Browse"));
         customDownloadsPathBrowseButton.addActionListener(e -> {
@@ -284,10 +293,14 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
             if (chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
                 File selectedPath = chooser.getSelectedFile();
                 customDownloadsPath.setText(selectedPath.getAbsolutePath());
+                viewModel.setCustomsDownloadPath(selectedPath.getAbsolutePath());
+                viewModel.setCustomsDownloadPathPending();
             }
         });
 
         customDownloadsPathPanel.add(customDownloadsPath);
+        customDownloadsPathPanel.add(Box.createHorizontalStrut(5));
+        customDownloadsPathPanel.add(customDownloadsPathChecker);
         customDownloadsPathPanel.add(Box.createHorizontalStrut(5));
         customDownloadsPathPanel.add(customDownloadsPathResetButton);
         customDownloadsPathPanel.add(Box.createHorizontalStrut(5));
@@ -528,9 +541,61 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         return "General";
     }
 
+    private void showCustomDownloadsPathWarning() {
+        DialogManager.okDialog()
+                .setTitle(GetText.tr("Help"))
+                .setContent(
+                        new HTMLBuilder()
+                                .center()
+                                .text(
+                                        GetText.tr(
+                                                "The Downloads Folder Path you set is incorrect.<br/><br/>Please verify it points to a folder and try again."))
+                                .build())
+                .setType(DialogManager.ERROR)
+                .show();
+    }
+
+    private void setLabelState(String tooltip, String path) {
+        try {
+            customDownloadsPathChecker.setToolTipText(tooltip);
+            ImageIcon icon = Utils.getIconImage(path);
+            if (icon != null) {
+                customDownloadsPathChecker.setIcon(icon);
+                icon.setImageObserver(customDownloadsPathChecker);
+            }
+        } catch (NullPointerException ignored) {
+        }
+    }
+
+    private void resetCustomDownloadsPathCheckLabel() {
+        customDownloadsPathChecker.setText("");
+        customDownloadsPathChecker.setIcon(null);
+        customDownloadsPathChecker.setToolTipText(null);
+    }
+
+    private void setCustomDownloadsPathCheckState(CheckState state) {
+        if (state == CheckState.NotChecking) {
+            resetCustomDownloadsPathCheckLabel();
+        } else if (state == CheckState.CheckPending) {
+            setLabelState(GetText.tr("Downloads folder path change pending"),
+                    "/assets/icon/warning.png");
+        } else if (state == CheckState.Checking) {
+            setLabelState(GetText.tr("Checking downloads folder path"),
+                    "/assets/image/loading-bars-small.gif");
+        } else if (state instanceof CheckState.Checked) {
+            if (((CheckState.Checked) state).valid) {
+                resetCustomDownloadsPathCheckLabel();
+            } else {
+                setLabelState(GetText.tr("Invalid!"), "/assets/icon/error.png");
+                showCustomDownloadsPathWarning();
+            }
+        }
+    }
+
     @Override
     protected void onDestroy() {
         removeAll();
+        customDownloadsPathChecker = null;
     }
 
     @Override

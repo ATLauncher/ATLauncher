@@ -13,6 +13,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Dedicated GPU support for Linux [#986]
 - Add option to open instance.json file for an instance
 - Add checking of Java install location setting before saving
+- Add checking of custom downloads path setting before saving
 
 ### Fixes
 - Invalid Java install location causing issues starting the launcher

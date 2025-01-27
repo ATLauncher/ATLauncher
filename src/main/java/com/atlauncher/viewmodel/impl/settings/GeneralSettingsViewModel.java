@@ -19,16 +19,22 @@ package com.atlauncher.viewmodel.impl.settings;
 
 import java.awt.Dimension;
 import java.awt.Point;
+import java.io.File;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.atlauncher.App;
 import com.atlauncher.FileSystem;
 import com.atlauncher.constants.Constants;
+import com.atlauncher.data.CheckState;
 import com.atlauncher.data.Language;
 import com.atlauncher.data.LauncherTheme;
 import com.atlauncher.evnt.listener.SettingsListener;
@@ -54,6 +60,12 @@ import io.reactivex.rxjava3.subjects.BehaviorSubject;
  *        View model for {@link GeneralSettingsTab}
  */
 public class GeneralSettingsViewModel implements SettingsListener {
+    private static final Logger LOG = LogManager.getLogger();
+    private static final long customDownloadsPathCheckDelay = 2000;
+    private long customDownloadsPathLastChange = 0;
+    private boolean customDownloadsPathChanged = false;
+    private final Thread customDownloadsPathCheckThread = new Thread(this::verifyCustomDownloadsPath);
+
     private final BehaviorSubject<Integer> _addOnSelectedLanguage = BehaviorSubject.create(),
             _selectedTheme = BehaviorSubject.create(),
             _dateFormat = BehaviorSubject.create(),
@@ -62,6 +74,7 @@ public class GeneralSettingsViewModel implements SettingsListener {
             _addInstanceSorting = BehaviorSubject.create();
 
     private final BehaviorSubject<String> _addOnCustomsDownloadPath = BehaviorSubject.create();
+    private final BehaviorSubject<CheckState> customDownloadsPathCheckState = BehaviorSubject.create();
 
     private final BehaviorSubject<Boolean> _keepLauncherOpen = BehaviorSubject.create(),
             _enableConsole = BehaviorSubject.create(),
@@ -325,6 +338,9 @@ public class GeneralSettingsViewModel implements SettingsListener {
      */
     public void resetCustomDownloadPath() {
         App.settings.customDownloadsPath = null;
+        _addOnCustomsDownloadPath.onNext(FileSystem.getUserDownloadsPath(false).toString());
+        customDownloadsPathCheckState.onNext(new CheckState.Checked(true));
+        SettingsValidityManager.setValidity("customDownloadsPath", true);
         SettingsManager.post();
     }
 
@@ -335,11 +351,47 @@ public class GeneralSettingsViewModel implements SettingsListener {
         SettingsValidityManager.setValidity("customDownloadsPath", false);
     }
 
+    public Observable<CheckState> getCustomDownloadsPathChecker() {
+        return customDownloadsPathCheckState.observeOn(SwingSchedulers.edt());
+    }
+
     /**
      * Listen to the custom download path being changed
      */
     public Observable<String> getCustomsDownloadPath() {
         return _addOnCustomsDownloadPath.observeOn(SwingSchedulers.edt());
+    }
+
+    private void verifyCustomDownloadsPath() {
+        LOG.debug("Running customDownloadsPathCheckThread");
+        while (true) {
+            try {
+                TimeUnit.MILLISECONDS.sleep(100);
+            } catch (InterruptedException e) {
+                LOG.error("customDownloadsPathCheckThread : Failed to delay check thread", e);
+            } finally {
+                if (customDownloadsPathChanged) {
+                    customDownloadsPathCheckState.onNext(CheckState.CheckPending);
+                    if (customDownloadsPathLastChange + customDownloadsPathCheckDelay < System.currentTimeMillis()) {
+                        // Prevent user from saving while checking
+                        setCustomsDownloadPathPending();
+                        customDownloadsPathCheckState.onNext(CheckState.Checking);
+
+                        File jPath = new File(App.settings.customDownloadsPath);
+                        boolean valid = jPath.exists();
+                        customDownloadsPathCheckState.onNext(new CheckState.Checked(valid));
+                        customDownloadsPathChanged = false;
+                        SettingsValidityManager.setValidity("customDownloadsPath", valid);
+
+                        if (!valid) {
+                            LOG.debug("customDownloadsPathCheckThread: Check thread reporting check fail");
+                        } else {
+                            SettingsManager.post();
+                        }
+                    }
+                }
+            }
+        }
     }
 
     /**
@@ -348,9 +400,16 @@ public class GeneralSettingsViewModel implements SettingsListener {
      * @param value download path
      */
     public void setCustomsDownloadPath(String value) {
-        App.settings.customDownloadsPath = value;
-        SettingsValidityManager.setValidity("customDownloadsPath", true);
-        SettingsManager.post();
+        if (!value.isEmpty()) {
+            App.settings.customDownloadsPath = value;
+            customDownloadsPathLastChange = System.currentTimeMillis();
+            customDownloadsPathChanged = true;
+            if (!customDownloadsPathCheckThread.isAlive()) {
+                customDownloadsPathCheckThread.start();
+            }
+        } else {
+            resetCustomDownloadPath();
+        }
     }
 
     /**
