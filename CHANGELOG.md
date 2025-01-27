@@ -14,6 +14,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Add option to open instance.json file for an instance
 - Add checking of Java install location setting before saving
 - Add checking of custom downloads path setting before saving
+- Add image to login with Microsoft account rather than just text
 
 ### Fixes
 - Invalid Java install location causing issues starting the launcher

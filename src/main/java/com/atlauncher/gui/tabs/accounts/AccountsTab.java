@@ -38,6 +38,7 @@ import javax.swing.event.HyperlinkEvent;
 
 import org.mini2Dx.gettext.GetText;
 
+import com.atlauncher.App;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.data.AbstractAccount;
 import com.atlauncher.data.MicrosoftAccount;
@@ -51,6 +52,7 @@ import com.atlauncher.managers.DialogManager;
 import com.atlauncher.utils.ComboItem;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.SkinUtils;
+import com.atlauncher.utils.Utils;
 import com.atlauncher.viewmodel.base.IAccountsViewModel;
 import com.atlauncher.viewmodel.impl.AccountsViewModel;
 
@@ -144,7 +146,11 @@ public class AccountsTab extends HierarchyPanel implements Tab, RelocalizationLi
                 viewModel.deleteAccount();
             }
         });
-        loginWithMicrosoftButton = new JButton(GetText.tr("Login with Microsoft"));
+        loginWithMicrosoftButton = new JButton();
+        loginWithMicrosoftButton.setBorderPainted(false);
+        loginWithMicrosoftButton.setToolTipText(GetText.tr("Sign In with Microsoft"));
+        loginWithMicrosoftButton.setIcon(Utils.getIconImage(
+                App.THEME.getResourcePath("image/providers", "sign-in-with-microsoft")));
         loginWithMicrosoftButton.addActionListener(e -> {
             // TODO This should be handled by some reaction via listener
             int numberOfAccountsBefore = viewModel.accountCount();
