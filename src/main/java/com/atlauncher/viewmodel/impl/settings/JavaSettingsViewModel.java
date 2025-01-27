@@ -52,6 +52,7 @@ import io.reactivex.rxjava3.subjects.BehaviorSubject;
 public class JavaSettingsViewModel implements SettingsListener {
     private static final long javaPathCheckDelay = 2000;
     private static final Logger LOG = LogManager.getLogger();
+    private static final long javaInstallLocationCheckDelay = 2000;
     private static final long javaParamCheckDelay = 2000;
 
     private final BehaviorSubject<Integer> _initialRam = BehaviorSubject.create(),
@@ -62,7 +63,7 @@ public class JavaSettingsViewModel implements SettingsListener {
 
     private final BehaviorSubject<String> _javaPath = BehaviorSubject.create(),
             _javaParams = BehaviorSubject.create(),
-            baseJavaInstallFolder = BehaviorSubject.create();
+            _javaInstallLocation = BehaviorSubject.create();
 
     private final BehaviorSubject<Boolean> _maximizeMinecraft = BehaviorSubject.create(),
             _ignoreJavaOnInstanceLaunch = BehaviorSubject.create(),
@@ -72,6 +73,7 @@ public class JavaSettingsViewModel implements SettingsListener {
             _useSystemOpenAl = BehaviorSubject.create();
 
     private final BehaviorSubject<CheckState> javaPathCheckState = BehaviorSubject.create(),
+            javaInstallLocationCheckState = BehaviorSubject.create(),
             javaParamCheckState = BehaviorSubject.create();
 
     private Integer systemRam = -1,
@@ -86,6 +88,10 @@ public class JavaSettingsViewModel implements SettingsListener {
     private long javaPathLastChange = 0;
     private boolean javaPathChanged = false;
     private final Thread javaPathCheckThread = new Thread(this::verifyJavaPath);
+
+    private long javaInstallLocationLastChange = 0;
+    private boolean javaInstallLocationChanged = false;
+    private final Thread javaInstallLocationCheckThread = new Thread(this::verifyJavaInstallLocation);
 
     private long javaParamLastChange = 0;
     private boolean javaParamChanged = false;
@@ -119,6 +125,38 @@ public class JavaSettingsViewModel implements SettingsListener {
 
                         if (!valid) {
                             LOG.debug("javaPathCheckThread: Check thread reporting check fail");
+                        } else {
+                            SettingsManager.post();
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private void verifyJavaInstallLocation() {
+        LOG.debug("Running javaInstallLocationCheckThread");
+        while (true) {
+            try {
+                TimeUnit.MILLISECONDS.sleep(100);
+            } catch (InterruptedException e) {
+                LOG.error("javaInstallLocationCheckThread : Failed to delay check thread", e);
+            } finally {
+                if (javaInstallLocationChanged) {
+                    javaInstallLocationCheckState.onNext(CheckState.CheckPending);
+                    if (javaInstallLocationLastChange + javaInstallLocationCheckDelay < System.currentTimeMillis()) {
+                        // Prevent user from saving while checking
+                        setJavaInstallLocationPending();
+                        javaInstallLocationCheckState.onNext(CheckState.Checking);
+
+                        File jPath = new File(App.settings.javaInstallLocation);
+                        boolean valid = jPath.exists();
+                        javaInstallLocationCheckState.onNext(new CheckState.Checked(valid));
+                        javaInstallLocationChanged = false;
+                        SettingsValidityManager.setValidity("javaInstallLocation", valid);
+
+                        if (!valid) {
+                            LOG.debug("javaInstallLocationCheckThread: Check thread reporting check fail");
                         } else {
                             SettingsManager.post();
                         }
@@ -172,7 +210,7 @@ public class JavaSettingsViewModel implements SettingsListener {
 
         _javaPath.onNext(App.settings.javaPath);
         _javaParams.onNext(App.settings.javaParameters);
-        baseJavaInstallFolder.onNext(Optional.ofNullable(App.settings.baseJavaInstallFolder).orElse(""));
+        _javaInstallLocation.onNext(Optional.ofNullable(App.settings.javaInstallLocation).orElse(""));
 
         _maximizeMinecraft.onNext(App.settings.maximiseMinecraft);
         _ignoreJavaOnInstanceLaunch.onNext(App.settings.ignoreJavaOnInstanceLaunch);
@@ -362,8 +400,9 @@ public class JavaSettingsViewModel implements SettingsListener {
         App.settings.usingCustomJavaPath = !path.equalsIgnoreCase(OS.getDefaultJavaPath());
         javaPathLastChange = System.currentTimeMillis();
         javaPathChanged = true;
-        if (!javaPathCheckThread.isAlive())
+        if (!javaPathCheckThread.isAlive()) {
             javaPathCheckThread.start();
+        }
     }
 
     public Observable<String> getJavaPathObservable() {
@@ -396,8 +435,9 @@ public class JavaSettingsViewModel implements SettingsListener {
         App.settings.javaParameters = params;
         javaParamLastChange = System.currentTimeMillis();
         javaParamChanged = true;
-        if (!javaParamCheckThread.isAlive())
+        if (!javaParamCheckThread.isAlive()) {
             javaParamCheckThread.start();
+        }
     }
 
     public Observable<CheckState> getJavaParamsChecker() {
@@ -466,21 +506,36 @@ public class JavaSettingsViewModel implements SettingsListener {
         return !ConfigManager.getConfigItem("removeInitialMemoryOption", false);
     }
 
-    public void resetBaseInstallFolder() {
-        App.settings.baseJavaInstallFolder = null;
-        SettingsManager.post();
+    public void setJavaInstallLocationPending() {
+        SettingsValidityManager.setValidity("javaInstallLocation", false);
     }
 
-    public Observable<String> getBaseInstallFolder() {
-        return baseJavaInstallFolder.observeOn(SwingSchedulers.edt());
+    public Observable<CheckState> getJavaInstallLocationChecker() {
+        return javaInstallLocationCheckState.observeOn(SwingSchedulers.edt());
     }
 
-    public void setBaseInstallFolder(@NotNull String path) {
+    public Observable<String> getJavaInstallLocation() {
+        return _javaInstallLocation.observeOn(SwingSchedulers.edt());
+    }
+
+    public Observable<String> getJavaInstallLocationObservable() {
+        return _javaInstallLocation.observeOn(SwingSchedulers.edt());
+    }
+
+    public void setJavaInstallLocation(@NotNull String path) {
         if (!path.isEmpty()) {
-            App.settings.baseJavaInstallFolder = path;
+            setJavaInstallLocationPending();
+            App.settings.javaInstallLocation = path;
+            javaInstallLocationLastChange = System.currentTimeMillis();
+            javaInstallLocationChanged = true;
+            if (!javaInstallLocationCheckThread.isAlive()) {
+                javaInstallLocationCheckThread.start();
+            }
         } else {
-            App.settings.baseJavaInstallFolder = null;
+            App.settings.javaInstallLocation = null;
+            javaInstallLocationCheckState.onNext(new CheckState.Checked(true));
+            SettingsValidityManager.setValidity("javaInstallLocation", true);
+            SettingsManager.post();
         }
-        SettingsManager.post();
     }
 }

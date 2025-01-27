@@ -43,6 +43,7 @@ import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Timestamper;
 import com.atlauncher.utils.Utils;
 import com.atlauncher.utils.sort.InstanceSortingStrategies;
+import com.google.gson.annotations.SerializedName;
 
 public class Settings {
     // Launcher things
@@ -102,7 +103,8 @@ public class Settings {
     public int windowHeight = 480;
     public String javaPath;
     public String javaParameters = Constants.DEFAULT_JAVA_PARAMETERS;
-    public String baseJavaInstallFolder = null;
+    @SerializedName(value = "javaInstallLocation", alternate = { "baseJavaInstallFolder" })
+    public String javaInstallLocation = null;
     public boolean maximiseMinecraft = false;
     public boolean ignoreJavaOnInstanceLaunch = false;
     public boolean useJavaProvidedByMinecraft = true;
