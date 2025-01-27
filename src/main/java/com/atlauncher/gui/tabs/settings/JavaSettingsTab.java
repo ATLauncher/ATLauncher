@@ -458,7 +458,7 @@ public class JavaSettingsTab extends AbstractSettingsTab {
 
             if (chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
                 viewModel.setJavaInstallLocation(chooser.getSelectedFile().getAbsolutePath());
-                
+
                 if (!chooser.getSelectedFile().getAbsolutePath().isEmpty()) {
                     viewModel.setJavaInstallLocationPending();
                 }
@@ -688,7 +688,9 @@ public class JavaSettingsTab extends AbstractSettingsTab {
     }
 
     private void resetJavaPathCheckLabel() {
-        setLabelState(javaPathChecker, GetText.tr("Java path change pending"), "/assets/icon/question.png");
+        javaPathChecker.setText("");
+        javaPathChecker.setIcon(null);
+        javaPathChecker.setToolTipText(null);
     }
 
     private void setJavaPathCheckState(CheckState state) {
@@ -712,8 +714,9 @@ public class JavaSettingsTab extends AbstractSettingsTab {
     }
 
     private void resetJavaParamCheckLabel() {
-        setLabelState(javaParamChecker, GetText.tr("Java params change pending"), "/assets/icon/question.png");
-
+        javaParamChecker.setText("");
+        javaParamChecker.setIcon(null);
+        javaParamChecker.setToolTipText(null);
     }
 
     private void setJavaParamCheckState(CheckState state) {
@@ -737,9 +740,9 @@ public class JavaSettingsTab extends AbstractSettingsTab {
     }
 
     private void resetJavaInstallLocationCheckLabel() {
-        setLabelState(javaInstallLocationChecker, GetText.tr("Java install location change pending"),
-                "/assets/icon/question.png");
-
+        javaInstallLocationChecker.setText("");
+        javaInstallLocationChecker.setIcon(null);
+        javaInstallLocationChecker.setToolTipText(null);
     }
 
     private void setJavaInstallLocationState(CheckState state) {
