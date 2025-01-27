@@ -297,6 +297,7 @@ public class Settings {
         validateDisableAddModRestrictions();
         validateDefaultModPlatform();
 
+        validateCustomDownloadsPath();
         validateJavaInstallLocation();
         validateJavaPath();
 
@@ -374,6 +375,23 @@ public class Settings {
         if (defaultModPlatform == null
                 || !(defaultModPlatform == ModPlatform.CURSEFORGE || defaultModPlatform == ModPlatform.MODRINTH)) {
             defaultModPlatform = ModPlatform.CURSEFORGE;
+        }
+    }
+
+    public void validateCustomDownloadsPath() {
+        if (customDownloadsPath != null) {
+            try {
+                Path customDownloadsPathPath = Paths.get(customDownloadsPath);
+
+                // set to null if path is not a directory that exists
+                if (!Files.exists(customDownloadsPathPath) || !Files.isDirectory(customDownloadsPathPath)) {
+                    LogManager.warn("Custom Downloads Path Is Incorrect! Deleting setting!");
+                    customDownloadsPath = null;
+                }
+            } catch (Exception e) {
+                LogManager.warn("Custom Downloads Path Is Incorrect! Deleting setting!");
+                customDownloadsPath = null;
+            }
         }
     }
 

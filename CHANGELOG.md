@@ -16,6 +16,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 
 ### Fixes
 - Invalid Java install location causing issues starting the launcher
+- Fix invalid custom downloads path not being validated on boot
 
 ### Misc
 - Update gradle wrapper version from 8.2 to 8.9 [#886]
