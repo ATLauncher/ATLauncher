@@ -110,15 +110,16 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         JComboBox<ComboItem<String>> theme = new JComboBox<>();
 
-        theme.addItemListener(itemEvent -> {
-            if (itemEvent.getStateChange() == ItemEvent.SELECTED)
-                viewModel.setSelectedTheme(((ComboItem<String>) itemEvent.getItem()).getValue());
-        });
-
         for (LauncherTheme launcherTheme : viewModel.getThemes()) {
             theme.addItem(new ComboItem<>(launcherTheme.id, launcherTheme.label));
         }
         addDisposable(viewModel.getSelectedTheme().subscribe(theme::setSelectedIndex));
+
+        theme.addItemListener(itemEvent -> {
+            if (itemEvent.getStateChange() == ItemEvent.SELECTED) {
+                viewModel.setSelectedTheme(((ComboItem<String>) itemEvent.getItem()).getValue());
+            }
+        });
 
         add(theme, gbc);
 
@@ -141,16 +142,16 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
 
         Date exampleDate = viewModel.getDate();
 
-        dateFormat.addItemListener(itemEvent -> {
-            if (itemEvent.getStateChange() == ItemEvent.SELECTED)
-                viewModel.setDateFormat(((ComboItem<String>) itemEvent.getItem()).getValue());
-        });
-
         for (String format : viewModel.getDateFormats()) {
             dateFormat.addItem(new ComboItem<>(format, new SimpleDateFormat(format).format(exampleDate)));
         }
 
         addDisposable(viewModel.getDateFormat().subscribe(dateFormat::setSelectedIndex));
+
+        dateFormat.addItemListener(itemEvent -> {
+            if (itemEvent.getStateChange() == ItemEvent.SELECTED)
+                viewModel.setDateFormat(((ComboItem<String>) itemEvent.getItem()).getValue());
+        });
 
         add(dateFormat, gbc);
 
@@ -171,17 +172,17 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         JComboBox<ComboItem<String>> instanceTitleFormat = new JComboBox<>();
 
-        instanceTitleFormat.addItemListener(itemEvent -> {
-            if (itemEvent.getStateChange() == ItemEvent.SELECTED)
-                viewModel.setInstanceTitleFormat(((ComboItem<String>) itemEvent.getItem()).getValue());
-        });
-
         for (String format : viewModel.getInstanceTitleFormats()) {
             instanceTitleFormat.addItem(new ComboItem<>(format, String.format(format, GetText.tr("Instance Name"),
                     GetText.tr("Pack Name"), GetText.tr("Pack Version"), GetText.tr("Minecraft Version"))));
         }
 
         addDisposable(viewModel.getInstanceFormat().subscribe(instanceTitleFormat::setSelectedIndex));
+
+        instanceTitleFormat.addItemListener(itemEvent -> {
+            if (itemEvent.getStateChange() == ItemEvent.SELECTED)
+                viewModel.setInstanceTitleFormat(((ComboItem<String>) itemEvent.getItem()).getValue());
+        });
 
         add(instanceTitleFormat, gbc);
 
@@ -238,11 +239,11 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         JComboBox<InstanceSortingStrategies> defaultInstanceSorting = new JComboBox<>(
                 InstanceSortingStrategies.values());
+        addDisposable(viewModel.getInstanceSortingObservable().subscribe(defaultInstanceSorting::setSelectedIndex));
         defaultInstanceSorting.addItemListener(itemEvent -> {
             if (itemEvent.getStateChange() == ItemEvent.SELECTED)
                 viewModel.setInstanceSorting((InstanceSortingStrategies) itemEvent.getItem());
         });
-        addDisposable(viewModel.getInstanceSortingObservable().subscribe(defaultInstanceSorting::setSelectedIndex));
 
         add(defaultInstanceSorting, gbc);
 

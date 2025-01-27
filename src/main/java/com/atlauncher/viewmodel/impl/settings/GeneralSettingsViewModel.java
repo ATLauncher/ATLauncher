@@ -201,8 +201,9 @@ public class GeneralSettingsViewModel implements SettingsListener {
 
     private void pushSelectedTheme() {
         for (int index = 0; index < getThemes().size(); index++) {
-            if (getThemes().get(index).id.equals(App.settings.theme))
+            if (getThemes().get(index).id.equals(App.settings.theme)) {
                 _selectedTheme.onNext(index);
+            }
         }
     }
 
