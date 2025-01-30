@@ -27,6 +27,7 @@ import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -155,7 +156,8 @@ public class Server {
         LogManager.info("Starting server " + name);
 
         if (curseForgeFile != null) {
-            LogManager.info("Server was created from a CurseForge server file with file ID " + curseForgeFile.id + ". It has been downloaded and unzipped without any modifications.");
+            LogManager.info("Server was created from a CurseForge server file with file ID " + curseForgeFile.id
+                    + ". It has been downloaded and unzipped without any modifications.");
         }
         List<String> arguments = new ArrayList<>();
 
@@ -215,12 +217,12 @@ public class Server {
                             + args);
                 } else {
                     String format = String.format(
-                        "./%s %s%s",
-                        serverScript,
-                        (isATLauncherLaunchScript && javaPath != null ?
-                            String.format(" ATLcustomjava %s", javaPath + "/bin/java ") : ""),
-                        args
-                    );
+                            "./%s %s%s",
+                            serverScript,
+                            (isATLauncherLaunchScript && javaPath != null
+                                    ? String.format(" ATLcustomjava %s", javaPath + "/bin/java ")
+                                    : ""),
+                            args);
 
                     if (Utils.executableInPath("exo-open")) {
                         arguments.add("exo-open");
@@ -296,7 +298,8 @@ public class Server {
             processBuilder.start();
 
             if (!close) {
-                LogManager.info("Server has started. No further logs will be shown in this console. Please check for a separate window or tab for the server logs and provide those logs (not these ones) if asking for help.");
+                LogManager.info(
+                        "Server has started. No further logs will be shown in this console. Please check for a separate window or tab for the server logs and provide those logs (not these ones) if asking for help.");
                 Toaster.instance().pop(GetText.tr("The server has been launched."));
             } else {
                 Analytics.endSession();
@@ -377,7 +380,13 @@ public class Server {
         Timestamp timestamp = new Timestamp(new Date().getTime());
         String time = timestamp.toString().replaceAll("[^0-9]", "_");
         String filename = "Server-" + getSafeName() + "-" + time.substring(0, time.lastIndexOf("_")) + ".zip";
-        Path backupZip = FileSystem.BACKUPS.resolve(filename);
+
+        Path backupsPath = FileSystem.BACKUPS;
+        if (App.settings.backupsPath != null) {
+            backupsPath = Paths.get(App.settings.backupsPath);
+        }
+
+        Path backupZip = backupsPath.resolve(filename);
 
         // #. {0} is the name of the server we're backing up
         ProgressDialog<Boolean> progressDialog = new ProgressDialog<>(GetText.tr("Backing Up {0}", name));
@@ -628,7 +637,7 @@ public class Server {
 
     public void save() {
         try (OutputStreamWriter fileWriter = new OutputStreamWriter(
-            Files.newOutputStream(this.getRoot().resolve("server.json")), StandardCharsets.UTF_8)) {
+                Files.newOutputStream(this.getRoot().resolve("server.json")), StandardCharsets.UTF_8)) {
             Gsons.DEFAULT.toJson(this, fileWriter);
         } catch (JsonIOException | IOException e) {
             LogManager.logStackTrace(e);

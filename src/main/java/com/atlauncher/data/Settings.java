@@ -131,6 +131,7 @@ public class Settings {
     public String analyticsClientId = UUID.randomUUID().toString();
 
     // Backups
+    public String backupsPath = null;
     public boolean enableAutomaticBackupAfterLaunch = false;
     public BackupMode backupMode = BackupMode.NORMAL;
 
@@ -313,6 +314,8 @@ public class Settings {
         validateDateFormat();
 
         validateInstanceTitleFormat();
+
+        validateBackupsPath();
     }
 
     private void validateAnalyticsClientId() {
@@ -557,6 +560,23 @@ public class Settings {
 
             showPackNameAndVersion = null;
             save();
+        }
+    }
+
+    public void validateBackupsPath() {
+        if (backupsPath != null) {
+            try {
+                Path backupsPathPath = Paths.get(backupsPath);
+
+                // set to null if path is not a directory that exists
+                if (!Files.exists(backupsPathPath) || !Files.isDirectory(backupsPathPath)) {
+                    LogManager.warn("Backups Path Is Incorrect! Deleting setting!");
+                    backupsPath = null;
+                }
+            } catch (Exception e) {
+                LogManager.warn("Backups Path Is Incorrect! Deleting setting!");
+                backupsPath = null;
+            }
         }
     }
 

@@ -15,6 +15,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Add checking of Java install location setting before saving
 - Add checking of custom downloads path setting before saving
 - Add image to login with Microsoft account rather than just text
+- Add option to specify a custom backups path
 
 ### Fixes
 - Invalid Java install location causing issues starting the launcher

@@ -17,8 +17,15 @@
  */
 package com.atlauncher.viewmodel.impl.settings;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Optional;
+
 import com.atlauncher.App;
+import com.atlauncher.FileSystem;
 import com.atlauncher.data.BackupMode;
+import com.atlauncher.data.CheckState;
 import com.atlauncher.evnt.listener.SettingsListener;
 import com.atlauncher.evnt.manager.SettingsManager;
 import com.atlauncher.gui.tabs.settings.BackupsSettingsTab;
@@ -29,15 +36,17 @@ import io.reactivex.rxjava3.subjects.BehaviorSubject;
 
 /**
  * @since 2022 / 06 / 15
- * <p>
- * View model for {@link BackupsSettingsTab}
+ *        <p>
+ *        View model for {@link BackupsSettingsTab}
  */
 public class BackupsSettingsViewModel implements SettingsListener {
-    private final BehaviorSubject<Integer>
-        backupMode = BehaviorSubject.create();
+    private final BehaviorSubject<Integer> backupMode = BehaviorSubject.create();
 
-    private final BehaviorSubject<Boolean>
-        enableAutomaticBackupAfterLaunch = BehaviorSubject.create();
+    private final BehaviorSubject<Boolean> enableAutomaticBackupAfterLaunch = BehaviorSubject.create();
+
+    private final BehaviorSubject<String> backupsPath = BehaviorSubject.create();
+
+    private final BehaviorSubject<CheckState> backupsPathChecker = BehaviorSubject.create();
 
     public BackupsSettingsViewModel() {
         onSettingsSaved();
@@ -48,6 +57,8 @@ public class BackupsSettingsViewModel implements SettingsListener {
     public void onSettingsSaved() {
         backupMode.onNext(App.settings.backupMode.ordinal());
         enableAutomaticBackupAfterLaunch.onNext(App.settings.enableAutomaticBackupAfterLaunch);
+        backupsPath.onNext(Optional.ofNullable(App.settings.backupsPath)
+                .orElse(FileSystem.BACKUPS.toAbsolutePath().toString()));
     }
 
     /**
@@ -80,5 +91,59 @@ public class BackupsSettingsViewModel implements SettingsListener {
     public void setEnableAutoBackup(boolean enabled) {
         App.settings.enableAutomaticBackupAfterLaunch = enabled;
         SettingsManager.post();
+    }
+
+    /**
+     * Listen to backups path changes
+     */
+    public Observable<String> getBackupsPath() {
+        return backupsPath.observeOn(SwingSchedulers.edt());
+    }
+
+    /**
+     * Listen to backups path validation state changes
+     */
+    public Observable<CheckState> getBackupsPathChecker() {
+        return backupsPathChecker.observeOn(SwingSchedulers.edt());
+    }
+
+    /**
+     * Set the backups path
+     */
+    public void setBackupsPath(String path) {
+        App.settings.backupsPath = path;
+        SettingsManager.post();
+        validateBackupsPath();
+    }
+
+    /**
+     * Reset the backups path to default
+     */
+    public void resetBackupsPath() {
+        App.settings.backupsPath = null;
+        SettingsManager.post();
+        validateBackupsPath();
+    }
+
+    /**
+     * Mark that the backups path is pending validation
+     */
+    public void setBackupsPathPending() {
+        backupsPathChecker.onNext(CheckState.CheckPending);
+    }
+
+    private void validateBackupsPath() {
+        if (App.settings.backupsPath == null) {
+            backupsPathChecker.onNext(CheckState.NotChecking);
+            return;
+        }
+
+        Path path = Paths.get(App.settings.backupsPath);
+        if (!Files.exists(path) || !Files.isDirectory(path)) {
+            backupsPathChecker.onNext(new CheckState.Checked(false));
+            return;
+        }
+
+        backupsPathChecker.onNext(new CheckState.Checked(true));
     }
 }

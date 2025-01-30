@@ -2615,7 +2615,12 @@ public class Instance extends MinecraftVersion {
             String time = timestamp.toString().replaceAll("[^0-9]", "_");
             String filename = getSafeName() + "-" + time.substring(0, time.lastIndexOf("_")) + ".zip";
 
-            ArchiveUtils.createZip(getRoot(), FileSystem.BACKUPS.resolve(filename),
+            Path backupsPath = FileSystem.BACKUPS;
+            if (App.settings.backupsPath != null) {
+                backupsPath = Paths.get(App.settings.backupsPath);
+            }
+
+            ArchiveUtils.createZip(getRoot(), backupsPath.resolve(filename),
                     ZipNameMapper.getMapperForBackupMode(backupMode));
 
             dialog.dispose();
@@ -3303,12 +3308,13 @@ public class Instance extends MinecraftVersion {
             }));
 
             progressDialog.start();
-        }PerformanceManager.end("Instance::scanMissingMods - CheckForAddedMods");
+        }
+        PerformanceManager.end("Instance::scanMissingMods - CheckForAddedMods");
 
-    PerformanceManager.start("Instance::scanMissingMods - CheckForRemovedMods");
+        PerformanceManager.start("Instance::scanMissingMods - CheckForRemovedMods");
 
-    // next remove any mods that the no longer exist in the filesystem
-    List<DisableableMod> removedMods = launcher.mods.parallelStream().filter(mod -> {
+        // next remove any mods that the no longer exist in the filesystem
+        List<DisableableMod> removedMods = launcher.mods.parallelStream().filter(mod -> {
             if (!mod.wasSelected || mod.skipped || mod.type != com.atlauncher.data.Type.mods) {
                 return false;
             }
@@ -3320,43 +3326,43 @@ public class Instance extends MinecraftVersion {
             }
         }).collect(Collectors.toList());
 
-    if(!removedMods.isEmpty())
-    {
-        removedMods.forEach(mod -> LogManager.info("Mod no longer in filesystem: " + mod.file));
-        launcher.mods.removeAll(removedMods);
-        save();
-    }PerformanceManager.end("Instance::scanMissingMods - CheckForRemovedMods");
+        if (!removedMods.isEmpty()) {
+            removedMods.forEach(mod -> LogManager.info("Mod no longer in filesystem: " + mod.file));
+            launcher.mods.removeAll(removedMods);
+            save();
+        }
+        PerformanceManager.end("Instance::scanMissingMods - CheckForRemovedMods");
 
-    PerformanceManager.start("Instance::scanMissingMods - CheckForDuplicateMods");
+        PerformanceManager.start("Instance::scanMissingMods - CheckForDuplicateMods");
 
-    Set<File> seenModFiles = new HashSet<>();
-    List<DisableableMod> duplicateMods = launcher.mods.stream()
-            .filter(mod -> {
-                if (!mod.wasSelected || mod.skipped || mod.type != com.atlauncher.data.Type.mods) {
-                    return false;
-                }
+        Set<File> seenModFiles = new HashSet<>();
+        List<DisableableMod> duplicateMods = launcher.mods.stream()
+                .filter(mod -> {
+                    if (!mod.wasSelected || mod.skipped || mod.type != com.atlauncher.data.Type.mods) {
+                        return false;
+                    }
 
-                File file;
-                if (mod.disabled) {
-                    file = mod.getDisabledFile(this);
-                } else {
-                    file = mod.getFile(this);
-                }
+                    File file;
+                    if (mod.disabled) {
+                        file = mod.getDisabledFile(this);
+                    } else {
+                        file = mod.getFile(this);
+                    }
 
-                if (file == null) {
-                    return false;
-                }
+                    if (file == null) {
+                        return false;
+                    }
 
-                return !seenModFiles.add(file);
-            })
-            .collect(Collectors.toList());
+                    return !seenModFiles.add(file);
+                })
+                .collect(Collectors.toList());
 
-    if(!duplicateMods.isEmpty())
-    {
-        duplicateMods.forEach(mod -> LogManager.info("Mod is a duplicate: " + mod.file));
-        launcher.mods.removeAll(duplicateMods);
-        save();
-    }PerformanceManager.end("Instance::scanMissingMods - CheckForDuplicateMods");
+        if (!duplicateMods.isEmpty()) {
+            duplicateMods.forEach(mod -> LogManager.info("Mod is a duplicate: " + mod.file));
+            launcher.mods.removeAll(duplicateMods);
+            save();
+        }
+        PerformanceManager.end("Instance::scanMissingMods - CheckForDuplicateMods");
     }
 
     public boolean showGetHelpButton() {
