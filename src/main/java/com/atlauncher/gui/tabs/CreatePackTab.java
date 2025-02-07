@@ -60,6 +60,7 @@ import com.atlauncher.managers.DialogManager;
 import com.atlauncher.utils.ComboItem;
 import com.atlauncher.viewmodel.base.ICreatePackViewModel;
 import com.atlauncher.viewmodel.impl.CreatePackViewModel;
+import com.formdev.flatlaf.ui.FlatScrollPaneBorder;
 
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.subjects.BehaviorSubject;
@@ -165,6 +166,7 @@ public class CreatePackTab extends HierarchyPanel implements Tab {
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         JScrollPane descriptionScrollPane = new JScrollPane(
                 JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        descriptionScrollPane.setBorder(new FlatScrollPaneBorder());
         descriptionScrollPane.setPreferredSize(new Dimension(450, 80));
         descriptionScrollPane.setViewportView(descriptionField);
 
@@ -216,6 +218,7 @@ public class CreatePackTab extends HierarchyPanel implements Tab {
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         JScrollPane minecraftVersionScrollPane = new JScrollPane(
                 JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        minecraftVersionScrollPane.setBorder(new FlatScrollPaneBorder());
         minecraftVersionScrollPane.setPreferredSize(new Dimension(450, 300));
         setupMinecraftVersionsTable();
         minecraftVersionScrollPane.setViewportView(minecraftVersionTable);

@@ -55,6 +55,7 @@ import com.atlauncher.utils.ComboItem;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
 import com.atlauncher.viewmodel.impl.settings.JavaSettingsViewModel;
+import com.formdev.flatlaf.ui.FlatScrollPaneBorder;
 
 public class JavaSettingsTab extends AbstractSettingsTab {
     private final JavaSettingsViewModel viewModel;
@@ -384,6 +385,7 @@ public class JavaSettingsTab extends AbstractSettingsTab {
         gbc.anchor = GridBagConstraints.FIRST_LINE_START;
         JScrollPane javaParametersScrollPane = new JScrollPane(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
                 ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        javaParametersScrollPane.setBorder(new FlatScrollPaneBorder());
         javaParametersScrollPane.setMaximumSize(new Dimension(1000, 200));
 
         JPanel javaParametersPanel = new JPanel();
@@ -399,8 +401,9 @@ public class JavaSettingsTab extends AbstractSettingsTab {
                 () -> viewModel.setJavaParams(javaParameters.getText()),
                 viewModel::setJavaParamsPending));
         addDisposable(viewModel.getJavaParams().subscribe(params -> {
-            if (!javaParameters.getText().equals(params))
+            if (!javaParameters.getText().equals(params)) {
                 javaParameters.setText(params);
+            }
         }));
         addDisposable(viewModel.getJavaParamsChecker().subscribe(this::setJavaParamCheckState));
 
@@ -783,7 +786,7 @@ public class JavaSettingsTab extends AbstractSettingsTab {
             setLabelState(javaInstallLocationChecker, GetText.tr("Checking java install location path"),
                     "/assets/image/loading-bars-small.gif");
 
-            javaParameters.setEnabled(false);
+            javaInstallLocation.setEnabled(false);
         } else if (state instanceof CheckState.Checked) {
             if (((CheckState.Checked) state).valid) {
                 resetJavaInstallLocationCheckLabel();
@@ -791,7 +794,7 @@ public class JavaSettingsTab extends AbstractSettingsTab {
                 setLabelState(javaInstallLocationChecker, GetText.tr("Invalid!"), "/assets/icon/error.png");
                 showJavaInstallLocationWarning();
             }
-            javaParameters.setEnabled(true);
+            javaInstallLocation.setEnabled(true);
         }
     }
 

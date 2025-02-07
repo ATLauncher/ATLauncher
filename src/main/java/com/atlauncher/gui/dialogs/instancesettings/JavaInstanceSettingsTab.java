@@ -61,6 +61,7 @@ import com.atlauncher.utils.Java;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
 import com.atlauncher.utils.javafinder.JavaInfo;
+import com.formdev.flatlaf.ui.FlatScrollPaneBorder;
 
 public class JavaInstanceSettingsTab extends JPanel {
     private final Instance instance;
@@ -369,6 +370,7 @@ public class JavaInstanceSettingsTab extends JPanel {
         javaParametersPanel.setLayout(new BoxLayout(javaParametersPanel, BoxLayout.X_AXIS));
         JScrollPane javaParametersScrollPane = new JScrollPane(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
                 ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        javaParametersScrollPane.setBorder(new FlatScrollPaneBorder());
         javaParametersScrollPane.setMaximumSize(new Dimension(1000, 200));
 
         javaParameters = new JTextArea(6, 40);

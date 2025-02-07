@@ -50,10 +50,10 @@ import io.reactivex.rxjava3.subjects.BehaviorSubject;
  *        View model for {@link JavaSettingsTab}
  */
 public class JavaSettingsViewModel implements SettingsListener {
-    private static final long javaPathCheckDelay = 2000;
     private static final Logger LOG = LogManager.getLogger();
-    private static final long javaInstallLocationCheckDelay = 2000;
+    private static final long javaPathCheckDelay = 2000;
     private static final long javaParamCheckDelay = 2000;
+    private static final long javaInstallLocationCheckDelay = 2000;
 
     private final BehaviorSubject<Integer> _initialRam = BehaviorSubject.create(),
             _maxRam = BehaviorSubject.create(),
