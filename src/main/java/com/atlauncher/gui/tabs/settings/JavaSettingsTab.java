@@ -40,6 +40,10 @@ import javax.swing.JTextField;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingUtilities;
+import javax.swing.text.AbstractDocument;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.DocumentFilter;
 
 import org.mini2Dx.gettext.GetText;
 
@@ -393,6 +397,20 @@ public class JavaSettingsTab extends AbstractSettingsTab {
         javaParametersPanel.setAlignmentY(Component.TOP_ALIGNMENT);
 
         javaParameters = new JTextArea(6, 40);
+        ((AbstractDocument) javaParameters.getDocument()).setDocumentFilter(
+                new DocumentFilter() {
+                    @Override
+                    public void insertString(FilterBypass fb, int offset, String string, AttributeSet attr)
+                            throws BadLocationException {
+                        fb.insertString(offset, string.replaceAll("[\n\r]", ""), attr);
+                    }
+
+                    @Override
+                    public void replace(FilterBypass fb, int offset, int length, String text, AttributeSet attrs)
+                            throws BadLocationException {
+                        fb.replace(offset, length, text.replaceAll("[\n\r]", ""), attrs);
+                    }
+                });
         javaParamChecker = new JLabelWithHover("", null, null);
         javaParameters.setLineWrap(true);
         javaParameters.setWrapStyleWord(true);
