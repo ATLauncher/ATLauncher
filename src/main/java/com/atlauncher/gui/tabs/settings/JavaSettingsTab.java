@@ -33,9 +33,11 @@ import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingUtilities;
 
@@ -380,6 +382,9 @@ public class JavaSettingsTab extends AbstractSettingsTab {
         gbc.gridx++;
         gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.FIRST_LINE_START;
+        JScrollPane javaParametersScrollPane = new JScrollPane(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
+                ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        javaParametersScrollPane.setMaximumSize(new Dimension(1000, 200));
 
         JPanel javaParametersPanel = new JPanel();
         javaParametersPanel.setLayout(new BoxLayout(javaParametersPanel, BoxLayout.X_AXIS));
@@ -402,7 +407,8 @@ public class JavaSettingsTab extends AbstractSettingsTab {
         JButton javaParametersResetButton = new JButton(GetText.tr("Reset"));
         javaParametersResetButton.addActionListener(e -> viewModel.resetJavaParams());
 
-        javaParametersPanel.add(javaParameters);
+        javaParametersScrollPane.setViewportView(javaParameters);
+        javaParametersPanel.add(javaParametersScrollPane);
         javaParametersPanel.add(Box.createHorizontalStrut(5));
 
         Box paramsResetBox = Box.createVerticalBox();
@@ -626,8 +632,8 @@ public class JavaSettingsTab extends AbstractSettingsTab {
             gbc.insets = UIConstants.LABEL_INSETS;
             gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
             JLabelWithHover useDedicatedGpuLabel = new JLabelWithHover(GetText.tr("Use Dedicated GPU") + "?", HELP_ICON,
-                new HTMLBuilder()
-                    .center().text(GetText.tr("Use the dedicated GPU for Minecraft.")).build());
+                    new HTMLBuilder()
+                            .center().text(GetText.tr("Use the dedicated GPU for Minecraft.")).build());
             add(useDedicatedGpuLabel, gbc);
 
             gbc.gridx++;
@@ -635,7 +641,7 @@ public class JavaSettingsTab extends AbstractSettingsTab {
             gbc.anchor = GridBagConstraints.BASELINE_LEADING;
             JCheckBox useDedicatedGpu = new JCheckBox();
             useDedicatedGpu.addItemListener(
-                itemEvent -> viewModel.setDedicatedGpu(itemEvent.getStateChange() == ItemEvent.SELECTED));
+                    itemEvent -> viewModel.setDedicatedGpu(itemEvent.getStateChange() == ItemEvent.SELECTED));
             addDisposable(viewModel.getDedicatedGpu().subscribe(useDedicatedGpu::setSelected));
             add(useDedicatedGpu, gbc);
         }

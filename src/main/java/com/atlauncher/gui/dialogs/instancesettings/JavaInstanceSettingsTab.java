@@ -36,9 +36,11 @@ import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingUtilities;
 import javax.swing.border.Border;
@@ -365,6 +367,9 @@ public class JavaInstanceSettingsTab extends JPanel {
         gbc.anchor = GridBagConstraints.FIRST_LINE_START;
         JPanel javaParametersPanel = new JPanel();
         javaParametersPanel.setLayout(new BoxLayout(javaParametersPanel, BoxLayout.X_AXIS));
+        JScrollPane javaParametersScrollPane = new JScrollPane(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
+                ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        javaParametersScrollPane.setMaximumSize(new Dimension(1000, 200));
 
         javaParameters = new JTextArea(6, 40);
         javaParameters.setText(getIfNotNull(this.instance.launcher.javaArguments, App.settings.javaParameters));
@@ -373,7 +378,8 @@ public class JavaInstanceSettingsTab extends JPanel {
         JButton javaParametersResetButton = new JButton(GetText.tr("Reset"));
         javaParametersResetButton.addActionListener(e -> javaParameters.setText(App.settings.javaParameters));
 
-        javaParametersPanel.add(javaParameters);
+        javaParametersScrollPane.setViewportView(javaParameters);
+        javaParametersPanel.add(javaParametersScrollPane);
         javaParametersPanel.add(Box.createHorizontalStrut(5));
 
         Box paramsResetBox = Box.createVerticalBox();
