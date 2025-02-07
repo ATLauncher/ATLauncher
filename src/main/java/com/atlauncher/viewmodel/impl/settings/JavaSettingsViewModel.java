@@ -183,7 +183,7 @@ public class JavaSettingsViewModel implements SettingsListener {
                         javaParamCheckState.onNext(CheckState.Checking);
 
                         String params = App.settings.javaParameters;
-                        boolean valid = (useInitialMemoryOption() || !params.contains("-Xms")) &&
+                        boolean valid = (!useInitialMemoryOption() || !params.contains("-Xms")) &&
                                 !params.contains("-Xmx") &&
                                 !params.contains("-XX:PermSize") &&
                                 !params.contains("-XX:MetaspaceSize");
