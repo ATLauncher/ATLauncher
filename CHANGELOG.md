@@ -24,7 +24,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 - The Java Parameter fields no longer accept new line characters [#666]
 
 ### Misc
-- Update gradle wrapper version from 8.2 to 8.9 [#886]
+- Update gradle wrapper version from 8.2 to 8.12
 - Update the `application.yml` GitHub workflow [#889]
 - Refactor News stack
 - Implement HierarchyPanel in AccountsTab [#838]
