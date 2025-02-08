@@ -1,4 +1,4 @@
-name: 'Close Support Requests'
+name: "Close Support Requests"
 
 on:
   issues:
@@ -11,10 +11,10 @@ jobs:
   close-support-requests:
     runs-on: ubuntu-latest
     steps:
-      - uses: dessant/support-requests@v2
+      - uses: dessant/support-requests@v4
         with:
           github-token: ${{ secrets.BOT_GITHUB_TOKEN }}
-          support-label: 'support'
+          support-label: "support"
           issue-comment: >
             :wave: @{issue-author}, we use the issue tracker exclusively
             for bug reports and feature requests with the launcher itself.
@@ -22,4 +22,4 @@ jobs:
             our [Discord Server](https://atl.pw/discord) to get support.
           close-issue: true
           lock-issue: false
-          issue-lock-reason: 'off-topic'
+          issue-lock-reason: "off-topic"

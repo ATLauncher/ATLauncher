@@ -7,7 +7,6 @@ on:
   pull_request:
     branches:
       - master
-      - develop
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -27,7 +26,7 @@ jobs:
           java-version: 8
 
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v3
+        uses: gradle/actions/setup-gradle@v4
         with:
           validate-wrappers: true
           add-job-summary: never
@@ -41,7 +40,7 @@ jobs:
     timeout-minutes: 5
     strategy:
       matrix:
-        java-version: ["8", "11", "17", "21", "22"] # LTS + Latest
+        java-version: ["8", "11", "17", "21", "23"] # LTS + Latest
         os: ["ubuntu-latest", "macos-latest", "windows-latest"]
     name: Java ${{ matrix.java-version }} (${{ matrix.os }}) Tests
     steps:
@@ -55,7 +54,7 @@ jobs:
           java-version: ${{ matrix.java-version }}
 
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v3
+        uses: gradle/actions/setup-gradle@v4
         with:
           validate-wrappers: true
           add-job-summary: never
@@ -64,7 +63,7 @@ jobs:
         run: ./gradlew --no-daemon test
 
       - name: Run UI Tests
-        uses: coactions/setup-xvfb@v1
+        uses: GabrielBB/xvfb-action@v1
         continue-on-error: true
         with:
           run: ./gradlew --no-daemon uiTest
@@ -75,7 +74,7 @@ jobs:
     needs: ci
     strategy:
       matrix:
-        java-version: ["8", "11", "17", "21", "22"] # LTS + Latest
+        java-version: ["8", "11", "17", "21", "23"] # LTS + Latest
         os: ["ubuntu-latest", "macos-latest", "windows-latest"]
     name: Java ${{ matrix.java-version }} (${{ matrix.os }}) Build
     steps:
@@ -89,7 +88,7 @@ jobs:
           java-version: ${{ matrix.java-version }}
 
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v3
+        uses: gradle/actions/setup-gradle@v4
         with:
           validate-wrappers: true
           add-job-summary: never
@@ -102,8 +101,8 @@ jobs:
     needs: ci
     timeout-minutes: 5
     outputs:
-      version: ${{ steps.version.outputs.text }}
-      clean-version: ${{ steps.clean-version.outputs.replaced }}
+      version: ${{ steps.version.outputs.VERSION }}
+      clean-version: ${{ steps.clean-version.outputs.CLEAN_VERSION }}
     steps:
       - uses: actions/checkout@v4
 
@@ -114,31 +113,22 @@ jobs:
           java-version: 8
 
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v3
+        uses: gradle/actions/setup-gradle@v4
         with:
           validate-wrappers: true
           add-job-summary: never
 
-      - name: Read version
+      - name: Read version and remove stream
         id: version
-        uses: pCYSl5EDgo/cat@cde404f088c582552b0fe4e24ecb3159445fde2a
-        with:
-          path: ./src/main/resources/version
-          trim: true
-
-      - name: Remove stream from version
-        id: clean-version
-        uses: frabert/replace-string-action@v2
-        with:
-          string: ${{ steps.version.outputs.text }}
-          pattern: '([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)\.?\w*'
-          replace-with: "$1"
+        run: |
+          echo 'VERSION=$(cat ./src/main/resources/version | tr -d " \t\n\r")' >> $GITHUB_OUTPUT
+          echo 'CLEAN_VERSION=$(grep -oE '[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+' ./src/main/resources/version)' >> $GITHUB_OUTPUT
 
       - name: Build
         run: ./gradlew build -x test
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: ATLauncher
           path: dist/*
@@ -154,32 +144,15 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Download built artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
 
-      - name: Read changelog
+      - name: Get cleaned changelog text
         id: changelog
-        uses: pCYSl5EDgo/cat@cde404f088c582552b0fe4e24ecb3159445fde2a
-        with:
-          path: ./CHANGELOG.md
-
-      - name: Remove the top part of the changelog
-        id: remove-top-of-changelog
-        uses: frabert/replace-string-action@v2
-        with:
-          string: ${{ steps.changelog.outputs.text }}
-          pattern: '^.*?(### (New Features|Fixes|Misc)\n.*)$'
-          replace-with: "$1"
-          flags: gs
-
-      - name: Clean up the changelog to only have used sections
-        id: clean-changelog
         run: |
-          awk '/^$/ {if (i) {b=b $0 "\n"} else {print $0 }; next} /^###/ {i=1; b=$0; next} {if (i) {print b}; i=0; print $0; next}' <<'EOF' > fixed-changelog.md
-          ${{ steps.remove-top-of-changelog.outputs.replaced }}
-          EOF
-          echo 'cleaned-changelog<<EOF' >> $GITHUB_ENV
-          cat fixed-changelog.md >> $GITHUB_ENV
-          echo 'EOF' >> $GITHUB_ENV
+          awk '/^### /{if (section) print section; section=$0 ORS; next} NF && section {section = section $0 ORS} END {if (section) print section}' CHANGELOG.md | awk '/^$/ {if (i) {b=b $0 "\n"} else {print $0 }; next} /^###/ {i=1; b=$0; next} {if (i) {print b}; i=0; print $0; next}' > fixed-changelog.md
+          echo 'cleaned<<EOF' >> $GITHUB_OUTPUT
+          cat fixed-changelog.md >> $GITHUB_OUTPUT
+          echo 'EOF' >> $GITHUB_OUTPUT
 
       - name: Create ATLauncher Version
         uses: ATLauncher/release-atlauncher-action@master
@@ -187,20 +160,20 @@ jobs:
         with:
           api-key: ${{ secrets.ATLAUNCHER_API_KEY }}
           version: ${{ needs.package.outputs.clean-version }}
-          changelog: ${{ env.cleaned-changelog }}
+          changelog: ${{ steps.changelog.outputs.cleaned }}
           files: |
             ./ATLauncher/ATLauncher-${{ needs.package.outputs.clean-version }}.exe
             ./ATLauncher/ATLauncher-${{ needs.package.outputs.clean-version }}.zip
             ./ATLauncher/ATLauncher-${{ needs.package.outputs.clean-version }}.jar
 
       - name: Create GitHub Release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           tag_name: v${{ needs.package.outputs.clean-version }}
           target_commitish: master
           name: ${{ needs.package.outputs.clean-version }}
-          body: ${{ env.cleaned-changelog }}
+          body: ${{ steps.changelog.outputs.cleaned }}
           prerelease: false
           draft: false
           files: |
@@ -251,7 +224,7 @@ jobs:
           token: ${{ secrets.BOT_GITHUB_TOKEN }}
 
       - name: Package up AUR versions
-        uses: peter-evans/repository-dispatch@v2
+        uses: peter-evans/repository-dispatch@v3
         with:
           token: ${{ secrets.BOT_GITHUB_TOKEN }}
           event-type: aur-publish

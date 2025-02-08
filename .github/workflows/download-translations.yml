@@ -19,7 +19,7 @@ jobs:
           ref: ${{ inputs.branch }}
 
       - name: Download translations from crowdin
-        uses: crowdin/github-action@v1.14.1
+        uses: crowdin/github-action@v2
         with:
           upload_sources: false
           upload_translations: false
