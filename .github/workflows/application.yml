@@ -102,7 +102,7 @@ jobs:
     timeout-minutes: 5
     outputs:
       version: ${{ steps.version.outputs.VERSION }}
-      clean-version: ${{ steps.clean-version.outputs.CLEAN_VERSION }}
+      clean-version: ${{ steps.version.outputs.CLEAN_VERSION }}
     steps:
       - uses: actions/checkout@v4
 
@@ -121,8 +121,8 @@ jobs:
       - name: Read version and remove stream
         id: version
         run: |
-          echo 'VERSION=$(cat ./src/main/resources/version | tr -d " \t\n\r")' >> $GITHUB_OUTPUT
-          echo 'CLEAN_VERSION=$(grep -oE '[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+' ./src/main/resources/version)' >> $GITHUB_OUTPUT
+          echo "VERSION=$(cat ./src/main/resources/version | tr -d ' \t\n\r')" >> $GITHUB_OUTPUT
+          echo "CLEAN_VERSION=$(grep -oE '[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+' ./src/main/resources/version)" >> $GITHUB_OUTPUT
 
       - name: Build
         run: ./gradlew build -x test
