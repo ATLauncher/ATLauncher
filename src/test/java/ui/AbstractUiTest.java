@@ -18,6 +18,8 @@
 package ui;
 
 import java.awt.Frame;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.UUID;
@@ -78,6 +80,8 @@ public class AbstractUiTest extends AssertJSwingTestCaseTemplate {
 
         this.setupHttpMocks();
 
+        this.setupFiles();
+
         // start the application
         ApplicationLauncher.application(App.class)
                 .withArgs("--skip-setup-dialog", "--disable-analytics", "--disable-error-reporting",
@@ -121,6 +125,15 @@ public class AbstractUiTest extends AssertJSwingTestCaseTemplate {
         // files from Minecraft servers
         MockHelper.mockJson(mockServer, "GET", "launchermeta.mojang.com",
                 "/v1/products/java-runtime/2ec0cc96c44e5a76b9c8b7c39df7210883d12871/all.json", "java_runtimes.json");
+    }
+
+    private void setupFiles() {
+        FileUtils.createDirectory(workingDir.resolve("configs"));
+        try {
+            Files.write(workingDir.resolve("configs/accounts.json"),
+                    Files.readAllBytes(Paths.get("src/test/resources/files/accounts.json")));
+        } catch (IOException e) {
+        }
     }
 
     protected void onSetUp() {

@@ -1,0 +1,34 @@
+[
+    {
+      "accessToken": "test.test.test",
+      "oauthToken": {
+        "token_type": "bearer",
+        "expires_in": 3600,
+        "expires_at": "2055-02-04T12:10:50Z",
+        "scope": "XboxLive.signin XboxLive.offline_access",
+        "access_token": "test",
+        "refresh_token": "test",
+        "user_id": "test"
+      },
+      "xstsAuth": {
+        "IssueInstant": "2025-02-04T13:09:18Z",
+        "NotAfter": "2055-02-05T05:09:18Z",
+        "Token": "test",
+        "DisplayClaims": {
+          "xui": [
+            {
+              "uhs": "test"
+            }
+          ]
+        }
+      },
+      "accessTokenExpiresAt": "2055-02-05T11:10:54Z",
+      "mustLogin": false,
+      "username": "test",
+      "minecraftUsername": "Example",
+      "uuid": "e50e5b562ca3c41f35631867a7cb14c5",
+      "collapsedPacks": [],
+      "collapsedInstances": [],
+      "collapsedServers": []
+    }
+  ]

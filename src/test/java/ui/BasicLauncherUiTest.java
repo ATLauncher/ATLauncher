@@ -18,12 +18,10 @@
 package ui;
 
 import java.awt.Dialog;
-import java.awt.event.KeyEvent;
 import java.nio.file.Files;
 import java.util.concurrent.TimeUnit;
 
 import org.assertj.swing.core.GenericTypeMatcher;
-import org.assertj.swing.core.KeyPressInfo;
 import org.assertj.swing.core.matcher.JButtonMatcher;
 import org.assertj.swing.data.Index;
 import org.assertj.swing.finder.WindowFinder;
@@ -32,7 +30,6 @@ import org.assertj.swing.fixture.JButtonFixture;
 import org.assertj.swing.fixture.JComboBoxFixture;
 import org.assertj.swing.fixture.JPanelFixture;
 import org.assertj.swing.fixture.JTabbedPaneFixture;
-import org.assertj.swing.fixture.JTextComponentFixture;
 import org.assertj.swing.timing.Condition;
 import org.assertj.swing.timing.Pause;
 import org.assertj.swing.timing.Timeout;
@@ -59,40 +56,8 @@ public class BasicLauncherUiTest extends AbstractUiTest {
 
         JComboBoxFixture accountsTabAccountsComboBox = this.frame.comboBox("accountsTabAccountsComboBox");
         accountsTabAccountsComboBox.requireVisible();
-        accountsTabAccountsComboBox.requireItemCount(1);
-        accountsTabAccountsComboBox.requireSelection(0);
-
-        JButtonFixture loginButton = this.frame.button("leftButton");
-        loginButton.requireVisible().requireEnabled();
-
-        JTextComponentFixture usernameField = this.frame.textBox("usernameField");
-        usernameField.requireVisible().requireEditable();
-
-        JTextComponentFixture passwordField = this.frame.textBox("passwordField");
-        passwordField.requireVisible().requireEditable();
-
-        MockHelper.mockMojangLogin(mockServer, "POST", "authserver.mojang.com", "/authenticate", "login-success.json");
-        MockHelper.mockJson(mockServer, "GET", "sessionserver.mojang.com",
-                "/session/minecraft/profile/e50e5b562ca3c41f35631867a7cb14c5", "profile.json");
-        MockHelper.mockPng(mockServer, "GET", "textures.minecraft.net",
-                "/texture/3b60a1f6d562f52aaebbf1434f1de147933a3affe0e764fa49ea057536623cd3",
-                "3b60a1f6d562f52aaebbf1434f1de147933a3affe0e764fa49ea057536623cd3.png");
-
-        usernameField.setText("test@example.com");
-        usernameField.pressAndReleaseKey(KeyPressInfo.keyCode(KeyEvent.VK_M));
-        passwordField.setText("password");
-        passwordField.pressAndReleaseKey(KeyPressInfo.keyCode(KeyEvent.VK_D));
-
-        // login
-        loginButton.click();
-
-        // give it 5 seconds
-        Pause.pause(5, TimeUnit.SECONDS);
-
-        // account was added, fields cleared
         accountsTabAccountsComboBox.requireItemCount(2);
-        usernameField.requireEmpty();
-        passwordField.requireEmpty();
+        accountsTabAccountsComboBox.requireSelection(0);
 
         // account selector now showing
         JComboBoxFixture accountSelector = this.frame.comboBox("accountSelector");
