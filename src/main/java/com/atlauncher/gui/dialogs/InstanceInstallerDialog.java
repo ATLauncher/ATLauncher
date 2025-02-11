@@ -23,14 +23,11 @@ import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Window;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -85,6 +82,7 @@ import com.atlauncher.data.minecraft.loaders.LoaderVersion;
 import com.atlauncher.data.minecraft.loaders.fabric.FabricLoader;
 import com.atlauncher.data.minecraft.loaders.forge.ForgeLoader;
 import com.atlauncher.data.minecraft.loaders.legacyfabric.LegacyFabricLoader;
+import com.atlauncher.data.minecraft.loaders.neoforge.NeoForgeLoader;
 import com.atlauncher.data.minecraft.loaders.quilt.QuiltLoader;
 import com.atlauncher.data.modrinth.ModrinthProject;
 import com.atlauncher.data.modrinth.ModrinthSearchHit;
@@ -549,9 +547,9 @@ public class InstanceInstallerDialog extends JDialog {
                         return false;
                     }
 
-                return mv.type != VersionManifestVersionType.OLD_ALPHA
-                    || ConfigManager.getConfigItem("minecraft.old_alpha.enabled", true);
-            }).map(v -> {
+                    return mv.type != VersionManifestVersionType.OLD_ALPHA
+                            || ConfigManager.getConfigItem("minecraft.old_alpha.enabled", true);
+                }).map(v -> {
                     PackVersion packVersion = new PackVersion();
                     packVersion.version = v.id;
                     packVersion.minecraftVersion = v;
@@ -1173,6 +1171,8 @@ public class InstanceInstallerDialog extends JDialog {
                     loaderVersions.addAll(FabricLoader.getChoosableVersions(item.minecraftVersion.id));
                 } else if (this.instance.launcher.loaderVersion.isForge()) {
                     loaderVersions.addAll(ForgeLoader.getChoosableVersions(item.minecraftVersion.id));
+                } else if (this.instance.launcher.loaderVersion.isNeoForge()) {
+                    loaderVersions.addAll(NeoForgeLoader.getChoosableVersions(item.minecraftVersion.id));
                 } else if (this.instance.launcher.loaderVersion.isLegacyFabric()) {
                     loaderVersions.addAll(LegacyFabricLoader.getChoosableVersions(item.minecraftVersion.id));
                 } else if (this.instance.launcher.loaderVersion.isQuilt()) {

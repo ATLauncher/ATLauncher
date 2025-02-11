@@ -24,6 +24,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Fix invalid custom downloads path not being validated on boot
 - Use a scrollpane for the Java Parameter fields [#963]
 - The Java Parameter fields no longer accept new line characters [#666]
+- Issue with NeoForge reinstalls having disabled fields [#955]
 
 ### Misc
 - Update gradle wrapper version from 8.2 to 8.12
