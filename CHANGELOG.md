@@ -16,6 +16,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Add checking of custom downloads path setting before saving
 - Add image to login with Microsoft account rather than just text
 - Add option to specify a custom backups path
+- Added Tokyonight theme
 
 ### Fixes
 - Invalid Java install location causing issues starting the launcher
@@ -35,4 +36,4 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Recreate UI on re-localization [#912]
 - Squash a ton of warnings [#918]
 - Implement architecture for all settings tabs [#910]
-- Added Tokyonight theme
+- Auto update bundled JRE on boot if already installed
