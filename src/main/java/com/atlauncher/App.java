@@ -414,30 +414,35 @@ public class App {
     private static void checkIfNeedToUpdateBundledJre() {
         if (ConfigManager.getConfigItem("bundledJre.promptToUpdate", false)
                 && Java.shouldPromptToUpdateBundledJre()) {
-            String dialogTitle;
-            String dialogText;
+
+            boolean shouldUpdateBundledJre;
+            // auto update if the user has installed the bundled JRE previously
             if (Files.exists(FileSystem.JRE) && Java.bundledJreOutOfDate()) {
-                dialogTitle = GetText.tr("Using Out Of Date Java");
-                dialogText = GetText.tr(
-                        "You're running an out of date version of Java that was installed with the launcher.<br/><br/>In the future the launcher will no longer work without updating this.<br/><br/>This process is automatic and doesn't affect any Java installs outside of the launcher.<br/><br/>Do you want to do it now?");
-            } else if (Java.getLauncherJavaVersionNumber() < ConfigManager.getConfigItem("bundledJre.majorVersion",
-                    17.0).intValue()) {
-                dialogTitle = GetText.tr("Using Out Of Date Java");
-                dialogText = GetText.tr(
-                        "You're running an out of date version of Java.<br/><br/>In the future the launcher will no longer work without updating this.<br/><br/>This process is automatic and doesn't affect any Java installs outside of the launcher.<br/><br/>Do you want to do it now?");
+                shouldUpdateBundledJre = true;
             } else {
-                dialogTitle = GetText.tr("Let Launcher Manage Java");
-                dialogText = GetText.tr(
-                        "You're currently using a version of Java not managed by the launcher.<br/><br/>Letting the launcher manage it's own version of Java is better for support and ease of use.<br/><br/>This process is automatic and doesn't affect any Java installs outside of the launcher.<br/><br/>Do you want to let the launcher manage it's own version of Java?");
+                String dialogTitle;
+                String dialogText;
+                if (Java.getLauncherJavaVersionNumber() < ConfigManager.getConfigItem("bundledJre.majorVersion",
+                        17.0).intValue()) {
+                    dialogTitle = GetText.tr("Using Out Of Date Java");
+                    dialogText = GetText.tr(
+                            "You're running an out of date version of Java.<br/><br/>In the future the launcher will no longer work without updating this.<br/><br/>This process is automatic and doesn't affect any Java installs outside of the launcher.<br/><br/>Do you want to do it now?");
+                } else {
+                    dialogTitle = GetText.tr("Let Launcher Manage Java");
+                    dialogText = GetText.tr(
+                            "You're currently using a version of Java not managed by the launcher.<br/><br/>Letting the launcher manage it's own version of Java is better for support and ease of use.<br/><br/>This process is automatic and doesn't affect any Java installs outside of the launcher.<br/><br/>Do you want to let the launcher manage it's own version of Java?");
+                }
+
+                int ret = DialogManager
+                        .yesNoDialog().setTitle(dialogTitle).setContent(new HTMLBuilder()
+                                .center().text(dialogText)
+                                .build())
+                        .setType(DialogManager.WARNING).show();
+
+                shouldUpdateBundledJre = ret == 0;
             }
 
-            int ret = DialogManager
-                    .yesNoDialog().setTitle(dialogTitle).setContent(new HTMLBuilder()
-                            .center().text(dialogText)
-                            .build())
-                    .setType(DialogManager.WARNING).show();
-
-            if (ret == 0) {
+            if (shouldUpdateBundledJre) {
                 String bundledJreConfigNamespace = OS.is64Bit() ? "bundledJre.windowsx64" : "bundledJre.windowsx86";
                 Path newJreBundlePath = FileSystem.TEMP.resolve("updatedbundledjre");
 
