@@ -1023,14 +1023,15 @@ public class Instance extends MinecraftVersion {
                     }
 
                     if (!LogManager.showDebug) {
-                        line = line.replace(account.minecraftUsername, "**MINECRAFTUSERNAME**");
-                        line = line.replace(account.username, "**MINECRAFTUSERNAME**");
-                        line = line.replace(account.uuid, "**UUID**");
-                        line = line.replace(replaceUUID, "**UUID**");
+                        line = line.replaceAll(account.minecraftUsername, "**MINECRAFTUSERNAME**");
+                        line = line.replaceAll(account.username, "**MINECRAFTUSERNAME**");
+                        line = line.replaceAll(account.uuid, "**UUID**");
+                        line = line.replaceAll(replaceUUID, "**UUID**");
+                        line = line.replaceAll("\\b(?:\\d{1,3}\\.){3}\\d{1,3}\\b", "**IPADDRESS**");
                     }
 
                     if (account.getAccessToken() != null) {
-                        line = line.replace(account.getAccessToken(), "**ACCESSTOKEN**");
+                        line = line.replaceAll(account.getAccessToken(), "**ACCESSTOKEN**");
                     }
 
                     if (line.contains("log4j:")) {

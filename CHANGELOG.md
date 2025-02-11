@@ -17,6 +17,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Add image to login with Microsoft account rather than just text
 - Add option to specify a custom backups path
 - Added Tokyonight theme
+- Censor IP addresses from Minecraft in launcher logs [#964]
 
 ### Fixes
 - Invalid Java install location causing issues starting the launcher
