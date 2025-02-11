@@ -72,7 +72,10 @@ public class InstancesTab extends HierarchyPanel implements Tab {
 
     @Override
     protected void onDestroy() {
-        viewModel.setScroll(scrollPane.getVerticalScrollBar().getValue());
+        if (scrollPane != null) {
+            viewModel.setScroll(scrollPane.getVerticalScrollBar().getValue());
+        }
+
         removeAll();
         navigationPanel = null;
         instancesListPanel = null;

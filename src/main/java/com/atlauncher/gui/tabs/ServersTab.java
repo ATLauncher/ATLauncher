@@ -68,8 +68,7 @@ public class ServersTab extends HierarchyPanel implements Tab, RelocalizationLis
 
         searchBox = new JTextField(16);
         addDisposable(
-            viewModel.getSearchObservable().subscribe(it -> searchBox.setText(it.orElse(null)))
-        );
+                viewModel.getSearchObservable().subscribe(it -> searchBox.setText(it.orElse(null))));
         searchBox.addKeyListener(new KeyAdapter() {
             public void keyReleased(KeyEvent e) {
                 if (e.getKeyChar() == KeyEvent.VK_ENTER) {
@@ -89,7 +88,7 @@ public class ServersTab extends HierarchyPanel implements Tab, RelocalizationLis
 
         panel = new JPanel();
         scrollPane = new JScrollPane(panel, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-            JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+                JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scrollPane.getVerticalScrollBar().setUnitIncrement(16);
         add(scrollPane, BorderLayout.CENTER);
 
@@ -120,8 +119,7 @@ public class ServersTab extends HierarchyPanel implements Tab, RelocalizationLis
         }));
 
         addDisposable(
-            viewModel.getViewPosition().subscribe(scrollPane.getVerticalScrollBar()::setValue)
-        );
+                viewModel.getViewPosition().subscribe(scrollPane.getVerticalScrollBar()::setValue));
     }
 
     @Override
@@ -147,7 +145,9 @@ public class ServersTab extends HierarchyPanel implements Tab, RelocalizationLis
 
     @Override
     protected void onDestroy() {
-        viewModel.setViewPosition(scrollPane.getVerticalScrollBar().getValue());
+        if (scrollPane != null) {
+            viewModel.setViewPosition(scrollPane.getVerticalScrollBar().getValue());
+        }
         removeAll();
         searchBox = null;
         panel = null;
