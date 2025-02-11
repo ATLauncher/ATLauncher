@@ -1019,6 +1019,8 @@ public class InstanceInstallerDialog extends JDialog {
                             && !minecraftVersion.get().id.equalsIgnoreCase(this.instance.id));
                     saveModsCheckbox.setVisible(minecraftVersion.isPresent()
                             && !minecraftVersion.get().id.equalsIgnoreCase(this.instance.id));
+
+                    WindowUtils.resizeForContent(this);
                 }
             }
         });
@@ -1133,6 +1135,13 @@ public class InstanceInstallerDialog extends JDialog {
 
             // #. {0} is the loader (Fabric/Forge/Quilt)
             loaderVersionLabel.setText(GetText.tr("{0} Version", "Forge") + ": ");
+        } else if (item.loaderType != null && item.loaderType.equalsIgnoreCase("neoforge")) {
+            if (!ConfigManager.getConfigItem("loaders.neoforge.enabled", true)) {
+                return;
+            }
+
+            // #. {0} is the loader (Fabric/Forge/Quilt)
+            loaderVersionLabel.setText(GetText.tr("{0} Version", "NeoForge") + ": ");
         } else if (item.loaderType != null && item.loaderType.equalsIgnoreCase("legacyfabric")) {
             if (!ConfigManager.getConfigItem("loaders.legacyfabric.enabled", true)) {
                 return;
