@@ -26,6 +26,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 - The Java Parameter fields no longer accept new line characters [#666]
 - Issue with NeoForge reinstalls having disabled fields [#955]
 - Issue with the name field missing when reinstalling an instance to a different Minecraft version
+- LegacyJavaFixer not being installed on 1.7.2 Forge
 
 ### Misc
 - Update gradle wrapper version from 8.2 to 8.12

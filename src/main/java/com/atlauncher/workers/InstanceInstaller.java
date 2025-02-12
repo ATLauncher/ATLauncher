@@ -502,9 +502,11 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                     .setUrl(version._curseForgeFile.downloadUrl).downloadTo(serverPackFile)
                     .size(version._curseForgeFile.fileLength);
 
-            Optional<CurseForgeFileHash> md5Hash = version._curseForgeFile.hashes.stream().filter(CurseForgeFileHash::isMd5)
+            Optional<CurseForgeFileHash> md5Hash = version._curseForgeFile.hashes.stream()
+                    .filter(CurseForgeFileHash::isMd5)
                     .findFirst();
-            Optional<CurseForgeFileHash> sha1Hash = version._curseForgeFile.hashes.stream().filter(CurseForgeFileHash::isSha1)
+            Optional<CurseForgeFileHash> sha1Hash = version._curseForgeFile.hashes.stream()
+                    .filter(CurseForgeFileHash::isSha1)
                     .findFirst();
 
             if (md5Hash.isPresent()) {
@@ -530,9 +532,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         ArchiveUtils.extract(serverPackFile, serverPackExtractedPath);
         Files.delete(serverPackFile);
 
-        File[] directories = serverPackExtractedPath.toFile().listFiles((dir, name) ->
-            !name.startsWith(".") && new File(dir, name).isDirectory()
-        );
+        File[] directories = serverPackExtractedPath.toFile()
+                .listFiles((dir, name) -> !name.startsWith(".") && new File(dir, name).isDirectory());
 
         // Only 1 folder, so likely a folder within the folder
         if (directories.length == 1) {
@@ -833,7 +834,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                         curseForgeProject.allowModDistribution, curseForgeProject.allowModDistribution == null ? "null"
                                 : curseForgeProject.allowModDistribution.toString()));
 
-                Optional<CurseForgeFileHash> sha1Hash = curseForgeFile.hashes.stream().filter(CurseForgeFileHash::isSha1)
+                Optional<CurseForgeFileHash> sha1Hash = curseForgeFile.hashes.stream()
+                        .filter(CurseForgeFileHash::isSha1)
                         .findFirst();
                 if (sha1Hash.isPresent()) {
                     ModrinthVersion modrinthVersion = modrinthVersions.get(sha1Hash.get().value);
@@ -976,9 +978,11 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                     .setUrl(version._curseForgeFile.downloadUrl).downloadTo(manifestFile)
                     .size(version._curseForgeFile.fileLength);
 
-            Optional<CurseForgeFileHash> md5Hash = version._curseForgeFile.hashes.stream().filter(CurseForgeFileHash::isMd5)
+            Optional<CurseForgeFileHash> md5Hash = version._curseForgeFile.hashes.stream()
+                    .filter(CurseForgeFileHash::isMd5)
                     .findFirst();
-            Optional<CurseForgeFileHash> sha1Hash = version._curseForgeFile.hashes.stream().filter(CurseForgeFileHash::isSha1)
+            Optional<CurseForgeFileHash> sha1Hash = version._curseForgeFile.hashes.stream()
+                    .filter(CurseForgeFileHash::isSha1)
                     .findFirst();
 
             if (md5Hash.isPresent()) {
@@ -1047,7 +1051,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         ArchiveUtils.extract(manifestFile, modrinthExtractedPath);
 
         try (InputStreamReader fileReader = new InputStreamReader(
-            Files.newInputStream(modrinthExtractedPath.resolve("modrinth.index.json")),
+                Files.newInputStream(modrinthExtractedPath.resolve("modrinth.index.json")),
                 StandardCharsets.UTF_8)) {
             modrinthManifest = Gsons.DEFAULT.fromJson(fileReader, ModrinthModpackManifest.class);
         } catch (Exception e) {
@@ -1538,7 +1542,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
 
         if (Files.exists(versionJsonPath)) {
             try (InputStreamReader fileReader = new InputStreamReader(
-                Files.newInputStream(versionJsonPath), StandardCharsets.UTF_8)) {
+                    Files.newInputStream(versionJsonPath), StandardCharsets.UTF_8)) {
                 versionJson = Gsons.DEFAULT.fromJson(fileReader, MinecraftVersion.class);
             } catch (Exception e) {
                 LogManager.error("Error reading in version.json");
@@ -3390,8 +3394,10 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
     private void installLegacyJavaFixer() {
         addPercent(5);
 
-        if ((this.technicModpack == null && this.allMods.isEmpty())
-                || !Utils.matchVersion(minecraftVersion.id, "1.6", true, true)) {
+        // Only apply the legacy Java fixer on <= 1.7.2 versions of Forge
+        if (this.loaderVersion == null || !this.loaderVersion.isForge()
+                || (!Utils.matchVersion(minecraftVersion.id, "1.6", true, true)
+                        && !minecraftVersion.id.equals("1.7.2"))) {
             return;
         }
 
@@ -4127,9 +4133,10 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         File shFile = shPath.toFile();
 
         // write out the server jar filename
-        Utils.replaceText(App.class.getResourceAsStream("/server-scripts/LaunchServer.bat"),  tmpBatPath.toFile(),
+        Utils.replaceText(App.class.getResourceAsStream("/server-scripts/LaunchServer.bat"), tmpBatPath.toFile(),
                 "%%SERVERJAR%%", getServerJar());
-        Utils.replaceText(App.class.getResourceAsStream("/server-scripts/LaunchServer.sh"), tmpShPath.toFile(), "%%SERVERJAR%%",
+        Utils.replaceText(App.class.getResourceAsStream("/server-scripts/LaunchServer.sh"), tmpShPath.toFile(),
+                "%%SERVERJAR%%",
                 getServerJar());
 
         // replace/remove the server arguments (if any)
