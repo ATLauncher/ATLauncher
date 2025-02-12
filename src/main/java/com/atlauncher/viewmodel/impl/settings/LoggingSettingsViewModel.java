@@ -28,16 +28,12 @@ import io.reactivex.rxjava3.subjects.BehaviorSubject;
 
 /**
  * @since 2022 / 06 / 17
- * <p>
- * View model for {@link LoggingSettingsTab}
+ *        <p>
+ *        View model for {@link LoggingSettingsTab}
  */
 public class LoggingSettingsViewModel implements SettingsListener {
-    private final BehaviorSubject<String>
-        _forgeLoggingLevel = BehaviorSubject.create();
-
-    private final BehaviorSubject<Boolean>
-        _enableLogging = BehaviorSubject.create(),
-        _enableAnalytics = BehaviorSubject.create();
+    private final BehaviorSubject<Boolean> _enableLogging = BehaviorSubject.create(),
+            _enableAnalytics = BehaviorSubject.create();
 
     public LoggingSettingsViewModel() {
         onSettingsSaved();
@@ -46,19 +42,8 @@ public class LoggingSettingsViewModel implements SettingsListener {
 
     @Override
     public void onSettingsSaved() {
-        _forgeLoggingLevel.onNext(App.settings.forgeLoggingLevel);
         _enableLogging.onNext(App.settings.enableLogs);
         _enableAnalytics.onNext(App.settings.enableAnalytics);
-    }
-
-    public void setLoggingLevel(String level) {
-        if (App.settings.forgeLoggingLevel.equals(level)) return;
-        App.settings.forgeLoggingLevel = level;
-        SettingsManager.post();
-    }
-
-    public Observable<String> getForgeLoggingLevel() {
-        return _forgeLoggingLevel.observeOn(SwingSchedulers.edt());
     }
 
     public Observable<Boolean> getEnableLogging() {

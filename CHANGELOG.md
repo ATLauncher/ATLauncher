@@ -3,29 +3,41 @@
 This changelog only contains the changes that are unreleased. For changes for individual releases, please visit the
 [releases](https://github.com/ATLauncher/ATLauncher/releases) page on GitHub.
 
-## 3.4.38.0
+## 3.4.39.0
 
 ### New Features
 - Add AboutTab [#568]
 - Add version option for CLI [#915]
-- Dynaimc fetching of JRE information from nodecdn [#958]
+- Removed Discord RPC
+- Mojang Account support completely removed [#907]
+- Dedicated GPU support for Linux [#986]
+- Add option to open instance.json file for an instance
+- Add checking of Java install location setting before saving
+- Add checking of custom downloads path setting before saving
+- Add image to login with Microsoft account rather than just text
+- Add option to specify a custom backups path
+- Added Tokyonight theme
+- Censor IP addresses from Minecraft in launcher logs [#964]
 
 ### Fixes
-- Java parameters field not being scrollable
+- Invalid Java install location causing issues starting the launcher
+- Fix invalid custom downloads path not being validated on boot
+- Use a scrollpane for the Java Parameter fields [#963]
+- The Java Parameter fields no longer accept new line characters [#666]
+- Issue with NeoForge reinstalls having disabled fields [#955]
+- Issue with the name field missing when reinstalling an instance to a different Minecraft version
+- LegacyJavaFixer not being installed on 1.7.2 Forge
 
 ### Misc
-- Update gradle wrapper version from 8.2 to 8.9 [#886]
-- Migrate to the new Gradle version catalogs for libraries and plugins
+- Update gradle wrapper version from 8.2 to 8.12
 - Update the `application.yml` GitHub workflow [#889]
-- Migrate to Gradle KTS [#898]
 - Refactor News stack
 - Implement HierarchyPanel in AccountsTab [#838]
 - Implement HierarchyPanel in ServersTab [#839]
 - Implement HierarchyPanel in ToolsTab [#840]
-- Mojang Account support completely removed [#907]
+- Implement HierarchyPanel to CreatePackTab [#816]
 - Update versions of Java tested in GitHub workflows
-- Update dependencies
 - Recreate UI on re-localization [#912]
 - Squash a ton of warnings [#918]
 - Implement architecture for all settings tabs [#910]
-- Implement HierarchyPanel to CreatePackTab [#816]
+- Auto update bundled JRE on boot if already installed
