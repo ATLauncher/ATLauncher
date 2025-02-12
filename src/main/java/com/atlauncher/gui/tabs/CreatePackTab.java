@@ -22,6 +22,7 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Rectangle;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 import java.util.List;
@@ -94,6 +95,7 @@ public class CreatePackTab extends HierarchyPanel implements Tab {
     private JTable minecraftVersionTable = null;
     @Nullable
     private DefaultTableModel minecraftVersionTableModel = null;
+    private boolean hasScrolledToSelection = false;
 
     public CreatePackTab() {
         super(new BorderLayout());
@@ -479,24 +481,27 @@ public class CreatePackTab extends HierarchyPanel implements Tab {
         addDisposable(viewModel.minecraftVersions().subscribe((minecraftVersions) -> {
             // remove all rows
             int rowCount = 0;
-            if (minecraftVersionTableModel != null)
+            if (minecraftVersionTableModel != null) {
                 rowCount = minecraftVersionTableModel.getRowCount();
+            }
 
             if (rowCount > 0) {
                 for (int i = rowCount - 1; i >= 0; i--) {
-                    if (minecraftVersionTableModel != null)
+                    if (minecraftVersionTableModel != null) {
                         minecraftVersionTableModel.removeRow(i);
+                    }
                 }
             }
 
             for (MCVersionRow row : minecraftVersions) {
-                if (minecraftVersionTableModel != null)
+                if (minecraftVersionTableModel != null) {
                     minecraftVersionTableModel.addRow(
                             new Object[] {
                                     row.id,
                                     row.date,
                                     row.type
                             });
+                }
             }
 
             // refresh the table
@@ -516,6 +521,12 @@ public class CreatePackTab extends HierarchyPanel implements Tab {
                         if (it < rowCount) {
                             minecraftVersionTable.setRowSelectionInterval(it, it);
                             minecraftVersionTable.revalidate();
+
+                            if (!hasScrolledToSelection) {
+                                Rectangle rect = minecraftVersionTable.getCellRect(it, 0, true);
+                                minecraftVersionTable.scrollRectToVisible(rect);
+                                hasScrolledToSelection = true;
+                            }
                         }
                     }
                 }));
@@ -573,6 +584,7 @@ public class CreatePackTab extends HierarchyPanel implements Tab {
 
     @Override
     protected void onShow() {
+        hasScrolledToSelection = false;
         nameField = new JTextField(32);
         descriptionField = new JTextArea(2, 40);
         minecraftVersionReleasesFilterCheckbox = new JCheckBox(getReleasesText());
