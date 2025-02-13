@@ -18,6 +18,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Add option to specify a custom backups path
 - Added Tokyonight theme
 - Censor IP addresses from Minecraft in launcher logs [#964]
+- Add PaperMC to loader list for creating plugin capable servers [#975]
 
 ### Fixes
 - Invalid Java install location causing issues starting the launcher

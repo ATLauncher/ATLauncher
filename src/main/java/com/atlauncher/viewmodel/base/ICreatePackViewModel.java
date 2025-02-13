@@ -235,6 +235,12 @@ public interface ICreatePackViewModel {
     Observable<Boolean> isNeoForgeVisible();
 
     /**
+     * Is PaperMC an option currently
+     */
+    @NotNull
+    Observable<Boolean> isPaperMCVisible();
+
+    /**
      * Is quilt an option currently
      */
     @NotNull
@@ -263,6 +269,12 @@ public interface ICreatePackViewModel {
      */
     @NotNull
     Boolean showNeoForgeOption();
+
+    /**
+     * If PaperMC should be enabled or not
+     */
+    @NotNull
+    Boolean showPaperMCOption();
 
     /**
      * If quilt is enabled in config or not
@@ -329,6 +341,18 @@ public interface ICreatePackViewModel {
      */
     @NotNull
     Observable<Boolean> loaderTypeNeoForgeEnabled();
+
+    /**
+     * Is PaperMC selected
+     */
+    @NotNull
+    Observable<Boolean> loaderTypePaperMCSelected();
+
+    /**
+     * Is PaperMC enabled
+     */
+    @NotNull
+    Observable<Boolean> loaderTypePaperMCEnabled();
 
     /**
      * Has quilt been selected

@@ -17,14 +17,15 @@
  */
 package com.atlauncher.gui.tabs;
 
+import static java.lang.Math.max;
+import static java.lang.Math.min;
+
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Rectangle;
-import static java.lang.Math.max;
-import static java.lang.Math.min;
 import java.util.List;
 
 import javax.annotation.Nullable;
@@ -80,6 +81,7 @@ public class CreatePackTab extends HierarchyPanel implements Tab {
     private JRadioButton loaderTypeForgeRadioButton;
     private JRadioButton loaderTypeLegacyFabricRadioButton;
     private JRadioButton loaderTypeNeoForgeRadioButton;
+    private JRadioButton loaderTypePaperMCRadioButton;
     private JRadioButton loaderTypeQuiltRadioButton;
     private JComboBox<ComboItem<LoaderVersion>> loaderVersionsDropDown;
     private JButton createServerButton;
@@ -241,6 +243,7 @@ public class CreatePackTab extends HierarchyPanel implements Tab {
         loaderTypeButtonGroup.add(loaderTypeForgeRadioButton);
         loaderTypeButtonGroup.add(loaderTypeLegacyFabricRadioButton);
         loaderTypeButtonGroup.add(loaderTypeNeoForgeRadioButton);
+        loaderTypeButtonGroup.add(loaderTypePaperMCRadioButton);
         loaderTypeButtonGroup.add(loaderTypeQuiltRadioButton);
         JPanel loaderTypePanel = new JPanel(new FlowLayout());
 
@@ -249,6 +252,7 @@ public class CreatePackTab extends HierarchyPanel implements Tab {
         setupLoaderForgeButton(loaderTypePanel);
         setupLoaderLegacyFabricButton(loaderTypePanel);
         setupLoaderNeoForgeButton(loaderTypePanel);
+        setupLoaderPaperMCButton(loaderTypePanel);
         setupLoaderQuiltButton(loaderTypePanel);
 
         mainPanel.add(loaderTypePanel, gbc);
@@ -374,6 +378,17 @@ public class CreatePackTab extends HierarchyPanel implements Tab {
                         LoaderType.NEOFORGE));
         if (viewModel.showNeoForgeOption()) {
             loaderTypePanel.add(loaderTypeNeoForgeRadioButton);
+        }
+    }
+
+    private void setupLoaderPaperMCButton(JPanel loaderTypePanel) {
+        addDisposable(viewModel.loaderTypePaperMCSelected().subscribe(loaderTypePaperMCRadioButton::setSelected));
+        addDisposable(viewModel.loaderTypePaperMCEnabled().subscribe(loaderTypePaperMCRadioButton::setEnabled));
+        addDisposable(viewModel.isPaperMCVisible().subscribe(loaderTypePaperMCRadioButton::setVisible));
+        loaderTypePaperMCRadioButton.addActionListener(
+                e -> viewModel.setLoaderType(LoaderType.PAPERMC));
+        if (viewModel.showPaperMCOption()) {
+            loaderTypePanel.add(loaderTypePaperMCRadioButton);
         }
     }
 
@@ -598,6 +613,7 @@ public class CreatePackTab extends HierarchyPanel implements Tab {
         loaderTypeForgeRadioButton = new JRadioButton("Forge");
         loaderTypeLegacyFabricRadioButton = new JRadioButton("Legacy Fabric");
         loaderTypeNeoForgeRadioButton = new JRadioButton("NeoForge");
+        loaderTypePaperMCRadioButton = new JRadioButton("PaperMC");
         loaderTypeQuiltRadioButton = new JRadioButton("Quilt");
         loaderVersionsDropDown = new JComboBox<>();
         createServerButton = new JButton(getCreateServerText());
@@ -623,6 +639,7 @@ public class CreatePackTab extends HierarchyPanel implements Tab {
         loaderTypeForgeRadioButton = null;
         loaderTypeLegacyFabricRadioButton = null;
         loaderTypeNeoForgeRadioButton = null;
+        loaderTypePaperMCRadioButton = null;
         loaderTypeQuiltRadioButton = null;
         loaderVersionsDropDown = null;
         createServerButton = null;

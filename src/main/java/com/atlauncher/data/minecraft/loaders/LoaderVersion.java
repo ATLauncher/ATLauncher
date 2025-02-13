@@ -63,6 +63,10 @@ public class LoaderVersion {
         return this.type.equalsIgnoreCase("NeoForge");
     }
 
+    public boolean isPaperMC() {
+        return this.type.equalsIgnoreCase("PaperMC");
+    }
+
     public boolean isQuilt() {
         return this.type.equalsIgnoreCase("Quilt");
     }
@@ -86,6 +90,10 @@ public class LoaderVersion {
 
         if (isNeoForge()) {
             return LoaderType.NEOFORGE;
+        }
+
+        if (isPaperMC()) {
+            return LoaderType.PAPERMC;
         }
 
         if (isQuilt()) {
@@ -159,6 +167,10 @@ public class LoaderVersion {
 
         if (isNeoForge()) {
             return "NeoForge";
+        }
+
+        if (isPaperMC()) {
+            return "PaperMC";
         }
 
         if (isQuilt()) {

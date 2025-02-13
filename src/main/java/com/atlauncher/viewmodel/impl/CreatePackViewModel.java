@@ -17,12 +17,10 @@
  */
 package com.atlauncher.viewmodel.impl;
 
-import static io.reactivex.rxjava3.core.Observable.combineLatest;
-import static java.util.Collections.emptyList;
-import static java.util.Collections.singletonList;
-
 import java.awt.Font;
 import java.util.ArrayList;
+import static java.util.Collections.emptyList;
+import static java.util.Collections.singletonList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -75,6 +73,7 @@ import com.atlauncher.viewmodel.base.ICreatePackViewModel;
 import com.gitlab.doomsdayrs.lib.rxswing.schedulers.SwingSchedulers;
 
 import io.reactivex.rxjava3.core.Observable;
+import static io.reactivex.rxjava3.core.Observable.combineLatest;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 import io.reactivex.rxjava3.subjects.BehaviorSubject;
 
@@ -113,6 +112,8 @@ public class CreatePackViewModel implements SettingsListener, ICreatePackViewMod
     // was true
     public final BehaviorSubject<Boolean> loaderTypeNeoForgeEnabled = BehaviorSubject.create();
     // was true
+    public final BehaviorSubject<Boolean> loaderTypePaperMCEnabled = BehaviorSubject.create();
+    // was true
     public final BehaviorSubject<Boolean> loaderTypeNoneEnabled = BehaviorSubject.create();
     // was true
     public final BehaviorSubject<Boolean> loaderTypeQuiltEnabled = BehaviorSubject.create();
@@ -141,6 +142,10 @@ public class CreatePackViewModel implements SettingsListener, ICreatePackViewMod
     // was lazy
     public final Boolean showNeoForgeOption = ConfigManager.getConfigItem(
             "loaders.neoforge.enabled",
+            true);
+    // was lazy
+    public final Boolean showPaperMCOption = ConfigManager.getConfigItem(
+            "loaders.papermc.enabled",
             true);
     // was lazy
     public final Boolean showQuiltOption = ConfigManager.getConfigItem("loaders.quilt.enabled", false);
@@ -273,6 +278,10 @@ public class CreatePackViewModel implements SettingsListener, ICreatePackViewMod
             .map(it -> it.orElse(null) == LoaderType.NEOFORGE)
             .subscribeOn(Schedulers.computation());
 
+    public final Observable<Boolean> loaderTypePaperMCSelected = selectedLoaderType
+            .map(it -> it.orElse(null) == LoaderType.PAPERMC)
+            .subscribeOn(Schedulers.computation());
+
     public final Observable<Boolean> loaderTypeNoneSelected = selectedLoaderType.map(it -> it.orElse(null) == null)
             .subscribeOn(Schedulers.computation());
 
@@ -302,6 +311,14 @@ public class CreatePackViewModel implements SettingsListener, ICreatePackViewMod
 
     public final Observable<Boolean> isNeoForgeVisible = selectedMinecraftVersionFlow
             .map(version -> !neoForgeDisabledMCVersions.contains(version.orElse(null)))
+            .subscribeOn(Schedulers.computation());
+
+    // was lazy
+    private final List<String> paperMCDisabledMCVersions = ConfigManager.getConfigItem(
+            "loaders.papermc.disabledMinecraftVersions", emptyList());
+
+    public final Observable<Boolean> isPaperMCVisible = selectedMinecraftVersionFlow
+            .map(version -> !paperMCDisabledMCVersions.contains(version.orElse(null)))
             .subscribeOn(Schedulers.computation());
 
     // was lazy
@@ -335,6 +352,10 @@ public class CreatePackViewModel implements SettingsListener, ICreatePackViewMod
     // was lazy
     private final List<String> disabledNeoForgeVersions = ConfigManager.getConfigItem(
             "loaders.neoforge.disabledVersions", emptyList());
+
+    // was lazy
+    private final List<String> disabledPaperMCVersions = ConfigManager.getConfigItem(
+            "loaders.papermc.disabledVersions", emptyList());
 
     // was lazy
     private final List<String> disabledForgeVersions = ConfigManager.getConfigItem(
@@ -374,6 +395,7 @@ public class CreatePackViewModel implements SettingsListener, ICreatePackViewMod
         loaderTypeForgeEnabled.onNext(true);
         loaderTypeLegacyFabricEnabled.onNext(true);
         loaderTypeNeoForgeEnabled.onNext(true);
+        loaderTypePaperMCEnabled.onNext(true);
 
         selectedMinecraftVersionFlow.onNext(Optional.empty());
 
@@ -427,6 +449,7 @@ public class CreatePackViewModel implements SettingsListener, ICreatePackViewMod
                     loaderTypeForgeEnabled.onNext(false);
                     loaderTypeLegacyFabricEnabled.onNext(false);
                     loaderTypeNeoForgeEnabled.onNext(false);
+                    loaderTypePaperMCEnabled.onNext(false);
                     loaderVersionsDropDownEnabled.onNext(false);
 
                     setLoaderGroupEnabled(false);
@@ -458,13 +481,15 @@ public class CreatePackViewModel implements SettingsListener, ICreatePackViewMod
 
                     boolean hasLoaderVersions = !loaders.isEmpty() && loaders.get(0) != noLoaderVersions;
 
-                    setLoaderGroupEnabled(hasLoaderVersions, hasLoaderVersions && enableCreateServers);
+                    setLoaderGroupEnabled(hasLoaderVersions, hasLoaderVersions && enableCreateServers,
+                            hasLoaderVersions && loaderType != LoaderType.PAPERMC);
                     loaderTypeNoneEnabled.onNext(true);
                     loaderTypeQuiltEnabled.onNext(true);
                     loaderTypeFabricEnabled.onNext(true);
                     loaderTypeForgeEnabled.onNext(true);
                     loaderTypeLegacyFabricEnabled.onNext(true);
                     loaderTypeNeoForgeEnabled.onNext(true);
+                    loaderTypePaperMCEnabled.onNext(true);
                 });
     }
 
@@ -543,6 +568,11 @@ public class CreatePackViewModel implements SettingsListener, ICreatePackViewMod
     }
 
     @Override
+    public Observable<Boolean> loaderTypePaperMCEnabled() {
+        return loaderTypePaperMCEnabled.observeOn(SwingSchedulers.edt());
+    }
+
+    @Override
     public Observable<Boolean> loaderTypeNoneEnabled() {
         return loaderTypeNoneEnabled.observeOn(SwingSchedulers.edt());
     }
@@ -595,6 +625,11 @@ public class CreatePackViewModel implements SettingsListener, ICreatePackViewMod
     @Override
     public Boolean showNeoForgeOption() {
         return showNeoForgeOption;
+    }
+
+    @Override
+    public Boolean showPaperMCOption() {
+        return showPaperMCOption;
     }
 
     @Override
@@ -683,6 +718,11 @@ public class CreatePackViewModel implements SettingsListener, ICreatePackViewMod
     }
 
     @Override
+    public Observable<Boolean> loaderTypePaperMCSelected() {
+        return loaderTypePaperMCSelected.observeOn(SwingSchedulers.edt());
+    }
+
+    @Override
     public Observable<Boolean> loaderTypeNoneSelected() {
         return loaderTypeNoneSelected.observeOn(SwingSchedulers.edt());
     }
@@ -705,6 +745,11 @@ public class CreatePackViewModel implements SettingsListener, ICreatePackViewMod
     @Override
     public Observable<Boolean> isNeoForgeVisible() {
         return isNeoForgeVisible.observeOn(SwingSchedulers.edt());
+    }
+
+    @Override
+    public Observable<Boolean> isPaperMCVisible() {
+        return isPaperMCVisible.observeOn(SwingSchedulers.edt());
     }
 
     @Override
@@ -976,6 +1021,17 @@ public class CreatePackViewModel implements SettingsListener, ICreatePackViewMod
                                 .collect(Collectors.toList()));
                         break;
 
+                    case PAPERMC:
+                        loaderVersionsList.addAll(data.loaderVersions().papermc()
+                                .stream()
+                                .filter(fv -> !disabledPaperMCVersions.contains(fv.build()))
+                                .map(version -> new LoaderVersion(
+                                        Integer.toString(version.build()),
+                                        false,
+                                        "PaperMC"))
+                                .collect(Collectors.toList()));
+                        break;
+
                     case QUILT:
                         loaderVersionsList.addAll(data.loaderVersions().quilt().stream()
                                 .filter(fv -> !disabledQuiltVersions.contains(fv.version()))
@@ -1000,15 +1056,20 @@ public class CreatePackViewModel implements SettingsListener, ICreatePackViewMod
     }
 
     private void setLoaderGroupEnabled(Boolean enabled, Boolean enableCreateServers) {
+        setLoaderGroupEnabled(enabled, enableCreateServers, enabled);
+    }
+
+    private void setLoaderGroupEnabled(Boolean enabled, Boolean enableCreateServers, Boolean enableCreateInstances) {
         loaderTypeNoneEnabled.onNext(true);
         loaderTypeFabricEnabled.onNext(true);
         loaderTypeForgeEnabled.onNext(true);
         loaderTypeLegacyFabricEnabled.onNext(true);
         loaderTypeNeoForgeEnabled.onNext(true);
+        loaderTypePaperMCEnabled.onNext(true);
         loaderTypeQuiltEnabled.onNext(true);
 
         createServerEnabled.onNext(enableCreateServers);
-        createInstanceEnabled.onNext(enabled);
+        createInstanceEnabled.onNext(enableCreateInstances);
         loaderVersionsDropDownEnabled.onNext(enabled);
     }
 

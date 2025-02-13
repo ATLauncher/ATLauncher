@@ -119,6 +119,7 @@ import com.atlauncher.data.technic.TechnicSolderModpackManifest;
 import com.atlauncher.exceptions.LocalException;
 import com.atlauncher.graphql.GetForgeLoaderVersionQuery;
 import com.atlauncher.graphql.GetNeoForgeLoaderVersionQuery;
+import com.atlauncher.graphql.GetPaperMCLoaderVersionQuery;
 import com.atlauncher.gui.dialogs.BrowserDownloadDialog;
 import com.atlauncher.interfaces.NetworkProgressable;
 import com.atlauncher.managers.ConfigManager;
@@ -385,7 +386,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                 return success(false);
             }
 
-            if (this.isServer && minecraftVersionManifest != null && minecraftVersionManifest.hasInitSettings()) {
+            if (this.isServer && minecraftVersionManifest != null && minecraftVersionManifest.hasInitSettings()
+                    && (this.loaderVersion == null || !this.loaderVersion.isPaperMC())) {
                 initServerSettings();
             }
 
@@ -2133,6 +2135,39 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
             loaderMeta.put("loader", loaderVersion.version);
             packVersion.loader.metadata = loaderMeta;
             packVersion.loader.className = "com.atlauncher.data.minecraft.loaders.neoforge.NeoForgeLoader";
+        } else if (loaderVersion != null && loaderVersion.isPaperMC()) {
+            String paperMCBuildString = loaderVersion.version;
+
+            if (ConfigManager.getConfigItem("useGraphql.loaderVersions", false) == false) {
+                throw new Exception(
+                        "Failed to find loader version for " + paperMCBuildString + " as GraphQL is disabled");
+            }
+
+            int paperMCBuild;
+
+            try {
+                paperMCBuild = Integer.parseInt(paperMCBuildString);
+            } catch (NumberFormatException ignored) {
+                throw new Exception("Failed to find loader version for " + paperMCBuildString);
+            }
+
+            GetPaperMCLoaderVersionQuery.Data response = GraphqlClient
+                    .callAndWait(new GetPaperMCLoaderVersionQuery(paperMCBuild, version.minecraftVersion.id));
+
+            if (response == null || response.paperMCVersion() == null) {
+                throw new Exception("Failed to find loader version for " + paperMCBuildString);
+            }
+
+            packVersion.loader = new com.atlauncher.data.json.Loader();
+            Map<String, Object> loaderMeta = new HashMap<>();
+            loaderMeta.put("minecraft", version.minecraftVersion.id);
+            loaderMeta.put("build", response.paperMCVersion().build());
+            loaderMeta.put("filename", response.paperMCVersion().filename());
+            loaderMeta.put("sha256", response.paperMCVersion().sha256());
+            loaderMeta.put("downloadUrl", response.paperMCVersion().downloadUrl());
+
+            packVersion.loader.metadata = loaderMeta;
+            packVersion.loader.className = "com.atlauncher.data.minecraft.loaders.papermc.PaperMCLoader";
         } else if (loaderVersion != null && loaderVersion.isQuilt()) {
             packVersion.loader = new com.atlauncher.data.json.Loader();
             Map<String, Object> loaderMeta = new HashMap<>();
@@ -2864,6 +2899,12 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
 
     private void downloadMinecraft() throws Exception {
         addPercent(5);
+
+        // if PaperMC, we don't need to download Minecraft
+        if (this.isServer && this.loaderVersion != null && this.loaderVersion.isPaperMC()) {
+            return;
+        }
+
         fireTask(GetText.tr("Downloading Minecraft"));
         fireSubProgressUnknown();
         totalBytes = 0;

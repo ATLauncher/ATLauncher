@@ -24,6 +24,10 @@ query GetLoaderVersionsForMinecraftVersion($minecraftVersion: String!) {
             rawVersion
             recommended
         }
+        papermc {
+            build
+            promoted
+        }
         quilt {
             version
         }
