@@ -103,6 +103,7 @@ public class CreatePackViewModel implements SettingsListener, ICreatePackViewMod
     public final BehaviorSubject<Boolean> createServerEnabled = BehaviorSubject.create();
     // was false
     public final BehaviorSubject<Boolean> createInstanceEnabled = BehaviorSubject.create();
+    public final BehaviorSubject<Optional<String>> createInstanceDisabledReason = BehaviorSubject.create();
     // was true
     public final BehaviorSubject<Boolean> loaderTypeFabricEnabled = BehaviorSubject.create();
     // was true
@@ -388,6 +389,7 @@ public class CreatePackViewModel implements SettingsListener, ICreatePackViewMod
         loaderVersions.onNext(Optional.empty());
         createServerEnabled.onNext(false);
         createInstanceEnabled.onNext(false);
+        createInstanceDisabledReason.onNext(Optional.empty());
 
         loaderTypeNoneEnabled.onNext(true);
         loaderTypeQuiltEnabled.onNext(true);
@@ -545,6 +547,11 @@ public class CreatePackViewModel implements SettingsListener, ICreatePackViewMod
     @Override
     public Observable<Boolean> createInstanceEnabled() {
         return createInstanceEnabled.observeOn(SwingSchedulers.edt());
+    }
+
+    @Override
+    public Observable<Optional<String>> createInstanceDisabledReason() {
+        return createInstanceDisabledReason.observeOn(SwingSchedulers.edt());
     }
 
     @Override
@@ -1070,6 +1077,9 @@ public class CreatePackViewModel implements SettingsListener, ICreatePackViewMod
 
         createServerEnabled.onNext(enableCreateServers);
         createInstanceEnabled.onNext(enableCreateInstances);
+        createInstanceDisabledReason
+                .onNext(enableCreateInstances ? Optional.empty()
+                        : Optional.of(GetText.tr("Disabled as PaperMC only supports servers")));
         loaderVersionsDropDownEnabled.onNext(enabled);
     }
 

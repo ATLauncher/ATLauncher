@@ -17,15 +17,14 @@
  */
 package com.atlauncher.gui.tabs;
 
-import static java.lang.Math.max;
-import static java.lang.Math.min;
-
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Rectangle;
+import static java.lang.Math.max;
+import static java.lang.Math.min;
 import java.util.List;
 
 import javax.annotation.Nullable;
@@ -575,6 +574,8 @@ public class CreatePackTab extends HierarchyPanel implements Tab {
             }
             viewModel.createServer();
         });
+        addDisposable(viewModel.createInstanceDisabledReason()
+                .subscribe((reason) -> createInstanceButton.setToolTipText(reason.orElse(null))));
         addDisposable(viewModel.createInstanceEnabled().subscribe(createInstanceButton::setEnabled));
         addDisposable(viewModel.createServerEnabled().subscribe(createServerButton::setEnabled));
         bottomPanel.add(createInstanceButton);

@@ -417,6 +417,12 @@ public interface ICreatePackViewModel {
     Observable<Boolean> createInstanceEnabled();
 
     /**
+     * The text to display when the create instance button is not enabled
+     */
+    @NotNull
+    Observable<Optional<String>> createInstanceDisabledReason();
+
+    /**
      * Create a server with the provided information
      */
     void createServer();
