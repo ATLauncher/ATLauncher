@@ -173,7 +173,7 @@ import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 
 @Json
-public class Instance extends MinecraftVersion {
+public class Instance extends MinecraftVersion implements ModManagement {
     public UUID uuid;
     public String inheritsFrom;
     public InstanceLauncher launcher;
@@ -1212,319 +1212,6 @@ public class Instance extends MinecraftVersion {
                 .findFirst().orElse(null);
     }
 
-    public void addFileFromCurseForge(CurseForgeProject mod, CurseForgeFile file, ProgressDialog dialog) {
-        Path downloadLocation = FileSystem.DOWNLOADS.resolve(file.fileName);
-        Path finalLocation = mod.getInstanceDirectoryPath(this.getRoot()).resolve(file.fileName);
-
-        // find mods with the same CurseForge project id
-        List<DisableableMod> sameMods = this.launcher.mods.stream()
-                .filter(installedMod -> installedMod.isFromCurseForge()
-                        && installedMod.getCurseForgeModId() == mod.id)
-                .collect(Collectors.toList());
-
-        // delete mod files that are the same mod id
-        sameMods.forEach(disableableMod -> Utils.delete(disableableMod.getFile(this)));
-
-        Optional<CurseForgeFileHash> md5Hash = file.hashes.stream().filter(CurseForgeFileHash::isMd5)
-                .findFirst();
-        Optional<CurseForgeFileHash> sha1Hash = file.hashes.stream().filter(CurseForgeFileHash::isSha1)
-                .findFirst();
-
-        if (file.downloadUrl == null) {
-            if (!App.settings.seenCurseForgeProjectDistributionDialog) {
-                App.settings.seenCurseForgeProjectDistributionDialog = true;
-                App.settings.save();
-
-                DialogManager.okDialog().setType(DialogManager.WARNING)
-                        .setTitle(GetText.tr("Mod Not Available"))
-                        .setContent(new HTMLBuilder().center().text(GetText.tr(
-                                "We were unable to download this mod.<br/>This is likely due to the author of the mod disabling third party clients from downloading it.<br/><br/>You'll be prompted shortly to download the mod manually through your browser to your downloads folder.<br/>Once you've downloaded the file that was opened in your browser to your downloads folder, we can continue with installing the mod.<br/><br/>This process is unfortunate, but we don't have any choice in this matter and has to be done this way."))
-                                .build())
-                        .show();
-            }
-
-            dialog.setIndeterminate();
-            String filename = file.fileName;
-            String filename2 = file.fileName.replace(" ", "+");
-            File fileLocation = downloadLocation.toFile();
-            File fileLocation2 = FileSystem.DOWNLOADS.resolve(filename2).toFile();
-            // if file downloaded already, but hashes don't match, delete it
-            if (fileLocation.exists()
-                    && ((md5Hash.isPresent()
-                            && !Hashing.md5(fileLocation.toPath()).equals(Hashing.toHashCode(md5Hash.get().value)))
-                            || (sha1Hash.isPresent()
-                                    && !Hashing.sha1(fileLocation.toPath())
-                                            .equals(Hashing.toHashCode(sha1Hash.get().value))))) {
-                FileUtils.delete(fileLocation.toPath());
-            } else if (fileLocation2.exists()
-                    && ((md5Hash.isPresent()
-                            && !Hashing.md5(fileLocation2.toPath()).equals(Hashing.toHashCode(md5Hash.get().value)))
-                            || (sha1Hash.isPresent()
-                                    && !Hashing.sha1(fileLocation2.toPath())
-                                            .equals(Hashing.toHashCode(sha1Hash.get().value))))) {
-                FileUtils.delete(fileLocation2.toPath());
-            }
-
-            if (!fileLocation.exists() && !fileLocation2.exists()) {
-                File downloadsFolderFile = new File(FileSystem.getUserDownloadsPath().toFile(), filename);
-                File downloadsFolderFile2 = new File(FileSystem.getUserDownloadsPath().toFile(), filename2);
-                if (downloadsFolderFile.exists()) {
-                    Utils.moveFile(downloadsFolderFile, fileLocation, true);
-                } else if (downloadsFolderFile2.exists()) {
-                    Utils.moveFile(downloadsFolderFile2, fileLocation, true);
-                }
-
-                while (!fileLocation.exists() && !fileLocation2.exists()) {
-                    int retValue = 1;
-                    do {
-                        if (retValue == 1) {
-                            OS.openWebBrowser(mod.getBrowserDownloadUrl(file));
-                        }
-
-                        retValue = DialogManager.optionDialog()
-                                .setTitle(GetText.tr("Downloading") + " "
-                                        + filename)
-                                .setContent(new HTMLBuilder().center().text(GetText.tr(
-                                        "Browser opened to download file {0}",
-                                        filename)
-                                        + "<br/><br/>" + GetText.tr("Please save this file to the following location")
-                                        + "<br/><br/>"
-                                        + (OS.isUsingMacApp()
-                                                ? FileSystem.getUserDownloadsPath().toFile().getAbsolutePath()
-                                                : FileSystem.DOWNLOADS.toAbsolutePath().toString()
-                                                        + " or<br/>"
-                                                        + FileSystem.getUserDownloadsPath().toFile()))
-                                        .build())
-                                .addOption(GetText.tr("Open Folder"), true)
-                                .addOption(GetText.tr("I've Downloaded This File")).setType(DialogManager.INFO)
-                                .showWithFileMonitoring(file.fileLength, 1, fileLocation, fileLocation2,
-                                        downloadsFolderFile, downloadsFolderFile2);
-
-                        if (retValue == DialogManager.CLOSED_OPTION) {
-                            return;
-                        } else if (retValue == 0) {
-                            OS.openFileExplorer(FileSystem.DOWNLOADS);
-                        }
-                    } while (retValue != 1);
-
-                    if (!fileLocation.exists() && !fileLocation2.exists()) {
-                        // Check users downloads folder to see if it's there
-                        if (downloadsFolderFile.exists()) {
-                            Utils.moveFile(downloadsFolderFile, fileLocation, true);
-                        } else if (downloadsFolderFile2.exists()) {
-                            Utils.moveFile(downloadsFolderFile2, fileLocation, true);
-                        }
-                        // Check to see if a browser has added a .zip to the end of the file
-                        File zipAddedFile = FileSystem.DOWNLOADS.resolve(file.fileName + ".zip").toFile();
-                        if (zipAddedFile.exists()) {
-                            Utils.moveFile(zipAddedFile, fileLocation, true);
-                        } else {
-                            zipAddedFile = new File(FileSystem.getUserDownloadsPath().toFile(), file.fileName + ".zip");
-                            if (zipAddedFile.exists()) {
-                                Utils.moveFile(zipAddedFile, fileLocation, true);
-                            }
-                        }
-                    }
-
-                    // file downloaded, but hashes don't match, delete it
-                    if (fileLocation.exists()
-                            && ((md5Hash.isPresent() && !Hashing.md5(fileLocation.toPath())
-                                    .equals(Hashing.toHashCode(md5Hash.get().value)))
-                                    || (sha1Hash.isPresent()
-                                            && !Hashing.sha1(fileLocation.toPath())
-                                                    .equals(Hashing.toHashCode(sha1Hash.get().value))))) {
-                        FileUtils.delete(fileLocation.toPath());
-                    } else if (fileLocation2.exists()
-                            && ((md5Hash.isPresent() && !Hashing.md5(fileLocation2.toPath())
-                                    .equals(Hashing.toHashCode(md5Hash.get().value)))
-                                    || (sha1Hash.isPresent()
-                                            && !Hashing.sha1(fileLocation2.toPath())
-                                                    .equals(Hashing.toHashCode(sha1Hash.get().value))))) {
-                        FileUtils.delete(fileLocation2.toPath());
-                    }
-                }
-            }
-
-            if (mod.getRootCategoryId() == Constants.CURSEFORGE_WORLDS_SECTION_ID) {
-                FileUtils.createDirectory(this.getRoot().resolve("saves"));
-
-                ArchiveUtils.extract(downloadLocation, this.getRoot().resolve("saves"));
-            } else {
-                if (Files.exists(finalLocation)) {
-                    FileUtils.delete(finalLocation);
-                }
-
-                if (!Files.isDirectory(finalLocation.getParent())) {
-                    FileUtils.createDirectory(finalLocation.getParent());
-                }
-
-                FileUtils.copyFile(downloadLocation, finalLocation, true);
-            }
-        } else {
-            com.atlauncher.network.Download download = com.atlauncher.network.Download.build().setUrl(file.downloadUrl)
-                    .downloadTo(downloadLocation).size(file.fileLength)
-                    .withHttpClient(Network.createProgressClient(dialog));
-
-            dialog.setTotalBytes(file.fileLength);
-
-            if (mod.getRootCategoryId() == Constants.CURSEFORGE_WORLDS_SECTION_ID) {
-                download = download.unzipTo(this.getRoot().resolve("saves"));
-            } else {
-                download = download.copyTo(finalLocation);
-                if (Files.exists(finalLocation)) {
-                    FileUtils.delete(finalLocation);
-                }
-            }
-
-            if (md5Hash.isPresent()) {
-                download = download.hash(md5Hash.get().value);
-            } else if (sha1Hash.isPresent()) {
-                download = download.hash(sha1Hash.get().value);
-            }
-
-            if (download.needToDownload()) {
-                try {
-                    download.downloadFile();
-                } catch (IOException e) {
-                    LogManager.logStackTrace(e);
-                    DialogManager.okDialog().setType(DialogManager.ERROR).setTitle("Failed to download")
-                            .setContent("Failed to download " + file.fileName + ". Please try again later.").show();
-                    return;
-                }
-            } else {
-                download.copy();
-            }
-        }
-
-        // remove any mods that are from the same mod on CurseForge from the master mod
-        // list
-        this.launcher.mods = this.launcher.mods.stream()
-                .filter(installedMod -> !installedMod.isFromCurseForge() || installedMod.getCurseForgeModId() != mod.id)
-                .collect(Collectors.toList());
-
-        DisableableMod dm = new DisableableMod(mod.name, file.displayName, true, file.fileName,
-                mod.getRootCategoryId() == Constants.CURSEFORGE_RESOURCE_PACKS_SECTION_ID ? Type.resourcepack
-                        : (mod.getRootCategoryId() == Constants.CURSEFORGE_WORLDS_SECTION_ID ? Type.worlds : Type.mods),
-                null, mod.summary, false, true, true, false, mod, file);
-
-        // check for mod on Modrinth
-        if (!App.settings.dontCheckModsOnModrinth) {
-            ModrinthVersion version = ModrinthApi.getVersionFromSha1Hash(Hashing.sha1(finalLocation).toString());
-            if (version != null) {
-                ModrinthProject project = ModrinthApi.getProject(version.projectId);
-                if (project != null) {
-                    // add Modrinth information
-                    dm.modrinthProject = project;
-                    dm.modrinthVersion = version;
-                }
-            }
-        }
-
-        // add this mod to the instance (if not a world)
-        if (dm.type != com.atlauncher.data.Type.worlds) {
-            this.launcher.mods.add(dm);
-            this.save();
-        }
-
-        // #. {0} is the name of a mod that was installed
-        App.TOASTER.pop(GetText.tr("{0} Installed", mod.name));
-    }
-
-    public void addFileFromModrinth(ModrinthProject mod, ModrinthVersion version, ModrinthFile file,
-            ProgressDialog dialog) {
-        ModrinthFile fileToDownload = Optional.ofNullable(file).orElse(version.getPrimaryFile());
-
-        Path downloadLocation = FileSystem.DOWNLOADS.resolve(fileToDownload.filename);
-        Path finalLocation = mod.projectType == ModrinthProjectType.MOD
-                ? this.getRoot().resolve("mods").resolve(fileToDownload.filename)
-                : (mod.projectType == ModrinthProjectType.SHADER
-                        ? this.getRoot().resolve("shaderpacks").resolve(fileToDownload.filename)
-                        : this.getRoot().resolve("resourcepacks").resolve(fileToDownload.filename));
-        com.atlauncher.network.Download download = com.atlauncher.network.Download.build().setUrl(fileToDownload.url)
-                .downloadTo(downloadLocation).copyTo(finalLocation)
-                .withHttpClient(Network.createProgressClient(dialog));
-
-        if (fileToDownload.hashes != null && fileToDownload.hashes.containsKey("sha512")) {
-            download = download.hash(fileToDownload.hashes.get("sha512"));
-        } else if (fileToDownload.hashes != null && fileToDownload.hashes.containsKey("sha1")) {
-            download = download.hash(fileToDownload.hashes.get("sha1"));
-        }
-
-        if (fileToDownload.size != null && fileToDownload.size != 0) {
-            dialog.setTotalBytes(fileToDownload.size);
-            download = download.size(fileToDownload.size);
-        }
-
-        if (Files.exists(finalLocation)) {
-            FileUtils.delete(finalLocation);
-        }
-
-        // find mods with the same Modrinth id
-        List<DisableableMod> sameMods = this.launcher.mods.stream().filter(
-                installedMod -> installedMod.isFromModrinth()
-                        && installedMod.modrinthProject.id.equalsIgnoreCase(mod.id))
-                .collect(Collectors.toList());
-
-        // delete mod files that are the same mod id
-        sameMods.forEach(disableableMod -> Utils.delete(disableableMod.getFile(this)));
-
-        if (download.needToDownload()) {
-            try {
-                download.downloadFile();
-            } catch (IOException e) {
-                LogManager.logStackTrace(e);
-                DialogManager.okDialog().setType(DialogManager.ERROR).setTitle("Failed to download")
-                        .setContent("Failed to download " + fileToDownload.filename + ". Please try again later.")
-                        .show();
-                return;
-            }
-        } else {
-            download.copy();
-        }
-
-        // remove any mods that are from the same mod from the master mod list
-        this.launcher.mods = this.launcher.mods.stream().filter(
-                installedMod -> !installedMod.isFromModrinth()
-                        || !installedMod.modrinthProject.id.equalsIgnoreCase(mod.id))
-                .collect(Collectors.toList());
-
-        Type modType = mod.projectType == ModrinthProjectType.MOD ? Type.mods
-                : (mod.projectType == ModrinthProjectType.SHADER ? Type.shaderpack : Type.resourcepack);
-
-        DisableableMod dm = new DisableableMod(mod.title, version.name, true, fileToDownload.filename, modType,
-                null, mod.description, false, true, true, false, mod, version);
-
-        // check for mod on CurseForge
-        if (!App.settings.dontCheckModsOnCurseForge) {
-            try {
-                CurseForgeFingerprint fingerprint = CurseForgeApi
-                        .checkFingerprints(new Long[] { Hashing.murmur(finalLocation) });
-
-                if (fingerprint.exactMatches != null && fingerprint.exactMatches.size() == 1) {
-                    CurseForgeFingerprintedMod foundMod = fingerprint.exactMatches.get(0);
-
-                    dm.curseForgeProjectId = foundMod.id;
-                    dm.curseForgeFile = foundMod.file;
-                    dm.curseForgeFileId = foundMod.file.id;
-
-                    CurseForgeProject curseForgeProject = CurseForgeApi.getProjectById(foundMod.id);
-                    if (curseForgeProject != null) {
-                        dm.curseForgeProject = curseForgeProject;
-                    }
-                }
-            } catch (IOException e) {
-                LogManager.logStackTrace(e);
-            }
-        }
-
-        // add this mod
-        this.launcher.mods.add(dm);
-        this.save();
-
-        // #. {0} is the name of a mod that was installed
-        App.TOASTER.pop(GetText.tr("{0} Installed", mod.title));
-    }
-
     public boolean hasCustomMods() {
         return this.launcher.mods.stream().anyMatch(DisableableMod::isUserAdded);
     }
@@ -2331,6 +2018,7 @@ public class Instance extends MinecraftVersion {
         }
     }
 
+    @Override
     public void save() {
         try (OutputStreamWriter fileWriter = new OutputStreamWriter(
                 Files.newOutputStream(this.getRoot().resolve("instance.json")), StandardCharsets.UTF_8)) {
@@ -2372,6 +2060,7 @@ public class Instance extends MinecraftVersion {
         return getCustomMinecraftJarLibraryPath().toFile();
     }
 
+    @Override
     public String getName() {
         return launcher.name;
     }
@@ -2384,6 +2073,7 @@ public class Instance extends MinecraftVersion {
         return launcher.version;
     }
 
+    @Override
     public LoaderVersion getLoaderVersion() {
         return launcher.loaderVersion;
     }
@@ -2416,6 +2106,7 @@ public class Instance extends MinecraftVersion {
         return mainClass;
     }
 
+    @Override
     public String getMinecraftVersion() {
         return id;
     }
@@ -3486,19 +3177,7 @@ public class Instance extends MinecraftVersion {
         return null;
     }
 
-    public void removeMod(DisableableMod foundMod) {
-        launcher.mods.remove(foundMod);
-        FileUtils.delete(
-                (foundMod.isDisabled()
-                        ? foundMod.getDisabledFile(this)
-                        : foundMod.getFile(this)).toPath(),
-                true);
-        save();
-
-        // #. {0} is the name of a mod that was removed
-        App.TOASTER.pop(GetText.tr("{0} Removed", foundMod.name));
-    }
-
+    @Override
     public boolean isForgeLikeAndHasInstalledSinytraConnector() {
         if (launcher.loaderVersion == null || !(launcher.loaderVersion.isForge()
                 || launcher.loaderVersion.isNeoForge())) {
@@ -3510,5 +3189,352 @@ public class Instance extends MinecraftVersion {
                 || m.isFromModrinth()
                         && m.modrinthProject.id.equalsIgnoreCase(Constants.MODRINTH_SINYTRA_CONNECTOR_MOD_ID))
                 && App.settings.showFabricModsWhenSinytraInstalled;
+    }
+
+    @Override
+    public boolean supportsPlugins() {
+        return false;
+    }
+
+    @Override
+    public List<DisableableMod> getMods() {
+        return launcher.mods;
+    }
+
+    @Override
+    public void addMod(DisableableMod mod) {
+        launcher.mods.add(mod);
+    }
+
+    @Override
+    public void addMods(List<DisableableMod> mods) {
+        launcher.mods.addAll(mods);
+    }
+
+    @Override
+    public void removeMod(DisableableMod mod) {
+        launcher.mods.remove(mod);
+        FileUtils.delete(
+                (mod.isDisabled()
+                        ? mod.getDisabledFile(this)
+                        : mod.getFile(this)).toPath(),
+                true);
+        save();
+
+        // #. {0} is the name of a mod that was removed
+        App.TOASTER.pop(GetText.tr("{0} Removed", mod.name));
+    }
+
+    public void addFileFromCurseForge(CurseForgeProject mod, CurseForgeFile file, ProgressDialog dialog) {
+        Path downloadLocation = FileSystem.DOWNLOADS.resolve(file.fileName);
+        Path finalLocation = mod.getInstanceDirectoryPath(this.getRoot()).resolve(file.fileName);
+
+        // find mods with the same CurseForge project id
+        List<DisableableMod> sameMods = this.launcher.mods.stream()
+                .filter(installedMod -> installedMod.isFromCurseForge()
+                        && installedMod.getCurseForgeModId() == mod.id)
+                .collect(Collectors.toList());
+
+        // delete mod files that are the same mod id
+        sameMods.forEach(disableableMod -> Utils.delete(disableableMod.getFile(this)));
+
+        Optional<CurseForgeFileHash> md5Hash = file.hashes.stream().filter(CurseForgeFileHash::isMd5)
+                .findFirst();
+        Optional<CurseForgeFileHash> sha1Hash = file.hashes.stream().filter(CurseForgeFileHash::isSha1)
+                .findFirst();
+
+        if (file.downloadUrl == null) {
+            if (!App.settings.seenCurseForgeProjectDistributionDialog) {
+                App.settings.seenCurseForgeProjectDistributionDialog = true;
+                App.settings.save();
+
+                DialogManager.okDialog().setType(DialogManager.WARNING)
+                        .setTitle(GetText.tr("Mod Not Available"))
+                        .setContent(new HTMLBuilder().center().text(GetText.tr(
+                                "We were unable to download this mod.<br/>This is likely due to the author of the mod disabling third party clients from downloading it.<br/><br/>You'll be prompted shortly to download the mod manually through your browser to your downloads folder.<br/>Once you've downloaded the file that was opened in your browser to your downloads folder, we can continue with installing the mod.<br/><br/>This process is unfortunate, but we don't have any choice in this matter and has to be done this way."))
+                                .build())
+                        .show();
+            }
+
+            dialog.setIndeterminate();
+            String filename = file.fileName;
+            String filename2 = file.fileName.replace(" ", "+");
+            File fileLocation = downloadLocation.toFile();
+            File fileLocation2 = FileSystem.DOWNLOADS.resolve(filename2).toFile();
+            // if file downloaded already, but hashes don't match, delete it
+            if (fileLocation.exists()
+                    && ((md5Hash.isPresent()
+                            && !Hashing.md5(fileLocation.toPath()).equals(Hashing.toHashCode(md5Hash.get().value)))
+                            || (sha1Hash.isPresent()
+                                    && !Hashing.sha1(fileLocation.toPath())
+                                            .equals(Hashing.toHashCode(sha1Hash.get().value))))) {
+                FileUtils.delete(fileLocation.toPath());
+            } else if (fileLocation2.exists()
+                    && ((md5Hash.isPresent()
+                            && !Hashing.md5(fileLocation2.toPath()).equals(Hashing.toHashCode(md5Hash.get().value)))
+                            || (sha1Hash.isPresent()
+                                    && !Hashing.sha1(fileLocation2.toPath())
+                                            .equals(Hashing.toHashCode(sha1Hash.get().value))))) {
+                FileUtils.delete(fileLocation2.toPath());
+            }
+
+            if (!fileLocation.exists() && !fileLocation2.exists()) {
+                File downloadsFolderFile = new File(FileSystem.getUserDownloadsPath().toFile(), filename);
+                File downloadsFolderFile2 = new File(FileSystem.getUserDownloadsPath().toFile(), filename2);
+                if (downloadsFolderFile.exists()) {
+                    Utils.moveFile(downloadsFolderFile, fileLocation, true);
+                } else if (downloadsFolderFile2.exists()) {
+                    Utils.moveFile(downloadsFolderFile2, fileLocation, true);
+                }
+
+                while (!fileLocation.exists() && !fileLocation2.exists()) {
+                    int retValue = 1;
+                    do {
+                        if (retValue == 1) {
+                            OS.openWebBrowser(mod.getBrowserDownloadUrl(file));
+                        }
+
+                        retValue = DialogManager.optionDialog()
+                                .setTitle(GetText.tr("Downloading") + " "
+                                        + filename)
+                                .setContent(new HTMLBuilder().center().text(GetText.tr(
+                                        "Browser opened to download file {0}",
+                                        filename)
+                                        + "<br/><br/>" + GetText.tr("Please save this file to the following location")
+                                        + "<br/><br/>"
+                                        + (OS.isUsingMacApp()
+                                                ? FileSystem.getUserDownloadsPath().toFile().getAbsolutePath()
+                                                : FileSystem.DOWNLOADS.toAbsolutePath().toString()
+                                                        + " or<br/>"
+                                                        + FileSystem.getUserDownloadsPath().toFile()))
+                                        .build())
+                                .addOption(GetText.tr("Open Folder"), true)
+                                .addOption(GetText.tr("I've Downloaded This File")).setType(DialogManager.INFO)
+                                .showWithFileMonitoring(file.fileLength, 1, fileLocation, fileLocation2,
+                                        downloadsFolderFile, downloadsFolderFile2);
+
+                        if (retValue == DialogManager.CLOSED_OPTION) {
+                            return;
+                        } else if (retValue == 0) {
+                            OS.openFileExplorer(FileSystem.DOWNLOADS);
+                        }
+                    } while (retValue != 1);
+
+                    if (!fileLocation.exists() && !fileLocation2.exists()) {
+                        // Check users downloads folder to see if it's there
+                        if (downloadsFolderFile.exists()) {
+                            Utils.moveFile(downloadsFolderFile, fileLocation, true);
+                        } else if (downloadsFolderFile2.exists()) {
+                            Utils.moveFile(downloadsFolderFile2, fileLocation, true);
+                        }
+                        // Check to see if a browser has added a .zip to the end of the file
+                        File zipAddedFile = FileSystem.DOWNLOADS.resolve(file.fileName + ".zip").toFile();
+                        if (zipAddedFile.exists()) {
+                            Utils.moveFile(zipAddedFile, fileLocation, true);
+                        } else {
+                            zipAddedFile = new File(FileSystem.getUserDownloadsPath().toFile(), file.fileName + ".zip");
+                            if (zipAddedFile.exists()) {
+                                Utils.moveFile(zipAddedFile, fileLocation, true);
+                            }
+                        }
+                    }
+
+                    // file downloaded, but hashes don't match, delete it
+                    if (fileLocation.exists()
+                            && ((md5Hash.isPresent() && !Hashing.md5(fileLocation.toPath())
+                                    .equals(Hashing.toHashCode(md5Hash.get().value)))
+                                    || (sha1Hash.isPresent()
+                                            && !Hashing.sha1(fileLocation.toPath())
+                                                    .equals(Hashing.toHashCode(sha1Hash.get().value))))) {
+                        FileUtils.delete(fileLocation.toPath());
+                    } else if (fileLocation2.exists()
+                            && ((md5Hash.isPresent() && !Hashing.md5(fileLocation2.toPath())
+                                    .equals(Hashing.toHashCode(md5Hash.get().value)))
+                                    || (sha1Hash.isPresent()
+                                            && !Hashing.sha1(fileLocation2.toPath())
+                                                    .equals(Hashing.toHashCode(sha1Hash.get().value))))) {
+                        FileUtils.delete(fileLocation2.toPath());
+                    }
+                }
+            }
+
+            if (mod.getRootCategoryId() == Constants.CURSEFORGE_WORLDS_SECTION_ID) {
+                FileUtils.createDirectory(this.getRoot().resolve("saves"));
+
+                ArchiveUtils.extract(downloadLocation, this.getRoot().resolve("saves"));
+            } else {
+                if (Files.exists(finalLocation)) {
+                    FileUtils.delete(finalLocation);
+                }
+
+                if (!Files.isDirectory(finalLocation.getParent())) {
+                    FileUtils.createDirectory(finalLocation.getParent());
+                }
+
+                FileUtils.copyFile(downloadLocation, finalLocation, true);
+            }
+        } else {
+            com.atlauncher.network.Download download = com.atlauncher.network.Download.build().setUrl(file.downloadUrl)
+                    .downloadTo(downloadLocation).size(file.fileLength)
+                    .withHttpClient(Network.createProgressClient(dialog));
+
+            dialog.setTotalBytes(file.fileLength);
+
+            if (mod.getRootCategoryId() == Constants.CURSEFORGE_WORLDS_SECTION_ID) {
+                download = download.unzipTo(this.getRoot().resolve("saves"));
+            } else {
+                download = download.copyTo(finalLocation);
+                if (Files.exists(finalLocation)) {
+                    FileUtils.delete(finalLocation);
+                }
+            }
+
+            if (md5Hash.isPresent()) {
+                download = download.hash(md5Hash.get().value);
+            } else if (sha1Hash.isPresent()) {
+                download = download.hash(sha1Hash.get().value);
+            }
+
+            if (download.needToDownload()) {
+                try {
+                    download.downloadFile();
+                } catch (IOException e) {
+                    LogManager.logStackTrace(e);
+                    DialogManager.okDialog().setType(DialogManager.ERROR).setTitle("Failed to download")
+                            .setContent("Failed to download " + file.fileName + ". Please try again later.").show();
+                    return;
+                }
+            } else {
+                download.copy();
+            }
+        }
+
+        // remove any mods that are from the same mod on CurseForge from the master mod
+        // list
+        this.launcher.mods = this.launcher.mods.stream()
+                .filter(installedMod -> !installedMod.isFromCurseForge() || installedMod.getCurseForgeModId() != mod.id)
+                .collect(Collectors.toList());
+
+        DisableableMod dm = new DisableableMod(mod.name, file.displayName, true, file.fileName,
+                mod.getRootCategoryId() == Constants.CURSEFORGE_RESOURCE_PACKS_SECTION_ID ? Type.resourcepack
+                        : (mod.getRootCategoryId() == Constants.CURSEFORGE_WORLDS_SECTION_ID ? Type.worlds : Type.mods),
+                null, mod.summary, false, true, true, false, mod, file);
+
+        // check for mod on Modrinth
+        if (!App.settings.dontCheckModsOnModrinth) {
+            ModrinthVersion version = ModrinthApi.getVersionFromSha1Hash(Hashing.sha1(finalLocation).toString());
+            if (version != null) {
+                ModrinthProject project = ModrinthApi.getProject(version.projectId);
+                if (project != null) {
+                    // add Modrinth information
+                    dm.modrinthProject = project;
+                    dm.modrinthVersion = version;
+                }
+            }
+        }
+
+        // add this mod to the instance (if not a world)
+        if (dm.type != com.atlauncher.data.Type.worlds) {
+            this.launcher.mods.add(dm);
+            this.save();
+        }
+
+        // #. {0} is the name of a mod that was installed
+        App.TOASTER.pop(GetText.tr("{0} Installed", mod.name));
+    }
+
+    public void addFileFromModrinth(ModrinthProject mod, ModrinthVersion version, ModrinthFile file,
+            ProgressDialog dialog) {
+        ModrinthFile fileToDownload = Optional.ofNullable(file).orElse(version.getPrimaryFile());
+
+        Path downloadLocation = FileSystem.DOWNLOADS.resolve(fileToDownload.filename);
+        Path finalLocation = mod.projectType == ModrinthProjectType.MOD
+                ? this.getRoot().resolve("mods").resolve(fileToDownload.filename)
+                : (mod.projectType == ModrinthProjectType.SHADER
+                        ? this.getRoot().resolve("shaderpacks").resolve(fileToDownload.filename)
+                        : this.getRoot().resolve("resourcepacks").resolve(fileToDownload.filename));
+        com.atlauncher.network.Download download = com.atlauncher.network.Download.build().setUrl(fileToDownload.url)
+                .downloadTo(downloadLocation).copyTo(finalLocation)
+                .withHttpClient(Network.createProgressClient(dialog));
+
+        if (fileToDownload.hashes != null && fileToDownload.hashes.containsKey("sha512")) {
+            download = download.hash(fileToDownload.hashes.get("sha512"));
+        } else if (fileToDownload.hashes != null && fileToDownload.hashes.containsKey("sha1")) {
+            download = download.hash(fileToDownload.hashes.get("sha1"));
+        }
+
+        if (fileToDownload.size != null && fileToDownload.size != 0) {
+            dialog.setTotalBytes(fileToDownload.size);
+            download = download.size(fileToDownload.size);
+        }
+
+        if (Files.exists(finalLocation)) {
+            FileUtils.delete(finalLocation);
+        }
+
+        // find mods with the same Modrinth id
+        List<DisableableMod> sameMods = this.launcher.mods.stream().filter(
+                installedMod -> installedMod.isFromModrinth()
+                        && installedMod.modrinthProject.id.equalsIgnoreCase(mod.id))
+                .collect(Collectors.toList());
+
+        // delete mod files that are the same mod id
+        sameMods.forEach(disableableMod -> Utils.delete(disableableMod.getFile(this)));
+
+        if (download.needToDownload()) {
+            try {
+                download.downloadFile();
+            } catch (IOException e) {
+                LogManager.logStackTrace(e);
+                DialogManager.okDialog().setType(DialogManager.ERROR).setTitle("Failed to download")
+                        .setContent("Failed to download " + fileToDownload.filename + ". Please try again later.")
+                        .show();
+                return;
+            }
+        } else {
+            download.copy();
+        }
+
+        // remove any mods that are from the same mod from the master mod list
+        this.launcher.mods = this.launcher.mods.stream().filter(
+                installedMod -> !installedMod.isFromModrinth()
+                        || !installedMod.modrinthProject.id.equalsIgnoreCase(mod.id))
+                .collect(Collectors.toList());
+
+        Type modType = mod.projectType == ModrinthProjectType.MOD ? Type.mods
+                : (mod.projectType == ModrinthProjectType.SHADER ? Type.shaderpack : Type.resourcepack);
+
+        DisableableMod dm = new DisableableMod(mod.title, version.name, true, fileToDownload.filename, modType,
+                null, mod.description, false, true, true, false, mod, version);
+
+        // check for mod on CurseForge
+        if (!App.settings.dontCheckModsOnCurseForge) {
+            try {
+                CurseForgeFingerprint fingerprint = CurseForgeApi
+                        .checkFingerprints(new Long[] { Hashing.murmur(finalLocation) });
+
+                if (fingerprint.exactMatches != null && fingerprint.exactMatches.size() == 1) {
+                    CurseForgeFingerprintedMod foundMod = fingerprint.exactMatches.get(0);
+
+                    dm.curseForgeProjectId = foundMod.id;
+                    dm.curseForgeFile = foundMod.file;
+                    dm.curseForgeFileId = foundMod.file.id;
+
+                    CurseForgeProject curseForgeProject = CurseForgeApi.getProjectById(foundMod.id);
+                    if (curseForgeProject != null) {
+                        dm.curseForgeProject = curseForgeProject;
+                    }
+                }
+            } catch (IOException e) {
+                LogManager.logStackTrace(e);
+            }
+        }
+
+        // add this mod
+        this.launcher.mods.add(dm);
+        this.save();
+
+        // #. {0} is the name of a mod that was installed
+        App.TOASTER.pop(GetText.tr("{0} Installed", mod.title));
     }
 }

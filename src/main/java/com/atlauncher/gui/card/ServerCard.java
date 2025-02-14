@@ -42,6 +42,8 @@ import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.gui.components.CollapsiblePanel;
 import com.atlauncher.gui.components.DropDownButton;
 import com.atlauncher.gui.components.ImagePanel;
+import com.atlauncher.gui.dialogs.AddModsDialog;
+import com.atlauncher.gui.dialogs.EditModsDialog;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.managers.ServerManager;
@@ -50,12 +52,15 @@ import com.atlauncher.network.analytics.AnalyticsEvent;
 import com.atlauncher.utils.OS;
 
 public class ServerCard extends CollapsiblePanel implements RelocalizationListener {
+
     private final Server server;
     private final ImagePanel image;
     private final JButton launchButton = new JButton(GetText.tr("Launch"));
     private final JButton launchAndCloseButton = new JButton(GetText.tr("Launch & Close"));
     private final JButton launchWithGui = new JButton(GetText.tr("Launch With GUI"));
     private final JButton launchWithGuiAndClose = new JButton(GetText.tr("Launch With GUI & Close"));
+    private final JButton addButton = new JButton(GetText.tr("Add Mods"));
+    private final JButton editButton = new JButton(GetText.tr("Edit Mods"));
     private final JButton backupButton = new JButton(GetText.tr("Backup"));
     private final JButton deleteButton = new JButton(GetText.tr("Delete"));
     private final JButton openButton = new JButton(GetText.tr("Open Folder"));
@@ -110,6 +115,19 @@ public class ServerCard extends CollapsiblePanel implements RelocalizationListen
         top.add(this.launchAndCloseButton);
         top.add(this.launchWithGui);
         top.add(this.launchWithGuiAndClose);
+
+        if (server.loaderVersion != null) {
+            // Paper only supports plugins and not mods, so update the button text to be
+            // clear
+            if (server.loaderVersion.isPaperMC()) {
+                this.addButton.setText(GetText.tr("Add Plugins"));
+                this.editButton.setText(GetText.tr("Edit Plugins"));
+            }
+
+            bottom.add(this.addButton);
+            bottom.add(this.editButton);
+        }
+
         bottom.add(this.backupButton);
         bottom.add(this.deleteButton);
         bottom.add(this.getHelpButton);
@@ -145,6 +163,12 @@ public class ServerCard extends CollapsiblePanel implements RelocalizationListen
         this.launchAndCloseButton.addActionListener(e -> server.launch("nogui", true));
         this.launchWithGui.addActionListener(e -> server.launch(false));
         this.launchWithGuiAndClose.addActionListener(e -> server.launch(true));
+        this.addButton.addActionListener(e -> {
+            new AddModsDialog(server);
+        });
+        this.editButton.addActionListener(e -> {
+            new EditModsDialog(server);
+        });
         this.backupButton.addActionListener(e -> server.backup());
         this.deleteButton.addActionListener(e -> {
             int ret = DialogManager.yesNoDialog(false).setTitle(GetText.tr("Delete Server"))
@@ -251,5 +275,14 @@ public class ServerCard extends CollapsiblePanel implements RelocalizationListen
         this.backupButton.setText(GetText.tr("Backup"));
         this.deleteButton.setText(GetText.tr("Delete"));
         this.openButton.setText(GetText.tr("Open Folder"));
+
+        // Paper only supports plugins and not mods, so update the button text to be clear
+        if (server.loaderVersion != null && server.loaderVersion.isPaperMC()) {
+            this.addButton.setText(GetText.tr("Add Plugins"));
+            this.editButton.setText(GetText.tr("Edit Plugins"));
+        } else {
+            this.addButton.setText(GetText.tr("Add Mods"));
+            this.editButton.setText(GetText.tr("Edit Mods"));
+        }
     }
 }

@@ -240,25 +240,25 @@ public class DisableableMod implements Serializable {
         return this.file;
     }
 
-    public boolean enable(Instance instance) {
+    public boolean enable(ModManagement instanceOrServer) {
         if (this.disabled) {
-            if (!getFile(instance).getParentFile().exists()) {
-                getFile(instance).getParentFile().mkdir();
+            if (!getFile(instanceOrServer).getParentFile().exists()) {
+                getFile(instanceOrServer).getParentFile().mkdir();
             }
-            if (Utils.moveFile(getDisabledFile(instance), getFile(instance), true)) {
+            if (Utils.moveFile(getDisabledFile(instanceOrServer), getFile(instanceOrServer), true)) {
                 this.disabled = false;
             }
         }
         return false;
     }
 
-    public boolean disable(Instance instance) {
+    public boolean disable(ModManagement instanceOrServer) {
         if (!this.disabled) {
-            if (!Files.isDirectory(instance.getRoot().resolve("disabledmods"))) {
-                FileUtils.createDirectory(instance.getRoot().resolve("disabledmods"));
+            if (!Files.isDirectory(instanceOrServer.getRoot().resolve("disabledmods"))) {
+                FileUtils.createDirectory(instanceOrServer.getRoot().resolve("disabledmods"));
             }
 
-            if (Utils.moveFile(getFile(instance), getDisabledFile(instance), true)) {
+            if (Utils.moveFile(getFile(instanceOrServer), getDisabledFile(instanceOrServer), true)) {
                 this.disabled = true;
                 return true;
             }
@@ -282,13 +282,21 @@ public class DisableableMod implements Serializable {
         return getFile(instance).toPath();
     }
 
-    public File getDisabledFile(Instance instance) {
+    public File getDisabledFile(ModManagement instanceOrServer) {
         try {
-            return instance.getRoot().resolve("disabledmods/" + this.file).toFile();
+            return instanceOrServer.getRoot().resolve("disabledmods/" + this.file).toFile();
         } catch (InvalidPathException e) {
             LogManager.warn("Invalid path for mod " + this.name);
             return null;
         }
+    }
+
+    public File getFile(ModManagement instanceOrServer) {
+        return getFile(instanceOrServer.getRoot(), instanceOrServer.getMinecraftVersion());
+    }
+
+    public File getFile(Server server) {
+        return getFile(server.getRoot(), server.version);
     }
 
     public File getFile(Instance instance) {
@@ -323,6 +331,9 @@ public class DisableableMod implements Serializable {
                         break;
                     case mods:
                         dir = base.resolve("mods").toFile();
+                        break;
+                    case plugins:
+                        dir = base.resolve("plugins").toFile();
                         break;
                     case ic2lib:
                         dir = base.resolve("mods/ic2").toFile();
@@ -361,11 +372,11 @@ public class DisableableMod implements Serializable {
         return this.type;
     }
 
-    public boolean checkForUpdate(Window parent, Instance instance) {
-        return checkForUpdate(parent, instance, null);
+    public boolean checkForUpdate(Window parent, ModManagement instanceOrServer) {
+        return checkForUpdate(parent, instanceOrServer, null);
     }
 
-    public boolean checkForUpdate(Window parent, Instance instance, ModPlatform platform) {
+    public boolean checkForUpdate(Window parent, ModManagement instanceOrServer, ModPlatform platform) {
         Analytics.trackEvent(AnalyticsEvent.simpleEvent("mod_update_check"));
 
         if (platform == ModPlatform.CURSEFORGE || (platform == null && isFromCurseForge()
@@ -390,12 +401,12 @@ public class DisableableMod implements Serializable {
 
                 if (App.settings.addModRestriction == AddModRestriction.STRICT) {
                     curseForgeFilesStream = curseForgeFilesStream
-                            .filter(file -> file.gameVersions.contains(instance.id));
+                            .filter(file -> file.gameVersions.contains(instanceOrServer.getMinecraftVersion()));
                 }
 
                 if (App.settings.addModRestriction == AddModRestriction.LAX) {
                     try {
-                        List<String> minecraftVersionsToSearch = MinecraftManager.getMajorMinecraftVersions(instance.id)
+                        List<String> minecraftVersionsToSearch = MinecraftManager.getMajorMinecraftVersions(instanceOrServer.getMinecraftVersion())
                                 .stream().map(mv -> mv.id).collect(Collectors.toList());
 
                         curseForgeFilesStream = curseForgeFilesStream.filter(
@@ -411,27 +422,27 @@ public class DisableableMod implements Serializable {
 
                 // filter out files not for our loader
                 curseForgeFilesStream = curseForgeFilesStream.filter(cf -> {
-                    if (cf.gameVersions.contains("Fabric") && instance.launcher.loaderVersion != null
-                            && (instance.launcher.loaderVersion.isFabric()
-                                    || instance.launcher.loaderVersion.isLegacyFabric()
-                                    || instance.launcher.loaderVersion.isQuilt())) {
+                    if (cf.gameVersions.contains("Fabric") && instanceOrServer.getLoaderVersion() != null
+                            && (instanceOrServer.getLoaderVersion().isFabric()
+                                    || instanceOrServer.getLoaderVersion().isLegacyFabric()
+                                    || instanceOrServer.getLoaderVersion().isQuilt())) {
                         return true;
                     }
 
-                    if (cf.gameVersions.contains("NeoForge") && instance.launcher.loaderVersion != null
-                            && instance.launcher.loaderVersion.isNeoForge()) {
+                    if (cf.gameVersions.contains("NeoForge") && instanceOrServer.getLoaderVersion() != null
+                            && instanceOrServer.getLoaderVersion().isNeoForge()) {
                         return true;
                     }
 
-                    if (cf.gameVersions.contains("Forge") && instance.launcher.loaderVersion != null
-                            && (instance.launcher.loaderVersion.isForge()
-                                    || (instance.launcher.loaderVersion.isNeoForge()
-                                            && neoForgeForgeCompatabilityVersions.contains(instance.id)))) {
+                    if (cf.gameVersions.contains("Forge") && instanceOrServer.getLoaderVersion() != null
+                            && (instanceOrServer.getLoaderVersion().isForge()
+                                    || (instanceOrServer.getLoaderVersion().isNeoForge()
+                                            && neoForgeForgeCompatabilityVersions.contains(instanceOrServer.getMinecraftVersion())))) {
                         return true;
                     }
 
-                    if (cf.gameVersions.contains("Quilt") && instance.launcher.loaderVersion != null
-                            && instance.launcher.loaderVersion.isQuilt()) {
+                    if (cf.gameVersions.contains("Quilt") && instanceOrServer.getLoaderVersion() != null
+                            && instanceOrServer.getLoaderVersion().isQuilt()) {
                         return true;
                     }
 
@@ -459,7 +470,7 @@ public class DisableableMod implements Serializable {
                 return false;
             }
 
-            new CurseForgeProjectFileSelectorDialog(parent, (CurseForgeProject) dialog.getReturnValue(), instance,
+            new CurseForgeProjectFileSelectorDialog(parent, (CurseForgeProject) dialog.getReturnValue(), instanceOrServer,
                     curseForgeFileId);
         } else if (platform == ModPlatform.MODRINTH || platform == null && isFromModrinth()
                 && (!isFromCurseForge() || App.settings.defaultModPlatform == ModPlatform.MODRINTH)) {
@@ -471,8 +482,8 @@ public class DisableableMod implements Serializable {
                     parent);
             dialog.addThread(new Thread(() -> {
                 ModrinthProject mod = ModrinthApi.getProject(modrinthProject.id);
-                List<ModrinthVersion> versions = ModrinthApi.getVersions(modrinthProject.id, instance.id,
-                        instance.launcher.loaderVersion);
+                List<ModrinthVersion> versions = ModrinthApi.getVersions(modrinthProject.id, instanceOrServer.getMinecraftVersion(),
+                        instanceOrServer.getLoaderVersion());
 
                 if (versions == null) {
                     dialog.setReturnValue(null);
@@ -484,7 +495,7 @@ public class DisableableMod implements Serializable {
                         .sorted(Comparator.comparing((ModrinthVersion version) -> version.datePublished).reversed());
 
                 if (App.settings.addModRestriction == AddModRestriction.STRICT) {
-                    versionsStream = versionsStream.filter(v -> v.gameVersions.contains(instance.id));
+                    versionsStream = versionsStream.filter(v -> v.gameVersions.contains(instanceOrServer.getMinecraftVersion()));
                 }
 
                 if (versionsStream.noneMatch(v -> ISODateTimeFormat.dateTimeParser().parseDateTime(v.datePublished)
@@ -506,17 +517,17 @@ public class DisableableMod implements Serializable {
 
             Pair<ModrinthProject, List<ModrinthVersion>> pair = dialog.getReturnValue();
 
-            new ModrinthVersionSelectorDialog(parent, pair.left(), pair.right(), instance, modrinthVersion.id);
+            new ModrinthVersionSelectorDialog(parent, pair.left(), pair.right(), instanceOrServer, modrinthVersion.id);
         }
 
         return true;
     }
 
-    public boolean reinstall(Window parent, Instance instance) {
-        return reinstall(parent, instance, null);
+    public boolean reinstall(Window parent, ModManagement instanceOrServer) {
+        return reinstall(parent, instanceOrServer, null);
     }
 
-    public boolean reinstall(Window parent, Instance instance, ModPlatform platform) {
+    public boolean reinstall(Window parent, ModManagement instanceOrServer, ModPlatform platform) {
         Analytics.trackEvent(AnalyticsEvent.simpleEvent("mod_reinstall"));
 
         if (platform == ModPlatform.CURSEFORGE || (platform == null && isFromCurseForge()
@@ -533,7 +544,7 @@ public class DisableableMod implements Serializable {
             }));
             dialog.start();
 
-            new CurseForgeProjectFileSelectorDialog(parent, dialog.getReturnValue(), instance, curseForgeFileId, false);
+            new CurseForgeProjectFileSelectorDialog(parent, dialog.getReturnValue(), instanceOrServer, curseForgeFileId, false);
         } else if (platform == ModPlatform.MODRINTH || (platform == null && isFromModrinth()
                 && (!isFromCurseForge() || App.settings.defaultModPlatform == ModPlatform.MODRINTH))) {
             ProgressDialog<ModrinthProject> dialog = new ProgressDialog<>(
@@ -547,7 +558,7 @@ public class DisableableMod implements Serializable {
             }));
             dialog.start();
 
-            new ModrinthVersionSelectorDialog(parent, dialog.getReturnValue(), instance, modrinthVersion.id, false);
+            new ModrinthVersionSelectorDialog(parent, dialog.getReturnValue(), instanceOrServer, modrinthVersion.id, false);
         }
 
         return true;

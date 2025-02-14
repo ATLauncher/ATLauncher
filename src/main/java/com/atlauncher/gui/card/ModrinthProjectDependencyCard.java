@@ -32,7 +32,7 @@ import javax.swing.border.TitledBorder;
 import org.mini2Dx.gettext.GetText;
 
 import com.atlauncher.App;
-import com.atlauncher.data.Instance;
+import com.atlauncher.data.ModManagement;
 import com.atlauncher.data.modrinth.ModrinthDependency;
 import com.atlauncher.data.modrinth.ModrinthProject;
 import com.atlauncher.gui.dialogs.ModrinthVersionSelectorDialog;
@@ -45,17 +45,17 @@ import com.atlauncher.workers.BackgroundImageWorker;
 public final class ModrinthProjectDependencyCard extends JPanel {
     private final ModrinthVersionSelectorDialog parent;
     private final ModrinthDependency dependency;
-    private final Instance instance;
+    private final ModManagement instanceOrServer;
 
     public ModrinthProjectDependencyCard(ModrinthVersionSelectorDialog parent, ModrinthDependency dependency,
-            Instance instance) {
+            ModManagement instanceOrServer) {
         this.parent = parent;
 
         setLayout(new BorderLayout());
         setPreferredSize(new Dimension(250, 180));
 
         this.dependency = dependency;
-        this.instance = instance;
+        this.instanceOrServer = instanceOrServer;
 
         setupComponents();
     }
@@ -89,7 +89,7 @@ public final class ModrinthProjectDependencyCard extends JPanel {
 
         addButton.addActionListener(e -> {
             Analytics.trackEvent(AnalyticsEvent.forAddMod(mod));
-            new ModrinthVersionSelectorDialog(parent, mod, instance);
+            new ModrinthVersionSelectorDialog(parent, mod, instanceOrServer);
             parent.reloadDependenciesPanel();
         });
 

@@ -42,7 +42,7 @@ import org.mini2Dx.gettext.GetText;
 import com.atlauncher.App;
 import com.atlauncher.constants.Constants;
 import com.atlauncher.data.AddModRestriction;
-import com.atlauncher.data.Instance;
+import com.atlauncher.data.ModManagement;
 import com.atlauncher.data.curseforge.CurseForgeFile;
 import com.atlauncher.data.curseforge.CurseForgeFileDependency;
 import com.atlauncher.data.curseforge.CurseForgeProject;
@@ -61,7 +61,7 @@ import com.atlauncher.utils.OS;
 public class CurseForgeProjectFileSelectorDialog extends JDialog {
     private int filesLength = 0;
     private final CurseForgeProject mod;
-    private final Instance instance;
+    private final ModManagement instanceOrServer;
     private Integer installedFileId = null;
     private boolean selectNewest = true;
 
@@ -75,36 +75,36 @@ public class CurseForgeProjectFileSelectorDialog extends JDialog {
     private JComboBox<CurseForgeFile> filesDropdown;
     private final List<CurseForgeFile> files = new ArrayList<>();
 
-    public CurseForgeProjectFileSelectorDialog(CurseForgeProject mod, Instance instance) {
-        this(App.launcher.getParent(), mod, instance);
+    public CurseForgeProjectFileSelectorDialog(CurseForgeProject mod, ModManagement instanceOrServer) {
+        this(App.launcher.getParent(), mod, instanceOrServer);
     }
 
-    public CurseForgeProjectFileSelectorDialog(Window parent, CurseForgeProject mod, Instance instance) {
+    public CurseForgeProjectFileSelectorDialog(Window parent, CurseForgeProject mod, ModManagement instanceOrServer) {
         super(parent, ModalityType.DOCUMENT_MODAL);
 
         this.mod = mod;
-        this.instance = instance;
+        this.instanceOrServer = instanceOrServer;
 
         setupComponents();
     }
 
-    public CurseForgeProjectFileSelectorDialog(Window parent, CurseForgeProject mod, Instance instance,
+    public CurseForgeProjectFileSelectorDialog(Window parent, CurseForgeProject mod, ModManagement instanceOrServer,
             int installedFileId) {
         super(parent, ModalityType.DOCUMENT_MODAL);
 
         this.mod = mod;
-        this.instance = instance;
+        this.instanceOrServer = instanceOrServer;
         this.installedFileId = installedFileId;
 
         setupComponents();
     }
 
-    public CurseForgeProjectFileSelectorDialog(Window parent, CurseForgeProject mod, Instance instance,
+    public CurseForgeProjectFileSelectorDialog(Window parent, CurseForgeProject mod, ModManagement instanceOrServer,
             int installedFileId, boolean selectNewest) {
         super(parent, ModalityType.DOCUMENT_MODAL);
 
         this.mod = mod;
-        this.instance = instance;
+        this.instanceOrServer = instanceOrServer;
         this.installedFileId = installedFileId;
         this.selectNewest = selectNewest;
 
@@ -182,7 +182,7 @@ public class CurseForgeProjectFileSelectorDialog extends JDialog {
                     GetText.tr("Installing {0}", file.displayName), false, this);
             progressDialog.addThread(new Thread(() -> {
                 Analytics.trackEvent(AnalyticsEvent.forAddedMod(mod, file));
-                instance.addFileFromCurseForge(mod, file, progressDialog);
+                instanceOrServer.addFileFromCurseForge(mod, file, progressDialog);
 
                 progressDialog.close();
             }));
@@ -233,15 +233,15 @@ public class CurseForgeProjectFileSelectorDialog extends JDialog {
                         }
 
                         // We shouldn't install Fabric API when using Sinytra Connector
-                        return !instance.isForgeLikeAndHasInstalledSinytraConnector();
+                        return !instanceOrServer.isForgeLikeAndHasInstalledSinytraConnector();
                     })
-                    .filter(dependency -> instance.launcher.mods.stream()
+                    .filter(dependency -> instanceOrServer.getMods().stream()
                             .noneMatch(installedMod -> {
-                                if (instance.getLoaderVersion().isQuilt()
+                                if (instanceOrServer.getLoaderVersion().isQuilt()
                                         && dependency.modId == Constants.CURSEFORGE_FABRIC_MOD_ID) {
                                     // if on Quilt and the dependency is Fabric API, then don't show it if user
                                     // already has QSL installed
-                                    return instance.launcher.mods.parallelStream().anyMatch(m -> m.isFromModrinth()
+                                    return instanceOrServer.getMods().parallelStream().anyMatch(m -> m.isFromModrinth()
                                             && m.modrinthProject.id.equals(Constants.MODRINTH_QSL_MOD_ID));
                                 }
 
@@ -277,7 +277,7 @@ public class CurseForgeProjectFileSelectorDialog extends JDialog {
                 dependenciesPanel.removeAll();
 
                 dependencies.forEach(dependency -> dependenciesPanel
-                        .add(new CurseForgeFileDependencyCard(this, dependency, instance)));
+                        .add(new CurseForgeFileDependencyCard(this, dependency, instanceOrServer)));
 
                 dependenciesPanel.setLayout(new GridLayout(dependencies.size() < 2 ? 1 : dependencies.size() / 2,
                         (dependencies.size() / 2) + 1));
@@ -302,7 +302,7 @@ public class CurseForgeProjectFileSelectorDialog extends JDialog {
         filesDropdown.setVisible(true);
 
         Runnable r = () -> {
-            LoaderVersion loaderVersion = this.instance.launcher.loaderVersion;
+            LoaderVersion loaderVersion = instanceOrServer.getLoaderVersion();
 
             List<CurseForgeFile> projectFiles = CurseForgeApi.getFilesForProject(mod.id);
             Stream<CurseForgeFile> curseForgeFilesStream = projectFiles.stream()
@@ -311,11 +311,11 @@ public class CurseForgeProjectFileSelectorDialog extends JDialog {
             if (App.settings.addModRestriction == AddModRestriction.STRICT) {
                 curseForgeFilesStream = curseForgeFilesStream.filter(
                         file -> mod.getRootCategoryId() == Constants.CURSEFORGE_RESOURCE_PACKS_SECTION_ID
-                                || file.gameVersions.contains(this.instance.id));
+                                || file.gameVersions.contains(instanceOrServer.getMinecraftVersion()));
             } else if (App.settings.addModRestriction == AddModRestriction.LAX) {
                 try {
                     List<String> minecraftVersionsToSearch = MinecraftManager
-                            .getMajorMinecraftVersions(this.instance.id).stream().map(mv -> mv.id)
+                            .getMajorMinecraftVersions(instanceOrServer.getMinecraftVersion()).stream().map(mv -> mv.id)
                             .collect(Collectors.toList());
 
                     curseForgeFilesStream = curseForgeFilesStream
@@ -330,7 +330,7 @@ public class CurseForgeProjectFileSelectorDialog extends JDialog {
                     .getConfigItem("loaders.neoforge.forgeCompatibleMinecraftVersions", new ArrayList<String>());
             boolean hasNeoForgeVersion = projectFiles.stream()
                     .anyMatch(v -> v.gameVersions.contains("NeoForge")
-                            || (neoForgeForgeCompatabilityVersions.contains(this.instance.id)
+                            || (neoForgeForgeCompatabilityVersions.contains(instanceOrServer.getMinecraftVersion())
                                     && v.gameVersions.contains("Forge")));
             boolean hasForgeVersion = projectFiles.stream().anyMatch(v -> v.gameVersions.contains("Forge"));
 
@@ -340,10 +340,10 @@ public class CurseForgeProjectFileSelectorDialog extends JDialog {
                     if (cf.gameVersions.contains("Fabric") && loaderVersion != null
                             && (loaderVersion.isFabric() || loaderVersion.isLegacyFabric()
                                     || loaderVersion.isQuilt()
-                                    || (this.instance.isForgeLikeAndHasInstalledSinytraConnector()
-                                            && this.instance.launcher.loaderVersion.isForge() && !hasForgeVersion)
-                                    || (this.instance.isForgeLikeAndHasInstalledSinytraConnector()
-                                            && this.instance.launcher.loaderVersion.isNeoForge()
+                                    || (instanceOrServer.isForgeLikeAndHasInstalledSinytraConnector()
+                                            && instanceOrServer.getLoaderVersion().isForge() && !hasForgeVersion)
+                                    || (instanceOrServer.isForgeLikeAndHasInstalledSinytraConnector()
+                                            && instanceOrServer.getLoaderVersion().isNeoForge()
                                             && !hasNeoForgeVersion))) {
                         return true;
                     }
@@ -356,7 +356,8 @@ public class CurseForgeProjectFileSelectorDialog extends JDialog {
                     if (cf.gameVersions.contains("Forge") && loaderVersion != null
                             && (loaderVersion.isForge()
                                     || (loaderVersion.isNeoForge()
-                                            && neoForgeForgeCompatabilityVersions.contains(this.instance.id)))) {
+                                            && neoForgeForgeCompatabilityVersions
+                                                    .contains(instanceOrServer.getMinecraftVersion())))) {
                         return true;
                     }
 

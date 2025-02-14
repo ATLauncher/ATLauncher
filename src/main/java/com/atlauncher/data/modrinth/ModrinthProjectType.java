@@ -26,6 +26,9 @@ public enum ModrinthProjectType {
     @SerializedName("modpack")
     MODPACK,
 
+    @SerializedName("plugin")
+    PLUGIN,
+
     @SerializedName("resourcepack")
     RESOURCEPACK,
 

@@ -30,6 +30,7 @@ import org.mini2Dx.gettext.GetText;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.data.DisableableMod;
 import com.atlauncher.data.ModPlatform;
+import com.atlauncher.data.Type;
 import com.atlauncher.data.json.Mod;
 import com.atlauncher.data.modrinth.ModrinthDonationUrl;
 import com.atlauncher.data.modrinth.ModrinthProject;
@@ -59,7 +60,8 @@ public class ModsJCheckBox extends JCheckBox {
     /**
      * Constructor for use in the {@link ModsChooser} dialog with new JSON format.
      *
-     * @param mod The mod this object is displaying data for
+     * @param mod
+     *            The mod this object is displaying data for
      */
     public ModsJCheckBox(Mod mod, EditModsDialog dialog) {
         super(mod.getName());
@@ -83,10 +85,11 @@ public class ModsJCheckBox extends JCheckBox {
     /**
      * Constructor for use in the {@link EditModsDialog} dialog.
      *
-     * @param mod The mod this object is displaying data for
+     * @param mod
+     *            The mod this object is displaying data for
      */
     public ModsJCheckBox(DisableableMod mod, EditModsDialog dialog) {
-        super(mod.getName());
+        super(mod.type == Type.plugins ? "[Plugin] " + mod.getName() : mod.getName());
 
         if (mod.hasColour()) {
             setForeground(mod.getColour());
@@ -195,9 +198,9 @@ public class ModsJCheckBox extends JCheckBox {
                 getDisableableMod().disabled ? GetText.tr("Enable") : GetText.tr("Disable"));
         enableDisableButton.addActionListener(e -> {
             if (getDisableableMod().disabled) {
-                getDisableableMod().enable(dialog.instance);
+                getDisableableMod().enable(dialog.instanceOrServer);
             } else {
-                getDisableableMod().disable(dialog.instance);
+                getDisableableMod().disable(dialog.instanceOrServer);
             }
 
             dialog.reloadPanels();
@@ -209,9 +212,9 @@ public class ModsJCheckBox extends JCheckBox {
         JMenuItem showInFileExplorer = new JMenuItem(GetText.tr("Show In File Explorer"));
         showInFileExplorer.addActionListener(e -> {
             if (getDisableableMod().disabled) {
-                OS.openFileExplorer(getDisableableMod().getDisabledFile(dialog.instance).toPath());
+                OS.openFileExplorer(getDisableableMod().getDisabledFile(dialog.instanceOrServer).toPath());
             } else {
-                OS.openFileExplorer(getDisableableMod().getFile(dialog.instance).toPath());
+                OS.openFileExplorer(getDisableableMod().getFile(dialog.instanceOrServer).toPath());
             }
         });
         contextMenu.add(showInFileExplorer);
@@ -220,9 +223,10 @@ public class ModsJCheckBox extends JCheckBox {
 
         JMenuItem remove = new JMenuItem(GetText.tr("Remove"));
         remove.addActionListener(e -> {
-            dialog.instance.launcher.mods.remove(getDisableableMod());
-            Utils.delete((getDisableableMod().isDisabled() ? getDisableableMod().getDisabledFile(dialog.instance)
-                    : getDisableableMod().getFile(dialog.instance)));
+            dialog.instanceOrServer.getMods().remove(getDisableableMod());
+            Utils.delete(
+                    (getDisableableMod().isDisabled() ? getDisableableMod().getDisabledFile(dialog.instanceOrServer)
+                            : getDisableableMod().getFile(dialog.instanceOrServer)));
 
             dialog.reloadPanels();
         });
@@ -234,7 +238,7 @@ public class ModsJCheckBox extends JCheckBox {
             // #. {0} is the platform to reinstall the mod from (e.g. CurseForge/Modrinth)
             JMenuItem reinstallFromCurseForge = new JMenuItem(GetText.tr("Reinstall From {0}", "CurseForge"));
             reinstallFromCurseForge.addActionListener(e -> {
-                getDisableableMod().reinstall(dialog, dialog.instance, ModPlatform.CURSEFORGE);
+                getDisableableMod().reinstall(dialog, dialog.instanceOrServer, ModPlatform.CURSEFORGE);
 
                 dialog.reloadPanels();
             });
@@ -243,7 +247,7 @@ public class ModsJCheckBox extends JCheckBox {
             // #. {0} is the platform to reinstall the mod from (e.g. CurseForge/Modrinth)
             JMenuItem reinstallFromModrinth = new JMenuItem(GetText.tr("Reinstall From {0}", "Modrinth"));
             reinstallFromModrinth.addActionListener(e -> {
-                getDisableableMod().reinstall(dialog, dialog.instance, ModPlatform.MODRINTH);
+                getDisableableMod().reinstall(dialog, dialog.instanceOrServer, ModPlatform.MODRINTH);
 
                 dialog.reloadPanels();
             });
@@ -256,7 +260,7 @@ public class ModsJCheckBox extends JCheckBox {
             checkForUpdatesOnCurseForge.addActionListener(e -> {
                 boolean updated = false;
 
-                updated = getDisableableMod().checkForUpdate(dialog, dialog.instance, ModPlatform.CURSEFORGE);
+                updated = getDisableableMod().checkForUpdate(dialog, dialog.instanceOrServer, ModPlatform.CURSEFORGE);
 
                 if (!updated) {
                     DialogManager.okDialog().setTitle(GetText.tr("No Updates Found"))
@@ -272,7 +276,7 @@ public class ModsJCheckBox extends JCheckBox {
             checkForUpdatesOnModrinth.addActionListener(e -> {
                 boolean updated = false;
 
-                updated = getDisableableMod().checkForUpdate(dialog, dialog.instance, ModPlatform.MODRINTH);
+                updated = getDisableableMod().checkForUpdate(dialog, dialog.instanceOrServer, ModPlatform.MODRINTH);
 
                 if (!updated) {
                     DialogManager.okDialog().setTitle(GetText.tr("No Updates Found"))
@@ -287,7 +291,7 @@ public class ModsJCheckBox extends JCheckBox {
 
             JMenuItem reinstall = new JMenuItem(GetText.tr("Reinstall"));
             reinstall.addActionListener(e -> {
-                getDisableableMod().reinstall(dialog, dialog.instance);
+                getDisableableMod().reinstall(dialog, dialog.instanceOrServer);
 
                 dialog.reloadPanels();
             });
@@ -297,7 +301,7 @@ public class ModsJCheckBox extends JCheckBox {
             checkForUpdates.addActionListener(e -> {
                 boolean updated = false;
 
-                updated = getDisableableMod().checkForUpdate(dialog, dialog.instance);
+                updated = getDisableableMod().checkForUpdate(dialog, dialog.instanceOrServer);
 
                 if (!updated) {
                     DialogManager.okDialog().setTitle(GetText.tr("No Updates Found"))

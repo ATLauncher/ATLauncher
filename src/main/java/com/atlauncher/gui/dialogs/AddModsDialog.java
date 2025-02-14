@@ -51,6 +51,7 @@ import com.atlauncher.constants.Constants;
 import com.atlauncher.data.AddModRestriction;
 import com.atlauncher.data.DisableableMod;
 import com.atlauncher.data.Instance;
+import com.atlauncher.data.ModManagement;
 import com.atlauncher.data.ModPlatform;
 import com.atlauncher.data.curseforge.CurseForgeCategoryForGame;
 import com.atlauncher.data.curseforge.CurseForgeProject;
@@ -78,7 +79,7 @@ import com.atlauncher.utils.OS;
 import com.formdev.flatlaf.icons.FlatSearchIcon;
 
 public final class AddModsDialog extends JDialog {
-    private final Instance instance;
+    private final ModManagement instanceOrServer;
 
     private boolean updating = false;
 
@@ -152,29 +153,39 @@ public final class AddModsDialog extends JDialog {
     private final JPanel mainPanel = new JPanel(new BorderLayout());
     private int page = 0;
 
-    public AddModsDialog(Instance instance) {
-        this(App.launcher.getParent(), instance);
+    public AddModsDialog(ModManagement instanceOrServer) {
+        this(App.launcher.getParent(), instanceOrServer);
     }
 
-    public AddModsDialog(Window parent, Instance instance) {
+    public AddModsDialog(Window parent, ModManagement instanceOrServer) {
         // #. {0} is the name of the mod we're installing
-        super(parent, GetText.tr("Adding Mods For {0}", instance.launcher.name), ModalityType.DOCUMENT_MODAL);
-        this.instance = instance;
+        super(parent, GetText.tr("Adding Mods For {0}", instanceOrServer.getName()), ModalityType.DOCUMENT_MODAL);
+        this.instanceOrServer = instanceOrServer;
 
         this.setPreferredSize(new Dimension(800, 500));
         this.setMinimumSize(new Dimension(800, 500));
         this.setResizable(true);
         this.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 
-        if (ConfigManager.getConfigItem("platforms.curseforge.modsEnabled", true)) {
+        int selectedHostIndex = 0;
+        String platformMessage = null;
+
+        if (ConfigManager.getConfigItem("platforms.curseforge.modsEnabled", true)
+                && (instanceOrServer.getLoaderVersion() == null || !instanceOrServer.getLoaderVersion().isPaperMC())) {
             hostComboBox.addItem(new ComboItem<>(ModPlatform.CURSEFORGE, "CurseForge"));
+            platformMessage = ConfigManager.getConfigItem("platforms.curseforge.message", null);
         }
 
         if (ConfigManager.getConfigItem("platforms.modrinth.modsEnabled", true)) {
             hostComboBox.addItem(new ComboItem<>(ModPlatform.MODRINTH, "Modrinth"));
+
+            if (App.settings.defaultModPlatform == ModPlatform.MODRINTH) {
+                selectedHostIndex = hostComboBox.getItemCount() - 1;
+                platformMessage = ConfigManager.getConfigItem("platforms.modrinth.message", null);
+            }
         }
 
-        hostComboBox.setSelectedIndex(App.settings.defaultModPlatform == ModPlatform.CURSEFORGE ? 0 : 1);
+        hostComboBox.setSelectedIndex(selectedHostIndex);
 
         searchField.putClientProperty("JTextField.placeholderText", GetText.tr("Search"));
         searchField.putClientProperty("JTextField.leadingIcon", new FlatSearchIcon());
@@ -184,31 +195,12 @@ public final class AddModsDialog extends JDialog {
             searchForMods();
         });
 
-        String platformMessage = ConfigManager.getConfigItem(String.format("platforms.%s.message",
-                App.settings.defaultModPlatform == ModPlatform.CURSEFORGE ? "curseforge" : "modrinth"), null);
         if (platformMessage != null) {
             platformMessageLabel.setText(new HTMLBuilder().center().text(platformMessage).build());
         }
         platformMessageLabel.setVisible(platformMessage != null);
 
-        if (instance.launcher.loaderVersion != null) {
-            sectionComboBox.addItem(new ComboItem<>("Mods", GetText.tr("Mods")));
-        }
-        sectionComboBox.addItem(new ComboItem<>("Resource Packs", GetText.tr("Resource Packs")));
-        sectionComboBox.addItem(new ComboItem<>("Shaders", GetText.tr("Shaders")));
-
-        if (App.settings.defaultModPlatform == ModPlatform.CURSEFORGE) {
-            sectionComboBox.addItem(new ComboItem<>("Worlds", GetText.tr("Worlds")));
-
-            sortComboBox.addItem(new ComboItem<>("Popularity", GetText.tr("Popularity")));
-            sortComboBox.addItem(new ComboItem<>("Last Updated", GetText.tr("Last Updated")));
-            sortComboBox.addItem(new ComboItem<>("Total Downloads", GetText.tr("Total Downloads")));
-        } else {
-            sortComboBox.addItem(new ComboItem<>("relevance", GetText.tr("Relevance")));
-            sortComboBox.addItem(new ComboItem<>("newest", GetText.tr("Newest")));
-            sortComboBox.addItem(new ComboItem<>("updated", GetText.tr("Last Updated")));
-            sortComboBox.addItem(new ComboItem<>("downloads", GetText.tr("Total Downloads")));
-        }
+        addSectionAndSortOptions(true);
 
         addCategories();
 
@@ -279,9 +271,9 @@ public final class AddModsDialog extends JDialog {
                 }
 
                 Analytics.trackEvent(AnalyticsEvent.forAddMod("Fabric API", "CurseForge"));
-                new CurseForgeProjectFileSelectorDialog(this, mod, instance);
+                new CurseForgeProjectFileSelectorDialog(this, mod, instanceOrServer);
 
-                if (instance.launcher.mods.stream().anyMatch(
+                if (instanceOrServer.getMods().stream().anyMatch(
                         m -> (m.isFromCurseForge() && m.getCurseForgeModId() == Constants.CURSEFORGE_FABRIC_MOD_ID)
                                 || (m.isFromModrinth()
                                         && m.modrinthProject.id.equalsIgnoreCase(Constants.MODRINTH_FABRIC_MOD_ID)))) {
@@ -321,9 +313,9 @@ public final class AddModsDialog extends JDialog {
                 }
 
                 Analytics.trackEvent(AnalyticsEvent.forAddMod("Fabric API", "Modrinth"));
-                new ModrinthVersionSelectorDialog(this, mod, instance);
+                new ModrinthVersionSelectorDialog(this, mod, instanceOrServer);
 
-                if (instance.launcher.mods.stream().anyMatch(
+                if (instanceOrServer.getMods().stream().anyMatch(
                         m -> (m.isFromCurseForge() && m.getCurseForgeModId() == Constants.CURSEFORGE_FABRIC_MOD_ID)
                                 || (m.isFromModrinth()
                                         && m.modrinthProject.id.equalsIgnoreCase(Constants.MODRINTH_FABRIC_MOD_ID)))) {
@@ -375,9 +367,9 @@ public final class AddModsDialog extends JDialog {
                 }
 
                 Analytics.trackEvent(AnalyticsEvent.forAddMod("Legacy Fabric API", "CurseForge"));
-                new CurseForgeProjectFileSelectorDialog(this, mod, instance);
+                new CurseForgeProjectFileSelectorDialog(this, mod, instanceOrServer);
 
-                if (instance.launcher.mods.stream().anyMatch(
+                if (instanceOrServer.getMods().stream().anyMatch(
                         m -> (m.isFromCurseForge()
                                 && m.getCurseForgeModId() == Constants.CURSEFORGE_LEGACY_FABRIC_MOD_ID)
                                 || (m.isFromModrinth()
@@ -419,9 +411,9 @@ public final class AddModsDialog extends JDialog {
                 }
 
                 Analytics.trackEvent(AnalyticsEvent.forAddMod("Legacy Fabric API", "Modrinth"));
-                new ModrinthVersionSelectorDialog(this, mod, instance);
+                new ModrinthVersionSelectorDialog(this, mod, instanceOrServer);
 
-                if (instance.launcher.mods.stream().anyMatch(
+                if (instanceOrServer.getMods().stream().anyMatch(
                         m -> (m.isFromCurseForge()
                                 && m.getCurseForgeModId() == Constants.CURSEFORGE_LEGACY_FABRIC_MOD_ID)
                                 || (m.isFromModrinth()
@@ -472,9 +464,9 @@ public final class AddModsDialog extends JDialog {
             }
 
             Analytics.trackEvent(AnalyticsEvent.forAddMod("Quilt Standard Libraries", "Modrinth"));
-            new ModrinthVersionSelectorDialog(this, mod, instance);
+            new ModrinthVersionSelectorDialog(this, mod, instanceOrServer);
 
-            if (instance.launcher.mods.stream().anyMatch(
+            if (instanceOrServer.getMods().stream().anyMatch(
                     m -> m.isFromModrinth()
                             && m.modrinthProject.id.equalsIgnoreCase(Constants.MODRINTH_QSL_MOD_ID))) {
                 quiltStandardLibrariesWarningLabel.setVisible(false);
@@ -519,9 +511,9 @@ public final class AddModsDialog extends JDialog {
                 }
 
                 Analytics.trackEvent(AnalyticsEvent.forAddMod("Forgified Fabric API", "CurseForge"));
-                new CurseForgeProjectFileSelectorDialog(this, mod, instance);
+                new CurseForgeProjectFileSelectorDialog(this, mod, instanceOrServer);
 
-                if (instance.launcher.mods.stream().anyMatch(
+                if (instanceOrServer.getMods().stream().anyMatch(
                         m -> (m.isFromCurseForge()
                                 && m.getCurseForgeModId() == Constants.CURSEFORGE_FORGIFIED_FABRIC_API_MOD_ID)
                                 || (m.isFromModrinth()
@@ -563,9 +555,9 @@ public final class AddModsDialog extends JDialog {
                 }
 
                 Analytics.trackEvent(AnalyticsEvent.forAddMod("Forgified Fabric API", "Modrinth"));
-                new ModrinthVersionSelectorDialog(this, mod, instance);
+                new ModrinthVersionSelectorDialog(this, mod, instanceOrServer);
 
-                if (instance.launcher.mods.stream().anyMatch(
+                if (instanceOrServer.getMods().stream().anyMatch(
                         m -> (m.isFromCurseForge()
                                 && m.getCurseForgeModId() == Constants.CURSEFORGE_FORGIFIED_FABRIC_API_MOD_ID)
                                 || (m.isFromModrinth()
@@ -583,9 +575,9 @@ public final class AddModsDialog extends JDialog {
             }
         });
 
-        LoaderVersion loaderVersion = this.instance.launcher.loaderVersion;
+        LoaderVersion loaderVersion = instanceOrServer.getLoaderVersion();
 
-        if (loaderVersion != null && loaderVersion.isFabric() && instance.launcher.mods.stream()
+        if (loaderVersion != null && loaderVersion.isFabric() && instanceOrServer.getMods().stream()
                 .noneMatch(m -> (m.isFromCurseForge() && m.getCurseForgeModId() == Constants.CURSEFORGE_FABRIC_MOD_ID)
                         || m.isFromModrinth()
                                 && m.modrinthProject.id.equalsIgnoreCase(Constants.MODRINTH_FABRIC_MOD_ID))) {
@@ -593,7 +585,7 @@ public final class AddModsDialog extends JDialog {
             this.topPanel.add(installFabricApiButton, BorderLayout.EAST);
         }
 
-        if (loaderVersion != null && loaderVersion.isLegacyFabric() && instance.launcher.mods.stream()
+        if (loaderVersion != null && loaderVersion.isLegacyFabric() && instanceOrServer.getMods().stream()
                 .noneMatch(m -> (m.isFromCurseForge()
                         && m.getCurseForgeModId() == Constants.CURSEFORGE_LEGACY_FABRIC_MOD_ID)
                         || m.isFromModrinth()
@@ -606,7 +598,7 @@ public final class AddModsDialog extends JDialog {
             this.topPanel.add(legacyFabricModrinthWarningLabel, BorderLayout.SOUTH);
         }
 
-        if (loaderVersion != null && loaderVersion.isQuilt() && instance.launcher.mods.stream()
+        if (loaderVersion != null && loaderVersion.isQuilt() && instanceOrServer.getMods().stream()
                 .noneMatch(m -> m.isFromModrinth()
                         && m.modrinthProject.id.equalsIgnoreCase(Constants.MODRINTH_QSL_MOD_ID))) {
             this.topPanel.add(quiltStandardLibrariesWarningLabel, BorderLayout.CENTER);
@@ -615,7 +607,7 @@ public final class AddModsDialog extends JDialog {
 
         // If on Forge/NeoForge and has Sinytra Connector installed, then show Forgified
         // Fabric API things
-        if (instance.isForgeLikeAndHasInstalledSinytraConnector() && instance.launcher.mods.stream()
+        if (instanceOrServer.isForgeLikeAndHasInstalledSinytraConnector() && instanceOrServer.getMods().stream()
                 .noneMatch(m -> (m.isFromCurseForge()
                         && m.getCurseForgeModId() == Constants.CURSEFORGE_FORGIFIED_FABRIC_API_MOD_ID)
                         || m.isFromModrinth()
@@ -671,45 +663,22 @@ public final class AddModsDialog extends JDialog {
         this.hostComboBox.addActionListener(e -> {
             updating = true;
             page = 0;
-            boolean isCurseForge = ((ComboItem<ModPlatform>) hostComboBox.getSelectedItem())
-                    .getValue() == ModPlatform.CURSEFORGE;
+            ModPlatform selectedModPlatform = ((ComboItem<ModPlatform>) hostComboBox.getSelectedItem()).getValue();
 
-            boolean resourcePacksSelected = ((ComboItem<String>) sectionComboBox.getSelectedItem()).getValue()
-                    .equals("Resource Packs");
-            boolean shadersSelected = ((ComboItem<String>) sectionComboBox.getSelectedItem()).getValue()
-                    .equals("Shaders");
+            boolean isCurseForge = selectedModPlatform == ModPlatform.CURSEFORGE;
+            boolean isModrinth = selectedModPlatform == ModPlatform.MODRINTH;
 
             String platformMessage = null;
 
             sortComboBox.removeAllItems();
             sectionComboBox.removeAllItems();
 
-            if (instance.launcher.loaderVersion != null) {
-                sectionComboBox.addItem(new ComboItem<>("Mods", GetText.tr("Mods")));
-            }
-
-            sectionComboBox.addItem(new ComboItem<>("Resource Packs", GetText.tr("Resource Packs")));
-            if (resourcePacksSelected) {
-                sectionComboBox.setSelectedIndex(sectionComboBox.getItemCount() - 1);
-            }
-
-            sectionComboBox.addItem(new ComboItem<>("Shaders", GetText.tr("Shaders")));
-            if (shadersSelected) {
-                sectionComboBox.setSelectedIndex(sectionComboBox.getItemCount() - 1);
-            }
+            addSectionAndSortOptions(false);
 
             if (isCurseForge) {
                 platformMessage = ConfigManager.getConfigItem("platforms.curseforge.message", null);
-                sectionComboBox.addItem(new ComboItem<>("Worlds", GetText.tr("Worlds")));
-                sortComboBox.addItem(new ComboItem<>("Popularity", GetText.tr("Popularity")));
-                sortComboBox.addItem(new ComboItem<>("Last Updated", GetText.tr("Last Updated")));
-                sortComboBox.addItem(new ComboItem<>("Total Downloads", GetText.tr("Total Downloads")));
-            } else {
+            } else if (isModrinth) {
                 platformMessage = ConfigManager.getConfigItem("platforms.modrinth.message", null);
-                sortComboBox.addItem(new ComboItem<>("relevance", GetText.tr("Relevance")));
-                sortComboBox.addItem(new ComboItem<>("newest", GetText.tr("Newest")));
-                sortComboBox.addItem(new ComboItem<>("updated", GetText.tr("Last Updated")));
-                sortComboBox.addItem(new ComboItem<>("downloads", GetText.tr("Total Downloads")));
             }
 
             addCategories();
@@ -719,7 +688,7 @@ public final class AddModsDialog extends JDialog {
             }
             platformMessageLabel.setVisible(platformMessage != null);
             legacyFabricModrinthWarningLabel
-                    .setVisible(loaderVersion != null && loaderVersion.isLegacyFabric() && !isCurseForge);
+                    .setVisible(loaderVersion != null && loaderVersion.isLegacyFabric() && isModrinth);
 
             if (searchField.getText().isEmpty()) {
                 loadDefaultMods();
@@ -786,11 +755,10 @@ public final class AddModsDialog extends JDialog {
             page -= 1;
         }
 
-        boolean isCurseForge = ((ComboItem<ModPlatform>) hostComboBox.getSelectedItem())
-                .getValue() == ModPlatform.CURSEFORGE;
+        ModPlatform selectedModPlatform = ((ComboItem<ModPlatform>) hostComboBox.getSelectedItem()).getValue();
         Analytics.trackEvent(
                 AnalyticsEvent.forSearchEventPlatform("add_mods", searchField.getText(), page + 1,
-                        isCurseForge ? "CurseForge" : "Modrinth"));
+                        selectedModPlatform.toString()));
 
         getMods();
     }
@@ -800,11 +768,10 @@ public final class AddModsDialog extends JDialog {
             page += 1;
         }
 
-        boolean isCurseForge = ((ComboItem<ModPlatform>) hostComboBox.getSelectedItem())
-                .getValue() == ModPlatform.CURSEFORGE;
+        ModPlatform selectedModPlatform = ((ComboItem<ModPlatform>) hostComboBox.getSelectedItem()).getValue();
         Analytics.trackEvent(
                 AnalyticsEvent.forSearchEventPlatform("add_mods", searchField.getText(), page + 1,
-                        isCurseForge ? "CurseForge" : "Modrinth"));
+                        selectedModPlatform.toString()));
 
         getMods();
     }
@@ -816,13 +783,12 @@ public final class AddModsDialog extends JDialog {
         nextButton.setEnabled(false);
 
         String query = searchField.getText();
-        boolean isCurseForge = ((ComboItem<ModPlatform>) hostComboBox.getSelectedItem())
-                .getValue() == ModPlatform.CURSEFORGE;
+        ModPlatform selectedModPlatform = ((ComboItem<ModPlatform>) hostComboBox.getSelectedItem()).getValue();
 
         new Thread(() -> {
-            if (isCurseForge) {
+            if (selectedModPlatform == ModPlatform.CURSEFORGE) {
                 String versionToSearchFor = App.settings.addModRestriction == AddModRestriction.STRICT
-                        ? this.instance.id
+                        ? instanceOrServer.getMinecraftVersion()
                         : null;
 
                 if (((ComboItem<String>) sectionComboBox.getSelectedItem()).getValue().equals("Resource Packs")) {
@@ -841,19 +807,19 @@ public final class AddModsDialog extends JDialog {
                             categoriesComboBox.getSelectedItem() == null ? null
                                     : ((ComboItem<String>) categoriesComboBox.getSelectedItem()).getValue()));
                 } else {
-                    if (this.instance.launcher.loaderVersion.isFabric()
-                            || this.instance.launcher.loaderVersion.isLegacyFabric()) {
+                    if (instanceOrServer.getLoaderVersion().isFabric()
+                            || instanceOrServer.getLoaderVersion().isLegacyFabric()) {
                         setCurseForgeMods(CurseForgeApi.searchModsForFabric(versionToSearchFor, query, page,
                                 ((ComboItem<String>) sortComboBox.getSelectedItem()).getValue(),
                                 categoriesComboBox.getSelectedItem() == null ? null
                                         : ((ComboItem<String>) categoriesComboBox.getSelectedItem()).getValue()));
-                    } else if (this.instance.launcher.loaderVersion.isQuilt()) {
+                    } else if (instanceOrServer.getLoaderVersion().isQuilt()) {
                         setCurseForgeMods(CurseForgeApi.searchModsForQuilt(versionToSearchFor, query, page,
                                 ((ComboItem<String>) sortComboBox.getSelectedItem()).getValue(),
                                 categoriesComboBox.getSelectedItem() == null ? null
                                         : ((ComboItem<String>) categoriesComboBox.getSelectedItem()).getValue()));
-                    } else if (this.instance.isForgeLikeAndHasInstalledSinytraConnector()) {
-                        if (this.instance.launcher.loaderVersion.isForge()) {
+                    } else if (instanceOrServer.isForgeLikeAndHasInstalledSinytraConnector()) {
+                        if (instanceOrServer.getLoaderVersion().isForge()) {
                             setCurseForgeMods(CurseForgeApi.searchModsForForgeOrFabric(versionToSearchFor, query, page,
                                     ((ComboItem<String>) sortComboBox.getSelectedItem()).getValue(),
                                     ((ComboItem<String>) categoriesComboBox.getSelectedItem()) == null ? null
@@ -865,12 +831,12 @@ public final class AddModsDialog extends JDialog {
                                     ((ComboItem<String>) categoriesComboBox.getSelectedItem()) == null ? null
                                             : ((ComboItem<String>) categoriesComboBox.getSelectedItem()).getValue()));
                         }
-                    } else if (this.instance.launcher.loaderVersion.isForge()) {
+                    } else if (instanceOrServer.getLoaderVersion().isForge()) {
                         setCurseForgeMods(CurseForgeApi.searchModsForForge(versionToSearchFor, query, page,
                                 ((ComboItem<String>) sortComboBox.getSelectedItem()).getValue(),
                                 categoriesComboBox.getSelectedItem() == null ? null
                                         : ((ComboItem<String>) categoriesComboBox.getSelectedItem()).getValue()));
-                    } else if (this.instance.launcher.loaderVersion.isNeoForge()) {
+                    } else if (instanceOrServer.getLoaderVersion().isNeoForge()) {
                         setCurseForgeMods(CurseForgeApi.searchModsForNeoForge(versionToSearchFor, query, page,
                                 ((ComboItem<String>) sortComboBox.getSelectedItem()).getValue(),
                                 categoriesComboBox.getSelectedItem() == null ? null
@@ -882,14 +848,15 @@ public final class AddModsDialog extends JDialog {
                                         : ((ComboItem<String>) categoriesComboBox.getSelectedItem()).getValue()));
                     }
                 }
-            } else {
+            } else if (selectedModPlatform == ModPlatform.MODRINTH) {
                 List<String> versionsToSearchFor = new ArrayList<>();
 
                 if (App.settings.addModRestriction == AddModRestriction.STRICT) {
-                    versionsToSearchFor.add(this.instance.id);
+                    versionsToSearchFor.add(instanceOrServer.getMinecraftVersion());
                 } else if (App.settings.addModRestriction == AddModRestriction.LAX) {
                     try {
-                        versionsToSearchFor.addAll(MinecraftManager.getMajorMinecraftVersions(this.instance.id).stream()
+                        versionsToSearchFor.addAll(MinecraftManager
+                                .getMajorMinecraftVersions(instanceOrServer.getMinecraftVersion()).stream()
                                 .map(mv -> mv.id).collect(Collectors.toList()));
                     } catch (InvalidMinecraftVersion e) {
                         LogManager.logStackTrace(e);
@@ -909,20 +876,27 @@ public final class AddModsDialog extends JDialog {
                             ((ComboItem<String>) sortComboBox.getSelectedItem()).getValue(),
                             categoriesComboBox.getSelectedItem() == null ? null
                                     : ((ComboItem<String>) categoriesComboBox.getSelectedItem()).getValue()));
+                } else if (((ComboItem<String>) sectionComboBox.getSelectedItem()).getValue().equals("Plugins")) {
+                    if (instanceOrServer.getLoaderVersion().isPaperMC()) {
+                        setModrinthMods(ModrinthApi.searchPluginsForPaper(versionsToSearchFor, query, page,
+                                ((ComboItem<String>) sortComboBox.getSelectedItem()).getValue(),
+                                categoriesComboBox.getSelectedItem() == null ? null
+                                        : ((ComboItem<String>) categoriesComboBox.getSelectedItem()).getValue()));
+                    }
                 } else {
-                    if (this.instance.launcher.loaderVersion.isFabric()
-                            || this.instance.launcher.loaderVersion.isLegacyFabric()) {
+                    if (instanceOrServer.getLoaderVersion().isFabric()
+                            || instanceOrServer.getLoaderVersion().isLegacyFabric()) {
                         setModrinthMods(ModrinthApi.searchModsForFabric(versionsToSearchFor, query, page,
                                 ((ComboItem<String>) sortComboBox.getSelectedItem()).getValue(),
                                 categoriesComboBox.getSelectedItem() == null ? null
                                         : ((ComboItem<String>) categoriesComboBox.getSelectedItem()).getValue()));
-                    } else if (this.instance.launcher.loaderVersion.isQuilt()) {
+                    } else if (instanceOrServer.getLoaderVersion().isQuilt()) {
                         setModrinthMods(ModrinthApi.searchModsForQuiltOrFabric(versionsToSearchFor, query, page,
                                 ((ComboItem<String>) sortComboBox.getSelectedItem()).getValue(),
                                 categoriesComboBox.getSelectedItem() == null ? null
                                         : ((ComboItem<String>) categoriesComboBox.getSelectedItem()).getValue()));
-                    } else if (this.instance.isForgeLikeAndHasInstalledSinytraConnector()) {
-                        if (this.instance.launcher.loaderVersion.isForge()) {
+                    } else if (instanceOrServer.isForgeLikeAndHasInstalledSinytraConnector()) {
+                        if (instanceOrServer.getLoaderVersion().isForge()) {
                             setModrinthMods(ModrinthApi.searchModsForForgeOrFabric(versionsToSearchFor, query, page,
                                     ((ComboItem<String>) sortComboBox.getSelectedItem()).getValue(),
                                     ((ComboItem<String>) categoriesComboBox.getSelectedItem()) == null ? null
@@ -933,12 +907,12 @@ public final class AddModsDialog extends JDialog {
                                     ((ComboItem<String>) categoriesComboBox.getSelectedItem()) == null ? null
                                             : ((ComboItem<String>) categoriesComboBox.getSelectedItem()).getValue()));
                         }
-                    } else if (this.instance.launcher.loaderVersion.isForge()) {
+                    } else if (instanceOrServer.getLoaderVersion().isForge()) {
                         setModrinthMods(ModrinthApi.searchModsForForge(versionsToSearchFor, query, page,
                                 ((ComboItem<String>) sortComboBox.getSelectedItem()).getValue(),
                                 categoriesComboBox.getSelectedItem() == null ? null
                                         : ((ComboItem<String>) categoriesComboBox.getSelectedItem()).getValue()));
-                    } else if (this.instance.launcher.loaderVersion.isNeoForge()) {
+                    } else if (instanceOrServer.getLoaderVersion().isNeoForge()) {
                         setModrinthMods(ModrinthApi.searchModsForNeoForge(versionsToSearchFor, query, page,
                                 ((ComboItem<String>) sortComboBox.getSelectedItem()).getValue(),
                                 categoriesComboBox.getSelectedItem() == null ? null
@@ -960,11 +934,10 @@ public final class AddModsDialog extends JDialog {
 
         page = 0;
 
-        boolean isCurseForge = ((ComboItem<ModPlatform>) hostComboBox.getSelectedItem())
-                .getValue() == ModPlatform.CURSEFORGE;
+        ModPlatform selectedModPlatform = ((ComboItem<ModPlatform>) hostComboBox.getSelectedItem()).getValue();
         Analytics.trackEvent(
                 AnalyticsEvent.forSearchEventPlatform("add_mods", query, page + 1,
-                        isCurseForge ? "CurseForge" : "Modrinth"));
+                        selectedModPlatform.toString()));
 
         getMods();
     }
@@ -991,18 +964,18 @@ public final class AddModsDialog extends JDialog {
             mods.forEach(mod -> {
                 CurseForgeProject castMod = mod;
 
-                contentPanel.add(new CurseForgeProjectCard(castMod, instance, e -> {
+                contentPanel.add(new CurseForgeProjectCard(castMod, instanceOrServer, e -> {
                     Analytics.trackEvent(AnalyticsEvent.forAddMod(castMod));
-                    new CurseForgeProjectFileSelectorDialog(this, castMod, instance);
+                    new CurseForgeProjectFileSelectorDialog(this, castMod, instanceOrServer);
                 }, e -> {
                     Analytics.trackEvent(AnalyticsEvent.forRemoveMod(castMod));
 
-                    Optional<DisableableMod> foundMod = instance.launcher.mods.stream()
+                    Optional<DisableableMod> foundMod = instanceOrServer.getMods().stream()
                             .filter(dm -> dm.isFromCurseForge() && dm.curseForgeProjectId == castMod.id)
                             .findFirst();
 
                     if (foundMod.isPresent()) {
-                        instance.removeMod(foundMod.get());
+                        instanceOrServer.removeMod(foundMod.get());
 
                         if (castMod.id == Constants.CURSEFORGE_FABRIC_MOD_ID) {
                             fabricApiWarningLabel.setVisible(true);
@@ -1053,7 +1026,7 @@ public final class AddModsDialog extends JDialog {
             searchResult.hits.forEach(mod -> {
                 ModrinthSearchHit castMod = mod;
 
-                contentPanel.add(new ModrinthSearchHitCard(castMod, instance, e -> {
+                contentPanel.add(new ModrinthSearchHitCard(castMod, instanceOrServer, e -> {
                     final ProgressDialog<ModrinthProject> modrinthProjectLookupDialog = new ProgressDialog<>(
                             GetText.tr("Getting Mod Information"), 0, GetText.tr("Getting Mod Information"),
                             "Aborting Getting Mod Information");
@@ -1078,16 +1051,16 @@ public final class AddModsDialog extends JDialog {
                     }
 
                     Analytics.trackEvent(AnalyticsEvent.forAddMod(castMod));
-                    new ModrinthVersionSelectorDialog(this, modrinthMod, instance);
+                    new ModrinthVersionSelectorDialog(this, modrinthMod, instanceOrServer);
                 }, e -> {
                     Analytics.trackEvent(AnalyticsEvent.forRemoveMod(castMod));
 
-                    Optional<DisableableMod> foundMod = instance.launcher.mods.stream()
+                    Optional<DisableableMod> foundMod = instanceOrServer.getMods().stream()
                             .filter(dm -> dm.isFromModrinth() && dm.modrinthProject.id.equals(castMod.projectId))
                             .findFirst();
 
                     if (foundMod.isPresent()) {
-                        instance.removeMod(foundMod.get());
+                        instanceOrServer.removeMod(foundMod.get());
 
                         if (castMod.projectId.equals(Constants.MODRINTH_FABRIC_MOD_ID)) {
                             fabricApiWarningLabel.setVisible(true);
@@ -1119,6 +1092,58 @@ public final class AddModsDialog extends JDialog {
 
         revalidate();
         repaint();
+    }
+
+    private void addSectionAndSortOptions(boolean firstTime) {
+        if (instanceOrServer.supportsPlugins()) {
+            sectionComboBox.addItem(new ComboItem<>("Plugins", GetText.tr("Plugins")));
+        }
+        if (instanceOrServer.getLoaderVersion() != null && !instanceOrServer.getLoaderVersion().isPaperMC()) {
+            sectionComboBox.addItem(new ComboItem<>("Mods", GetText.tr("Mods")));
+        }
+        if (instanceOrServer instanceof Instance) {
+            sectionComboBox.addItem(new ComboItem<>("Resource Packs", GetText.tr("Resource Packs")));
+            if (!firstTime) {
+                boolean resourcePacksSelected = ((ComboItem<String>) sectionComboBox.getSelectedItem()).getValue()
+                        .equals("Resource Packs");
+
+                if (resourcePacksSelected) {
+                    sectionComboBox.setSelectedIndex(sectionComboBox.getItemCount() - 1);
+                }
+            }
+
+            sectionComboBox.addItem(new ComboItem<>("Shaders", GetText.tr("Shaders")));
+            if (!firstTime) {
+                boolean shadersSelected = ((ComboItem<String>) sectionComboBox.getSelectedItem()).getValue()
+                        .equals("Shaders");
+
+                if (shadersSelected) {
+                    sectionComboBox.setSelectedIndex(sectionComboBox.getItemCount() - 1);
+                }
+            }
+        }
+
+        boolean isCurseForgeSelected = firstTime
+                && (instanceOrServer.getLoaderVersion() == null || !instanceOrServer.getLoaderVersion().isPaperMC())
+                        ? App.settings.defaultModPlatform == ModPlatform.CURSEFORGE
+                        : ((ComboItem<ModPlatform>) hostComboBox.getSelectedItem())
+                                .getValue() == ModPlatform.CURSEFORGE;
+
+        if (isCurseForgeSelected) {
+            if (instanceOrServer instanceof Instance) {
+                sectionComboBox.addItem(new ComboItem<>("Worlds", GetText.tr("Worlds")));
+            }
+
+            sortComboBox.addItem(new ComboItem<>("Popularity", GetText.tr("Popularity")));
+            sortComboBox.addItem(new ComboItem<>("Last Updated", GetText.tr("Last Updated")));
+            sortComboBox.addItem(new ComboItem<>("Total Downloads", GetText.tr("Total Downloads")));
+        } else {
+            sortComboBox.addItem(new ComboItem<>("relevance", GetText.tr("Relevance")));
+            sortComboBox.addItem(new ComboItem<>("newest", GetText.tr("Newest")));
+            sortComboBox.addItem(new ComboItem<>("updated", GetText.tr("Last Updated")));
+            sortComboBox.addItem(new ComboItem<>("downloads", GetText.tr("Total Downloads")));
+        }
+
     }
 
     private void addCategories() {

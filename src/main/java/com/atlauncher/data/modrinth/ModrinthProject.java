@@ -59,6 +59,9 @@ public class ModrinthProject {
     public int followers;
 
     public List<String> categories;
+
+    public List<String> loaders;
+
     @ExcludeFromGsonSerialization
     public List<String> versions;
 

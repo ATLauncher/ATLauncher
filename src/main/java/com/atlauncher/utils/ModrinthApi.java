@@ -107,14 +107,16 @@ public class ModrinthApi {
 
     public static ModrinthSearchResult searchResourcePacks(List<String> gameVersions, String query, int page,
             String sort, String category) {
-        List<List<String>> categories = category == null ? null : Collections.singletonList(Collections.singletonList(category));
+        List<List<String>> categories = category == null ? null
+                : Collections.singletonList(Collections.singletonList(category));
 
         return searchModrinth(gameVersions, query, page, sort, categories, ModrinthProjectType.RESOURCEPACK);
     }
 
     public static ModrinthSearchResult searchShaders(List<String> gameVersions, String query, int page,
             String sort, String category) {
-        List<List<String>> categories = category == null ? null : Collections.singletonList(Collections.singletonList(category));
+        List<List<String>> categories = category == null ? null
+                : Collections.singletonList(Collections.singletonList(category));
 
         return searchModrinth(gameVersions, query, page, sort, categories, ModrinthProjectType.SHADER);
     }
@@ -177,7 +179,8 @@ public class ModrinthApi {
 
     public static ModrinthSearchResult searchModsForFabric(List<String> gameVersions, String query, int page,
             String sort, String category) {
-        List<List<String>> categories = category == null ? Collections.singletonList(Collections.singletonList("fabric"))
+        List<List<String>> categories = category == null
+                ? Collections.singletonList(Collections.singletonList("fabric"))
                 : Arrays.asList(Collections.singletonList(category), Collections.singletonList("fabric"));
 
         return searchModrinth(gameVersions, query, page, sort, categories,
@@ -202,10 +205,20 @@ public class ModrinthApi {
 
     public static ModrinthSearchResult searchModPacks(String minecraftVersion, String query, int page, String sort,
             String category) {
-        List<List<String>> categories = category == null ? null : Collections.singletonList(Collections.singletonList(category));
+        List<List<String>> categories = category == null ? null
+                : Collections.singletonList(Collections.singletonList(category));
 
-        return searchModrinth(minecraftVersion == null ? null : Collections.singletonList(minecraftVersion), query, page, sort,
+        return searchModrinth(minecraftVersion == null ? null : Collections.singletonList(minecraftVersion), query,
+                page, sort,
                 categories, ModrinthProjectType.MODPACK);
+    }
+
+    public static ModrinthSearchResult searchPluginsForPaper(List<String> gameVersions, String query, int page,
+            String sort, String category) {
+        List<List<String>> categories = category == null ? Collections.singletonList(Arrays.asList("paper", "bukkit", "spigot"))
+                : Arrays.asList(Collections.singletonList(category), Arrays.asList("paper", "bukkit", "spigot"));
+
+        return searchModrinth(gameVersions, query, page, sort, categories, ModrinthProjectType.PLUGIN);
     }
 
     public static ModrinthProject getProject(String projectId) {
@@ -221,8 +234,7 @@ public class ModrinthApi {
 
     public static List<ModrinthVersion> getVersions(String projectId, String minecraftVersion,
             LoaderVersion loaderVersion) {
-        java.lang.reflect.Type type = new TypeToken<List<ModrinthVersion>>() {
-        }.getType();
+        java.lang.reflect.Type type = new TypeToken<List<ModrinthVersion>>() {}.getType();
 
         String queryParamsString = "";
 
@@ -270,8 +282,7 @@ public class ModrinthApi {
     }
 
     public static List<ModrinthCategory> getCategories() {
-        java.lang.reflect.Type type = new TypeToken<List<ModrinthCategory>>() {
-        }.getType();
+        java.lang.reflect.Type type = new TypeToken<List<ModrinthCategory>>() {}.getType();
 
         return getDownloadBuilder().setUrl(String.format("%s/tag/category", Constants.MODRINTH_API_URL))
                 .cached(new CacheControl.Builder().maxStale(1, TimeUnit.HOURS).build()).asType(type);
@@ -288,6 +299,13 @@ public class ModrinthApi {
         List<ModrinthCategory> categories = getCategories();
 
         return categories.stream().filter(c -> c.projectType == ModrinthProjectType.MOD)
+                .sorted(Comparator.comparing(c -> c.name)).collect(Collectors.toList());
+    }
+
+    public static List<ModrinthCategory> getCategoriesForPlugins() {
+        List<ModrinthCategory> categories = getCategories();
+
+        return categories.stream().filter(c -> c.projectType == ModrinthProjectType.PLUGIN)
                 .sorted(Comparator.comparing(c -> c.name)).collect(Collectors.toList());
     }
 
@@ -350,8 +368,7 @@ public class ModrinthApi {
             body.put("hashes", hashes);
             body.put("algorithm", algorithm);
 
-            java.lang.reflect.Type type = new TypeToken<Map<String, ModrinthVersion>>() {
-            }.getType();
+            java.lang.reflect.Type type = new TypeToken<Map<String, ModrinthVersion>>() {}.getType();
 
             return getDownloadBuilder()
                     .setUrl(String.format("%s/version_files", Constants.MODRINTH_API_URL))
@@ -364,8 +381,7 @@ public class ModrinthApi {
     }
 
     public static List<ModrinthProject> getProjects(String[] projectIds) {
-        java.lang.reflect.Type type = new TypeToken<List<ModrinthProject>>() {
-        }.getType();
+        java.lang.reflect.Type type = new TypeToken<List<ModrinthProject>>() {}.getType();
 
         return getDownloadBuilder()
                 .setUrl(String.format("%s/projects?ids=%s", Constants.MODRINTH_API_URL,

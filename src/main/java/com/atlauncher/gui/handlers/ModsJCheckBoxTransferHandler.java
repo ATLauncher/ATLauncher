@@ -64,14 +64,17 @@ public class ModsJCheckBoxTransferHandler extends TransferHandler {
         this.disabled = disabled;
     }
 
+    @Override
     public int getSourceActions(JComponent c) {
         return COPY;
     }
 
+    @Override
     public boolean canImport(TransferSupport ts) {
         return ts.isDataFlavorSupported(DataFlavor.javaFileListFlavor);
     }
 
+    @Override
     public boolean importData(TransferSupport ts) {
         try {
             @SuppressWarnings("unchecked")
@@ -103,26 +106,26 @@ public class ModsJCheckBoxTransferHandler extends TransferHandler {
 
                 if (ret != 0) {
                     type = Type.jar;
-                    instanceFile = dialog.instance.ROOT.resolve("jarmods").toFile();
+                    instanceFile = dialog.instanceOrServer.getRoot().resolve("jarmods").toFile();
                 } else {
                     type = Type.mods;
-                    instanceFile = dialog.instance.ROOT.resolve("mods").toFile();
+                    instanceFile = dialog.instanceOrServer.getRoot().resolve("mods").toFile();
                 }
             } else if (typeTemp.equalsIgnoreCase("CoreMods Mod")) {
                 type = Type.coremods;
-                instanceFile = dialog.instance.ROOT.resolve("coremods").toFile();
+                instanceFile = dialog.instanceOrServer.getRoot().resolve("coremods").toFile();
             } else if (typeTemp.equalsIgnoreCase("Texture Pack")) {
                 type = Type.texturepack;
-                instanceFile = dialog.instance.ROOT.resolve("texturepacks").toFile();
+                instanceFile = dialog.instanceOrServer.getRoot().resolve("texturepacks").toFile();
             } else if (typeTemp.equalsIgnoreCase("Resource Pack")) {
                 type = Type.resourcepack;
-                instanceFile = dialog.instance.ROOT.resolve("resourcepacks").toFile();
+                instanceFile = dialog.instanceOrServer.getRoot().resolve("resourcepacks").toFile();
             } else if (typeTemp.equalsIgnoreCase("Shader Pack")) {
                 type = Type.shaderpack;
-                instanceFile = dialog.instance.ROOT.resolve("shaderpacks").toFile();
+                instanceFile = dialog.instanceOrServer.getRoot().resolve("shaderpacks").toFile();
             } else {
                 type = Type.mods;
-                instanceFile = dialog.instance.ROOT.resolve("mods").toFile();
+                instanceFile = dialog.instanceOrServer.getRoot().resolve("mods").toFile();
             }
 
             final ProgressDialog<Object> progressDialog = new ProgressDialog<>(GetText.tr("Copying Mods"), 0,
@@ -142,7 +145,7 @@ public class ModsJCheckBoxTransferHandler extends TransferHandler {
                     }
 
                     if (this.disabled) {
-                        copyTo = dialog.instance.ROOT.resolve("disabledmods").toFile();
+                        copyTo = dialog.instanceOrServer.getRoot().resolve("disabledmods").toFile();
                     }
 
                     DisableableMod mod = new DisableableMod();
@@ -184,10 +187,13 @@ public class ModsJCheckBoxTransferHandler extends TransferHandler {
 
                     modsAdded.stream()
                             .filter(dm -> dm.curseForgeProject == null && dm.curseForgeFile == null)
-                            .filter(dm -> dm.getFile(dialog.instance.ROOT, dialog.instance.id) != null).forEach(dm -> {
+                            .filter(dm -> dm.getFile(dialog.instanceOrServer.getRoot(),
+                                    dialog.instanceOrServer.getMinecraftVersion()) != null)
+                            .forEach(dm -> {
                                 try {
                                     long hash = Hashing
-                                            .murmur(dm.getFile(dialog.instance.ROOT, dialog.instance.id).toPath());
+                                            .murmur(dm.getFile(dialog.instanceOrServer.getRoot(),
+                                                    dialog.instanceOrServer.getMinecraftVersion()).toPath());
                                     murmurHashes.put(hash, dm);
                                 } catch (Throwable t) {
                                     LogManager.logStackTrace(t);
@@ -242,12 +248,16 @@ public class ModsJCheckBoxTransferHandler extends TransferHandler {
 
                     modsAdded.stream()
                             .filter(dm -> dm.modrinthProject == null && dm.modrinthVersion == null)
-                            .filter(dm -> dm.getFile(dialog.instance.ROOT, dialog.instance.id) != null).forEach(dm -> {
+                            .filter(dm -> dm.getFile(dialog.instanceOrServer.getRoot(),
+                                    dialog.instanceOrServer.getMinecraftVersion()) != null)
+                            .forEach(dm -> {
                                 try {
                                     sha1Hashes.put(Hashing
-                                            .sha1(dm.disabled ? dm.getDisabledFile(dialog.instance).toPath()
+                                            .sha1(dm.disabled ? dm.getDisabledFile(dialog.instanceOrServer).toPath()
                                                     : dm
-                                                            .getFile(dialog.instance.ROOT, dialog.instance.id).toPath())
+                                                            .getFile(dialog.instanceOrServer.getRoot(),
+                                                                    dialog.instanceOrServer.getMinecraftVersion())
+                                                            .toPath())
                                             .toString(), dm);
                                 } catch (Throwable t) {
                                     LogManager.logStackTrace(t);
@@ -297,7 +307,7 @@ public class ModsJCheckBoxTransferHandler extends TransferHandler {
                     }
                 }
 
-                dialog.instance.launcher.mods.addAll(modsAdded);
+                dialog.instanceOrServer.addMods(modsAdded);
 
                 progressDialog.close();
             }));

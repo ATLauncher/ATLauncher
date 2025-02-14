@@ -33,7 +33,7 @@ import javax.swing.border.TitledBorder;
 import org.mini2Dx.gettext.GetText;
 
 import com.atlauncher.App;
-import com.atlauncher.data.Instance;
+import com.atlauncher.data.ModManagement;
 import com.atlauncher.data.curseforge.CurseForgeAttachment;
 import com.atlauncher.data.curseforge.CurseForgeFileDependency;
 import com.atlauncher.data.curseforge.CurseForgeProject;
@@ -48,17 +48,17 @@ import com.atlauncher.workers.BackgroundImageWorker;
 public final class CurseForgeFileDependencyCard extends JPanel {
     private final CurseForgeProjectFileSelectorDialog parent;
     private final CurseForgeFileDependency dependency;
-    private final Instance instance;
+    private final ModManagement instanceOrServer;
 
     public CurseForgeFileDependencyCard(CurseForgeProjectFileSelectorDialog parent, CurseForgeFileDependency dependency,
-            Instance instance) {
+            ModManagement instanceOrServer) {
         this.parent = parent;
 
         setLayout(new BorderLayout());
         setPreferredSize(new Dimension(250, 180));
 
         this.dependency = dependency;
-        this.instance = instance;
+        this.instanceOrServer = instanceOrServer;
 
         setupComponents();
     }
@@ -92,7 +92,7 @@ public final class CurseForgeFileDependencyCard extends JPanel {
 
         addButton.addActionListener(e -> {
             Analytics.trackEvent(AnalyticsEvent.forAddMod(mod));
-            new CurseForgeProjectFileSelectorDialog(parent, mod, instance);
+            new CurseForgeProjectFileSelectorDialog(parent, mod, instanceOrServer);
             parent.reloadDependenciesPanel();
         });
 
@@ -106,8 +106,8 @@ public final class CurseForgeFileDependencyCard extends JPanel {
         setBorder(border);
 
         Optional<CurseForgeAttachment> attachment = mod.getLogo();
-        attachment.ifPresent(curseForgeAttachment ->
-            new BackgroundImageWorker(icon, curseForgeAttachment.thumbnailUrl, 60, 60).execute()
-        );
+        attachment.ifPresent(
+                curseForgeAttachment -> new BackgroundImageWorker(icon, curseForgeAttachment.thumbnailUrl, 60, 60)
+                        .execute());
     }
 }

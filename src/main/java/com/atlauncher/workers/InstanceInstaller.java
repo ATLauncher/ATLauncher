@@ -2728,6 +2728,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
             server.hash = this.version.hash;
         }
 
+        server.loaderVersion = this.loaderVersion;
+
         server.save();
 
         ServerManager.addServer(server);

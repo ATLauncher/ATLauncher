@@ -191,6 +191,10 @@ public class AnalyticsEvent {
         return AnalyticsEvent.forAddMod(mod.title, "Modrinth");
     }
 
+    public static AnalyticsEvent forAddPlugin(ModrinthSearchHit plugin) {
+        return AnalyticsEvent.forAddPlugin(plugin.title, "Modrinth");
+    }
+
     public static AnalyticsEvent forAddMod(ModrinthProject mod) {
         return AnalyticsEvent.forAddMod(mod.title, "Modrinth");
     }
@@ -203,12 +207,24 @@ public class AnalyticsEvent {
         return new AnalyticsEvent("mod_add", payload);
     }
 
+    public static AnalyticsEvent forAddPlugin(String name, String platform) {
+        final Map<String, Object> payload = new HashMap<>();
+        payload.put("name", name);
+        payload.put("platform", platform);
+
+        return new AnalyticsEvent("plugin_add", payload);
+    }
+
     public static AnalyticsEvent forRemoveMod(CurseForgeProject mod) {
         return AnalyticsEvent.forRemoveMod(mod.name, "CurseForge");
     }
 
     public static AnalyticsEvent forRemoveMod(ModrinthSearchHit mod) {
         return AnalyticsEvent.forRemoveMod(mod.title, "Modrinth");
+    }
+
+    public static AnalyticsEvent forRemovePlugin(ModrinthSearchHit plugin) {
+        return AnalyticsEvent.forRemovePlugin(plugin.title, "Modrinth");
     }
 
     public static AnalyticsEvent forRemoveMod(String name, String platform) {
@@ -219,12 +235,24 @@ public class AnalyticsEvent {
         return new AnalyticsEvent("mod_remove", payload);
     }
 
+    public static AnalyticsEvent forRemovePlugin(String name, String platform) {
+        final Map<String, Object> payload = new HashMap<>();
+        payload.put("name", name);
+        payload.put("platform", platform);
+
+        return new AnalyticsEvent("plugin_remove", payload);
+    }
+
     public static AnalyticsEvent forAddedMod(CurseForgeProject mod, CurseForgeFile file) {
         return AnalyticsEvent.forAddedMod(mod.name, file.displayName, "CurseForge");
     }
 
     public static AnalyticsEvent forAddedMod(ModrinthProject mod, ModrinthVersion version) {
         return AnalyticsEvent.forAddedMod(mod.title, version.name, "Modrinth");
+    }
+
+    public static AnalyticsEvent forAddedPlugin(ModrinthProject plugin, ModrinthVersion version) {
+        return AnalyticsEvent.forAddedPlugin(plugin.title, version.name, "Modrinth");
     }
 
     public static AnalyticsEvent forAddedMod(String name, String version, String platform) {
@@ -234,6 +262,15 @@ public class AnalyticsEvent {
         payload.put("platform", platform);
 
         return new AnalyticsEvent("mod_added", payload);
+    }
+
+    public static AnalyticsEvent forAddedPlugin(String name, String version, String platform) {
+        final Map<String, Object> payload = new HashMap<>();
+        payload.put("name", name);
+        payload.put("version", version);
+        payload.put("platform", platform);
+
+        return new AnalyticsEvent("plugin_added", payload);
     }
 
     public static AnalyticsEvent forPackInstall(UnifiedModPackResultsFragment result) {

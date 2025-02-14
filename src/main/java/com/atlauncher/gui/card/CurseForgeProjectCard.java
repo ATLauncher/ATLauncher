@@ -33,7 +33,7 @@ import javax.swing.border.EmptyBorder;
 import org.mini2Dx.gettext.GetText;
 
 import com.atlauncher.App;
-import com.atlauncher.data.Instance;
+import com.atlauncher.data.ModManagement;
 import com.atlauncher.data.curseforge.CurseForgeAttachment;
 import com.atlauncher.data.curseforge.CurseForgeProject;
 import com.atlauncher.gui.borders.IconTitledBorder;
@@ -43,19 +43,20 @@ import com.atlauncher.workers.BackgroundImageWorker;
 
 public final class CurseForgeProjectCard extends JPanel {
     private final CurseForgeProject mod;
-    private final Instance instance;
+    private final ModManagement instanceOrServer;
 
     private final JButton addButton = new JButton(GetText.tr("Add"));
     private final JButton reinstallButton = new JButton(GetText.tr("Reinstall"));
     private final JButton removeButton = new JButton(GetText.tr("Remove"));
 
-    public CurseForgeProjectCard(final CurseForgeProject mod, final Instance instance, ActionListener installAl,
+    public CurseForgeProjectCard(final CurseForgeProject mod, final ModManagement instanceOrServer,
+            ActionListener installAl,
             ActionListener removeAl) {
         setLayout(new BorderLayout());
         setPreferredSize(new Dimension(250, 180));
 
         this.mod = mod;
-        this.instance = instance;
+        this.instanceOrServer = instanceOrServer;
 
         JPanel summaryPanel = new JPanel(new BorderLayout());
         JTextArea summary = new JTextArea();
@@ -98,15 +99,15 @@ public final class CurseForgeProjectCard extends JPanel {
         add(buttonsPanel, BorderLayout.SOUTH);
 
         Optional<CurseForgeAttachment> attachment = mod.getLogo();
-        attachment.ifPresent(curseForgeAttachment ->
-            new BackgroundImageWorker(icon, curseForgeAttachment.thumbnailUrl, 60, 60).execute()
-        );
+        attachment.ifPresent(
+                curseForgeAttachment -> new BackgroundImageWorker(icon, curseForgeAttachment.thumbnailUrl, 60, 60)
+                        .execute());
 
         updateInstalledStatus();
     }
 
     private void updateInstalledStatus() {
-        boolean alreadyInstalled = instance.launcher.mods.stream()
+        boolean alreadyInstalled = instanceOrServer == null ? false : instanceOrServer.getMods().stream()
                 .anyMatch(m -> m.isFromCurseForge() && m.curseForgeProjectId == mod.id);
 
         addButton.setVisible(!alreadyInstalled);

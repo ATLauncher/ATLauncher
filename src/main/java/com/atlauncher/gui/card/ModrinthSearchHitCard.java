@@ -32,7 +32,7 @@ import javax.swing.border.EmptyBorder;
 import org.mini2Dx.gettext.GetText;
 
 import com.atlauncher.App;
-import com.atlauncher.data.Instance;
+import com.atlauncher.data.ModManagement;
 import com.atlauncher.data.modrinth.ModrinthSearchHit;
 import com.atlauncher.gui.borders.IconTitledBorder;
 import com.atlauncher.utils.OS;
@@ -41,19 +41,20 @@ import com.atlauncher.workers.BackgroundImageWorker;
 
 public final class ModrinthSearchHitCard extends JPanel {
     private final ModrinthSearchHit mod;
-    private final Instance instance;
+    private final ModManagement instanceOrServer;
 
     private final JButton addButton = new JButton(GetText.tr("Add"));
     private final JButton reinstallButton = new JButton(GetText.tr("Reinstall"));
     private final JButton removeButton = new JButton(GetText.tr("Remove"));
 
-    public ModrinthSearchHitCard(final ModrinthSearchHit mod, final Instance instance, ActionListener installAl,
+    public ModrinthSearchHitCard(final ModrinthSearchHit mod, final ModManagement instanceOrServer,
+            ActionListener installAl,
             ActionListener removeAl) {
         setLayout(new BorderLayout());
         setPreferredSize(new Dimension(250, 180));
 
         this.mod = mod;
-        this.instance = instance;
+        this.instanceOrServer = instanceOrServer;
 
         JPanel summaryPanel = new JPanel(new BorderLayout());
         JTextArea summary = new JTextArea();
@@ -103,8 +104,9 @@ public final class ModrinthSearchHitCard extends JPanel {
     }
 
     private void updateInstalledStatus() {
-        boolean alreadyInstalled = instance.launcher.mods.stream()
-                .anyMatch(m -> m.isFromModrinth() && m.modrinthProject.id.equals(mod.projectId));
+        boolean alreadyInstalled = instanceOrServer == null ? false
+                : instanceOrServer.getMods().stream()
+                        .anyMatch(m -> m.isFromModrinth() && m.modrinthProject.id.equals(mod.projectId));
 
         addButton.setVisible(!alreadyInstalled);
         reinstallButton.setVisible(alreadyInstalled);

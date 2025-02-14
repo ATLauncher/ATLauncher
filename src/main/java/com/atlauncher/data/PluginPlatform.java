@@ -19,18 +19,10 @@ package com.atlauncher.data;
 
 import com.google.gson.annotations.SerializedName;
 
-public enum ModPlatform {
-    @SerializedName("CurseForge")
-    CURSEFORGE {
-        public String toString() {
-            return "CurseForge";
-        }
-    },
+public enum PluginPlatform {
+    @SerializedName("Hangar")
+    HANGAR,
 
     @SerializedName("Modrinth")
-    MODRINTH {
-        public String toString() {
-            return "Modrinth";
-        }
-    }
+    MODRINTH
 }
