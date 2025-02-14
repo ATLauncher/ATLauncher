@@ -939,7 +939,8 @@ public class Server implements ModManagement {
     public void addFileFromModrinth(ModrinthProject project, ModrinthVersion version, ModrinthFile file,
             ProgressDialog dialog) {
         ModrinthFile fileToDownload = Optional.ofNullable(file).orElse(version.getPrimaryFile());
-        boolean isMod = project.projectType == ModrinthProjectType.MOD && !version.loaders.contains("paper")
+        boolean isMod = project.projectType == ModrinthProjectType.MOD && !version.loaders.contains("purpur")
+                && !version.loaders.contains("paper")
                 && !version.loaders.contains("spigot") && !version.loaders.contains("bukkit");
 
         Path downloadLocation = FileSystem.DOWNLOADS.resolve(fileToDownload.filename);
