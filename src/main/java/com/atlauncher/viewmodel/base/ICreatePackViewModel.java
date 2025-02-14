@@ -235,10 +235,17 @@ public interface ICreatePackViewModel {
     Observable<Boolean> isNeoForgeVisible();
 
     /**
-     * Is PaperMC an option currently
+     * Is Paper an option currently
      */
     @NotNull
-    Observable<Boolean> isPaperMCVisible();
+    Observable<Boolean> isPaperVisible();
+
+
+    /**
+     * Is Purpur an option currently
+     */
+    @NotNull
+    Observable<Boolean> isPurpurVisible();
 
     /**
      * Is quilt an option currently
@@ -271,10 +278,16 @@ public interface ICreatePackViewModel {
     Boolean showNeoForgeOption();
 
     /**
-     * If PaperMC should be enabled or not
+     * If Paper should be enabled or not
      */
     @NotNull
-    Boolean showPaperMCOption();
+    Boolean showPaperOption();
+
+    /**
+     * If Purpur should be enabled or not
+     */
+    @NotNull
+    Boolean showPurpurOption();
 
     /**
      * If quilt is enabled in config or not
@@ -343,16 +356,28 @@ public interface ICreatePackViewModel {
     Observable<Boolean> loaderTypeNeoForgeEnabled();
 
     /**
-     * Is PaperMC selected
+     * Is Paper selected
      */
     @NotNull
-    Observable<Boolean> loaderTypePaperMCSelected();
+    Observable<Boolean> loaderTypePaperSelected();
 
     /**
-     * Is PaperMC enabled
+     * Is Paper enabled
      */
     @NotNull
-    Observable<Boolean> loaderTypePaperMCEnabled();
+    Observable<Boolean> loaderTypePaperEnabled();
+
+    /**
+     * Is Purpur selected
+     */
+    @NotNull
+    Observable<Boolean> loaderTypePurpurSelected();
+
+    /**
+     * Is Purpur enabled
+     */
+    @NotNull
+    Observable<Boolean> loaderTypePurpurEnabled();
 
     /**
      * Has quilt been selected

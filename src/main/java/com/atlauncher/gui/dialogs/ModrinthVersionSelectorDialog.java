@@ -228,9 +228,13 @@ public class ModrinthVersionSelectorDialog extends JDialog {
         addButton.setEnabled(false);
 
         viewModButton = new JButton(GetText.tr("View Mod"));
-        if (instanceOrServer.getLoaderVersion() != null && instanceOrServer.getLoaderVersion().isPaperMC()
+        if (instanceOrServer.getLoaderVersion() != null && ((instanceOrServer.getLoaderVersion().isPaper()
                 && (project.projectType == ModrinthProjectType.PLUGIN || project.loaders.contains("paper")
-                        || project.loaders.contains("bukkit") || project.loaders.contains("spigot"))) {
+                        || project.loaders.contains("bukkit") || project.loaders.contains("spigot")))
+                || (instanceOrServer.getLoaderVersion().isPurpur()
+                        && (project.projectType == ModrinthProjectType.PLUGIN || project.loaders.contains("purpur")
+                                || project.loaders.contains("paper")
+                                || project.loaders.contains("bukkit") || project.loaders.contains("spigot"))))) {
             viewModButton.setText(GetText.tr("View Plugin"));
         }
         viewModButton.setEnabled(false);
@@ -406,7 +410,13 @@ public class ModrinthVersionSelectorDialog extends JDialog {
                     }
 
                     if ((v.loaders.contains("paper") || v.loaders.contains("bukkit") || v.loaders.contains("spigot"))
-                            && loaderVersion.isPaperMC()) {
+                            && loaderVersion.isPaper()) {
+                        return true;
+                    }
+
+                    if ((v.loaders.contains("purpur") || v.loaders.contains("paper") || v.loaders.contains("bukkit")
+                            || v.loaders.contains("spigot"))
+                            && loaderVersion.isPurpur()) {
                         return true;
                     }
 

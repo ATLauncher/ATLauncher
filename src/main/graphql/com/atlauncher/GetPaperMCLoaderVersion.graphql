@@ -1,9 +1,0 @@
-query GetPaperMCLoaderVersion($build: Int!, $minecraft: String!) {
-    paperMCVersion(build: $build, minecraft: $minecraft) {
-        build
-        promoted
-        filename
-        downloadUrl
-        sha256
-    }
-}

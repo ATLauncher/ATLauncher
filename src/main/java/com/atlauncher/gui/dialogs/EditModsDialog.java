@@ -219,7 +219,8 @@ public class EditModsDialog extends JDialog {
 
             if (instanceOrServer instanceof Instance) {
                 modTypes = new String[] { "Mods Folder", "Resource Pack", "Shader Pack", "Inside Minecraft.jar" };
-            } else if (instanceOrServer.getLoaderVersion() != null && instanceOrServer.getLoaderVersion().isPaperMC()) {
+            } else if (instanceOrServer.getLoaderVersion() != null && (instanceOrServer.getLoaderVersion().isPaper()
+                    || instanceOrServer.getLoaderVersion().isPurpur())) {
                 modTypes = new String[] { "Plugins Folder" };
             } else {
                 modTypes = new String[] { "Mods Folder" };

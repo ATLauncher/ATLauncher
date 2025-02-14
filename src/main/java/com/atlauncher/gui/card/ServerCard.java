@@ -117,9 +117,8 @@ public class ServerCard extends CollapsiblePanel implements RelocalizationListen
         top.add(this.launchWithGuiAndClose);
 
         if (server.loaderVersion != null) {
-            // Paper only supports plugins and not mods, so update the button text to be
-            // clear
-            if (server.loaderVersion.isPaperMC()) {
+            // Paper/Purpur only supports plugins and not mods, so update the button text to be clear
+            if (server.loaderVersion.isPaper() || server.loaderVersion.isPurpur()) {
                 this.addButton.setText(GetText.tr("Add Plugins"));
                 this.editButton.setText(GetText.tr("Edit Plugins"));
             }
@@ -276,8 +275,8 @@ public class ServerCard extends CollapsiblePanel implements RelocalizationListen
         this.deleteButton.setText(GetText.tr("Delete"));
         this.openButton.setText(GetText.tr("Open Folder"));
 
-        // Paper only supports plugins and not mods, so update the button text to be clear
-        if (server.loaderVersion != null && server.loaderVersion.isPaperMC()) {
+        // Paper/Purpur only supports plugins and not mods, so update the button text to be clear
+        if (server.loaderVersion != null && (server.loaderVersion.isPaper() || server.loaderVersion.isPurpur())) {
             this.addButton.setText(GetText.tr("Add Plugins"));
             this.editButton.setText(GetText.tr("Edit Plugins"));
         } else {

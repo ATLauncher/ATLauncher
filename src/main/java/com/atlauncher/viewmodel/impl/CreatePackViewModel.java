@@ -113,7 +113,9 @@ public class CreatePackViewModel implements SettingsListener, ICreatePackViewMod
     // was true
     public final BehaviorSubject<Boolean> loaderTypeNeoForgeEnabled = BehaviorSubject.create();
     // was true
-    public final BehaviorSubject<Boolean> loaderTypePaperMCEnabled = BehaviorSubject.create();
+    public final BehaviorSubject<Boolean> loaderTypePaperEnabled = BehaviorSubject.create();
+    // was true
+    public final BehaviorSubject<Boolean> loaderTypePurpurEnabled = BehaviorSubject.create();
     // was true
     public final BehaviorSubject<Boolean> loaderTypeNoneEnabled = BehaviorSubject.create();
     // was true
@@ -145,8 +147,12 @@ public class CreatePackViewModel implements SettingsListener, ICreatePackViewMod
             "loaders.neoforge.enabled",
             true);
     // was lazy
-    public final Boolean showPaperMCOption = ConfigManager.getConfigItem(
-            "loaders.papermc.enabled",
+    public final Boolean showPaperOption = ConfigManager.getConfigItem(
+            "loaders.paper.enabled",
+            true);
+    // was lazy
+    public final Boolean showPurpurOption = ConfigManager.getConfigItem(
+            "loaders.purpur.enabled",
             true);
     // was lazy
     public final Boolean showQuiltOption = ConfigManager.getConfigItem("loaders.quilt.enabled", false);
@@ -202,7 +208,7 @@ public class CreatePackViewModel implements SettingsListener, ICreatePackViewMod
     public final Observable<Boolean> releaseEnabled = combineLatest(
             releaseSelected, minecraftVersionTypeFiltersPublisher,
             (a, b) -> !(a && (b.values().stream().filter(it -> it).toArray().length == 1)))
-            .subscribeOn(Schedulers.computation());
+                    .subscribeOn(Schedulers.computation());
 
     public final Observable<Boolean> experimentSelected = minecraftVersionTypeFiltersPublisher
             .map(it -> it.getOrDefault(VersionManifestVersionType.EXPERIMENT, false))
@@ -210,7 +216,7 @@ public class CreatePackViewModel implements SettingsListener, ICreatePackViewMod
 
     public final Observable<Boolean> experimentEnabled = combineLatest(experimentSelected,
             minecraftVersionTypeFiltersPublisher, (a, b) -> !(a && (count(b, Map.Entry::getValue) == 1)))
-            .subscribeOn(Schedulers.computation());
+                    .subscribeOn(Schedulers.computation());
 
     public final Observable<Boolean> snapshotSelected = minecraftVersionTypeFiltersPublisher
             .map(it -> it.getOrDefault(VersionManifestVersionType.SNAPSHOT, false))
@@ -279,8 +285,12 @@ public class CreatePackViewModel implements SettingsListener, ICreatePackViewMod
             .map(it -> it.orElse(null) == LoaderType.NEOFORGE)
             .subscribeOn(Schedulers.computation());
 
-    public final Observable<Boolean> loaderTypePaperMCSelected = selectedLoaderType
-            .map(it -> it.orElse(null) == LoaderType.PAPERMC)
+    public final Observable<Boolean> loaderTypePaperSelected = selectedLoaderType
+            .map(it -> it.orElse(null) == LoaderType.PAPER)
+            .subscribeOn(Schedulers.computation());
+
+    public final Observable<Boolean> loaderTypePurpurSelected = selectedLoaderType
+            .map(it -> it.orElse(null) == LoaderType.PURPUR)
             .subscribeOn(Schedulers.computation());
 
     public final Observable<Boolean> loaderTypeNoneSelected = selectedLoaderType.map(it -> it.orElse(null) == null)
@@ -315,11 +325,19 @@ public class CreatePackViewModel implements SettingsListener, ICreatePackViewMod
             .subscribeOn(Schedulers.computation());
 
     // was lazy
-    private final List<String> paperMCDisabledMCVersions = ConfigManager.getConfigItem(
-            "loaders.papermc.disabledMinecraftVersions", emptyList());
+    private final List<String> paperDisabledMCVersions = ConfigManager.getConfigItem(
+            "loaders.paper.disabledMinecraftVersions", emptyList());
 
-    public final Observable<Boolean> isPaperMCVisible = selectedMinecraftVersionFlow
-            .map(version -> !paperMCDisabledMCVersions.contains(version.orElse(null)))
+    public final Observable<Boolean> isPaperVisible = selectedMinecraftVersionFlow
+            .map(version -> !paperDisabledMCVersions.contains(version.orElse(null)))
+            .subscribeOn(Schedulers.computation());
+
+    // was lazy
+    private final List<String> purpurDisabledMCVersions = ConfigManager.getConfigItem(
+            "loaders.purpur.disabledMinecraftVersions", emptyList());
+
+    public final Observable<Boolean> isPurpurVisible = selectedMinecraftVersionFlow
+            .map(version -> !purpurDisabledMCVersions.contains(version.orElse(null)))
             .subscribeOn(Schedulers.computation());
 
     // was lazy
@@ -355,8 +373,12 @@ public class CreatePackViewModel implements SettingsListener, ICreatePackViewMod
             "loaders.neoforge.disabledVersions", emptyList());
 
     // was lazy
-    private final List<String> disabledPaperMCVersions = ConfigManager.getConfigItem(
-            "loaders.papermc.disabledVersions", emptyList());
+    private final List<String> disabledPaperVersions = ConfigManager.getConfigItem(
+            "loaders.paper.disabledVersions", emptyList());
+
+    // was lazy
+    private final List<String> disabledPurpurVersions = ConfigManager.getConfigItem(
+            "loaders.purpur.disabledVersions", emptyList());
 
     // was lazy
     private final List<String> disabledForgeVersions = ConfigManager.getConfigItem(
@@ -397,7 +419,8 @@ public class CreatePackViewModel implements SettingsListener, ICreatePackViewMod
         loaderTypeForgeEnabled.onNext(true);
         loaderTypeLegacyFabricEnabled.onNext(true);
         loaderTypeNeoForgeEnabled.onNext(true);
-        loaderTypePaperMCEnabled.onNext(true);
+        loaderTypePaperEnabled.onNext(true);
+        loaderTypePurpurEnabled.onNext(true);
 
         selectedMinecraftVersionFlow.onNext(Optional.empty());
 
@@ -451,7 +474,8 @@ public class CreatePackViewModel implements SettingsListener, ICreatePackViewMod
                     loaderTypeForgeEnabled.onNext(false);
                     loaderTypeLegacyFabricEnabled.onNext(false);
                     loaderTypeNeoForgeEnabled.onNext(false);
-                    loaderTypePaperMCEnabled.onNext(false);
+                    loaderTypePaperEnabled.onNext(false);
+                    loaderTypePurpurEnabled.onNext(false);
                     loaderVersionsDropDownEnabled.onNext(false);
 
                     setLoaderGroupEnabled(false);
@@ -484,14 +508,15 @@ public class CreatePackViewModel implements SettingsListener, ICreatePackViewMod
                     boolean hasLoaderVersions = !loaders.isEmpty() && loaders.get(0) != noLoaderVersions;
 
                     setLoaderGroupEnabled(hasLoaderVersions, hasLoaderVersions && enableCreateServers,
-                            hasLoaderVersions && loaderType != LoaderType.PAPERMC);
+                            hasLoaderVersions && loaderType != LoaderType.PAPER && loaderType != LoaderType.PURPUR);
                     loaderTypeNoneEnabled.onNext(true);
                     loaderTypeQuiltEnabled.onNext(true);
                     loaderTypeFabricEnabled.onNext(true);
                     loaderTypeForgeEnabled.onNext(true);
                     loaderTypeLegacyFabricEnabled.onNext(true);
                     loaderTypeNeoForgeEnabled.onNext(true);
-                    loaderTypePaperMCEnabled.onNext(true);
+                    loaderTypePaperEnabled.onNext(true);
+                    loaderTypePurpurEnabled.onNext(true);
                 });
     }
 
@@ -575,8 +600,13 @@ public class CreatePackViewModel implements SettingsListener, ICreatePackViewMod
     }
 
     @Override
-    public Observable<Boolean> loaderTypePaperMCEnabled() {
-        return loaderTypePaperMCEnabled.observeOn(SwingSchedulers.edt());
+    public Observable<Boolean> loaderTypePaperEnabled() {
+        return loaderTypePaperEnabled.observeOn(SwingSchedulers.edt());
+    }
+
+    @Override
+    public Observable<Boolean> loaderTypePurpurEnabled() {
+        return loaderTypePurpurEnabled.observeOn(SwingSchedulers.edt());
     }
 
     @Override
@@ -635,8 +665,13 @@ public class CreatePackViewModel implements SettingsListener, ICreatePackViewMod
     }
 
     @Override
-    public Boolean showPaperMCOption() {
-        return showPaperMCOption;
+    public Boolean showPaperOption() {
+        return showPaperOption;
+    }
+
+    @Override
+    public Boolean showPurpurOption() {
+        return showPurpurOption;
     }
 
     @Override
@@ -725,8 +760,13 @@ public class CreatePackViewModel implements SettingsListener, ICreatePackViewMod
     }
 
     @Override
-    public Observable<Boolean> loaderTypePaperMCSelected() {
-        return loaderTypePaperMCSelected.observeOn(SwingSchedulers.edt());
+    public Observable<Boolean> loaderTypePaperSelected() {
+        return loaderTypePaperSelected.observeOn(SwingSchedulers.edt());
+    }
+
+    @Override
+    public Observable<Boolean> loaderTypePurpurSelected() {
+        return loaderTypePurpurSelected.observeOn(SwingSchedulers.edt());
     }
 
     @Override
@@ -755,8 +795,13 @@ public class CreatePackViewModel implements SettingsListener, ICreatePackViewMod
     }
 
     @Override
-    public Observable<Boolean> isPaperMCVisible() {
-        return isPaperMCVisible.observeOn(SwingSchedulers.edt());
+    public Observable<Boolean> isPaperVisible() {
+        return isPaperVisible.observeOn(SwingSchedulers.edt());
+    }
+
+    @Override
+    public Observable<Boolean> isPurpurVisible() {
+        return isPurpurVisible.observeOn(SwingSchedulers.edt());
     }
 
     @Override
@@ -1028,14 +1073,25 @@ public class CreatePackViewModel implements SettingsListener, ICreatePackViewMod
                                 .collect(Collectors.toList()));
                         break;
 
-                    case PAPERMC:
-                        loaderVersionsList.addAll(data.loaderVersions().papermc()
+                    case PAPER:
+                        loaderVersionsList.addAll(data.loaderVersions().paper()
                                 .stream()
-                                .filter(fv -> !disabledPaperMCVersions.contains(fv.build()))
+                                .filter(fv -> !disabledPaperVersions.contains(fv.build()))
                                 .map(version -> new LoaderVersion(
                                         Integer.toString(version.build()),
                                         false,
-                                        "PaperMC"))
+                                        "Paper"))
+                                .collect(Collectors.toList()));
+                        break;
+
+                    case PURPUR:
+                        loaderVersionsList.addAll(data.loaderVersions().purpur()
+                                .stream()
+                                .filter(fv -> !disabledPurpurVersions.contains(fv.build()))
+                                .map(version -> new LoaderVersion(
+                                        Integer.toString(version.build()),
+                                        false,
+                                        "Purpur"))
                                 .collect(Collectors.toList()));
                         break;
 
@@ -1072,14 +1128,15 @@ public class CreatePackViewModel implements SettingsListener, ICreatePackViewMod
         loaderTypeForgeEnabled.onNext(true);
         loaderTypeLegacyFabricEnabled.onNext(true);
         loaderTypeNeoForgeEnabled.onNext(true);
-        loaderTypePaperMCEnabled.onNext(true);
+        loaderTypePaperEnabled.onNext(true);
+        loaderTypePurpurEnabled.onNext(true);
         loaderTypeQuiltEnabled.onNext(true);
 
         createServerEnabled.onNext(enableCreateServers);
         createInstanceEnabled.onNext(enableCreateInstances);
         createInstanceDisabledReason
                 .onNext(enableCreateInstances ? Optional.empty()
-                        : Optional.of(GetText.tr("Disabled as PaperMC only supports servers")));
+                        : Optional.of(GetText.tr("Disabled as the loader you selected only supports servers")));
         loaderVersionsDropDownEnabled.onNext(enabled);
     }
 

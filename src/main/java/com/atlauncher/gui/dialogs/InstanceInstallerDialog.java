@@ -83,7 +83,8 @@ import com.atlauncher.data.minecraft.loaders.fabric.FabricLoader;
 import com.atlauncher.data.minecraft.loaders.forge.ForgeLoader;
 import com.atlauncher.data.minecraft.loaders.legacyfabric.LegacyFabricLoader;
 import com.atlauncher.data.minecraft.loaders.neoforge.NeoForgeLoader;
-import com.atlauncher.data.minecraft.loaders.papermc.PaperMCLoader;
+import com.atlauncher.data.minecraft.loaders.paper.PaperLoader;
+import com.atlauncher.data.minecraft.loaders.purpur.PurpurLoader;
 import com.atlauncher.data.minecraft.loaders.quilt.QuiltLoader;
 import com.atlauncher.data.modrinth.ModrinthProject;
 import com.atlauncher.data.modrinth.ModrinthSearchHit;
@@ -276,8 +277,7 @@ public class InstanceInstallerDialog extends JDialog {
         });
         nameField.addFocusListener(new FocusListener() {
             @Override
-            public void focusLost(final FocusEvent pE) {
-            }
+            public void focusLost(final FocusEvent pE) {}
 
             @Override
             public void focusGained(final FocusEvent pE) {
@@ -1143,13 +1143,20 @@ public class InstanceInstallerDialog extends JDialog {
 
             // #. {0} is the loader (Fabric/Forge/Quilt)
             loaderVersionLabel.setText(GetText.tr("{0} Version", "NeoForge") + ": ");
-        } else if (item.loaderType != null && item.loaderType.equalsIgnoreCase("papermc")) {
-            if (!ConfigManager.getConfigItem("loaders.papermc.enabled", true)) {
+        } else if (item.loaderType != null && item.loaderType.equalsIgnoreCase("paper")) {
+            if (!ConfigManager.getConfigItem("loaders.paper.enabled", true)) {
                 return;
             }
 
             // #. {0} is the loader (Fabric/Forge/Quilt)
-            loaderVersionLabel.setText(GetText.tr("{0} Version", "PaperMC") + ": ");
+            loaderVersionLabel.setText(GetText.tr("{0} Version", "Paper") + ": ");
+        } else if (item.loaderType != null && item.loaderType.equalsIgnoreCase("purpur")) {
+            if (!ConfigManager.getConfigItem("loaders.purpur.enabled", true)) {
+                return;
+            }
+
+            // #. {0} is the loader (Fabric/Forge/Quilt)
+            loaderVersionLabel.setText(GetText.tr("{0} Version", "Purpur") + ": ");
         } else if (item.loaderType != null && item.loaderType.equalsIgnoreCase("legacyfabric")) {
             if (!ConfigManager.getConfigItem("loaders.legacyfabric.enabled", true)) {
                 return;
@@ -1190,8 +1197,10 @@ public class InstanceInstallerDialog extends JDialog {
                     loaderVersions.addAll(ForgeLoader.getChoosableVersions(item.minecraftVersion.id));
                 } else if (this.instance.launcher.loaderVersion.isNeoForge()) {
                     loaderVersions.addAll(NeoForgeLoader.getChoosableVersions(item.minecraftVersion.id));
-                } else if (this.instance.launcher.loaderVersion.isPaperMC()) {
-                    loaderVersions.addAll(PaperMCLoader.getChoosableVersions(item.minecraftVersion.id));
+                } else if (this.instance.launcher.loaderVersion.isPaper()) {
+                    loaderVersions.addAll(PaperLoader.getChoosableVersions(item.minecraftVersion.id));
+                } else if (this.instance.launcher.loaderVersion.isPurpur()) {
+                    loaderVersions.addAll(PurpurLoader.getChoosableVersions(item.minecraftVersion.id));
                 } else if (this.instance.launcher.loaderVersion.isLegacyFabric()) {
                     loaderVersions.addAll(LegacyFabricLoader.getChoosableVersions(item.minecraftVersion.id));
                 } else if (this.instance.launcher.loaderVersion.isQuilt()) {

@@ -215,8 +215,19 @@ public class ModrinthApi {
 
     public static ModrinthSearchResult searchPluginsForPaper(List<String> gameVersions, String query, int page,
             String sort, String category) {
-        List<List<String>> categories = category == null ? Collections.singletonList(Arrays.asList("paper", "bukkit", "spigot"))
+        List<List<String>> categories = category == null
+                ? Collections.singletonList(Arrays.asList("paper", "bukkit", "spigot"))
                 : Arrays.asList(Collections.singletonList(category), Arrays.asList("paper", "bukkit", "spigot"));
+
+        return searchModrinth(gameVersions, query, page, sort, categories, ModrinthProjectType.PLUGIN);
+    }
+
+    public static ModrinthSearchResult searchPluginsForPurpur(List<String> gameVersions, String query, int page,
+            String sort, String category) {
+        List<List<String>> categories = category == null
+                ? Collections.singletonList(Arrays.asList("purpur", "paper", "bukkit", "spigot"))
+                : Arrays.asList(Collections.singletonList(category),
+                        Arrays.asList("purpur", "paper", "bukkit", "spigot"));
 
         return searchModrinth(gameVersions, query, page, sort, categories, ModrinthProjectType.PLUGIN);
     }

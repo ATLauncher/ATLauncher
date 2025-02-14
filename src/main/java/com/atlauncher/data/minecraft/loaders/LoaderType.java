@@ -50,10 +50,17 @@ public enum LoaderType {
         }
     },
 
-    @SerializedName("papermc")
-    PAPERMC {
+    @SerializedName("paper")
+    PAPER {
         public String toString() {
-            return "PaperMC";
+            return "Paper";
+        }
+    },
+
+    @SerializedName("purpur")
+    PURPUR {
+        public String toString() {
+            return "Purpur";
         }
     },
 

@@ -80,7 +80,8 @@ public class CreatePackTab extends HierarchyPanel implements Tab {
     private JRadioButton loaderTypeForgeRadioButton;
     private JRadioButton loaderTypeLegacyFabricRadioButton;
     private JRadioButton loaderTypeNeoForgeRadioButton;
-    private JRadioButton loaderTypePaperMCRadioButton;
+    private JRadioButton loaderTypePaperRadioButton;
+    private JRadioButton loaderTypePurpurRadioButton;
     private JRadioButton loaderTypeQuiltRadioButton;
     private JComboBox<ComboItem<LoaderVersion>> loaderVersionsDropDown;
     private JButton createServerButton;
@@ -242,7 +243,8 @@ public class CreatePackTab extends HierarchyPanel implements Tab {
         loaderTypeButtonGroup.add(loaderTypeForgeRadioButton);
         loaderTypeButtonGroup.add(loaderTypeLegacyFabricRadioButton);
         loaderTypeButtonGroup.add(loaderTypeNeoForgeRadioButton);
-        loaderTypeButtonGroup.add(loaderTypePaperMCRadioButton);
+        loaderTypeButtonGroup.add(loaderTypePaperRadioButton);
+        loaderTypeButtonGroup.add(loaderTypePurpurRadioButton);
         loaderTypeButtonGroup.add(loaderTypeQuiltRadioButton);
         JPanel loaderTypePanel = new JPanel(new FlowLayout());
 
@@ -251,7 +253,8 @@ public class CreatePackTab extends HierarchyPanel implements Tab {
         setupLoaderForgeButton(loaderTypePanel);
         setupLoaderLegacyFabricButton(loaderTypePanel);
         setupLoaderNeoForgeButton(loaderTypePanel);
-        setupLoaderPaperMCButton(loaderTypePanel);
+        setupLoaderPaperButton(loaderTypePanel);
+        setupLoaderPurpurButton(loaderTypePanel);
         setupLoaderQuiltButton(loaderTypePanel);
 
         mainPanel.add(loaderTypePanel, gbc);
@@ -380,14 +383,25 @@ public class CreatePackTab extends HierarchyPanel implements Tab {
         }
     }
 
-    private void setupLoaderPaperMCButton(JPanel loaderTypePanel) {
-        addDisposable(viewModel.loaderTypePaperMCSelected().subscribe(loaderTypePaperMCRadioButton::setSelected));
-        addDisposable(viewModel.loaderTypePaperMCEnabled().subscribe(loaderTypePaperMCRadioButton::setEnabled));
-        addDisposable(viewModel.isPaperMCVisible().subscribe(loaderTypePaperMCRadioButton::setVisible));
-        loaderTypePaperMCRadioButton.addActionListener(
-                e -> viewModel.setLoaderType(LoaderType.PAPERMC));
-        if (viewModel.showPaperMCOption()) {
-            loaderTypePanel.add(loaderTypePaperMCRadioButton);
+    private void setupLoaderPaperButton(JPanel loaderTypePanel) {
+        addDisposable(viewModel.loaderTypePaperSelected().subscribe(loaderTypePaperRadioButton::setSelected));
+        addDisposable(viewModel.loaderTypePaperEnabled().subscribe(loaderTypePaperRadioButton::setEnabled));
+        addDisposable(viewModel.isPaperVisible().subscribe(loaderTypePaperRadioButton::setVisible));
+        loaderTypePaperRadioButton.addActionListener(
+                e -> viewModel.setLoaderType(LoaderType.PAPER));
+        if (viewModel.showPaperOption()) {
+            loaderTypePanel.add(loaderTypePaperRadioButton);
+        }
+    }
+
+    private void setupLoaderPurpurButton(JPanel loaderTypePanel) {
+        addDisposable(viewModel.loaderTypePurpurSelected().subscribe(loaderTypePurpurRadioButton::setSelected));
+        addDisposable(viewModel.loaderTypePurpurEnabled().subscribe(loaderTypePurpurRadioButton::setEnabled));
+        addDisposable(viewModel.isPurpurVisible().subscribe(loaderTypePurpurRadioButton::setVisible));
+        loaderTypePurpurRadioButton.addActionListener(
+                e -> viewModel.setLoaderType(LoaderType.PURPUR));
+        if (viewModel.showPurpurOption()) {
+            loaderTypePanel.add(loaderTypePurpurRadioButton);
         }
     }
 
@@ -614,7 +628,8 @@ public class CreatePackTab extends HierarchyPanel implements Tab {
         loaderTypeForgeRadioButton = new JRadioButton("Forge");
         loaderTypeLegacyFabricRadioButton = new JRadioButton("Legacy Fabric");
         loaderTypeNeoForgeRadioButton = new JRadioButton("NeoForge");
-        loaderTypePaperMCRadioButton = new JRadioButton("PaperMC");
+        loaderTypePaperRadioButton = new JRadioButton("Paper");
+        loaderTypePurpurRadioButton = new JRadioButton("Purpur");
         loaderTypeQuiltRadioButton = new JRadioButton("Quilt");
         loaderVersionsDropDown = new JComboBox<>();
         createServerButton = new JButton(getCreateServerText());
@@ -640,7 +655,8 @@ public class CreatePackTab extends HierarchyPanel implements Tab {
         loaderTypeForgeRadioButton = null;
         loaderTypeLegacyFabricRadioButton = null;
         loaderTypeNeoForgeRadioButton = null;
-        loaderTypePaperMCRadioButton = null;
+        loaderTypePaperRadioButton = null;
+        loaderTypePurpurRadioButton = null;
         loaderTypeQuiltRadioButton = null;
         loaderVersionsDropDown = null;
         createServerButton = null;

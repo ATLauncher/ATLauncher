@@ -2541,7 +2541,7 @@
             "deprecationReason": null
           },
           {
-            "name": "papermc",
+            "name": "paper",
             "description": null,
             "args": [],
             "type": {
@@ -2555,7 +2555,31 @@
                   "name": null,
                   "ofType": {
                     "kind": "OBJECT",
-                    "name": "PaperMCVersion",
+                    "name": "PaperVersion",
+                    "ofType": null
+                  }
+                }
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "purpur",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "OBJECT",
+                    "name": "PurpurMCBuild",
                     "ofType": null
                   }
                 }
@@ -5596,8 +5620,8 @@
       },
       {
         "kind": "OBJECT",
-        "name": "PaperMCVersion",
-        "description": "A PaperMC Version.",
+        "name": "PaperVersion",
+        "description": "A Paper Version.",
         "fields": [
           {
             "name": "build",
@@ -5713,6 +5737,156 @@
           },
           {
             "name": "sha256",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "inputFields": null,
+        "interfaces": [],
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "OBJECT",
+        "name": "PurpurMCBuild",
+        "description": "A Purpur Version.",
+        "fields": [
+          {
+            "name": "build",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "id",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "ID",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "inputFields": null,
+        "interfaces": [],
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "OBJECT",
+        "name": "PurpurVersion",
+        "description": "A Purpur Version.",
+        "fields": [
+          {
+            "name": "build",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "createdAt",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "DateTime",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "downloadUrl",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "filename",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "id",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "ID",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "md5",
             "description": null,
             "args": [],
             "type": {
@@ -6524,8 +6698,8 @@
             "deprecationReason": null
           },
           {
-            "name": "paperMCVersion",
-            "description": "Get a specific version of the PaperMC modloader",
+            "name": "paperVersion",
+            "description": "Get a specific version of the Paper modloader",
             "args": [
               {
                 "name": "build",
@@ -6543,30 +6717,34 @@
               },
               {
                 "name": "minecraft",
-                "description": "The Minecraft version to get PaperMC versions for.",
+                "description": "The Minecraft version to get Paper versions for.",
                 "type": {
-                  "kind": "SCALAR",
-                  "name": "String",
-                  "ofType": null
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null
+                  }
                 },
                 "defaultValue": null
               }
             ],
             "type": {
               "kind": "OBJECT",
-              "name": "PaperMCVersion",
+              "name": "PaperVersion",
               "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
-            "name": "paperMCVersions",
-            "description": "Versions of the PaperMC modloader",
+            "name": "paperVersions",
+            "description": "Versions of the Paper modloader",
             "args": [
               {
                 "name": "minecraft",
-                "description": "The Minecraft version to get PaperMC versions for.",
+                "description": "The Minecraft version to get Paper versions for.",
                 "type": {
                   "kind": "SCALAR",
                   "name": "String",
@@ -6586,7 +6764,83 @@
                   "name": null,
                   "ofType": {
                     "kind": "OBJECT",
-                    "name": "PaperMCVersion",
+                    "name": "PaperVersion",
+                    "ofType": null
+                  }
+                }
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "purpurVersion",
+            "description": "Get a specific version of the Purpur modloader",
+            "args": [
+              {
+                "name": "build",
+                "description": "The build number",
+                "type": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "Int",
+                    "ofType": null
+                  }
+                },
+                "defaultValue": null
+              },
+              {
+                "name": "minecraft",
+                "description": "The Minecraft version to get Purpur versions for.",
+                "type": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null
+                  }
+                },
+                "defaultValue": null
+              }
+            ],
+            "type": {
+              "kind": "OBJECT",
+              "name": "PurpurVersion",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "purpurVersions",
+            "description": "Versions of the Purpur modloader",
+            "args": [
+              {
+                "name": "minecraft",
+                "description": "The Minecraft version to get Purpur versions for.",
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                },
+                "defaultValue": null
+              }
+            ],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "OBJECT",
+                    "name": "PurpurMCBuild",
                     "ofType": null
                   }
                 }

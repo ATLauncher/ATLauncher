@@ -1,0 +1,9 @@
+query GetPaperLoaderVersion($build: Int!, $minecraft: String!) {
+    paperVersion(build: $build, minecraft: $minecraft) {
+        build
+        promoted
+        filename
+        downloadUrl
+        sha256
+    }
+}

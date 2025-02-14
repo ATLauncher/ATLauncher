@@ -171,7 +171,8 @@ public final class AddModsDialog extends JDialog {
         String platformMessage = null;
 
         if (ConfigManager.getConfigItem("platforms.curseforge.modsEnabled", true)
-                && (instanceOrServer.getLoaderVersion() == null || !instanceOrServer.getLoaderVersion().isPaperMC())) {
+                && (instanceOrServer.getLoaderVersion() == null || (!instanceOrServer.getLoaderVersion().isPaper()
+                        && !instanceOrServer.getLoaderVersion().isPurpur()))) {
             hostComboBox.addItem(new ComboItem<>(ModPlatform.CURSEFORGE, "CurseForge"));
             platformMessage = ConfigManager.getConfigItem("platforms.curseforge.message", null);
         }
@@ -877,8 +878,13 @@ public final class AddModsDialog extends JDialog {
                             categoriesComboBox.getSelectedItem() == null ? null
                                     : ((ComboItem<String>) categoriesComboBox.getSelectedItem()).getValue()));
                 } else if (((ComboItem<String>) sectionComboBox.getSelectedItem()).getValue().equals("Plugins")) {
-                    if (instanceOrServer.getLoaderVersion().isPaperMC()) {
+                    if (instanceOrServer.getLoaderVersion().isPaper()) {
                         setModrinthMods(ModrinthApi.searchPluginsForPaper(versionsToSearchFor, query, page,
+                                ((ComboItem<String>) sortComboBox.getSelectedItem()).getValue(),
+                                categoriesComboBox.getSelectedItem() == null ? null
+                                        : ((ComboItem<String>) categoriesComboBox.getSelectedItem()).getValue()));
+                    } else if (instanceOrServer.getLoaderVersion().isPurpur()) {
+                        setModrinthMods(ModrinthApi.searchPluginsForPurpur(versionsToSearchFor, query, page,
                                 ((ComboItem<String>) sortComboBox.getSelectedItem()).getValue(),
                                 categoriesComboBox.getSelectedItem() == null ? null
                                         : ((ComboItem<String>) categoriesComboBox.getSelectedItem()).getValue()));
@@ -1098,7 +1104,8 @@ public final class AddModsDialog extends JDialog {
         if (instanceOrServer.supportsPlugins()) {
             sectionComboBox.addItem(new ComboItem<>("Plugins", GetText.tr("Plugins")));
         }
-        if (instanceOrServer.getLoaderVersion() != null && !instanceOrServer.getLoaderVersion().isPaperMC()) {
+        if (instanceOrServer.getLoaderVersion() != null && !instanceOrServer.getLoaderVersion().isPaper()
+                && !instanceOrServer.getLoaderVersion().isPurpur()) {
             sectionComboBox.addItem(new ComboItem<>("Mods", GetText.tr("Mods")));
         }
         if (instanceOrServer instanceof Instance) {
@@ -1124,10 +1131,11 @@ public final class AddModsDialog extends JDialog {
         }
 
         boolean isCurseForgeSelected = firstTime
-                && (instanceOrServer.getLoaderVersion() == null || !instanceOrServer.getLoaderVersion().isPaperMC())
-                        ? App.settings.defaultModPlatform == ModPlatform.CURSEFORGE
-                        : ((ComboItem<ModPlatform>) hostComboBox.getSelectedItem())
-                                .getValue() == ModPlatform.CURSEFORGE;
+                && (instanceOrServer.getLoaderVersion() == null || (!instanceOrServer.getLoaderVersion().isPaper()
+                        && !instanceOrServer.getLoaderVersion().isPurpur()))
+                                ? App.settings.defaultModPlatform == ModPlatform.CURSEFORGE
+                                : ((ComboItem<ModPlatform>) hostComboBox.getSelectedItem())
+                                        .getValue() == ModPlatform.CURSEFORGE;
 
         if (isCurseForgeSelected) {
             if (instanceOrServer instanceof Instance) {

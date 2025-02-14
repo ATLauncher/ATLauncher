@@ -119,7 +119,8 @@ import com.atlauncher.data.technic.TechnicSolderModpackManifest;
 import com.atlauncher.exceptions.LocalException;
 import com.atlauncher.graphql.GetForgeLoaderVersionQuery;
 import com.atlauncher.graphql.GetNeoForgeLoaderVersionQuery;
-import com.atlauncher.graphql.GetPaperMCLoaderVersionQuery;
+import com.atlauncher.graphql.GetPaperLoaderVersionQuery;
+import com.atlauncher.graphql.GetPurpurLoaderVersionQuery;
 import com.atlauncher.gui.dialogs.BrowserDownloadDialog;
 import com.atlauncher.interfaces.NetworkProgressable;
 import com.atlauncher.managers.ConfigManager;
@@ -387,7 +388,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
             }
 
             if (this.isServer && minecraftVersionManifest != null && minecraftVersionManifest.hasInitSettings()
-                    && (this.loaderVersion == null || !this.loaderVersion.isPaperMC())) {
+                    && (this.loaderVersion == null
+                            || (!this.loaderVersion.isPaper() && !this.loaderVersion.isPurpur()))) {
                 initServerSettings();
             }
 
@@ -619,8 +621,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                 .anyMatch(m -> m.projectID == Constants.CURSEFORGE_JUMPLOADER_MOD_ID);
 
         if (hasJumpLoader) {
-            java.lang.reflect.Type type = new TypeToken<List<FabricMetaVersion>>() {
-            }.getType();
+            java.lang.reflect.Type type = new TypeToken<List<FabricMetaVersion>>() {}.getType();
 
             List<FabricMetaVersion> loaders = com.atlauncher.network.Download.build().setUrl(
                     String.format("https://meta.fabricmc.net/v2/versions/loader/%s?limit=1", packVersion.minecraft))
@@ -693,8 +694,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
 
                     packVersion.loader.metadata = loaderMeta;
                 } else {
-                    java.lang.reflect.Type type = new TypeToken<APIResponse<ATLauncherApiForgeVersion>>() {
-                    }.getType();
+                    java.lang.reflect.Type type = new TypeToken<APIResponse<ATLauncherApiForgeVersion>>() {}.getType();
 
                     APIResponse<ATLauncherApiForgeVersion> forgeVersionInfo = com.atlauncher.network.Download.build()
                             .setUrl(String.format("%sforge-version/%s", Constants.API_BASE_URL, forgeVersionString))
@@ -1147,8 +1147,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
 
                 packVersion.loader.metadata = loaderMeta;
             } else {
-                java.lang.reflect.Type type = new TypeToken<APIResponse<ATLauncherApiForgeVersion>>() {
-                }.getType();
+                java.lang.reflect.Type type = new TypeToken<APIResponse<ATLauncherApiForgeVersion>>() {}.getType();
 
                 APIResponse<ATLauncherApiForgeVersion> forgeVersionInfo = com.atlauncher.network.Download.build()
                         .setUrl(String.format("%sforge-version/%s", Constants.API_BASE_URL, forgeVersionString))
@@ -1619,8 +1618,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
 
                         packVersion.loader.metadata = loaderMeta;
                     } else {
-                        java.lang.reflect.Type type = new TypeToken<APIResponse<ATLauncherApiForgeVersion>>() {
-                        }.getType();
+                        java.lang.reflect.Type type = new TypeToken<APIResponse<ATLauncherApiForgeVersion>>() {}
+                                .getType();
 
                         APIResponse<ATLauncherApiForgeVersion> forgeVersionInfo = com.atlauncher.network.Download
                                 .build()
@@ -1809,8 +1808,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
 
                     packVersion.loader.metadata = loaderMeta;
                 } else {
-                    java.lang.reflect.Type type = new TypeToken<APIResponse<ATLauncherApiForgeVersion>>() {
-                    }.getType();
+                    java.lang.reflect.Type type = new TypeToken<APIResponse<ATLauncherApiForgeVersion>>() {}.getType();
 
                     APIResponse<ATLauncherApiForgeVersion> forgeVersionInfo = com.atlauncher.network.Download.build()
                             .setUrl(String.format("%sforge-version/%s", Constants.API_BASE_URL, forgeVersionString))
@@ -1956,8 +1954,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
 
                 packVersion.loader.metadata = loaderMeta;
             } else {
-                java.lang.reflect.Type type = new TypeToken<APIResponse<ATLauncherApiForgeVersion>>() {
-                }.getType();
+                java.lang.reflect.Type type = new TypeToken<APIResponse<ATLauncherApiForgeVersion>>() {}.getType();
 
                 APIResponse<ATLauncherApiForgeVersion> forgeVersionInfo = com.atlauncher.network.Download.build()
                         .setUrl(String.format("%sforge-version/%s", Constants.API_BASE_URL, forgeVersionString))
@@ -2074,8 +2071,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
 
                 packVersion.loader.metadata = loaderMeta;
             } else {
-                java.lang.reflect.Type type = new TypeToken<APIResponse<ATLauncherApiForgeVersion>>() {
-                }.getType();
+                java.lang.reflect.Type type = new TypeToken<APIResponse<ATLauncherApiForgeVersion>>() {}.getType();
 
                 APIResponse<ATLauncherApiForgeVersion> forgeVersionInfo = com.atlauncher.network.Download.build()
                         .setUrl(String.format("%sforge-version/%s", Constants.API_BASE_URL, loaderVersion.version))
@@ -2135,39 +2131,72 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
             loaderMeta.put("loader", loaderVersion.version);
             packVersion.loader.metadata = loaderMeta;
             packVersion.loader.className = "com.atlauncher.data.minecraft.loaders.neoforge.NeoForgeLoader";
-        } else if (loaderVersion != null && loaderVersion.isPaperMC()) {
-            String paperMCBuildString = loaderVersion.version;
+        } else if (loaderVersion != null && loaderVersion.isPaper()) {
+            String paperBuildString = loaderVersion.version;
 
             if (ConfigManager.getConfigItem("useGraphql.loaderVersions", false) == false) {
                 throw new Exception(
-                        "Failed to find loader version for " + paperMCBuildString + " as GraphQL is disabled");
+                        "Failed to find loader version for " + paperBuildString + " as GraphQL is disabled");
             }
 
-            int paperMCBuild;
+            int paperBuild;
 
             try {
-                paperMCBuild = Integer.parseInt(paperMCBuildString);
+                paperBuild = Integer.parseInt(paperBuildString);
             } catch (NumberFormatException ignored) {
-                throw new Exception("Failed to find loader version for " + paperMCBuildString);
+                throw new Exception("Failed to find loader version for " + paperBuildString);
             }
 
-            GetPaperMCLoaderVersionQuery.Data response = GraphqlClient
-                    .callAndWait(new GetPaperMCLoaderVersionQuery(paperMCBuild, version.minecraftVersion.id));
+            GetPaperLoaderVersionQuery.Data response = GraphqlClient
+                    .callAndWait(new GetPaperLoaderVersionQuery(paperBuild, version.minecraftVersion.id));
 
-            if (response == null || response.paperMCVersion() == null) {
-                throw new Exception("Failed to find loader version for " + paperMCBuildString);
+            if (response == null || response.paperVersion() == null) {
+                throw new Exception("Failed to find loader version for " + paperBuildString);
             }
 
             packVersion.loader = new com.atlauncher.data.json.Loader();
             Map<String, Object> loaderMeta = new HashMap<>();
             loaderMeta.put("minecraft", version.minecraftVersion.id);
-            loaderMeta.put("build", response.paperMCVersion().build());
-            loaderMeta.put("filename", response.paperMCVersion().filename());
-            loaderMeta.put("sha256", response.paperMCVersion().sha256());
-            loaderMeta.put("downloadUrl", response.paperMCVersion().downloadUrl());
+            loaderMeta.put("build", response.paperVersion().build());
+            loaderMeta.put("filename", response.paperVersion().filename());
+            loaderMeta.put("sha256", response.paperVersion().sha256());
+            loaderMeta.put("downloadUrl", response.paperVersion().downloadUrl());
 
             packVersion.loader.metadata = loaderMeta;
-            packVersion.loader.className = "com.atlauncher.data.minecraft.loaders.papermc.PaperMCLoader";
+            packVersion.loader.className = "com.atlauncher.data.minecraft.loaders.paper.PaperLoader";
+        } else if (loaderVersion != null && loaderVersion.isPurpur()) {
+            String purpurBuildString = loaderVersion.version;
+
+            if (ConfigManager.getConfigItem("useGraphql.loaderVersions", false) == false) {
+                throw new Exception(
+                        "Failed to find loader version for " + purpurBuildString + " as GraphQL is disabled");
+            }
+
+            int purpurBuild;
+
+            try {
+                purpurBuild = Integer.parseInt(purpurBuildString);
+            } catch (NumberFormatException ignored) {
+                throw new Exception("Failed to find loader version for " + purpurBuildString);
+            }
+
+            GetPurpurLoaderVersionQuery.Data response = GraphqlClient
+                    .callAndWait(new GetPurpurLoaderVersionQuery(purpurBuild, version.minecraftVersion.id));
+
+            if (response == null || response.purpurVersion() == null) {
+                throw new Exception("Failed to find loader version for " + purpurBuildString);
+            }
+
+            packVersion.loader = new com.atlauncher.data.json.Loader();
+            Map<String, Object> loaderMeta = new HashMap<>();
+            loaderMeta.put("minecraft", version.minecraftVersion.id);
+            loaderMeta.put("build", response.purpurVersion().build());
+            loaderMeta.put("filename", response.purpurVersion().filename());
+            loaderMeta.put("md5", response.purpurVersion().md5());
+            loaderMeta.put("downloadUrl", response.purpurVersion().downloadUrl());
+
+            packVersion.loader.metadata = loaderMeta;
+            packVersion.loader.className = "com.atlauncher.data.minecraft.loaders.purpur.PurpurLoader";
         } else if (loaderVersion != null && loaderVersion.isQuilt()) {
             packVersion.loader = new com.atlauncher.data.json.Loader();
             Map<String, Object> loaderMeta = new HashMap<>();
@@ -2902,8 +2931,9 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
     private void downloadMinecraft() throws Exception {
         addPercent(5);
 
-        // if PaperMC, we don't need to download Minecraft
-        if (this.isServer && this.loaderVersion != null && this.loaderVersion.isPaperMC()) {
+        // if Paper or Purpur, we don't need to download Minecraft
+        if (this.isServer && this.loaderVersion != null
+                && (this.loaderVersion.isPaper() || this.loaderVersion.isPurpur())) {
             return;
         }
 

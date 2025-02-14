@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.atlauncher.data.minecraft.loaders.papermc;
+package com.atlauncher.data.minecraft.loaders.purpur;
 
 import java.io.File;
 import java.io.IOException;
@@ -31,7 +31,7 @@ import com.atlauncher.data.minecraft.Arguments;
 import com.atlauncher.data.minecraft.Library;
 import com.atlauncher.data.minecraft.loaders.Loader;
 import com.atlauncher.data.minecraft.loaders.LoaderVersion;
-import com.atlauncher.graphql.GetPaperMCLoaderVersionsForMinecraftVersionQuery;
+import com.atlauncher.graphql.GetPurpurLoaderVersionsForMinecraftVersionQuery;
 import com.atlauncher.managers.ConfigManager;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.network.Download;
@@ -40,11 +40,11 @@ import com.atlauncher.workers.InstanceInstaller;
 
 import okhttp3.OkHttpClient;
 
-public class PaperMCLoader implements Loader {
+public class PurpurLoader implements Loader {
     protected String build;
     protected String filename;
     protected String downloadUrl;
-    protected String sha256;
+    protected String md5;
     protected String minecraft;
     protected File tempDir;
     protected InstanceInstaller instanceInstaller;
@@ -66,12 +66,11 @@ public class PaperMCLoader implements Loader {
         this.filename = (String) metadata.get("filename");
         this.downloadPath = FileSystem.LOADERS.resolve(filename);
         this.downloadUrl = (String) metadata.get("downloadUrl");
-        this.sha256 = (String) metadata.get("sha256");
+        this.md5 = (String) metadata.get("md5");
     }
 
     @Override
-    public void downloadAndExtractInstaller() throws Exception {
-    }
+    public void downloadAndExtractInstaller() throws Exception {}
 
     @Override
     public void runProcessors() {
@@ -81,8 +80,8 @@ public class PaperMCLoader implements Loader {
         Download download = Download.build().setUrl(this.downloadUrl).downloadTo(downloadPath).copyTo(serverPath)
                 .withInstanceInstaller(instanceInstaller).withHttpClient(httpClient);
 
-        if (this.sha256 != null) {
-            download = download.hash(this.sha256);
+        if (this.md5 != null) {
+            download = download.hash(this.md5);
         }
 
         if (download.needToDownload()) {
@@ -92,7 +91,7 @@ public class PaperMCLoader implements Loader {
         try {
             download.downloadFile();
         } catch (IOException e) {
-            LogManager.logStackTrace("Failed to download PaperMC", e);
+            LogManager.logStackTrace("Failed to download Purpur", e);
         }
     }
 
@@ -132,19 +131,19 @@ public class PaperMCLoader implements Loader {
     }
 
     public static List<LoaderVersion> getChoosableVersions(String minecraft) {
-        GetPaperMCLoaderVersionsForMinecraftVersionQuery.Data response = GraphqlClient
-                .callAndWait(new GetPaperMCLoaderVersionsForMinecraftVersionQuery(minecraft));
+        GetPurpurLoaderVersionsForMinecraftVersionQuery.Data response = GraphqlClient
+                .callAndWait(new GetPurpurLoaderVersionsForMinecraftVersionQuery(minecraft));
 
         if (response == null) {
             return new ArrayList<>();
         }
 
-        List<String> disabledVersions = ConfigManager.getConfigItem("loaders.papermc.disabledVersions",
+        List<String> disabledVersions = ConfigManager.getConfigItem("loaders.purpur.disabledVersions",
                 new ArrayList<>());
 
-        return response.loaderVersions().papermc().stream()
+        return response.loaderVersions().purpur().stream()
                 .filter(fv -> !disabledVersions.contains(fv.build()))
-                .map(version -> new LoaderVersion(Integer.toString(version.build()), version.promoted(), "PaperMC"))
+                .map(version -> new LoaderVersion(Integer.toString(version.build()), false, "Purpur"))
                 .collect(Collectors.toList());
     }
 
@@ -155,6 +154,6 @@ public class PaperMCLoader implements Loader {
 
     @Override
     public LoaderVersion getLoaderVersion() {
-        return new LoaderVersion(build, false, "PaperMC");
+        return new LoaderVersion(build, false, "Purpur");
     }
 }

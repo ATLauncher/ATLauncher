@@ -63,8 +63,12 @@ public class LoaderVersion {
         return this.type.equalsIgnoreCase("NeoForge");
     }
 
-    public boolean isPaperMC() {
-        return this.type.equalsIgnoreCase("PaperMC");
+    public boolean isPaper() {
+        return this.type.equalsIgnoreCase("Paper");
+    }
+
+    public boolean isPurpur() {
+        return this.type.equalsIgnoreCase("Purpur");
     }
 
     public boolean isQuilt() {
@@ -92,8 +96,12 @@ public class LoaderVersion {
             return LoaderType.NEOFORGE;
         }
 
-        if (isPaperMC()) {
-            return LoaderType.PAPERMC;
+        if (isPaper()) {
+            return LoaderType.PAPER;
+        }
+
+        if (isPurpur()) {
+            return LoaderType.PURPUR;
         }
 
         if (isQuilt()) {
@@ -169,8 +177,12 @@ public class LoaderVersion {
             return "NeoForge";
         }
 
-        if (isPaperMC()) {
-            return "PaperMC";
+        if (isPaper()) {
+            return "Paper";
+        }
+
+        if (isPurpur()) {
+            return "Purpur";
         }
 
         if (isQuilt()) {

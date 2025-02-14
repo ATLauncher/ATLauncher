@@ -679,7 +679,7 @@ public class Server implements ModManagement {
 
     @Override
     public boolean supportsPlugins() {
-        return loaderVersion != null && loaderVersion.isPaperMC();
+        return loaderVersion != null && (loaderVersion.isPaper() || loaderVersion.isPurpur());
     }
 
     @Override

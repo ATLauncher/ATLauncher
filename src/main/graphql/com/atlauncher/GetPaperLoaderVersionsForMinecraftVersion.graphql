@@ -1,6 +1,6 @@
-query GetPaperMCLoaderVersionsForMinecraftVersion($minecraftVersion: String!) {
+query GetPaperLoaderVersionsForMinecraftVersion($minecraftVersion: String!) {
     loaderVersions(minecraftVersion: $minecraftVersion) {
-        papermc {
+        paper {
             build
             promoted
         }

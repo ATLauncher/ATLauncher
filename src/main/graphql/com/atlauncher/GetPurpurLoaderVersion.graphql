@@ -1,0 +1,8 @@
+query GetPurpurLoaderVersion($build: Int!, $minecraft: String!) {
+    purpurVersion(build: $build, minecraft: $minecraft) {
+        build
+        filename
+        downloadUrl
+        md5
+    }
+}
