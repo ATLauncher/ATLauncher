@@ -7,7 +7,8 @@
     "[java]": {
         "editor.codeActionsOnSave": {
             "source.organizeImports": "explicit"
-        }
+        },
+        "editor.detectIndentation": false,
     },
     "[github-actions-workflow]": {
         "editor.tabSize": 2
@@ -28,5 +29,7 @@
     "java.codeGeneration.generateComments": true,
     "git.inputValidationLength": 100,
     "java.compile.nullAnalysis.mode": "automatic",
-    "java.debug.settings.hotCodeReplace": "auto"
+    "java.debug.settings.hotCodeReplace": "auto",
+    "java.settings.url": ".vscode/settings.prefs",
+    "java.format.settings.url": ".vscode/eclipse-formatter.xml"
 }

@@ -1,0 +1,2 @@
+org.eclipse.jdt.core.formatter.lineSplit=120
+org.eclipse.jdt.core.formatter.comment.line_length=120
