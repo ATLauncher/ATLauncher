@@ -170,11 +170,13 @@ public final class AddModsDialog extends JDialog {
         int selectedHostIndex = 0;
         String platformMessage = null;
 
-        if (ConfigManager.getConfigItem("platforms.curseforge.modsEnabled", true)
-                && (instanceOrServer.getLoaderVersion() == null || (!instanceOrServer.getLoaderVersion().isPaper()
-                        && !instanceOrServer.getLoaderVersion().isPurpur()))) {
+        if (ConfigManager.getConfigItem("platforms.curseforge.modsEnabled", true)) {
             hostComboBox.addItem(new ComboItem<>(ModPlatform.CURSEFORGE, "CurseForge"));
-            platformMessage = ConfigManager.getConfigItem("platforms.curseforge.message", null);
+
+            if (App.settings.defaultModPlatform == ModPlatform.CURSEFORGE) {
+                selectedHostIndex = hostComboBox.getItemCount() - 1;
+                platformMessage = ConfigManager.getConfigItem("platforms.curseforge.message", null);
+            }
         }
 
         if (ConfigManager.getConfigItem("platforms.modrinth.modsEnabled", true)) {
@@ -807,6 +809,11 @@ public final class AddModsDialog extends JDialog {
                             ((ComboItem<String>) sortComboBox.getSelectedItem()).getValue(),
                             categoriesComboBox.getSelectedItem() == null ? null
                                     : ((ComboItem<String>) categoriesComboBox.getSelectedItem()).getValue()));
+                } else if (((ComboItem<String>) sectionComboBox.getSelectedItem()).getValue().equals("Plugins")) {
+                    setCurseForgeMods(CurseForgeApi.searchPlugins(versionToSearchFor, query, page,
+                            ((ComboItem<String>) sortComboBox.getSelectedItem()).getValue(),
+                            categoriesComboBox.getSelectedItem() == null ? null
+                                    : ((ComboItem<String>) categoriesComboBox.getSelectedItem()).getValue()));
                 } else {
                     if (instanceOrServer.getLoaderVersion().isFabric()
                             || instanceOrServer.getLoaderVersion().isLegacyFabric()) {
@@ -1172,6 +1179,8 @@ public final class AddModsDialog extends JDialog {
                 categories.addAll(CurseForgeApi.getCategoriesForShaderPacks());
             } else if (((ComboItem<String>) sectionComboBox.getSelectedItem()).getValue().equals("Worlds")) {
                 categories.addAll(CurseForgeApi.getCategoriesForWorlds());
+            } else if (((ComboItem<String>) sectionComboBox.getSelectedItem()).getValue().equals("Plugins")) {
+                categories.addAll(CurseForgeApi.getCategoriesForPlugins());
             } else {
                 categories.addAll(CurseForgeApi.getCategoriesForMods());
             }
@@ -1185,6 +1194,8 @@ public final class AddModsDialog extends JDialog {
                 categories.addAll(ModrinthApi.getCategoriesForResourcePacks());
             } else if (((ComboItem<String>) sectionComboBox.getSelectedItem()).getValue().equals("Shaders")) {
                 categories.addAll(ModrinthApi.getCategoriesForShaders());
+            } else if (((ComboItem<String>) sectionComboBox.getSelectedItem()).getValue().equals("Plugins")) {
+                categories.addAll(ModrinthApi.getCategoriesForPlugins());
             } else {
                 categories.addAll(ModrinthApi.getCategoriesForMods());
             }

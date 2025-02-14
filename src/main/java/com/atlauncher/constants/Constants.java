@@ -31,7 +31,7 @@ public class Constants {
     static {
         String versionFromFile = new BufferedReader(
                 new InputStreamReader(App.class.getResourceAsStream("/version"), StandardCharsets.UTF_8)).lines()
-                .collect(Collectors.joining("")).trim();
+                        .collect(Collectors.joining("")).trim();
         String[] versionParts = versionFromFile.split("\\.", 4);
 
         String stream = "Release";
@@ -96,6 +96,7 @@ public class Constants {
     public static final int CURSEFORGE_JUMPLOADER_MOD_ID = 361988;
     public static final int CURSEFORGE_SINYTRA_CONNECTOR_MOD_ID = 890127;
     public static final int CURSEFORGE_FORGIFIED_FABRIC_API_MOD_ID = 889079;
+    public static final int CURSEFORGE_PLUGINS_SECTION_ID = 5;
     public static final int CURSEFORGE_MODS_SECTION_ID = 6;
     public static final int CURSEFORGE_MODPACKS_SECTION_ID = 4471;
     public static final int CURSEFORGE_RESOURCE_PACKS_SECTION_ID = 12;
@@ -164,14 +165,14 @@ public class Constants {
     public static final String[] INSTANCE_TITLE_FORMATS = { "%1$s (%2$s %3$s)", "%1$s", "%1$s (%4$s)", "%1$s (%3$s)" };
 
     public static final ScreenResolution[] SCREEN_RESOLUTIONS = {
-        new ScreenResolution(854, 480),
-        new ScreenResolution(1280, 720),
-        new ScreenResolution(1366, 768),
-        new ScreenResolution(1600, 900),
-        new ScreenResolution(1920, 1080),
-        new ScreenResolution(2560, 1440),
-        new ScreenResolution(3440, 1440),
-        new ScreenResolution(3840, 2160)
+            new ScreenResolution(854, 480),
+            new ScreenResolution(1280, 720),
+            new ScreenResolution(1366, 768),
+            new ScreenResolution(1600, 900),
+            new ScreenResolution(1920, 1080),
+            new ScreenResolution(2560, 1440),
+            new ScreenResolution(3440, 1440),
+            new ScreenResolution(3840, 2160)
     };
 
     public static final String DEFAULT_JAVA_PARAMETERS = "-XX:+UnlockExperimentalVMOptions -XX:+UseG1GC -XX:G1NewSizePercent=20 -XX:G1ReservePercent=20 -XX:MaxGCPauseMillis=50 -XX:G1HeapRegionSize=32M";

@@ -910,7 +910,8 @@ public class Server implements ModManagement {
                 .filter(installedMod -> !installedMod.isFromCurseForge() || installedMod.getCurseForgeModId() != mod.id)
                 .collect(Collectors.toList());
 
-        DisableableMod dm = new DisableableMod(mod.name, file.displayName, true, file.fileName, Type.mods,
+        DisableableMod dm = new DisableableMod(mod.name, file.displayName, true, file.fileName,
+                mod.getRootCategoryId() == Constants.CURSEFORGE_PLUGINS_SECTION_ID ? Type.plugins : Type.mods,
                 null, mod.summary, false, true, true, false, mod, file);
 
         // check for mod on Modrinth

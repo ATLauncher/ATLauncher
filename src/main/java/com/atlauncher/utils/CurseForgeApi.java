@@ -95,8 +95,8 @@ public class CurseForgeApi {
                     .cached(new CacheControl.Builder().maxStale(10, TimeUnit.MINUTES).build())
                     .setUrl(url).header("x-api-key", Constants.CURSEFORGE_CORE_API_KEY);
 
-            java.lang.reflect.Type type = new TypeToken<CurseForgeCoreApiResponse<List<CurseForgeProject>>>() {
-            }.getType();
+            java.lang.reflect.Type type = new TypeToken<CurseForgeCoreApiResponse<List<CurseForgeProject>>>() {}
+                    .getType();
 
             CurseForgeCoreApiResponse<List<CurseForgeProject>> response = download.asType(type);
 
@@ -142,6 +142,15 @@ public class CurseForgeApi {
         Integer categoryIdParam = categoryId == null ? null : Integer.parseInt(categoryId);
 
         return searchCurseForge(gameVersion, Constants.CURSEFORGE_MODS_SECTION_ID, query, page, null, sort,
+                categoryIdParam);
+    }
+
+    public static List<CurseForgeProject> searchPlugins(String gameVersion, String query, int page, String sort,
+            String categoryId) {
+        Integer categoryIdParam = categoryId == null ? null : Integer.parseInt(categoryId);
+
+        // CurseForge plugins don't seem to update their supported versions often, so we have to just get all
+        return searchCurseForge(null, Constants.CURSEFORGE_PLUGINS_SECTION_ID, query, page, null, sort,
                 categoryIdParam);
     }
 
@@ -236,8 +245,7 @@ public class CurseForgeApi {
         Download download = Download.build().setUrl(url).header("x-api-key", Constants.CURSEFORGE_CORE_API_KEY)
                 .cached(new CacheControl.Builder().maxStale(10, TimeUnit.MINUTES).build());
 
-        java.lang.reflect.Type type = new TypeToken<CurseForgeCoreApiResponse<List<CurseForgeFile>>>() {
-        }.getType();
+        java.lang.reflect.Type type = new TypeToken<CurseForgeCoreApiResponse<List<CurseForgeFile>>>() {}.getType();
 
         CurseForgeCoreApiResponse<List<CurseForgeFile>> response = download.asType(type);
 
@@ -255,8 +263,7 @@ public class CurseForgeApi {
         Download download = Download.build().setUrl(url).header("x-api-key", Constants.CURSEFORGE_CORE_API_KEY)
                 .cached(new CacheControl.Builder().maxStale(1, TimeUnit.HOURS).build());
 
-        java.lang.reflect.Type type = new TypeToken<CurseForgeCoreApiResponse<CurseForgeFile>>() {
-        }.getType();
+        java.lang.reflect.Type type = new TypeToken<CurseForgeCoreApiResponse<CurseForgeFile>>() {}.getType();
 
         CurseForgeCoreApiResponse<CurseForgeFile> response = download.asType(type);
 
@@ -274,8 +281,7 @@ public class CurseForgeApi {
         Download download = Download.build().setUrl(url).header("x-api-key", Constants.CURSEFORGE_CORE_API_KEY)
                 .cached(new CacheControl.Builder().maxStale(1, TimeUnit.HOURS).build());
 
-        java.lang.reflect.Type type = new TypeToken<CurseForgeCoreApiResponse<String>>() {
-        }.getType();
+        java.lang.reflect.Type type = new TypeToken<CurseForgeCoreApiResponse<String>>() {}.getType();
 
         CurseForgeCoreApiResponse<String> response = download.asType(type);
 
@@ -296,8 +302,7 @@ public class CurseForgeApi {
         Download download = Download.build().setUrl(url).header("x-api-key", Constants.CURSEFORGE_CORE_API_KEY)
                 .cached(new CacheControl.Builder().maxStale(10, TimeUnit.MINUTES).build());
 
-        java.lang.reflect.Type type = new TypeToken<CurseForgeCoreApiResponse<CurseForgeProject>>() {
-        }.getType();
+        java.lang.reflect.Type type = new TypeToken<CurseForgeCoreApiResponse<CurseForgeProject>>() {}.getType();
 
         CurseForgeCoreApiResponse<CurseForgeProject> response = download.asType(type);
 
@@ -324,8 +329,7 @@ public class CurseForgeApi {
         Download download = Download.build().setUrl(url).header("x-api-key", Constants.CURSEFORGE_CORE_API_KEY)
                 .cached(new CacheControl.Builder().maxStale(10, TimeUnit.MINUTES).build());
 
-        java.lang.reflect.Type type = new TypeToken<CurseForgeCoreApiResponse<List<CurseForgeProject>>>() {
-        }.getType();
+        java.lang.reflect.Type type = new TypeToken<CurseForgeCoreApiResponse<List<CurseForgeProject>>>() {}.getType();
 
         CurseForgeCoreApiResponse<List<CurseForgeProject>> response = download.asType(type);
 
@@ -374,8 +378,7 @@ public class CurseForgeApi {
         download = download.setUrl(url).header("x-api-key", Constants.CURSEFORGE_CORE_API_KEY)
                 .cached(new CacheControl.Builder().maxStale(10, TimeUnit.MINUTES).build());
 
-        java.lang.reflect.Type type = new TypeToken<CurseForgeCoreApiResponse<List<CurseForgeProject>>>() {
-        }.getType();
+        java.lang.reflect.Type type = new TypeToken<CurseForgeCoreApiResponse<List<CurseForgeProject>>>() {}.getType();
 
         CurseForgeCoreApiResponse<List<CurseForgeProject>> response = download.asType(type);
 
@@ -402,8 +405,7 @@ public class CurseForgeApi {
                 .header("x-api-key", Constants.CURSEFORGE_CORE_API_KEY)
                 .cached(new CacheControl.Builder().maxStale(10, TimeUnit.MINUTES).build());
 
-        java.lang.reflect.Type type = new TypeToken<CurseForgeCoreApiResponse<List<CurseForgeFile>>>() {
-        }.getType();
+        java.lang.reflect.Type type = new TypeToken<CurseForgeCoreApiResponse<List<CurseForgeFile>>>() {}.getType();
 
         CurseForgeCoreApiResponse<List<CurseForgeFile>> response = download.asType(type);
 
@@ -429,8 +431,7 @@ public class CurseForgeApi {
         download = download.setUrl(url).header("x-api-key", Constants.CURSEFORGE_CORE_API_KEY)
                 .cached(new CacheControl.Builder().maxStale(10, TimeUnit.MINUTES).build());
 
-        java.lang.reflect.Type type = new TypeToken<CurseForgeCoreApiResponse<CurseForgeFingerprint>>() {
-        }.getType();
+        java.lang.reflect.Type type = new TypeToken<CurseForgeCoreApiResponse<CurseForgeFingerprint>>() {}.getType();
 
         CurseForgeCoreApiResponse<CurseForgeFingerprint> response = download.asType(type);
 
@@ -447,8 +448,8 @@ public class CurseForgeApi {
         Download download = Download.build().setUrl(url).header("x-api-key", Constants.CURSEFORGE_CORE_API_KEY)
                 .cached(new CacheControl.Builder().maxStale(1, TimeUnit.HOURS).build());
 
-        java.lang.reflect.Type type = new TypeToken<CurseForgeCoreApiResponse<List<CurseForgeCategoryForGame>>>() {
-        }.getType();
+        java.lang.reflect.Type type = new TypeToken<CurseForgeCoreApiResponse<List<CurseForgeCategoryForGame>>>() {}
+                .getType();
 
         CurseForgeCoreApiResponse<List<CurseForgeCategoryForGame>> response = download.asType(type);
 
@@ -478,6 +479,18 @@ public class CurseForgeApi {
         }
 
         return categories.stream().filter(c -> c.classId != null && c.classId == Constants.CURSEFORGE_MODS_SECTION_ID)
+                .sorted(Comparator.comparing(c -> c.name)).collect(Collectors.toList());
+    }
+
+    public static List<CurseForgeCategoryForGame> getCategoriesForPlugins() {
+        List<CurseForgeCategoryForGame> categories = getCategories();
+
+        if (categories == null) {
+            return new ArrayList<>();
+        }
+
+        return categories.stream()
+                .filter(c -> c.classId != null && c.classId == Constants.CURSEFORGE_PLUGINS_SECTION_ID)
                 .sorted(Comparator.comparing(c -> c.name)).collect(Collectors.toList());
     }
 

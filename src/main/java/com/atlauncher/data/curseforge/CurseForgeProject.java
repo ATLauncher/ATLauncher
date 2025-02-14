@@ -80,8 +80,8 @@ public class CurseForgeProject {
                 .findFirst();
 
         return primaryCategory
-            .map(curseForgeCategory -> curseForgeCategory.classId)
-            .orElse(Constants.CURSEFORGE_MODS_SECTION_ID);
+                .map(curseForgeCategory -> curseForgeCategory.classId)
+                .orElse(Constants.CURSEFORGE_MODS_SECTION_ID);
     }
 
     public Optional<CurseForgeAttachment> getLogo() {
@@ -148,6 +148,10 @@ public class CurseForgeProject {
         if (getRootCategoryId() == Constants.CURSEFORGE_SHADER_PACKS_SECTION_ID
                 || classId == Constants.CURSEFORGE_SHADER_PACKS_SECTION_ID) {
             return root.resolve("shaderpacks");
+        }
+
+        if (getRootCategoryId() == Constants.CURSEFORGE_PLUGINS_SECTION_ID) {
+            return root.resolve("plugins");
         }
 
         return root.resolve("mods");

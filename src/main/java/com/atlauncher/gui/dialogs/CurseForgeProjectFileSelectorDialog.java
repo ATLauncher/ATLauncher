@@ -311,6 +311,7 @@ public class CurseForgeProjectFileSelectorDialog extends JDialog {
             if (App.settings.addModRestriction == AddModRestriction.STRICT) {
                 curseForgeFilesStream = curseForgeFilesStream.filter(
                         file -> mod.getRootCategoryId() == Constants.CURSEFORGE_RESOURCE_PACKS_SECTION_ID
+                                || mod.getRootCategoryId() == Constants.CURSEFORGE_PLUGINS_SECTION_ID
                                 || file.gameVersions.contains(instanceOrServer.getMinecraftVersion()));
             } else if (App.settings.addModRestriction == AddModRestriction.LAX) {
                 try {
