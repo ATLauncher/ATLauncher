@@ -107,6 +107,7 @@ public class ATLauncherPackCard extends JPanel implements RelocalizationListener
         descArea.setText(pack.getDescription());
         descArea.setLineWrap(true);
         descArea.setEditable(false);
+        descArea.setFocusable(false);
         descArea.setHighlighter(null);
         descArea.setWrapStyleWord(true);
         descArea.setCaretPosition(0);

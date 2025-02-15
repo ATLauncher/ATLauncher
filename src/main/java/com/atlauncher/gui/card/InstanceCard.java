@@ -170,6 +170,7 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
         this.descArea.setText(instance.getPackDescription());
         this.descArea.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 5));
         this.descArea.setEditable(false);
+        this.descArea.setFocusable(false);
         this.descArea.setHighlighter(null);
         this.descArea.setLineWrap(true);
         this.descArea.setWrapStyleWord(true);

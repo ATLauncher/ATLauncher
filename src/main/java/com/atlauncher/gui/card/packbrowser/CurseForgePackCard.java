@@ -133,6 +133,7 @@ public class CurseForgePackCard extends JPanel implements RelocalizationListener
         descArea.setText(project.summary);
         descArea.setLineWrap(true);
         descArea.setEditable(false);
+        descArea.setFocusable(false);
         descArea.setHighlighter(null);
         descArea.setWrapStyleWord(true);
         descArea.setCaretPosition(0);

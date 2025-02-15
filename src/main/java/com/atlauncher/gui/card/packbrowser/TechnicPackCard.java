@@ -92,6 +92,7 @@ public class TechnicPackCard extends JPanel implements RelocalizationListener {
         descArea.setText(pack.name);
         descArea.setLineWrap(true);
         descArea.setEditable(false);
+        descArea.setFocusable(false);
         descArea.setHighlighter(null);
         descArea.setWrapStyleWord(true);
         descArea.setCaretPosition(0);

@@ -127,6 +127,7 @@ public class ModrinthPackCard extends JPanel implements RelocalizationListener {
         descArea.setText(searchHit.description);
         descArea.setLineWrap(true);
         descArea.setEditable(false);
+        descArea.setFocusable(false);
         descArea.setHighlighter(null);
         descArea.setWrapStyleWord(true);
         descArea.setCaretPosition(0);

@@ -154,6 +154,8 @@ public class UnifiedPackCard extends JPanel implements RelocalizationListener {
         JEditorPane descArea = new JEditorPane("text/html",
                 String.format("<html>%s</html>", Markdown.render(result.summary())));
         descArea.setEditable(false);
+        descArea.setFocusable(false);
+        descArea.setHighlighter(null);
         descArea.addHyperlinkListener(e -> {
             if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
                 OS.openWebBrowser(e.getURL());

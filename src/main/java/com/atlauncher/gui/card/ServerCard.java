@@ -87,6 +87,7 @@ public class ServerCard extends CollapsiblePanel implements RelocalizationListen
         descArea.setText(server.getPackDescription());
         descArea.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 5));
         descArea.setEditable(false);
+        descArea.setFocusable(false);
         descArea.setHighlighter(null);
         descArea.setLineWrap(true);
         descArea.setWrapStyleWord(true);
