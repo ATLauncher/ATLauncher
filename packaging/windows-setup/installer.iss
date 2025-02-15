@@ -57,8 +57,67 @@ Type: filesandordirs; Name: "{app}\jre"
 Type: filesandordirs; Name: "{app}\jre"
 
 [Code]
+#include "lib/JsonHelpers.pas"
+const
+CONFIGURL = 'https://download.nodecdn.net/containers/atl/launcher/json/config.json';
+FALLBACKx86 = 'https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.9%2B9.1/OpenJDK17U-jre_x86-32_windows_hotspot_17.0.9_9.zip';
+FALLBACKx64 = 'https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.9%2B9.1/OpenJDK17U-jre_x64_windows_hotspot_17.0.9_9.zip';
+
 var
   DownloadPage: TDownloadWizardPage;
+  FallbackUrl, FallbackHash, Url, Hash, Folder: WideString;
+
+procedure GetJreInfo;
+  var
+    WinHttpReq: Variant;
+    Json, OS: string;
+    JsonParser: TJsonParser;
+    JsonRoot, BundledJreObject, OSObject: TJsonObject;
+begin
+  if IsWin64 then
+    begin
+      OS := 'windowsx64'
+      FallbackUrl := FALLBACKx64
+      FallbackHash := '6c491d6f8c28c6f451f08110a30348696a04b009f8c58592191046e0fab1477b'
+    end
+  else
+    begin
+      OS := 'windowsx86'
+      FallbackUrl := FALLBACKx86
+      FallbackHash := '2f9fe8b587400e89cd3ef33b71e0517ab99a12a5ee623382cbe9f5078bf2b435'
+    end;
+  Try
+    WinHttpReq := CreateOleObject('WinHttp.WinHttpRequest.5.1');
+    WinHttpReq.Open('GET', CONFIGURL, False);
+    WinHttpReq.Send('');
+    if WinHttpReq.Status = 200 then
+     begin
+        Json := WinHttpReq.ResponseText
+        if ParseJsonAndLogErrors(JsonParser, Json) then
+          begin
+            JsonRoot := GetJsonRoot(JsonParser.Output);
+            if not FindJsonObject(JsonParser.Output, JsonRoot, 'bundledJre', BundledJreObject) or
+            not FindJsonObject(JsonParser.Output, BundledJreObject, OS, OSObject) or
+            not FindJsonString(JsonParser.Output, OSObject, 'url', Url) or
+            not FindJsonString(JsonParser.Output, OSObject, 'hash', Hash) or
+            not FindJsonString(JsonParser.Output, OSObject, 'folder',Folder) then
+            begin
+              RaiseException('Failed to read from ' + CONFIGURL + ', falling back to defaults')
+            end;
+        end;
+      ClearJsonParser(JsonParser)
+      end
+      else
+        begin
+          RaiseException('Failed to read from ' + CONFIGURL + ', falling back to defaults')
+      end;
+  Except
+    MsgBox(GetExceptionMessage,mbError,MB_OK)
+    Url := FallbackUrl
+    Hash := FallbackHash
+    Folder := 'jdk-17.0.9+9-jre'
+ end;
+end;
 
 procedure InitializeWizard;
 begin
@@ -68,7 +127,7 @@ end;
 procedure CurStepChanged(CurStep: TSetupStep);
 begin
   if (CurStep = ssPostInstall) then begin
-    if not RenameFile(ExpandConstant('{app}') + '\jdk-17.0.3+7-jre', ExpandConstant('{app}/jre')) then begin
+    if not RenameFile(ExpandConstant('{app}') + '\' + Folder, ExpandConstant('{app}/jre')) then begin
       MsgBox('Failed to rename jre directory. Please try again', mbError, MB_OK);
       WizardForm.Close;
     end
@@ -97,17 +156,14 @@ begin
           Result := (Answer <> IDCANCEL);
         end;
       until not Retry;
-      
+
       if not Result then Exit;
 
       // Now do the download for the JRE, but make it optional and okay if it fails
       repeat
         DownloadPage.Clear;
-        if IsWin64 then begin
-          DownloadPage.Add('https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.3%2B7/OpenJDK17U-jre_x64_windows_hotspot_17.0.3_7.zip', 'jre.zip', 'd77745fdb57b51116f7b8fabd7d251067edbe3c94ea18fa224f64d9584b41a97');
-        end else begin
-          DownloadPage.Add('https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.3%2B7/OpenJDK17U-jre_x86-32_windows_hotspot_17.0.3_7.zip', 'jre.zip', 'e29e311e4200a32438ef65637a75eb8eb09f73a37cef3877f08d02b6355cd221');
-        end;
+        GetJreInfo;
+        DownloadPage.Add(Url, 'jre.zip', Hash);
         try
           DownloadPage.Download;
           Result := True;

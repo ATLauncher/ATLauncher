@@ -21,6 +21,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Add Paper to loader list for creating plugin capable servers [#975]
 - Add option to install/manage plugins and mods to servers [#975][#421]
 - Add Purpur support for servers
+- Dynaimc fetching of JRE information from nodecdn [#958]
 
 ### Fixes
 - Invalid Java install location causing issues starting the launcher
