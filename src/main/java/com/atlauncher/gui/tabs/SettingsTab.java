@@ -82,6 +82,8 @@ public class SettingsTab extends HierarchyPanel implements Tab {
     @Nullable
     private List<Tab> tabs;
 
+    private int selectedTabIndex = 0;
+
     public SettingsTab() {
         setLayout(new BorderLayout());
     }
@@ -114,13 +116,15 @@ public class SettingsTab extends HierarchyPanel implements Tab {
         backupsSettingsTab = new BackupsSettingsTab(backupSettingsViewModel);
         commandSettingsTab = new CommandsSettingsTab(commandsSettingsViewModel);
         tabs = Arrays.asList(
-            new Tab[]{this.generalSettingsTab, this.modsSettingsTab, this.javaSettingsTab, this.networkSettingsTab,
-                this.loggingSettingsTab, this.backupsSettingsTab, this.commandSettingsTab});
+                new Tab[] { this.generalSettingsTab, this.modsSettingsTab, this.javaSettingsTab,
+                        this.networkSettingsTab,
+                        this.loggingSettingsTab, this.backupsSettingsTab, this.commandSettingsTab });
 
         for (Tab tab : this.tabs) {
             this.tabbedPane.addTab(tab.getTitle(), (JPanel) tab);
         }
         tabbedPane.setOpaque(true);
+        tabbedPane.setSelectedIndex(selectedTabIndex);
 
         add(tabbedPane, BorderLayout.CENTER);
 
@@ -131,8 +135,11 @@ public class SettingsTab extends HierarchyPanel implements Tab {
         addDisposable(viewModel.getSaveEnabled().subscribe(saveButton::setEnabled));
         saveButton.addActionListener(arg0 -> viewModel.save());
 
-        tabbedPane.addChangeListener(e -> Analytics
-            .sendScreenView(((Tab) tabbedPane.getSelectedComponent()).getAnalyticsScreenViewName() + " Settings"));
+        tabbedPane.addChangeListener(e -> {
+            selectedTabIndex = tabbedPane.getSelectedIndex();
+            Analytics.sendScreenView(
+                    ((Tab) tabbedPane.getSelectedComponent()).getAnalyticsScreenViewName() + " Settings");
+        });
     }
 
     @Override
