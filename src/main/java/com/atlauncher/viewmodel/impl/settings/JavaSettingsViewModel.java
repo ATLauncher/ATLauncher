@@ -35,7 +35,6 @@ import com.atlauncher.data.ScreenResolution;
 import com.atlauncher.evnt.listener.SettingsListener;
 import com.atlauncher.evnt.manager.SettingsManager;
 import com.atlauncher.gui.tabs.settings.JavaSettingsTab;
-import com.atlauncher.managers.ConfigManager;
 import com.atlauncher.managers.SettingsValidityManager;
 import com.atlauncher.utils.Java;
 import com.atlauncher.utils.OS;
@@ -55,8 +54,7 @@ public class JavaSettingsViewModel implements SettingsListener {
     private static final long javaParamCheckDelay = 2000;
     private static final long javaInstallLocationCheckDelay = 2000;
 
-    private final BehaviorSubject<Integer> _initialRam = BehaviorSubject.create(),
-            _maxRam = BehaviorSubject.create(),
+    private final BehaviorSubject<Integer> _maxRam = BehaviorSubject.create(),
             _metaspace = BehaviorSubject.create(),
             _width = BehaviorSubject.create(),
             _height = BehaviorSubject.create();
@@ -80,8 +78,7 @@ public class JavaSettingsViewModel implements SettingsListener {
     private Integer systemRam = -1,
             recommendSize;
 
-    private boolean initialMemoryWarningShown = false,
-            maximumMemoryHalfWarningShown = false,
+    private boolean maximumMemoryHalfWarningShown = false,
             maximumMemoryEightGBWarningShown = false,
             permgenWarningShown = false;
     private List<String> javaPaths;
@@ -183,8 +180,7 @@ public class JavaSettingsViewModel implements SettingsListener {
                         javaParamCheckState.onNext(CheckState.Checking);
 
                         String params = App.settings.javaParameters;
-                        boolean valid = (!useInitialMemoryOption() || !params.contains("-Xms")) &&
-                                !params.contains("-Xmx") &&
+                        boolean valid = !params.contains("-Xmx") &&
                                 !params.contains("-XX:PermSize") &&
                                 !params.contains("-XX:MetaspaceSize");
                         javaParamCheckState.onNext(new CheckState.Checked(valid));
@@ -203,7 +199,6 @@ public class JavaSettingsViewModel implements SettingsListener {
 
     @Override
     public void onSettingsSaved() {
-        _initialRam.onNext(App.settings.initialMemory);
         _maxRam.onNext(App.settings.maximumMemory);
         _metaspace.onNext(App.settings.metaspace);
         _width.onNext(App.settings.windowWidth);
@@ -243,14 +238,6 @@ public class JavaSettingsViewModel implements SettingsListener {
         return systemRam;
     }
 
-    public boolean isInitialMemoryWarningShown() {
-        return initialMemoryWarningShown;
-    }
-
-    public void setInitialMemoryWarningShown() {
-        initialMemoryWarningShown = true;
-    }
-
     public boolean isMaximumMemoryHalfWarningShown() {
         return maximumMemoryHalfWarningShown;
     }
@@ -276,40 +263,13 @@ public class JavaSettingsViewModel implements SettingsListener {
     }
 
     /**
-     * Set the initial ram
-     *
-     * @param initialRam initial ram value
-     * @return true to show warning for above 512, false otherwise
-     */
-    public boolean setInitialRam(int initialRam) {
-        App.settings.initialMemory = initialRam;
-
-        // if initial memory is larger than maximum memory, make maximum memory match
-        if (initialRam > App.settings.maximumMemory) {
-            App.settings.maximumMemory = initialRam;
-        }
-
-        SettingsManager.post();
-
-        return initialRam > 512 && !isInitialMemoryWarningShown();
-    }
-
-    public Observable<Integer> getInitialRam() {
-        return _initialRam.observeOn(SwingSchedulers.edt());
-    }
-
-    /**
      * Set the maximum ram
      *
-     * @param maxRam max ram value
+     * @param maxRam
+     *            max ram value
      */
     public void setMaxRam(int maxRam) {
         App.settings.maximumMemory = maxRam;
-        // if initial memory is larger than maximum memory, make initial memory match
-        if (useInitialMemoryOption() && App.settings.initialMemory > maxRam) {
-            App.settings.initialMemory = maxRam;
-        }
-
         SettingsManager.post();
     }
 
@@ -327,7 +287,8 @@ public class JavaSettingsViewModel implements SettingsListener {
     /**
      * Set the perm gen size
      *
-     * @param permGen perm gen size
+     * @param permGen
+     *            perm gen size
      * @return true to show warning, false otherwise
      */
     public boolean setPermGen(int permGen) {
@@ -514,10 +475,6 @@ public class JavaSettingsViewModel implements SettingsListener {
     public void setDedicatedGpu(Boolean b) {
         App.settings.useDedicatedGpu = b;
         SettingsManager.post();
-    }
-
-    public Boolean useInitialMemoryOption() {
-        return !ConfigManager.getConfigItem("removeInitialMemoryOption", false);
     }
 
     public void setJavaInstallLocationPending() {

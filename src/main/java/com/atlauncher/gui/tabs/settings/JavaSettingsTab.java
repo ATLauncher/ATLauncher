@@ -80,61 +80,6 @@ public class JavaSettingsTab extends AbstractSettingsTab {
         Integer systemRam = viewModel.getSystemRam();
         Integer maximumSystemRamForSpinnerModels = systemRam == null || systemRam == 0 ? null : systemRam;
 
-        if (viewModel.useInitialMemoryOption()) {
-            // Initial Memory Settings
-            gbc.gridx = 0;
-            gbc.gridy++;
-            gbc.insets = UIConstants.LABEL_INSETS;
-            gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-
-            JLabelWithHover initialMemoryLabelWarning = new JLabelWithHover(WARNING_ICON,
-                    new HTMLBuilder().center().split(100).text(GetText
-                            .tr("You're running a 32 bit Java and therefore cannot use more than 1GB of Ram. Please see http://atl.pw/32bit for help."))
-                            .build(),
-                    RESTART_BORDER);
-
-            JLabelWithHover initialMemoryLabel = new JLabelWithHover(GetText.tr("Initial Memory/Ram") + ":", HELP_ICON,
-                    new HTMLBuilder().center().split(100).text(GetText.tr(
-                            "Initial memory/ram is the starting amount of memory/ram to use when starting Minecraft. This should be left at the default of 512 MB unless you know what your doing."))
-                            .build());
-
-            JPanel initialMemoryPanel = new JPanel();
-            initialMemoryPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 0, 0));
-            if (viewModel.isJava32Bit()) {
-                initialMemoryPanel.add(initialMemoryLabelWarning);
-            }
-            initialMemoryPanel.add(initialMemoryLabel);
-
-            add(initialMemoryPanel, gbc);
-
-            gbc.gridx++;
-            gbc.insets = UIConstants.FIELD_INSETS;
-            gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-            SpinnerNumberModel initialMemoryModel = new SpinnerNumberModel(App.settings.initialMemory, null, null, 128);
-            initialMemoryModel.setMinimum(128);
-            initialMemoryModel.setMaximum(maximumSystemRamForSpinnerModels);
-            JSpinner initialMemory = new JSpinner(initialMemoryModel);
-            ((JSpinner.DefaultEditor) initialMemory.getEditor()).getTextField().setColumns(5);
-            initialMemory.addChangeListener(e -> {
-                boolean result = viewModel.setInitialRam((Integer) initialMemory.getValue());
-
-                if (result) {
-                    viewModel.setInitialMemoryWarningShown();
-                    int ret = DialogManager.yesNoDialog().setTitle(GetText.tr("Warning"))
-                            .setType(DialogManager.WARNING)
-                            .setContent(GetText.tr(
-                                    "Setting initial memory above 512MB is not recommended and can cause issues. Are you sure you want to do this?"))
-                            .show();
-
-                    if (ret != 0) {
-                        viewModel.setInitialRam(512);
-                    }
-                }
-            });
-            add(initialMemory, gbc);
-            addDisposable(viewModel.getInitialRam().subscribe(initialMemory::setValue));
-        }
-
         // Maximum Memory Settings
         // Perm Gen Settings
         gbc.gridx = 0;
@@ -690,7 +635,7 @@ public class JavaSettingsTab extends AbstractSettingsTab {
                                 .center()
                                 .text(
                                         GetText.tr(
-                                                "The entered Java Parameters were incorrect.<br/><br/>Please remove any references to Xmx, Xms or XX:PermSize."))
+                                                "The entered Java Parameters were incorrect.<br/><br/>Please remove any references to Xmx or XX:PermSize."))
                                 .build())
                 .setType(DialogManager.ERROR)
                 .show();
@@ -721,8 +666,7 @@ public class JavaSettingsTab extends AbstractSettingsTab {
     }
 
     @Override
-    protected void createViewModel() {
-    }
+    protected void createViewModel() {}
 
     private void setLabelState(JLabelWithHover label, String tooltip, String path) {
         try {

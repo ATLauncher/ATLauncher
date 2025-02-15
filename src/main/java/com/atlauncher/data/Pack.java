@@ -18,12 +18,9 @@
 package com.atlauncher.data;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 import javax.swing.ImageIcon;
 
@@ -39,8 +36,6 @@ import com.atlauncher.graphql.AddPackActionMutation;
 import com.atlauncher.graphql.type.AddPackActionInput;
 import com.atlauncher.graphql.type.PackLogAction;
 import com.atlauncher.managers.AccountManager;
-import com.atlauncher.managers.ConfigManager;
-import com.atlauncher.managers.LogManager;
 import com.atlauncher.managers.PackManager;
 import com.atlauncher.network.GraphqlClient;
 import com.atlauncher.utils.Utils;
@@ -309,59 +304,23 @@ public class Pack {
     }
 
     public void addInstall(String version) {
-        if (ConfigManager.getConfigItem("useGraphql.packActions", false)) {
-            GraphqlClient
-                    .mutateAndWait(
-                            new AddPackActionMutation(AddPackActionInput.builder().packId(Integer.toString(
-                                    id)).version(version).action(PackLogAction.INSTALL).build()));
-        } else {
-            Map<String, Object> request = new HashMap<>();
-
-            request.put("version", version);
-
-            try {
-                Utils.sendAPICall("pack/" + getSafeName() + "/installed/", request);
-            } catch (IOException e) {
-                LogManager.logStackTrace(e);
-            }
-        }
+        GraphqlClient
+                .mutateAndWait(
+                        new AddPackActionMutation(AddPackActionInput.builder().packId(Integer.toString(
+                                id)).version(version).action(PackLogAction.INSTALL).build()));
     }
 
     public void addServerInstall(String version) {
-        if (ConfigManager.getConfigItem("useGraphql.packActions", false)) {
-            GraphqlClient
-                    .mutateAndWait(
-                            new AddPackActionMutation(AddPackActionInput.builder().packId(Integer.toString(
-                                    id)).version(version).action(PackLogAction.SERVER).build()));
-        } else {
-            Map<String, Object> request = new HashMap<>();
-
-            request.put("version", version);
-
-            try {
-                Utils.sendAPICall("pack/" + getSafeName() + "/serverinstalled/", request);
-            } catch (IOException e) {
-                LogManager.logStackTrace(e);
-            }
-        }
+        GraphqlClient
+                .mutateAndWait(
+                        new AddPackActionMutation(AddPackActionInput.builder().packId(Integer.toString(
+                                id)).version(version).action(PackLogAction.SERVER).build()));
     }
 
     public void addUpdate(String version) {
-        if (ConfigManager.getConfigItem("useGraphql.packActions", false)) {
-            GraphqlClient
-                    .mutateAndWait(
-                            new AddPackActionMutation(AddPackActionInput.builder().packId(Integer.toString(
-                                    id)).version(version).action(PackLogAction.UPDATE).build()));
-        } else {
-            Map<String, Object> request = new HashMap<>();
-
-            request.put("version", version);
-
-            try {
-                Utils.sendAPICall("pack/" + getSafeName() + "/updated/", request);
-            } catch (IOException e) {
-                LogManager.logStackTrace(e);
-            }
-        }
+        GraphqlClient
+                .mutateAndWait(
+                        new AddPackActionMutation(AddPackActionInput.builder().packId(Integer.toString(
+                                id)).version(version).action(PackLogAction.UPDATE).build()));
     }
 }

@@ -61,7 +61,6 @@ public class InstanceLauncher {
     public Integer requiredMemory;
     public Integer requiredPermGen;
 
-    public Integer initialMemory;
     public Integer maximumMemory;
     public Integer permGen;
     public String javaPath;

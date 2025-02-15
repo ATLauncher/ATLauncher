@@ -34,21 +34,17 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import com.atlauncher.FileSystem;
-import com.atlauncher.Gsons;
 import com.atlauncher.data.minecraft.Arguments;
 import com.atlauncher.data.minecraft.Library;
 import com.atlauncher.data.minecraft.loaders.Loader;
 import com.atlauncher.data.minecraft.loaders.LoaderVersion;
 import com.atlauncher.graphql.GetLatestQuiltLoaderVersionQuery;
-import com.atlauncher.graphql.GetQuiltLoaderVersionQuery;
 import com.atlauncher.graphql.GetQuiltLoaderVersionsForMinecraftVersionQuery;
 import com.atlauncher.managers.ConfigManager;
 import com.atlauncher.managers.LogManager;
-import com.atlauncher.network.Download;
 import com.atlauncher.network.GraphqlClient;
 import com.atlauncher.utils.Utils;
 import com.atlauncher.workers.InstanceInstaller;
-import com.google.gson.reflect.TypeToken;
 
 public class QuiltLoader implements Loader {
     protected String minecraft;
@@ -77,58 +73,34 @@ public class QuiltLoader implements Loader {
     }
 
     private QuiltMetaProfile getLoader(String version) {
-        if (ConfigManager.getConfigItem("useGraphql.loaderVersionsNonForge", false)) {
-            GetQuiltLoaderVersionQuery.Data response = GraphqlClient
-                    .callAndWait(GetQuiltLoaderVersionQuery.builder().quiltVersion(version)
-                            .minecraftVersion(this.minecraft).includeClientJson(
-                                    !instanceInstaller.isServer)
-                            .includeServerJson(instanceInstaller.isServer).build());
+        GetQuiltLoaderVersionQuery.Data response = GraphqlClient
+                .callAndWait(GetQuiltLoaderVersionQuery.builder().quiltVersion(version)
+                        .minecraftVersion(this.minecraft).includeClientJson(
+                                !instanceInstaller.isServer)
+                        .includeServerJson(instanceInstaller.isServer).build());
 
-            if (response == null || response.quiltLoaderVersion() == null) {
-                return null;
-            }
-
-            if (instanceInstaller.isServer) {
-                return Gsons.DEFAULT.fromJson(response.quiltLoaderVersion().serverJson(),
-                        QuiltMetaProfile.class);
-            }
-
-            return Gsons.DEFAULT.fromJson(response.quiltLoaderVersion().clientJson(),
-                    QuiltMetaProfile.class);
-        }
-
-        return Download.build()
-                .setUrl(String.format("https://meta.quiltmc.org/v3/versions/loader/%s/%s/%s/json", this.minecraft,
-                        version,
-                        instanceInstaller.isServer ? "server" : "profile"))
-                .asClass(QuiltMetaProfile.class);
-    }
-
-    public String getLatestVersion() {
-        if (ConfigManager.getConfigItem("useGraphql.loaderVersionsNonForge", false)) {
-            GetLatestQuiltLoaderVersionQuery.Data response = GraphqlClient
-                    .callAndWait(new GetLatestQuiltLoaderVersionQuery());
-
-            if (response == null || response.quiltLoaderVersions() == null
-                    || response.quiltLoaderVersions().isEmpty()) {
-                return null;
-            }
-
-            return response.quiltLoaderVersions().get(0).version();
-        }
-
-        java.lang.reflect.Type type = new TypeToken<List<QuiltMetaVersion>>() {
-        }.getType();
-
-        List<QuiltMetaVersion> loaders = Download.build()
-                .setUrl(String.format("https://meta.quiltmc.org/v3/versions/loader/%s?limit=1", this.minecraft))
-                .asType(type);
-
-        if (loaders == null || loaders.isEmpty()) {
+        if (response == null || response.quiltLoaderVersion() == null) {
             return null;
         }
 
-        return loaders.get(0).loader.version;
+        if (instanceInstaller.isServer) {
+            return Gsons.DEFAULT.fromJson(response.quiltLoaderVersion().serverJson(),
+                    QuiltMetaProfile.class);
+        }
+
+        return Gsons.DEFAULT.fromJson(response.quiltLoaderVersion().clientJson(),
+                QuiltMetaProfile.class);
+
+    public String getLatestVersion() {
+        GetLatestQuiltLoaderVersionQuery.Data response = GraphqlClient
+                .callAndWait(new GetLatestQuiltLoaderVersionQuery());
+
+        if (response == null || response.quiltLoaderVersions() == null
+                || response.quiltLoaderVersions().isEmpty()) {
+            return null;
+        }
+
+        return response.quiltLoaderVersions().get(0).version();
     }
 
     @Override
@@ -237,33 +209,20 @@ public class QuiltLoader implements Loader {
     public static List<LoaderVersion> getChoosableVersions(String minecraft) {
         try {
             List<String> disabledVersions = ConfigManager.getConfigItem("loaders.quilt.disabledVersions",
-                new ArrayList<>());
+                    new ArrayList<>());
 
-            if (ConfigManager.getConfigItem("useGraphql.loaderVersionsNonForge", false)) {
-                GetQuiltLoaderVersionsForMinecraftVersionQuery.Data response = GraphqlClient
-                        .callAndWait(new GetQuiltLoaderVersionsForMinecraftVersionQuery(minecraft));
+            GetQuiltLoaderVersionsForMinecraftVersionQuery.Data response = GraphqlClient
+                    .callAndWait(new GetQuiltLoaderVersionsForMinecraftVersionQuery(minecraft));
 
-                if (response == null || response.loaderVersions() == null
-                        || response.loaderVersions().quilt() == null
-                        || response.loaderVersions().quilt().isEmpty()) {
-                    return null;
-                }
-
-                return response.loaderVersions().quilt().stream()
-                        .filter(fv -> !disabledVersions.contains(fv.version()))
-                        .map(version -> new LoaderVersion(version.version(), false, "Quilt"))
-                        .collect(Collectors.toList());
+            if (response == null || response.loaderVersions() == null
+                    || response.loaderVersions().quilt() == null
+                    || response.loaderVersions().quilt().isEmpty()) {
+                return null;
             }
 
-            java.lang.reflect.Type type = new TypeToken<List<QuiltMetaVersion>>() {
-            }.getType();
-
-            List<QuiltMetaVersion> versions = Download.build()
-                    .setUrl(String.format("https://meta.quiltmc.org/v3/versions/loader/%s", minecraft))
-                    .asTypeWithThrow(type);
-
-            return versions.stream().filter(fv -> !disabledVersions.contains(fv.loader.version))
-                    .map(version -> new LoaderVersion(version.loader.version, false, "Quilt"))
+            return response.loaderVersions().quilt().stream()
+                    .filter(fv -> !disabledVersions.contains(fv.version()))
+                    .map(version -> new LoaderVersion(version.version(), false, "Quilt"))
                     .collect(Collectors.toList());
         } catch (Exception e) {
             return new ArrayList<>();

@@ -22,8 +22,6 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagLayout;
-import java.awt.event.AdjustmentEvent;
-import java.awt.event.AdjustmentListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.List;
@@ -271,10 +269,8 @@ public final class PacksBrowserTab extends JPanel
 
         int index = 0;
 
-        if (ConfigManager.getConfigItem("useGraphql.unifiedModPacks", false)) {
-            platformTabbedPane.add(unifiedPacksPanel);
-            platformTabbedPane.setTabComponentAt(index++, new PacksBrowserTabTitlePanel("Search"));
-        }
+        platformTabbedPane.add(unifiedPacksPanel);
+        platformTabbedPane.setTabComponentAt(index++, new PacksBrowserTabTitlePanel("Search"));
 
         platformTabbedPane.add(atlauncherPacksPanel);
         platformTabbedPane.setTabComponentAt(index++, new PacksBrowserTabTitlePanel("ATLauncher"));
@@ -362,7 +358,7 @@ public final class PacksBrowserTab extends JPanel
             minecraftVersionComboBox.addItem(new ComboItem<>(null, GetText.tr("All Versions")));
 
             List<VersionManifestVersion> versionsToShow = !selectedPanel
-                .getSupportedMinecraftVersionsForFiltering().isEmpty()
+                    .getSupportedMinecraftVersionsForFiltering().isEmpty()
                             ? selectedPanel.getSupportedMinecraftVersionsForFiltering()
                             : MinecraftManager
                                     .getFilteredMinecraftVersions(
@@ -529,8 +525,7 @@ public final class PacksBrowserTab extends JPanel
         platformTabbedPane.setSelectedIndex(0);
     }
 
-    public void refresh() {
-    }
+    public void refresh() {}
 
     @Override
     public String getTitle() {
@@ -539,11 +534,7 @@ public final class PacksBrowserTab extends JPanel
 
     @Override
     public String getAnalyticsScreenViewName() {
-        if (ConfigManager.getConfigItem("useGraphql.unifiedModPacks", false)) {
-            return "Unified ModPack Search";
-        }
-
-        return "ATLauncher Platform Packs";
+        return "Unified ModPack Search";
     }
 
     @Override

@@ -39,7 +39,6 @@ import java.util.UUID;
 import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
 import com.atlauncher.constants.Constants;
-import com.atlauncher.managers.ConfigManager;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Timestamper;
@@ -98,7 +97,6 @@ public class Settings {
     public boolean scanModsOnLaunch = true;
 
     // Java/Minecraft
-    public int initialMemory = 512;
     public int maximumMemory = 4096;
     public int metaspace = (OS.is64Bit() ? 256 : 128);
     public int windowWidth = 854;
@@ -199,11 +197,6 @@ public class Settings {
         String importedFirstTimeRun = properties.getProperty("firsttimerun");
         if (importedFirstTimeRun != null) {
             firstTimeRun = Boolean.parseBoolean(importedFirstTimeRun);
-        }
-
-        String importedInitialMemory = properties.getProperty("initialmemory");
-        if (importedInitialMemory != null) {
-            initialMemory = Integer.parseInt(importedInitialMemory);
         }
 
         String importedMaximumMemory = properties.getProperty("ram");
@@ -430,20 +423,6 @@ public class Settings {
     private void validateMemory() {
         boolean needToSave = false;
         int systemMemory = OS.getMaximumRam();
-
-        if (!ConfigManager.getConfigItem("removeInitialMemoryOption", false)) {
-            if (systemMemory != 0 && initialMemory > systemMemory) {
-                LogManager.warn("Tried to allocate " + initialMemory + "MB for initial memory but only " + systemMemory
-                        + "MB is available to use!");
-                initialMemory = 512;
-                needToSave = true;
-            } else if (initialMemory > maximumMemory) {
-                LogManager.warn("Tried to allocate " + initialMemory + "MB for initial memory which is more than "
-                        + maximumMemory + "MB set for the maximum memory!");
-                initialMemory = 512;
-                needToSave = true;
-            }
-        }
 
         if (systemMemory != 0 && maximumMemory > systemMemory) {
             LogManager.warn("Tried to allocate " + maximumMemory + "MB of maximum memory but only " + systemMemory

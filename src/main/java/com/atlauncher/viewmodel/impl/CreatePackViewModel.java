@@ -51,11 +51,6 @@ import com.atlauncher.data.minecraft.VersionManifestVersion;
 import com.atlauncher.data.minecraft.VersionManifestVersionType;
 import com.atlauncher.data.minecraft.loaders.LoaderType;
 import com.atlauncher.data.minecraft.loaders.LoaderVersion;
-import com.atlauncher.data.minecraft.loaders.fabric.FabricLoader;
-import com.atlauncher.data.minecraft.loaders.forge.ForgeLoader;
-import com.atlauncher.data.minecraft.loaders.legacyfabric.LegacyFabricLoader;
-import com.atlauncher.data.minecraft.loaders.neoforge.NeoForgeLoader;
-import com.atlauncher.data.minecraft.loaders.quilt.QuiltLoader;
 import com.atlauncher.evnt.listener.SettingsListener;
 import com.atlauncher.evnt.manager.SettingsManager;
 import com.atlauncher.exceptions.InvalidMinecraftVersion;
@@ -483,12 +478,8 @@ public class CreatePackViewModel implements SettingsListener, ICreatePackViewMod
                     // Legacy Forge doesn't support servers easily
                     final boolean enableCreateServers = (loaderType == LoaderType.FORGE || !Utils.matchVersion(
                             selectedMinecraftVersion, "1.5", true, true));
-                    final List<LoaderVersion> loaders;
-                    if (ConfigManager.getConfigItem("useGraphql.vanillaLoaderVersions", false)) {
-                        loaders = apolloLoad(loaderType, selectedMinecraftVersion, enableCreateServers);
-                    } else {
-                        loaders = legacyLoad(loaderType, selectedMinecraftVersion, enableCreateServers);
-                    }
+                    final List<LoaderVersion> loaders = loadLoaderVersions(loaderType, selectedMinecraftVersion,
+                            enableCreateServers);
 
                     loaderVersions.onNext(Optional.of(loaders));
 
@@ -996,7 +987,7 @@ public class CreatePackViewModel implements SettingsListener, ICreatePackViewMod
         return InstanceManager.getInstances().isEmpty();
     }
 
-    private List<LoaderVersion> apolloLoad(
+    private List<LoaderVersion> loadLoaderVersions(
             LoaderType selectedLoader, @Nonnull String selectedMinecraftVersion, Boolean enableCreateServers) {
         try {
             ApolloQueryCall<GetLoaderVersionsForMinecraftVersionQuery.Data> call = GraphqlClient.apolloClient.query(
@@ -1138,38 +1129,6 @@ public class CreatePackViewModel implements SettingsListener, ICreatePackViewMod
                 .onNext(enableCreateInstances ? Optional.empty()
                         : Optional.of(GetText.tr("Disabled as the loader you selected only supports servers")));
         loaderVersionsDropDownEnabled.onNext(enabled);
-    }
-
-    /**
-     * Use legacy loading mechanic
-     */
-    List<LoaderVersion> legacyLoad(
-            LoaderType selectedLoader, String selectedMinecraftVersion, Boolean enableCreateServers) {
-        final ArrayList<LoaderVersion> loaderVersionsList = new ArrayList<>();
-        switch (selectedLoader) {
-            case FABRIC:
-                loaderVersionsList.addAll(FabricLoader.getChoosableVersions(selectedMinecraftVersion));
-                break;
-            case FORGE:
-                loaderVersionsList.addAll(ForgeLoader.getChoosableVersions(selectedMinecraftVersion));
-                break;
-            case LEGACY_FABRIC:
-                loaderVersionsList.addAll(LegacyFabricLoader.getChoosableVersions(selectedMinecraftVersion));
-                break;
-            case NEOFORGE:
-                loaderVersionsList.addAll(NeoForgeLoader.getChoosableVersions(selectedMinecraftVersion));
-                break;
-            case QUILT:
-                loaderVersionsList.addAll(QuiltLoader.getChoosableVersions(selectedMinecraftVersion));
-                break;
-        }
-
-        if (loaderVersionsList.isEmpty()) {
-            setLoaderGroupEnabled(false);
-            return singletonList(noLoaderVersions);
-        }
-
-        return loaderVersionsList;
     }
 
     /**

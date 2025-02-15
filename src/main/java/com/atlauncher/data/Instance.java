@@ -1167,43 +1167,18 @@ public class Instance extends MinecraftVersion implements ModManagement {
     }
 
     public void addPlay(String version) {
-        if (ConfigManager.getConfigItem("useGraphql.packActions", false)) {
-            GraphqlClient
-                    .mutateAndWait(
-                            new AddPackActionMutation(AddPackActionInput.builder().packId(Integer.toString(
-                                    this.getPack().id))
-                                    .version(version).action(PackLogAction.PLAY).build()));
-        } else {
-            Map<String, Object> request = new HashMap<>();
-
-            request.put("version", version);
-
-            try {
-                Utils.sendAPICall("pack/" + this.getPack().getSafeName() + "/play", request);
-            } catch (IOException e) {
-                LogManager.logStackTrace(e);
-            }
-        }
+        GraphqlClient
+                .mutateAndWait(
+                        new AddPackActionMutation(AddPackActionInput.builder().packId(Integer.toString(
+                                this.getPack().id))
+                                .version(version).action(PackLogAction.PLAY).build()));
     }
 
     public void addTimePlayed(int time, String version) {
-        if (ConfigManager.getConfigItem("useGraphql.packActions", false)) {
-            GraphqlClient
-                    .mutateAndWait(
-                            new AddPackTimePlayedMutation(AddPackTimePlayedInput.builder().packId(Integer.toString(
-                                    this.getPack().id)).version(version).time(time).build()));
-        } else {
-            Map<String, Object> request = new HashMap<>();
-
-            request.put("version", version);
-            request.put("time", time);
-
-            try {
-                Utils.sendAPICall("pack/" + this.getPack().getSafeName() + "/timeplayed/", request);
-            } catch (IOException e) {
-                LogManager.logStackTrace(e);
-            }
-        }
+        GraphqlClient
+                .mutateAndWait(
+                        new AddPackTimePlayedMutation(AddPackTimePlayedInput.builder().packId(Integer.toString(
+                                this.getPack().id)).version(version).time(time).build()));
     }
 
     public DisableableMod getDisableableModByCurseModId(int curseModId) {
@@ -1522,12 +1497,6 @@ public class Instance extends MinecraftVersion implements ModManagement {
         instanceCfg.setProperty("MCLaunchMethod", "LauncherPart");
         instanceCfg.setProperty("MaxMemAlloc",
                 Optional.ofNullable(launcher.maximumMemory).orElse(App.settings.maximumMemory) + "");
-
-        if (!ConfigManager.getConfigItem("removeInitialMemoryOption", false)) {
-            instanceCfg.setProperty("MinMemAlloc",
-                    Optional.ofNullable(launcher.initialMemory).orElse(App.settings.initialMemory) + "");
-        }
-
         instanceCfg.setProperty("MinecraftWinHeight", App.settings.windowHeight + "");
         instanceCfg.setProperty("MinecraftWinWidth", App.settings.windowWidth + "");
         instanceCfg.setProperty("OverrideCommands",

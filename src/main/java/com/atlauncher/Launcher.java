@@ -105,7 +105,7 @@ public class Launcher {
 
         NewsManager.loadNews(); // Load the news
 
-        if (App.settings.enableAnalytics && ConfigManager.getConfigItem("useGraphql.launcherLaunch", false)) {
+        if (App.settings.enableAnalytics && ConfigManager.getConfigItem("useGraphqlLauncherLaunch", false)) {
             App.TASKPOOL.execute(() -> GraphqlClient.mutate(new AddLauncherLaunchMutation(
                     AddLauncherLaunchInput.builder().version(Constants.VERSION.toStringForLogging())
                             .hash(Constants.VERSION.getSha1Revision().toString())
@@ -256,8 +256,7 @@ public class Launcher {
      */
     private List<com.atlauncher.network.Download> getLauncherFiles() {
         if (this.launcherFiles == null) {
-            java.lang.reflect.Type type = new TypeToken<List<DownloadableFile>>() {
-            }.getType();
+            java.lang.reflect.Type type = new TypeToken<List<DownloadableFile>>() {}.getType();
 
             try {
                 this.launcherFiles = com.atlauncher.network.Download.build().cached()
@@ -424,7 +423,8 @@ public class Launcher {
     /**
      * Sets the main parent JFrame reference for the Launcher
      *
-     * @param parent The Launcher main JFrame
+     * @param parent
+     *            The Launcher main JFrame
      */
     public void setParentFrame(JFrame parent) {
         this.parent = parent;
@@ -449,7 +449,8 @@ public class Launcher {
     /**
      * Sets the panel used for the Packs Browser
      *
-     * @param packsBrowserPanel Packs Browser Panel
+     * @param packsBrowserPanel
+     *            Packs Browser Panel
      */
     public void setPacksBrowserPanel(PacksBrowserTab packsBrowserPanel) {
         this.packsBrowserPanel = packsBrowserPanel;

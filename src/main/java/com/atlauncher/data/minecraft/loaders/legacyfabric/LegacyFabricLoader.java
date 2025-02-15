@@ -37,8 +37,6 @@ import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-import org.jetbrains.annotations.Nullable;
-
 import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
 import com.atlauncher.data.minecraft.Arguments;
@@ -84,58 +82,35 @@ public class LegacyFabricLoader implements Loader {
     }
 
     private LegacyFabricMetaProfile getLoader(String version) {
-        if (ConfigManager.getConfigItem("useGraphql.loaderVersionsNonForge", false)) {
-            GetLegacyFabricLoaderVersionQuery.Data response = GraphqlClient
-                    .callAndWait(GetLegacyFabricLoaderVersionQuery.builder().legacyFabricVersion(version)
-                            .minecraftVersion(this.minecraft).includeClientJson(
-                                    !instanceInstaller.isServer)
-                            .includeServerJson(instanceInstaller.isServer).build());
+        GetLegacyFabricLoaderVersionQuery.Data response = GraphqlClient
+                .callAndWait(GetLegacyFabricLoaderVersionQuery.builder().legacyFabricVersion(version)
+                        .minecraftVersion(this.minecraft).includeClientJson(
+                                !instanceInstaller.isServer)
+                        .includeServerJson(instanceInstaller.isServer).build());
 
-            if (response == null || response.legacyFabricLoaderVersion() == null) {
-                return null;
-            }
-
-            if (instanceInstaller.isServer) {
-                return Gsons.DEFAULT.fromJson(response.legacyFabricLoaderVersion().serverJson(),
-                        LegacyFabricMetaProfile.class);
-            }
-
-            return Gsons.DEFAULT.fromJson(response.legacyFabricLoaderVersion().clientJson(),
-                    LegacyFabricMetaProfile.class);
-        }
-
-        return Download.build()
-                .setUrl(String.format("https://meta.legacyfabric.net/v2/versions/loader/%s/%s/%s/json",
-                        this.minecraft,
-                        version, instanceInstaller.isServer ? "server" : "profile"))
-                .asClass(LegacyFabricMetaProfile.class);
-    }
-
-    public String getLatestVersion() {
-        if (ConfigManager.getConfigItem("useGraphql.loaderVersionsNonForge", false)) {
-            GetLatestLegacyFabricLoaderVersionQuery.Data response = GraphqlClient
-                    .callAndWait(new GetLatestLegacyFabricLoaderVersionQuery());
-
-            if (response == null || response.legacyFabricLoaderVersions() == null
-                    || response.legacyFabricLoaderVersions().isEmpty()) {
-                return null;
-            }
-
-            return response.legacyFabricLoaderVersions().get(0).version();
-        }
-
-        java.lang.reflect.Type type = new TypeToken<List<LegacyFabricMetaVersion>>() {
-        }.getType();
-
-        List<LegacyFabricMetaVersion> loaders = Download.build()
-                .setUrl(String.format("https://meta.legacyfabric.net/v2/versions/loader/%s?limit=1", this.minecraft))
-                .asType(type);
-
-        if (loaders == null || loaders.isEmpty()) {
+        if (response == null || response.legacyFabricLoaderVersion() == null) {
             return null;
         }
 
-        return loaders.get(0).loader.version;
+        if (instanceInstaller.isServer) {
+            return Gsons.DEFAULT.fromJson(response.legacyFabricLoaderVersion().serverJson(),
+                    LegacyFabricMetaProfile.class);
+        }
+
+        return Gsons.DEFAULT.fromJson(response.legacyFabricLoaderVersion().clientJson(),
+                LegacyFabricMetaProfile.class);
+    }
+
+    public String getLatestVersion() {
+        GetLatestLegacyFabricLoaderVersionQuery.Data response = GraphqlClient
+                .callAndWait(new GetLatestLegacyFabricLoaderVersionQuery());
+
+        if (response == null || response.legacyFabricLoaderVersions() == null
+                || response.legacyFabricLoaderVersions().isEmpty()) {
+            return null;
+        }
+
+        return response.legacyFabricLoaderVersions().get(0).version();
     }
 
     @Override
@@ -280,33 +255,20 @@ public class LegacyFabricLoader implements Loader {
         try {
             List<String> disabledVersions = ConfigManager.getConfigItem(
                     "loaders.legacyfabric.disabledVersions",
-                new ArrayList<>());
+                    new ArrayList<>());
 
-            if (ConfigManager.getConfigItem("useGraphql.loaderVersionsNonForge", false)) {
-                GetLegacyFabricLoaderVersionsForMinecraftVersionQuery.Data response = GraphqlClient
-                        .callAndWait(new GetLegacyFabricLoaderVersionsForMinecraftVersionQuery(minecraft));
+            GetLegacyFabricLoaderVersionsForMinecraftVersionQuery.Data response = GraphqlClient
+                    .callAndWait(new GetLegacyFabricLoaderVersionsForMinecraftVersionQuery(minecraft));
 
-                if (response == null || response.loaderVersions() == null
-                        || response.loaderVersions().legacyfabric() == null
-                        || response.loaderVersions().legacyfabric().isEmpty()) {
-                    return null;
-                }
-
-                return response.loaderVersions().legacyfabric().stream()
-                        .filter(fv -> !disabledVersions.contains(fv.version()))
-                        .map(version -> new LoaderVersion(version.version(), false, "LegacyFabric"))
-                        .collect(Collectors.toList());
+            if (response == null || response.loaderVersions() == null
+                    || response.loaderVersions().legacyfabric() == null
+                    || response.loaderVersions().legacyfabric().isEmpty()) {
+                return null;
             }
 
-            java.lang.reflect.Type type = new TypeToken<List<LegacyFabricMetaVersion>>() {
-            }.getType();
-
-            List<LegacyFabricMetaVersion> versions = Download.build()
-                    .setUrl(String.format("https://meta.legacyfabric.net/v2/versions/loader/%s", minecraft))
-                    .asTypeWithThrow(type);
-
-            return versions.stream().filter(fv -> !disabledVersions.contains(fv.loader.version))
-                    .map(version -> new LoaderVersion(version.loader.version, false, "LegacyFabric"))
+            return response.loaderVersions().legacyfabric().stream()
+                    .filter(fv -> !disabledVersions.contains(fv.version()))
+                    .map(version -> new LoaderVersion(version.version(), false, "LegacyFabric"))
                     .collect(Collectors.toList());
         } catch (Exception e) {
             return new ArrayList<>();

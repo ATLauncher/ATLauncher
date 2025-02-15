@@ -41,7 +41,6 @@ import com.atlauncher.data.QuickPlayOption;
 import com.atlauncher.data.json.QuickPlay;
 import com.atlauncher.data.minecraft.Library;
 import com.atlauncher.data.minecraft.LoggingClient;
-import com.atlauncher.managers.ConfigManager;
 import com.atlauncher.managers.LWJGLManager;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.network.ErrorReporting;
@@ -286,11 +285,6 @@ public class MCLauncher {
         }
         arguments.add(path);
 
-        if (!ConfigManager.getConfigItem("removeInitialMemoryOption", false)) {
-            int initialMemory = Optional.ofNullable(instance.launcher.initialMemory).orElse(App.settings.initialMemory);
-            arguments.add("-Xms" + initialMemory + "M");
-        }
-
         if (OS.getMaximumRam() != 0 && maximumMemory < instance.getMemory()) {
             if ((OS.getMaximumRam() / 2) < instance.getMemory()) {
                 arguments.add("-Xmx" + maximumMemory + "M");
@@ -516,7 +510,8 @@ public class MCLauncher {
 
     private static Map<String, String> getEnvironmentVariables(Instance instance) {
         Map<String, String> env = new LinkedHashMap<>();
-        Boolean useDedicatedGpu = Optional.ofNullable(instance.launcher.useDedicatedGpu).orElse(App.settings.useDedicatedGpu);
+        Boolean useDedicatedGpu = Optional.ofNullable(instance.launcher.useDedicatedGpu)
+                .orElse(App.settings.useDedicatedGpu);
 
         if (OS.isLinux() && useDedicatedGpu) {
             env.put("DRI_PRIME", "1");
