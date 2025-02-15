@@ -17,6 +17,7 @@
  */
 package com.atlauncher.gui.tabs.tools;
 
+@SuppressWarnings("unused")
 public class BlankToolPanel extends AbstractToolPanel {
 
     public BlankToolPanel() {

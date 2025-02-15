@@ -34,11 +34,13 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import com.atlauncher.FileSystem;
+import com.atlauncher.Gsons;
 import com.atlauncher.data.minecraft.Arguments;
 import com.atlauncher.data.minecraft.Library;
 import com.atlauncher.data.minecraft.loaders.Loader;
 import com.atlauncher.data.minecraft.loaders.LoaderVersion;
 import com.atlauncher.graphql.GetLatestQuiltLoaderVersionQuery;
+import com.atlauncher.graphql.GetQuiltLoaderVersionQuery;
 import com.atlauncher.graphql.GetQuiltLoaderVersionsForMinecraftVersionQuery;
 import com.atlauncher.managers.ConfigManager;
 import com.atlauncher.managers.LogManager;
@@ -90,6 +92,7 @@ public class QuiltLoader implements Loader {
 
         return Gsons.DEFAULT.fromJson(response.quiltLoaderVersion().clientJson(),
                 QuiltMetaProfile.class);
+    }
 
     public String getLatestVersion() {
         GetLatestQuiltLoaderVersionQuery.Data response = GraphqlClient

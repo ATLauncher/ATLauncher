@@ -50,3 +50,4 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Don't fail the setup if the JRE fails to download
 - Move scan mods on launch setting to Mods tab
 - Remove some old config no longer used
+- Cleanup dead unused code
