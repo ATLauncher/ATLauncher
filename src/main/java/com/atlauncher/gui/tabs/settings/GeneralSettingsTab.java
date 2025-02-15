@@ -35,7 +35,6 @@ import javax.swing.JTextField;
 
 import org.mini2Dx.gettext.GetText;
 
-import com.atlauncher.App;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.constants.Constants;
 import com.atlauncher.constants.UIConstants;
@@ -509,27 +508,6 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
             addDisposable(viewModel.getEnableArmSupport().subscribe(useRecycleBin::setSelected));
             add(enableArmSupport, gbc);
         }
-
-        // Enable scanning mods on launch
-        gbc.gridx = 0;
-        gbc.gridy++;
-        gbc.insets = UIConstants.LABEL_INSETS;
-        gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        JLabelWithHover scanModsOnLaunchLabel = new JLabelWithHover(GetText.tr("Scan Mods On Launch?"), HELP_ICON,
-                new HTMLBuilder().center().split(100)
-                        .text(GetText.tr(
-                                "This will scan the mods in instances before launching to ensure they do not contain malware or have been modified since installing."))
-                        .build());
-        add(scanModsOnLaunchLabel, gbc);
-
-        gbc.gridx++;
-        gbc.insets = UIConstants.CHECKBOX_FIELD_INSETS;
-        gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-        JCheckBox scanModsOnLaunch = new JCheckBox();
-        scanModsOnLaunch.setSelected(App.settings.scanModsOnLaunch);
-        scanModsOnLaunch.addItemListener(e -> viewModel.setScanModsOnLaunch(e.getStateChange() == ItemEvent.SELECTED));
-        addDisposable(viewModel.getScanModsOnLaunch().subscribe(scanModsOnLaunch::setSelected));
-        add(scanModsOnLaunch, gbc);
     }
 
     @Override

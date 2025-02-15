@@ -84,8 +84,7 @@ public class GeneralSettingsViewModel implements SettingsListener {
             _rememberWindowSizePosition = BehaviorSubject.create(),
             _useNativeFilePicker = BehaviorSubject.create(),
             _useRecycleBin = BehaviorSubject.create(),
-            enableArmSupport = BehaviorSubject.create(),
-            scanModsOnLaunch = BehaviorSubject.create();
+            enableArmSupport = BehaviorSubject.create();
 
     private List<LauncherTheme> themes = null;
 
@@ -544,15 +543,6 @@ public class GeneralSettingsViewModel implements SettingsListener {
 
     public void setEnableArmSupport(boolean b) {
         App.settings.enableArmSupport = b;
-        SettingsManager.post();
-    }
-
-    public Observable<Boolean> getScanModsOnLaunch() {
-        return scanModsOnLaunch.observeOn(SwingSchedulers.edt());
-    }
-
-    public void setScanModsOnLaunch(boolean b) {
-        App.settings.scanModsOnLaunch = b;
         SettingsManager.post();
     }
 }

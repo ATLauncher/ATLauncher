@@ -85,17 +85,17 @@ public class Settings {
     public boolean useNativeFilePicker = OS.isMac();
     public boolean useRecycleBin = true;
     public boolean enableArmSupport = true;
-    public boolean scanModsOnLaunch = true;
 
     // Mods
     public ModPlatform defaultModPlatform = ModPlatform.CURSEFORGE;
+    public InstanceExportFormat defaultExportFormat = InstanceExportFormat.CURSEFORGE;
     public AddModRestriction addModRestriction = AddModRestriction.STRICT;
     public boolean enableAddedModsByDefault = true;
     public boolean showFabricModsWhenSinytraInstalled = true;
     public boolean allowCurseForgeAlphaBetaFiles = false;
     public boolean dontCheckModsOnCurseForge = false;
     public boolean dontCheckModsOnModrinth = false;
-    public InstanceExportFormat defaultExportFormat = InstanceExportFormat.CURSEFORGE;
+    public boolean scanModsOnLaunch = true;
 
     // Java/Minecraft
     public int initialMemory = 512;

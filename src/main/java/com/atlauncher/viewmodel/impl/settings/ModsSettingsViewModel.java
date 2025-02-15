@@ -50,7 +50,8 @@ public class ModsSettingsViewModel implements SettingsListener {
         _showFabricModsWhenSinytraInstalled = BehaviorSubject.create(),
         _doNotCheckModsOnCurseForge = BehaviorSubject.create(),
         _doNotCheckModsOnModrinth = BehaviorSubject.create(),
-        allowCurseForgeAlphaBetaFiles = BehaviorSubject.create();
+        allowCurseForgeAlphaBetaFiles = BehaviorSubject.create(),
+        scanModsOnLaunch = BehaviorSubject.create();
 
     public ModsSettingsViewModel() {
         onSettingsSaved();
@@ -143,6 +144,15 @@ public class ModsSettingsViewModel implements SettingsListener {
         }
 
         App.settings.allowCurseForgeAlphaBetaFiles = b;
+        SettingsManager.post();
+    }
+
+    public Observable<Boolean> getScanModsOnLaunch() {
+        return scanModsOnLaunch.observeOn(SwingSchedulers.edt());
+    }
+
+    public void setScanModsOnLaunch(boolean b) {
+        App.settings.scanModsOnLaunch = b;
         SettingsManager.post();
     }
 }

@@ -31,7 +31,6 @@ import com.atlauncher.constants.UIConstants;
 import com.atlauncher.data.AddModRestriction;
 import com.atlauncher.data.InstanceExportFormat;
 import com.atlauncher.data.ModPlatform;
-import com.atlauncher.data.PluginPlatform;
 import com.atlauncher.gui.components.JLabelWithHover;
 import com.atlauncher.utils.ComboItem;
 import com.atlauncher.viewmodel.impl.settings.ModsSettingsViewModel;
@@ -76,6 +75,41 @@ public class ModsSettingsTab extends AbstractSettingsTab {
         addDisposable(viewModel.getDefaultModPlatform().subscribe(defaultModPlatform::setSelectedIndex));
 
         add(defaultModPlatform, gbc);
+
+        // Default export format
+
+        gbc.gridx = 0;
+        gbc.gridy++;
+        gbc.insets = UIConstants.LABEL_INSETS;
+        gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
+
+        JLabelWithHover defaultExportFormatLabel = new JLabelWithHover(GetText.tr("Default Export Format") + ":",
+                HELP_ICON, GetText.tr(
+                        "The default format to export instances to. Can also be changed at time of export."));
+
+        add(defaultExportFormatLabel, gbc);
+
+        gbc.gridx++;
+        gbc.insets = UIConstants.FIELD_INSETS;
+        gbc.anchor = GridBagConstraints.BASELINE_LEADING;
+        JComboBox<ComboItem<InstanceExportFormat>> defaultExportFormat = new JComboBox<>();
+        defaultExportFormat.addItem(new ComboItem<>(InstanceExportFormat.CURSEFORGE, "CurseForge"));
+        defaultExportFormat.addItem(new ComboItem<>(InstanceExportFormat.MODRINTH, "Modrinth"));
+        defaultExportFormat
+                .addItem(new ComboItem<>(InstanceExportFormat.CURSEFORGE_AND_MODRINTH, "CurseForge & Modrinth"));
+        defaultExportFormat.addItem(new ComboItem<>(InstanceExportFormat.MULTIMC, "MultiMC"));
+
+        defaultExportFormat.addItemListener(itemEvent -> {
+            if (itemEvent.getStateChange() == ItemEvent.SELECTED) {
+                @SuppressWarnings("unchecked")
+                ComboItem<InstanceExportFormat> item = (ComboItem<InstanceExportFormat>) itemEvent.getItem();
+
+                viewModel.setDefaultExportFormat(item.getValue());
+            }
+        });
+        addDisposable(viewModel.getDefaultExportFormat().subscribe(defaultExportFormat::setSelectedIndex));
+
+        add(defaultExportFormat, gbc);
 
         // Add Mod Restrictions
 
@@ -229,40 +263,26 @@ public class ModsSettingsTab extends AbstractSettingsTab {
         addDisposable(viewModel.getDoNotCheckModsOnModrinth().subscribe(dontCheckModsOnModrinth::setSelected));
         add(dontCheckModsOnModrinth, gbc);
 
-        // Default export format
-
+        // Enable scanning mods on launch
         gbc.gridx = 0;
         gbc.gridy++;
         gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-
-        JLabelWithHover defaultExportFormatLabel = new JLabelWithHover(GetText.tr("Default Export Format") + ":",
-                HELP_ICON, GetText.tr(
-                        "The default format to export instances to. Can also be changed at time of export."));
-
-        add(defaultExportFormatLabel, gbc);
+        JLabelWithHover scanModsOnLaunchLabel = new JLabelWithHover(GetText.tr("Scan Mods On Launch?"), HELP_ICON,
+                new HTMLBuilder().center().split(100)
+                        .text(GetText.tr(
+                                "This will scan the mods in instances before launching to ensure they do not contain malware or have been modified since installing."))
+                        .build());
+        add(scanModsOnLaunchLabel, gbc);
 
         gbc.gridx++;
-        gbc.insets = UIConstants.FIELD_INSETS;
+        gbc.insets = UIConstants.CHECKBOX_FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-        JComboBox<ComboItem<InstanceExportFormat>> defaultExportFormat = new JComboBox<>();
-        defaultExportFormat.addItem(new ComboItem<>(InstanceExportFormat.CURSEFORGE, "CurseForge"));
-        defaultExportFormat.addItem(new ComboItem<>(InstanceExportFormat.MODRINTH, "Modrinth"));
-        defaultExportFormat
-                .addItem(new ComboItem<>(InstanceExportFormat.CURSEFORGE_AND_MODRINTH, "CurseForge & Modrinth"));
-        defaultExportFormat.addItem(new ComboItem<>(InstanceExportFormat.MULTIMC, "MultiMC"));
-
-        defaultExportFormat.addItemListener(itemEvent -> {
-            if (itemEvent.getStateChange() == ItemEvent.SELECTED) {
-                @SuppressWarnings("unchecked")
-                ComboItem<InstanceExportFormat> item = (ComboItem<InstanceExportFormat>) itemEvent.getItem();
-
-                viewModel.setDefaultExportFormat(item.getValue());
-            }
-        });
-        addDisposable(viewModel.getDefaultExportFormat().subscribe(defaultExportFormat::setSelectedIndex));
-
-        add(defaultExportFormat, gbc);
+        JCheckBox scanModsOnLaunch = new JCheckBox();
+        scanModsOnLaunch.setSelected(App.settings.scanModsOnLaunch);
+        scanModsOnLaunch.addItemListener(e -> viewModel.setScanModsOnLaunch(e.getStateChange() == ItemEvent.SELECTED));
+        addDisposable(viewModel.getScanModsOnLaunch().subscribe(scanModsOnLaunch::setSelected));
+        add(scanModsOnLaunch, gbc);
     }
 
     @Override
@@ -276,8 +296,7 @@ public class ModsSettingsTab extends AbstractSettingsTab {
     }
 
     @Override
-    protected void createViewModel() {
-    }
+    protected void createViewModel() {}
 
     @Override
     protected void onDestroy() {
