@@ -1,6 +1,6 @@
 #define MyAppName "ATLauncher"
 #define MyAppURL "https://atlauncher.com"
-#define MyAppVersion "1.2.0.0"
+#define MyAppVersion "1.3.0.0"
 
 [Setup]
 AppId={{2F5FDA11-45A5-4CC3-8E51-5E11E2481697}
@@ -12,6 +12,7 @@ VersionInfoVersion={#MyAppVersion}
 AppPublisherURL={#MyAppURL}
 AppSupportURL={#MyAppURL}
 AppUpdatesURL={#MyAppURL}
+AlwaysShowComponentsList=no
 DefaultDirName={userappdata}\{#MyAppName}
 DisableDirPage=auto
 DisableWelcomePage=no
@@ -30,7 +31,7 @@ WizardStyle=modern
 ChangesAssociations=yes
 
 [Run]
-Filename: {tmp}\7za.exe; Parameters: "x ""{tmp}\jre.zip"" -o""{app}\"" * -r -aoa"; Flags: runhidden runascurrentuser; Components: java
+Filename: {tmp}\7za.exe; Parameters: "x ""{tmp}\jre.zip"" -o""{app}\"" * -r -aoa"; Flags: runhidden runascurrentuser
 Filename: {app}\{#MyAppName}.exe; Description: {cm:LaunchProgram,{#MyAppName}}; Flags: nowait postinstall skipifsilent
 
 [Tasks]
@@ -39,11 +40,7 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 [Files]
 Source: "7za.exe"; DestDir: "{tmp}"; Flags: deleteafterinstall
 Source: "{tmp}\{#MyAppName}.exe"; DestDir: "{app}"; Flags: external ignoreversion
-Source: "{tmp}\jre.zip"; DestDir: "{tmp}"; Flags: external deleteafterinstall; Components: java
-
-[Components]
-Name: "atlauncher"; Description: "ATLauncher"; ExtraDiskSpaceRequired: 20000000; Types: full compact custom; Flags: fixed
-Name: "java"; Description: "Install Java 17 (For ATLauncher Only)"; ExtraDiskSpaceRequired: 129016602; Types: full; Flags: disablenouninstallwarning
+Source: "{tmp}\jre.zip"; DestDir: "{tmp}"; Flags: external deleteafterinstall
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
@@ -54,10 +51,10 @@ Name: "{userdesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppName}.exe"; Tasks: d
 Name: "{group}\{cm:UninstallProgram,{#MyAppName}}"; Filename: "{uninstallexe}"
 
 [InstallDelete]
-Type: filesandordirs; Name: "{app}\jre"; Components: java
+Type: filesandordirs; Name: "{app}\jre"
 
 [UninstallDelete]
-Type: filesandordirs; Name: "{app}\jre"; Components: java
+Type: filesandordirs; Name: "{app}\jre"
 
 [Code]
 var
@@ -71,31 +68,24 @@ end;
 procedure CurStepChanged(CurStep: TSetupStep);
 begin
   if (CurStep = ssPostInstall) then begin
-    if WizardIsComponentSelected('java') then begin
-      if not RenameFile(ExpandConstant('{app}') + '\jdk-17.0.3+7-jre', ExpandConstant('{app}/jre')) then begin
-        MsgBox('Failed to rename jre directory. Please try again or uncheck the "Install Java" option', mbError, MB_OK);
-        WizardForm.Close;
-      end
+    if not RenameFile(ExpandConstant('{app}') + '\jdk-17.0.3+7-jre', ExpandConstant('{app}/jre')) then begin
+      MsgBox('Failed to rename jre directory. Please try again', mbError, MB_OK);
+      WizardForm.Close;
     end
   end
 end;
 
 function NextButtonClick(CurPageID: Integer): Boolean;
 begin
-  if (CurPageID = wpSelectComponents) and not WizardIsComponentSelected('java') then
-  begin
-    Result := SuppressibleMsgBox('The option to install Java was not selected. Letting the launcher install and use it''s own version of Java is highly recommended to avoid issues in the future when we update the application.' + #13#10 + #13#10 + 'Installing this will not install it globally on your system, only for ATLauncher to use.' + #13#10 + #13#10 + 'Are you sure you want to continue without installing Java?', mbConfirmation, MB_YESNO, IDNO) = IDYES;
-  end else if CurPageID = wpReady then begin
+  if CurPageID = wpReady then begin
     DownloadPage.Clear;
 
     DownloadPage.Add('https://download.nodecdn.net/containers/atl/ATLauncher.exe', '{#MyAppName}.exe', '');
 
-    if WizardIsComponentSelected('java') then begin
-      if IsWin64 then begin
-        DownloadPage.Add('https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.3%2B7/OpenJDK17U-jre_x64_windows_hotspot_17.0.3_7.zip', 'jre.zip', 'd77745fdb57b51116f7b8fabd7d251067edbe3c94ea18fa224f64d9584b41a97');
-      end else begin
-        DownloadPage.Add('https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.3%2B7/OpenJDK17U-jre_x86-32_windows_hotspot_17.0.3_7.zip', 'jre.zip', 'e29e311e4200a32438ef65637a75eb8eb09f73a37cef3877f08d02b6355cd221');
-      end;
+    if IsWin64 then begin
+      DownloadPage.Add('https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.3%2B7/OpenJDK17U-jre_x64_windows_hotspot_17.0.3_7.zip', 'jre.zip', 'd77745fdb57b51116f7b8fabd7d251067edbe3c94ea18fa224f64d9584b41a97');
+    end else begin
+      DownloadPage.Add('https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.3%2B7/OpenJDK17U-jre_x86-32_windows_hotspot_17.0.3_7.zip', 'jre.zip', 'e29e311e4200a32438ef65637a75eb8eb09f73a37cef3877f08d02b6355cd221');
     end;
 
     DownloadPage.Show;

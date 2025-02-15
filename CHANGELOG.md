@@ -44,3 +44,4 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Squash a ton of warnings [#918]
 - Implement architecture for all settings tabs [#910]
 - Auto update bundled JRE on boot if already installed
+- Remove option to not install Java when using the setup as it's completely local
