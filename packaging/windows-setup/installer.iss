@@ -76,27 +76,48 @@ begin
 end;
 
 function NextButtonClick(CurPageID: Integer): Boolean;
+var
+  Retry: Boolean;
+  Answer: Integer;
 begin
   if CurPageID = wpReady then begin
-    DownloadPage.Clear;
-
-    DownloadPage.Add('https://download.nodecdn.net/containers/atl/ATLauncher.exe', '{#MyAppName}.exe', '');
-
-    if IsWin64 then begin
-      DownloadPage.Add('https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.3%2B7/OpenJDK17U-jre_x64_windows_hotspot_17.0.3_7.zip', 'jre.zip', 'd77745fdb57b51116f7b8fabd7d251067edbe3c94ea18fa224f64d9584b41a97');
-    end else begin
-      DownloadPage.Add('https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.3%2B7/OpenJDK17U-jre_x86-32_windows_hotspot_17.0.3_7.zip', 'jre.zip', 'e29e311e4200a32438ef65637a75eb8eb09f73a37cef3877f08d02b6355cd221');
-    end;
-
-    DownloadPage.Show;
     try
-      try
-        DownloadPage.Download;
-        Result := True;
-      except
-          SuppressibleMsgBox(AddPeriod(GetExceptionMessage), mbCriticalError, MB_OK, IDOK);
-        Result := False;
-      end;
+      // The launcher download must complete
+      repeat
+        DownloadPage.Clear;
+        DownloadPage.Add('https://download.nodecdn.net/containers/atl/ATLauncher.exe', '{#MyAppName}.exe', '');
+        DownloadPage.Show;
+        try
+          DownloadPage.Download;
+          Result := True;
+          Retry := False;
+        except
+          Answer := SuppressibleMsgBox(AddPeriod(GetExceptionMessage), mbCriticalError, MB_RETRYCANCEL, IDRETRY);
+          Retry := (Answer = IDRETRY);
+          Result := (Answer <> IDCANCEL);
+        end;
+      until not Retry;
+      
+      if not Result then Exit;
+
+      // Now do the download for the JRE, but make it optional and okay if it fails
+      repeat
+        DownloadPage.Clear;
+        if IsWin64 then begin
+          DownloadPage.Add('https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.3%2B7/OpenJDK17U-jre_x64_windows_hotspot_17.0.3_7.zip', 'jre.zip', 'd77745fdb57b51116f7b8fabd7d251067edbe3c94ea18fa224f64d9584b41a97');
+        end else begin
+          DownloadPage.Add('https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.3%2B7/OpenJDK17U-jre_x86-32_windows_hotspot_17.0.3_7.zip', 'jre.zip', 'e29e311e4200a32438ef65637a75eb8eb09f73a37cef3877f08d02b6355cd221');
+        end;
+        try
+          DownloadPage.Download;
+          Result := True;
+          Retry := False;
+        except
+          Answer := SuppressibleMsgBox(AddPeriod(GetExceptionMessage), mbCriticalError, MB_ABORTRETRYIGNORE, IDIGNORE);
+          Retry := (Answer = IDRETRY);
+          Result := (Answer <> IDABORT);
+        end;
+      until not Retry;
     finally
       DownloadPage.Hide;
     end;
