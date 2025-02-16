@@ -204,10 +204,12 @@ public class CurseForgePacksPanel extends PackBrowserPlatformPanel {
         return hasMorePages;
     }
 
+    @Override
     public boolean supportsManualAdding() {
         return true;
     }
 
+    @Override
     public void addById(String id) {
         ProgressDialog<CurseForgeProject> progressDialog = new ProgressDialog<>(
                 // #. {0} is the platform were getting info from (e.g. CurseForge/Modrinth)

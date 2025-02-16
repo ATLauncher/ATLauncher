@@ -72,9 +72,6 @@ import static io.reactivex.rxjava3.core.Observable.combineLatest;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 import io.reactivex.rxjava3.subjects.BehaviorSubject;
 
-/**
- * 25 / 06 / 2022
- */
 public class CreatePackViewModel implements SettingsListener, ICreatePackViewModel {
     /**
      * Name to display
@@ -478,8 +475,7 @@ public class CreatePackViewModel implements SettingsListener, ICreatePackViewMod
                     // Legacy Forge doesn't support servers easily
                     final boolean enableCreateServers = (loaderType == LoaderType.FORGE || !Utils.matchVersion(
                             selectedMinecraftVersion, "1.5", true, true));
-                    final List<LoaderVersion> loaders = loadLoaderVersions(loaderType, selectedMinecraftVersion,
-                            enableCreateServers);
+                    final List<LoaderVersion> loaders = loadLoaderVersions(loaderType, selectedMinecraftVersion);
 
                     loaderVersions.onNext(Optional.of(loaders));
 
@@ -867,11 +863,11 @@ public class CreatePackViewModel implements SettingsListener, ICreatePackViewMod
     private boolean isNameDirty() {
         return !(Objects.equals(name.getValue().orElse(null),
                 String.format("Minecraft %s", selectedMinecraftVersionFlow.getValue().orElse(null))) ||
-                selectedLoaderType.getValue().isPresent() &&
+                (selectedLoaderType.getValue().isPresent() &&
                         Objects.equals(name.getValue().orElse(null),
                                 String.format("Minecraft %s with %s",
                                         selectedMinecraftVersionFlow.getValue().orElse(null),
-                                        selectedLoaderType.getValue().orElse(null))));
+                                        selectedLoaderType.getValue().orElse(null)))));
     }
 
     /**
@@ -880,6 +876,7 @@ public class CreatePackViewModel implements SettingsListener, ICreatePackViewMod
      */
     private Thread nameCheckDirtyThread = null;
 
+    @Override
     public void setName(String name) {
         this.name.onNext(Optional.of(name));
         if (nameCheckDirtyThread == null || !nameCheckDirtyThread.isAlive()) {
@@ -891,11 +888,11 @@ public class CreatePackViewModel implements SettingsListener, ICreatePackViewMod
     private boolean isDescriptionDirty() {
         return !(Objects.equals(description.getValue().orElse(null),
                 String.format("Minecraft %s", selectedMinecraftVersionFlow.getValue().orElse(null))) ||
-                selectedLoaderType.getValue().isPresent() &&
+                (selectedLoaderType.getValue().isPresent() &&
                         Objects.equals(description.getValue().orElse(null),
                                 String.format("Minecraft %s with %s",
                                         selectedMinecraftVersionFlow.getValue().orElse(null),
-                                        selectedLoaderType.getValue().orElse(null))));
+                                        selectedLoaderType.getValue().orElse(null)))));
     }
 
     /**
@@ -904,6 +901,7 @@ public class CreatePackViewModel implements SettingsListener, ICreatePackViewMod
      */
     private Thread descCheckDirtyThread = null;
 
+    @Override
     public void setDescription(String description) {
         this.description.onNext(Optional.of(description));
         if (descCheckDirtyThread == null || !descCheckDirtyThread.isAlive()) {
@@ -912,6 +910,7 @@ public class CreatePackViewModel implements SettingsListener, ICreatePackViewMod
         }
     }
 
+    @Override
     public void setReleaseSelected(Boolean b) {
         final HashMap<VersionManifestVersionType, Boolean> map = new HashMap<>(
                 minecraftVersionTypeFiltersPublisher.getValue());
@@ -919,6 +918,7 @@ public class CreatePackViewModel implements SettingsListener, ICreatePackViewMod
         minecraftVersionTypeFiltersPublisher.onNext((HashMap) map.clone());
     }
 
+    @Override
     public void setExperimentSelected(Boolean b) {
         final HashMap<VersionManifestVersionType, Boolean> map = new HashMap(
                 minecraftVersionTypeFiltersPublisher.getValue());
@@ -926,6 +926,7 @@ public class CreatePackViewModel implements SettingsListener, ICreatePackViewMod
         minecraftVersionTypeFiltersPublisher.onNext((HashMap) map.clone());
     }
 
+    @Override
     public void setSnapshotSelected(Boolean b) {
         final HashMap<VersionManifestVersionType, Boolean> map = new HashMap(
                 minecraftVersionTypeFiltersPublisher.getValue());
@@ -933,6 +934,7 @@ public class CreatePackViewModel implements SettingsListener, ICreatePackViewMod
         minecraftVersionTypeFiltersPublisher.onNext((HashMap) map.clone());
     }
 
+    @Override
     public void setOldAlphaSelected(Boolean b) {
         final HashMap<VersionManifestVersionType, Boolean> map = new HashMap(
                 minecraftVersionTypeFiltersPublisher.getValue());
@@ -940,6 +942,7 @@ public class CreatePackViewModel implements SettingsListener, ICreatePackViewMod
         minecraftVersionTypeFiltersPublisher.onNext((HashMap) map.clone());
     }
 
+    @Override
     public void setOldBetaSelected(Boolean b) {
         final HashMap<VersionManifestVersionType, Boolean> map = new HashMap(
                 minecraftVersionTypeFiltersPublisher.getValue());
@@ -947,14 +950,17 @@ public class CreatePackViewModel implements SettingsListener, ICreatePackViewMod
         minecraftVersionTypeFiltersPublisher.onNext((HashMap) map.clone());
     }
 
+    @Override
     public void setSelectedMinecraftVersion(@Nullable String newVersion) {
         selectedMinecraftVersionFlow.onNext(Optional.ofNullable(newVersion));
     }
 
+    @Override
     public void setLoaderType(@Nullable LoaderType loader) {
         selectedLoaderType.onNext(Optional.ofNullable(loader));
     }
 
+    @Override
     public void setLoaderVersion(@Nonnull LoaderVersion loaderVersion) {
         Optional<LoaderVersion> currentOptional = selectedLoaderVersion.getValue();
         // Do not push two of the same?
@@ -970,14 +976,17 @@ public class CreatePackViewModel implements SettingsListener, ICreatePackViewMod
         return selectedLoaderVersionIndex.observeOn(SwingSchedulers.edt());
     }
 
+    @Override
     public void createServer() {
         install(true);
     }
 
+    @Override
     public void createInstance() {
         install(false);
     }
 
+    @Override
     public void onSettingsSaved() {
         font.onNext(App.THEME.getBoldFont());
     }
@@ -987,8 +996,8 @@ public class CreatePackViewModel implements SettingsListener, ICreatePackViewMod
         return InstanceManager.getInstances().isEmpty();
     }
 
-    private List<LoaderVersion> loadLoaderVersions(
-            LoaderType selectedLoader, @Nonnull String selectedMinecraftVersion, Boolean enableCreateServers) {
+    private List<LoaderVersion> loadLoaderVersions(LoaderType selectedLoader,
+            @Nonnull String selectedMinecraftVersion) {
         try {
             ApolloQueryCall<GetLoaderVersionsForMinecraftVersionQuery.Data> call = GraphqlClient.apolloClient.query(
                     new GetLoaderVersionsForMinecraftVersionQuery(
@@ -1067,7 +1076,7 @@ public class CreatePackViewModel implements SettingsListener, ICreatePackViewMod
                     case PAPER:
                         loaderVersionsList.addAll(data.loaderVersions().paper()
                                 .stream()
-                                .filter(fv -> !disabledPaperVersions.contains(fv.build()))
+                                .filter(fv -> !disabledPaperVersions.contains(Integer.toString(fv.build())))
                                 .map(version -> new LoaderVersion(
                                         Integer.toString(version.build()),
                                         false,
@@ -1078,7 +1087,7 @@ public class CreatePackViewModel implements SettingsListener, ICreatePackViewMod
                     case PURPUR:
                         loaderVersionsList.addAll(data.loaderVersions().purpur()
                                 .stream()
-                                .filter(fv -> !disabledPurpurVersions.contains(fv.build()))
+                                .filter(fv -> !disabledPurpurVersions.contains(Integer.toString(fv.build())))
                                 .map(version -> new LoaderVersion(
                                         Integer.toString(version.build()),
                                         false,

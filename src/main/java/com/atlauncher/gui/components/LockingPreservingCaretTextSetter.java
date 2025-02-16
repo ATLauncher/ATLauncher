@@ -24,8 +24,6 @@ import org.jetbrains.annotations.Nullable;
 
 /**
  * Wrapper of PreservingCaretTextSetter, allowing locking of setting.
- *
- * @since 2024 / 08 / 03
  */
 public class LockingPreservingCaretTextSetter extends PreservingCaretTextSetter {
     private boolean isLocked = false;
@@ -39,13 +37,14 @@ public class LockingPreservingCaretTextSetter extends PreservingCaretTextSetter 
 
     @Override
     public void setText(@Nullable String newText) {
-        if (!isLocked) // If locked, drop the input from view model.
+        // If locked, drop the input from view model.
+        if (!isLocked) {
             super.setText(newText);
+        }
     }
 
     /**
      * Set if the text setter is locked or not.
-     * @param isLocked
      */
     public void setLocked(boolean isLocked) {
         this.isLocked = isLocked;

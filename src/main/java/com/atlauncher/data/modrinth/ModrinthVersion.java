@@ -71,6 +71,7 @@ public class ModrinthVersion {
                 .findFirst().orElse(getPrimaryFile());
     }
 
+    @Override
     public String toString() {
         if (this.versionType == null) {
             return this.name;

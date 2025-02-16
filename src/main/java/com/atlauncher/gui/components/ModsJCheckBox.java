@@ -258,9 +258,8 @@ public class ModsJCheckBox extends JCheckBox {
             // #. {0} is the platform to check for updates from (e.g. CurseForge/Modrinth)
             JMenuItem checkForUpdatesOnCurseForge = new JMenuItem(GetText.tr("Check For Updates On {0}", "CurseForge"));
             checkForUpdatesOnCurseForge.addActionListener(e -> {
-                boolean updated = false;
-
-                updated = getDisableableMod().checkForUpdate(dialog, dialog.instanceOrServer, ModPlatform.CURSEFORGE);
+                boolean updated = getDisableableMod().checkForUpdate(dialog, dialog.instanceOrServer,
+                        ModPlatform.CURSEFORGE);
 
                 if (!updated) {
                     DialogManager.okDialog().setTitle(GetText.tr("No Updates Found"))
@@ -274,9 +273,8 @@ public class ModsJCheckBox extends JCheckBox {
             // #. {0} is the platform to check for updates from (e.g. CurseForge/Modrinth)
             JMenuItem checkForUpdatesOnModrinth = new JMenuItem(GetText.tr("Check For Updates On {0}", "Modrinth"));
             checkForUpdatesOnModrinth.addActionListener(e -> {
-                boolean updated = false;
-
-                updated = getDisableableMod().checkForUpdate(dialog, dialog.instanceOrServer, ModPlatform.MODRINTH);
+                boolean updated = getDisableableMod().checkForUpdate(dialog, dialog.instanceOrServer,
+                        ModPlatform.MODRINTH);
 
                 if (!updated) {
                     DialogManager.okDialog().setTitle(GetText.tr("No Updates Found"))
@@ -299,9 +297,7 @@ public class ModsJCheckBox extends JCheckBox {
 
             JMenuItem checkForUpdates = new JMenuItem(GetText.tr("Check For Updates"));
             checkForUpdates.addActionListener(e -> {
-                boolean updated = false;
-
-                updated = getDisableableMod().checkForUpdate(dialog, dialog.instanceOrServer);
+                boolean updated = getDisableableMod().checkForUpdate(dialog, dialog.instanceOrServer);
 
                 if (!updated) {
                     DialogManager.okDialog().setTitle(GetText.tr("No Updates Found"))
@@ -314,6 +310,7 @@ public class ModsJCheckBox extends JCheckBox {
         }
 
         addMouseListener(new MouseAdapter() {
+            @Override
             public void mousePressed(MouseEvent e) {
                 if (e.getButton() == MouseEvent.BUTTON3) {
                     contextMenu.show(ModsJCheckBox.this, e.getX(), e.getY());

@@ -124,6 +124,7 @@ public final class LogManager {
                     debug(exception.response, 5);
                 }
             } catch (Exception e) {
+                // ignored
             }
         }
     }

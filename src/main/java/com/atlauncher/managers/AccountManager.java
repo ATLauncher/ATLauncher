@@ -24,7 +24,6 @@ import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -47,11 +46,10 @@ import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.subjects.BehaviorSubject;
 
 public class AccountManager {
-    private static final Type abstractAccountListType = new TypeToken<List<MicrosoftAccount>>() {
-    }.getType();
+    private static final Type abstractAccountListType = new TypeToken<List<MicrosoftAccount>>() {}.getType();
 
     public static final BehaviorSubject<List<MicrosoftAccount>> ACCOUNTS = BehaviorSubject
-            .createDefault(new LinkedList<>());
+            .createDefault(new ArrayList<>());
 
     /**
      * Account using the Launcher
@@ -88,11 +86,11 @@ public class AccountManager {
 
         if (Files.exists(FileSystem.ACCOUNTS)) {
             try (InputStreamReader fileReader = new InputStreamReader(
-                Files.newInputStream(FileSystem.ACCOUNTS), StandardCharsets.UTF_8)) {
+                    Files.newInputStream(FileSystem.ACCOUNTS), StandardCharsets.UTF_8)) {
                 List<MicrosoftAccount> accounts = Gsons.DEFAULT.fromJson(fileReader, abstractAccountListType);
 
                 newAccounts.addAll(accounts.stream().filter(account -> account.accessToken != null
-                    && account.accessToken.split("\\.").length == 3).collect(Collectors.toList()));
+                        && account.accessToken.split("\\.").length == 3).collect(Collectors.toList()));
             } catch (Exception e) {
                 LogManager.logStackTrace("Exception loading accounts", e);
             }
@@ -120,7 +118,7 @@ public class AccountManager {
 
     private static void saveAccounts(List<MicrosoftAccount> accounts) {
         try (OutputStreamWriter fileWriter = new OutputStreamWriter(
-            Files.newOutputStream(FileSystem.ACCOUNTS), StandardCharsets.UTF_8)) {
+                Files.newOutputStream(FileSystem.ACCOUNTS), StandardCharsets.UTF_8)) {
             Gsons.DEFAULT.toJson(accounts, abstractAccountListType, fileWriter);
         } catch (JsonIOException | IOException e) {
             LogManager.logStackTrace(e);

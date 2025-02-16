@@ -94,6 +94,7 @@ public class JavaFinder {
                                     }
                                 });
                     } catch (Exception ignored) {
+                        // ignored
                     }
 
                     if (!foundPaths.isEmpty()) {
@@ -137,6 +138,7 @@ public class JavaFinder {
                                     }
                                 });
                     } catch (Exception ignored) {
+                        // ignored
                     }
 
                     if (!foundPaths.isEmpty()) {

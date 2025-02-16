@@ -19,8 +19,8 @@ package com.atlauncher.managers;
 
 import java.awt.Window;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -58,7 +58,7 @@ public final class DialogManager {
     public Window parent;
     public String title;
     public Object content;
-    public List<String> options = new LinkedList<>();
+    public List<String> options = new ArrayList<>();
     public Icon icon = null;
     public int lookAndFeel = DialogManager.DEFAULT_OPTION;
     public String defaultOption = null;

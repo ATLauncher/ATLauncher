@@ -21,7 +21,6 @@ import java.awt.event.KeyEvent;
 import java.util.concurrent.TimeUnit;
 
 /**
- * @since 2022 / 06 / 19
  * <p>
  * This is a key listener that delays the saving of text to a view model.
  * This ensures that the user can type in text and not have their cursor
@@ -80,6 +79,7 @@ public class DelayedSavingKeyListener extends StatefulTextKeyAdapter implements 
             try {
                 TimeUnit.MILLISECONDS.sleep(saveDelay);
             } catch (InterruptedException ignored) {
+                // ignored
             }
 
             // Check if the contents have changed

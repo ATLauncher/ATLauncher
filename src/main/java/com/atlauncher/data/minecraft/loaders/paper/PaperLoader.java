@@ -70,8 +70,7 @@ public class PaperLoader implements Loader {
     }
 
     @Override
-    public void downloadAndExtractInstaller() throws Exception {
-    }
+    public void downloadAndExtractInstaller() throws Exception {}
 
     @Override
     public void runProcessors() {
@@ -143,7 +142,7 @@ public class PaperLoader implements Loader {
                 new ArrayList<>());
 
         return response.loaderVersions().paper().stream()
-                .filter(fv -> !disabledVersions.contains(fv.build()))
+                .filter(fv -> !disabledVersions.contains(Integer.toString(fv.build())))
                 .map(version -> new LoaderVersion(Integer.toString(version.build()), version.promoted(), "Paper"))
                 .collect(Collectors.toList());
     }

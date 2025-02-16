@@ -27,9 +27,6 @@ import com.atlauncher.data.Server;
 import io.reactivex.rxjava3.core.Flowable;
 import io.reactivex.rxjava3.core.Observable;
 
-/**
- * 19 / 11 / 2022
- */
 public interface IServersTabViewModel {
     /**
      * Get observable list to subscribe to.

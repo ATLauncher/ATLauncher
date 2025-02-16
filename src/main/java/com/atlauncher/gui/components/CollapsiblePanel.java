@@ -82,7 +82,7 @@ public class CollapsiblePanel extends JPanel implements ThemeListener, Relocaliz
      * their own collapsible panels.
      *
      * @param component Radio button that expands and collapses the panel based on
-     *                  if it is selected or not
+     *            if it is selected or not
      */
     public CollapsiblePanel(JRadioButton component) {
         component.addItemListener(new CollapsiblePanel.ExpandAndCollapseAction());
@@ -95,7 +95,7 @@ public class CollapsiblePanel extends JPanel implements ThemeListener, Relocaliz
      * Constructor, using a label/button to control the collapsible panel.
      *
      * @param text Title of the collapsible panel in string format, used to create a
-     *             button with text and an arrow icon
+     *            button with text and an arrow icon
      */
     public CollapsiblePanel(String text) {
         arrow.setText(text);
@@ -118,7 +118,7 @@ public class CollapsiblePanel extends JPanel implements ThemeListener, Relocaliz
     }
 
     /**
-     * @param instance            Given instance
+     * @param instance Given instance
      * @param instanceTitleFormat Title format for said instance
      */
     public CollapsiblePanel(Instance instance, String instanceTitleFormat) {
@@ -168,7 +168,7 @@ public class CollapsiblePanel extends JPanel implements ThemeListener, Relocaliz
      * will a label text.
      *
      * @param text Title of the collapsible panel in string format, used to create a
-     *             button with text and an arrow icon
+     *            button with text and an arrow icon
      */
     public CollapsiblePanel(String text, JRadioButton component) {
         collapsed = !component.isSelected();
@@ -291,6 +291,7 @@ public class CollapsiblePanel extends JPanel implements ThemeListener, Relocaliz
     private class ExpandAndCollapseAction extends AbstractAction implements ItemListener {
         public static final long serialVersionUID = -343231;
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             setCollapsed(!isCollapsed());
             if (AccountManager.getSelectedAccount() != null) {
@@ -304,6 +305,7 @@ public class CollapsiblePanel extends JPanel implements ThemeListener, Relocaliz
             }
         }
 
+        @Override
         public void itemStateChanged(ItemEvent e) {
             setCollapsed(!isCollapsed());
             if (AccountManager.getSelectedAccount() != null) {
@@ -338,6 +340,7 @@ public class CollapsiblePanel extends JPanel implements ThemeListener, Relocaliz
             }
         }
 
+        @Override
         public void paintBorder(Component c, Graphics g, int x, int y, int width, int height) {
             Rectangle borderR = new Rectangle(x + EDGE_SPACING, y + EDGE_SPACING, width - (EDGE_SPACING * 2),
                     height - (EDGE_SPACING * 2));
@@ -383,6 +386,7 @@ public class CollapsiblePanel extends JPanel implements ThemeListener, Relocaliz
             g.setColor(col);
         }
 
+        @Override
         public Insets getBorderInsets(Component c, Insets insets) {
             Insets borderInsets;
             if (border != null) {

@@ -42,6 +42,7 @@ public class SMButton extends JButton {
         this(Utils.getIconImage(i), t);
     }
 
+    @Override
     public JToolTip createToolTip() {
         JToolTip tip = super.createToolTip();
         tip.setBorder(new HoverLineBorder());

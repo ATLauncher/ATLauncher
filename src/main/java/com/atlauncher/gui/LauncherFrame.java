@@ -115,6 +115,7 @@ public final class LauncherFrame extends JFrame implements RelocalizationListene
                             SystemTray.getSystemTray().remove(App.trayIcon);
                         }
                     } catch (Exception ignored) {
+                        // ignored
                     }
                 }
             });
@@ -140,6 +141,7 @@ public final class LauncherFrame extends JFrame implements RelocalizationListene
 
         addComponentListener(new ComponentAdapter() {
 
+            @Override
             public void componentResized(ComponentEvent evt) {
                 Component c = (Component) evt.getSource();
 
@@ -149,6 +151,7 @@ public final class LauncherFrame extends JFrame implements RelocalizationListene
                 }
             }
 
+            @Override
             public void componentMoved(ComponentEvent evt) {
                 Component c = (Component) evt.getSource();
 

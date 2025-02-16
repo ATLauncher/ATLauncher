@@ -63,8 +63,9 @@ public class Loader {
 
     public com.atlauncher.data.minecraft.loaders.Loader getLoader(File tempDir, InstanceInstaller instanceInstaller,
             LoaderVersion loaderVersion) throws Exception {
-        com.atlauncher.data.minecraft.loaders.Loader instance = (com.atlauncher.data.minecraft.loaders.Loader) Class
+        com.atlauncher.data.minecraft.loaders.Loader instance = Class
                 .forName(this.className.replace("com.atlauncher.data.loaders", "com.atlauncher.data.minecraft.loaders"))
+                .asSubclass(com.atlauncher.data.minecraft.loaders.Loader.class)
                 .getDeclaredConstructor().newInstance();
 
         instance.set(this.metadata, tempDir, instanceInstaller, loaderVersion);

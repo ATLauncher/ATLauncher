@@ -119,7 +119,7 @@ public class MicrosoftAccount extends AbstractAccount {
             return null;
         }
 
-        return Optional.of(profile.name).orElse(null);
+        return profile.name;
     }
 
     @Override
@@ -148,7 +148,7 @@ public class MicrosoftAccount extends AbstractAccount {
             return null;
         }
 
-        return Optional.of(profile.skins).orElse(new ArrayList<>()).stream()
+        return Optional.ofNullable(profile.skins).orElse(new ArrayList<>()).stream()
                 .filter(s -> s.state.equalsIgnoreCase("ACTIVE")).findFirst().map(s -> s.url).orElse(null);
     }
 
@@ -239,12 +239,9 @@ public class MicrosoftAccount extends AbstractAccount {
     /**
      * This will check the user has a Minecraft profile (Game Pass subscribers will
      * not until first login of the Minecraft Launcher).
-     *
      * If an account doesn't have a Minecraft profile, then they either don't own
      * Minecraft Java edition, or their Game Pass subscription has expired and no
      * longer has a profile.
-     *
-     * @param accessToken
      */
     private boolean checkAndUpdateProfile(String accessToken) {
         Profile profile = null;

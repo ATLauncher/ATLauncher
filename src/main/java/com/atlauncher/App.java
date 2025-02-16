@@ -814,6 +814,7 @@ public class App {
                 awtAppClassNameField.setAccessible(true);
                 awtAppClassNameField.set(toolkit, Constants.LAUNCHER_NAME);
             } catch (Throwable t) {
+                // ignored
             }
         }
     }
@@ -877,8 +878,6 @@ public class App {
 
     /**
      * Sets the look and feel of the application.
-     *
-     * @throws Exception
      */
     private static void setLAF(String theme) throws Exception {
         try {
@@ -907,8 +906,6 @@ public class App {
 
     /**
      * This modifies the look and feel based upon the theme loaded.
-     *
-     * @throws Exception
      */
     private static void modifyLAF() throws Exception {
         ToolTipManager.sharedInstance().setDismissDelay(15000);
@@ -962,8 +959,6 @@ public class App {
 
     /**
      * This tries to create the system tray menu.
-     *
-     * @throws Exception
      */
     private static void trySystemTrayIntegration() throws Exception {
         if (SystemTray.isSupported()) {

@@ -26,12 +26,12 @@ import com.atlauncher.managers.DialogManager;
 
 public class DownloadClearerToolPanel extends AbstractToolPanel {
 
-    public DownloadClearerToolPanel(IToolsViewModel viewModel) {
+    public DownloadClearerToolPanel(ToolsViewModel viewModel) {
         super(GetText.tr("Download Clearer"));
 
         JLabel INFO_LABEL = new JLabel(new HTMLBuilder().center().split(70).text(GetText.tr(
                 "This tool clears out all the downloads done by the launcher. This will not affect any instances, but means new pack installs may take longer as it needs to redownload mods."))
-            .build());
+                .build());
         MIDDLE_PANEL.add(INFO_LABEL);
         BOTTOM_PANEL.add(LAUNCH_BUTTON);
         LAUNCH_BUTTON.addActionListener(e -> {
@@ -39,7 +39,7 @@ public class DownloadClearerToolPanel extends AbstractToolPanel {
                 viewModel.clearDownloads();
 
                 DialogManager.okDialog().setType(DialogManager.INFO).setTitle(GetText.tr("Success"))
-                    .setContent(GetText.tr("Successfully cleared the downloads.")).show();
+                        .setContent(GetText.tr("Successfully cleared the downloads.")).show();
             }
         });
     }

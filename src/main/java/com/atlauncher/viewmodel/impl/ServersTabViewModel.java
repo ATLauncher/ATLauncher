@@ -35,9 +35,6 @@ import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 import io.reactivex.rxjava3.subjects.BehaviorSubject;
 
-/**
- * 19 / 11 / 2022
- */
 public class ServersTabViewModel implements IServersTabViewModel {
     private final Observable<List<Server>> sourceServers =
         ServerManager.getServersObservable()

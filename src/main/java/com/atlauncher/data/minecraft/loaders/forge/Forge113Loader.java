@@ -71,7 +71,7 @@ public class Forge113Loader extends ForgeLoader {
                         new File(tempDir,
                                 "maven/" + library.downloads.artifact.path.substring(0,
                                         library.downloads.artifact.path.lastIndexOf(".jar")) + "-universal.jar")
-                                .toPath(),
+                                                .toPath(),
                         FileSystem.LIBRARIES.resolve(library.downloads.artifact.path.substring(0,
                                 library.downloads.artifact.path.lastIndexOf(".jar")) + "-universal.jar"),
                         true);
@@ -83,7 +83,7 @@ public class Forge113Loader extends ForgeLoader {
         Version version = null;
 
         try (InputStreamReader fileReader = new InputStreamReader(
-            Files.newInputStream(this.tempDir.toPath().resolve( "version.json")), StandardCharsets.UTF_8)) {
+                Files.newInputStream(this.tempDir.toPath().resolve("version.json")), StandardCharsets.UTF_8)) {
             version = Gsons.DEFAULT.fromJson(fileReader, Version.class);
         } catch (JsonSyntaxException | JsonIOException | IOException e) {
             LogManager.logStackTrace(e);
@@ -92,6 +92,7 @@ public class Forge113Loader extends ForgeLoader {
         return version;
     }
 
+    @Override
     public void runProcessors() {
         ForgeInstallProfile installProfile = this.getInstallProfile();
 
@@ -108,14 +109,17 @@ public class Forge113Loader extends ForgeLoader {
         });
     }
 
+    @Override
     public List<Library> getInstallLibraries() {
         return new ArrayList<>(this.getInstallProfile().getLibraries());
     }
 
+    @Override
     public List<Library> getLibraries() {
         return new ArrayList<>(this.getVersion().libraries);
     }
 
+    @Override
     public Arguments getArguments() {
         int forgeMajorVersion = Integer.parseInt(this.version.substring(0, this.version.indexOf(".")));
 
@@ -135,6 +139,7 @@ public class Forge113Loader extends ForgeLoader {
         return new Arguments(this.getVersion().arguments.game, jvmArgs);
     }
 
+    @Override
     public String getMainClass() {
         return this.getVersion().mainClass;
     }

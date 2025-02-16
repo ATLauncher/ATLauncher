@@ -74,6 +74,7 @@ public class UnifiedPackCard extends JPanel implements RelocalizationListener {
                 splitter.setLeftComponent(
                         new PackImagePanel(PackManager.getPackByID(Integer.parseInt(result.id()))));
             } catch (Exception e) {
+                // ignored
             }
         } else {
             String imageUrl = null;
@@ -144,6 +145,7 @@ public class UnifiedPackCard extends JPanel implements RelocalizationListener {
             try {
                 showCreateServerButton = PackManager.getPackByID(Integer.parseInt(result.id())).createServer;
             } catch (Exception e) {
+                // ignored
             }
         }
         createServerButton.setVisible(showCreateServerButton);

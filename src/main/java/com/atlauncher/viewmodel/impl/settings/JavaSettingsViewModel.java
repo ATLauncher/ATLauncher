@@ -44,9 +44,7 @@ import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.subjects.BehaviorSubject;
 
 /**
- * @since 2022 / 06 / 16
- *        <p>
- *        View model for {@link JavaSettingsTab}
+ * View model for {@link JavaSettingsTab}
  */
 public class JavaSettingsViewModel implements SettingsListener {
     private static final Logger LOG = LogManager.getLogger();

@@ -44,6 +44,7 @@ public class ModrinthExportOverridesDialog extends JDialog {
         setLayout(new BorderLayout());
 
         addWindowListener(new WindowAdapter() {
+            @Override
             public void windowClosing(WindowEvent arg0) {
                 close();
             }

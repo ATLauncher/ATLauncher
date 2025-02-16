@@ -207,6 +207,7 @@ public class AccountsTab extends HierarchyPanel implements Tab, RelocalizationLi
 
         userSkin = new JLabel(SkinUtils.getDefaultSkin());
         userSkin.addMouseListener(new MouseAdapter() {
+            @Override
             public void mousePressed(MouseEvent e) {
                 if (e.getButton() == MouseEvent.BUTTON3) {
                     if (accountsComboBox.getSelectedIndex() != 0) {
@@ -281,10 +282,8 @@ public class AccountsTab extends HierarchyPanel implements Tab, RelocalizationLi
                 refreshAccessTokenMenuItem.setVisible(false);
             } else {
                 deleteButton.setVisible(true);
-                loginWithMicrosoftButton.setVisible(
-                        account instanceof MicrosoftAccount);
-                refreshAccessTokenMenuItem.setVisible(
-                        account instanceof MicrosoftAccount);
+                loginWithMicrosoftButton.setVisible(true);
+                refreshAccessTokenMenuItem.setVisible(true);
 
                 deleteButton.setText(GetText.tr("Delete"));
                 userSkin.setIcon(account.getMinecraftSkin());
@@ -292,10 +291,7 @@ public class AccountsTab extends HierarchyPanel implements Tab, RelocalizationLi
         });
         viewModel.onAccountsNamesChanged(accounts -> {
             accountsComboBox.removeAllItems();
-            accountsComboBox.addItem(
-                    new ComboItem<>(
-                            null,
-                            GetText.tr("Add An Account")));
+            accountsComboBox.addItem(new ComboItem<>(null, GetText.tr("Add An Account")));
             for (String account : accounts) {
                 accountsComboBox.addItem(new ComboItem<>(null, account));
             }

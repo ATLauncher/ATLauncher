@@ -23,6 +23,7 @@ import com.atlauncher.data.Instance;
 import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.RelocalizationManager;
 
+@SuppressWarnings("ImmutableEnumChecker")
 public enum InstanceSortingStrategies implements InstanceSortingStrategy, RelocalizationListener {
     BY_NAME(GetText.tr("By Name")) {
         @Override

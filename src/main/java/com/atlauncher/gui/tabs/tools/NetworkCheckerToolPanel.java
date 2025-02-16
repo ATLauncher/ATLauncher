@@ -31,9 +31,9 @@ import com.atlauncher.managers.DialogManager;
 import com.atlauncher.managers.LogManager;
 
 public class NetworkCheckerToolPanel extends AbstractToolPanel implements ActionListener {
-    private final IToolsViewModel viewModel;
+    private final ToolsViewModel viewModel;
 
-    public NetworkCheckerToolPanel(IToolsViewModel viewModel) {
+    public NetworkCheckerToolPanel(ToolsViewModel viewModel) {
         super(GetText.tr("Network Checker"));
         this.viewModel = viewModel;
 

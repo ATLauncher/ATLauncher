@@ -24,8 +24,6 @@ import com.atlauncher.graphql.GetNewsQuery.GeneralNew;
 
 /**
  * Because there are two types of news in ATLauncher, but are used for the same purpose, this is a combing class.
- *
- * @since 2023 / 12 / 02
  */
 public class AbstractNews {
 

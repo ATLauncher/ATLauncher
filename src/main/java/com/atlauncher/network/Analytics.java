@@ -110,6 +110,7 @@ public final class Analytics {
             try {
                 responseFuture.get(10, TimeUnit.SECONDS);
             } catch (InterruptedException | ExecutionException | TimeoutException ignored) {
+                // ignored
             }
         }
     }

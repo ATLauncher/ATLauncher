@@ -187,6 +187,7 @@ public class BackupsSettingsTab extends AbstractSettingsTab {
                 icon.setImageObserver(backupsPathChecker);
             }
         } catch (NullPointerException ignored) {
+            // ignored
         }
     }
 

@@ -28,8 +28,6 @@ import com.gitlab.doomsdayrs.lib.rxswing.schedulers.SwingSchedulers;
 import io.reactivex.rxjava3.core.Observable;
 
 /**
- * @since 2022 / 06 / 19
- * <p>
  * View model for {@link SettingsTab}
  */
 public class SettingsViewModel {

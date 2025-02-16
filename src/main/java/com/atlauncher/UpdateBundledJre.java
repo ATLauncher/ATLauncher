@@ -40,6 +40,7 @@ public class UpdateBundledJre {
                 FileUtils.deleteDirectoryQuietly(oldBundledJrePath.toPath());
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
+                // ignored
             }
         }
 

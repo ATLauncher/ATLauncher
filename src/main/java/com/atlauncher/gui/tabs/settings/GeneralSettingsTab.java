@@ -543,6 +543,7 @@ public class GeneralSettingsTab extends AbstractSettingsTab {
                 icon.setImageObserver(customDownloadsPathChecker);
             }
         } catch (NullPointerException ignored) {
+            // ignored
         }
     }
 

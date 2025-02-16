@@ -17,16 +17,15 @@
  */
 package com.atlauncher.viewmodel.base;
 
-import com.atlauncher.data.MicrosoftAccount;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import java.util.List;
 import java.util.function.Consumer;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import com.atlauncher.data.MicrosoftAccount;
+
 /**
- * 12 / 06 / 2022
- *
  * The view model for Accounts tab, handles all background activity
  */
 public interface IAccountsViewModel {
@@ -45,6 +44,7 @@ public interface IAccountsViewModel {
 
     /**
      * Get the count of accounts in the launcher
+     * 
      * @return count of accounts
      */
     int accountCount();
@@ -115,18 +115,17 @@ public interface IAccountsViewModel {
         /**
          * The account was added
          */
-        public static class Added extends LoginPostResult {
-        }
+        public static class Added extends LoginPostResult {}
 
         /**
          * The account was edited
          */
-        public static class Edited extends LoginPostResult {
-        }
+        public static class Edited extends LoginPostResult {}
 
         /**
          * An error occured adding the account
          */
+        @SuppressWarnings("JavaLangClash")
         public static class Error extends LoginPostResult {
             @Nullable
             public final String errorContent;

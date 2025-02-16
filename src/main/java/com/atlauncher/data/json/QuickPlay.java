@@ -31,7 +31,7 @@ public class QuickPlay {
 
     /**
      * The default value is null to all the properties
-     * */
+     */
     public static QuickPlay getDefault() {
         return new QuickPlay(null, null, null);
     }
@@ -49,7 +49,7 @@ public class QuickPlay {
 
     /**
      * @return The current/selected quick play option based on the data in this data class
-     * */
+     */
     public QuickPlayOption getSelectedQuickPlayOption() {
         if (serverAddress != null) {
             return QuickPlayOption.multiPlayer;

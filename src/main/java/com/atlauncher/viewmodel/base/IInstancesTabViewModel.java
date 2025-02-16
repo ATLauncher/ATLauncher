@@ -30,9 +30,6 @@ import com.atlauncher.utils.sort.InstanceSortingStrategies;
 import io.reactivex.rxjava3.core.Flowable;
 import io.reactivex.rxjava3.core.Observable;
 
-/**
- * 20 / 11 / 2022
- */
 public interface IInstancesTabViewModel {
     /**
      * Set how the instances should be sorted.

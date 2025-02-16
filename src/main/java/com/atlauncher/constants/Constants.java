@@ -27,6 +27,7 @@ import com.atlauncher.data.LauncherVersion;
 import com.atlauncher.data.ScreenResolution;
 import com.atlauncher.utils.OS;
 
+@SuppressWarnings("MutablePublicArray")
 public class Constants {
     static {
         String versionFromFile = new BufferedReader(

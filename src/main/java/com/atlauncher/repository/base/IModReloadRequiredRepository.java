@@ -19,9 +19,6 @@ package com.atlauncher.repository.base;
 
 import io.reactivex.rxjava3.core.Observable;
 
-/**
- * @since 2024 / 05 / 26
- */
 public interface IModReloadRequiredRepository {
     Observable<Boolean> getModReloadRequiredObservable();
 

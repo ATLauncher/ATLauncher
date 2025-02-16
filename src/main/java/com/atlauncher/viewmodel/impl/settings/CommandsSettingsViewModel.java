@@ -30,8 +30,6 @@ import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.subjects.BehaviorSubject;
 
 /**
- * @since 2022 / 06 / 15
- * <p>
  * View model for {@link CommandsSettingsTab}
  */
 public class CommandsSettingsViewModel implements SettingsListener {

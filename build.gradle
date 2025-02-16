@@ -29,9 +29,11 @@ plugins {
     id 'com.github.johnrengelman.shadow' version '8.1.1'
     id 'com.github.ben-manes.versions' version '0.52.0'
     id 'com.apollographql.apollo' version '2.5.14' // Cannot update past 2.x.x as Kotlin is required
+    id 'net.ltgt.errorprone' version '4.1.0'
 }
 
 apply plugin: 'org.mini2Dx.gettext'
+apply plugin: 'net.ltgt.errorprone'
 
 sourceCompatibility = '1.8'
 targetCompatibility = '1.8'
@@ -99,7 +101,6 @@ dependencies {
     implementation 'com.apollographql.apollo:apollo-http-cache:2.5.14'
     implementation 'com.apollographql.apollo:apollo-rx3-support:2.5.14'
 
-
     // RxJava
     implementation("io.reactivex.rxjava3:rxjava:3.1.10")
     implementation("com.gitlab.doomsdayrs:rxswing:a5749ad421") // TODO tag
@@ -134,6 +135,33 @@ test {
 
     testlogger {
         theme 'mocha'
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    dependencies {
+        errorprone "com.google.errorprone:error_prone_core:2.36.0"
+    }
+
+    options.errorprone {
+        enabled = true
+        allErrorsAsWarnings = true
+        disableWarningsInGeneratedCode = true
+        excludedPaths = ".*/build/generated/.*|.*/src/test/.*|.*/src/main/java/io/github/asyncronous/.*"
+
+        disable(
+            "CheckReturnValue", // Too many of these and unimportant
+            "UnnecessaryParentheses", // Usually there for readability
+            "JavaUtilDate", // Lots of these, of low concern vs cost to fix
+            "MissingSummary", // Not worth fixing, any comments there are fine
+            "CatchAndPrintStackTrace", // Don't care about these
+            "StringSplitter",
+            "TypeParameterUnusedInFormals",
+            "MixedMutabilityReturnType",
+            "Finally",
+            "FutureReturnValueIgnored",
+            "NarrowCalculation",
+        )
     }
 }
 
@@ -343,7 +371,7 @@ project.afterEvaluate {
     }
 }
 
-def shouldIgnoreUpdate = { String version -> return ['ALPHA', 'BETA', 'RC', '-M'].any { it -> version.toUpperCase().contains(it) }}
+def shouldIgnoreUpdate = { String version -> return ['ALPHA', 'BETA', 'RC', '-M'].any { it -> version.toUpperCase(Locale.ENGLISH).contains(it) }}
 tasks.named("dependencyUpdates").configure {
     rejectVersionIf {
         shouldIgnoreUpdate(it.candidate.version)

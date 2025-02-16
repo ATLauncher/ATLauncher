@@ -19,8 +19,6 @@ package com.atlauncher.data;
 
 /**
  * Represents a screen resolution
- *
- * @since 2024/05/26
  */
 public class ScreenResolution {
 

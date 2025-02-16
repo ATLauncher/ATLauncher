@@ -329,6 +329,7 @@ public enum OS {
 
             return os.getBitness() == 64;
         } catch (Throwable ignored) {
+            // ignored
         }
 
         // worse case fallback to checking the Java install
@@ -500,8 +501,6 @@ public enum OS {
 
     /**
      * This restarts the launcher with an option set of arguments to add.
-     *
-     * @param args a List of arguments to pass when starting the launcher
      */
     public static void restartToUpdateBundledJre(Path newJrePath) {
         String path = getRunningProgramPath().toString();
@@ -641,7 +640,7 @@ public enum OS {
             }
             case OSX: {
                 // M1 machines still show Intel
-                name = String.format("Macintosh; Intel %s %s", getName(), getVersion().replaceAll(".", "_"));
+                name = String.format("Macintosh; Intel %s %s", getName(), getVersion().replaceAll("\\.", "_"));
                 break;
             }
             case LINUX: {
@@ -667,6 +666,7 @@ public enum OS {
                     antivirusProcesses = os.getProcesses(OS.WINDOWS_ANTIVIRUS_PROCESS_FILTER,
                             ProcessSorting.PID_ASC, 0);
                 } catch (Throwable ignored) {
+                    // ignored
                 }
             }
 

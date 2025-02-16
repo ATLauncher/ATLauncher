@@ -36,9 +36,6 @@ import com.gitlab.doomsdayrs.lib.rxswing.schedulers.SwingSchedulers;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.subjects.BehaviorSubject;
 
-/**
- * 13 / 06 / 2022
- */
 public class AboutTabViewModel implements IAboutTabViewModel {
 
     private final BehaviorSubject<List<Contributor>> contributorsSubject = BehaviorSubject.createDefault(Collections.emptyList());

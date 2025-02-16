@@ -190,7 +190,7 @@ public class InstanceInstallerDialog extends JDialog {
     }
 
     public InstanceInstallerDialog(Pack pack, boolean isServer) {
-        this(pack, false, true, null, true, null, App.launcher.getParent(), null);
+        this(pack, false, isServer, null, true, null, App.launcher.getParent(), null);
     }
 
     public InstanceInstallerDialog(Object object, boolean isUpdate, boolean isServer, PackVersion autoInstallVersion,
@@ -271,6 +271,7 @@ public class InstanceInstallerDialog extends JDialog {
             nameField.setEnabled(false);
         }
         nameField.addComponentListener(new ComponentAdapter() {
+            @Override
             public void componentShown(ComponentEvent ce) {
                 nameField.requestFocusInWindow();
             }
@@ -629,7 +630,6 @@ public class InstanceInstallerDialog extends JDialog {
         pack.websiteURL = String.format("https://modrinth.com/modpack/%s", modrinthProject.slug);
         pack.modrinthProject = modrinthProject;
 
-        List<ModrinthVersion> versions = new ArrayList<>();
         final ProgressDialog<List<ModrinthVersion>> modrinthProjectLookupDialog = new ProgressDialog<>(
                 GetText.tr("Getting Modpack Versions"), 0, GetText.tr("Getting Modpack Versions"),
                 "Aborting Getting Modpack Versions");
@@ -641,7 +641,7 @@ public class InstanceInstallerDialog extends JDialog {
         }));
 
         modrinthProjectLookupDialog.start();
-        versions = modrinthProjectLookupDialog.getReturnValue();
+        List<ModrinthVersion> versions = modrinthProjectLookupDialog.getReturnValue();
 
         pack.versions = versions.stream()
                 .sorted(Comparator.comparing((ModrinthVersion version) -> version.datePublished).reversed())
@@ -943,6 +943,7 @@ public class InstanceInstallerDialog extends JDialog {
                 handleTechnicInstall(technicModpack);
                 return;
             }
+            default: // fall out
         }
     }
 

@@ -75,8 +75,6 @@ public final class FileSystem {
     /**
      * This will organise the file system. This will remove old folders, create
      * directories needed as well as remove old directories no longer needed.
-     *
-     * @throws IOException
      */
     public static void organise() throws IOException {
         deleteOldThings();
@@ -160,8 +158,7 @@ public final class FileSystem {
 
                 for (String line : output.split("\\r?\\n")) {
                     if (line.contains("REG_EXPAND_SZ")) {
-                        Path downloadsFolderPath =
-                            Paths.get(line.substring(line.indexOf("REG_EXPAND_SZ") + 13).trim());
+                        Path downloadsFolderPath = Paths.get(line.substring(line.indexOf("REG_EXPAND_SZ") + 13).trim());
 
                         if (Files.exists(downloadsFolderPath)) {
                             CACHED_USER_DOWNLOADS = downloadsFolderPath;

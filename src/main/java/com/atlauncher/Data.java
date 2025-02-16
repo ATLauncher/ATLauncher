@@ -17,8 +17,8 @@
  */
 package com.atlauncher;
 
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -32,7 +32,7 @@ public final class Data {
     public static Map<String, Object> CONFIG = new HashMap<>();
     public static Map<String, Object> CONFIG_OVERRIDES = new HashMap<>();
 
-    public static final List<Pack> PACKS = new LinkedList<>();
+    public static final List<Pack> PACKS = new ArrayList<>();
 
     public static final Map<String, VersionManifestVersion> MINECRAFT = new HashMap<>();
     public static LWJGLVersions LWJGL_VERSIONS = null;

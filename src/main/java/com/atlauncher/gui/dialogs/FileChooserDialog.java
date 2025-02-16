@@ -28,6 +28,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.annotation.Nullable;
 import javax.swing.Box;
@@ -62,50 +63,45 @@ public class FileChooserDialog extends JDialog {
     private boolean closed = false;
 
     public FileChooserDialog(
-        Window parent,
-        String title,
-        String labelName,
-        String bottomText,
-        String selectorText,
-        String[] subOptions
-    ) {
+            Window parent,
+            String title,
+            String labelName,
+            String bottomText,
+            String selectorText,
+            String[] subOptions) {
         this(
-            parent,
-            title,
-            labelName,
-            bottomText,
-            selectorText,
-            subOptions,
-            false
-        );
+                parent,
+                title,
+                labelName,
+                bottomText,
+                selectorText,
+                subOptions,
+                false);
     }
 
     public FileChooserDialog(
-        Window parent,
-        String title,
-        String labelName,
-        String bottomText
-    ) {
+            Window parent,
+            String title,
+            String labelName,
+            String bottomText) {
         this(
-            parent,
-            title,
-            labelName,
-            bottomText,
-            null,
-            null,
-            true
-        );
+                parent,
+                title,
+                labelName,
+                bottomText,
+                null,
+                null,
+                true);
     }
 
     public FileChooserDialog(
-        Window parent,
-        String title,
-        String labelName,
-        String bottomText,
-        @Nullable String selectorText,
-        @Nullable String[] subOptions,
-        Boolean directory
-    ) {
+            Window parent,
+            String title,
+            String labelName,
+            String bottomText,
+            @Nullable String selectorText,
+            @Nullable String[] subOptions,
+            Boolean directory) {
         super(parent, title, ModalityType.DOCUMENT_MODAL);
         setSize(400, 175);
         setMinimumSize(new Dimension(400, 175));
@@ -198,6 +194,7 @@ public class FileChooserDialog extends JDialog {
         add(bottom, BorderLayout.SOUTH);
 
         addWindowListener(new WindowAdapter() {
+            @Override
             public void windowClosing(WindowEvent arg0) {
                 closed = true;
                 close();
@@ -251,8 +248,8 @@ public class FileChooserDialog extends JDialog {
         return this.closed;
     }
 
-    public ArrayList<File> getChosenFiles() {
-        ArrayList<File> files = new ArrayList<>();
+    public List<File> getChosenFiles() {
+        List<File> files = new ArrayList<>();
         if (this.filesChosen == null) {
             return null;
         }

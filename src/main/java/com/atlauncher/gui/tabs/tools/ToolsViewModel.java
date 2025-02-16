@@ -38,10 +38,7 @@ import com.atlauncher.network.analytics.AnalyticsEvent;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
 
-/**
- * 15 / 06 / 2022
- */
-public class ToolsViewModel implements IToolsViewModel, SettingsListener {
+public class ToolsViewModel implements SettingsListener {
     private Consumer<Boolean> onCanRunNetworkCheckerChanged;
     private Consumer<Boolean> onSkinUpdaterEnabledChanged;
 
@@ -62,24 +59,20 @@ public class ToolsViewModel implements IToolsViewModel, SettingsListener {
         return !AccountManager.getAccounts().isEmpty();
     }
 
-    @Override
     public boolean isDebugEnabled() {
         return LogManager.showDebug;
     }
 
-    @Override
     public boolean isLaunchInDebugEnabled() {
         return !OS.isUsingFlatpak() && !isDebugEnabled();
     }
 
-    @Override
     public void launchInDebug() {
         Analytics.trackEvent(AnalyticsEvent.forToolRun("debug_mode"));
 
         OS.relaunchInDebugMode();
     }
 
-    @Override
     public void clearDownloads() {
         Analytics.trackEvent(AnalyticsEvent.forToolRun("download_clearer"));
 
@@ -98,7 +91,6 @@ public class ToolsViewModel implements IToolsViewModel, SettingsListener {
         }
     }
 
-    @Override
     public void deleteLibraries() {
         Analytics.trackEvent(AnalyticsEvent.forToolRun("libraries_deleter"));
 
@@ -107,7 +99,6 @@ public class ToolsViewModel implements IToolsViewModel, SettingsListener {
         }
     }
 
-    @Override
     public void clearLogs() {
         Analytics.trackEvent(AnalyticsEvent.forToolRun("log_clearer"));
 
@@ -122,7 +113,6 @@ public class ToolsViewModel implements IToolsViewModel, SettingsListener {
         return App.settings.enableLogs;
     }
 
-    @Override
     public void onCanRunNetworkCheckerChanged(Consumer<Boolean> onChanged) {
         onChanged.accept(canRunNetworkChecker());
         onCanRunNetworkCheckerChanged = onChanged;
@@ -135,12 +125,10 @@ public class ToolsViewModel implements IToolsViewModel, SettingsListener {
             Constants.QUILT_HOST, Constants.CURSEFORGE_CORE_API_HOST, Constants.MODRINTH_HOST,
             Constants.FTB_HOST };
 
-    @Override
     public int hostsLength() {
         return HOSTS.length;
     }
 
-    @Override
     public void runNetworkChecker(Consumer<Void> onTaskComplete, Consumer<Void> onFail, Consumer<Void> onSuccess) {
         Analytics.trackEvent(AnalyticsEvent.forToolRun("network_checker"));
         StringBuilder results = new StringBuilder();
@@ -315,18 +303,15 @@ public class ToolsViewModel implements IToolsViewModel, SettingsListener {
         }
     }
 
-    @Override
     public void onSkinUpdaterEnabledChanged(Consumer<Boolean> onChanged) {
         this.onSkinUpdaterEnabledChanged = onChanged;
         onChanged.accept(skinUpdaterEnabled());
     }
 
-    @Override
     public int accountCount() {
         return AccountManager.getAccounts().size();
     }
 
-    @Override
     public void updateSkins(Consumer<Void> onTaskComplete) {
         Analytics.trackEvent(AnalyticsEvent.forToolRun("skin_updater"));
 

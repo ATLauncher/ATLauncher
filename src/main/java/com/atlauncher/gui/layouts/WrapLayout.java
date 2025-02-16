@@ -43,8 +43,8 @@ public class WrapLayout extends FlowLayout {
      * <code>WrapLayout</code>, or <code>WrapLayout</code>.
      *
      * @param align the alignment value
-     * @param hgap  the horizontal gap between components
-     * @param vgap  the vertical gap between components
+     * @param hgap the horizontal gap between components
+     * @param vgap the vertical gap between components
      */
     public WrapLayout(int align, int hgap, int vgap) {
         super(align, hgap, vgap);
@@ -82,7 +82,7 @@ public class WrapLayout extends FlowLayout {
      * Returns the minimum or preferred dimension needed to layout the target
      * container.
      *
-     * @param target    target to get layout size for
+     * @param target target to get layout size for
      * @param preferred should preferred size be calculated
      * @return the dimension to layout the target container
      */
@@ -92,17 +92,17 @@ public class WrapLayout extends FlowLayout {
             // When the container width = 0, the preferred width of the container
             // has not yet been calculated so lets ask for the maximum.
 
-            int targetWidth = target.getSize().width;
             Container container = target;
 
             while (container.getSize().width == 0 && container.getParent() != null) {
                 container = container.getParent();
             }
 
-            targetWidth = container.getSize().width;
+            int targetWidth = container.getSize().width;
 
-            if (targetWidth == 0)
+            if (targetWidth == 0) {
                 targetWidth = Integer.MAX_VALUE;
+            }
 
             int hgap = getHgap();
             int vgap = getVgap();
@@ -166,11 +166,8 @@ public class WrapLayout extends FlowLayout {
     /*
      * A new row has been completed. Use the dimensions of this row to update the
      * preferred size for the container.
-     *
      * @param dim update the width and height when appropriate
-     *
      * @param rowWidth the width of the row to add
-     *
      * @param rowHeight the height of the row to add
      */
     private void addRow(Dimension dim, int rowWidth, int rowHeight) {

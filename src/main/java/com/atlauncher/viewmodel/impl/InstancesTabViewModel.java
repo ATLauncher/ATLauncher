@@ -56,9 +56,6 @@ import io.reactivex.rxjava3.core.ObservableSource;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 import io.reactivex.rxjava3.subjects.BehaviorSubject;
 
-/**
- * 20 / 11 / 2022
- */
 public class InstancesTabViewModel implements IInstancesTabViewModel, SettingsListener {
 
     private final BehaviorSubject<String> instanceTitleFormat = BehaviorSubject

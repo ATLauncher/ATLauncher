@@ -18,6 +18,7 @@
 package com.atlauncher.data.mojang.api;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 import com.atlauncher.Gsons;
 import com.atlauncher.annot.Json;
@@ -43,6 +44,7 @@ public class UserPropertyRaw {
     }
 
     public UserProperty parse() throws IOException {
-        return Gsons.DEFAULT.fromJson(new String(Base64.decode(this.value)), UserProperty.class);
+        return Gsons.DEFAULT.fromJson(new String(Base64.decode(this.value), StandardCharsets.UTF_8),
+                UserProperty.class);
     }
 }

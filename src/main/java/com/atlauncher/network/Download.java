@@ -24,6 +24,7 @@ import java.net.SocketTimeoutException;
 import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
@@ -132,7 +133,7 @@ public final class Download {
                 this.downloadFile();
             }
 
-            try (InputStreamReader isr = new InputStreamReader(Files.newInputStream(this.to))) {
+            try (InputStreamReader isr = new InputStreamReader(Files.newInputStream(this.to), StandardCharsets.UTF_8)) {
                 return gson.fromJson(isr, tClass);
             }
         }
@@ -171,7 +172,7 @@ public final class Download {
                 this.downloadFile();
             }
 
-            try (InputStreamReader isr = new InputStreamReader(Files.newInputStream(this.to))) {
+            try (InputStreamReader isr = new InputStreamReader(Files.newInputStream(this.to), StandardCharsets.UTF_8)) {
                 return gson.fromJson(isr, tClass);
             }
         }
@@ -587,6 +588,7 @@ public final class Download {
                             this.copy();
                         }
                     } catch (IOException ignored) {
+                        // ignored
                     }
                 } else {
                     HashCode fileHash = Hashing.EMPTY_HASH_CODE;
@@ -666,20 +668,22 @@ public final class Download {
                     LogManager.error(
                             "The response from this request was a HTML response. This is usually caused by an antivirus or firewall software intercepting and rewriting the response. The response is below.");
 
-                    LogManager.error(new String(Files.readAllBytes(this.to)));
+                    LogManager.error(new String(Files.readAllBytes(this.to), StandardCharsets.UTF_8));
                 }
 
                 FileUtils.copyFile(this.to, FileSystem.FAILED_DOWNLOADS);
                 if (fingerprint != null) {
                     LogManager.error("Error downloading " + this.to.getFileName() + " from " + this.url + ". Expected"
-                            + " fingerprint of " + fingerprint.toString() + " (" + (this.size == 0 ? "with unknown size": "with size of" + this.size) + ") but got "
+                            + " fingerprint of " + fingerprint.toString() + " ("
+                            + (this.size == 0 ? "with unknown size" : "with size of" + this.size) + ") but got "
                             + Hashing.murmur(this.to) + " (with size of "
                             + (Files.exists(this.to) ? Files.size(this.to) : 0)
                             + ") instead. Copied to FailedDownloads folder & cancelling install! ("
                             + App.settings.connectionTimeout + "/" + App.settings.concurrentConnections + ")");
                 } else {
                     LogManager.error("Error downloading " + this.to.getFileName() + " from " + this.url + ". Expected"
-                            + " hash of " + expected.toString() + " (" + (this.size == 0 ? "with unknown size": "with size of" + this.size) + ") but got "
+                            + " hash of " + expected.toString() + " ("
+                            + (this.size == 0 ? "with unknown size" : "with size of" + this.size) + ") but got "
                             + (this.md5() ? Hashing.md5(this.to)
                                     : (this.sha256() ? Hashing.sha256(this.to)
                                             : (this.sha512() ? Hashing.sha512(this.to) : Hashing.sha1(this.to))))
@@ -699,6 +703,7 @@ public final class Download {
                             this.copy();
                         }
                     } catch (IOException ignored) {
+                        // ignored
                     }
                 } else {
                     HashCode fileHash2 = Hashing.EMPTY_HASH_CODE;
@@ -756,6 +761,7 @@ public final class Download {
         return this.to.getFileName().toString();
     }
 
+    @Override
     public boolean equals(Object other) {
         if (other instanceof Download) {
             try {
@@ -768,6 +774,7 @@ public final class Download {
         }
     }
 
+    @Override
     public int hashCode() {
         return this.to.hashCode();
     }

@@ -21,6 +21,7 @@ import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import com.atlauncher.FileSystem;
@@ -56,7 +57,7 @@ public class JavaInfo {
             this.minorVersion = Java.parseJavaBuildVersion(this.version);
         }
 
-        this.is64bits = versionInfo.toUpperCase().contains("64-BIT");
+        this.is64bits = versionInfo.toUpperCase(Locale.ENGLISH).contains("64-BIT");
         this.path = javaPath;
         this.rootPath = new File(javaPath).getParentFile().getParentFile().getAbsolutePath();
 
@@ -98,6 +99,7 @@ public class JavaInfo {
         this.is64bits = is64bits;
     }
 
+    @Override
     public String toString() {
         return this.path + " (" + (this.is64bits ? "64-bit" : "32-bit") + ")";
     }

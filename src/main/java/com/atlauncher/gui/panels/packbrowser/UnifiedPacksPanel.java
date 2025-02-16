@@ -175,12 +175,13 @@ public class UnifiedPacksPanel extends PackBrowserPlatformPanel {
         return supportedTypes;
     }
 
+    @Override
     public boolean supportsManualAdding() {
         return false;
     }
 
-    public void addById(String id) {
-    }
+    @Override
+    public void addById(String id) {}
 
     @Override
     public boolean hasPagination() {

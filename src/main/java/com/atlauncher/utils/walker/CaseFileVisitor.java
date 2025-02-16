@@ -49,7 +49,7 @@ public final class CaseFileVisitor extends SimpleFileVisitor<Path> {
         if (!Files.isRegularFile(path) || !Utils.isAcceptedModFile(path)) {
             if (caseType == CaseType.upper) {
                 String filename = path.getFileName().toString();
-                filename = filename.substring(0, filename.lastIndexOf(".")).toUpperCase()
+                filename = filename.substring(0, filename.lastIndexOf(".")).toUpperCase(Locale.ENGLISH)
                         + filename.substring(filename.lastIndexOf("."));
                 FileUtils.moveFile(path, path.getParent().resolve(filename), true);
             } else if (caseType == CaseType.lower) {

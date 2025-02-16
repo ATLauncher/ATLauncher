@@ -28,7 +28,7 @@ import com.atlauncher.builders.HTMLBuilder;
 
 public class DebugModePanel extends AbstractToolPanel {
 
-    public DebugModePanel(IToolsViewModel viewModel) {
+    public DebugModePanel(ToolsViewModel viewModel) {
         super(GetText.tr("Debug Mode"));
 
         JLabel INFO_LABEL = new JLabel(new HTMLBuilder().center().split(70).text(GetText.tr(

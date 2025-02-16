@@ -24,7 +24,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -45,7 +45,7 @@ import com.atlauncher.network.Analytics;
 public final class ViewModsDialog extends JDialog {
     private final JPanel contentPanel = new JPanel(new GridBagLayout());
     private final JTextField searchField = new JTextField(16);
-    private final List<ModCard> cards = new LinkedList<>();
+    private final List<ModCard> cards = new ArrayList<>();
 
     public ViewModsDialog(Pack pack) {
         // #. {0} is the name of the pack

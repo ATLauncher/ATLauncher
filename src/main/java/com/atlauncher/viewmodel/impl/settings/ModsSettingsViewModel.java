@@ -32,26 +32,21 @@ import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.subjects.BehaviorSubject;
 
 /**
- * @since 2022 / 06 / 17
- * <p>
  * View model for {@link ModsSettingsTab}
  */
 public class ModsSettingsViewModel implements SettingsListener {
-    private final IModReloadRequiredRepository modReloadRequiredRepository =
-        ModReloadRequiredRepository.get();
+    private final IModReloadRequiredRepository modReloadRequiredRepository = ModReloadRequiredRepository.get();
 
-    private final BehaviorSubject<Integer>
-        _defaultModPlatform = BehaviorSubject.create(),
-        _addModRestriction = BehaviorSubject.create(),
-        _defaultExportFormat = BehaviorSubject.create();
+    private final BehaviorSubject<Integer> _defaultModPlatform = BehaviorSubject.create(),
+            _addModRestriction = BehaviorSubject.create(),
+            _defaultExportFormat = BehaviorSubject.create();
 
-    private final BehaviorSubject<Boolean>
-        _enableAddedModsByDefault = BehaviorSubject.create(),
-        _showFabricModsWhenSinytraInstalled = BehaviorSubject.create(),
-        _doNotCheckModsOnCurseForge = BehaviorSubject.create(),
-        _doNotCheckModsOnModrinth = BehaviorSubject.create(),
-        allowCurseForgeAlphaBetaFiles = BehaviorSubject.create(),
-        scanModsOnLaunch = BehaviorSubject.create();
+    private final BehaviorSubject<Boolean> _enableAddedModsByDefault = BehaviorSubject.create(),
+            _showFabricModsWhenSinytraInstalled = BehaviorSubject.create(),
+            _doNotCheckModsOnCurseForge = BehaviorSubject.create(),
+            _doNotCheckModsOnModrinth = BehaviorSubject.create(),
+            allowCurseForgeAlphaBetaFiles = BehaviorSubject.create(),
+            scanModsOnLaunch = BehaviorSubject.create();
 
     public ModsSettingsViewModel() {
         onSettingsSaved();
@@ -59,6 +54,7 @@ public class ModsSettingsViewModel implements SettingsListener {
     }
 
     @Override
+    @SuppressWarnings("EnumOrdinal")
     public void onSettingsSaved() {
         _defaultModPlatform.onNext(App.settings.defaultModPlatform.ordinal());
         _addModRestriction.onNext(App.settings.addModRestriction.ordinal());

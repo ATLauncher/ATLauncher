@@ -30,7 +30,7 @@ import com.atlauncher.gui.tabs.Tab;
 
 public class ToolsTab extends HierarchyPanel implements Tab {
 
-    private IToolsViewModel viewModel;
+    private ToolsViewModel viewModel;
 
     public ToolsTab() {
         super(new BorderLayout());

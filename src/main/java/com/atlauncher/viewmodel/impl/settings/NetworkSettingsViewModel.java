@@ -36,27 +36,21 @@ import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.subjects.BehaviorSubject;
 
 /**
- * @since 2022 / 06 / 18
- * <p>
  * View model for {@link NetworkSettingsTab}
  */
 public class NetworkSettingsViewModel implements SettingsListener {
 
-    private final BehaviorSubject<Integer>
-        _concurrentConnections = BehaviorSubject.create(),
-        _connectionTimeout = BehaviorSubject.create(),
-        _proxyPort = BehaviorSubject.create(),
-        _proxyType = BehaviorSubject.create();
+    private final BehaviorSubject<Integer> _concurrentConnections = BehaviorSubject.create(),
+            _connectionTimeout = BehaviorSubject.create(),
+            _proxyPort = BehaviorSubject.create(),
+            _proxyType = BehaviorSubject.create();
 
-    private final BehaviorSubject<Boolean>
-        _enableProxy = BehaviorSubject.create();
+    private final BehaviorSubject<Boolean> _enableProxy = BehaviorSubject.create();
 
-    private final BehaviorSubject<String>
-        _proxyHost = BehaviorSubject.create(),
-        modrinthAPIKey = BehaviorSubject.create();
+    private final BehaviorSubject<String> _proxyHost = BehaviorSubject.create(),
+            modrinthAPIKey = BehaviorSubject.create();
 
-    private final BehaviorSubject<CheckState> proxyCheckState =
-        BehaviorSubject.createDefault(CheckState.NotChecking);
+    private final BehaviorSubject<CheckState> proxyCheckState = BehaviorSubject.createDefault(CheckState.NotChecking);
 
     private long lastSetPending = System.currentTimeMillis();
     private boolean isCheckThreadRunning = false;
@@ -151,6 +145,7 @@ public class NetworkSettingsViewModel implements SettingsListener {
                     try {
                         Thread.sleep(200);
                     } catch (InterruptedException ignored) {
+                        // ignored
                     }
                 }
 
@@ -206,7 +201,8 @@ public class NetworkSettingsViewModel implements SettingsListener {
     public void setModrinthAPIKey(String apiKey) {
         if (!apiKey.isEmpty())
             App.settings.modrinthApiKey = apiKey;
-        else App.settings.modrinthApiKey = null;
+        else
+            App.settings.modrinthApiKey = null;
     }
 
     public Observable<CheckState> getProxyCheckState() {
@@ -244,8 +240,7 @@ public class NetworkSettingsViewModel implements SettingsListener {
         }
 
         boolean result = Utils.testProxy(
-            new Proxy(type, new InetSocketAddress(App.settings.proxyHost, App.settings.proxyPort))
-        );
+                new Proxy(type, new InetSocketAddress(App.settings.proxyHost, App.settings.proxyPort)));
 
         SettingsValidityManager.setValidity("proxy", result);
 

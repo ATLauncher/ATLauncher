@@ -70,6 +70,7 @@ public class ServersTab extends HierarchyPanel implements Tab, RelocalizationLis
         addDisposable(
                 viewModel.getSearchObservable().subscribe(it -> searchBox.setText(it.orElse(null))));
         searchBox.addKeyListener(new KeyAdapter() {
+            @Override
             public void keyReleased(KeyEvent e) {
                 if (e.getKeyChar() == KeyEvent.VK_ENTER) {
                     String text = searchBox.getText();

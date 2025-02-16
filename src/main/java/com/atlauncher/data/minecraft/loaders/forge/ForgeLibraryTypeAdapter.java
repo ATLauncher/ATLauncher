@@ -115,6 +115,7 @@ public class ForgeLibraryTypeAdapter implements JsonDeserializer<ForgeLibrary> {
                                     }
                                 }
                             } catch (IOException ignored) {
+                                // ignored
                             }
                         }
 

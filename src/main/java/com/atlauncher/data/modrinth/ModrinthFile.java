@@ -26,6 +26,7 @@ public class ModrinthFile {
     public boolean primary;
     public Long size;
 
+    @Override
     public String toString() {
         if (primary) {
             return String.format("%s (Primary)", this.filename);

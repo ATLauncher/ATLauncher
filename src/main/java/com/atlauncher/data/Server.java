@@ -291,7 +291,7 @@ public class Server implements ModManagement {
                     launchScript.add("; rm -f ./.launcherrun.sh");
 
                     Path tempLaunchFile = getRoot().resolve(".launcherrun.sh");
-                    Files.write(tempLaunchFile, String.join(" ", launchScript).getBytes(),
+                    Files.write(tempLaunchFile, String.join(" ", launchScript).getBytes(StandardCharsets.UTF_8),
                             StandardOpenOption.CREATE,
                             StandardOpenOption.TRUNCATE_EXISTING);
                     tempLaunchFile.toFile().setExecutable(true);
@@ -691,8 +691,8 @@ public class Server implements ModManagement {
 
         return mods.stream().anyMatch(m -> (m.isFromCurseForge()
                 && m.getCurseForgeModId() == Constants.CURSEFORGE_SINYTRA_CONNECTOR_MOD_ID)
-                || m.isFromModrinth()
-                        && m.modrinthProject.id.equalsIgnoreCase(Constants.MODRINTH_SINYTRA_CONNECTOR_MOD_ID))
+                || (m.isFromModrinth()
+                        && m.modrinthProject.id.equalsIgnoreCase(Constants.MODRINTH_SINYTRA_CONNECTOR_MOD_ID)))
                 && App.settings.showFabricModsWhenSinytraInstalled;
     }
 
@@ -707,8 +707,8 @@ public class Server implements ModManagement {
     }
 
     @Override
-    public void addMods(List<DisableableMod> mods) {
-        mods.addAll(mods);
+    public void addMods(List<DisableableMod> modsToAdd) {
+        mods.addAll(modsToAdd);
     }
 
     @Override
@@ -937,6 +937,7 @@ public class Server implements ModManagement {
         App.TOASTER.pop(GetText.tr("{0} Installed", mod.name));
     }
 
+    @Override
     public void addFileFromModrinth(ModrinthProject project, ModrinthVersion version, ModrinthFile file,
             ProgressDialog dialog) {
         ModrinthFile fileToDownload = Optional.ofNullable(file).orElse(version.getPrimaryFile());

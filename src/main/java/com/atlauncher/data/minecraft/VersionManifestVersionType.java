@@ -24,10 +24,12 @@ import com.google.gson.annotations.SerializedName;
 public enum VersionManifestVersionType {
     @SerializedName("experiment")
     EXPERIMENT {
+        @Override
         public String getValue() {
             return "experiment";
         }
 
+        @Override
         public String toString() {
             return "Experiment";
         }
@@ -35,10 +37,12 @@ public enum VersionManifestVersionType {
 
     @SerializedName("snapshot")
     SNAPSHOT {
+        @Override
         public String getValue() {
             return "snapshot";
         }
 
+        @Override
         public String toString() {
             return "Snapshot";
         }
@@ -46,10 +50,12 @@ public enum VersionManifestVersionType {
 
     @SerializedName("release")
     RELEASE {
+        @Override
         public String getValue() {
             return "release";
         }
 
+        @Override
         public String toString() {
             return "Release";
         }
@@ -57,10 +63,12 @@ public enum VersionManifestVersionType {
 
     @SerializedName("old_beta")
     OLD_BETA {
+        @Override
         public String getValue() {
             return "old_beta";
         }
 
+        @Override
         public String toString() {
             return "Beta";
         }
@@ -68,16 +76,18 @@ public enum VersionManifestVersionType {
 
     @SerializedName("old_alpha")
     OLD_ALPHA {
+        @Override
         public String getValue() {
             return "old_alpha";
         }
 
+        @Override
         public String toString() {
             return "Alpha";
         }
     };
 
     public String getValue() {
-        return getValue();
+        return "release";
     }
 }

@@ -197,10 +197,12 @@ public class ModrinthPacksPanel extends PackBrowserPlatformPanel {
         return hasMorePages;
     }
 
+    @Override
     public boolean supportsManualAdding() {
         return true;
     }
 
+    @Override
     public void addById(String id) {
         String packLookup = id;
 

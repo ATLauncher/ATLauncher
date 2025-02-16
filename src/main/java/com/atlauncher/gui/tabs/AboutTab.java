@@ -58,8 +58,6 @@ import com.atlauncher.viewmodel.base.IAboutTabViewModel;
 import com.atlauncher.viewmodel.impl.AboutTabViewModel;
 
 /**
- * 14 / 04 / 2022
- * <p>
  * The about tab displays to the user some basic information in regard to
  * the current state of ATLauncher, and some other basic diagnostic information
  * to let users more easily report errors.
@@ -97,11 +95,8 @@ public class AboutTab extends HierarchyPanel implements Tab {
 
         // Top info panel
         {
-            // Add header
+            // Add header, info of the current instance of ATLauncher
             {
-                /**
-                 * Info of the current instance of ATLauncher
-                 */
                 JLabel infoLabel = new JLabel();
                 infoLabel.setText(Constants.LAUNCHER_NAME);
                 infoLabel.setFont(ATLauncherLaf.getInstance().getTitleFont());
@@ -123,11 +118,8 @@ public class AboutTab extends HierarchyPanel implements Tab {
             info.setAlignmentY(Component.TOP_ALIGNMENT);
             info.setMaximumSize(new Dimension(Integer.MAX_VALUE, 128));
 
-            // Add text info
+            // Add text info, contained in [info], Displays to user various information on ATLauncher
             {
-                /**
-                 * Contained in [info], Displays to user various information on ATLauncher
-                 */
                 JTextPane textInfo = new JTextPane();
                 textInfo.setText(viewModel.getInfo());
                 textInfo.setEditable(false);

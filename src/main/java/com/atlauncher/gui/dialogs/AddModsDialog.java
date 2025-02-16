@@ -582,8 +582,8 @@ public final class AddModsDialog extends JDialog {
 
         if (loaderVersion != null && loaderVersion.isFabric() && instanceOrServer.getMods().stream()
                 .noneMatch(m -> (m.isFromCurseForge() && m.getCurseForgeModId() == Constants.CURSEFORGE_FABRIC_MOD_ID)
-                        || m.isFromModrinth()
-                                && m.modrinthProject.id.equalsIgnoreCase(Constants.MODRINTH_FABRIC_MOD_ID))) {
+                        || (m.isFromModrinth()
+                                && m.modrinthProject.id.equalsIgnoreCase(Constants.MODRINTH_FABRIC_MOD_ID)))) {
             this.topPanel.add(fabricApiWarningLabel, BorderLayout.CENTER);
             this.topPanel.add(installFabricApiButton, BorderLayout.EAST);
         }
@@ -591,8 +591,8 @@ public final class AddModsDialog extends JDialog {
         if (loaderVersion != null && loaderVersion.isLegacyFabric() && instanceOrServer.getMods().stream()
                 .noneMatch(m -> (m.isFromCurseForge()
                         && m.getCurseForgeModId() == Constants.CURSEFORGE_LEGACY_FABRIC_MOD_ID)
-                        || m.isFromModrinth()
-                                && m.modrinthProject.id.equalsIgnoreCase(Constants.MODRINTH_LEGACY_FABRIC_MOD_ID))) {
+                        || (m.isFromModrinth()
+                                && m.modrinthProject.id.equalsIgnoreCase(Constants.MODRINTH_LEGACY_FABRIC_MOD_ID)))) {
             this.topPanel.add(legacyFabricApiWarningLabel, BorderLayout.CENTER);
             this.topPanel.add(installLegacyFabricApiButton, BorderLayout.EAST);
         }
@@ -613,9 +613,9 @@ public final class AddModsDialog extends JDialog {
         if (instanceOrServer.isForgeLikeAndHasInstalledSinytraConnector() && instanceOrServer.getMods().stream()
                 .noneMatch(m -> (m.isFromCurseForge()
                         && m.getCurseForgeModId() == Constants.CURSEFORGE_FORGIFIED_FABRIC_API_MOD_ID)
-                        || m.isFromModrinth()
+                        || (m.isFromModrinth()
                                 && m.modrinthProject.id
-                                        .equalsIgnoreCase(Constants.MODRINTH_FORGIFIED_FABRIC_API_MOD_ID))) {
+                                        .equalsIgnoreCase(Constants.MODRINTH_FORGIFIED_FABRIC_API_MOD_ID)))) {
             this.topPanel.add(forgifiedFabricApiWarningLabel, BorderLayout.CENTER);
             this.topPanel.add(installForgifiedFabricApiButton, BorderLayout.EAST);
         }
@@ -1137,9 +1137,9 @@ public final class AddModsDialog extends JDialog {
             }
         }
 
-        boolean isCurseForgeSelected = firstTime
+        boolean isCurseForgeSelected = (firstTime
                 && (instanceOrServer.getLoaderVersion() == null || (!instanceOrServer.getLoaderVersion().isPaper()
-                        && !instanceOrServer.getLoaderVersion().isPurpur()))
+                        && !instanceOrServer.getLoaderVersion().isPurpur())))
                                 ? App.settings.defaultModPlatform == ModPlatform.CURSEFORGE
                                 : ((ComboItem<ModPlatform>) hostComboBox.getSelectedItem())
                                         .getValue() == ModPlatform.CURSEFORGE;

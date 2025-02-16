@@ -35,9 +35,7 @@ import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.subjects.BehaviorSubject;
 
 /**
- * @since 2022 / 06 / 15
- *        <p>
- *        View model for {@link BackupsSettingsTab}
+ * View model for {@link BackupsSettingsTab}
  */
 public class BackupsSettingsViewModel implements SettingsListener {
     private final BehaviorSubject<Integer> backupMode = BehaviorSubject.create();
@@ -54,6 +52,7 @@ public class BackupsSettingsViewModel implements SettingsListener {
     }
 
     @Override
+    @SuppressWarnings("EnumOrdinal")
     public void onSettingsSaved() {
         backupMode.onNext(App.settings.backupMode.ordinal());
         enableAutomaticBackupAfterLaunch.onNext(App.settings.enableAutomaticBackupAfterLaunch);

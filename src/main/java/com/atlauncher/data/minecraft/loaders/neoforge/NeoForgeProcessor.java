@@ -193,6 +193,7 @@ public class NeoForgeProcessor {
             Method getPlatform = ClassLoader.class.getDeclaredMethod("getPlatformClassLoader");
             parentClassLoader = (ClassLoader) getPlatform.invoke(null);
         } catch (Exception e) {
+            // ignored
         }
 
         ClassLoader cl = new URLClassLoader(classpath.toArray(new URL[0]), parentClassLoader);

@@ -32,9 +32,6 @@ import com.atlauncher.network.Analytics;
 import com.atlauncher.network.analytics.AnalyticsEvent;
 import com.atlauncher.viewmodel.base.IAccountsViewModel;
 
-/**
- * 12 / 06 / 2022
- */
 public class AccountsViewModel implements IAccountsViewModel {
     @Override
     public int accountCount() {
@@ -85,16 +82,6 @@ public class AccountsViewModel implements IAccountsViewModel {
     @Override
     public MicrosoftAccount getSelectedAccount() {
         return accounts().get(selectedAccountIndex);
-    }
-
-    private String clientToken = null;
-
-    @NotNull
-    private String getClientToken() {
-        if (clientToken == null)
-            clientToken = UUID.randomUUID().toString().replace("-", "");
-
-        return clientToken;
     }
 
     @Override

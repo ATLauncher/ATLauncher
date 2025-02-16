@@ -19,8 +19,6 @@ package com.atlauncher.data;
 
 /**
  * Proxy type to be shown in UI, ordered as originally shown.
- *
- * @since 2024/05/26
  */
 public enum ProxyType {
     HTTP, SOCKS, DIRECT

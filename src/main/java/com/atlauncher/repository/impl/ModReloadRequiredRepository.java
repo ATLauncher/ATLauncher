@@ -22,9 +22,6 @@ import com.atlauncher.repository.base.IModReloadRequiredRepository;
 import io.reactivex.rxjava3.subjects.BehaviorSubject;
 import io.reactivex.rxjava3.subjects.Subject;
 
-/**
- * @since 2024 / 05 / 26
- */
 public class ModReloadRequiredRepository implements IModReloadRequiredRepository {
 
     private static ModReloadRequiredRepository repo = null;

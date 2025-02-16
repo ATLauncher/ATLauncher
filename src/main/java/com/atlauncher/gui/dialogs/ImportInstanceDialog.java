@@ -246,6 +246,7 @@ public class ImportInstanceDialog extends JDialog {
         add(bottom, BorderLayout.SOUTH);
 
         addWindowListener(new WindowAdapter() {
+            @Override
             public void windowClosing(WindowEvent arg0) {
                 setVisible(false);
                 dispose();

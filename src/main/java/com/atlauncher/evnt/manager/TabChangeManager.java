@@ -17,7 +17,7 @@
  */
 package com.atlauncher.evnt.manager;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.SwingUtilities;
@@ -25,7 +25,7 @@ import javax.swing.SwingUtilities;
 import com.atlauncher.evnt.listener.TabChangeListener;
 
 public final class TabChangeManager {
-    private static final List<TabChangeListener> listeners = new LinkedList<>();
+    private static final List<TabChangeListener> listeners = new ArrayList<>();
 
     public static synchronized void addListener(TabChangeListener listener) {
         listeners.add(listener);

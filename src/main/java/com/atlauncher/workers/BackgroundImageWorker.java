@@ -56,6 +56,7 @@ public class BackgroundImageWorker extends SwingWorker<ImageIcon, Object> {
             try {
                 download.downloadFile();
             } catch (DownloadException ignored) {
+                // ignored
             }
         }
 

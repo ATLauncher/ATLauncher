@@ -20,6 +20,7 @@ package com.atlauncher.data;
 import com.atlauncher.annot.Json;
 
 @Json
+@SuppressWarnings("JavaLangClash")
 public class Runtime {
     public String version;
     public String url;

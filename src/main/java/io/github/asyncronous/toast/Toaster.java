@@ -56,7 +56,6 @@ public final class Toaster {
      * Will generate a question Toaster Notification with the chosen settings
      *
      * @param msg The text of the message you want to display
-     * @example Toaster.popQuestion("This is a question?");
      */
     public void popQuestion(String msg) {
         ToastWindow window = new ToastWindow();
@@ -69,7 +68,6 @@ public final class Toaster {
      * Will generate a standard info Toaster Notification with the chosen settings
      *
      * @param msg The text of the message you want to display
-     * @example Toaster.pop("This is some information");
      */
     public void pop(String msg) {
         ToastWindow window = new ToastWindow();
@@ -82,7 +80,6 @@ public final class Toaster {
      * Will generate a warning Toaster Notification with the chosen settings
      *
      * @param msg The text of the message you want to display
-     * @example Toaster.popWarning("This is a warning");
      */
     public void popWarning(String msg) {
         ToastWindow window = new ToastWindow();
@@ -95,7 +92,6 @@ public final class Toaster {
      * Will generate an error Toaster Notification with the chosen settings
      *
      * @param msg The text of the message you want to display
-     * @example Toaster.popError("This is an error");
      */
     public void popError(String msg) {
         ToastWindow window = new ToastWindow();
@@ -109,7 +105,6 @@ public final class Toaster {
      *
      * @param msg The text of the message you want to display
      * @param ico The icon you would like to display
-     * @example ImageIcon image = new
      *          ImageIcon(ImageIO.read(getClass().getResourceAsStream
      *          ("/assets/toaster/icons/error.png" ))); Toaster.pop("This is an
      *          error", image);

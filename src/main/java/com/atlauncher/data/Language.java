@@ -115,7 +115,7 @@ public class Language {
             selected = Locale.ENGLISH.getDisplayName();
         }
 
-        if (locale != Locale.ENGLISH) {
+        if (!locale.equals(Locale.ENGLISH)) {
             try {
                 GetText.add(
                         new PoFile(locale, App.class.getResourceAsStream(

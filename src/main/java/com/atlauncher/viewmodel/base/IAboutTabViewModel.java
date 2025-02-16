@@ -26,8 +26,6 @@ import com.atlauncher.data.Contributor;
 import io.reactivex.rxjava3.core.Observable;
 
 /**
- * 13 / 06 / 2022
- * <p>
  * View model for the about tab.
  */
 public interface IAboutTabViewModel {

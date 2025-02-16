@@ -55,9 +55,7 @@ import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.subjects.BehaviorSubject;
 
 /**
- * @since 2022 / 06 / 15
- *        <p>
- *        View model for {@link GeneralSettingsTab}
+ * View model for {@link GeneralSettingsTab}
  */
 public class GeneralSettingsViewModel implements SettingsListener {
     private static final Logger LOG = LogManager.getLogger();
@@ -124,7 +122,7 @@ public class GeneralSettingsViewModel implements SettingsListener {
      * @return languages
      */
     public String[] getLanguages() {
-        return Language.locales.stream().filter(l -> l == Locale.ENGLISH || Language.languages.containsValue(l))
+        return Language.locales.stream().filter(l -> l.equals(Locale.ENGLISH) || Language.languages.containsValue(l))
                 .map(Locale::getDisplayName).toArray(String[]::new);
     }
 

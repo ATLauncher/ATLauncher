@@ -111,6 +111,7 @@ public final class TrayMenu extends JPopupMenu {
                     SystemTray.getSystemTray().remove(App.trayIcon);
                 }
             } catch (Exception ignored) {
+                // ignored
             }
 
             Analytics.endSession();

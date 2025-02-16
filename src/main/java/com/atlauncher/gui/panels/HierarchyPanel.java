@@ -33,8 +33,6 @@ import io.reactivex.rxjava3.disposables.CompositeDisposable;
 import io.reactivex.rxjava3.disposables.Disposable;
 
 /**
- * 24 / 06 / 2022
- * <p>
  * This panel uses {@link HierarchyListener} to react the visibility changes.
  * By implementing this panel instead of {@link JPanel} one can lower background
  * memory usage and increase application boot times by delegating resource intensive tasks to runtime.

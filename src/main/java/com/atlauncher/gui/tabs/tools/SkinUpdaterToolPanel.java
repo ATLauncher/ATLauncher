@@ -30,13 +30,13 @@ import com.atlauncher.managers.DialogManager;
 
 public class SkinUpdaterToolPanel extends AbstractToolPanel implements ActionListener {
 
-    private final IToolsViewModel viewModel;
+    private final ToolsViewModel viewModel;
 
-    public SkinUpdaterToolPanel(IToolsViewModel viewModel) {
+    public SkinUpdaterToolPanel(ToolsViewModel viewModel) {
         super(GetText.tr("Skin Updater"));
         this.viewModel = viewModel;
         JLabel INFO_LABEL = new JLabel(new HTMLBuilder().center().split(70)
-            .text(GetText.tr("This tool will update all your accounts skins on the launcher.")).build());
+                .text(GetText.tr("This tool will update all your accounts skins on the launcher.")).build());
         MIDDLE_PANEL.add(INFO_LABEL);
         BOTTOM_PANEL.add(LAUNCH_BUTTON);
         LAUNCH_BUTTON.addActionListener(this);
@@ -45,8 +45,9 @@ public class SkinUpdaterToolPanel extends AbstractToolPanel implements ActionLis
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        final ProgressDialog<Boolean> dialog = new ProgressDialog<>(GetText.tr("Skin Updater"), viewModel.accountCount(),
-            GetText.tr("Updating Skins. Please Wait!"), "Skin Updater Tool Cancelled!");
+        final ProgressDialog<Boolean> dialog = new ProgressDialog<>(GetText.tr("Skin Updater"),
+                viewModel.accountCount(),
+                GetText.tr("Updating Skins. Please Wait!"), "Skin Updater Tool Cancelled!");
 
         dialog.addThread(new Thread(() -> {
             viewModel.updateSkins(onTaskComplete -> dialog.doneTask());
@@ -57,6 +58,6 @@ public class SkinUpdaterToolPanel extends AbstractToolPanel implements ActionLis
         dialog.start();
 
         DialogManager.okDialog().setType(DialogManager.INFO).setTitle(GetText.tr("Success"))
-            .setContent(GetText.tr("Successfully updated skins.")).show();
+                .setContent(GetText.tr("Successfully updated skins.")).show();
     }
 }

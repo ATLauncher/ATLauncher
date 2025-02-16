@@ -167,6 +167,7 @@ public abstract class Installable {
                 curseExtractedPath, ftbPackManifest, modrinthManifest, modrinthExtractedPath, multiMCManifest,
                 multiMCExtractedPath, technicModpack, dialog) {
 
+            @Override
             protected void done() {
                 Boolean success = false;
                 int type;
@@ -311,7 +312,7 @@ public abstract class Installable {
         };
 
         instanceInstaller.addPropertyChangeListener(evt -> {
-            if ("progress" == evt.getPropertyName()) {
+            if ("progress".equals(evt.getPropertyName())) {
                 if (progressBar.isIndeterminate()) {
                     progressBar.setIndeterminate(false);
                 }
@@ -325,7 +326,7 @@ public abstract class Installable {
                     progress = 100.0;
                 }
                 progressBar.setValue((int) Math.round(progress * 100.0));
-            } else if ("subprogress" == evt.getPropertyName()) {
+            } else if ("subprogress".equals(evt.getPropertyName())) {
                 if (!subProgressBar.isVisible()) {
                     subProgressBar.setVisible(true);
                 }
@@ -363,7 +364,7 @@ public abstract class Installable {
                     subProgressBar.setString(String.format(Locale.ENGLISH, "%.2f%%", progress));
                 }
                 subProgressBar.setValue((int) Math.round(progress * 100.0));
-            } else if ("subprogressint" == evt.getPropertyName()) {
+            } else if ("subprogressint".equals(evt.getPropertyName())) {
                 if (subProgressBar.isStringPainted()) {
                     subProgressBar.setStringPainted(false);
                 }
@@ -373,13 +374,14 @@ public abstract class Installable {
                 if (!subProgressBar.isIndeterminate()) {
                     subProgressBar.setIndeterminate(true);
                 }
-            } else if ("doing" == evt.getPropertyName()) {
+            } else if ("doing".equals(evt.getPropertyName())) {
                 String doingText = (String) evt.getNewValue();
                 doing.setText(doingText);
             }
         });
 
         dialog.addWindowListener(new WindowAdapter() {
+            @Override
             public void windowClosing(WindowEvent e) {
                 instanceInstaller.cancel(true);
             }

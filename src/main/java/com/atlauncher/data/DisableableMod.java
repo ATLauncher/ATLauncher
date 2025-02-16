@@ -166,8 +166,7 @@ public class DisableableMod implements Serializable {
                 null, null);
     }
 
-    public DisableableMod() {
-    }
+    public DisableableMod() {}
 
     public String getName() {
         return this.name;
@@ -406,7 +405,8 @@ public class DisableableMod implements Serializable {
 
                 if (App.settings.addModRestriction == AddModRestriction.LAX) {
                     try {
-                        List<String> minecraftVersionsToSearch = MinecraftManager.getMajorMinecraftVersions(instanceOrServer.getMinecraftVersion())
+                        List<String> minecraftVersionsToSearch = MinecraftManager
+                                .getMajorMinecraftVersions(instanceOrServer.getMinecraftVersion())
                                 .stream().map(mv -> mv.id).collect(Collectors.toList());
 
                         curseForgeFilesStream = curseForgeFilesStream.filter(
@@ -437,7 +437,8 @@ public class DisableableMod implements Serializable {
                     if (cf.gameVersions.contains("Forge") && instanceOrServer.getLoaderVersion() != null
                             && (instanceOrServer.getLoaderVersion().isForge()
                                     || (instanceOrServer.getLoaderVersion().isNeoForge()
-                                            && neoForgeForgeCompatabilityVersions.contains(instanceOrServer.getMinecraftVersion())))) {
+                                            && neoForgeForgeCompatabilityVersions
+                                                    .contains(instanceOrServer.getMinecraftVersion())))) {
                         return true;
                     }
 
@@ -448,7 +449,7 @@ public class DisableableMod implements Serializable {
 
                     // if there's no loaders, assume the mod is untagged so we should show it
                     return !cf.gameVersions.contains("Fabric") && !cf.gameVersions.contains("NeoForge")
-                        && !cf.gameVersions.contains("Forge") && !cf.gameVersions.contains("Quilt");
+                            && !cf.gameVersions.contains("Forge") && !cf.gameVersions.contains("Quilt");
                 });
 
                 if (curseForgeFilesStream.noneMatch(file -> file.id > curseForgeFileId)) {
@@ -470,10 +471,11 @@ public class DisableableMod implements Serializable {
                 return false;
             }
 
-            new CurseForgeProjectFileSelectorDialog(parent, (CurseForgeProject) dialog.getReturnValue(), instanceOrServer,
+            new CurseForgeProjectFileSelectorDialog(parent, (CurseForgeProject) dialog.getReturnValue(),
+                    instanceOrServer,
                     curseForgeFileId);
-        } else if (platform == ModPlatform.MODRINTH || platform == null && isFromModrinth()
-                && (!isFromCurseForge() || App.settings.defaultModPlatform == ModPlatform.MODRINTH)) {
+        } else if (platform == ModPlatform.MODRINTH || ((platform == null && isFromModrinth())
+                && (!isFromCurseForge() || App.settings.defaultModPlatform == ModPlatform.MODRINTH))) {
             ProgressDialog<Pair<ModrinthProject, List<ModrinthVersion>>> dialog = new ProgressDialog<>(
                     // #. {0} is the platform were checking for updates (e.g. CurseForge/Modrinth)
                     GetText.tr("Checking For Update On {0}", "Modrinth"), 0,
@@ -482,7 +484,8 @@ public class DisableableMod implements Serializable {
                     parent);
             dialog.addThread(new Thread(() -> {
                 ModrinthProject mod = ModrinthApi.getProject(modrinthProject.id);
-                List<ModrinthVersion> versions = ModrinthApi.getVersions(modrinthProject.id, instanceOrServer.getMinecraftVersion(),
+                List<ModrinthVersion> versions = ModrinthApi.getVersions(modrinthProject.id,
+                        instanceOrServer.getMinecraftVersion(),
                         instanceOrServer.getLoaderVersion());
 
                 if (versions == null) {
@@ -495,7 +498,8 @@ public class DisableableMod implements Serializable {
                         .sorted(Comparator.comparing((ModrinthVersion version) -> version.datePublished).reversed());
 
                 if (App.settings.addModRestriction == AddModRestriction.STRICT) {
-                    versionsStream = versionsStream.filter(v -> v.gameVersions.contains(instanceOrServer.getMinecraftVersion()));
+                    versionsStream = versionsStream
+                            .filter(v -> v.gameVersions.contains(instanceOrServer.getMinecraftVersion()));
                 }
 
                 if (versionsStream.noneMatch(v -> ISODateTimeFormat.dateTimeParser().parseDateTime(v.datePublished)
@@ -544,7 +548,8 @@ public class DisableableMod implements Serializable {
             }));
             dialog.start();
 
-            new CurseForgeProjectFileSelectorDialog(parent, dialog.getReturnValue(), instanceOrServer, curseForgeFileId, false);
+            new CurseForgeProjectFileSelectorDialog(parent, dialog.getReturnValue(), instanceOrServer, curseForgeFileId,
+                    false);
         } else if (platform == ModPlatform.MODRINTH || (platform == null && isFromModrinth()
                 && (!isFromCurseForge() || App.settings.defaultModPlatform == ModPlatform.MODRINTH))) {
             ProgressDialog<ModrinthProject> dialog = new ProgressDialog<>(
@@ -558,7 +563,8 @@ public class DisableableMod implements Serializable {
             }));
             dialog.start();
 
-            new ModrinthVersionSelectorDialog(parent, dialog.getReturnValue(), instanceOrServer, modrinthVersion.id, false);
+            new ModrinthVersionSelectorDialog(parent, dialog.getReturnValue(), instanceOrServer, modrinthVersion.id,
+                    false);
         }
 
         return true;

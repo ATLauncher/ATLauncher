@@ -23,17 +23,14 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
 import com.atlauncher.data.minecraft.Arguments;
 import com.atlauncher.data.minecraft.Library;
@@ -111,12 +108,6 @@ public class QuiltLoader implements Loader {
         return new ArrayList<>(this.version.libraries);
     }
 
-    private List<File> getLibraryFiles() {
-        return this.getLibraries().stream()
-                .map(library -> FileSystem.LIBRARIES.resolve(library.downloads.artifact.path).toFile())
-                .collect(Collectors.toList());
-    }
-
     @Override
     public String getMainClass() {
         return this.version.mainClass;
@@ -153,33 +144,25 @@ public class QuiltLoader implements Loader {
         }
 
         try {
-
             FileOutputStream outputStream = new FileOutputStream(file);
             ZipOutputStream zipOutputStream = new ZipOutputStream(outputStream);
 
-            List<File> libraryFiles = this.getLibraryFiles();
+            zipOutputStream.putNextEntry(new ZipEntry("META-INF/MANIFEST.MF"));
+            Manifest manifest = new Manifest();
+            manifest.getMainAttributes().put(Attributes.Name.MANIFEST_VERSION, "1.0");
+            manifest.getMainAttributes().put(Attributes.Name.MAIN_CLASS,
+                    this.version.launcherMainClass == null
+                            ? "org.quiltmc.loader.impl.launch.server.QuiltServerLauncher"
+                            : this.version.launcherMainClass);
+            manifest.getMainAttributes().put(Attributes.Name.CLASS_PATH, getLibraries().stream()
+                    .map(library -> instanceInstaller.root
+                            .relativize(instanceInstaller.root.resolve("libraries")
+                                    .resolve(library.downloads.artifact.path))
+                            .normalize().toString())
+                    .collect(Collectors.joining(" ")));
+            manifest.write(zipOutputStream);
 
-            Set<String> addedEntries = new HashSet<>();
-            {
-                addedEntries.add("META-INF/MANIFEST.MF");
-                zipOutputStream.putNextEntry(new ZipEntry("META-INF/MANIFEST.MF"));
-
-                Manifest manifest = new Manifest();
-                manifest.getMainAttributes().put(Attributes.Name.MANIFEST_VERSION, "1.0");
-                manifest.getMainAttributes().put(Attributes.Name.MAIN_CLASS,
-                        this.version.launcherMainClass == null
-                                ? "org.quiltmc.loader.impl.launch.server.QuiltServerLauncher"
-                                : this.version.launcherMainClass);
-                manifest.getMainAttributes().put(Attributes.Name.CLASS_PATH, getLibraries().stream()
-                        .map(library -> instanceInstaller.root
-                                .relativize(instanceInstaller.root.resolve("libraries")
-                                        .resolve(library.downloads.artifact.path))
-                                .normalize().toString())
-                        .collect(Collectors.joining(" ")));
-                manifest.write(zipOutputStream);
-
-                zipOutputStream.closeEntry();
-            }
+            zipOutputStream.closeEntry();
 
             zipOutputStream.close();
             outputStream.close();

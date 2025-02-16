@@ -27,8 +27,6 @@ import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.subjects.BehaviorSubject;
 
 /**
- * @since 2022 / 06 / 17
- * <p>
  * View model for {@link LoggingSettingsTab}
  */
 public class LoggingSettingsViewModel implements SettingsListener {

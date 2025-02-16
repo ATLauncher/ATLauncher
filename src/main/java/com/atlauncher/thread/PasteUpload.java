@@ -26,6 +26,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.concurrent.Callable;
 
 import com.atlauncher.App;
@@ -61,7 +62,7 @@ public final class PasteUpload implements Callable<String> {
         try {
             conn.addRequestProperty("User-Agent", Network.USER_AGENT);
             conn.connect();
-            conn.getOutputStream().write(urlParameters.getBytes());
+            conn.getOutputStream().write(urlParameters.getBytes(StandardCharsets.UTF_8));
             conn.getOutputStream().flush();
             conn.getOutputStream().close();
         } catch (IOException e) {
@@ -81,7 +82,7 @@ public final class PasteUpload implements Callable<String> {
                 return "No error message returned from paste API";
             }
         }
-        BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
+        BufferedReader reader = new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8));
         try {
             String line;
             while ((line = reader.readLine()) != null) {

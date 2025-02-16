@@ -37,8 +37,9 @@ public class Contributor {
     public final String avatarUrl;
 
     /**
-     * @param name     of the author
-     * @param imageURL of the authors profile picture
+     * @param name of the author
+     * @param url of the authors GitHub profile
+     * @param avatarUrl of the authors profile picture
      */
     public Contributor(String name, String url, String avatarUrl) {
         this.name = name;

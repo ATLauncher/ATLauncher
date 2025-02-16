@@ -29,7 +29,7 @@ public enum ModrinthSide {
     @SerializedName("unsupported")
     UNSUPPORTED("unsupported");
 
-    private String name;
+    private final String name;
 
     ModrinthSide(final String name) {
         this.name = name;

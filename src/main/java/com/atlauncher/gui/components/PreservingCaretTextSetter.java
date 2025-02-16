@@ -25,8 +25,6 @@ import javax.swing.text.JTextComponent;
  * A single use class that's job is to preserve the caret position of a text component while setting text.
  * <p>
  * This is useful for state based classes using view models reacting to view model state changes during user input.
- *
- * @since 27 / 04 / 2023
  */
 public class PreservingCaretTextSetter {
 
@@ -51,9 +49,6 @@ public class PreservingCaretTextSetter {
     public void setText(@Nullable String newText) {
         // Preserve caret
         int oldCaret = component.getCaretPosition();
-
-        // Preserve old text, do not calculate length
-        String oldText = component.getText();
 
         // Set text as soon as possible
         component.setText(newText);

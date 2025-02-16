@@ -24,7 +24,7 @@ import io.github.asyncronous.toast.thread.ToastAnimator;
  * Main Toaster Notification class
  */
 public final class ToastWindow extends JWindow {
-    private final JLabel ICON = new JLabel();
+    private final JLabel icon = new JLabel();
     private final JTextArea MESSAGE = new JTextArea();
 
     public ToastWindow() {
@@ -44,7 +44,7 @@ public final class ToastWindow extends JWindow {
         JPanel CONTENT_PANEL = new JPanel(new BorderLayout());
         JPanel WRAPPER_PANEL = new JPanel(new BorderLayout());
         WRAPPER_PANEL.setBackground((Color) UIManager.get(ToasterConstants.BG_COLOR));
-        WRAPPER_PANEL.add(this.ICON, BorderLayout.WEST);
+        WRAPPER_PANEL.add(this.icon, BorderLayout.WEST);
         WRAPPER_PANEL.add(this.MESSAGE, BorderLayout.CENTER);
         WRAPPER_PANEL.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         CONTENT_PANEL.setBorder(BorderFactory.createLineBorder((Color) UIManager.get(ToasterConstants.BORDER_COLOR)));
@@ -90,7 +90,7 @@ public final class ToastWindow extends JWindow {
      * @param icon The icon you would like to pop
      */
     public void setIcon(Icon icon) {
-        this.ICON.setIcon(icon);
+        this.icon.setIcon(icon);
     }
 
     /**
@@ -99,7 +99,7 @@ public final class ToastWindow extends JWindow {
      * @return The icon of the message
      */
     public Icon getIcon() {
-        return this.ICON.getIcon();
+        return this.icon.getIcon();
     }
 
     /**

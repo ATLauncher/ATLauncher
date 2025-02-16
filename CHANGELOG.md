@@ -51,3 +51,4 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Move scan mods on launch setting to Mods tab
 - Remove some old config no longer used
 - Cleanup dead unused code
+- Add errorprone to check for bad code on compilation

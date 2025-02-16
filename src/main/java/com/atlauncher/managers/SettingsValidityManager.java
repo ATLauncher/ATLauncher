@@ -23,9 +23,6 @@ import java.util.Map;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.subjects.BehaviorSubject;
 
-/**
- * @since 2024 / 05 / 23
- */
 public class SettingsValidityManager {
     /**
      * Backing state for validities.

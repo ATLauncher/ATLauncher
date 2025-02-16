@@ -95,7 +95,7 @@ public class SetupDialog extends JDialog implements RelocalizationListener {
         gbc.insets = UIConstants.FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         language = new JComboBox<>(
-                Language.locales.stream().filter(l -> l == Locale.ENGLISH || Language.languages.containsValue(l))
+                Language.locales.stream().filter(l -> l.equals(Locale.ENGLISH) || Language.languages.containsValue(l))
                         .map(Locale::getDisplayName).toArray(String[]::new));
         language.setSelectedItem(Language.selected);
         language.addItemListener(e -> {
@@ -157,6 +157,7 @@ public class SetupDialog extends JDialog implements RelocalizationListener {
         add(bottom, BorderLayout.SOUTH);
 
         addWindowListener(new WindowAdapter() {
+            @Override
             public void windowClosing(WindowEvent arg0) {
                 System.exit(0);
             }

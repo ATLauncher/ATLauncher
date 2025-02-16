@@ -44,6 +44,7 @@ public class PackVersion {
         return this.version.replaceAll("[^A-Za-z0-9]", "");
     }
 
+    @Override
     public String toString() {
         String versionString = getVersionString();
 

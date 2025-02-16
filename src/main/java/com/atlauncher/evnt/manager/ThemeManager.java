@@ -17,7 +17,7 @@
  */
 package com.atlauncher.evnt.manager;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.SwingUtilities;
@@ -25,7 +25,7 @@ import javax.swing.SwingUtilities;
 import com.atlauncher.evnt.listener.ThemeListener;
 
 public final class ThemeManager {
-    private static final List<ThemeListener> listeners = new LinkedList<>();
+    private static final List<ThemeListener> listeners = new ArrayList<>();
 
     public static synchronized void addListener(ThemeListener listener) {
         listeners.add(listener);

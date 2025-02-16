@@ -48,7 +48,7 @@ public interface ModManagement {
 
     public abstract void addMod(DisableableMod mod);
 
-    public abstract void addMods(List<DisableableMod> mods);
+    public abstract void addMods(List<DisableableMod> modsToAdd);
 
     public abstract void removeMod(DisableableMod mod);
 

@@ -120,7 +120,7 @@ public final class BrowserDownloadDialog extends JDialog {
         }, 5000, 5000);
     }
 
-    protected void checkForDownloadedMods(boolean allowReload) {
+    private void checkForDownloadedMods(boolean allowReload) {
         boolean reloadMainPanel = false;
         for (Mod mod : browserDownloadMods) {
             if (modsDownloaded.contains(mod)) {

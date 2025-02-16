@@ -106,8 +106,6 @@ public class Account implements Serializable {
      * Reads in the object from file into an Object.
      *
      * @param ois The InputStream for the object
-     * @throws IOException
-     * @throws ClassNotFoundException
      */
     private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
         ois.defaultReadObject(); // Read the object in

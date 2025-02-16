@@ -119,6 +119,7 @@ public class Launcher extends Applet implements AppletStub {
         try {
             return new URL("http://www.minecraft.net/game/");
         } catch (MalformedURLException ignored) {
+            // ignored
         }
 
         return null;
@@ -129,6 +130,7 @@ public class Launcher extends Applet implements AppletStub {
         try {
             return new URL("http://www.minecraft.net/game/");
         } catch (MalformedURLException ignored) {
+            // ignored
         }
 
         return null;

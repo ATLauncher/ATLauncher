@@ -76,6 +76,7 @@ public final class Console extends JTextPane {
 class WrapEditorKit extends StyledEditorKit {
     ViewFactory defaultFactory = new WrapColumnFactory();
 
+    @Override
     public ViewFactory getViewFactory() {
         return defaultFactory;
     }
@@ -83,6 +84,7 @@ class WrapEditorKit extends StyledEditorKit {
 }
 
 class WrapColumnFactory implements ViewFactory {
+    @Override
     public View create(Element elem) {
         String kind = elem.getName();
         if (kind != null) {
@@ -110,6 +112,7 @@ class WrapLabelView extends LabelView {
         super(elem);
     }
 
+    @Override
     public float getMinimumSpan(int axis) {
         switch (axis) {
             case View.X_AXIS:

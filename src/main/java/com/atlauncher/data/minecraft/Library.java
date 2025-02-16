@@ -104,6 +104,7 @@ public class Library {
                 return;
             }
         } catch (NumberFormatException ignored) {
+            // ignored
         }
 
         switch (libraryParts[1]) {

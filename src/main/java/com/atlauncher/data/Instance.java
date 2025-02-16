@@ -233,6 +233,7 @@ public class Instance extends MinecraftVersion implements ModManagement {
         return this.launcher.pack.replaceAll("[^A-Za-z0-9]", "");
     }
 
+    @Override
     public Path getRoot() {
         return this.ROOT;
     }
@@ -899,8 +900,6 @@ public class Instance extends MinecraftVersion implements ModManagement {
                 LogManager.info(String.format("Launching pack %s %s (%s) for Minecraft %s", this.launcher.pack,
                         this.launcher.version, getPlatformName(), this.id));
 
-                Process process = null;
-
                 boolean enableCommands = Optional.ofNullable(this.launcher.enableCommands)
                         .orElse(App.settings.enableCommands);
                 String preLaunchCommand = Optional.ofNullable(this.launcher.preLaunchCommand)
@@ -954,7 +953,7 @@ public class Instance extends MinecraftVersion implements ModManagement {
                     }
                 }
 
-                process = MCLauncher.launch(account, this, nativesTempDir,
+                Process process = MCLauncher.launch(account, this, nativesTempDir,
                         LWJGLManager.shouldUseLegacyLWJGL(this) ? lwjglNativesTempDir : null,
                         wrapperCommand, username);
 
@@ -983,7 +982,7 @@ public class Instance extends MinecraftVersion implements ModManagement {
 
                 App.launcher.showKillMinecraft(process);
                 InputStream is = process.getInputStream();
-                InputStreamReader isr = new InputStreamReader(is);
+                InputStreamReader isr = new InputStreamReader(is, StandardCharsets.UTF_8);
                 StringBuilder sb = new StringBuilder();
                 BufferedReader br = new BufferedReader(isr);
                 String line;
@@ -1568,6 +1567,7 @@ public class Instance extends MinecraftVersion implements ModManagement {
                     .filter(path -> path.getFileName().toString().equals(".DS_Store"))
                     .forEach(f -> FileUtils.delete(f, false));
         } catch (IOException ignored) {
+            // ignored
         }
 
         ArchiveUtils.createZip(tempDir, to);
@@ -1752,6 +1752,7 @@ public class Instance extends MinecraftVersion implements ModManagement {
                     .filter(path -> path.getFileName().toString().equals(".DS_Store"))
                     .forEach(f -> FileUtils.delete(f, false));
         } catch (IOException ignored) {
+            // ignored
         }
 
         // log files that are not available on CurseForge anymore and put in overrides
@@ -1930,6 +1931,7 @@ public class Instance extends MinecraftVersion implements ModManagement {
                     .filter(path -> path.getFileName().toString().equals(".DS_Store"))
                     .forEach(f -> FileUtils.delete(f, false));
         } catch (IOException ignored) {
+            // ignored
         }
 
         // remove files that come from Modrinth or aren't disabled
@@ -1962,6 +1964,7 @@ public class Instance extends MinecraftVersion implements ModManagement {
                             || path.getFileName().toString().endsWith(".zip"))
                     .forEach(f -> overridesForPermissions.append(String.format("%s\n", tempDir.relativize(f))));
         } catch (IOException ignored) {
+            // ignored
         }
 
         ArchiveUtils.createZip(tempDir, to);
@@ -2289,6 +2292,7 @@ public class Instance extends MinecraftVersion implements ModManagement {
         });
         backupThread.start();
         dialog.addWindowListener(new WindowAdapter() {
+            @Override
             public void windowClosing(WindowEvent e) {
                 backupThread.interrupt();
                 dialog.dispose();
@@ -2792,6 +2796,7 @@ public class Instance extends MinecraftVersion implements ModManagement {
         return files;
     }
 
+    @Override
     public void scanMissingMods() {
         scanMissingMods(App.launcher.getParent());
     }
@@ -3155,8 +3160,8 @@ public class Instance extends MinecraftVersion implements ModManagement {
 
         return launcher.mods.stream().anyMatch(m -> (m.isFromCurseForge()
                 && m.getCurseForgeModId() == Constants.CURSEFORGE_SINYTRA_CONNECTOR_MOD_ID)
-                || m.isFromModrinth()
-                        && m.modrinthProject.id.equalsIgnoreCase(Constants.MODRINTH_SINYTRA_CONNECTOR_MOD_ID))
+                || (m.isFromModrinth()
+                        && m.modrinthProject.id.equalsIgnoreCase(Constants.MODRINTH_SINYTRA_CONNECTOR_MOD_ID)))
                 && App.settings.showFabricModsWhenSinytraInstalled;
     }
 
@@ -3176,8 +3181,8 @@ public class Instance extends MinecraftVersion implements ModManagement {
     }
 
     @Override
-    public void addMods(List<DisableableMod> mods) {
-        launcher.mods.addAll(mods);
+    public void addMods(List<DisableableMod> modsToAdd) {
+        launcher.mods.addAll(modsToAdd);
     }
 
     @Override
@@ -3194,6 +3199,7 @@ public class Instance extends MinecraftVersion implements ModManagement {
         App.TOASTER.pop(GetText.tr("{0} Removed", mod.name));
     }
 
+    @Override
     public void addFileFromCurseForge(CurseForgeProject mod, CurseForgeFile file, ProgressDialog dialog) {
         Path downloadLocation = FileSystem.DOWNLOADS.resolve(file.fileName);
         Path finalLocation = mod.getInstanceDirectoryPath(this.getRoot()).resolve(file.fileName);
@@ -3412,6 +3418,7 @@ public class Instance extends MinecraftVersion implements ModManagement {
         App.TOASTER.pop(GetText.tr("{0} Installed", mod.name));
     }
 
+    @Override
     public void addFileFromModrinth(ModrinthProject mod, ModrinthVersion version, ModrinthFile file,
             ProgressDialog dialog) {
         ModrinthFile fileToDownload = Optional.ofNullable(file).orElse(version.getPrimaryFile());

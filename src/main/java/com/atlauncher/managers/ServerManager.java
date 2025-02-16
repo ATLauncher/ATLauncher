@@ -22,7 +22,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
@@ -41,8 +40,7 @@ public class ServerManager {
      * <p>
      * Automatically updates subscribed entities downstream.
      */
-    private static final BehaviorSubject<List<Server>> SERVERS =
-        BehaviorSubject.createDefault(new LinkedList<>());
+    private static final BehaviorSubject<List<Server>> SERVERS = BehaviorSubject.createDefault(new ArrayList<>());
 
     /**
      * @return Observable list of servers.
@@ -59,15 +57,15 @@ public class ServerManager {
         LogManager.debug("Loading servers");
         ArrayList<Server> servers = new ArrayList<>();
 
-        for (String folder : Optional.of(FileSystem.SERVERS.toFile().list(Utils.getServerFileFilter()))
-            .orElse(new String[0])) {
+        for (String folder : Optional.ofNullable(FileSystem.SERVERS.toFile().list(Utils.getServerFileFilter()))
+                .orElse(new String[0])) {
             Path serverDir = FileSystem.SERVERS.resolve(folder);
 
             Server server;
 
             try (InputStreamReader fileReader = new InputStreamReader(
-                Files.newInputStream(serverDir.resolve( "server.json")),
-                StandardCharsets.UTF_8)) {
+                    Files.newInputStream(serverDir.resolve("server.json")),
+                    StandardCharsets.UTF_8)) {
                 server = Gsons.DEFAULT.fromJson(fileReader, Server.class);
                 server.ROOT = serverDir;
                 LogManager.debug("Loaded server from " + serverDir);
@@ -102,7 +100,8 @@ public class ServerManager {
     /**
      * Note, this method ignores ConstantConditions warning, as it always has.
      *
-     * @param server server to add
+     * @param server
+     *            server to add
      * @return if the server was added or not
      */
     @SuppressWarnings("ConstantConditions")
@@ -126,6 +125,6 @@ public class ServerManager {
 
     public static boolean isServer(String name) {
         return SERVERS.getValue().stream()
-            .anyMatch(s -> s.getSafeName().equalsIgnoreCase(name.replaceAll("[^A-Za-z0-9]", "")));
+                .anyMatch(s -> s.getSafeName().equalsIgnoreCase(name.replaceAll("[^A-Za-z0-9]", "")));
     }
 }

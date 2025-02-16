@@ -22,6 +22,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -54,9 +55,9 @@ public class CommandExecutor {
      * in the specified command, then runs it on the command line.
      *
      * @param instance The instance to run the command for
-     * @param command  The command to run on the command line
+     * @param command The command to run on the command line
      * @throws CommandException If the process exits with a non zero value or
-     *                          another error occurs when trying to run the command
+     *             another error occurs when trying to run the command
      */
     public static void executeCommand(Instance instance, String command) {
         if (command == null)
@@ -94,7 +95,7 @@ public class CommandExecutor {
 
     private static void printStreamToConsole(InputStream stream) {
         try {
-            InputStreamReader inputStreamReader = new InputStreamReader(stream);
+            InputStreamReader inputStreamReader = new InputStreamReader(stream, StandardCharsets.UTF_8);
             BufferedReader reader = new BufferedReader(inputStreamReader);
             String line;
 
@@ -111,7 +112,7 @@ public class CommandExecutor {
     private static void printErrorStreamToConsole(InputStream stream) {
         try {
             boolean hasGotFirstContentLine = false;
-            InputStreamReader inputStreamReader = new InputStreamReader(stream);
+            InputStreamReader inputStreamReader = new InputStreamReader(stream, StandardCharsets.UTF_8);
             BufferedReader reader = new BufferedReader(inputStreamReader);
             StringBuilder message = new StringBuilder();
             String line;
@@ -135,8 +136,8 @@ public class CommandExecutor {
      * Substitutes all tokens beginning with '$' (and in all capitals) with the
      * matching key in {@code tokens} if it exists
      *
-     * @param tokens  All the keys that will be replaced with their value in
-     *                {@code command}
+     * @param tokens All the keys that will be replaced with their value in
+     *            {@code command}
      * @param command The string to substitute into
      * @return The string with all tokens substituted
      */

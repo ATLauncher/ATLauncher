@@ -242,6 +242,7 @@ public class NetworkSettingsTab extends AbstractSettingsTab {
                 icon.setImageObserver(proxyCheckIndicator);
             }
         } catch (NullPointerException ignored) {
+            // ignored
         }
     }
 

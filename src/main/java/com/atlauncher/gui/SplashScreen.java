@@ -87,6 +87,7 @@ public class SplashScreen extends JWindow {
                         SystemTray.getSystemTray().remove(App.trayIcon);
                     }
                 } catch (Exception ignored) {
+                    // ignored
                 }
 
                 Analytics.endSession();

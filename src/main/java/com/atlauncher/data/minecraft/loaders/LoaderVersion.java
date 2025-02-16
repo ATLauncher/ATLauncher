@@ -75,6 +75,7 @@ public class LoaderVersion {
         return this.type.equalsIgnoreCase("Quilt");
     }
 
+    @Override
     public String toString() {
         if (this.recommended) {
             return this.version + " (Recommended)";

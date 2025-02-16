@@ -142,7 +142,7 @@ public class PurpurLoader implements Loader {
                 new ArrayList<>());
 
         return response.loaderVersions().purpur().stream()
-                .filter(fv -> !disabledVersions.contains(fv.build()))
+                .filter(fv -> !disabledVersions.contains(Integer.toString(fv.build())))
                 .map(version -> new LoaderVersion(Integer.toString(version.build()), false, "Purpur"))
                 .collect(Collectors.toList());
     }

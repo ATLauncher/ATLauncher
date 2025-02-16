@@ -56,6 +56,7 @@ public final class ErrorReporting {
                         event.setServerName(null); // Don't send server names, they're useless
                         return event;
                     } catch (Throwable ignored) {
+                        // ignored
                     }
                     return event;
                 });

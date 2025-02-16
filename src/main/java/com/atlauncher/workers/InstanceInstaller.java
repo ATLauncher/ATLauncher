@@ -793,7 +793,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                 LogManager.debug(String.format(Locale.ENGLISH,
                         "File %s (%d) for mod %s (%d) has no downloadUrl and allowModDistribution set to %s",
                         curseForgeFile.displayName, curseForgeFile.id, curseForgeProject.name, curseForgeProject.id,
-                        curseForgeProject.allowModDistribution, curseForgeProject.allowModDistribution == null ? "null"
+                        curseForgeProject.allowModDistribution == null ? "null"
                                 : curseForgeProject.allowModDistribution.toString()));
 
                 Optional<CurseForgeFileHash> sha1Hash = curseForgeFile.hashes.stream()
@@ -965,7 +965,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         fireTask(GetText.tr("Extracting Manifest"));
         fireSubProgressUnknown();
 
-        curseForgeManifest = Gsons.DEFAULT.fromJson(new String(ArchiveUtils.getFile(manifestFile, "manifest.json")),
+        curseForgeManifest = Gsons.DEFAULT.fromJson(ArchiveUtils.getFile(manifestFile, "manifest.json"),
                 CurseForgeManifest.class);
         curseForgeExtractedPath = this.temp.resolve("curseforgeimport");
 
@@ -1054,8 +1054,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         packVersion.minecraft = minecraftTarget.version;
         packVersion.enableCurseForgeIntegration = true;
         packVersion.enableEditingMods = true;
-        packVersion.memory = Optional.ofNullable(ftbPackVersionManifest.specs.minimum)
-                .orElse(ftbPackVersionManifest.specs.recommended);
+        packVersion.memory = ftbPackVersionManifest.specs.recommended;
 
         this.version.minecraftVersion = MinecraftManager.getMinecraftVersion(packVersion.minecraft);
 
@@ -1251,7 +1250,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                                             || m.filename.replace("_", " ").equalsIgnoreCase(file.name)))
                                     .findFirst();
 
-                    int curseFileId = (modInfo.isPresent() && modInfo.get() != null
+                    int curseFileId = (modInfo.isPresent()
                             && modInfo.get().curseFile != null)
                                     ? modInfo.get().curseFile
                                     : file.curseforge.file;
@@ -1302,11 +1301,11 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                                     .findFirst();
 
                     int curseProjectId = ((file.curseforge == null || file.curseforge.project == null
-                            || file.curseforge.file == null) && modInfo.isPresent() && modInfo.get() != null
+                            || file.curseforge.file == null) && modInfo.isPresent()
                             && modInfo.get().curseProject != null) ? modInfo.get().curseProject
                                     : file.curseforge.project;
                     int curseFileId = ((file.curseforge == null || file.curseforge.project == null
-                            || file.curseforge.file == null) && modInfo.isPresent() && modInfo.get() != null
+                            || file.curseforge.file == null) && modInfo.isPresent()
                             && modInfo.get().curseFile != null) ? modInfo.get().curseFile : file.curseforge.file;
 
                     CurseForgeProject curseForgeProject = Optional
@@ -1323,7 +1322,6 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                                 "File %s (%d) for mod %s (%d) has no downloadUrl and allowModDistribution set to %s",
                                 curseForgeFile.displayName, curseForgeFile.id, curseForgeProject.name,
                                 curseForgeProject.id,
-                                curseForgeProject.allowModDistribution,
                                 curseForgeProject.allowModDistribution == null ? "null"
                                         : curseForgeProject.allowModDistribution.toString()));
 
@@ -1404,7 +1402,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
             try {
                 packVersion.memory = Integer.parseInt(technicSolderModpackManifest.memory);
             } catch (NumberFormatException ignored) {
-
+                // ignored
             }
         }
 
@@ -2055,7 +2053,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
 
             if (mod.type == ModType.mods
                     && this.packVersion.getCaseAllFiles() == com.atlauncher.data.json.CaseType.upper) {
-                file = file.substring(0, file.lastIndexOf(".")).toUpperCase() + file.substring(file.lastIndexOf("."));
+                file = file.substring(0, file.lastIndexOf(".")).toUpperCase(Locale.ENGLISH)
+                        + file.substring(file.lastIndexOf("."));
             } else if (mod.type == ModType.mods
                     && this.packVersion.getCaseAllFiles() == com.atlauncher.data.json.CaseType.lower) {
                 file = file.substring(0, file.lastIndexOf(".")).toLowerCase(Locale.ENGLISH)
@@ -2495,6 +2494,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                 LogManager.debug("initServerSettings output");
                 LogManager.debug(output);
             } catch (Throwable ignored) {
+                // ignored
             }
         }).start();
     }
@@ -3104,10 +3104,10 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
 
                 for (Mod mod : browserDownloadMods) {
                     if (browserDownloadDialog.modsDownloaded.stream()
-                            .noneMatch(m -> m.curseForgeFileId == mod.curseForgeFileId)) {
+                            .noneMatch(m -> m.curseForgeFileId.equals(mod.curseForgeFileId))) {
                         LogManager.info("Browser download mod " + mod.name + " was skipped");
                         Optional<DisableableMod> disableableMod = this.modsInstalled.stream()
-                                .filter(m -> m.curseForgeFileId == mod.curseForgeFileId).findFirst();
+                                .filter(m -> m.curseForgeFileId.equals(mod.curseForgeFileId)).findFirst();
                         disableableMod.ifPresent(value -> value.skipped = true);
                     }
                 }
@@ -3125,13 +3125,13 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                         if (!mod.download(this)) {
                             LogManager.info("Browser download mod " + mod.name + " was skipped");
                             Optional<DisableableMod> disableableMod = this.modsInstalled.stream()
-                                    .filter(m -> m.file == mod.file).findFirst();
+                                    .filter(m -> m.file.equals(mod.file)).findFirst();
                             disableableMod.ifPresent(value -> value.skipped = true);
                         }
 
                         browserDownloadModsDownloaded++;
 
-                        fireSubProgress((browserDownloadModsDownloaded / browserDownloadMods.size()) * 100.0,
+                        fireSubProgress((browserDownloadModsDownloaded / ((double) browserDownloadMods.size())) * 100.0,
                                 String.format(Locale.ENGLISH, "%d/%d", browserDownloadModsDownloaded,
                                         browserDownloadMods.size()));
                     }
@@ -3783,14 +3783,18 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                                 while (parentDir != null && parentDir.startsWith(this.root)
                                         && !parentDir.equals(this.root)
                                         && Files.isDirectory(parentDir)) {
-                                    if (Files.list(parentDir).count() == 0) {
-                                        FileUtils.deleteDirectory(parentDir);
-                                        parentDir = parentDir.getParent();
-                                    } else {
-                                        break;
+
+                                    try (Stream<Path> stream = Files.list(parentDir)) {
+                                        if (stream.count() == 0) {
+                                            FileUtils.deleteDirectory(parentDir);
+                                            parentDir = parentDir.getParent();
+                                        } else {
+                                            break;
+                                        }
                                     }
                                 }
                             } catch (IOException ignored) {
+                                // ignored
                             }
                         }
                     });
@@ -4138,12 +4142,13 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         return groupedMods;
     }
 
+    @SuppressWarnings("LabelledBreakTarget")
     public List<Mod> getModsDependancies(Mod mod) {
         List<Mod> dependsMods = new ArrayList<>();
-        for (String name : mod.getDepends()) {
+        for (String modName : mod.getDepends()) {
             inner: {
                 for (Mod modd : allMods) {
-                    if (modd.getName().equalsIgnoreCase(name)) {
+                    if (modd.getName().equalsIgnoreCase(modName)) {
                         dependsMods.add(modd);
                         break inner;
                     }

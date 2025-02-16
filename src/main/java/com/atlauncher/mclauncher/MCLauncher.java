@@ -25,10 +25,10 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import com.atlauncher.App;
 import com.atlauncher.FileSystem;
@@ -50,15 +50,8 @@ import com.atlauncher.utils.Pair;
 import com.atlauncher.utils.Utils;
 
 public class MCLauncher {
-    public static final List<String> IGNORED_ARGUMENTS = new ArrayList<String>() {
-        {
-            // these seem to be tracking/telemetry things
-            add("--clientId");
-            add("${clientid}");
-            add("--xuid");
-            add("${auth_xuid}");
-        }
-    };
+    public static final List<String> IGNORED_ARGUMENTS = Arrays.asList("--clientId", "${clientid}", "--xuid",
+            "${auth_xuid}");
 
     public static Process launch(MicrosoftAccount account, Instance instance, Path nativesTempDir,
             Path lwjglNativesTempDir,
@@ -100,19 +93,22 @@ public class MCLauncher {
 
             if (instance.ROOT.resolve("mods").toFile().listFiles().length != 0) {
                 LogManager.info("Mods:");
-                Files.walk(instance.ROOT.resolve("mods"))
-                        .filter(file -> Files.isRegularFile(file)
-                                && (file.toString().endsWith(".jar") || file.toString().endsWith(".zip")))
-                        .forEach(file -> {
-                            String filename = file.toString().replace(instance.ROOT.resolve("mods").toString(), "");
-                            DisableableMod mod = instance.launcher.mods.parallelStream()
-                                    .filter(m -> filename.contains(m.file)).findFirst().orElse(null);
 
-                            boolean isCustomAdded = filename.lastIndexOf(File.separator) == 0
-                                    && (mod == null || mod.userAdded);
+                try (Stream<Path> stream = Files.walk(instance.ROOT.resolve("mods"))) {
+                    stream
+                            .filter(file -> Files.isRegularFile(file)
+                                    && (file.toString().endsWith(".jar") || file.toString().endsWith(".zip")))
+                            .forEach(file -> {
+                                String filename = file.toString().replace(instance.ROOT.resolve("mods").toString(), "");
+                                DisableableMod mod = instance.launcher.mods.parallelStream()
+                                        .filter(m -> filename.contains(m.file)).findFirst().orElse(null);
 
-                            LogManager.info(String.format(" - %s%s", filename, isCustomAdded ? " (Added)" : ""));
-                        });
+                                boolean isCustomAdded = filename.lastIndexOf(File.separator) == 0
+                                        && (mod == null || mod.userAdded);
+
+                                LogManager.info(String.format(" - %s%s", filename, isCustomAdded ? " (Added)" : ""));
+                            });
+                }
             }
 
             if (instance.launcher.mods.stream().anyMatch(m -> m.skipped)) {
@@ -126,11 +122,12 @@ public class MCLauncher {
                         "Legacy launching disabled. If you have issues with Minecraft, please enable this setting again");
             }
         } catch (IOException ignored) {
+            // ignored
         }
     }
 
     private static List<String> wrapArguments(String wrapperCommand, List<String> args) {
-        List<String> wrapArgs = new LinkedList<>(Arrays.asList(wrapperCommand.trim().split("\\s+")));
+        List<String> wrapArgs = new ArrayList<>(Arrays.asList(wrapperCommand.trim().split("\\s+")));
 
         // wrapper not set
         if (wrapArgs.isEmpty()) {

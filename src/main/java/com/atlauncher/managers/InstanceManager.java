@@ -22,7 +22,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -48,7 +47,7 @@ public class InstanceManager {
      * <p>
      * Automatically updates subscribed entities downstream.
      */
-    private static final BehaviorSubject<List<Instance>> INSTANCES = BehaviorSubject.createDefault(new LinkedList<>());
+    private static final BehaviorSubject<List<Instance>> INSTANCES = BehaviorSubject.createDefault(new ArrayList<>());
 
     /**
      * @return Observable list of instances.
@@ -72,9 +71,9 @@ public class InstanceManager {
     public static void loadInstances() {
         PerformanceManager.start();
         LogManager.debug("Loading instances");
-        List<Instance> newInstances = new LinkedList<>();
+        List<Instance> newInstances = new ArrayList<>();
 
-        for (String folder : Optional.of(FileSystem.INSTANCES.toFile().list(Utils.getInstanceFileFilter()))
+        for (String folder : Optional.ofNullable(FileSystem.INSTANCES.toFile().list(Utils.getInstanceFileFilter()))
                 .orElse(new String[0])) {
             Path instanceDir = FileSystem.INSTANCES.resolve(folder);
 
@@ -82,7 +81,7 @@ public class InstanceManager {
 
             try {
                 try (InputStreamReader fileReader = new InputStreamReader(
-                    Files.newInputStream(instanceDir.resolve("instance.json")), StandardCharsets.UTF_8)) {
+                        Files.newInputStream(instanceDir.resolve("instance.json")), StandardCharsets.UTF_8)) {
                     instance = Gsons.DEFAULT.fromJson(fileReader, Instance.class);
                     instance.ROOT = instanceDir;
                     LogManager.debug("Loaded instance from " + instanceDir);
@@ -195,7 +194,8 @@ public class InstanceManager {
     /**
      * Removes an instance and deletes its directory.
      *
-     * @param instance Instance to remove
+     * @param instance
+     *            Instance to remove
      */
     public static void removeInstance(Instance instance) {
         List<Instance> instances = INSTANCES.getValue();
@@ -208,7 +208,8 @@ public class InstanceManager {
     /**
      * Checks to see if there is already an instance with the name provided or not
      *
-     * @param name The name of the instance to check for
+     * @param name
+     *            The name of the instance to check for
      * @return True if there is an instance with the same name already
      */
     public static boolean isInstance(String name) {
@@ -219,7 +220,8 @@ public class InstanceManager {
     /**
      * Checks if there is an instance by the given name
      *
-     * @param name name of the Instance to find
+     * @param name
+     *            name of the Instance to find
      * @return True if the instance is found from the name
      */
     public static boolean isInstanceByName(String name) {
@@ -229,7 +231,8 @@ public class InstanceManager {
     /**
      * Checks if there is an instance by the given name
      *
-     * @param name name of the Instance to find
+     * @param name
+     *            name of the Instance to find
      * @return True if the instance is found from the name
      */
     public static boolean isInstanceBySafeName(String name) {
@@ -239,7 +242,8 @@ public class InstanceManager {
     /**
      * Finds a Instance from the given name
      *
-     * @param name name of the Instance to find
+     * @param name
+     *            name of the Instance to find
      * @return Instance if the instance is found from the name
      */
     public static Instance getInstanceByName(String name) {
@@ -250,7 +254,8 @@ public class InstanceManager {
     /**
      * Finds a Instance from the given name
      *
-     * @param name name of the Instance to find
+     * @param name
+     *            name of the Instance to find
      * @return Instance if the instance is found from the name
      */
     public static Instance getInstanceBySafeName(String name) {
@@ -285,7 +290,8 @@ public class InstanceManager {
     /**
      * Update the Instance with new data
      *
-     * @param instance Instance to update
+     * @param instance
+     *            Instance to update
      */
     public static void updateInstance(Instance instance) {
         List<Instance> instances = INSTANCES.getValue();

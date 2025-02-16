@@ -21,8 +21,6 @@ import io.reactivex.rxjava3.core.Observable;
 
 /**
  * View model for NewsTab
- *
- * @since 2022 / 06 / 14
  */
 public interface INewsViewModel {
 

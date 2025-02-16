@@ -25,7 +25,6 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
-import java.net.Proxy.Type;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -478,17 +477,17 @@ public class Settings {
         }
 
         if (enableProxy) {
-            Type type = Type.HTTP;
+            Proxy.Type type = Proxy.Type.HTTP;
 
             switch (this.proxyType) {
                 case "HTTP":
-                    type = Type.HTTP;
+                    type = Proxy.Type.HTTP;
                     break;
                 case "SOCKS":
-                    type = Type.SOCKS;
+                    type = Proxy.Type.SOCKS;
                     break;
                 case "DIRECT":
-                    type = Type.DIRECT;
+                    type = Proxy.Type.DIRECT;
                     break;
             }
 

@@ -185,12 +185,13 @@ public class FTBPacksPanel extends PackBrowserPlatformPanel {
         return hasMorePages;
     }
 
+    @Override
     public boolean supportsManualAdding() {
         return false;
     }
 
-    public void addById(String id) {
-    }
+    @Override
+    public void addById(String id) {}
 
     @Override
     public String getPlatformMessage() {

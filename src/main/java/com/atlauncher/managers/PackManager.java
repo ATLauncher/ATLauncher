@@ -25,7 +25,6 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
@@ -39,6 +38,7 @@ import com.atlauncher.data.Pack;
 import com.atlauncher.data.PackUsers;
 import com.atlauncher.exceptions.InvalidPack;
 import com.atlauncher.utils.Hashing;
+import com.google.common.hash.HashCode;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
@@ -56,12 +56,11 @@ public class PackManager {
         LogManager.debug("Loading packs");
         Data.PACKS.clear();
         try (InputStreamReader fileReader = new InputStreamReader(
-            Files.newInputStream(FileSystem.JSON.resolve("packsnew.json")),
+                Files.newInputStream(FileSystem.JSON.resolve("packsnew.json")),
                 StandardCharsets.UTF_8)) {
-            java.lang.reflect.Type type = new TypeToken<List<Pack>>() {
-            }.getType();
+            java.lang.reflect.Type type = new TypeToken<List<Pack>>() {}.getType();
             List<Pack> packs = Gsons.DEFAULT.fromJson(fileReader, type);
-            if (packs!=null) {
+            if (packs != null) {
                 Data.PACKS.addAll(packs);
             }
         } catch (JsonSyntaxException | IOException | JsonIOException e) {
@@ -77,7 +76,7 @@ public class PackManager {
      * @return The Packs available in the Launcher sorted alphabetically
      */
     public static List<Pack> getPacksSortedAlphabetically(boolean isFeatured, boolean sortDescending) {
-        List<Pack> packs = new LinkedList<>();
+        List<Pack> packs = new ArrayList<>();
 
         for (Pack pack : Data.PACKS) {
             if (isFeatured) {
@@ -106,7 +105,7 @@ public class PackManager {
      * @return The Packs available in the Launcher sorted by position
      */
     public static List<Pack> getPacksSortedPositionally(boolean isFeatured, boolean sortDescending) {
-        List<Pack> packs = new LinkedList<>();
+        List<Pack> packs = new ArrayList<>();
 
         for (Pack pack : Data.PACKS) {
             if (isFeatured) {
@@ -256,12 +255,12 @@ public class PackManager {
     }
 
     public static void removePack(String packCode) {
-        for (String code : App.settings.addedPacks) {
-            if (Hashing.md5(code).equals(Hashing.toHashCode(packCode))) {
-                App.settings.addedPacks.remove(packCode);
-                App.settings.save();
-                App.launcher.refreshPacksBrowserPanel();
-            }
+        HashCode hashToRemove = Hashing.toHashCode(packCode);
+        boolean removed = App.settings.addedPacks.removeIf(code -> Hashing.md5(code).equals(hashToRemove));
+
+        if (removed) {
+            App.settings.save();
+            App.launcher.refreshPacksBrowserPanel();
         }
     }
 
@@ -274,12 +273,11 @@ public class PackManager {
         List<PackUsers> packUsers = new ArrayList<>();
 
         try (InputStreamReader fileReader = new InputStreamReader(
-            Files.newInputStream(FileSystem.JSON.resolve("users.json")),
+                Files.newInputStream(FileSystem.JSON.resolve("users.json")),
                 StandardCharsets.UTF_8)) {
-            java.lang.reflect.Type type = new TypeToken<List<PackUsers>>() {
-            }.getType();
+            java.lang.reflect.Type type = new TypeToken<List<PackUsers>>() {}.getType();
             List<PackUsers> users = Gsons.DEFAULT.fromJson(fileReader, type);
-            if (users!=null) {
+            if (users != null) {
                 packUsers.addAll(users);
             }
         } catch (JsonSyntaxException | IOException | JsonIOException e) {

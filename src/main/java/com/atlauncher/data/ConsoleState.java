@@ -17,9 +17,6 @@
  */
 package com.atlauncher.data;
 
-/**
- * @since 2023 / 08 / 29
- */
 public enum ConsoleState {
     OPEN,
     CLOSED

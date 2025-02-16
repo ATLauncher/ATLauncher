@@ -24,6 +24,7 @@ import com.google.gson.annotations.SerializedName;
 public enum LoaderType {
     @SerializedName("fabric")
     FABRIC {
+        @Override
         public String toString() {
             return "Fabric";
         }
@@ -31,6 +32,7 @@ public enum LoaderType {
 
     @SerializedName("forge")
     FORGE {
+        @Override
         public String toString() {
             return "Forge";
         }
@@ -38,6 +40,7 @@ public enum LoaderType {
 
     @SerializedName("legacyfabric")
     LEGACY_FABRIC {
+        @Override
         public String toString() {
             return "Legacy Fabric";
         }
@@ -45,6 +48,7 @@ public enum LoaderType {
 
     @SerializedName("neoforge")
     NEOFORGE {
+        @Override
         public String toString() {
             return "NeoForge";
         }
@@ -52,6 +56,7 @@ public enum LoaderType {
 
     @SerializedName("paper")
     PAPER {
+        @Override
         public String toString() {
             return "Paper";
         }
@@ -59,6 +64,7 @@ public enum LoaderType {
 
     @SerializedName("purpur")
     PURPUR {
+        @Override
         public String toString() {
             return "Purpur";
         }
@@ -66,6 +72,7 @@ public enum LoaderType {
 
     @SerializedName("quilt")
     QUILT {
+        @Override
         public String toString() {
             return "Quilt";
         }

@@ -24,11 +24,9 @@ import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.Closeable;
-import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -52,11 +50,11 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.security.InvalidKeyException;
 import java.security.Key;
+import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.EnumSet;
 import java.util.Enumeration;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
@@ -73,7 +71,6 @@ import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.spec.SecretKeySpec;
 import javax.imageio.ImageIO;
-import javax.net.ssl.HttpsURLConnection;
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -201,7 +198,7 @@ public class Utils {
      * Upload paste.
      *
      * @param title the title
-     * @param log   the log
+     * @param log the log
      * @return the string
      */
     public static String uploadPaste(String title, String log) {
@@ -217,10 +214,11 @@ public class Utils {
             URLConnection conn = url.openConnection();
             conn.addRequestProperty("User-Agent", Network.USER_AGENT);
             conn.setDoOutput(true);
-            OutputStreamWriter writer = new OutputStreamWriter(conn.getOutputStream());
+            OutputStreamWriter writer = new OutputStreamWriter(conn.getOutputStream(), StandardCharsets.UTF_8);
             writer.write(urlParameters);
             writer.flush();
-            BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+            BufferedReader reader = new BufferedReader(
+                    new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8));
             while ((line = reader.readLine()) != null) {
                 result = line;
             }
@@ -235,8 +233,8 @@ public class Utils {
     /**
      * Move file.
      *
-     * @param from         the from
-     * @param to           the to
+     * @param from the from
+     * @param to the to
      * @param withFilename the with filename
      * @return true, if successful
      */
@@ -254,7 +252,7 @@ public class Utils {
      * Copy file.
      *
      * @param from the from
-     * @param to   the to
+     * @param to the to
      * @return true, if successful
      */
     public static boolean copyFile(File from, File to) {
@@ -264,8 +262,8 @@ public class Utils {
     /**
      * Copy file.
      *
-     * @param from         the from
-     * @param to           the to
+     * @param from the from
+     * @param to the to
      * @param withFilename the with filename
      * @return true, if successful
      */
@@ -398,7 +396,7 @@ public class Utils {
      *
      * @param sourceLocation the source location
      * @param targetLocation the target location
-     * @param copyFolder     the copy folder
+     * @param copyFolder the copy folder
      * @return true, if successful
      */
     public static boolean copyDirectory(File sourceLocation, File targetLocation, boolean copyFolder) {
@@ -438,7 +436,7 @@ public class Utils {
     /**
      * Unzip.
      *
-     * @param in  the in
+     * @param in the in
      * @param out the out
      */
     public static void unzip(File in, File out) {
@@ -448,8 +446,8 @@ public class Utils {
     /**
      * Unzip.
      *
-     * @param in          the in
-     * @param out         the out
+     * @param in the in
+     * @param out the out
      * @param extractRule the extract rule
      */
     public static void unzip(File in, File out, ExtractRule extractRule) {
@@ -588,13 +586,13 @@ public class Utils {
     /**
      * Zip.
      *
-     * @param in  the in
+     * @param in the in
      * @param out the out
      */
     public static void zip(File in, File out) {
         try {
             URI base = in.toURI();
-            Deque<File> queue = new LinkedList<>();
+            Deque<File> queue = new ArrayDeque<>();
             queue.push(in);
             OutputStream stream = new FileOutputStream(out);
             Closeable res = stream;
@@ -634,7 +632,7 @@ public class Utils {
     /**
      * Copy.
      *
-     * @param in  the in
+     * @param in the in
      * @param out the out
      * @throws IOException Signals that an I/O exception has occurred.
      */
@@ -653,7 +651,7 @@ public class Utils {
      * Copy.
      *
      * @param file the file
-     * @param out  the out
+     * @param out the out
      * @throws IOException Signals that an I/O exception has occurred.
      */
     private static void copy(File file, OutputStream out) throws IOException {
@@ -675,7 +673,7 @@ public class Utils {
             key = generateKey();
             Cipher c = Cipher.getInstance("AES");
             c.init(Cipher.ENCRYPT_MODE, key);
-            byte[] encVal = c.doFinal(Data.getBytes());
+            byte[] encVal = c.doFinal(Data.getBytes(StandardCharsets.UTF_8));
             encryptedValue = Base64.encodeBytes(encVal);
         } catch (Exception e) {
             LogManager.logStackTrace(e);
@@ -698,7 +696,7 @@ public class Utils {
             c.init(Cipher.DECRYPT_MODE, key);
             byte[] decordedValue = Base64.decode(encryptedData);
             byte[] decValue = c.doFinal(decordedValue);
-            decryptedValue = new String(decValue);
+            decryptedValue = new String(decValue, StandardCharsets.UTF_8);
         } catch (InvalidKeyException | IllegalBlockSizeException | BadPaddingException e) {
             return Utils.decryptOld(encryptedData);
         } catch (Exception e) {
@@ -717,13 +715,14 @@ public class Utils {
         Key key;
         String decryptedValue = null;
         try {
-            key = new SecretKeySpec("NotARandomKeyYes".getBytes(), "AES");
+            key = new SecretKeySpec("NotARandomKeyYes".getBytes(StandardCharsets.UTF_8), "AES");
             Cipher c = Cipher.getInstance("AES");
             c.init(Cipher.DECRYPT_MODE, key);
             byte[] decordedValue = Base64.decode(encryptedData);
             byte[] decValue = c.doFinal(decordedValue);
-            decryptedValue = new String(decValue);
+            decryptedValue = new String(decValue, StandardCharsets.UTF_8);
         } catch (Exception ignored) {
+            // ignored
         }
         return decryptedValue;
     }
@@ -732,24 +731,23 @@ public class Utils {
      * Generate key.
      *
      * @return the key
-     * @throws Exception the exception
      */
     private static Key generateKey() throws Exception {
-        return new SecretKeySpec(getMACAdressHash().getBytes(), 0, 16, "AES");
+        return new SecretKeySpec(getMACAdressHash().getBytes(StandardCharsets.UTF_8), 0, 16, "AES");
     }
 
     /**
      * Replace text.
      *
      * @param destinationFile the destination file
-     * @param replaceThis     the replace this
-     * @param withThis        the with this
+     * @param replaceThis the replace this
+     * @param withThis the with this
      * @throws IOException Signals that an I/O exception has occurred.
      */
     public static void replaceText(InputStream fs, File destinationFile, String replaceThis, String withThis)
             throws IOException {
 
-        BufferedReader br = new BufferedReader(new InputStreamReader(fs));
+        BufferedReader br = new BufferedReader(new InputStreamReader(fs, StandardCharsets.UTF_8));
 
         OutputStreamWriter fileWriter = new OutputStreamWriter(
                 new FileOutputStream(destinationFile), StandardCharsets.UTF_8);
@@ -777,7 +775,7 @@ public class Utils {
     public static void writeResourceToFile(InputStream fs, File destinationFile)
             throws IOException {
 
-        BufferedReader br = new BufferedReader(new InputStreamReader(fs));
+        BufferedReader br = new BufferedReader(new InputStreamReader(fs, StandardCharsets.UTF_8));
 
         OutputStreamWriter fileWriter = new OutputStreamWriter(
                 new FileOutputStream(destinationFile), StandardCharsets.UTF_8);
@@ -975,7 +973,7 @@ public class Utils {
         String contents = null;
         BufferedReader br = null;
         try {
-            br = new BufferedReader(new FileReader(file));
+            br = Files.newBufferedReader(file.toPath(), StandardCharsets.UTF_8);
             StringBuilder sb = new StringBuilder();
             String line = br.readLine();
 
@@ -1003,7 +1001,7 @@ public class Utils {
      * This splits up a string into a multi lined string by adding a separator at
      * every space after a given count.
      *
-     * @param string        the string to split up
+     * @param string the string to split up
      * @param maxLineLength the number of characters minimum to have per line
      * @param lineSeparator the string to place when a new line should be placed
      * @return the new multi lined string
@@ -1099,7 +1097,7 @@ public class Utils {
             }
 
             BufferedReader reader;
-            reader = new BufferedReader(new InputStreamReader(traceRoute.getInputStream()));
+            reader = new BufferedReader(new InputStreamReader(traceRoute.getInputStream(), StandardCharsets.UTF_8));
 
             response = new StringBuilder();
             String line;
@@ -1131,7 +1129,7 @@ public class Utils {
             }
 
             BufferedReader reader;
-            reader = new BufferedReader(new InputStreamReader(traceRoute.getInputStream()));
+            reader = new BufferedReader(new InputStreamReader(traceRoute.getInputStream(), StandardCharsets.UTF_8));
 
             response = new StringBuilder();
             String line;
@@ -1473,7 +1471,7 @@ public class Utils {
         }
 
         return !lessThan && versionParts[0].equals(matchedParts[0])
-            && Integer.parseInt(versionParts[1].split("-")[0]) > Integer.parseInt(matchedParts[1].split("-")[0]);
+                && Integer.parseInt(versionParts[1].split("-")[0]) > Integer.parseInt(matchedParts[1].split("-")[0]);
     }
 
     public static boolean matchWholeVersion(String version, String matches, boolean equal) {
@@ -1494,8 +1492,7 @@ public class Utils {
 
     public static MCMod getMCModForFile(File file) {
         try {
-            java.lang.reflect.Type type = new TypeToken<List<MCMod>>() {
-            }.getType();
+            java.lang.reflect.Type type = new TypeToken<List<MCMod>>() {}.getType();
 
             List<MCMod> mods = Gsons.DEFAULT.fromJson(ArchiveUtils.getFile(file.toPath(), "mcmod.info"), type);
 
@@ -1503,7 +1500,7 @@ public class Utils {
                 return mods.get(0);
             }
         } catch (Exception ignored) {
-
+            // ignored
         }
 
         return null;
@@ -1518,7 +1515,7 @@ public class Utils {
                 return mod;
             }
         } catch (Exception ignored2) {
-
+            // ignored
         }
 
         return null;
@@ -1542,7 +1539,8 @@ public class Utils {
             processBuilder.redirectErrorStream(true);
 
             Process process = processBuilder.start();
-            BufferedReader br = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            BufferedReader br = new BufferedReader(
+                    new InputStreamReader(process.getInputStream(), StandardCharsets.UTF_8));
             StringBuilder sb = new StringBuilder();
 
             try {
@@ -1571,7 +1569,8 @@ public class Utils {
             processBuilder.redirectErrorStream(true);
 
             Process process = processBuilder.start();
-            BufferedReader br = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            BufferedReader br = new BufferedReader(
+                    new InputStreamReader(process.getInputStream(), StandardCharsets.UTF_8));
             StringBuilder sb = new StringBuilder();
 
             try {
@@ -1610,6 +1609,7 @@ public class Utils {
                 return true;
             }
         } catch (Exception ignored) {
+            // ignored
         }
 
         return false;

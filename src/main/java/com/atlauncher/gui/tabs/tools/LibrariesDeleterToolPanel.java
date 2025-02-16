@@ -26,7 +26,7 @@ import com.atlauncher.managers.DialogManager;
 
 public class LibrariesDeleterToolPanel extends AbstractToolPanel {
 
-    public LibrariesDeleterToolPanel(IToolsViewModel viewModel) {
+    public LibrariesDeleterToolPanel(ToolsViewModel viewModel) {
         super(GetText.tr("Libraries Deleter"));
 
         JLabel INFO_LABEL = new JLabel(new HTMLBuilder().center().split(70).text(GetText.tr(

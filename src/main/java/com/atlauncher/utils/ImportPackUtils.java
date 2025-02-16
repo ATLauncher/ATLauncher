@@ -87,7 +87,6 @@ public class ImportPackUtils {
         }
 
         String packSlug = matcher.group(1);
-        Integer projectId = null;
         Integer fileId = null;
 
         LogManager.debug(matcher.groupCount() + "");
@@ -99,7 +98,7 @@ public class ImportPackUtils {
         LogManager.debug("Found pack with slug " + packSlug + " and file id of " + fileId);
 
         CurseForgeProject project = CurseForgeApi.getModPackBySlug(packSlug);
-        projectId = project.id;
+        Integer projectId = project.id;
         fileId = project.mainFileId;
 
         if (projectId == null || fileId == null) {

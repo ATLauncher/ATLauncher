@@ -60,8 +60,7 @@ public class AbstractUiTest extends AssertJSwingTestCaseTemplate {
         FileUtils.createDirectory(workingDir);
     }
 
-    protected void preSetUp() {
-    }
+    protected void preSetUp() {}
 
     @BeforeEach
     public final void setUp() {
@@ -92,6 +91,7 @@ public class AbstractUiTest extends AssertJSwingTestCaseTemplate {
 
         // get a reference to the main launcher frame
         frame = WindowFinder.findFrame(new GenericTypeMatcher<Frame>(Frame.class) {
+            @Override
             protected boolean isMatching(Frame frame) {
                 return Constants.LAUNCHER_NAME.equals(frame.getTitle()) && frame.isShowing();
             }
@@ -99,6 +99,7 @@ public class AbstractUiTest extends AssertJSwingTestCaseTemplate {
 
         // get a reference to the console frame
         consoleFrame = WindowFinder.findFrame(new GenericTypeMatcher<Frame>(Frame.class) {
+            @Override
             protected boolean isMatching(Frame frame) {
                 return (Constants.LAUNCHER_NAME + " Console").equals(frame.getTitle()) && frame.isShowing();
             }
@@ -136,8 +137,7 @@ public class AbstractUiTest extends AssertJSwingTestCaseTemplate {
         }
     }
 
-    protected void onSetUp() {
-    }
+    protected void onSetUp() {}
 
     @AfterEach
     public final void tearDown() {
@@ -154,6 +154,5 @@ public class AbstractUiTest extends AssertJSwingTestCaseTemplate {
         FileUtils.deleteDirectory(workingDir);
     }
 
-    protected void onTearDown() {
-    }
+    protected void onTearDown() {}
 }

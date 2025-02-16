@@ -88,6 +88,7 @@ public class LauncherConsole extends JFrame implements RelocalizationListener {
         RelocalizationManager.addListener(this);
 
         addComponentListener(new ComponentAdapter() {
+            @Override
             public void componentResized(ComponentEvent evt) {
                 Component c = (Component) evt.getSource();
 
@@ -100,6 +101,7 @@ public class LauncherConsole extends JFrame implements RelocalizationListener {
                 }
             }
 
+            @Override
             public void componentMoved(ComponentEvent evt) {
                 Component c = (Component) evt.getSource();
 
@@ -134,6 +136,7 @@ public class LauncherConsole extends JFrame implements RelocalizationListener {
         contextMenu.add(copy);
 
         console.addMouseListener(new MouseAdapter() {
+            @Override
             public void mousePressed(MouseEvent e) {
                 if (console.getSelectedText() != null) {
                     if (e.getButton() == MouseEvent.BUTTON3) {

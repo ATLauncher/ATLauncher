@@ -205,6 +205,7 @@ public final class PacksBrowserTab extends JPanel
         actionsPanel.add(spacer);
 
         searchField.addKeyListener(new KeyAdapter() {
+            @Override
             public void keyReleased(KeyEvent e) {
                 if (e.getKeyChar() == KeyEvent.VK_ENTER) {
                     executeSearch();

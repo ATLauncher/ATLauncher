@@ -237,7 +237,7 @@ public class EditModsDialog extends JDialog {
                     GetText.tr("Copying Mods"), this);
 
             progressDialog.addThread(new Thread(() -> {
-                ArrayList<File> files = fcd.getChosenFiles();
+                List<File> files = fcd.getChosenFiles();
                 if (files != null && !files.isEmpty()) {
                     boolean reload = false;
                     for (File file : files) {

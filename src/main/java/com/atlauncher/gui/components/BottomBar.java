@@ -114,6 +114,7 @@ public abstract class BottomBar extends JPanel implements ThemeListener {
         });
     }
 
+    @Override
     public void onThemeChange() {
         this.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, UIManager.getColor("BottomBar.dividerColor")));
     }

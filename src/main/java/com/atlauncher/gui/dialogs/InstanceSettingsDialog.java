@@ -72,6 +72,7 @@ public class InstanceSettingsDialog extends JDialog {
         setupComponents();
 
         addWindowListener(new WindowAdapter() {
+            @Override
             public void windowClosing(WindowEvent arg0) {
                 close();
             }
@@ -105,7 +106,7 @@ public class InstanceSettingsDialog extends JDialog {
         JButton saveButton = new JButton(GetText.tr("Save"));
         saveButton.addActionListener(arg0 -> {
             if (javaInstanceSettingsTab.isValidJavaPath() && javaInstanceSettingsTab.isValidJavaParamaters()
-                && generalInstanceSettingsTab.isValidQuickPlayOptionValue()) {
+                    && generalInstanceSettingsTab.isValidQuickPlayOptionValue()) {
                 saveSettings();
                 App.TOASTER.pop("Instance Settings Saved");
                 close();

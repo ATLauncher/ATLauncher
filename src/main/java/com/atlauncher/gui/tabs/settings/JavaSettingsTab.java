@@ -677,6 +677,7 @@ public class JavaSettingsTab extends AbstractSettingsTab {
                 icon.setImageObserver(label);
             }
         } catch (NullPointerException ignored) {
+            // ignored
         }
     }
 
