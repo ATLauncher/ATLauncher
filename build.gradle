@@ -139,6 +139,11 @@ test {
 }
 
 tasks.withType(JavaCompile).configureEach {
+    // compile with JDK 17
+    javaCompiler = javaToolchains.compilerFor {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+
     dependencies {
         errorprone "com.google.errorprone:error_prone_core:2.36.0"
     }
