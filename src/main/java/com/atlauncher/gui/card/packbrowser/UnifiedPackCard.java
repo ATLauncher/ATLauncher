@@ -20,8 +20,10 @@ package com.atlauncher.gui.card.packbrowser;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Font;
 import java.util.Locale;
 
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JEditorPane;
 import javax.swing.JPanel;
@@ -29,6 +31,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.SwingConstants;
 import javax.swing.event.HyperlinkEvent;
+import javax.swing.text.html.HTMLDocument;
 
 import org.mini2Dx.gettext.GetText;
 
@@ -93,7 +96,8 @@ public class UnifiedPackCard extends JPanel implements RelocalizationListener {
         splitter.setRightComponent(actionsPanel);
         splitter.setEnabled(false);
 
-        JPanel buttonsPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 2));
+        JPanel buttonsPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 0));
+        buttonsPanel.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0));
 
         newInstanceButton.addActionListener(e -> {
             if (AccountManager.getSelectedAccount() == null) {
@@ -158,6 +162,11 @@ public class UnifiedPackCard extends JPanel implements RelocalizationListener {
 
         JEditorPane descArea = new JEditorPane("text/html",
                 String.format("<html>%s</html>", Markdown.render(result.summary())));
+
+        Font font = App.THEME.getNormalFont();
+        String bodyRule = "p { font-family: " + font.getFamily() + "; " +
+                "font-size: " + font.getSize() + "pt; }";
+        ((HTMLDocument) descArea.getDocument()).getStyleSheet().addRule(bodyRule);
         descArea.setEditable(false);
         descArea.setFocusable(false);
         descArea.setHighlighter(null);

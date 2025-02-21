@@ -32,6 +32,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Issue with the name field missing when reinstalling an instance to a different Minecraft version
 - LegacyJavaFixer not being installed on 1.7.2 Forge
 - Remember which settings tab was selected when switching to other tabs and back
+- More consistent UI between the tabs in the Packs tab
 
 ### Misc
 - Update gradle wrapper version from 8.2 to 8.12

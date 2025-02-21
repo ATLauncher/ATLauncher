@@ -10,6 +10,9 @@
         },
         "editor.detectIndentation": false,
     },
+    "[markdown]": {
+        "editor.formatOnSave": false
+    },
     "[github-actions-workflow]": {
         "editor.tabSize": 2
     },

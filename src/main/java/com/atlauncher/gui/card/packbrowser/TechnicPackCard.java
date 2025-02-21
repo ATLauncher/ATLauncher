@@ -67,7 +67,8 @@ public class TechnicPackCard extends JPanel implements RelocalizationListener {
         splitter.setRightComponent(actionsPanel);
         splitter.setEnabled(false);
 
-        JPanel buttonsPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 2));
+        JPanel buttonsPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 0));
+        buttonsPanel.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0));
 
         newInstanceButton.addActionListener(e -> {
             if (AccountManager.getSelectedAccount() == null) {
