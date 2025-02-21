@@ -85,7 +85,8 @@ public class ModrinthPackCard extends JPanel implements RelocalizationListener {
                 }
             } else {
                 Analytics.trackEvent(AnalyticsEvent.forPackInstall(searchHit));
-                new InstanceInstallerDialog(searchHit, false);
+                InstanceInstallerDialog instanceInstallerDialog = new InstanceInstallerDialog(searchHit, false);
+                instanceInstallerDialog.setVisible(true);
             }
         });
         buttonsPanel.add(newInstanceButton);
@@ -114,7 +115,8 @@ public class ModrinthPackCard extends JPanel implements RelocalizationListener {
                 }
             } else {
                 Analytics.trackEvent(AnalyticsEvent.forPackInstall(searchHit, true));
-                new InstanceInstallerDialog(searchHit, true);
+                InstanceInstallerDialog instanceInstallerDialog = new InstanceInstallerDialog(searchHit, true);
+                instanceInstallerDialog.setVisible(true);
             }
         });
         buttonsPanel.add(createServerButton);

@@ -17,6 +17,7 @@
  */
 package com.atlauncher.managers;
 
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -30,6 +31,7 @@ import java.util.UUID;
 import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
 import com.atlauncher.data.Instance;
+import com.atlauncher.data.MicrosoftAccount;
 import com.atlauncher.data.Pack;
 import com.atlauncher.exceptions.InvalidPack;
 import com.atlauncher.utils.CurseForgeApi;
@@ -77,7 +79,7 @@ public class InstanceManager {
                 .orElse(new String[0])) {
             Path instanceDir = FileSystem.INSTANCES.resolve(folder);
 
-            Instance instance = null;
+            Instance instance;
 
             try {
                 try (InputStreamReader fileReader = new InputStreamReader(
@@ -129,7 +131,7 @@ public class InstanceManager {
                 }
 
                 newInstances.add(instance);
-            } catch (Exception e2) {
+            } catch (IOException e2) {
                 LogManager.logStackTrace("Failed to load instance in the folder " + instanceDir, e2);
             }
         }
@@ -179,26 +181,30 @@ public class InstanceManager {
     }
 
     public static void setInstanceVisbility(Instance instance, boolean collapsed) {
-        if (collapsed) {
-            // Closed It
-            if (!AccountManager.getSelectedAccount().collapsedInstances.contains(instance.launcher.name)) {
-                AccountManager.getSelectedAccount().collapsedInstances.add(instance.launcher.name);
+        MicrosoftAccount selectedAccount = AccountManager.getSelectedAccount();
+
+        if (selectedAccount != null) {
+            if (collapsed) {
+                // Closed It
+                if (!selectedAccount.collapsedInstances.contains(instance.launcher.name)) {
+                    selectedAccount.collapsedInstances.add(instance.launcher.name);
+                }
+            } else {
+                // Opened It
+                selectedAccount.collapsedInstances.remove(instance.launcher.name);
             }
-        } else {
-            // Opened It
-            AccountManager.getSelectedAccount().collapsedInstances.remove(instance.launcher.name);
+            AccountManager.saveAccounts();
         }
-        AccountManager.saveAccounts();
     }
 
     /**
      * Removes an instance and deletes its directory.
      *
-     * @param instance
-     *            Instance to remove
+     * @param instance Instance to remove
      */
     public static void removeInstance(Instance instance) {
-        List<Instance> instances = INSTANCES.getValue();
+        List<Instance> instances = Optional.ofNullable(INSTANCES.getValue()).orElse(new ArrayList<>());
+
         if (instances.remove(instance)) {
             FileUtils.delete(instance.getRoot(), true);
             INSTANCES.onNext(instances);
@@ -208,58 +214,63 @@ public class InstanceManager {
     /**
      * Checks to see if there is already an instance with the name provided or not
      *
-     * @param name
-     *            The name of the instance to check for
+     * @param name The name of the instance to check for
      * @return True if there is an instance with the same name already
      */
     public static boolean isInstance(String name) {
-        return INSTANCES.getValue().stream()
+        List<Instance> instances = Optional.ofNullable(INSTANCES.getValue()).orElse(new ArrayList<>());
+
+        return instances.stream()
                 .anyMatch(i -> i.getSafeName().equalsIgnoreCase(name.replaceAll("[^A-Za-z0-9]", "")));
     }
 
     /**
      * Checks if there is an instance by the given name
      *
-     * @param name
-     *            name of the Instance to find
+     * @param name name of the Instance to find
      * @return True if the instance is found from the name
      */
     public static boolean isInstanceByName(String name) {
-        return INSTANCES.getValue().stream().anyMatch(i -> i.launcher.name.equalsIgnoreCase(name));
+        List<Instance> instances = Optional.ofNullable(INSTANCES.getValue()).orElse(new ArrayList<>());
+
+        return instances.stream().anyMatch(i -> i.launcher.name.equalsIgnoreCase(name));
     }
 
     /**
      * Checks if there is an instance by the given name
      *
-     * @param name
-     *            name of the Instance to find
+     * @param name name of the Instance to find
      * @return True if the instance is found from the name
      */
     public static boolean isInstanceBySafeName(String name) {
-        return INSTANCES.getValue().stream().anyMatch(i -> i.getSafeName().equalsIgnoreCase(name));
+        List<Instance> instances = Optional.ofNullable(INSTANCES.getValue()).orElse(new ArrayList<>());
+
+        return instances.stream().anyMatch(i -> i.getSafeName().equalsIgnoreCase(name));
     }
 
     /**
      * Finds a Instance from the given name
      *
-     * @param name
-     *            name of the Instance to find
+     * @param name name of the Instance to find
      * @return Instance if the instance is found from the name
      */
     public static Instance getInstanceByName(String name) {
-        return INSTANCES.getValue().stream().filter(i -> i.launcher.name.equalsIgnoreCase(name)).findFirst()
+        List<Instance> instances = Optional.ofNullable(INSTANCES.getValue()).orElse(new ArrayList<>());
+
+        return instances.stream().filter(i -> i.launcher.name.equalsIgnoreCase(name)).findFirst()
                 .orElse(null);
     }
 
     /**
      * Finds a Instance from the given name
      *
-     * @param name
-     *            name of the Instance to find
+     * @param name name of the Instance to find
      * @return Instance if the instance is found from the name
      */
     public static Instance getInstanceBySafeName(String name) {
-        return INSTANCES.getValue().stream().filter(i -> i.getSafeName().equalsIgnoreCase(name)).findFirst()
+        List<Instance> instances = Optional.ofNullable(INSTANCES.getValue()).orElse(new ArrayList<>());
+
+        return instances.stream().filter(i -> i.getSafeName().equalsIgnoreCase(name)).findFirst()
                 .orElse(null);
     }
 
@@ -275,14 +286,15 @@ public class InstanceManager {
             FileUtils.createDirectory(clonedInstance.getRoot());
             Utils.copyDirectory(instance.getRoot().toFile(), clonedInstance.getRoot().toFile());
             clonedInstance.save();
-            List<Instance> instances = INSTANCES.getValue();
+
+            List<Instance> instances = Optional.ofNullable(INSTANCES.getValue()).orElse(new ArrayList<>());
             instances.add(clonedInstance);
             INSTANCES.onNext(instances);
         }
     }
 
     public static void addInstance(Instance instance) {
-        List<Instance> instances = INSTANCES.getValue();
+        List<Instance> instances = Optional.ofNullable(INSTANCES.getValue()).orElse(new ArrayList<>());
         instances.add(instance);
         INSTANCES.onNext(instances);
     }
@@ -290,11 +302,10 @@ public class InstanceManager {
     /**
      * Update the Instance with new data
      *
-     * @param instance
-     *            Instance to update
+     * @param instance Instance to update
      */
     public static void updateInstance(Instance instance) {
-        List<Instance> instances = INSTANCES.getValue();
+        List<Instance> instances = Optional.ofNullable(INSTANCES.getValue()).orElse(new ArrayList<>());
         instances.removeIf(it -> it.getUUID().equals(instance.getUUID()));
         instances.add(instance);
         INSTANCES.onNext(instances);

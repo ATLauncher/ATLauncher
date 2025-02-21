@@ -49,6 +49,7 @@ import com.atlauncher.App;
 import com.atlauncher.constants.UIConstants;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.InstanceExportFormat;
+import com.atlauncher.data.MicrosoftAccount;
 import com.atlauncher.gui.components.JLabelWithHover;
 import com.atlauncher.managers.AccountManager;
 import com.atlauncher.utils.ComboItem;
@@ -83,8 +84,6 @@ public class InstanceExportDialog extends JDialog {
         });
 
         WindowUtils.resizeForContent(this);
-
-        setVisible(true);
     }
 
     private void setupComponents() {
@@ -143,9 +142,9 @@ public class InstanceExportDialog extends JDialog {
         gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         final JTextField author = new JTextField(30);
+        final MicrosoftAccount selectedAccount = AccountManager.getSelectedAccount();
         author.setText(Optional.ofNullable(instance.launcher.lastExportAuthor)
-                .orElse(AccountManager.getSelectedAccount() == null ? ""
-                        : AccountManager.getSelectedAccount().minecraftUsername));
+                .orElse(selectedAccount == null ? "" : selectedAccount.minecraftUsername));
         topPanel.add(author, gbc);
 
         // Format
@@ -207,6 +206,7 @@ public class InstanceExportDialog extends JDialog {
                     GetText.tr("Select export directory"),
                     GetText.tr("Directory"),
                     GetText.tr("Select"));
+            fcd.setVisible(true);
 
             if (fcd.wasClosed()) {
                 return;
@@ -321,7 +321,8 @@ public class InstanceExportDialog extends JDialog {
                     if ((exportFormat == InstanceExportFormat.MODRINTH
                             || exportFormat == InstanceExportFormat.CURSEFORGE_AND_MODRINTH)
                             && exportResult.right() != null && !exportResult.right().isEmpty()) {
-                        new ModrinthExportOverridesDialog(dialog, exportResult.right());
+                        ModrinthExportOverridesDialog modrinthExportOverridesDialog = new ModrinthExportOverridesDialog(dialog, exportResult.right());
+                        modrinthExportOverridesDialog.setVisible(true);
                     }
 
                     App.TOASTER.pop(GetText.tr("Exported Instance Successfully"));

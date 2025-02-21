@@ -19,7 +19,8 @@ package com.atlauncher.network;
 
 import java.io.IOException;
 
-@SuppressWarnings("serial")
+import com.atlauncher.managers.LogManager;
+
 public class DownloadException extends IOException {
     public Download download;
     public String response = null;
@@ -35,7 +36,7 @@ public class DownloadException extends IOException {
                 this.response = download.response.body().string();
                 this.statusCode = download.response.code();
             } catch (IOException e) {
-                e.printStackTrace();
+                LogManager.logStackTrace(e);
             }
         }
     }
@@ -45,9 +46,16 @@ public class DownloadException extends IOException {
     }
 
     public boolean hasResponse() {
-        if (this.download.response == null || this.response == null)
+        if (this.download.response == null || this.response == null) {
             return false;
+        }
+
         final String contentType = this.download.response.header("Content-Type");
+
+        if (contentType == null) {
+            return false;
+        }
+
         return contentType.equalsIgnoreCase("application/json")
                 || contentType.equalsIgnoreCase("application/xml")
                 || contentType.startsWith("text/");

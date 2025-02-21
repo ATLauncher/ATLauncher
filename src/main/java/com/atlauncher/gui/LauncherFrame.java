@@ -134,7 +134,8 @@ public final class LauncherFrame extends JFrame implements RelocalizationListene
                     LogManager
                             .error("Error automatically installing " + (pack == null ? "pack" : pack.getName()) + "!");
                 } else {
-                    new InstanceInstallerDialog(pack);
+                    InstanceInstallerDialog instanceInstallerDialog = new InstanceInstallerDialog(pack);
+                    instanceInstallerDialog.setVisible(true);
                 }
             }
         }

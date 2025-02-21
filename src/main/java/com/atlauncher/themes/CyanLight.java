@@ -17,7 +17,6 @@
  */
 package com.atlauncher.themes;
 
-@SuppressWarnings("serial")
 public class CyanLight extends Light {
     public static boolean install() {
         instance = new CyanLight();

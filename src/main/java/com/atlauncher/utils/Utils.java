@@ -66,6 +66,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
+import javax.annotation.Nullable;
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
@@ -1298,12 +1299,9 @@ public class Utils {
     }
 
     public static void unXZFile(File input, File output) throws IOException {
-        FileInputStream fis;
-        FileOutputStream fos;
-        XZInputStream xzis;
-        fis = new FileInputStream(input);
-        xzis = new XZInputStream(fis);
-        fos = new FileOutputStream(output);
+        FileInputStream fis = new FileInputStream(input);
+        FileOutputStream fos = new FileOutputStream(output);
+        XZInputStream xzis = new XZInputStream(fis);
 
         final byte[] buffer = new byte[8192];
         int n;
@@ -1311,15 +1309,9 @@ public class Utils {
             fos.write(buffer, 0, n);
         }
 
-        if (fis != null) {
-            fis.close();
-        }
-        if (fos != null) {
-            fos.close();
-        }
-        if (xzis != null) {
-            xzis.close();
-        }
+        fis.close();
+        fos.close();
+        xzis.close();
     }
 
     private static String getMACAdressHash() {
@@ -1613,5 +1605,17 @@ public class Utils {
         }
 
         return false;
+    }
+
+    public static @Nullable Integer getSafeIntegerFromString(@Nullable String string) {
+        Integer categoryIdParam = null;
+        if (string != null) {
+            try {
+                categoryIdParam = Integer.valueOf(string);
+            } catch (NumberFormatException e) {
+                categoryIdParam = null;
+            }
+        }
+        return categoryIdParam;
     }
 }

@@ -177,7 +177,7 @@ public class CurseForgeProjectFileSelectorDialog extends JDialog {
         addButton.addActionListener(e -> {
             CurseForgeFile file = (CurseForgeFile) filesDropdown.getSelectedItem();
 
-            ProgressDialog<Object> progressDialog = new ProgressDialog<>(
+            ProgressDialog<Void> progressDialog = new ProgressDialog<>(
                     // #. {0} is the name of the mod we're installing
                     GetText.tr("Installing {0}", file.displayName), false, this);
             progressDialog.addThread(new Thread(() -> {
@@ -210,7 +210,6 @@ public class CurseForgeProjectFileSelectorDialog extends JDialog {
         add(top, BorderLayout.NORTH);
         add(middle, BorderLayout.CENTER);
         add(bottom, BorderLayout.SOUTH);
-        setVisible(true);
     }
 
     public void reloadDependenciesPanel() {
@@ -328,7 +327,7 @@ public class CurseForgeProjectFileSelectorDialog extends JDialog {
             }
 
             List<String> neoForgeForgeCompatabilityVersions = ConfigManager
-                    .getConfigItem("loaders.neoforge.forgeCompatibleMinecraftVersions", new ArrayList<String>());
+                    .getConfigItem("loaders.neoforge.forgeCompatibleMinecraftVersions", new ArrayList<>());
             boolean hasNeoForgeVersion = projectFiles.stream()
                     .anyMatch(v -> v.gameVersions.contains("NeoForge")
                             || (neoForgeForgeCompatabilityVersions.contains(instanceOrServer.getMinecraftVersion())

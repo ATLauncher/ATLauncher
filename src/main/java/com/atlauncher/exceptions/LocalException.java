@@ -20,7 +20,6 @@ package com.atlauncher.exceptions;
 /**
  * These exceptions are not sent remotely
  */
-@SuppressWarnings("serial")
 public class LocalException extends Exception {
     public LocalException(String message) {
         super(message);

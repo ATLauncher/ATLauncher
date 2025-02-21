@@ -26,7 +26,6 @@ import java.awt.GridBagLayout;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
-import java.io.FilenameFilter;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -229,7 +228,7 @@ public class ImportInstanceDialog extends JDialog {
 
             dialog.start();
 
-            if (!dialog.getReturnValue()) {
+            if (dialog.getReturnValue() == false) {
                 DialogManager.okDialog().setTitle(GetText.tr("Failed To Import Instance"))
                         .setContent(new HTMLBuilder().center().text(GetText.tr(
                                 "An error occured when trying to import an instance.<br/><br/>Check the console for more information."))

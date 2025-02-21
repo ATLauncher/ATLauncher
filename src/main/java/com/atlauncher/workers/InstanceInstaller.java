@@ -3598,7 +3598,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         if (!sha1Hashes.isEmpty()) {
             Set<String> keys = sha1Hashes.keySet();
             Map<String, ModrinthVersion> modrinthVersions = ModrinthApi
-                    .getVersionsFromSha1Hashes(keys.toArray(new String[keys.size()]));
+                    .getVersionsFromSha1Hashes(keys.toArray(new String[0]));
 
             if (modrinthVersions != null && !modrinthVersions.isEmpty()) {
                 String[] projectIdsFound = modrinthVersions.values().stream().map(mv -> mv.projectId)

@@ -23,7 +23,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Random;
 import java.util.Timer;
 import java.util.UUID;
@@ -53,10 +52,10 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public final class Analytics {
-    private static List<AnalyticsEvent> events = new ArrayList<>();
-    private static String sessionId = UUID.randomUUID().toString();
+    private static final List<AnalyticsEvent> events = new ArrayList<>();
+    private static final String sessionId = UUID.randomUUID().toString();
     private static boolean sessionInitialised = false;
-    private static Timer timer = new Timer();
+    private static final Timer timer = new Timer();
 
     public static void startSession(int initialTab) {
         Map<String, Object> properties = new HashMap<>();

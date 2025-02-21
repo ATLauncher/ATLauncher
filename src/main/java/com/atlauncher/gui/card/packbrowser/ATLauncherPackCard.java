@@ -151,7 +151,8 @@ public class ATLauncherPackCard extends JPanel implements RelocalizationListener
                 }
             } else {
                 Analytics.trackEvent(AnalyticsEvent.forPackInstall(pack));
-                new InstanceInstallerDialog(pack);
+                InstanceInstallerDialog instanceInstallerDialog = new InstanceInstallerDialog(pack);
+                instanceInstallerDialog.setVisible(true);
             }
         });
 
@@ -179,7 +180,8 @@ public class ATLauncherPackCard extends JPanel implements RelocalizationListener
                 }
             } else {
                 Analytics.trackEvent(AnalyticsEvent.forPackInstall(pack, true));
-                new InstanceInstallerDialog(pack, true);
+                InstanceInstallerDialog instanceInstallerDialog = new InstanceInstallerDialog(pack, true);
+                instanceInstallerDialog.setVisible(true);
             }
         });
 
@@ -195,7 +197,8 @@ public class ATLauncherPackCard extends JPanel implements RelocalizationListener
 
         this.modsButton.addActionListener(e -> {
             Analytics.trackEvent(AnalyticsEvent.forPackEvent("pack_view_mods", pack.getName(), "ATLauncher"));
-            new ViewModsDialog(pack).setVisible(true);
+            ViewModsDialog viewModsDialog = new ViewModsDialog(pack);
+            viewModsDialog.setVisible(false);
         });
     }
 

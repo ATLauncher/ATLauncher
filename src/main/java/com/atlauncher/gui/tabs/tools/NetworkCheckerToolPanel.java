@@ -70,7 +70,7 @@ public class NetworkCheckerToolPanel extends AbstractToolPanel implements Action
             }));
             dialog.start();
 
-            if (dialog.getReturnValue() == null || !dialog.getReturnValue()) {
+            if (dialog.getReturnValue() != true) {
                 LogManager.error("Network Test failed to run!");
             } else {
                 LogManager.info("Network Test ran and submitted to " + Constants.LAUNCHER_NAME + "!");

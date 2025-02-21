@@ -45,14 +45,13 @@ import com.atlauncher.data.minecraft.loaders.Loader;
 import com.atlauncher.data.minecraft.loaders.LoaderVersion;
 import com.atlauncher.graphql.GetLatestLegacyFabricLoaderVersionQuery;
 import com.atlauncher.graphql.GetLegacyFabricLoaderVersionQuery;
+import com.atlauncher.graphql.GetLegacyFabricLoaderVersionQuery.LegacyFabricLoaderVersion;
 import com.atlauncher.graphql.GetLegacyFabricLoaderVersionsForMinecraftVersionQuery;
 import com.atlauncher.managers.ConfigManager;
 import com.atlauncher.managers.LogManager;
-import com.atlauncher.network.Download;
 import com.atlauncher.network.GraphqlClient;
 import com.atlauncher.utils.Utils;
 import com.atlauncher.workers.InstanceInstaller;
-import com.google.gson.reflect.TypeToken;
 
 public class LegacyFabricLoader implements Loader {
     protected String minecraft;
@@ -88,16 +87,30 @@ public class LegacyFabricLoader implements Loader {
                                 !instanceInstaller.isServer)
                         .includeServerJson(instanceInstaller.isServer).build());
 
-        if (response == null || response.legacyFabricLoaderVersion() == null) {
+        if (response == null) {
+            return null;
+        }
+
+        LegacyFabricLoaderVersion legacyFabricLoaderVersion = response.legacyFabricLoaderVersion();
+
+        if (legacyFabricLoaderVersion == null) {
             return null;
         }
 
         if (instanceInstaller.isServer) {
-            return Gsons.DEFAULT.fromJson(response.legacyFabricLoaderVersion().serverJson(),
+            if (legacyFabricLoaderVersion.serverJson() == null) {
+                return null;
+            }
+
+            return Gsons.DEFAULT.fromJson(legacyFabricLoaderVersion.serverJson(),
                     LegacyFabricMetaProfile.class);
         }
 
-        return Gsons.DEFAULT.fromJson(response.legacyFabricLoaderVersion().clientJson(),
+        if (legacyFabricLoaderVersion.clientJson() == null) {
+            return null;
+        }
+
+        return Gsons.DEFAULT.fromJson(legacyFabricLoaderVersion.clientJson(),
                 LegacyFabricMetaProfile.class);
     }
 
@@ -105,8 +118,7 @@ public class LegacyFabricLoader implements Loader {
         GetLatestLegacyFabricLoaderVersionQuery.Data response = GraphqlClient
                 .callAndWait(new GetLatestLegacyFabricLoaderVersionQuery());
 
-        if (response == null || response.legacyFabricLoaderVersions() == null
-                || response.legacyFabricLoaderVersions().isEmpty()) {
+        if (response == null || response.legacyFabricLoaderVersions().isEmpty()) {
             return null;
         }
 
@@ -161,76 +173,75 @@ public class LegacyFabricLoader implements Loader {
 
         try {
 
-            FileOutputStream outputStream = new FileOutputStream(file);
-            ZipOutputStream zipOutputStream = new ZipOutputStream(outputStream);
+            try (FileOutputStream outputStream = new FileOutputStream(file);
+                    ZipOutputStream zipOutputStream = new ZipOutputStream(outputStream)) {
+                List<File> libraryFiles = this.getLibraryFiles();
+                boolean shadeLibraries = !Utils.matchWholeVersion(this.loaderVersion, "0.12.5", false);
 
-            List<File> libraryFiles = this.getLibraryFiles();
-            boolean shadeLibraries = !Utils.matchWholeVersion(this.loaderVersion, "0.12.5", false);
+                Set<String> addedEntries = new HashSet<>();
+                {
+                    addedEntries.add("META-INF/MANIFEST.MF");
+                    zipOutputStream.putNextEntry(new ZipEntry("META-INF/MANIFEST.MF"));
 
-            Set<String> addedEntries = new HashSet<>();
-            {
-                addedEntries.add("META-INF/MANIFEST.MF");
-                zipOutputStream.putNextEntry(new ZipEntry("META-INF/MANIFEST.MF"));
+                    Manifest manifest = new Manifest();
+                    manifest.getMainAttributes().put(Attributes.Name.MANIFEST_VERSION, "1.0");
+                    manifest.getMainAttributes().put(Attributes.Name.MAIN_CLASS,
+                            "net.fabricmc.loader.launch.server.FabricServerLauncher");
 
-                Manifest manifest = new Manifest();
-                manifest.getMainAttributes().put(Attributes.Name.MANIFEST_VERSION, "1.0");
-                manifest.getMainAttributes().put(Attributes.Name.MAIN_CLASS,
-                        "net.fabricmc.loader.launch.server.FabricServerLauncher");
+                    if (!shadeLibraries) {
+                        manifest.getMainAttributes().put(Attributes.Name.CLASS_PATH, getLibraries().stream()
+                                .map(library -> instanceInstaller.root
+                                        .relativize(instanceInstaller.root.resolve("libraries")
+                                                .resolve(library.downloads.artifact.path))
+                                        .normalize().toString())
+                                .collect(Collectors.joining(" ")));
+                    }
 
-                if (!shadeLibraries) {
-                    manifest.getMainAttributes().put(Attributes.Name.CLASS_PATH, getLibraries().stream()
-                            .map(library -> instanceInstaller.root
-                                    .relativize(instanceInstaller.root.resolve("libraries")
-                                            .resolve(library.downloads.artifact.path))
-                                    .normalize().toString())
-                            .collect(Collectors.joining(" ")));
-                }
+                    manifest.write(zipOutputStream);
 
-                manifest.write(zipOutputStream);
+                    zipOutputStream.closeEntry();
 
-                zipOutputStream.closeEntry();
+                    addedEntries.add("fabric-server-launch.properties");
+                    zipOutputStream.putNextEntry(new ZipEntry("fabric-server-launch.properties"));
+                    zipOutputStream.write(
+                            ("launch.mainClass=" + this.version.mainClass
+                                    + "\n").getBytes(StandardCharsets.UTF_8));
+                    zipOutputStream.closeEntry();
 
-                addedEntries.add("fabric-server-launch.properties");
-                zipOutputStream.putNextEntry(new ZipEntry("fabric-server-launch.properties"));
-                zipOutputStream.write(
-                        ("launch.mainClass=" + this.version.mainClass
-                                + "\n").getBytes(StandardCharsets.UTF_8));
-                zipOutputStream.closeEntry();
+                    if (shadeLibraries) {
+                        byte[] buffer = new byte[32768];
 
-                if (shadeLibraries) {
-                    byte[] buffer = new byte[32768];
+                        for (File f : libraryFiles) {
+                            try (FileInputStream is = new FileInputStream(f);
+                                    JarInputStream jis = new JarInputStream(is)) {
+                                JarEntry entry;
+                                while ((entry = jis.getNextJarEntry()) != null) {
+                                    if (!addedEntries.contains(entry.getName())
+                                            && !manifestPattern.matcher(entry.getName()).matches()) {
+                                        JarEntry newEntry = new JarEntry(entry.getName());
+                                        zipOutputStream.putNextEntry(newEntry);
 
-                    for (File f : libraryFiles) {
-                        try (FileInputStream is = new FileInputStream(f); JarInputStream jis = new JarInputStream(is)) {
-                            JarEntry entry;
-                            while ((entry = jis.getNextJarEntry()) != null) {
-                                if (!addedEntries.contains(entry.getName())
-                                        && !manifestPattern.matcher(entry.getName()).matches()) {
-                                    JarEntry newEntry = new JarEntry(entry.getName());
-                                    zipOutputStream.putNextEntry(newEntry);
+                                        int r;
+                                        while ((r = jis.read(buffer, 0, buffer.length)) >= 0) {
+                                            zipOutputStream.write(buffer, 0, r);
+                                        }
 
-                                    int r;
-                                    while ((r = jis.read(buffer, 0, buffer.length)) >= 0) {
-                                        zipOutputStream.write(buffer, 0, r);
+                                        zipOutputStream.closeEntry();
+                                        addedEntries.add(entry.getName());
                                     }
-
-                                    zipOutputStream.closeEntry();
-                                    addedEntries.add(entry.getName());
                                 }
                             }
                         }
                     }
                 }
+
             }
 
-            zipOutputStream.close();
-            outputStream.close();
-
-            FileOutputStream propertiesOutputStream = new FileOutputStream(
-                    new File(this.instanceInstaller.root.toFile(), "fabric-server-launcher.properties"));
-            propertiesOutputStream.write(("serverJar=" + this.instanceInstaller.getMinecraftJar().getName() + "\n")
-                    .getBytes(StandardCharsets.UTF_8));
-            propertiesOutputStream.close();
+            try (FileOutputStream propertiesOutputStream = new FileOutputStream(
+                    new File(this.instanceInstaller.root.toFile(), "fabric-server-launcher.properties"))) {
+                propertiesOutputStream.write(("serverJar=" + this.instanceInstaller.getMinecraftJar().getName() + "\n")
+                        .getBytes(StandardCharsets.UTF_8));
+            }
         } catch (IOException e) {
             LogManager.logStackTrace(e);
         }
@@ -260,9 +271,7 @@ public class LegacyFabricLoader implements Loader {
             GetLegacyFabricLoaderVersionsForMinecraftVersionQuery.Data response = GraphqlClient
                     .callAndWait(new GetLegacyFabricLoaderVersionsForMinecraftVersionQuery(minecraft));
 
-            if (response == null || response.loaderVersions() == null
-                    || response.loaderVersions().legacyfabric() == null
-                    || response.loaderVersions().legacyfabric().isEmpty()) {
+            if (response == null || response.loaderVersions().legacyfabric().isEmpty()) {
                 return null;
             }
 

@@ -22,12 +22,10 @@ import java.awt.GridBagLayout;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-import javax.swing.border.Border;
 
 import org.mini2Dx.gettext.GetText;
 
@@ -64,10 +62,6 @@ public class GeneralInstanceSettingsTab extends JPanel {
     private JTextField quickPlayRealmId;
 
     final ImageIcon HELP_ICON = Utils.getIconImage(App.THEME.getIconPath("question"));
-    final ImageIcon ERROR_ICON = Utils.getIconImage(App.THEME.getIconPath("error"));
-    final ImageIcon WARNING_ICON = Utils.getIconImage(App.THEME.getIconPath("warning"));
-
-    final Border RESTART_BORDER = BorderFactory.createEmptyBorder(0, 0, 0, 5);
 
     final GridBagConstraints gbc = new GridBagConstraints();
 

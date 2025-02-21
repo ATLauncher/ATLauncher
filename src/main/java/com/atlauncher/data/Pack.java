@@ -171,7 +171,7 @@ public class Pack {
     }
 
     public boolean isTester() {
-        AbstractAccount account = AccountManager.getSelectedAccount();
+        MicrosoftAccount account = AccountManager.getSelectedAccount();
         if (account == null) {
             return false;
         }
@@ -205,7 +205,7 @@ public class Pack {
         if (this.type != PackType.PRIVATE) {
             return true;
         }
-        AbstractAccount account = AccountManager.getSelectedAccount();
+        MicrosoftAccount account = AccountManager.getSelectedAccount();
         if (account == null) {
             return false;
         }

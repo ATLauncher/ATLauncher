@@ -60,8 +60,9 @@ public class NewsManager {
                     @Override
                     public void onResponse(@NotNull Response<GetNewsQuery.Data> response) {
                         GetNewsQuery.Data data = response.getData();
-                        if (data == null)
+                        if (data == null) {
                             return;
+                        }
                         List<GetNewsQuery.GeneralNew> networkNews = data.generalNews();
                         NEWS.onNext(networkNews.stream().map(AbstractNews::new).collect(Collectors.toList()));
                     }

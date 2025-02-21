@@ -24,9 +24,10 @@ import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+import javax.annotation.Nonnull;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.jetbrains.annotations.NotNull;
 
 import com.atlauncher.App;
 import com.atlauncher.constants.Constants;
@@ -48,9 +49,9 @@ import io.reactivex.rxjava3.subjects.BehaviorSubject;
  */
 public class JavaSettingsViewModel implements SettingsListener {
     private static final Logger LOG = LogManager.getLogger();
-    private static final long javaPathCheckDelay = 2000;
-    private static final long javaParamCheckDelay = 2000;
-    private static final long javaInstallLocationCheckDelay = 2000;
+    private static final long JAVA_PATH_CHECK_DELAY = 2000;
+    private static final long JAVA_PARAM_CHECK_DELAY = 2000;
+    private static final long JAVA_INSTALL_LOCATION_CHECK_DELAY = 2000;
 
     private final BehaviorSubject<Integer> _maxRam = BehaviorSubject.create(),
             _metaspace = BehaviorSubject.create(),
@@ -108,7 +109,7 @@ public class JavaSettingsViewModel implements SettingsListener {
             } finally {
                 if (javaPathChanged) {
                     javaPathCheckState.onNext(CheckState.CheckPending);
-                    if (javaPathLastChange + javaPathCheckDelay < System.currentTimeMillis()) {
+                    if (javaPathLastChange + JAVA_PATH_CHECK_DELAY < System.currentTimeMillis()) {
                         // Prevent user from saving while checking
                         setJavaPathPending();
                         javaPathCheckState.onNext(CheckState.Checking);
@@ -140,7 +141,7 @@ public class JavaSettingsViewModel implements SettingsListener {
             } finally {
                 if (javaInstallLocationChanged) {
                     javaInstallLocationCheckState.onNext(CheckState.CheckPending);
-                    if (javaInstallLocationLastChange + javaInstallLocationCheckDelay < System.currentTimeMillis()) {
+                    if (javaInstallLocationLastChange + JAVA_INSTALL_LOCATION_CHECK_DELAY < System.currentTimeMillis()) {
                         // Prevent user from saving while checking
                         setJavaInstallLocationPending();
                         javaInstallLocationCheckState.onNext(CheckState.Checking);
@@ -172,7 +173,7 @@ public class JavaSettingsViewModel implements SettingsListener {
             } finally {
                 if (javaParamChanged) {
                     javaParamCheckState.onNext(CheckState.CheckPending);
-                    if (javaParamLastChange + javaParamCheckDelay < System.currentTimeMillis()) {
+                    if (javaParamLastChange + JAVA_PARAM_CHECK_DELAY < System.currentTimeMillis()) {
                         // Prevent user from saving while checking
                         setJavaParamsPending();
                         javaParamCheckState.onNext(CheckState.Checking);
@@ -491,7 +492,7 @@ public class JavaSettingsViewModel implements SettingsListener {
         return _javaInstallLocation.observeOn(SwingSchedulers.edt());
     }
 
-    public void setJavaInstallLocation(@NotNull String path) {
+    public void setJavaInstallLocation(@Nonnull String path) {
         if (!path.isEmpty()) {
             setJavaInstallLocationPending();
             App.settings.javaInstallLocation = path;

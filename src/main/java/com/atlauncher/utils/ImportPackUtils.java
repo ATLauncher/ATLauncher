@@ -48,6 +48,7 @@ import com.atlauncher.gui.dialogs.InstanceInstallerDialog;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.network.Download;
+import com.google.gson.JsonSyntaxException;
 
 public class ImportPackUtils {
     public static boolean loadFromUrl(String url) {
@@ -92,20 +93,20 @@ public class ImportPackUtils {
         LogManager.debug(matcher.groupCount() + "");
 
         if (matcher.groupCount() == 2 && matcher.group(2) != null) {
-            fileId = Integer.parseInt(matcher.group(2));
+            fileId = Integer.valueOf(matcher.group(2));
         }
 
         LogManager.debug("Found pack with slug " + packSlug + " and file id of " + fileId);
 
         CurseForgeProject project = CurseForgeApi.getModPackBySlug(packSlug);
-        Integer projectId = project.id;
-        fileId = project.mainFileId;
-
-        if (projectId == null || fileId == null) {
+        if (project == null) {
             LogManager.error(
-                    "Cannot install as the id's couldn't be found. Try using a specific files install link instead.");
+                    "Cannot install as the project with slug " + packSlug + " was not found.");
             return false;
         }
+
+        Integer projectId = project.id;
+        fileId = project.mainFileId;
 
         LogManager.debug("Resolved to project id " + projectId + " and file id of " + fileId);
 
@@ -245,7 +246,8 @@ public class ImportPackUtils {
                 return false;
             }
 
-            new InstanceInstallerDialog(modrinthProject);
+            InstanceInstallerDialog instanceInstallerDialog = new InstanceInstallerDialog(modrinthProject);
+            instanceInstallerDialog.setVisible(true);
         } catch (Exception e) {
             LogManager.logStackTrace("Failed to install Modrinth pack from URL", e);
             return false;
@@ -320,8 +322,9 @@ public class ImportPackUtils {
 
             ArchiveUtils.extract(file.toPath(), tmpDir);
 
-            new InstanceInstallerDialog(manifest, tmpDir);
-        } catch (Exception e) {
+            InstanceInstallerDialog instanceInstallerDialog = new InstanceInstallerDialog(manifest, tmpDir);
+            instanceInstallerDialog.setVisible(true);
+        } catch (JsonSyntaxException e) {
             LogManager.logStackTrace("Failed to install CurseForge pack", e);
             FileUtils.deleteDirectory(tmpDir);
             return false;
@@ -342,7 +345,8 @@ public class ImportPackUtils {
                 ModrinthProject project = ModrinthApi.getProject(version.projectId);
 
                 if (project != null) {
-                    new InstanceInstallerDialog(project, version);
+                    InstanceInstallerDialog instanceInstallerDialog = new InstanceInstallerDialog(project, version);
+                    instanceInstallerDialog.setVisible(true);
 
                     return true;
                 }
@@ -376,8 +380,9 @@ public class ImportPackUtils {
 
             ArchiveUtils.extract(file.toPath(), tmpDir);
 
-            new InstanceInstallerDialog(manifest, tmpDir);
-        } catch (Exception e) {
+            InstanceInstallerDialog instanceInstallerDialog = new InstanceInstallerDialog(manifest, tmpDir);
+            instanceInstallerDialog.setVisible(true);
+        } catch (JsonSyntaxException e) {
             LogManager.logStackTrace("Failed to install Modrinth pack", e);
             FileUtils.deleteDirectory(tmpDir);
             return false;
@@ -388,10 +393,10 @@ public class ImportPackUtils {
 
     public static boolean loadMultiMCFormat(Path extractedPath) {
         try (InputStreamReader fileReader = new InputStreamReader(
-            Files.newInputStream(extractedPath.resolve("mmc-pack.json")),
+                Files.newInputStream(extractedPath.resolve("mmc-pack.json")),
                 StandardCharsets.UTF_8);
                 InputStreamReader instanceCfgStream = new InputStreamReader(
-                    Files.newInputStream(extractedPath.resolve("instance.cfg")),
+                        Files.newInputStream(extractedPath.resolve("instance.cfg")),
                         StandardCharsets.UTF_8)) {
             MultiMCManifest manifest = Gsons.DEFAULT.fromJson(fileReader, MultiMCManifest.class);
 
@@ -405,7 +410,8 @@ public class ImportPackUtils {
                 return false;
             }
 
-            new InstanceInstallerDialog(manifest, extractedPath);
+            InstanceInstallerDialog instanceInstallerDialog = new InstanceInstallerDialog(manifest, extractedPath);
+            instanceInstallerDialog.setVisible(true);
         } catch (Exception e) {
             LogManager.logStackTrace("Failed to install MultiMC pack", e);
             return false;

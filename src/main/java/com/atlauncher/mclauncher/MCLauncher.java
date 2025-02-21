@@ -33,7 +33,6 @@ import java.util.stream.Stream;
 import com.atlauncher.App;
 import com.atlauncher.FileSystem;
 import com.atlauncher.constants.Constants;
-import com.atlauncher.data.AbstractAccount;
 import com.atlauncher.data.DisableableMod;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.MicrosoftAccount;
@@ -59,7 +58,7 @@ public class MCLauncher {
         return launch(account, instance, null, nativesTempDir.toFile(), lwjglNativesTempDir, wrapperCommand, username);
     }
 
-    private static Process launch(AbstractAccount account, Instance instance, String props, File nativesDir,
+    private static Process launch(MicrosoftAccount account, Instance instance, String props, File nativesDir,
             Path lwjglNativesTempDir, String wrapperCommand, String username) throws Exception {
         List<String> arguments = getArguments(account, instance, props, nativesDir.getAbsolutePath(),
                 lwjglNativesTempDir, username);
@@ -155,7 +154,7 @@ public class MCLauncher {
         return wrapArgs;
     }
 
-    private static List<String> getArguments(AbstractAccount account, Instance instance, String props,
+    private static List<String> getArguments(MicrosoftAccount account, Instance instance, String props,
             String nativesDir, Path lwjglNativesTempDir, String username) {
         StringBuilder cpb = new StringBuilder();
         boolean hasCustomJarMods = false;
@@ -456,7 +455,7 @@ public class MCLauncher {
         return arguments;
     }
 
-    private static String replaceArgument(String incomingArgument, Instance instance, AbstractAccount account,
+    private static String replaceArgument(String incomingArgument, Instance instance, MicrosoftAccount account,
             String props, String nativesDir, String classpath, String username) {
         String argument = incomingArgument;
 
@@ -483,7 +482,7 @@ public class MCLauncher {
         return argument;
     }
 
-    private static String censorArguments(List<String> arguments, AbstractAccount account, String props,
+    private static String censorArguments(List<String> arguments, MicrosoftAccount account, String props,
             String username) {
         String argsString = arguments.toString();
 

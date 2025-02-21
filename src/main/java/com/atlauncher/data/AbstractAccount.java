@@ -125,7 +125,7 @@ public abstract class AbstractAccount implements Serializable {
         if (dialog.getReturnValue() == null) {
             DialogManager.okDialog().setTitle(GetText.tr("No Changes"))
                     .setContent(GetText.tr("Your username hasn't changed.")).setType(DialogManager.INFO).show();
-        } else if (dialog.getReturnValue()) {
+        } else if (dialog.getReturnValue() == true) {
             AccountManager.saveAccounts();
             DialogManager.okDialog().setTitle(GetText.tr("Username Updated"))
                     .setContent(GetText.tr("Your username has been updated.")).setType(DialogManager.INFO).show();
@@ -210,7 +210,7 @@ public abstract class AbstractAccount implements Serializable {
             dialog.close();
         }));
         dialog.start();
-        if (!dialog.getReturnValue()) {
+        if (dialog.getReturnValue() == false) {
             DialogManager.okDialog().setTitle(GetText.tr("Error"))
                     .setContent(GetText.tr("Error downloading skin. Please try again later!"))
                     .setType(DialogManager.ERROR).show();
@@ -266,10 +266,9 @@ public abstract class AbstractAccount implements Serializable {
      */
     private String dashedUUID() {
         return this.uuid
-            .replaceFirst(
-                "(\\p{XDigit}{8})(\\p{XDigit}{4})(\\p{XDigit}{4})(\\p{XDigit}{4})(\\p{XDigit}+)",
-                "$1-$2-$3-$4-$5"
-            );
+                .replaceFirst(
+                        "(\\p{XDigit}{8})(\\p{XDigit}{4})(\\p{XDigit}{4})(\\p{XDigit}{4})(\\p{XDigit}+)",
+                        "$1-$2-$3-$4-$5");
     }
 
     /**

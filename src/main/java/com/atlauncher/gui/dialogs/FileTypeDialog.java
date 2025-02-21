@@ -88,8 +88,6 @@ public class FileTypeDialog extends JDialog {
                 close();
             }
         });
-
-        setVisible(true);
     }
 
     private void close() {

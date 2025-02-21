@@ -80,7 +80,8 @@ public class TechnicPackCard extends JPanel implements RelocalizationListener {
                 }
             } else {
                 Analytics.trackEvent(AnalyticsEvent.forPackInstall(pack));
-                new InstanceInstallerDialog(pack);
+                InstanceInstallerDialog instanceInstallerDialog = new InstanceInstallerDialog(pack);
+                instanceInstallerDialog.setVisible(true);
             }
         });
         buttonsPanel.add(newInstanceButton);

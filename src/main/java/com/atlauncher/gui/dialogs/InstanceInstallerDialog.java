@@ -417,8 +417,6 @@ public class InstanceInstallerDialog extends JDialog {
         add(bottom, BorderLayout.SOUTH);
 
         WindowUtils.resizeForContent(this);
-
-        setVisible(true);
     }
 
     private void handlePackInstall(Object object) {
@@ -477,11 +475,20 @@ public class InstanceInstallerDialog extends JDialog {
 
         dialog.start();
 
-        List<CurseForgeFile> files = dialog.getReturnValue().left();
-        pack.curseForgeProjectDescription = dialog.getReturnValue().right();
+        Pair<List<CurseForgeFile>, String> returnValue = dialog.getReturnValue();
+        if (returnValue == null) {
+            DialogManager.okDialog().setTitle(GetText.tr("Error"))
+                    .setContent(new HTMLBuilder().text(GetText.tr(
+                            "Failed to get project files from CurseForge."))
+                            .center().build())
+                    .show();
+            return;
+        }
 
-        if (files == null || files.isEmpty()) {
-            // TODO: this still throws an exception, fix at some point
+        List<CurseForgeFile> files = Optional.ofNullable(returnValue.left()).orElse(new ArrayList<>());
+        pack.curseForgeProjectDescription = returnValue.right();
+
+        if (files.isEmpty()) {
             DialogManager.okDialog().setTitle(GetText.tr("No Server Files Available"))
                     .setContent(new HTMLBuilder().text(GetText.tr(
                             "No server files are available for this pack, so a server cannot be created."))
@@ -641,7 +648,8 @@ public class InstanceInstallerDialog extends JDialog {
         }));
 
         modrinthProjectLookupDialog.start();
-        List<ModrinthVersion> versions = modrinthProjectLookupDialog.getReturnValue();
+        List<ModrinthVersion> versions = Optional.ofNullable(modrinthProjectLookupDialog.getReturnValue())
+                .orElse(new ArrayList<>());
 
         pack.versions = versions.stream()
                 .sorted(Comparator.comparing((ModrinthVersion version) -> version.datePublished).reversed())
@@ -671,8 +679,15 @@ public class InstanceInstallerDialog extends JDialog {
 
         if (object instanceof TechnicModpack) {
             slug = ((TechnicModpack) object).name;
-        } else {
+        } else if (object instanceof TechnicModpackSlim) {
             slug = ((TechnicModpackSlim) object).slug;
+        } else {
+            DialogManager.okDialog().setTitle(GetText.tr("Error"))
+                    .setContent(new HTMLBuilder().text(GetText.tr(
+                            "Failed to get slug for modpack from Technic."))
+                            .center().build())
+                    .show();
+            return;
         }
 
         final ProgressDialog<TechnicModpack> technicModpackDialog = new ProgressDialog<>(
@@ -710,6 +725,14 @@ public class InstanceInstallerDialog extends JDialog {
             dialog.start();
 
             TechnicSolderModpack technicSolderModpack = dialog.getReturnValue();
+            if (technicSolderModpack == null) {
+                DialogManager.okDialog().setTitle(GetText.tr("Error"))
+                        .setContent(new HTMLBuilder().text(GetText.tr(
+                                "Failed to get modpack builds from Technic."))
+                                .center().build())
+                        .show();
+                return;
+            }
 
             pack.versions = technicSolderModpack.builds.stream().map(v -> {
                 PackVersion packVersion = new PackVersion();

@@ -56,7 +56,6 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import javax.imageio.IIOException;
 import javax.imageio.ImageIO;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -101,7 +100,6 @@ import com.atlauncher.data.minecraft.JavaRuntimeManifestFileType;
 import com.atlauncher.data.minecraft.JavaRuntimes;
 import com.atlauncher.data.minecraft.Library;
 import com.atlauncher.data.minecraft.MinecraftVersion;
-import com.atlauncher.data.minecraft.MojangAssetIndex;
 import com.atlauncher.data.minecraft.VersionManifestVersionType;
 import com.atlauncher.data.minecraft.loaders.LoaderType;
 import com.atlauncher.data.minecraft.loaders.LoaderVersion;
@@ -308,13 +306,9 @@ public class Instance extends MinecraftVersion implements ModManagement {
 
                     return new ImageIcon(img.getScaledInstance(300, 150, Image.SCALE_SMOOTH));
                 }
-            } catch (IIOException e) {
+            } catch (IOException e) {
                 LogManager.warn("Error creating scaled image from the custom image of instance " + this.launcher.name
                         + ". Using default image.");
-            } catch (Exception e) {
-                LogManager.logStackTrace(
-                        "Error creating scaled image from the custom image of instance " + this.launcher.name, e,
-                        false);
             }
         }
 
@@ -429,7 +423,8 @@ public class Instance extends MinecraftVersion implements ModManagement {
      * Minecraft jar and libraries, as well as organise the libraries, ready to be
      * played.
      */
-    public boolean prepareForLaunch(ProgressDialog progressDialog, Path nativesTempDir, Path lwjglNativesTempDir) {
+    public boolean prepareForLaunch(ProgressDialog<Boolean> progressDialog, Path nativesTempDir,
+            Path lwjglNativesTempDir) {
         PerformanceManager.start();
         OkHttpClient httpClient = Network.createProgressClient(progressDialog);
 
@@ -607,7 +602,6 @@ public class Instance extends MinecraftVersion implements ModManagement {
         // organise assets
         PerformanceManager.start("Organising Resources 1");
         progressDialog.setLabel(GetText.tr("Organising Resources"));
-        MojangAssetIndex assetIndex = this.assetIndex;
 
         AssetIndex index = com.atlauncher.network.Download.build().setUrl(assetIndex.url).hash(assetIndex.sha1)
                 .size(assetIndex.size).downloadTo(FileSystem.RESOURCES_INDEXES.resolve(assetIndex.id + ".json"))
@@ -825,8 +819,7 @@ public class Instance extends MinecraftVersion implements ModManagement {
 
         final String username = offline ? playerName : account.minecraftUsername;
 
-        int maximumMemory = (this.launcher.maximumMemory == null) ? App.settings.maximumMemory
-                : this.launcher.maximumMemory;
+        int maximumMemory = Optional.ofNullable(this.launcher.maximumMemory).orElse(App.settings.maximumMemory);
         if ((maximumMemory < this.launcher.requiredMemory)
                 && (this.launcher.requiredMemory <= OS.getSafeMaximumRam())) {
             int ret = DialogManager.yesNoDialog().setTitle(GetText.tr("Insufficient Ram"))
@@ -841,7 +834,7 @@ public class Instance extends MinecraftVersion implements ModManagement {
                 return false;
             }
         }
-        int permGen = (this.launcher.permGen == null) ? App.settings.metaspace : this.launcher.permGen;
+        int permGen = Optional.ofNullable(this.launcher.permGen).orElse(App.settings.metaspace);
         if (permGen < this.launcher.requiredPermGen) {
             int ret = DialogManager.yesNoDialog().setTitle(GetText.tr("Insufficent Permgen"))
                     .setContent(new HTMLBuilder().center().text(GetText.tr(
@@ -883,14 +876,14 @@ public class Instance extends MinecraftVersion implements ModManagement {
         }));
         prepareDialog.start();
 
-        if (prepareDialog.getReturnValue() == null || !prepareDialog.getReturnValue()) {
+        if (prepareDialog.getReturnValue() != true) {
             Analytics.trackEvent(AnalyticsEvent.forInstanceLaunchFailed(this, offline, "prepare_failure"));
             LogManager.error(
                     "Failed to prepare instance " + this.launcher.name + " for launch. Check the logs and try again.");
             return false;
         }
 
-        Thread launcher = new Thread(() -> {
+        Thread launcherThread = new Thread(() -> {
             try {
                 long start = System.currentTimeMillis();
                 if (App.launcher.getParent() != null) {
@@ -922,7 +915,7 @@ public class Instance extends MinecraftVersion implements ModManagement {
                     }));
                     loginDialog.start();
 
-                    if (!(Boolean) loginDialog.getReturnValue()) {
+                    if (loginDialog.getReturnValue() == false) {
                         LogManager.error("Failed to login");
                         Analytics.trackEvent(
                                 AnalyticsEvent.forInstanceLaunchFailed(this, offline, "microsoft_login_failure"));
@@ -1141,7 +1134,7 @@ public class Instance extends MinecraftVersion implements ModManagement {
         this.incrementNumberOfPlays();
         this.save();
 
-        launcher.start();
+        launcherThread.start();
         return true;
     }
 
@@ -1592,8 +1585,8 @@ public class Instance extends MinecraftVersion implements ModManagement {
                     try {
                         long hash = Hashing.murmur(dm.getFile(this.ROOT, this.id).toPath());
                         murmurHashes.put(hash, dm);
-                    } catch (Throwable t) {
-                        LogManager.logStackTrace(t);
+                    } catch (IOException e) {
+                        LogManager.logStackTrace(e);
                     }
                 });
 
@@ -2220,7 +2213,9 @@ public class Instance extends MinecraftVersion implements ModManagement {
     }
 
     public void update() {
-        new InstanceInstallerDialog(this, true, false, null, true, null, App.launcher.getParent(), null);
+        InstanceInstallerDialog instanceInstallerDialog = new InstanceInstallerDialog(this, true, false, null, true,
+                null, App.launcher.getParent(), null);
+        instanceInstallerDialog.setVisible(true);
     }
 
     public boolean hasCurseForgeProjectId() {
@@ -2276,8 +2271,9 @@ public class Instance extends MinecraftVersion implements ModManagement {
 
         final Thread backupThread = new Thread(() -> {
             Timestamp timestamp = new Timestamp(new Date().getTime());
-            String time = timestamp.toString().replaceAll("[^0-9]", "_");
-            String filename = getSafeName() + "-" + time.substring(0, time.lastIndexOf("_")) + ".zip";
+            String timestampString = timestamp.toString().replaceAll("[^0-9]", "_");
+            String filename = getSafeName() + "-" + timestampString.substring(0, timestampString.lastIndexOf("_"))
+                    + ".zip";
 
             Path backupsPath = FileSystem.BACKUPS;
             if (App.settings.backupsPath != null) {
@@ -2307,12 +2303,14 @@ public class Instance extends MinecraftVersion implements ModManagement {
 
     public void startReinstall() {
         Analytics.trackEvent(AnalyticsEvent.forInstanceEvent("instance_reinstall", this));
-        new InstanceInstallerDialog(this);
+        InstanceInstallerDialog instanceInstallerDialog = new InstanceInstallerDialog(this);
+        instanceInstallerDialog.setVisible(true);
     }
 
     public void startRename() {
         Analytics.trackEvent(AnalyticsEvent.forInstanceEvent("instance_rename", this));
-        new RenameInstanceDialog(this);
+        RenameInstanceDialog renameInstanceDialog = new RenameInstanceDialog(this);
+        renameInstanceDialog.setVisible(true);
     }
 
     public void startClone() {
@@ -2329,7 +2327,7 @@ public class Instance extends MinecraftVersion implements ModManagement {
             Analytics.trackEvent(AnalyticsEvent.forInstanceEvent("instance_clone", this));
 
             final String newName = clonedName;
-            final ProgressDialog dialog = new ProgressDialog(GetText.tr("Cloning Instance"), 0,
+            final ProgressDialog<Void> dialog = new ProgressDialog<>(GetText.tr("Cloning Instance"), 0,
                     GetText.tr("Cloning Instance. Please wait..."), null, App.launcher.getParent());
             dialog.addThread(new Thread(() -> {
                 InstanceManager.cloneInstance(this, newName);
@@ -2661,7 +2659,7 @@ public class Instance extends MinecraftVersion implements ModManagement {
             String[] versionParts = id.split("\\.", 3);
 
             return Integer.parseInt(versionParts[0]) == 1 && Integer.parseInt(versionParts[1]) < 6;
-        } catch (Exception e) {
+        } catch (NumberFormatException e) {
             return false;
         }
     }
@@ -2734,13 +2732,13 @@ public class Instance extends MinecraftVersion implements ModManagement {
             return false;
         }
 
-        String javaVersion = Java.getVersionForJavaPath(new File(getJavaPath()));
+        String javaVersionNumber = Java.getVersionForJavaPath(new File(getJavaPath()));
 
-        if (javaVersion.equalsIgnoreCase("Unknown")) {
+        if (javaVersionNumber.equalsIgnoreCase("Unknown")) {
             return false;
         }
 
-        int majorJavaVersion = Java.parseJavaVersionNumber(javaVersion);
+        int majorJavaVersion = Java.parseJavaVersionNumber(javaVersionNumber);
 
         return !launcher.java.conforms(majorJavaVersion);
     }
@@ -2797,10 +2795,6 @@ public class Instance extends MinecraftVersion implements ModManagement {
     }
 
     @Override
-    public void scanMissingMods() {
-        scanMissingMods(App.launcher.getParent());
-    }
-
     public void scanMissingMods(Window parent) {
         PerformanceManager.start("Instance::scanMissingMods - CheckForAddedMods");
 
@@ -2832,7 +2826,7 @@ public class Instance extends MinecraftVersion implements ModManagement {
         }
 
         if (!files.isEmpty()) {
-            final ProgressDialog progressDialog = new ProgressDialog(GetText.tr("Scanning New Mods"), 0,
+            final ProgressDialog<Void> progressDialog = new ProgressDialog<>(GetText.tr("Scanning New Mods"), 0,
                     GetText.tr("Scanning New Mods"), parent);
 
             progressDialog.addThread(new Thread(() -> {
@@ -2860,8 +2854,8 @@ public class Instance extends MinecraftVersion implements ModManagement {
                                                     : dm
                                                             .getFile(ROOT, id).toPath());
                                     murmurHashes.put(hash, dm);
-                                } catch (Throwable t) {
-                                    LogManager.logStackTrace(t);
+                                } catch (IOException e) {
+                                    LogManager.logStackTrace(e);
                                 }
                             });
 
@@ -2928,7 +2922,7 @@ public class Instance extends MinecraftVersion implements ModManagement {
                     if (!sha1Hashes.isEmpty()) {
                         Set<String> keys = sha1Hashes.keySet();
                         Map<String, ModrinthVersion> modrinthVersions = ModrinthApi
-                                .getVersionsFromSha1Hashes(keys.toArray(new String[keys.size()]));
+                                .getVersionsFromSha1Hashes(keys.toArray(new String[0]));
 
                         if (modrinthVersions != null && !modrinthVersions.isEmpty()) {
                             String[] projectIdsFound = modrinthVersions.values().stream().map(mv -> mv.projectId)
@@ -3200,7 +3194,7 @@ public class Instance extends MinecraftVersion implements ModManagement {
     }
 
     @Override
-    public void addFileFromCurseForge(CurseForgeProject mod, CurseForgeFile file, ProgressDialog dialog) {
+    public void addFileFromCurseForge(CurseForgeProject mod, CurseForgeFile file, ProgressDialog<Void> dialog) {
         Path downloadLocation = FileSystem.DOWNLOADS.resolve(file.fileName);
         Path finalLocation = mod.getInstanceDirectoryPath(this.getRoot()).resolve(file.fileName);
 
@@ -3420,7 +3414,7 @@ public class Instance extends MinecraftVersion implements ModManagement {
 
     @Override
     public void addFileFromModrinth(ModrinthProject mod, ModrinthVersion version, ModrinthFile file,
-            ProgressDialog dialog) {
+            ProgressDialog<Void> dialog) {
         ModrinthFile fileToDownload = Optional.ofNullable(file).orElse(version.getPrimaryFile());
 
         Path downloadLocation = FileSystem.DOWNLOADS.resolve(fileToDownload.filename);

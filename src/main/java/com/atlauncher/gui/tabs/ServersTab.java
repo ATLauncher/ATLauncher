@@ -32,7 +32,6 @@ import org.mini2Dx.gettext.GetText;
 
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.constants.UIConstants;
-import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.gui.card.NilCard;
 import com.atlauncher.gui.card.ServerCard;
 import com.atlauncher.gui.panels.HierarchyPanel;
@@ -42,13 +41,13 @@ import com.atlauncher.viewmodel.base.IServersTabViewModel;
 import com.atlauncher.viewmodel.impl.ServersTabViewModel;
 import com.formdev.flatlaf.icons.FlatSearchIcon;
 
-public class ServersTab extends HierarchyPanel implements Tab, RelocalizationListener {
+public class ServersTab extends HierarchyPanel implements Tab {
     private JTextField searchBox;
 
     private JPanel panel;
     private JScrollPane scrollPane;
 
-    private NilCard nilCard = new NilCard(
+    private final NilCard nilCard = new NilCard(
             getNilMessage(),
             new NilCard.Action[] {
                     NilCard.Action.createCreateServerAction(),

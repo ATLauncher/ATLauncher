@@ -91,7 +91,8 @@ public class CurseForgePackCard extends JPanel implements RelocalizationListener
                 }
             } else {
                 Analytics.trackEvent(AnalyticsEvent.forPackInstall(project));
-                new InstanceInstallerDialog(project);
+                InstanceInstallerDialog instanceInstallerDialog = new InstanceInstallerDialog(project);
+                instanceInstallerDialog.setVisible(true);
             }
         });
         buttonsPanel.add(newInstanceButton);
@@ -120,7 +121,8 @@ public class CurseForgePackCard extends JPanel implements RelocalizationListener
                 }
             } else {
                 Analytics.trackEvent(AnalyticsEvent.forPackInstall(project, true));
-                new InstanceInstallerDialog(project, true);
+                InstanceInstallerDialog instanceInstallerDialog = new InstanceInstallerDialog(project, true);
+                instanceInstallerDialog.setVisible(true);
             }
         });
         createServerButton.setVisible(project.latestFiles.stream().anyMatch(f -> f.serverPackFileId != null));

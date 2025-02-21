@@ -220,7 +220,7 @@ public class CurseForgePacksPanel extends PackBrowserPlatformPanel {
                 // #. {0} is the platform were getting info from (e.g. CurseForge/Modrinth)
                 GetText.tr("Cancelling Looking Up Pack On {0}", "Modrinth"));
         progressDialog.addThread(new Thread(() -> {
-            CurseForgeProject project = null;
+            CurseForgeProject project;
 
             if (id.startsWith("https://www.curseforge.com/minecraft/modpacks")) {
                 Pattern pattern = Pattern.compile(
@@ -271,7 +271,8 @@ public class CurseForgePacksPanel extends PackBrowserPlatformPanel {
             }
         } else {
             Analytics.trackEvent(AnalyticsEvent.forPackInstall(project));
-            new InstanceInstallerDialog(project);
+            InstanceInstallerDialog instanceInstallerDialog = new InstanceInstallerDialog(project);
+            instanceInstallerDialog.setVisible(true);
         }
     }
 

@@ -92,7 +92,8 @@ public final class CurseForgeFileDependencyCard extends JPanel {
 
         addButton.addActionListener(e -> {
             Analytics.trackEvent(AnalyticsEvent.forAddMod(mod));
-            new CurseForgeProjectFileSelectorDialog(parent, mod, instanceOrServer);
+            CurseForgeProjectFileSelectorDialog curseForgeProjectFileSelectorDialog = new CurseForgeProjectFileSelectorDialog(parent, mod, instanceOrServer);
+            curseForgeProjectFileSelectorDialog.setVisible(true);
             parent.reloadDependenciesPanel();
         });
 

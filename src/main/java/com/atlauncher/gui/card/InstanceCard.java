@@ -42,8 +42,6 @@ import com.atlauncher.constants.Constants;
 import com.atlauncher.data.BackupMode;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.minecraft.loaders.LoaderType;
-import com.atlauncher.evnt.listener.RelocalizationListener;
-import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.gui.components.CollapsiblePanel;
 import com.atlauncher.gui.components.DropDownButton;
 import com.atlauncher.gui.components.ImagePanel;
@@ -64,7 +62,7 @@ import com.atlauncher.utils.OS;
  * <p/>
  * Class for displaying instances in the Instance Tab
  */
-public class InstanceCard extends CollapsiblePanel implements RelocalizationListener {
+public class InstanceCard extends CollapsiblePanel {
     private final Instance instance;
     private final JTextArea descArea = new JTextArea();
     private final ImagePanel image;
@@ -253,8 +251,6 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
 
         this.getContentPane().setLayout(new BorderLayout());
         this.getContentPane().add(splitter, BorderLayout.CENTER);
-
-        RelocalizationManager.addListener(this);
 
         if (!hasUpdate) {
             this.updateButton.setVisible(false);
@@ -506,12 +502,14 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
         });
         this.addButton.addActionListener(e -> {
             Analytics.trackEvent(AnalyticsEvent.forInstanceEvent("instance_add_mods", instance));
-            new AddModsDialog(instance);
+            AddModsDialog addModsDialog = new AddModsDialog(instance);
+            addModsDialog.setVisible(true);
             exportButton.setVisible(instance.canBeExported());
         });
         this.editButton.addActionListener(e -> {
             Analytics.trackEvent(AnalyticsEvent.forInstanceEvent("instance_edit_mods", instance));
-            new EditModsDialog(instance);
+            EditModsDialog editModsDialog = new EditModsDialog(instance);
+            editModsDialog.setVisible(true);
             exportButton.setVisible(instance.canBeExported());
         });
         this.serversButton.addActionListener(e -> OS.openWebBrowser(
@@ -520,7 +518,8 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
         this.openWebsite.addActionListener(e -> OS.openWebBrowser(instance.getWebsiteUrl()));
         this.settingsButton.addActionListener(e -> {
             Analytics.trackEvent(AnalyticsEvent.forInstanceEvent("instance_settings", instance));
-            new InstanceSettingsDialog(instance);
+            InstanceSettingsDialog instanceSettingsDialog = new InstanceSettingsDialog(instance);
+            instanceSettingsDialog.setVisible(true);
         });
         this.deleteButton.addActionListener(e -> {
             int ret = DialogManager.yesNoDialog(false).setTitle(GetText.tr("Delete Instance"))
@@ -542,7 +541,8 @@ public class InstanceCard extends CollapsiblePanel implements RelocalizationList
         });
         this.exportButton.addActionListener(e -> {
             Analytics.trackEvent(AnalyticsEvent.forInstanceEvent("instance_export", instance));
-            new InstanceExportDialog(instance);
+            InstanceExportDialog instanceExportDialog = new InstanceExportDialog(instance);
+            instanceExportDialog.setVisible(true);
         });
     }
 

@@ -18,6 +18,7 @@
 package com.atlauncher.constants;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.stream.Collectors;
@@ -30,9 +31,13 @@ import com.atlauncher.utils.OS;
 @SuppressWarnings("MutablePublicArray")
 public class Constants {
     static {
-        String versionFromFile = new BufferedReader(
-                new InputStreamReader(App.class.getResourceAsStream("/version"), StandardCharsets.UTF_8)).lines()
-                        .collect(Collectors.joining("")).trim();
+        String versionFromFile;
+        try (BufferedReader reader = new BufferedReader(
+                new InputStreamReader(App.class.getResourceAsStream("/version"), StandardCharsets.UTF_8))) {
+            versionFromFile = reader.lines().collect(Collectors.joining("")).trim();
+        } catch (IOException e) {
+            versionFromFile = "3.0.0.0";
+        }
         String[] versionParts = versionFromFile.split("\\.", 4);
 
         String stream = "Release";
@@ -57,23 +62,34 @@ public class Constants {
     public static final String SENTRY_DSN = "https://499c3bbc55cb434dad42a3ac670e2c91@sentry.io/1498519";
 
     // Launcher domains, endpoints, etc
-    public static String BASE_LAUNCHER_PROTOCOL = "https://";
-    public static String BASE_LAUNCHER_DOMAIN = "atlauncher.com";
-    public static String API_BASE_URL = BASE_LAUNCHER_PROTOCOL + "api." + BASE_LAUNCHER_DOMAIN + "/v1/launcher/";
-    public static String GRAPHQL_ENDPOINT = BASE_LAUNCHER_PROTOCOL + "api." + BASE_LAUNCHER_DOMAIN + "/v2/graphql";
-    public static String API_HOST = "api." + BASE_LAUNCHER_DOMAIN;
-    public static String ANALYTICS_BASE_URL = BASE_LAUNCHER_PROTOCOL + "analytics." + BASE_LAUNCHER_DOMAIN;
-    public static String PASTE_CHECK_URL = BASE_LAUNCHER_PROTOCOL + "paste." + BASE_LAUNCHER_DOMAIN;
-    public static String PASTE_HOST = "paste." + BASE_LAUNCHER_DOMAIN;
-    public static String SERVERS_LIST_PACK = BASE_LAUNCHER_PROTOCOL + BASE_LAUNCHER_DOMAIN + "/servers/list/pack";
-    public static String PASTE_API_URL = BASE_LAUNCHER_PROTOCOL + "paste." + BASE_LAUNCHER_DOMAIN + "/api/create";
+    private static final String DEFAULT_BASE_LAUNCHER_PROTOCOL = "https://";
+    private static final String DEFAULT_BASE_LAUNCHER_DOMAIN = "atlauncher.com";
+
+    public static String BASE_LAUNCHER_PROTOCOL = DEFAULT_BASE_LAUNCHER_PROTOCOL;
+    public static String BASE_LAUNCHER_DOMAIN = DEFAULT_BASE_LAUNCHER_DOMAIN;
+    public static String API_BASE_URL = DEFAULT_BASE_LAUNCHER_PROTOCOL + "api." + DEFAULT_BASE_LAUNCHER_DOMAIN
+            + "/v1/launcher/";
+    public static String GRAPHQL_ENDPOINT = DEFAULT_BASE_LAUNCHER_PROTOCOL + "api." + DEFAULT_BASE_LAUNCHER_DOMAIN
+            + "/v2/graphql";
+    public static String API_HOST = "api." + DEFAULT_BASE_LAUNCHER_DOMAIN;
+    public static String ANALYTICS_BASE_URL = DEFAULT_BASE_LAUNCHER_PROTOCOL + "analytics."
+            + DEFAULT_BASE_LAUNCHER_DOMAIN;
+    public static String PASTE_CHECK_URL = DEFAULT_BASE_LAUNCHER_PROTOCOL + "paste." + DEFAULT_BASE_LAUNCHER_DOMAIN;
+    public static String PASTE_HOST = "paste." + DEFAULT_BASE_LAUNCHER_DOMAIN;
+    public static String SERVERS_LIST_PACK = DEFAULT_BASE_LAUNCHER_PROTOCOL + DEFAULT_BASE_LAUNCHER_DOMAIN
+            + "/servers/list/pack";
+    public static String PASTE_API_URL = DEFAULT_BASE_LAUNCHER_PROTOCOL + "paste." + DEFAULT_BASE_LAUNCHER_DOMAIN
+            + "/api/create";
 
     // CDN domains, endpoints, etc
-    public static String BASE_CDN_PROTOCOL = "https://";
-    public static String BASE_CDN_DOMAIN = "download.nodecdn.net";
-    public static String BASE_CDN_PATH = "/containers/atl";
-    public static String DOWNLOAD_SERVER = BASE_CDN_PROTOCOL + BASE_CDN_DOMAIN + BASE_CDN_PATH;
-    public static String DOWNLOAD_HOST = BASE_CDN_DOMAIN;
+    private static final String DEFAULT_BASE_CDN_PROTOCOL = "https://";
+    private static final String DEFAULT_BASE_CDN_DOMAIN = "download.nodecdn.net";
+    public static final String BASE_CDN_PATH = "/containers/atl";
+
+    public static String BASE_CDN_PROTOCOL = DEFAULT_BASE_CDN_PROTOCOL;
+    public static String BASE_CDN_DOMAIN = DEFAULT_BASE_CDN_DOMAIN;
+    public static String DOWNLOAD_SERVER = DEFAULT_BASE_CDN_PROTOCOL + DEFAULT_BASE_CDN_DOMAIN + BASE_CDN_PATH;
+    public static String DOWNLOAD_HOST = DEFAULT_BASE_CDN_DOMAIN;
 
     // Mixpanel analytics
     // if you fork or modify this launcher, you must not use this token and get your
@@ -222,7 +238,6 @@ public class Constants {
     }
 
     public static void setBaseCdnPath(String baseCdnPath) {
-        BASE_CDN_PATH = baseCdnPath;
         DOWNLOAD_SERVER = BASE_CDN_PROTOCOL + BASE_CDN_DOMAIN + baseCdnPath;
     }
 }

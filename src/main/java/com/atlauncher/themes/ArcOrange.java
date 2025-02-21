@@ -17,7 +17,6 @@
  */
 package com.atlauncher.themes;
 
-@SuppressWarnings("serial")
 public class ArcOrange extends Light {
     public static boolean install() {
         instance = new ArcOrange();

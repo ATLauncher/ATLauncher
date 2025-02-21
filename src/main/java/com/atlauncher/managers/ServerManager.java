@@ -27,6 +27,7 @@ import java.util.Optional;
 
 import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
+import com.atlauncher.data.MicrosoftAccount;
 import com.atlauncher.data.Server;
 import com.atlauncher.utils.FileUtils;
 import com.atlauncher.utils.Utils;
@@ -83,15 +84,17 @@ public class ServerManager {
     }
 
     public static void setServerVisibility(Server server, boolean collapsed) {
-        if (server != null) {
+        MicrosoftAccount selectedAccount = AccountManager.getSelectedAccount();
+
+        if (server != null && selectedAccount != null) {
             if (collapsed) {
                 // Closed It
-                if (!AccountManager.getSelectedAccount().collapsedServers.contains(server.name)) {
-                    AccountManager.getSelectedAccount().collapsedServers.add(server.name);
+                if (!selectedAccount.collapsedServers.contains(server.name)) {
+                    selectedAccount.collapsedServers.add(server.name);
                 }
             } else {
                 // Opened It
-                AccountManager.getSelectedAccount().collapsedServers.remove(server.name);
+                selectedAccount.collapsedServers.remove(server.name);
             }
             AccountManager.saveAccounts();
         }
@@ -106,7 +109,8 @@ public class ServerManager {
      */
     @SuppressWarnings("ConstantConditions")
     public static boolean addServer(Server server) {
-        List<Server> servers = SERVERS.getValue();
+        List<Server> servers = Optional.ofNullable(SERVERS.getValue()).orElse(new ArrayList<>());
+
         boolean added = servers.add(server);
         if (added) {
             SERVERS.onNext(servers);
@@ -115,7 +119,7 @@ public class ServerManager {
     }
 
     public static void removeServer(Server server) {
-        List<Server> servers = SERVERS.getValue();
+        List<Server> servers = Optional.ofNullable(SERVERS.getValue()).orElse(new ArrayList<>());
 
         if (servers.remove(server)) {
             FileUtils.delete(server.getRoot(), true);
@@ -124,7 +128,9 @@ public class ServerManager {
     }
 
     public static boolean isServer(String name) {
-        return SERVERS.getValue().stream()
+        List<Server> servers = Optional.ofNullable(SERVERS.getValue()).orElse(new ArrayList<>());
+
+        return servers.stream()
                 .anyMatch(s -> s.getSafeName().equalsIgnoreCase(name.replaceAll("[^A-Za-z0-9]", "")));
     }
 }

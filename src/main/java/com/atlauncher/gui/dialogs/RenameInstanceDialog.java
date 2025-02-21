@@ -75,8 +75,6 @@ public class RenameInstanceDialog extends JDialog {
                 close();
             }
         });
-
-        setVisible(true);
     }
 
     private void setupComponents() {

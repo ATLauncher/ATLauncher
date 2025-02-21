@@ -40,9 +40,7 @@ import org.mini2Dx.gettext.GetText;
 
 import com.atlauncher.App;
 import com.atlauncher.builders.HTMLBuilder;
-import com.atlauncher.data.AbstractAccount;
 import com.atlauncher.data.MicrosoftAccount;
-import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.gui.dialogs.LoginWithMicrosoftDialog;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.gui.panels.HierarchyPanel;
@@ -56,7 +54,7 @@ import com.atlauncher.utils.Utils;
 import com.atlauncher.viewmodel.base.IAccountsViewModel;
 import com.atlauncher.viewmodel.impl.AccountsViewModel;
 
-public class AccountsTab extends HierarchyPanel implements Tab, RelocalizationListener {
+public class AccountsTab extends HierarchyPanel implements Tab {
     private static final long serialVersionUID = 2493791137600123223L;
 
     private IAccountsViewModel viewModel;
@@ -154,12 +152,13 @@ public class AccountsTab extends HierarchyPanel implements Tab, RelocalizationLi
         loginWithMicrosoftButton.addActionListener(e -> {
             // TODO This should be handled by some reaction via listener
             int numberOfAccountsBefore = viewModel.accountCount();
-            LoginWithMicrosoftDialog dialog = new LoginWithMicrosoftDialog();
+            LoginWithMicrosoftDialog loginWithMicrosoftDialog = new LoginWithMicrosoftDialog();
+            loginWithMicrosoftDialog.setVisible(true);
 
             if (numberOfAccountsBefore != viewModel.accountCount()) {
                 // account was added, so get the skin
-                if (dialog.account != null) {
-                    dialog.account.updateSkin();
+                if (loginWithMicrosoftDialog.account != null) {
+                    loginWithMicrosoftDialog.account.updateSkin();
                 }
 
                 viewModel.pushNewAccounts();
@@ -180,8 +179,10 @@ public class AccountsTab extends HierarchyPanel implements Tab, RelocalizationLi
 
             // TODO Have this done via listener
             // To describe, userSkin icon should be reactive, not active.
-            AbstractAccount account = viewModel.getSelectedAccount();
-            userSkin.setIcon(account.getMinecraftSkin());
+            MicrosoftAccount account = viewModel.getSelectedAccount();
+            if (account != null) {
+                userSkin.setIcon(account.getMinecraftSkin());
+            }
         });
         contextMenu.add(changeSkin);
 
@@ -191,8 +192,10 @@ public class AccountsTab extends HierarchyPanel implements Tab, RelocalizationLi
 
             // TODO Have this done via listener
             // To describe, userSkin icon should be reactive, not active.
-            AbstractAccount account = viewModel.getSelectedAccount();
-            userSkin.setIcon(account.getMinecraftSkin());
+            MicrosoftAccount account = viewModel.getSelectedAccount();
+            if (account != null) {
+                userSkin.setIcon(account.getMinecraftSkin());
+            }
         });
         contextMenu.add(updateSkin);
 
@@ -232,8 +235,9 @@ public class AccountsTab extends HierarchyPanel implements Tab, RelocalizationLi
      */
     private void refreshAccessToken() {
         MicrosoftAccount account = viewModel.getSelectedAccount();
-        if (account == null)
+        if (account == null) {
             return;
+        }
 
         final ProgressDialog<Boolean> dialog = new ProgressDialog<>(
                 GetText.tr("Refreshing Access Token For {0}", account.minecraftUsername),
@@ -248,7 +252,7 @@ public class AccountsTab extends HierarchyPanel implements Tab, RelocalizationLi
         }));
         dialog.start();
 
-        boolean success = dialog.getReturnValue();
+        boolean success = dialog.getReturnValue() == true;
 
         if (success) {
             DialogManager
@@ -266,7 +270,8 @@ public class AccountsTab extends HierarchyPanel implements Tab, RelocalizationLi
                     .setType(DialogManager.ERROR)
                     .show();
 
-            new LoginWithMicrosoftDialog(account);
+            LoginWithMicrosoftDialog loginWithMicrosoftDialog = new LoginWithMicrosoftDialog(account);
+            loginWithMicrosoftDialog.setVisible(true);
         }
     }
 

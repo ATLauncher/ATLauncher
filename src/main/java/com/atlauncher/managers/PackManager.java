@@ -34,6 +34,7 @@ import com.atlauncher.App;
 import com.atlauncher.Data;
 import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
+import com.atlauncher.data.MicrosoftAccount;
 import com.atlauncher.data.Pack;
 import com.atlauncher.data.PackUsers;
 import com.atlauncher.exceptions.InvalidPack;
@@ -129,15 +130,17 @@ public class PackManager {
     }
 
     public static void setPackVisbility(Pack pack, boolean collapsed) {
-        if (pack != null && AccountManager.getSelectedAccount() != null) {
+        MicrosoftAccount selectedAccount = AccountManager.getSelectedAccount();
+
+        if (pack != null && selectedAccount != null) {
             if (collapsed) {
                 // Closed It
-                if (!AccountManager.getSelectedAccount().collapsedPacks.contains(pack.getName())) {
-                    AccountManager.getSelectedAccount().collapsedPacks.add(pack.getName());
+                if (!selectedAccount.collapsedPacks.contains(pack.getName())) {
+                    selectedAccount.collapsedPacks.add(pack.getName());
                 }
             } else {
                 // Opened It
-                AccountManager.getSelectedAccount().collapsedPacks.remove(pack.getName());
+                selectedAccount.collapsedPacks.remove(pack.getName());
             }
             AccountManager.saveAccounts();
         }

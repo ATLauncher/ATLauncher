@@ -24,6 +24,7 @@ import java.awt.event.ItemEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -118,11 +119,9 @@ public class EditModsDialog extends JDialog {
 
         setupComponents();
 
-        instanceOrServer.scanMissingMods();
+        instanceOrServer.scanMissingMods(this);
 
         loadMods();
-
-        setVisible(true);
     }
 
     private void setupComponents() {
@@ -228,6 +227,7 @@ public class EditModsDialog extends JDialog {
 
             FileChooserDialog fcd = new FileChooserDialog(this, GetText.tr("Add Mod"), GetText.tr("Mod"),
                     GetText.tr("Add"), GetText.tr("Type of Mod"), modTypes);
+            fcd.setVisible(true);
 
             if (fcd.wasClosed()) {
                 return;
@@ -305,7 +305,8 @@ public class EditModsDialog extends JDialog {
                             && instanceOrServer.getLoaderVersion() != null)) {
                 JButton browseMods = new JButton(GetText.tr("Browse Mods"));
                 browseMods.addActionListener(e -> {
-                    new AddModsDialog(this, instanceOrServer);
+                    AddModsDialog addModsDialog = new AddModsDialog(this, instanceOrServer);
+                    addModsDialog.setVisible(true);
 
                     loadMods();
 
@@ -539,7 +540,7 @@ public class EditModsDialog extends JDialog {
                                         .murmur(mjc.getDisableableMod().getFile(instanceOrServer.getRoot(),
                                                 instanceOrServer.getMinecraftVersion()).toPath());
                                 murmurHashes.put(hash, mjc);
-                            } catch (Throwable t) {
+                            } catch (IOException t) {
                                 LogManager.logStackTrace(t);
                             }
                         });
@@ -608,7 +609,7 @@ public class EditModsDialog extends JDialog {
                 if (!sha1Hashes.isEmpty()) {
                     Set<String> keys = sha1Hashes.keySet();
                     Map<String, ModrinthVersion> modrinthVersions = ModrinthApi
-                            .getVersionsFromSha1Hashes(keys.toArray(new String[keys.size()]));
+                            .getVersionsFromSha1Hashes(keys.toArray(new String[0]));
 
                     if (modrinthVersions != null && !modrinthVersions.isEmpty()) {
                         String[] projectIdsFound = modrinthVersions.values().stream().map(mv -> mv.projectId)

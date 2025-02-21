@@ -17,6 +17,7 @@
  */
 package com.atlauncher.data;
 
+import java.awt.Window;
 import java.nio.file.Path;
 import java.util.List;
 
@@ -52,12 +53,12 @@ public interface ModManagement {
 
     public abstract void removeMod(DisableableMod mod);
 
-    public abstract void addFileFromCurseForge(CurseForgeProject mod, CurseForgeFile file, ProgressDialog dialog);
+    public abstract void addFileFromCurseForge(CurseForgeProject mod, CurseForgeFile file, ProgressDialog<Void> dialog);
 
     public abstract void addFileFromModrinth(ModrinthProject project, ModrinthVersion version, ModrinthFile file,
-            ProgressDialog dialog);
+            ProgressDialog<Void> dialog);
 
-    public abstract void scanMissingMods();
+    public abstract void scanMissingMods(Window parent);
 
     public abstract void save();
 }

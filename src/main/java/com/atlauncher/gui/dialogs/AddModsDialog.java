@@ -213,7 +213,6 @@ public final class AddModsDialog extends JDialog {
 
         this.pack();
         this.setLocationRelativeTo(parent);
-        this.setVisible(true);
     }
 
     private void setupComponents() {
@@ -240,8 +239,8 @@ public final class AddModsDialog extends JDialog {
         searchButtonsPanel.add(this.searchField);
 
         this.installFabricApiButton.addActionListener(e -> {
-            boolean isCurseForge = ((ComboItem<ModPlatform>) hostComboBox.getSelectedItem())
-                    .getValue() == ModPlatform.CURSEFORGE;
+            ModPlatform selectedHost = ((ComboItem<ModPlatform>) hostComboBox.getSelectedItem()).getValue();
+            boolean isCurseForge = selectedHost == ModPlatform.CURSEFORGE;
             if (isCurseForge) {
                 final ProgressDialog<CurseForgeProject> curseForgeProjectLookupDialog = new ProgressDialog<>(
                         // #. {0} is the loader api were getting info from (Fabric/Quilt)
@@ -274,7 +273,9 @@ public final class AddModsDialog extends JDialog {
                 }
 
                 Analytics.trackEvent(AnalyticsEvent.forAddMod("Fabric API", "CurseForge"));
-                new CurseForgeProjectFileSelectorDialog(this, mod, instanceOrServer);
+                CurseForgeProjectFileSelectorDialog curseForgeProjectFileSelectorDialog = new CurseForgeProjectFileSelectorDialog(
+                        this, mod, instanceOrServer);
+                curseForgeProjectFileSelectorDialog.setVisible(true);
 
                 if (instanceOrServer.getMods().stream().anyMatch(
                         m -> (m.isFromCurseForge() && m.getCurseForgeModId() == Constants.CURSEFORGE_FABRIC_MOD_ID)
@@ -316,7 +317,9 @@ public final class AddModsDialog extends JDialog {
                 }
 
                 Analytics.trackEvent(AnalyticsEvent.forAddMod("Fabric API", "Modrinth"));
-                new ModrinthVersionSelectorDialog(this, mod, instanceOrServer);
+                ModrinthVersionSelectorDialog modrinthVersionSelectorDialog = new ModrinthVersionSelectorDialog(this,
+                        mod, instanceOrServer);
+                modrinthVersionSelectorDialog.setVisible(true);
 
                 if (instanceOrServer.getMods().stream().anyMatch(
                         m -> (m.isFromCurseForge() && m.getCurseForgeModId() == Constants.CURSEFORGE_FABRIC_MOD_ID)
@@ -370,7 +373,9 @@ public final class AddModsDialog extends JDialog {
                 }
 
                 Analytics.trackEvent(AnalyticsEvent.forAddMod("Legacy Fabric API", "CurseForge"));
-                new CurseForgeProjectFileSelectorDialog(this, mod, instanceOrServer);
+                CurseForgeProjectFileSelectorDialog curseForgeProjectFileSelectorDialog = new CurseForgeProjectFileSelectorDialog(
+                        this, mod, instanceOrServer);
+                curseForgeProjectFileSelectorDialog.setVisible(true);
 
                 if (instanceOrServer.getMods().stream().anyMatch(
                         m -> (m.isFromCurseForge()
@@ -414,7 +419,9 @@ public final class AddModsDialog extends JDialog {
                 }
 
                 Analytics.trackEvent(AnalyticsEvent.forAddMod("Legacy Fabric API", "Modrinth"));
-                new ModrinthVersionSelectorDialog(this, mod, instanceOrServer);
+                ModrinthVersionSelectorDialog modrinthVersionSelectorDialog = new ModrinthVersionSelectorDialog(this,
+                        mod, instanceOrServer);
+                modrinthVersionSelectorDialog.setVisible(true);
 
                 if (instanceOrServer.getMods().stream().anyMatch(
                         m -> (m.isFromCurseForge()
@@ -467,7 +474,9 @@ public final class AddModsDialog extends JDialog {
             }
 
             Analytics.trackEvent(AnalyticsEvent.forAddMod("Quilt Standard Libraries", "Modrinth"));
-            new ModrinthVersionSelectorDialog(this, mod, instanceOrServer);
+            ModrinthVersionSelectorDialog modrinthVersionSelectorDialog = new ModrinthVersionSelectorDialog(this, mod,
+                    instanceOrServer);
+            modrinthVersionSelectorDialog.setVisible(true);
 
             if (instanceOrServer.getMods().stream().anyMatch(
                     m -> m.isFromModrinth()
@@ -514,7 +523,9 @@ public final class AddModsDialog extends JDialog {
                 }
 
                 Analytics.trackEvent(AnalyticsEvent.forAddMod("Forgified Fabric API", "CurseForge"));
-                new CurseForgeProjectFileSelectorDialog(this, mod, instanceOrServer);
+                CurseForgeProjectFileSelectorDialog curseForgeProjectFileSelectorDialog = new CurseForgeProjectFileSelectorDialog(
+                        this, mod, instanceOrServer);
+                curseForgeProjectFileSelectorDialog.setVisible(true);
 
                 if (instanceOrServer.getMods().stream().anyMatch(
                         m -> (m.isFromCurseForge()
@@ -558,7 +569,9 @@ public final class AddModsDialog extends JDialog {
                 }
 
                 Analytics.trackEvent(AnalyticsEvent.forAddMod("Forgified Fabric API", "Modrinth"));
-                new ModrinthVersionSelectorDialog(this, mod, instanceOrServer);
+                ModrinthVersionSelectorDialog modrinthVersionSelectorDialog = new ModrinthVersionSelectorDialog(this,
+                        mod, instanceOrServer);
+                modrinthVersionSelectorDialog.setVisible(true);
 
                 if (instanceOrServer.getMods().stream().anyMatch(
                         m -> (m.isFromCurseForge()
@@ -979,7 +992,9 @@ public final class AddModsDialog extends JDialog {
 
                 contentPanel.add(new CurseForgeProjectCard(castMod, instanceOrServer, e -> {
                     Analytics.trackEvent(AnalyticsEvent.forAddMod(castMod));
-                    new CurseForgeProjectFileSelectorDialog(this, castMod, instanceOrServer);
+                    CurseForgeProjectFileSelectorDialog curseForgeProjectFileSelectorDialog = new CurseForgeProjectFileSelectorDialog(
+                            this, castMod, instanceOrServer);
+                    curseForgeProjectFileSelectorDialog.setVisible(true);
                 }, e -> {
                     Analytics.trackEvent(AnalyticsEvent.forRemoveMod(castMod));
 
@@ -1064,7 +1079,9 @@ public final class AddModsDialog extends JDialog {
                     }
 
                     Analytics.trackEvent(AnalyticsEvent.forAddMod(castMod));
-                    new ModrinthVersionSelectorDialog(this, modrinthMod, instanceOrServer);
+                    ModrinthVersionSelectorDialog modrinthVersionSelectorDialog = new ModrinthVersionSelectorDialog(
+                            this, modrinthMod, instanceOrServer);
+                    modrinthVersionSelectorDialog.setVisible(true);
                 }, e -> {
                     Analytics.trackEvent(AnalyticsEvent.forRemoveMod(castMod));
 

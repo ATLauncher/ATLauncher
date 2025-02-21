@@ -37,6 +37,7 @@ import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.constants.UIConstants;
 import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.RelocalizationManager;
+import com.atlauncher.exceptions.InvalidPack;
 import com.atlauncher.graphql.fragment.UnifiedModPackResultsFragment;
 import com.atlauncher.graphql.type.ModPackPlatformType;
 import com.atlauncher.gui.borders.IconTitledBorder;
@@ -73,7 +74,7 @@ public class UnifiedPackCard extends JPanel implements RelocalizationListener {
             try {
                 splitter.setLeftComponent(
                         new PackImagePanel(PackManager.getPackByID(Integer.parseInt(result.id()))));
-            } catch (Exception e) {
+            } catch (InvalidPack | NumberFormatException e) {
                 // ignored
             }
         } else {
@@ -105,7 +106,8 @@ public class UnifiedPackCard extends JPanel implements RelocalizationListener {
                 }
             } else {
                 Analytics.trackEvent(AnalyticsEvent.forPackInstall(result));
-                new InstanceInstallerDialog(result, false);
+                InstanceInstallerDialog instanceInstallerDialog = new InstanceInstallerDialog(result, false);
+                instanceInstallerDialog.setVisible(true);
             }
         });
         buttonsPanel.add(newInstanceButton);
@@ -134,7 +136,8 @@ public class UnifiedPackCard extends JPanel implements RelocalizationListener {
                 }
             } else {
                 Analytics.trackEvent(AnalyticsEvent.forPackInstall(result, true));
-                new InstanceInstallerDialog(result, true);
+                InstanceInstallerDialog instanceInstallerDialog = new InstanceInstallerDialog(result, true);
+                instanceInstallerDialog.setVisible(true);
             }
         });
         buttonsPanel.add(createServerButton);
@@ -144,7 +147,7 @@ public class UnifiedPackCard extends JPanel implements RelocalizationListener {
         if (result.platform() == ModPackPlatformType.ATLAUNCHER) {
             try {
                 showCreateServerButton = PackManager.getPackByID(Integer.parseInt(result.id())).createServer;
-            } catch (Exception e) {
+            } catch (InvalidPack | NumberFormatException e) {
                 // ignored
             }
         }

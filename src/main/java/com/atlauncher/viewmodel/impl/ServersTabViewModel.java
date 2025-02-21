@@ -24,6 +24,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import javax.annotation.Nullable;
+
 import com.atlauncher.data.Server;
 import com.atlauncher.managers.ServerManager;
 import com.atlauncher.viewmodel.base.IServersTabViewModel;
@@ -36,31 +38,28 @@ import io.reactivex.rxjava3.schedulers.Schedulers;
 import io.reactivex.rxjava3.subjects.BehaviorSubject;
 
 public class ServersTabViewModel implements IServersTabViewModel {
-    private final Observable<List<Server>> sourceServers =
-        ServerManager.getServersObservable()
-            .map(servers ->
-                servers.stream()
+    private final Observable<List<Server>> sourceServers = ServerManager.getServersObservable()
+            .map(servers -> servers.stream()
                     .sorted(Comparator.comparing(s -> s.name))
                     .collect(Collectors.toList()))
             .subscribeOn(Schedulers.computation());
 
-    private final BehaviorSubject<Optional<String>> searchSubject =
-        BehaviorSubject.createDefault(Optional.empty());
+    private final BehaviorSubject<Optional<String>> searchSubject = BehaviorSubject.createDefault(Optional.empty());
 
     private final BehaviorSubject<Integer> currentPositionSubject = BehaviorSubject.createDefault(0);
 
-    private final Flowable<List<Server>> servers =
-        Observable.combineLatest(sourceServers, searchSubject, (servers, searchOptional) ->
-                servers
+    private final Flowable<List<Server>> servers = Observable.combineLatest(sourceServers, searchSubject,
+            (servers, searchOptional) -> servers
                     .stream()
                     .filter(server -> {
                         String search = searchOptional.orElse(null);
                         if (search != null)
-                            return Pattern.compile(Pattern.quote(search), Pattern.CASE_INSENSITIVE).matcher(server.name).find();
-                        else return true;
+                            return Pattern.compile(Pattern.quote(search), Pattern.CASE_INSENSITIVE).matcher(server.name)
+                                    .find();
+                        else
+                            return true;
                     })
-                    .collect(Collectors.toList())
-            )
+                    .collect(Collectors.toList()))
             .throttleLatest(100, TimeUnit.MILLISECONDS)
             .toFlowable(BackpressureStrategy.LATEST) // Backpressure first, as down stream is the edt thread
             .observeOn(SwingSchedulers.edt());
@@ -76,7 +75,7 @@ public class ServersTabViewModel implements IServersTabViewModel {
     }
 
     @Override
-    public void setSearchSubject(String search) {
+    public void setSearchSubject(@Nullable String search) {
         searchSubject.onNext(Optional.ofNullable(search));
     }
 

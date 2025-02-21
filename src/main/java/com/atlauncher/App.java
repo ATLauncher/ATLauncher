@@ -365,7 +365,8 @@ public class App {
                 App.settings.save();
             } else {
                 LogManager.warn("Launcher not setup. Loading Setup Dialog");
-                new SetupDialog();
+                SetupDialog setupDialog = new SetupDialog();
+                setupDialog.setVisible(true);
             }
         }
 
@@ -477,7 +478,7 @@ public class App {
                 }));
                 progressDialog.start();
 
-                if (progressDialog.getReturnValue()) {
+                if (progressDialog.getReturnValue() == true) {
                     String folder = ConfigManager.getConfigItem(bundledJreConfigNamespace + ".folder", null);
                     OS.restartToUpdateBundledJre(folder == null ? newJreBundlePath : newJreBundlePath.resolve(folder));
                     System.exit(0);
@@ -555,8 +556,6 @@ public class App {
         LogManager.info("Java Version: "
                 + String.format(Locale.ENGLISH, "Java %d (%s)", Java.getLauncherJavaVersionNumber(),
                         Java.getLauncherJavaVersion()));
-
-        LogManager.info("Java Path: " + settings.javaPath);
 
         LogManager.info("64 Bit Java: " + Java.is64Bit());
 
@@ -777,6 +776,7 @@ public class App {
         }
     }
 
+    @SuppressWarnings("UseSpecificCatch")
     private static void setupOSSpecificThings() {
         // do some Mac specific stuff, setting the name of the application and icon
         // set only when using jar bundle, as if using *.app, macOS sets icon and name
@@ -982,6 +982,7 @@ public class App {
         }
     }
 
+    @SuppressWarnings("CallToPrintStackTrace")
     private static void parseCommandLineArguments(String[] args) {
         // Parse all the command line arguments
         OptionParser parser = new OptionParser();
@@ -1025,7 +1026,8 @@ public class App {
         parser.accepts("proxy-port", "The port of the proxy to use.").withRequiredArg().ofType(Integer.class);
         parser.accepts("config-override", "A JSON string to override the launchers config.").withRequiredArg()
                 .ofType(String.class);
-        parser.acceptsAll(Arrays.asList("help", "?"), "Shows help for the arguments for the application.").forHelp();
+        parser
+                .acceptsAll(Arrays.asList("help", "?"), "Shows help for the arguments for the application.").forHelp();
         parser
                 .acceptsAll(Arrays.asList("version", "v"), "Shows the launcher version")
                 .withOptionalArg()

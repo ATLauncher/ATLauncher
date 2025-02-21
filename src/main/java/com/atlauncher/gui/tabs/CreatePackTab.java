@@ -151,7 +151,7 @@ public class CreatePackTab extends HierarchyPanel implements Tab {
         gbc.insets = UIConstants.FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         LockingPreservingCaretTextSetter nameFieldSetter = new LockingPreservingCaretTextSetter(nameField);
-        viewModel.name().subscribe((it) -> nameFieldSetter.setText(it.orElse(null)));
+        addDisposable(viewModel.name().subscribe((it) -> nameFieldSetter.setText(it.orElse(null))));
         nameField.addKeyListener(new StatefulTextKeyAdapter(
                 (e) -> viewModel.setName(nameField.getText()),
                 (e) -> nameFieldSetter.setLocked(true),
@@ -177,7 +177,7 @@ public class CreatePackTab extends HierarchyPanel implements Tab {
         descriptionField.setLineWrap(true);
         LockingPreservingCaretTextSetter descriptionFieldSetter = new LockingPreservingCaretTextSetter(
                 descriptionField);
-        viewModel.description().subscribe((it) -> descriptionFieldSetter.setText(it.orElse(null)));
+        addDisposable(viewModel.description().subscribe((it) -> descriptionFieldSetter.setText(it.orElse(null))));
         descriptionField.addKeyListener(new StatefulTextKeyAdapter(
                 (e) -> viewModel.setDescription(descriptionField.getText()),
                 (e) -> descriptionFieldSetter.setLocked(true),
@@ -475,7 +475,8 @@ public class CreatePackTab extends HierarchyPanel implements Tab {
         }
     }
 
-    private void setupMinecraftVersionsTable() {
+    @SuppressWarnings("null")
+	private void setupMinecraftVersionsTable() {
         minecraftVersionTableModel = new DefaultTableModel(
                 new String[][] {},
                 new String[] { GetText.tr("Version"), GetText.tr("Released"), GetText.tr("Type") }) {

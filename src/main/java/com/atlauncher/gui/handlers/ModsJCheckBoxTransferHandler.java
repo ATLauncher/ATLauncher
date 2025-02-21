@@ -54,7 +54,6 @@ import com.atlauncher.utils.Hashing;
 import com.atlauncher.utils.ModrinthApi;
 import com.atlauncher.utils.Utils;
 
-@SuppressWarnings("serial")
 public class ModsJCheckBoxTransferHandler extends TransferHandler {
     private final EditModsDialog dialog;
     private final boolean disabled;
@@ -88,14 +87,15 @@ public class ModsJCheckBoxTransferHandler extends TransferHandler {
 
             String[] modTypes = new String[] { "Mods Folder", "Resource Pack", "Shader Pack", "Inside Minecraft.jar" };
 
-            FileTypeDialog fcd = new FileTypeDialog(GetText.tr("Add Mod"), GetText.tr("Adding Mods"), GetText.tr("Add"),
+            FileTypeDialog ftd = new FileTypeDialog(GetText.tr("Add Mod"), GetText.tr("Adding Mods"), GetText.tr("Add"),
                     GetText.tr("Type"), modTypes);
+            ftd.setVisible(true);
 
-            if (fcd.wasClosed()) {
+            if (ftd.wasClosed()) {
                 return false;
             }
 
-            String typeTemp = fcd.getSelectorValue();
+            String typeTemp = ftd.getSelectorValue();
 
             if (typeTemp.equalsIgnoreCase("Inside Minecraft.jar")) {
                 int ret = DialogManager.yesNoDialog().setTitle(GetText.tr("Add As Mod?"))
@@ -195,8 +195,8 @@ public class ModsJCheckBoxTransferHandler extends TransferHandler {
                                             .murmur(dm.getFile(dialog.instanceOrServer.getRoot(),
                                                     dialog.instanceOrServer.getMinecraftVersion()).toPath());
                                     murmurHashes.put(hash, dm);
-                                } catch (Throwable t) {
-                                    LogManager.logStackTrace(t);
+                                } catch (IOException e) {
+                                    LogManager.logStackTrace(e);
                                 }
                             });
 
@@ -267,7 +267,7 @@ public class ModsJCheckBoxTransferHandler extends TransferHandler {
                     if (!sha1Hashes.isEmpty()) {
                         Set<String> keys = sha1Hashes.keySet();
                         Map<String, ModrinthVersion> modrinthVersions = ModrinthApi
-                                .getVersionsFromSha1Hashes(keys.toArray(new String[keys.size()]));
+                                .getVersionsFromSha1Hashes(keys.toArray(new String[0]));
 
                         if (modrinthVersions != null && !modrinthVersions.isEmpty()) {
                             String[] projectIdsFound = modrinthVersions.values().stream().map(mv -> mv.projectId)

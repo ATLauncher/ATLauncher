@@ -251,7 +251,8 @@ public class MicrosoftAccount extends AbstractAccount {
         } catch (DownloadException e) {
             LogManager.error("Minecraft profile not found");
 
-            new CreateMinecraftProfileDialog(accessToken);
+            CreateMinecraftProfileDialog createMinecraftProfileDialog = new CreateMinecraftProfileDialog(accessToken);
+            createMinecraftProfileDialog.setVisible(true);
 
             try {
                 profile = MicrosoftAuthAPI.getMcProfile(accessToken);

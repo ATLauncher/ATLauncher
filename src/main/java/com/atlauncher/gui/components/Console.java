@@ -72,7 +72,6 @@ public final class Console extends JTextPane {
 }
 
 // https://stackoverflow.com/a/13375811
-@SuppressWarnings("serial")
 class WrapEditorKit extends StyledEditorKit {
     ViewFactory defaultFactory = new WrapColumnFactory();
 

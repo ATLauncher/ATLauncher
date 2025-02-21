@@ -117,21 +117,21 @@ public class CurseForgeApi {
 
     public static List<CurseForgeProject> searchWorlds(String gameVersion, String query, int page, String sort,
             String categoryId) {
-        Integer categoryIdParam = categoryId == null ? null : Integer.parseInt(categoryId);
+        Integer categoryIdParam = Utils.getSafeIntegerFromString(categoryId);
 
         return searchCurseForge(gameVersion, Constants.CURSEFORGE_WORLDS_SECTION_ID, query, page, null, sort,
                 categoryIdParam);
     }
 
     public static List<CurseForgeProject> searchResourcePacks(String query, int page, String sort, String categoryId) {
-        Integer categoryIdParam = categoryId == null ? null : Integer.parseInt(categoryId);
+        Integer categoryIdParam = Utils.getSafeIntegerFromString(categoryId);
 
         return searchCurseForge(Constants.CURSEFORGE_RESOURCE_PACKS_SECTION_ID, query, page, null, sort,
                 categoryIdParam);
     }
 
     public static List<CurseForgeProject> searchShaderPacks(String query, int page, String sort, String categoryId) {
-        Integer categoryIdParam = categoryId == null ? null : Integer.parseInt(categoryId);
+        Integer categoryIdParam = Utils.getSafeIntegerFromString(categoryId);
 
         return searchCurseForge(Constants.CURSEFORGE_SHADER_PACKS_SECTION_ID, query, page, null, sort,
                 categoryIdParam);
@@ -139,7 +139,7 @@ public class CurseForgeApi {
 
     public static List<CurseForgeProject> searchMods(String gameVersion, String query, int page, String sort,
             String categoryId) {
-        Integer categoryIdParam = categoryId == null ? null : Integer.parseInt(categoryId);
+        Integer categoryIdParam = Utils.getSafeIntegerFromString(categoryId);
 
         return searchCurseForge(gameVersion, Constants.CURSEFORGE_MODS_SECTION_ID, query, page, null, sort,
                 categoryIdParam);
@@ -147,17 +147,17 @@ public class CurseForgeApi {
 
     public static List<CurseForgeProject> searchPlugins(String gameVersion, String query, int page, String sort,
             String categoryId) {
-        Integer categoryIdParam = categoryId == null ? null : Integer.parseInt(categoryId);
+        Integer categoryIdParam = Utils.getSafeIntegerFromString(categoryId);
 
         // CurseForge plugins don't seem to update their supported versions often, so we have to just get all
-        return searchCurseForge(null, Constants.CURSEFORGE_PLUGINS_SECTION_ID, query, page, null, sort,
+        return searchCurseForge(gameVersion, Constants.CURSEFORGE_PLUGINS_SECTION_ID, query, page, null, sort,
                 categoryIdParam);
     }
 
     public static List<CurseForgeProject> searchModPacks(String query, int page, String sort, boolean sortDescending,
             String categoryId,
             String minecraftVersion) {
-        Integer categoryIdParam = categoryId == null ? null : Integer.parseInt(categoryId);
+        Integer categoryIdParam = Utils.getSafeIntegerFromString(categoryId);
 
         return searchCurseForge(minecraftVersion, Constants.CURSEFORGE_MODPACKS_SECTION_ID, query, page, null, sort,
                 sortDescending, categoryIdParam);
@@ -165,7 +165,7 @@ public class CurseForgeApi {
 
     public static List<CurseForgeProject> searchModsForFabric(String gameVersion, String query, int page, String sort,
             String categoryId) {
-        Integer categoryIdParam = categoryId == null ? null : Integer.parseInt(categoryId);
+        Integer categoryIdParam = Utils.getSafeIntegerFromString(categoryId);
         List<Integer> modLoaderTypes = Collections.singletonList(Constants.CURSEFORGE_FABRIC_MODLOADER_ID);
 
         return searchCurseForge(gameVersion, Constants.CURSEFORGE_MODS_SECTION_ID, query, page,
@@ -174,7 +174,7 @@ public class CurseForgeApi {
 
     public static List<CurseForgeProject> searchModsForQuilt(String gameVersion, String query, int page, String sort,
             String categoryId) {
-        Integer categoryIdParam = categoryId == null ? null : Integer.parseInt(categoryId);
+        Integer categoryIdParam = Utils.getSafeIntegerFromString(categoryId);
         List<Integer> modLoaderTypes = Arrays.asList(Constants.CURSEFORGE_FABRIC_MODLOADER_ID,
                 Constants.CURSEFORGE_QUILT_MODLOADER_ID);
 
@@ -184,7 +184,7 @@ public class CurseForgeApi {
 
     public static List<CurseForgeProject> searchModsForForge(String gameVersion, String query, int page, String sort,
             String categoryId) {
-        Integer categoryIdParam = categoryId == null ? null : Integer.parseInt(categoryId);
+        Integer categoryIdParam = Utils.getSafeIntegerFromString(categoryId);
         List<Integer> modLoaderTypes = Collections.singletonList(Constants.CURSEFORGE_FORGE_MODLOADER_ID);
 
         return searchCurseForge(gameVersion, Constants.CURSEFORGE_MODS_SECTION_ID, query, page,
@@ -194,7 +194,7 @@ public class CurseForgeApi {
     public static List<CurseForgeProject> searchModsForForgeOrFabric(String gameVersion, String query, int page,
             String sort,
             String categoryId) {
-        Integer categoryIdParam = categoryId == null ? null : Integer.parseInt(categoryId);
+        Integer categoryIdParam = Utils.getSafeIntegerFromString(categoryId);
         List<Integer> modLoaderTypes = Arrays.asList(Constants.CURSEFORGE_FORGE_MODLOADER_ID,
                 Constants.CURSEFORGE_FABRIC_MODLOADER_ID);
 
@@ -204,13 +204,13 @@ public class CurseForgeApi {
 
     public static List<CurseForgeProject> searchModsForNeoForge(String gameVersion, String query, int page, String sort,
             String categoryId) {
-        Integer categoryIdParam = categoryId == null ? null : Integer.parseInt(categoryId);
+        Integer categoryIdParam = Utils.getSafeIntegerFromString(categoryId);
 
         List<Integer> modLoaderTypes = new ArrayList<>();
         modLoaderTypes.add(Constants.CURSEFORGE_NEOFORGE_MODLOADER_ID);
 
         List<String> neoForgeForgeCompatabilityVersions = ConfigManager
-                .getConfigItem("loaders.neoforge.forgeCompatibleMinecraftVersions", new ArrayList<String>());
+                .getConfigItem("loaders.neoforge.forgeCompatibleMinecraftVersions", new ArrayList<>());
         if (neoForgeForgeCompatabilityVersions.contains(gameVersion)) {
             modLoaderTypes.add(Constants.CURSEFORGE_FORGE_MODLOADER_ID);
         }
@@ -222,7 +222,7 @@ public class CurseForgeApi {
     public static List<CurseForgeProject> searchModsForNeoForgeOrFabric(String gameVersion, String query, int page,
             String sort,
             String categoryId) {
-        Integer categoryIdParam = categoryId == null ? null : Integer.parseInt(categoryId);
+        Integer categoryIdParam = Utils.getSafeIntegerFromString(categoryId);
 
         List<Integer> modLoaderTypes = new ArrayList<>();
         modLoaderTypes.add(Constants.CURSEFORGE_NEOFORGE_MODLOADER_ID);

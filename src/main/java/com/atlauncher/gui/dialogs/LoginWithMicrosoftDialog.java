@@ -20,8 +20,6 @@ package com.atlauncher.gui.dialogs;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
@@ -115,7 +113,6 @@ public final class LoginWithMicrosoftDialog extends JDialog {
         }
 
         this.setLocationRelativeTo(App.launcher.getParent());
-        this.setVisible(true);
     }
 
     private void close() {
@@ -166,14 +163,14 @@ public final class LoginWithMicrosoftDialog extends JDialog {
     private void addAccount(OauthTokenResponse oauthTokenResponse, XboxLiveAuthResponse xstsAuthResponse,
             LoginResponse loginResponse, Profile profile) throws Exception {
         if (account != null || AccountManager.isAccountByName(loginResponse.username)) {
-            MicrosoftAccount account = AccountManager.getAccountByName(loginResponse.username);
+            MicrosoftAccount existingAccount = AccountManager.getAccountByName(loginResponse.username);
 
-            if (account == null) {
+            if (existingAccount == null) {
                 return;
             }
 
             // if forced to relogin, then make sure they logged into correct account
-            if (account != null && this.account != null && !account.username.equals(this.account.username)) {
+            if (this.account != null && !existingAccount.username.equals(this.account.username)) {
                 DialogManager.okDialog().setTitle(GetText.tr("Incorrect account"))
                         .setContent(
                                 GetText.tr("Logged into incorrect account. Please login again on the Accounts tab."))
@@ -181,14 +178,14 @@ public final class LoginWithMicrosoftDialog extends JDialog {
                 return;
             }
 
-            account.update(oauthTokenResponse, xstsAuthResponse, loginResponse, profile);
+            existingAccount.update(oauthTokenResponse, xstsAuthResponse, loginResponse, profile);
             AccountManager.saveAccounts();
         } else {
-            MicrosoftAccount account = new MicrosoftAccount(oauthTokenResponse, xstsAuthResponse, loginResponse,
+            MicrosoftAccount newAccount = new MicrosoftAccount(oauthTokenResponse, xstsAuthResponse, loginResponse,
                     profile);
 
-            AccountManager.addAccount(account);
-            this.account = account;
+            AccountManager.addAccount(newAccount);
+            this.account = newAccount;
         }
     }
 
@@ -268,7 +265,9 @@ public final class LoginWithMicrosoftDialog extends JDialog {
         } catch (DownloadException e) {
             LogManager.error("Minecraft profile not found");
 
-            new CreateMinecraftProfileDialog(loginResponse.accessToken);
+            CreateMinecraftProfileDialog createMinecraftProfileDialog = new CreateMinecraftProfileDialog(
+                    loginResponse.accessToken);
+            createMinecraftProfileDialog.setVisible(true);
 
             try {
                 profile = MicrosoftAuthAPI.getMcProfile(loginResponse.accessToken);

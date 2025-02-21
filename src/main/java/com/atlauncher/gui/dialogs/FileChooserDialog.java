@@ -200,8 +200,6 @@ public class FileChooserDialog extends JDialog {
                 close();
             }
         });
-
-        setVisible(true);
     }
 
     private File[] getFilesUsingJFileChooser() {

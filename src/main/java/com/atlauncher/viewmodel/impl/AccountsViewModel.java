@@ -18,13 +18,11 @@
 package com.atlauncher.viewmodel.impl;
 
 import java.util.List;
-import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nullable;
 
-import com.atlauncher.data.AbstractAccount;
 import com.atlauncher.data.MicrosoftAccount;
 import com.atlauncher.gui.dialogs.ChangeSkinDialog;
 import com.atlauncher.managers.AccountManager;
@@ -72,13 +70,14 @@ public class AccountsViewModel implements IAccountsViewModel {
     @Override
     public void setSelectedAccount(int index) {
         selectedAccountIndex = index - 1;
-        if (index == 0)
+        if (index == 0) {
             selected.accept(null);
-        else
+        } else {
             selected.accept(getSelectedAccount());
+        }
     }
 
-    @NotNull
+    @Nullable
     @Override
     public MicrosoftAccount getSelectedAccount() {
         return accounts().get(selectedAccountIndex);
@@ -94,6 +93,10 @@ public class AccountsViewModel implements IAccountsViewModel {
         Analytics.trackEvent(AnalyticsEvent.simpleEvent("account_refresh_access_token"));
 
         MicrosoftAccount account = getSelectedAccount();
+        if (account == null) {
+            return false;
+        }
+
         boolean success = account
                 .refreshAccessToken(true);
 
@@ -108,31 +111,41 @@ public class AccountsViewModel implements IAccountsViewModel {
 
     @Override
     public void updateUsername() {
-        AbstractAccount account = getSelectedAccount();
-        Analytics.trackEvent(AnalyticsEvent.simpleEvent("account_update_username"));
-        account.updateUsername();
-        AccountManager.saveAccounts();
-        pushNewAccounts();
+        MicrosoftAccount account = getSelectedAccount();
+        if (account != null) {
+            Analytics.trackEvent(AnalyticsEvent.simpleEvent("account_update_username"));
+            account.updateUsername();
+            AccountManager.saveAccounts();
+            pushNewAccounts();
+        }
     }
 
     @Override
     public void changeSkin() {
-        AbstractAccount account = getSelectedAccount();
+        MicrosoftAccount account = getSelectedAccount();
 
-        new ChangeSkinDialog(account);
+        if (account != null) {
+            ChangeSkinDialog changeSkinDialog = new ChangeSkinDialog(account);
+            changeSkinDialog.setVisible(true);
+        }
     }
 
     @Override
     public void updateSkin() {
-        AbstractAccount account = getSelectedAccount();
-        Analytics.trackEvent(AnalyticsEvent.simpleEvent("account_update_skin"));
-        account.updateSkin();
+        MicrosoftAccount account = getSelectedAccount();
+        if (account != null) {
+            Analytics.trackEvent(AnalyticsEvent.simpleEvent("account_update_skin"));
+            account.updateSkin();
+        }
     }
 
     @Override
     public void deleteAccount() {
-        Analytics.trackEvent(AnalyticsEvent.simpleEvent("account_delete"));
-        AccountManager.removeAccount(getSelectedAccount());
-        pushNewAccounts();
+        MicrosoftAccount account = getSelectedAccount();
+        if (account != null) {
+            Analytics.trackEvent(AnalyticsEvent.simpleEvent("account_delete"));
+            AccountManager.removeAccount(account);
+            pushNewAccounts();
+        }
     }
 }

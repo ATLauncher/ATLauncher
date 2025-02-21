@@ -23,7 +23,7 @@ import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nullable;
 
 import com.atlauncher.managers.ConfigManager;
 
@@ -38,7 +38,7 @@ public class CurseForgeUtils {
         }
 
         List<String> customDiscordLinks = ConfigManager
-                .getConfigItem("discordLinkMatching.customLinks", new ArrayList<String>());
+                .getConfigItem("discordLinkMatching.customLinks", new ArrayList<>());
         Optional<String> foundDiscordLink = customDiscordLinks.stream().filter(link -> description.contains(link))
                 .findFirst();
         if (foundDiscordLink.isPresent()) {

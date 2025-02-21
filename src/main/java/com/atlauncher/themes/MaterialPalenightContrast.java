@@ -17,7 +17,6 @@
  */
 package com.atlauncher.themes;
 
-@SuppressWarnings("serial")
 public class MaterialPalenightContrast extends Dark {
     public static boolean install() {
         instance = new MaterialPalenightContrast();

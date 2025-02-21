@@ -37,8 +37,6 @@ import org.mini2Dx.gettext.GetText;
 
 import com.atlauncher.App;
 import com.atlauncher.data.Server;
-import com.atlauncher.evnt.listener.RelocalizationListener;
-import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.gui.components.CollapsiblePanel;
 import com.atlauncher.gui.components.DropDownButton;
 import com.atlauncher.gui.components.ImagePanel;
@@ -51,7 +49,7 @@ import com.atlauncher.network.Analytics;
 import com.atlauncher.network.analytics.AnalyticsEvent;
 import com.atlauncher.utils.OS;
 
-public class ServerCard extends CollapsiblePanel implements RelocalizationListener {
+public class ServerCard extends CollapsiblePanel {
 
     private final Server server;
     private final ImagePanel image;
@@ -152,8 +150,6 @@ public class ServerCard extends CollapsiblePanel implements RelocalizationListen
 
         setupButtonPopupMenus();
 
-        RelocalizationManager.addListener(this);
-
         this.addActionListeners();
         this.addMouseListeners();
     }
@@ -164,10 +160,12 @@ public class ServerCard extends CollapsiblePanel implements RelocalizationListen
         this.launchWithGui.addActionListener(e -> server.launch(false));
         this.launchWithGuiAndClose.addActionListener(e -> server.launch(true));
         this.addButton.addActionListener(e -> {
-            new AddModsDialog(server);
+            AddModsDialog addModsDialog = new AddModsDialog(server);
+            addModsDialog.setVisible(true);
         });
         this.editButton.addActionListener(e -> {
-            new EditModsDialog(server);
+            EditModsDialog editModsDialog = new EditModsDialog(server);
+            editModsDialog.setVisible(true);
         });
         this.backupButton.addActionListener(e -> server.backup());
         this.deleteButton.addActionListener(e -> {

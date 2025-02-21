@@ -129,22 +129,22 @@ public class NeoForgeLoader implements Loader {
     }
 
     public Version getVersion() {
-        Version version = null;
+        Version neoForgeVersionData = null;
 
         try (InputStreamReader fileReader = new InputStreamReader(
-            Files.newInputStream(new File(this.tempDir, "version.json").toPath()), StandardCharsets.UTF_8)) {
-            version = Gsons.DEFAULT.fromJson(fileReader, Version.class);
+                Files.newInputStream(new File(this.tempDir, "version.json").toPath()), StandardCharsets.UTF_8)) {
+            neoForgeVersionData = Gsons.DEFAULT.fromJson(fileReader, Version.class);
         } catch (JsonSyntaxException | JsonIOException | IOException e) {
             LogManager.logStackTrace(e);
         }
 
-        return version;
+        return neoForgeVersionData;
     }
 
     public void copyLocalLibraries() {
-        Version version = getVersion();
+        Version neoForgeVersionData = getVersion();
         NeoForgeInstallProfile installProfile = getInstallProfile();
-        version.libraries.forEach(library -> {
+        neoForgeVersionData.libraries.forEach(library -> {
             // copy over any local files from the loader zip file
             if (library.name.equalsIgnoreCase(installProfile.path)) {
                 FileUtils.copyFile(new File(tempDir, "maven/" + library.downloads.artifact.path).toPath(),
@@ -154,7 +154,7 @@ public class NeoForgeLoader implements Loader {
                         new File(tempDir,
                                 "maven/" + library.downloads.artifact.path.substring(0,
                                         library.downloads.artifact.path.lastIndexOf(".jar")) + "-universal.jar")
-                                .toPath(),
+                                                .toPath(),
                         FileSystem.LIBRARIES.resolve(library.downloads.artifact.path.substring(0,
                                 library.downloads.artifact.path.lastIndexOf(".jar")) + "-universal.jar"),
                         true);
@@ -163,10 +163,11 @@ public class NeoForgeLoader implements Loader {
     }
 
     public NeoForgeInstallProfile getInstallProfile() {
-        NeoForgeInstallProfile installProfile = null;
+        NeoForgeInstallProfile installProfile = new NeoForgeInstallProfile();
 
         try (InputStreamReader fileReader = new InputStreamReader(
-            Files.newInputStream(new File(this.tempDir, "install_profile.json").toPath()), StandardCharsets.UTF_8)) {
+                Files.newInputStream(new File(this.tempDir, "install_profile.json").toPath()),
+                StandardCharsets.UTF_8)) {
             installProfile = Gsons.DEFAULT.fromJson(fileReader, NeoForgeInstallProfile.class);
         } catch (Throwable e) {
             LogManager.logStackTrace(e);
@@ -190,7 +191,7 @@ public class NeoForgeLoader implements Loader {
         NeoForgeInstallProfile versionInfo = null;
 
         try (InputStreamReader fileReader = new InputStreamReader(
-            Files.newInputStream(new File(this.tempDir, "version.json").toPath()), StandardCharsets.UTF_8)) {
+                Files.newInputStream(new File(this.tempDir, "version.json").toPath()), StandardCharsets.UTF_8)) {
             versionInfo = Gsons.DEFAULT.fromJson(fileReader, NeoForgeInstallProfile.class);
         } catch (Throwable e) {
             LogManager.logStackTrace(e);
@@ -271,7 +272,7 @@ public class NeoForgeLoader implements Loader {
         }
 
         List<String> disabledVersions = ConfigManager.getConfigItem("loaders.neoforge.disabledVersions",
-            new ArrayList<>());
+                new ArrayList<>());
 
         return response.loaderVersions().neoforge().stream().filter(fv -> !disabledVersions.contains(
                 fv.version()))

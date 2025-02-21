@@ -167,9 +167,9 @@ public class LauncherBottomBar extends BottomBar implements RelocalizationListen
             username.addItem(account);
         }
 
-        selectedAccount.ifPresent(abstractAccount -> username.setSelectedItem(abstractAccount));
+        selectedAccount.ifPresent(microsoftAccount -> username.setSelectedItem(microsoftAccount));
 
-        username.setVisible(accounts.size() != 0);
+        username.setVisible(!accounts.isEmpty());
 
         dontSave = false;
     }

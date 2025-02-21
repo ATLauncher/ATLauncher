@@ -44,6 +44,7 @@ import javax.swing.border.TitledBorder;
 
 import com.atlauncher.App;
 import com.atlauncher.data.Instance;
+import com.atlauncher.data.MicrosoftAccount;
 import com.atlauncher.data.Pack;
 import com.atlauncher.data.Server;
 import com.atlauncher.evnt.listener.RelocalizationListener;
@@ -110,8 +111,10 @@ public class CollapsiblePanel extends JPanel implements ThemeListener, Relocaliz
         titleComponent = arrow;
         collapsed = false;
         commonConstructor();
-        if (AccountManager.getSelectedAccount() != null) {
-            if (AccountManager.getSelectedAccount().collapsedPacks.contains(pack.getName())) {
+
+        MicrosoftAccount selectedAccount = AccountManager.getSelectedAccount();
+        if (selectedAccount != null) {
+            if (selectedAccount.collapsedPacks.contains(pack.getName())) {
                 setCollapsed(true);
             }
         }
@@ -142,8 +145,10 @@ public class CollapsiblePanel extends JPanel implements ThemeListener, Relocaliz
         titleComponent = arrow;
         collapsed = false;
         commonConstructor();
-        if (AccountManager.getSelectedAccount() != null) {
-            if (AccountManager.getSelectedAccount().collapsedInstances.contains(instance.launcher.name)) {
+
+        MicrosoftAccount selectedAccount = AccountManager.getSelectedAccount();
+        if (selectedAccount != null) {
+            if (selectedAccount.collapsedPacks.contains(instance.launcher.name)) {
                 setCollapsed(true);
             }
         }
@@ -156,8 +161,10 @@ public class CollapsiblePanel extends JPanel implements ThemeListener, Relocaliz
         titleComponent = arrow;
         collapsed = false;
         commonConstructor();
-        if (AccountManager.getSelectedAccount() != null) {
-            if (AccountManager.getSelectedAccount().collapsedServers.contains(server.name)) {
+
+        MicrosoftAccount selectedAccount = AccountManager.getSelectedAccount();
+        if (selectedAccount != null) {
+            if (selectedAccount.collapsedPacks.contains(server.name)) {
                 setCollapsed(true);
             }
         }
@@ -260,10 +267,10 @@ public class CollapsiblePanel extends JPanel implements ThemeListener, Relocaliz
      *         versions of the right hand side arrow
      */
     private ImageIcon[] createExpandAndCollapseIcon() {
-        ImageIcon[] iconArrow = new ImageIcon[2];
-        iconArrow[COLLAPSED] = Utils.getIconImage(App.THEME.getIconPath("collapsed"));
-        iconArrow[EXPANDED] = Utils.getIconImage(App.THEME.getIconPath("expanded"));
-        return iconArrow;
+        ImageIcon[] arrowIcons = new ImageIcon[2];
+        arrowIcons[COLLAPSED] = Utils.getIconImage(App.THEME.getIconPath("collapsed"));
+        arrowIcons[EXPANDED] = Utils.getIconImage(App.THEME.getIconPath("expanded"));
+        return arrowIcons;
     }
 
     /**

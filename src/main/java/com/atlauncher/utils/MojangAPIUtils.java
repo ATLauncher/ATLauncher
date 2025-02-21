@@ -23,7 +23,7 @@ import java.util.List;
 
 import com.atlauncher.Gsons;
 import com.atlauncher.Network;
-import com.atlauncher.data.AbstractAccount;
+import com.atlauncher.data.MicrosoftAccount;
 import com.atlauncher.data.mojang.api.NameHistory;
 import com.atlauncher.data.mojang.api.ProfileResponse;
 import com.atlauncher.managers.LogManager;
@@ -37,6 +37,7 @@ import okhttp3.MultipartBody;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+import okhttp3.ResponseBody;
 
 /**
  * Various utility methods for interacting with the Mojang API.
@@ -55,8 +56,8 @@ public class MojangAPIUtils {
         return profile.getId();
     }
 
-    public static boolean uploadSkin(AbstractAccount account, File skinPath, String skinType) {
-        RequestBody requestBody = RequestBody.create(MediaType.parse("image/png"), skinPath);
+    public static boolean uploadSkin(MicrosoftAccount account, File skinPath, String skinType) {
+        RequestBody requestBody = RequestBody.create(skinPath, MediaType.parse("image/png"));
 
         MultipartBody body = new MultipartBody.Builder()
                 .setType(MultipartBody.FORM)
@@ -81,8 +82,7 @@ public class MojangAPIUtils {
     }
 
     public static String getCurrentUsername(String uuid) {
-        java.lang.reflect.Type type = new TypeToken<List<NameHistory>>() {
-        }.getType();
+        java.lang.reflect.Type type = new TypeToken<List<NameHistory>>() {}.getType();
 
         List<NameHistory> history = Download.build().setUrl("https://api.mojang.com/user/profiles/" + uuid + "/names")
                 .asType(type);
@@ -129,8 +129,12 @@ public class MojangAPIUtils {
 
         try (Response response = Network.CLIENT.newCall(request).execute()) {
             if (response.isSuccessful()) {
-                String responseBody = response.body().string();
-                JsonObject jsonResponse = Gsons.DEFAULT.fromJson(responseBody, JsonObject.class);
+                ResponseBody responseBody = response.body();
+                if (responseBody == null) {
+                    LogManager.error("Failed to check username availability");
+                    return false;
+                }
+                JsonObject jsonResponse = Gsons.DEFAULT.fromJson(responseBody.string(), JsonObject.class);
 
                 if (jsonResponse.get("status").getAsString().equals("AVAILABLE")) {
                     return true;
@@ -159,7 +163,10 @@ public class MojangAPIUtils {
 
         try (Response response = Network.CLIENT.newCall(request).execute()) {
             if (!response.isSuccessful()) {
-                LogManager.error(response.body().string());
+                ResponseBody responseBody = response.body();
+                if (responseBody != null) {
+                    LogManager.error(responseBody.string());
+                }
             }
 
             return response.isSuccessful();

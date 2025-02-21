@@ -25,9 +25,9 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.ListCellRenderer;
 
-import com.atlauncher.data.AbstractAccount;
+import com.atlauncher.data.MicrosoftAccount;
 
-public class AccountsDropDownRenderer extends JLabel implements ListCellRenderer<AbstractAccount> {
+public class AccountsDropDownRenderer extends JLabel implements ListCellRenderer<MicrosoftAccount> {
     public AccountsDropDownRenderer() {
         setOpaque(true);
         setHorizontalAlignment(CENTER);
@@ -48,7 +48,7 @@ public class AccountsDropDownRenderer extends JLabel implements ListCellRenderer
      * @return A component whose paint() method will render the specified value
      */
     @Override
-    public Component getListCellRendererComponent(JList<? extends AbstractAccount> list, AbstractAccount account,
+    public Component getListCellRendererComponent(JList<? extends MicrosoftAccount> list, MicrosoftAccount account,
             int index, boolean isSelected, boolean cellHasFocus) {
         if (account == null) {
             return this;

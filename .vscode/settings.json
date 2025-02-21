@@ -23,9 +23,14 @@
         }
     ],
     "editor.wordWrapColumn": 120,
-    "editor.rulers": [120],
+    "editor.rulers": [
+        120
+    ],
     "java.import.gradle.wrapper.enabled": true,
-    "java.completion.filteredTypes": ["java.awt.List", "com.sun.*"],
+    "java.completion.filteredTypes": [
+        "java.awt.List",
+        "com.sun.*"
+    ],
     "java.codeGeneration.generateComments": true,
     "git.inputValidationLength": 100,
     "java.compile.nullAnalysis.mode": "automatic",

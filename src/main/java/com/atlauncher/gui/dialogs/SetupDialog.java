@@ -164,8 +164,6 @@ public class SetupDialog extends JDialog implements RelocalizationListener {
         });
 
         RelocalizationManager.addListener(this);
-
-        setVisible(true);
     }
 
     @Override

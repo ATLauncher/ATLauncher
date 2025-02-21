@@ -57,7 +57,6 @@ import com.atlauncher.utils.Pair;
 import com.atlauncher.utils.Utils;
 import com.google.gson.annotations.SerializedName;
 
-@SuppressWarnings("serial")
 public class DisableableMod implements Serializable {
     public String name;
     public String version;
@@ -396,11 +395,11 @@ public class DisableableMod implements Serializable {
                 }
 
                 Stream<CurseForgeFile> curseForgeFilesStream = curseForgeFiles.stream()
-                        .sorted(Comparator.comparingInt((CurseForgeFile file) -> file.id).reversed());
+                        .sorted(Comparator.comparingInt((CurseForgeFile f) -> f.id).reversed());
 
                 if (App.settings.addModRestriction == AddModRestriction.STRICT) {
                     curseForgeFilesStream = curseForgeFilesStream
-                            .filter(file -> file.gameVersions.contains(instanceOrServer.getMinecraftVersion()));
+                            .filter(f -> f.gameVersions.contains(instanceOrServer.getMinecraftVersion()));
                 }
 
                 if (App.settings.addModRestriction == AddModRestriction.LAX) {
@@ -410,7 +409,7 @@ public class DisableableMod implements Serializable {
                                 .stream().map(mv -> mv.id).collect(Collectors.toList());
 
                         curseForgeFilesStream = curseForgeFilesStream.filter(
-                                file -> file.gameVersions.stream()
+                                f -> f.gameVersions.stream()
                                         .anyMatch(minecraftVersionsToSearch::contains));
                     } catch (InvalidMinecraftVersion e) {
                         LogManager.logStackTrace(e);
@@ -452,7 +451,7 @@ public class DisableableMod implements Serializable {
                             && !cf.gameVersions.contains("Forge") && !cf.gameVersions.contains("Quilt");
                 });
 
-                if (curseForgeFilesStream.noneMatch(file -> file.id > curseForgeFileId)) {
+                if (curseForgeFilesStream.noneMatch(f -> f.id > curseForgeFileId)) {
                     dialog.setReturnValue(false);
                     dialog.close();
                     return;
@@ -463,17 +462,19 @@ public class DisableableMod implements Serializable {
             }));
             dialog.start();
 
-            if (dialog.getReturnValue() instanceof Boolean) {
-                return ((Boolean) dialog.getReturnValue());
-            }
-
             if (dialog.getReturnValue() == null) {
                 return false;
             }
 
-            new CurseForgeProjectFileSelectorDialog(parent, (CurseForgeProject) dialog.getReturnValue(),
+            if (dialog.getReturnValue() instanceof Boolean) {
+                return ((Boolean) dialog.getReturnValue()) == true;
+            }
+
+            CurseForgeProjectFileSelectorDialog curseForgeProjectFileSelectorDialog = new CurseForgeProjectFileSelectorDialog(
+                    parent, (CurseForgeProject) dialog.getReturnValue(),
                     instanceOrServer,
                     curseForgeFileId);
+            curseForgeProjectFileSelectorDialog.setVisible(true);
         } else if (platform == ModPlatform.MODRINTH || ((platform == null && isFromModrinth())
                 && (!isFromCurseForge() || App.settings.defaultModPlatform == ModPlatform.MODRINTH))) {
             ProgressDialog<Pair<ModrinthProject, List<ModrinthVersion>>> dialog = new ProgressDialog<>(
@@ -495,7 +496,7 @@ public class DisableableMod implements Serializable {
                 }
 
                 Stream<ModrinthVersion> versionsStream = versions.stream()
-                        .sorted(Comparator.comparing((ModrinthVersion version) -> version.datePublished).reversed());
+                        .sorted(Comparator.comparing((ModrinthVersion mv) -> mv.datePublished).reversed());
 
                 if (App.settings.addModRestriction == AddModRestriction.STRICT) {
                     versionsStream = versionsStream
@@ -515,13 +516,14 @@ public class DisableableMod implements Serializable {
             }));
             dialog.start();
 
-            if (dialog.getReturnValue() == null) {
+            Pair<ModrinthProject, List<ModrinthVersion>> pair = dialog.getReturnValue();
+            if (pair == null) {
                 return false;
             }
 
-            Pair<ModrinthProject, List<ModrinthVersion>> pair = dialog.getReturnValue();
-
-            new ModrinthVersionSelectorDialog(parent, pair.left(), pair.right(), instanceOrServer, modrinthVersion.id);
+            ModrinthVersionSelectorDialog modrinthVersionSelectorDialog = new ModrinthVersionSelectorDialog(parent,
+                    pair.left(), pair.right(), instanceOrServer, modrinthVersion.id);
+            modrinthVersionSelectorDialog.setVisible(true);
         }
 
         return true;
@@ -548,8 +550,9 @@ public class DisableableMod implements Serializable {
             }));
             dialog.start();
 
-            new CurseForgeProjectFileSelectorDialog(parent, dialog.getReturnValue(), instanceOrServer, curseForgeFileId,
+            CurseForgeProjectFileSelectorDialog curseForgeProjectFileSelectorDialog = new CurseForgeProjectFileSelectorDialog(parent, dialog.getReturnValue(), instanceOrServer, curseForgeFileId,
                     false);
+            curseForgeProjectFileSelectorDialog.setVisible(true);
         } else if (platform == ModPlatform.MODRINTH || (platform == null && isFromModrinth()
                 && (!isFromCurseForge() || App.settings.defaultModPlatform == ModPlatform.MODRINTH))) {
             ProgressDialog<ModrinthProject> dialog = new ProgressDialog<>(
@@ -563,8 +566,9 @@ public class DisableableMod implements Serializable {
             }));
             dialog.start();
 
-            new ModrinthVersionSelectorDialog(parent, dialog.getReturnValue(), instanceOrServer, modrinthVersion.id,
+            ModrinthVersionSelectorDialog modrinthVersionSelectorDialog = new ModrinthVersionSelectorDialog(parent, dialog.getReturnValue(), instanceOrServer, modrinthVersion.id,
                     false);
+            modrinthVersionSelectorDialog.setVisible(true);
         }
 
         return true;

@@ -89,7 +89,9 @@ public final class ModrinthProjectDependencyCard extends JPanel {
 
         addButton.addActionListener(e -> {
             Analytics.trackEvent(AnalyticsEvent.forAddMod(mod));
-            new ModrinthVersionSelectorDialog(parent, mod, instanceOrServer);
+            ModrinthVersionSelectorDialog modrinthVersionSelectorDialog = new ModrinthVersionSelectorDialog(parent, mod,
+                    instanceOrServer);
+            modrinthVersionSelectorDialog.setVisible(true);
             parent.reloadDependenciesPanel();
         });
 

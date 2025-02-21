@@ -30,8 +30,6 @@ import java.util.stream.Stream;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import org.jetbrains.annotations.NotNull;
-
 import com.atlauncher.App;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.Pack;
@@ -85,17 +83,17 @@ public class InstancesTabViewModel implements IInstancesTabViewModel, SettingsLi
             new ObservableSource[] { InstanceManager.getInstancesObservable(), searchPattern, sortingStrategy },
             it -> {
                 List<Instance> instancesSorted = (List<Instance>) it[0];
-                Optional<Pattern> searchPattern = (Optional<Pattern>) it[1];
-                InstanceSortingStrategy sortingStrategy = (InstanceSortingStrategy) it[2];
+                Optional<Pattern> selectedSearchPattern = (Optional<Pattern>) it[1];
+                InstanceSortingStrategy selectedSortingStrategy = (InstanceSortingStrategy) it[2];
 
                 Stream<Instance> stream = instancesSorted.stream();
 
-                if (searchPattern.isPresent()) {
-                    stream = stream.filter(createSearchFilter(searchPattern.get()));
+                if (selectedSearchPattern.isPresent()) {
+                    stream = stream.filter(createSearchFilter(selectedSearchPattern.get()));
                 }
 
-                if (sortingStrategy != null) {
-                    stream = stream.sorted(sortingStrategy);
+                if (selectedSortingStrategy != null) {
+                    stream = stream.sorted(selectedSortingStrategy);
                 }
 
                 return stream.collect(Collectors.toList());
@@ -149,7 +147,7 @@ public class InstancesTabViewModel implements IInstancesTabViewModel, SettingsLi
         sortingStrategy.onNext(strategy);
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public InstanceSortingStrategies getSort() {
         return sortingStrategy.getValue();

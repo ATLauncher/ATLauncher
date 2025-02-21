@@ -210,7 +210,7 @@ public class Launcher {
             }));
             progressDialog.start();
 
-            if (progressDialog.getReturnValue()) {
+            if (progressDialog.getReturnValue() == true) {
                 runUpdate(path, newFile.getAbsolutePath());
             }
         } catch (IOException e) {

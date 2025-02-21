@@ -256,7 +256,8 @@ public class ModrinthPacksPanel extends PackBrowserPlatformPanel {
             }
         } else {
             Analytics.trackEvent(AnalyticsEvent.forPackInstall(project));
-            new InstanceInstallerDialog(project);
+            InstanceInstallerDialog instanceInstallerDialog = new InstanceInstallerDialog(project);
+            instanceInstallerDialog.setVisible(true);
         }
     }
 

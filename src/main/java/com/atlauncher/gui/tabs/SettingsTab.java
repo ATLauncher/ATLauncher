@@ -101,6 +101,7 @@ public class SettingsTab extends HierarchyPanel implements Tab {
         networkSettingsViewModel = new NetworkSettingsViewModel();
     }
 
+    @SuppressWarnings("null")
     @Override
     protected void onShow() {
         saveButton = new JButton(GetText.tr("Save"));

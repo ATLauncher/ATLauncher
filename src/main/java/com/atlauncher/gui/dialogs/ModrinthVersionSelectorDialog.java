@@ -303,7 +303,7 @@ public class ModrinthVersionSelectorDialog extends JDialog {
             ModrinthFile file = filesDropdown.getSelectedItem() == null ? null
                     : ((ComboItem<ModrinthFile>) filesDropdown.getSelectedItem()).getValue();
 
-            ProgressDialog<Object> progressDialog = new ProgressDialog<>(
+            ProgressDialog<Void> progressDialog = new ProgressDialog<>(
                     // #. {0} is the name of the mod we're installing
                     GetText.tr("Installing {0}", version.name), true, this);
             progressDialog.addThread(new Thread(() -> {
@@ -366,7 +366,6 @@ public class ModrinthVersionSelectorDialog extends JDialog {
         add(top, BorderLayout.NORTH);
         add(middle, BorderLayout.CENTER);
         add(bottom, BorderLayout.SOUTH);
-        setVisible(true);
     }
 
     protected void getFiles() {
@@ -387,7 +386,7 @@ public class ModrinthVersionSelectorDialog extends JDialog {
             if (App.settings.addModRestriction != AddModRestriction.NONE && loaderVersion != null
                     && project.projectType == ModrinthProjectType.MOD) {
                 List<String> neoForgeForgeCompatabilityVersions = ConfigManager
-                        .getConfigItem("loaders.neoforge.forgeCompatibleMinecraftVersions", new ArrayList<String>());
+                        .getConfigItem("loaders.neoforge.forgeCompatibleMinecraftVersions", new ArrayList<>());
                 boolean hasNeoForgeVersion = this.versionsData.stream()
                         .anyMatch(v -> v.loaders.contains("neoforge")
                                 || (neoForgeForgeCompatabilityVersions.contains(minecraftVersion)

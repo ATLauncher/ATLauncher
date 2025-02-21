@@ -46,7 +46,7 @@ import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.subjects.BehaviorSubject;
 
 public class AccountManager {
-    private static final Type abstractAccountListType = new TypeToken<List<MicrosoftAccount>>() {}.getType();
+    private static final Type microsoftAccountListType = new TypeToken<List<MicrosoftAccount>>() {}.getType();
 
     public static final BehaviorSubject<List<MicrosoftAccount>> ACCOUNTS = BehaviorSubject
             .createDefault(new ArrayList<>());
@@ -67,7 +67,7 @@ public class AccountManager {
 
     @Nonnull
     public static List<MicrosoftAccount> getAccounts() {
-        return ACCOUNTS.getValue();
+        return Optional.ofNullable(ACCOUNTS.getValue()).orElse(new ArrayList<>());
     }
 
     @Nullable
@@ -87,7 +87,7 @@ public class AccountManager {
         if (Files.exists(FileSystem.ACCOUNTS)) {
             try (InputStreamReader fileReader = new InputStreamReader(
                     Files.newInputStream(FileSystem.ACCOUNTS), StandardCharsets.UTF_8)) {
-                List<MicrosoftAccount> accounts = Gsons.DEFAULT.fromJson(fileReader, abstractAccountListType);
+                List<MicrosoftAccount> accounts = Gsons.DEFAULT.fromJson(fileReader, microsoftAccountListType);
 
                 newAccounts.addAll(accounts.stream().filter(account -> account.accessToken != null
                         && account.accessToken.split("\\.").length == 3).collect(Collectors.toList()));
@@ -119,7 +119,7 @@ public class AccountManager {
     private static void saveAccounts(List<MicrosoftAccount> accounts) {
         try (OutputStreamWriter fileWriter = new OutputStreamWriter(
                 Files.newOutputStream(FileSystem.ACCOUNTS), StandardCharsets.UTF_8)) {
-            Gsons.DEFAULT.toJson(accounts, abstractAccountListType, fileWriter);
+            Gsons.DEFAULT.toJson(accounts, microsoftAccountListType, fileWriter);
         } catch (JsonIOException | IOException e) {
             LogManager.logStackTrace(e);
         }

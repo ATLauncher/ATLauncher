@@ -76,8 +76,6 @@ public class CreateMinecraftProfileDialog extends JDialog {
                 close();
             }
         });
-
-        setVisible(true);
     }
 
     private void setupComponents() {
@@ -151,7 +149,7 @@ public class CreateMinecraftProfileDialog extends JDialog {
             }));
             progressDialog.start();
 
-            if (progressDialog.getReturnValue()) {
+            if (progressDialog.getReturnValue() == true) {
                 close();
             }
 

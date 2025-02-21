@@ -17,10 +17,9 @@
  */
 package com.atlauncher.gui.components;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.swing.text.JTextComponent;
-
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * Wrapper of PreservingCaretTextSetter, allowing locking of setting.
@@ -31,7 +30,7 @@ public class LockingPreservingCaretTextSetter extends PreservingCaretTextSetter 
     /**
      * @param component TextComponent to set text of.
      */
-    public LockingPreservingCaretTextSetter(@NotNull JTextComponent component) {
+    public LockingPreservingCaretTextSetter(@Nonnull JTextComponent component) {
         super(component);
     }
 

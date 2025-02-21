@@ -23,8 +23,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.jetbrains.annotations.Nullable;
-
 import com.atlauncher.FileSystem;
 import com.atlauncher.Network;
 import com.atlauncher.constants.Constants;
@@ -213,8 +211,7 @@ public class LegacyForgeLoader implements Loader {
     }
 
     @Override
-    public void runProcessors() {
-    }
+    public void runProcessors() {}
 
     @Override
     public List<Library> getLibraries() {

@@ -920,7 +920,7 @@ public class CreatePackViewModel implements SettingsListener, ICreatePackViewMod
 
     @Override
     public void setExperimentSelected(Boolean b) {
-        final HashMap<VersionManifestVersionType, Boolean> map = new HashMap(
+        final HashMap<VersionManifestVersionType, Boolean> map = new HashMap<>(
                 minecraftVersionTypeFiltersPublisher.getValue());
         map.put(VersionManifestVersionType.EXPERIMENT, b);
         minecraftVersionTypeFiltersPublisher.onNext((HashMap) map.clone());
@@ -928,7 +928,7 @@ public class CreatePackViewModel implements SettingsListener, ICreatePackViewMod
 
     @Override
     public void setSnapshotSelected(Boolean b) {
-        final HashMap<VersionManifestVersionType, Boolean> map = new HashMap(
+        final HashMap<VersionManifestVersionType, Boolean> map = new HashMap<>(
                 minecraftVersionTypeFiltersPublisher.getValue());
         map.put(VersionManifestVersionType.SNAPSHOT, b);
         minecraftVersionTypeFiltersPublisher.onNext((HashMap) map.clone());
@@ -936,7 +936,7 @@ public class CreatePackViewModel implements SettingsListener, ICreatePackViewMod
 
     @Override
     public void setOldAlphaSelected(Boolean b) {
-        final HashMap<VersionManifestVersionType, Boolean> map = new HashMap(
+        final HashMap<VersionManifestVersionType, Boolean> map = new HashMap<>(
                 minecraftVersionTypeFiltersPublisher.getValue());
         map.put(VersionManifestVersionType.OLD_ALPHA, b);
         minecraftVersionTypeFiltersPublisher.onNext((HashMap) map.clone());
@@ -944,7 +944,7 @@ public class CreatePackViewModel implements SettingsListener, ICreatePackViewMod
 
     @Override
     public void setOldBetaSelected(Boolean b) {
-        final HashMap<VersionManifestVersionType, Boolean> map = new HashMap(
+        final HashMap<VersionManifestVersionType, Boolean> map = new HashMap<>(
                 minecraftVersionTypeFiltersPublisher.getValue());
         map.put(VersionManifestVersionType.OLD_BETA, b);
         minecraftVersionTypeFiltersPublisher.onNext((HashMap) map.clone());

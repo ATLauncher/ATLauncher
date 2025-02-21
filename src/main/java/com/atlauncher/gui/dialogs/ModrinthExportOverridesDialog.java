@@ -80,8 +80,6 @@ public class ModrinthExportOverridesDialog extends JDialog {
         buttonPanel.add(closeButton);
 
         add(buttonPanel, BorderLayout.SOUTH);
-
-        setVisible(true);
     }
 
     private void close() {

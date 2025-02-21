@@ -26,9 +26,12 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.security.KeyManagementException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
 import java.security.cert.Certificate;
+import java.security.cert.CertificateException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -257,7 +260,7 @@ public class Java {
                     .collect(Collectors.toMap(a -> a, (String alias) -> {
                         try {
                             return keyStore.getCertificate(alias);
-                        } catch (Exception e) {
+                        } catch (KeyStoreException e) {
                             LogManager.logStackTrace("Failed to get certificate", e);
                             return null;
                         }
@@ -292,7 +295,7 @@ public class Java {
             tls.init(null, instance.getTrustManagers(), null);
             HttpsURLConnection.setDefaultSSLSocketFactory(tls.getSocketFactory());
             LogManager.info("Injected new root certificates");
-        } catch (Exception e) {
+        } catch (IOException | KeyManagementException | KeyStoreException | NoSuchAlgorithmException | CertificateException e) {
             LogManager.logStackTrace("Failed to inject new root certificates. Problems might happen", e);
         }
     }
@@ -361,11 +364,7 @@ public class Java {
             return true;
         }
 
-        if (App.settings.seenOutdatedJavaPromptVersion != ConfigManager.getConfigItem("outdatedJavaPrompt.version", 1.0)
-                .intValue()) {
-            return true;
-        }
-
-        return false;
+        return App.settings.seenOutdatedJavaPromptVersion != ConfigManager.getConfigItem("outdatedJavaPrompt.version", 1.0)
+                .intValue();
     }
 }

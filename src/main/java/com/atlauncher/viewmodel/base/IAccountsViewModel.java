@@ -20,8 +20,7 @@ package com.atlauncher.viewmodel.base;
 import java.util.List;
 import java.util.function.Consumer;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nullable;
 
 import com.atlauncher.data.MicrosoftAccount;
 
@@ -105,7 +104,7 @@ public interface IAccountsViewModel {
      *
      * @return the currently selected account
      */
-    @NotNull
+    @Nullable
     MicrosoftAccount getSelectedAccount();
 
     /**

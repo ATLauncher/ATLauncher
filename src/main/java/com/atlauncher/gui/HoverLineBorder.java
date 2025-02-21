@@ -23,7 +23,6 @@ import java.awt.Insets;
 import javax.swing.UIManager;
 import javax.swing.border.LineBorder;
 
-@SuppressWarnings("serial")
 public class HoverLineBorder extends LineBorder {
     private final int insets;
 

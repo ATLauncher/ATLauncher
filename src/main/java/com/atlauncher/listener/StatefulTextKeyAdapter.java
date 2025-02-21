@@ -59,12 +59,13 @@ public class StatefulTextKeyAdapter extends KeyAdapter {
     }
 
     /**
-     * @param consumer        Consumer to receive events with
-     * @param ignoredReceiver Receiver to get events not sent to consumer, but not consume them. (They are passed to super).
+     * @param consumer Consumer to receive events with
+     * @param ignoredReceiver Receiver to get events not sent to consumer, but not consume them. (They are passed to
+     *            super).
      */
     public StatefulTextKeyAdapter(@Nonnull Consumer<KeyEvent> consumer,
-                                  @Nonnull Consumer<KeyEvent> ignoredReceiver,
-                                  @Nonnull Consumer<KeyEvent> postIgnoredReceiver) {
+            @Nonnull Consumer<KeyEvent> ignoredReceiver,
+            @Nonnull Consumer<KeyEvent> postIgnoredReceiver) {
         this.consumer = consumer;
         this.ignoredReceiver = ignoredReceiver;
         this.postIgnoredReceiver = postIgnoredReceiver;
@@ -81,6 +82,7 @@ public class StatefulTextKeyAdapter extends KeyAdapter {
 
     /**
      * Used as per the empty constructor.
+     * 
      * @param consumer Consumer to receive events with.
      */
     public void setConsumer(@Nullable Consumer<KeyEvent> consumer) {
@@ -89,25 +91,28 @@ public class StatefulTextKeyAdapter extends KeyAdapter {
 
     @Override
     public void keyReleased(KeyEvent e) {
-
         // Ignore if the event is null
+        // Ignore if the consumer is null
         // Ignore if it is an action key (arrows)
         // Ignore if it is a shift key (for shift selection)
         // Ignore if it is a control key (for ctrl commands)
         // Ignore if it is an alt key
         // Ignore if the modifiers has control down (for ctrl commands)
         if (e != null &&
-            !e.isActionKey() &&
-            e.getKeyCode() != KeyEvent.VK_SHIFT &&
-            e.getKeyCode() != KeyEvent.VK_CONTROL &&
-            e.getKeyCode() != KeyEvent.VK_ALT &&
-            e.getModifiersEx() != KeyEvent.CTRL_DOWN_MASK
-        ) {
+                !e.isActionKey() &&
+                e.getKeyCode() != KeyEvent.VK_SHIFT &&
+                e.getKeyCode() != KeyEvent.VK_CONTROL &&
+                e.getKeyCode() != KeyEvent.VK_ALT &&
+                e.getModifiersEx() != KeyEvent.CTRL_DOWN_MASK && consumer != null) {
             consumer.accept(e);
         } else {
-            if (ignoredReceiver != null) ignoredReceiver.accept(e);
+            if (ignoredReceiver != null) {
+                ignoredReceiver.accept(e);
+            }
             super.keyReleased(e);
-            if (postIgnoredReceiver != null) postIgnoredReceiver.accept(e);
+            if (postIgnoredReceiver != null) {
+                postIgnoredReceiver.accept(e);
+            }
         }
     }
 }

@@ -109,4 +109,20 @@ public class UtilsTest {
         assertEquals(0, Utils.compareVersions("asdasdasds", "1.7.0"));
     }
 
+    @Test
+    public void testGetSafeIntegerFromString() {
+        // Test null input
+        assertEquals(null, Utils.getSafeIntegerFromString(null));
+
+        // Test valid integer string
+        assertEquals(Integer.valueOf(123), Utils.getSafeIntegerFromString("123"));
+        assertEquals(Integer.valueOf(-456), Utils.getSafeIntegerFromString("-456"));
+        assertEquals(Integer.valueOf(0), Utils.getSafeIntegerFromString("0"));
+
+        // Test invalid integer string
+        assertEquals(null, Utils.getSafeIntegerFromString("abc"));
+        assertEquals(null, Utils.getSafeIntegerFromString("12.34"));
+        assertEquals(null, Utils.getSafeIntegerFromString("124hh"));
+        assertEquals(null, Utils.getSafeIntegerFromString("124hh"));
+    }
 }

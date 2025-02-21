@@ -51,7 +51,6 @@ import com.atlauncher.network.analytics.AnalyticsEvent;
 import com.atlauncher.utils.Markdown;
 import com.atlauncher.utils.OS;
 
-@SuppressWarnings("serial")
 public class FTBPackCard extends JPanel implements RelocalizationListener {
     private final JButton newInstanceButton = new JButton(GetText.tr("New Instance"));
     private final JButton websiteButton = new JButton(GetText.tr("Website"));
@@ -93,12 +92,13 @@ public class FTBPackCard extends JPanel implements RelocalizationListener {
                         .setContent(GetText.tr("Cannot create instance as you have no account selected."))
                         .setType(DialogManager.ERROR).show();
 
-                if (AccountManager.getAccounts().size() == 0) {
+                if (AccountManager.getAccounts().isEmpty()) {
                     App.navigate(UIConstants.LAUNCHER_ACCOUNTS_TAB);
                 }
             } else {
                 Analytics.trackEvent(AnalyticsEvent.forPackInstall(pack));
-                new InstanceInstallerDialog(pack);
+                InstanceInstallerDialog instanceInstallerDialog = new InstanceInstallerDialog(pack);
+                instanceInstallerDialog.setVisible(true);
             }
         });
         buttonsPanel.add(newInstanceButton);
