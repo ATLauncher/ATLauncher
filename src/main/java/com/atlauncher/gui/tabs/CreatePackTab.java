@@ -389,6 +389,10 @@ public class CreatePackTab extends HierarchyPanel implements Tab {
         addDisposable(viewModel.isPaperVisible().subscribe(loaderTypePaperRadioButton::setVisible));
         loaderTypePaperRadioButton.addActionListener(
                 e -> viewModel.setLoaderType(LoaderType.PAPER));
+        // #. {0} is the name of the loader
+        loaderTypePaperRadioButton.setToolTipText(new HTMLBuilder().text(GetText.tr(
+                "{0} is a loader for servers that allow you to install and run plugins.<br/>You can't run mods with the {0} loader and can only be used on servers.",
+                "Paper")).center().build());
         if (viewModel.showPaperOption()) {
             loaderTypePanel.add(loaderTypePaperRadioButton);
         }
@@ -400,6 +404,10 @@ public class CreatePackTab extends HierarchyPanel implements Tab {
         addDisposable(viewModel.isPurpurVisible().subscribe(loaderTypePurpurRadioButton::setVisible));
         loaderTypePurpurRadioButton.addActionListener(
                 e -> viewModel.setLoaderType(LoaderType.PURPUR));
+        // #. {0} is the name of the loader
+        loaderTypePurpurRadioButton.setToolTipText(new HTMLBuilder().text(GetText.tr(
+                "{0} is a loader for servers that allow you to install and run plugins.<br/>You can't run mods with the {0} loader and can only be used on servers.",
+                "Purpur")).center().build());
         if (viewModel.showPurpurOption()) {
             loaderTypePanel.add(loaderTypePurpurRadioButton);
         }
@@ -476,7 +484,7 @@ public class CreatePackTab extends HierarchyPanel implements Tab {
     }
 
     @SuppressWarnings("null")
-	private void setupMinecraftVersionsTable() {
+    private void setupMinecraftVersionsTable() {
         minecraftVersionTableModel = new DefaultTableModel(
                 new String[][] {},
                 new String[] { GetText.tr("Version"), GetText.tr("Released"), GetText.tr("Type") }) {

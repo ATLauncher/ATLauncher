@@ -65,6 +65,7 @@ import com.atlauncher.data.Instance;
 import com.atlauncher.data.Language;
 import com.atlauncher.data.Pack;
 import com.atlauncher.data.Settings;
+import com.atlauncher.gui.HoverLineBorder;
 import com.atlauncher.gui.LauncherConsole;
 import com.atlauncher.gui.LauncherFrame;
 import com.atlauncher.gui.SplashScreen;
@@ -915,11 +916,13 @@ public class App {
         UIManager.put("defaultFont", THEME.getNormalFont());
         UIManager.put("Button.font", THEME.getNormalFont());
         UIManager.put("Toaster.font", THEME.getNormalFont());
+        UIManager.put("ToolTip.font", THEME.getNormalFont());
         UIManager.put("Toaster.opacity", 0.75F);
 
         UIManager.put("FileChooser.readOnly", Boolean.TRUE);
         UIManager.put("ScrollBar.minimumThumbSize", new Dimension(50, 50));
         UIManager.put("ScrollPane.border", BorderFactory.createEmptyBorder());
+        UIManager.put("ToolTip.border", new HoverLineBorder());
 
         // for Mac we setup correct copy/cut/paste shortcuts otherwise it just uses Ctrl
         if (OS.isMac()) {

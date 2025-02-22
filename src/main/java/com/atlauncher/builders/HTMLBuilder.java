@@ -17,6 +17,10 @@
  */
 package com.atlauncher.builders;
 
+import java.awt.Font;
+
+import com.atlauncher.App;
+
 public final class HTMLBuilder {
     public boolean center = false;
     public String text;
@@ -66,7 +70,9 @@ public final class HTMLBuilder {
         String end = "";
 
         if (center) {
-            start += "<p align=\"center\">";
+            Font font = App.THEME.getNormalFont();
+            start += "<p style=\"padding: 0;font-family: " + font.getFamily() + ";font-size: " + font.getSize()
+                    + "pt;\" align=\"center\">";
             end += "</p>";
         }
 
