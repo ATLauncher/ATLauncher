@@ -47,7 +47,7 @@ import com.atlauncher.network.analytics.AnalyticsEvent;
 import com.atlauncher.utils.OS;
 
 public class ModrinthPackCard extends JPanel implements RelocalizationListener {
-    private final JButton newInstanceButton = new JButton(GetText.tr("Install"));
+    private final JButton installButton = new JButton(GetText.tr("Install"));
     private final JButton createServerButton = new JButton(GetText.tr("Create Server"));
     private final JButton websiteButton = new JButton(GetText.tr("Website"));
 
@@ -75,7 +75,7 @@ public class ModrinthPackCard extends JPanel implements RelocalizationListener {
         JPanel buttonsPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 0));
         buttonsPanel.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0));
 
-        newInstanceButton.addActionListener(e -> {
+        installButton.addActionListener(e -> {
             if (AccountManager.getSelectedAccount() == null) {
                 DialogManager.okDialog().setTitle(GetText.tr("No Account Selected"))
                         .setContent(GetText.tr("Cannot create instance as you have no account selected."))
@@ -90,7 +90,7 @@ public class ModrinthPackCard extends JPanel implements RelocalizationListener {
                 instanceInstallerDialog.setVisible(true);
             }
         });
-        buttonsPanel.add(newInstanceButton);
+        buttonsPanel.add(installButton);
 
         createServerButton.addActionListener(e -> {
             // user has no instances, they may not be aware this is not how to play
@@ -144,7 +144,7 @@ public class ModrinthPackCard extends JPanel implements RelocalizationListener {
 
     @Override
     public void onRelocalization() {
-        newInstanceButton.setText(GetText.tr("New Instance"));
+        installButton.setText(GetText.tr("New Instance"));
         websiteButton.setText(GetText.tr("Website"));
     }
 }

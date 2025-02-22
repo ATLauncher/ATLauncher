@@ -49,7 +49,7 @@ import com.atlauncher.network.analytics.AnalyticsEvent;
 import com.atlauncher.utils.OS;
 
 public class ATLauncherPackCard extends JPanel implements RelocalizationListener {
-    private final JButton newInstanceButton = new JButton(GetText.tr("Install"));
+    private final JButton installButton = new JButton(GetText.tr("Install"));
     private final JButton createServerButton = new JButton(GetText.tr("Create Server"));
     private final JButton discordInviteButton = new JButton("Discord");
     private final JButton supportButton = new JButton(GetText.tr("Support"));
@@ -82,7 +82,7 @@ public class ATLauncherPackCard extends JPanel implements RelocalizationListener
         as.setBottomComponent(bottom);
         as.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0));
 
-        top.add(this.newInstanceButton);
+        top.add(this.installButton);
         top.add(this.createServerButton);
 
         if (pack.getDiscordInviteURL() != null) {
@@ -140,7 +140,7 @@ public class ATLauncherPackCard extends JPanel implements RelocalizationListener
     }
 
     private void addActionListeners() {
-        this.newInstanceButton.addActionListener(e -> {
+        this.installButton.addActionListener(e -> {
             if (AccountManager.getSelectedAccount() == null) {
                 DialogManager.okDialog().setTitle(GetText.tr("No Account Selected"))
                         .setContent(GetText.tr("Cannot create instance as you have no account selected."))
@@ -204,7 +204,7 @@ public class ATLauncherPackCard extends JPanel implements RelocalizationListener
 
     @Override
     public void onRelocalization() {
-        this.newInstanceButton.setText(GetText.tr("New Instance"));
+        this.installButton.setText(GetText.tr("New Instance"));
         this.createServerButton.setText(GetText.tr("Create Server"));
         this.supportButton.setText(GetText.tr("Support"));
         this.websiteButton.setText(GetText.tr("Website"));

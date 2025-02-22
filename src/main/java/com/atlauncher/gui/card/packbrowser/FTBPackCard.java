@@ -54,7 +54,7 @@ import com.atlauncher.utils.Markdown;
 import com.atlauncher.utils.OS;
 
 public class FTBPackCard extends JPanel implements RelocalizationListener {
-    private final JButton newInstanceButton = new JButton(GetText.tr("New Instance"));
+    private final JButton installButton = new JButton(GetText.tr("Install"));
     private final JButton websiteButton = new JButton(GetText.tr("Website"));
 
     public FTBPackCard(final FTBPackManifest pack) {
@@ -89,7 +89,7 @@ public class FTBPackCard extends JPanel implements RelocalizationListener {
         JPanel buttonsPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 0));
         buttonsPanel.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0));
 
-        newInstanceButton.addActionListener(e -> {
+        installButton.addActionListener(e -> {
             if (AccountManager.getSelectedAccount() == null) {
                 DialogManager.okDialog().setTitle(GetText.tr("No Account Selected"))
                         .setContent(GetText.tr("Cannot create instance as you have no account selected."))
@@ -104,7 +104,7 @@ public class FTBPackCard extends JPanel implements RelocalizationListener {
                 instanceInstallerDialog.setVisible(true);
             }
         });
-        buttonsPanel.add(newInstanceButton);
+        buttonsPanel.add(installButton);
 
         websiteButton.addActionListener(e -> OS.openWebBrowser(pack.getWebsiteUrl()));
         buttonsPanel.add(websiteButton);
@@ -139,7 +139,7 @@ public class FTBPackCard extends JPanel implements RelocalizationListener {
 
     @Override
     public void onRelocalization() {
-        newInstanceButton.setText(GetText.tr("New Instance"));
+        installButton.setText(GetText.tr("Install"));
         websiteButton.setText(GetText.tr("Website"));
     }
 }
