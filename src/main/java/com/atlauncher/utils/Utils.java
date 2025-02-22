@@ -177,16 +177,10 @@ public class Utils {
             name += ".png";
         }
 
-        InputStream stream = App.class.getResourceAsStream(name);
-
-        if (stream == null) {
-            throw new NullPointerException("Stream == null");
-        }
-
-        try {
-            return ImageIO.read(stream);
+        try (InputStream inputStream = App.class.getResourceAsStream(name)) {
+            return ImageIO.read(inputStream);
         } catch (IOException e) {
-            LogManager.logStackTrace("Failed to read image", e);
+            LogManager.logStackTrace("Failed to get resource input stream for path: " + name, e);
             return null;
         }
     }

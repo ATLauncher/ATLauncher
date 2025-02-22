@@ -33,6 +33,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 - LegacyJavaFixer not being installed on 1.7.2 Forge
 - Remember which settings tab was selected when switching to other tabs and back
 - More consistent UI between the tabs in the Packs tab
+- Clean up some unclosed resources/sockets
 
 ### Misc
 - Update gradle wrapper version from 8.2 to 8.12

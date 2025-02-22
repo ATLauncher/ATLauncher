@@ -140,7 +140,12 @@ public final class Download {
 
         this.execute();
 
-        return gson.fromJson(this.response.body().charStream(), tClass);
+        T res = gson.fromJson(this.response.body().charStream(), tClass);
+
+        this.response.close();
+        this.response = null;
+
+        return res;
     }
 
     public <T> T asClass(Class<T> tClass, Gson gson) {
@@ -179,7 +184,12 @@ public final class Download {
 
         this.execute();
 
-        return gson.fromJson(this.response.body().charStream(), tClass);
+        T res = gson.fromJson(this.response.body().charStream(), tClass);
+
+        this.response.close();
+        this.response = null;
+
+        return res;
     }
 
     public <T> T asType(Type tClass, Gson gson) {
