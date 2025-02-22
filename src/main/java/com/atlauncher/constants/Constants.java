@@ -79,7 +79,7 @@ public class Constants {
     public static String SERVERS_LIST_PACK = DEFAULT_BASE_LAUNCHER_PROTOCOL + DEFAULT_BASE_LAUNCHER_DOMAIN
             + "/servers/list/pack";
     public static String PASTE_API_URL = DEFAULT_BASE_LAUNCHER_PROTOCOL + "paste." + DEFAULT_BASE_LAUNCHER_DOMAIN
-            + "/api/create";
+            + "/api/create-v2";
 
     // CDN domains, endpoints, etc
     private static final String DEFAULT_BASE_CDN_PROTOCOL = "https://";
@@ -225,7 +225,7 @@ public class Constants {
         PASTE_CHECK_URL = BASE_LAUNCHER_PROTOCOL + "paste." + host;
         PASTE_HOST = "paste." + host;
         SERVERS_LIST_PACK = BASE_LAUNCHER_PROTOCOL + host + "/servers/list/pack";
-        PASTE_API_URL = BASE_LAUNCHER_PROTOCOL + "paste." + host + "/api/create";
+        PASTE_API_URL = BASE_LAUNCHER_PROTOCOL + "paste." + host + "/api/create-v2";
     }
 
     public static void setBaseCdnDomain(String baseCdnDomain) {

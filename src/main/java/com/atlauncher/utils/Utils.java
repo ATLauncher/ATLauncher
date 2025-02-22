@@ -40,8 +40,6 @@ import java.net.NetworkInterface;
 import java.net.Proxy;
 import java.net.URI;
 import java.net.URL;
-import java.net.URLConnection;
-import java.net.URLEncoder;
 import java.nio.channels.FileChannel;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -54,9 +52,11 @@ import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.EnumSet;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -89,9 +89,13 @@ import com.atlauncher.data.minecraft.ExtractRule;
 import com.atlauncher.data.minecraft.FabricMod;
 import com.atlauncher.data.minecraft.MCMod;
 import com.atlauncher.managers.LogManager;
+import com.atlauncher.network.NetworkClient;
 import com.google.gson.reflect.TypeToken;
 
 import net.iharder.Base64;
+import okhttp3.Headers;
+import okhttp3.MediaType;
+import okhttp3.RequestBody;
 
 public class Utils {
     public static EnumSet<StandardOpenOption> WRITE = EnumSet.of(StandardOpenOption.CREATE_NEW,
@@ -194,35 +198,17 @@ public class Utils {
      *
      * @param title the title
      * @param log the log
-     * @return the string
+     * @return the url of the paste
      */
     public static String uploadPaste(String title, String log) {
-        String line;
-        String result = "";
-        try {
-            String urlParameters = "";
-            urlParameters += "title=" + URLEncoder.encode(title, "ISO-8859-1") + "&";
-            urlParameters += "language=" + URLEncoder.encode("text", "ISO-8859-1") + "&";
-            urlParameters += "private=" + URLEncoder.encode("1", "ISO-8859-1") + "&";
-            urlParameters += "text=" + URLEncoder.encode(log, "ISO-8859-1");
-            URL url = new URL(Constants.PASTE_API_URL);
-            URLConnection conn = url.openConnection();
-            conn.addRequestProperty("User-Agent", Network.USER_AGENT);
-            conn.setDoOutput(true);
-            OutputStreamWriter writer = new OutputStreamWriter(conn.getOutputStream(), StandardCharsets.UTF_8);
-            writer.write(urlParameters);
-            writer.flush();
-            BufferedReader reader = new BufferedReader(
-                    new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8));
-            while ((line = reader.readLine()) != null) {
-                result = line;
-            }
-            writer.close();
-            reader.close();
-        } catch (IOException e1) {
-            LogManager.logStackTrace(e1);
-        }
-        return result;
+        Map<Object, Object> data = new HashMap<>();
+        data.put("title", title);
+        data.put("text", log);
+
+        return NetworkClient.post(Constants.PASTE_API_URL,
+                Headers.of("Content-Type", "application/json"),
+                RequestBody.create(Gsons.DEFAULT.toJson(data), MediaType.get("application/json; charset=utf-8")),
+                String.class);
     }
 
     /**

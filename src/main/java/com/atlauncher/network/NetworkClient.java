@@ -182,6 +182,12 @@ public class NetworkClient {
 
     @Nullable
     private static <T> T makeRequest(String url, @Nullable Headers headers, @Nullable RequestBody requestBody,
+            Class<T> tClass, @Nullable CacheControl cacheControl) throws DownloadException {
+        return makeRequest(url, headers, requestBody, TypeToken.get(tClass).getType(), cacheControl);
+    }
+
+    @Nullable
+    private static <T> T makeRequest(String url, @Nullable Headers headers, @Nullable RequestBody requestBody,
             Type type, @Nullable CacheControl cacheControl) throws DownloadException {
         Request.Builder builder = new Request.Builder().url(url);
 
@@ -220,11 +226,5 @@ public class NetworkClient {
             LogManager.logStackTrace(String.format("Error calling %s", url), e);
             return null;
         }
-    }
-
-    @Nullable
-    private static <T> T makeRequest(String url, @Nullable Headers headers, @Nullable RequestBody requestBody,
-            Class<T> tClass, @Nullable CacheControl cacheControl) throws DownloadException {
-        return makeRequest(url, headers, requestBody, TypeToken.get(tClass).getType(), cacheControl);
     }
 }

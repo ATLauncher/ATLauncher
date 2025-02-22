@@ -32,6 +32,7 @@ public final class UserAgentInterceptor implements Interceptor {
         Request originalRequest = chain.request();
 
         boolean internalHost = originalRequest.url().host().equals(Constants.API_HOST)
+                || originalRequest.url().host().equals(Constants.PASTE_HOST)
                 || originalRequest.url().host().equals(Constants.DOWNLOAD_HOST);
         String userAgent = internalHost ? Network.API_USER_AGENT
                 : Network.USER_AGENT;

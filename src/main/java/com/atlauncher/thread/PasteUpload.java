@@ -17,86 +17,17 @@
  */
 package com.atlauncher.thread;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.util.concurrent.Callable;
 
 import com.atlauncher.App;
-import com.atlauncher.Network;
 import com.atlauncher.constants.Constants;
-import com.atlauncher.managers.LogManager;
+import com.atlauncher.utils.Utils;
 
 public final class PasteUpload implements Callable<String> {
     @Override
     public String call() {
         String log = App.console.getLog().replace(System.lineSeparator(), "\n");
-        String urlParameters = "";
-        try {
-            urlParameters += "title=" + URLEncoder.encode(Constants.LAUNCHER_NAME + " - Log", "UTF-8") + "&";
-            urlParameters += "language=" + URLEncoder.encode("text", "UTF-8") + "&";
-            urlParameters += "private=" + URLEncoder.encode("1", "UTF-8") + "&";
-            urlParameters += "text=" + URLEncoder.encode(log, "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            LogManager.logStackTrace("Unsupported encoding", e);
-            return "Unsupported encoding";
-        }
-        HttpURLConnection conn;
-        try {
-            conn = (HttpURLConnection) new URL(Constants.PASTE_API_URL).openConnection();
-        } catch (MalformedURLException e) {
-            LogManager.logStackTrace("Malformed paste API URL", e);
-            return "Malformed paste API URL";
-        } catch (IOException e) {
-            LogManager.logStackTrace("Failed to connect to paste API", e);
-            return "Failed to connect to paste API";
-        }
-        conn.setDoOutput(true);
-        try {
-            conn.addRequestProperty("User-Agent", Network.USER_AGENT);
-            conn.connect();
-            conn.getOutputStream().write(urlParameters.getBytes(StandardCharsets.UTF_8));
-            conn.getOutputStream().flush();
-            conn.getOutputStream().close();
-        } catch (IOException e) {
-            LogManager.logStackTrace("Failed to send data to paste API", e);
-            return "Failed to send data to paste API";
-        }
 
-        StringBuilder builder = new StringBuilder();
-        InputStream stream;
-        try {
-            stream = conn.getInputStream();
-        } catch (IOException e) {
-            LogManager.logStackTrace("Failed to receive response from paste API", e);
-            stream = conn.getErrorStream();
-            if (stream == null) {
-                LogManager.error("No error message returned from paste API");
-                return "No error message returned from paste API";
-            }
-        }
-        BufferedReader reader = new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8));
-        try {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                builder.append(line);
-            }
-        } catch (IOException e) {
-            LogManager.logStackTrace("Failed to read error data", e);
-        } finally {
-            try {
-                reader.close();
-            } catch (IOException e) {
-                LogManager.logStackTrace("Failed to close error reader", e);
-            }
-        }
-        return builder.toString();
+        return Utils.uploadPaste(Constants.LAUNCHER_NAME + " - Log", log);
     }
 }

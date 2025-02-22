@@ -19,6 +19,7 @@ package com.atlauncher.data;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.Serializable;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -164,9 +165,8 @@ public abstract class AbstractAccount implements Serializable {
                     }
 
                     // Only copy over the default skin if there is no skin for the user
-                    try {
-                        java.nio.file.Files.copy(
-                                Utils.getResourceInputStream("/assets/image/skins/" + skinFilename), file.toPath());
+                    try (InputStream is = Utils.getResourceInputStream("/assets/image/skins/" + skinFilename)) {
+                        java.nio.file.Files.copy(is, file.toPath());
                     } catch (IOException e) {
                         LogManager.logStackTrace(e);
                     }
@@ -176,32 +176,24 @@ public abstract class AbstractAccount implements Serializable {
             } else {
                 try {
                     HttpURLConnection conn = (HttpURLConnection) new URL(skinURL).openConnection();
-                    if (conn.getResponseCode() == 200) {
-                        if (file.exists()) {
-                            Utils.delete(file);
-                        }
-                        Download.build().setUrl(skinURL).downloadTo(file.toPath()).downloadFile();
-                        dialog.setReturnValue(true);
-                    } else {
-                        if (!file.exists()) {
-                            String skinFilename = "default.png";
-
-                            // even UUID's use the alex skin
-                            if ((uid.hashCode() & 1) != 0) {
-                                skinFilename = "default-alex.png";
+                    try {
+                        if (conn.getResponseCode() == 200) {
+                            if (file.exists()) {
+                                Utils.delete(file);
                             }
-
-                            // Only copy over the default skin if there is no skin for the user
-                            try {
-                                java.nio.file.Files.copy(
-                                        Utils.getResourceInputStream("/assets/image/skins/" + skinFilename),
-                                        file.toPath());
-                            } catch (IOException e) {
-                                LogManager.logStackTrace(e);
-                            }
-
+                            Download.build().setUrl(skinURL).downloadTo(file.toPath()).downloadFile();
                             dialog.setReturnValue(true);
+                        } else {
+                            if (!file.exists()) {
+                                String skinFilename = ((uid.hashCode() & 1) != 0) ? "default-alex.png" : "default.png";
+                                try (InputStream is = Utils.getResourceInputStream("/assets/image/skins/" + skinFilename)) {
+                                    java.nio.file.Files.copy(is, file.toPath());
+                                }
+                                dialog.setReturnValue(true);
+                            }
                         }
+                    } finally {
+                        conn.disconnect();
                     }
                 } catch (IOException e) {
                     LogManager.logStackTrace(e);
