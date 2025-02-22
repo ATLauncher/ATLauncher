@@ -3773,31 +3773,35 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                 }
 
                 if (this.instance.launcher.overridePaths != null && !this.instance.launcher.overridePaths.isEmpty()) {
-                    this.instance.launcher.overridePaths.forEach(path -> {
-                        if (Files.exists(this.root.resolve(path))) {
-                            FileUtils.delete(this.root.resolve(path));
+                    this.instance.launcher.overridePaths.stream()
+                            .filter(Objects::nonNull)
+                            .forEach(path -> {
+                                Path resolvedPath = this.root.resolve(path);
 
-                            // delete empty parent directories recursively up to root
-                            try {
-                                Path parentDir = this.root.resolve(path).getParent();
-                                while (parentDir != null && parentDir.startsWith(this.root)
-                                        && !parentDir.equals(this.root)
-                                        && Files.isDirectory(parentDir)) {
+                                if (Files.exists(resolvedPath)) {
+                                    FileUtils.delete(resolvedPath);
 
-                                    try (Stream<Path> stream = Files.list(parentDir)) {
-                                        if (stream.count() == 0) {
-                                            FileUtils.deleteDirectory(parentDir);
-                                            parentDir = parentDir.getParent();
-                                        } else {
-                                            break;
+                                    // delete empty parent directories recursively up to root
+                                    try {
+                                        Path parentDir = resolvedPath.getParent();
+                                        while (parentDir != null && parentDir.startsWith(this.root)
+                                                && !parentDir.equals(this.root)
+                                                && Files.isDirectory(parentDir)) {
+
+                                            try (Stream<Path> stream = Files.list(parentDir)) {
+                                                if (stream.count() == 0) {
+                                                    FileUtils.deleteDirectory(parentDir);
+                                                    parentDir = parentDir.getParent();
+                                                } else {
+                                                    break;
+                                                }
+                                            }
                                         }
+                                    } catch (IOException ignored) {
+                                        // ignored
                                     }
                                 }
-                            } catch (IOException ignored) {
-                                // ignored
-                            }
-                        }
-                    });
+                            });
                 }
             } else {
                 if (Files.isDirectory(this.root.resolve("mods"))) {

@@ -34,6 +34,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Remember which settings tab was selected when switching to other tabs and back
 - More consistent UI between the tabs in the Packs tab
 - Clean up some unclosed resources/sockets
+- Issue reinstalling/updating instances with null overridePath items
 
 ### Misc
 - Update gradle wrapper version from 8.2 to 8.12
