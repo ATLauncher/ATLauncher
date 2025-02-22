@@ -55,3 +55,4 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Cleanup dead unused code
 - Add errorprone to check for bad code on compilation
 - Update compilation of the application to use JDK 17 (still Java 8 compat)
+- Move to a simpler NetworkClient for simple json requests rather than use Download

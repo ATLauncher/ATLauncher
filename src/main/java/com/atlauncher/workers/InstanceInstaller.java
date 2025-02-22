@@ -131,6 +131,7 @@ import com.atlauncher.network.Analytics;
 import com.atlauncher.network.DownloadPool;
 import com.atlauncher.network.ErrorReporting;
 import com.atlauncher.network.GraphqlClient;
+import com.atlauncher.network.NetworkClient;
 import com.atlauncher.network.analytics.AnalyticsEvent;
 import com.atlauncher.utils.ArchiveUtils;
 import com.atlauncher.utils.CurseForgeApi;
@@ -581,8 +582,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         fireTask(GetText.tr("Generating Pack Version From {0}", "ATLauncher"));
         fireSubProgressUnknown();
 
-        this.packVersion = com.atlauncher.network.Download.build().cached()
-                .setUrl(this.pack.getJsonDownloadUrl(version.version)).asClass(com.atlauncher.data.json.Version.class);
+        this.packVersion = NetworkClient.get(this.pack.getJsonDownloadUrl(version.version),
+                com.atlauncher.data.json.Version.class);
 
         if (this.packVersion == null) {
             throw new Exception("Failed to download pack version definition");
@@ -621,9 +622,9 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         if (hasJumpLoader) {
             java.lang.reflect.Type type = new TypeToken<List<FabricMetaVersion>>() {}.getType();
 
-            List<FabricMetaVersion> loaders = com.atlauncher.network.Download.build().setUrl(
-                    String.format("https://meta.fabricmc.net/v2/versions/loader/%s?limit=1", packVersion.minecraft))
-                    .asType(type);
+            List<FabricMetaVersion> loaders = NetworkClient.get(
+                    String.format("https://meta.fabricmc.net/v2/versions/loader/%s?limit=1", packVersion.minecraft),
+                    type);
 
             if (loaders == null || loaders.isEmpty()) {
                 throw new Exception("Failed to get Fabric version for pack containing JumpLoader");
@@ -1036,11 +1037,11 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         fireTask(GetText.tr("Generating Pack Version From {0}", "FTB"));
         fireSubProgressUnknown();
 
-        this.ftbPackVersionManifest = com.atlauncher.network.Download.build()
-                .setUrl(String.format("%s/modpack/%s/%s", Constants.FTB_API_URL, ftbPackManifest.id,
-                        this.version._ftbId))
-                .cached(new CacheControl.Builder().maxStale(1, TimeUnit.HOURS).build())
-                .asClass(FTBPackVersionManifest.class);
+        this.ftbPackVersionManifest = NetworkClient.getCached(
+                String.format("%s/modpack/%s/%s", Constants.FTB_API_URL, ftbPackManifest.id,
+                        this.version._ftbId),
+                FTBPackVersionManifest.class,
+                new CacheControl.Builder().maxStale(1, TimeUnit.HOURS).build());
 
         FTBPackVersionManifestTarget minecraftTarget = this.ftbPackVersionManifest.targets.stream()
                 .filter(t -> t.type == FTBPackVersionManifestTargetType.GAME).findFirst().orElse(null);
@@ -1982,12 +1983,11 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
 
         minecraftVersionManifest = MinecraftManager.getMinecraftVersion(this.packVersion.getMinecraft());
 
-        com.atlauncher.network.Download download = com.atlauncher.network.Download.build()
+        this.minecraftVersion = com.atlauncher.network.Download.build()
                 .setUrl(minecraftVersionManifest.url).hash(minecraftVersionManifest.sha1)
                 .size(minecraftVersionManifest.size)
-                .downloadTo(FileSystem.MINECRAFT_VERSIONS_JSON.resolve(minecraftVersionManifest.id + ".json"));
-
-        this.minecraftVersion = download.asClass(MinecraftVersion.class);
+                .downloadTo(FileSystem.MINECRAFT_VERSIONS_JSON.resolve(minecraftVersionManifest.id + ".json"))
+                .asClass(MinecraftVersion.class);
 
         if (this.minecraftVersion == null) {
             LogManager.error("Failed to download Minecraft json.");

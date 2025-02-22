@@ -38,6 +38,7 @@ public final class FileSystem {
     public static final Path BACKUPS = BASE_DIR.resolve("backups");
     public static final Path CACHE = BASE_DIR.resolve("cache");
     public static final Path APOLLO_CACHE = CACHE.resolve("apolloCache");
+    public static final Path HTTP_CACHE = CACHE.resolve("http");
     public static final Path REMOTE_IMAGE_CACHE = CACHE.resolve("remote_image");
     public static final Path FRACTURISER_SCANNED_HASHES = CACHE.resolve("fracturiser_scanned_hashes.json");
     public static final Path LOADERS = BASE_DIR.resolve("loaders");
@@ -230,6 +231,7 @@ public final class FileSystem {
 
         FileUtils.createDirectory(BACKUPS);
         FileUtils.createDirectory(CACHE);
+        FileUtils.createDirectory(HTTP_CACHE);
         FileUtils.createDirectory(REMOTE_IMAGE_CACHE);
         FileUtils.createDirectory(INSTANCES);
         FileUtils.createDirectory(LIBRARIES);

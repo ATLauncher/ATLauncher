@@ -19,7 +19,6 @@ package com.atlauncher.network;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.lang.reflect.Type;
 import java.net.SocketTimeoutException;
 import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
@@ -42,7 +41,6 @@ import com.atlauncher.utils.Hashing;
 import com.atlauncher.utils.Utils;
 import com.atlauncher.workers.InstanceInstaller;
 import com.google.common.hash.HashCode;
-import com.google.gson.Gson;
 
 import okhttp3.CacheControl;
 import okhttp3.Headers;
@@ -127,30 +125,9 @@ public final class Download {
         return null;
     }
 
-    public <T> T asClassWithThrow(Class<T> tClass, Gson gson) throws IOException {
-        if (this.to != null) {
-            if (this.needToDownload()) {
-                this.downloadFile();
-            }
-
-            try (InputStreamReader isr = new InputStreamReader(Files.newInputStream(this.to), StandardCharsets.UTF_8)) {
-                return gson.fromJson(isr, tClass);
-            }
-        }
-
-        this.execute();
-
-        T res = gson.fromJson(this.response.body().charStream(), tClass);
-
-        this.response.close();
-        this.response = null;
-
-        return res;
-    }
-
-    public <T> T asClass(Class<T> tClass, Gson gson) {
+    public <T> T asClass(Class<T> tClass) {
         try {
-            return asClassWithThrow(tClass, gson);
+            return this.asClassWithThrow(tClass);
         } catch (IOException e) {
             LogManager.logStackTrace(e);
 
@@ -161,58 +138,16 @@ public final class Download {
         }
 
         return null;
-    }
-
-    public <T> T asClass(Class<T> tClass) {
-        return asClass(tClass, Gsons.DEFAULT);
     }
 
     public <T> T asClassWithThrow(Class<T> tClass) throws IOException {
-        return asClassWithThrow(tClass, Gsons.DEFAULT);
-    }
-
-    public <T> T asTypeWithThrow(Type tClass, Gson gson) throws IOException {
-        if (this.to != null) {
-            if (this.needToDownload()) {
-                this.downloadFile();
-            }
-
-            try (InputStreamReader isr = new InputStreamReader(Files.newInputStream(this.to), StandardCharsets.UTF_8)) {
-                return gson.fromJson(isr, tClass);
-            }
+        if (this.needToDownload()) {
+            this.downloadFile();
         }
 
-        this.execute();
-
-        T res = gson.fromJson(this.response.body().charStream(), tClass);
-
-        this.response.close();
-        this.response = null;
-
-        return res;
-    }
-
-    public <T> T asType(Type tClass, Gson gson) {
-        try {
-            return asTypeWithThrow(tClass, gson);
-        } catch (IOException e) {
-            LogManager.logStackTrace(e);
-
-            if (this.response != null) {
-                this.response.close();
-                this.response = null;
-            }
+        try (InputStreamReader isr = new InputStreamReader(Files.newInputStream(this.to), StandardCharsets.UTF_8)) {
+            return Gsons.DEFAULT.fromJson(isr, tClass);
         }
-
-        return null;
-    }
-
-    public <T> T asType(Type tClass) {
-        return asType(tClass, Gsons.DEFAULT);
-    }
-
-    public <T> T asTypeWithThrow(Type tClass) throws IOException {
-        return asTypeWithThrow(tClass, Gsons.DEFAULT);
     }
 
     public Download downloadTo(Path to) {

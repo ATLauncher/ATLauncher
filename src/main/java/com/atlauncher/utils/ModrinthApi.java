@@ -17,7 +17,6 @@
  */
 package com.atlauncher.utils;
 
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -32,6 +31,8 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+import javax.annotation.Nullable;
+
 import com.atlauncher.App;
 import com.atlauncher.Gsons;
 import com.atlauncher.constants.Constants;
@@ -43,11 +44,11 @@ import com.atlauncher.data.modrinth.ModrinthSearchResult;
 import com.atlauncher.data.modrinth.ModrinthVersion;
 import com.atlauncher.managers.ConfigManager;
 import com.atlauncher.managers.LogManager;
-import com.atlauncher.network.Download;
-import com.atlauncher.network.DownloadException;
+import com.atlauncher.network.NetworkClient;
 import com.google.gson.reflect.TypeToken;
 
 import okhttp3.CacheControl;
+import okhttp3.Headers;
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
 
@@ -55,14 +56,12 @@ import okhttp3.RequestBody;
  * Various utility methods for interacting with the Modrinth API.
  */
 public class ModrinthApi {
-    private static Download getDownloadBuilder() {
-        Download downloadBuilder = Download.build();
-
-        if (App.settings.modrinthApiKey != null && !App.settings.modrinthApiKey.isEmpty()) {
-            downloadBuilder.header("Authorization", App.settings.modrinthApiKey);
+    private static Headers getHeaders() {
+        if (App.settings.modrinthApiKey == null || App.settings.modrinthApiKey.isEmpty()) {
+            return null;
         }
 
-        return downloadBuilder;
+        return Headers.of("Authorization", App.settings.modrinthApiKey);
     }
 
     public static ModrinthSearchResult searchModrinth(List<String> gameVersions, String query, int page, String index,
@@ -96,8 +95,8 @@ public class ModrinthApi {
                 url += String.format("&facets=%s", Gsons.DEFAULT_SLIM.toJson(facets));
             }
 
-            return getDownloadBuilder().cached(new CacheControl.Builder().maxStale(10, TimeUnit.MINUTES).build())
-                    .setUrl(url).asClass(ModrinthSearchResult.class);
+            return NetworkClient.getCached(url, getHeaders(), ModrinthSearchResult.class,
+                    new CacheControl.Builder().maxStale(10, TimeUnit.MINUTES).build());
         } catch (UnsupportedEncodingException e) {
             LogManager.logStackTrace(e);
         }
@@ -233,20 +232,19 @@ public class ModrinthApi {
     }
 
     public static ModrinthProject getProject(String projectId) {
-        return getDownloadBuilder()
-                .setUrl(String.format("%s/project/%s", Constants.MODRINTH_API_URL, projectId.replace("local-", "")))
-                .cached(new CacheControl.Builder().maxStale(10, TimeUnit.MINUTES).build())
-                .asClass(ModrinthProject.class);
+        return NetworkClient.getCached(
+                String.format("%s/project/%s", Constants.MODRINTH_API_URL, projectId.replace("local-", "")),
+                getHeaders(), ModrinthProject.class,
+                new CacheControl.Builder().maxStale(10, TimeUnit.MINUTES).build());
     }
 
     public static List<ModrinthVersion> getVersions(String projectId) {
         return getVersions(projectId, null, null);
     }
 
+    @Nullable
     public static List<ModrinthVersion> getVersions(String projectId, String minecraftVersion,
             LoaderVersion loaderVersion) {
-        java.lang.reflect.Type type = new TypeToken<List<ModrinthVersion>>() {}.getType();
-
         String queryParamsString = "";
 
         if (minecraftVersion != null) {
@@ -286,17 +284,21 @@ public class ModrinthApi {
             queryParamsString += String.format("loaders=%s", Gsons.DEFAULT_SLIM.toJson(loaders));
         }
 
-        return getDownloadBuilder()
-                .setUrl(String.format("%s/project/%s/version%s", Constants.MODRINTH_API_URL, projectId,
-                        queryParamsString))
-                .cached(new CacheControl.Builder().maxStale(10, TimeUnit.MINUTES).build()).asType(type);
+        java.lang.reflect.Type type = new TypeToken<List<ModrinthVersion>>() {}.getType();
+
+        return NetworkClient.get(
+                String.format("%s/project/%s/version%s", Constants.MODRINTH_API_URL, projectId, queryParamsString),
+                getHeaders(),
+                type);
     }
 
     public static List<ModrinthCategory> getCategories() {
         java.lang.reflect.Type type = new TypeToken<List<ModrinthCategory>>() {}.getType();
 
-        return getDownloadBuilder().setUrl(String.format("%s/tag/category", Constants.MODRINTH_API_URL))
-                .cached(new CacheControl.Builder().maxStale(1, TimeUnit.HOURS).build()).asType(type);
+        return NetworkClient.getCached(
+                String.format("%s/tag/category", Constants.MODRINTH_API_URL),
+                getHeaders(), type,
+                new CacheControl.Builder().maxStale(1, TimeUnit.HOURS).build());
     }
 
     public static List<ModrinthCategory> getCategoriesForModpacks() {
@@ -343,22 +345,11 @@ public class ModrinthApi {
     }
 
     private static ModrinthVersion getVersionFromHash(String hash, String algorithm) {
-        try {
-            return getDownloadBuilder()
-                    .setUrl(String.format("%s/version_file/%s?algorithm=%s", Constants.MODRINTH_API_URL, hash,
-                            algorithm))
-                    .cached(new CacheControl.Builder().maxStale(10, TimeUnit.MINUTES).build())
-                    .asTypeWithThrow(ModrinthVersion.class);
-        } catch (DownloadException e) {
-            // 404 is fine from this endpoint, so anything else, log it
-            if (e.statusCode != 404) {
-                LogManager.logStackTrace(e);
-            }
-
-            return null;
-        } catch (IOException e) {
-            return null;
-        }
+        return NetworkClient.getCached(
+                String.format("%s/version_file/%s?algorithm=%s", Constants.MODRINTH_API_URL, hash,
+                        algorithm),
+                getHeaders(), ModrinthVersion.class,
+                new CacheControl.Builder().maxStale(10, TimeUnit.MINUTES).build());
     }
 
     public static Map<String, ModrinthVersion> getVersionsFromSha1Hashes(String[] hashes) {
@@ -374,31 +365,33 @@ public class ModrinthApi {
             return new HashMap<>();
         }
 
-        try {
-            Map<String, Object> body = new HashMap<>();
-            body.put("hashes", hashes);
-            body.put("algorithm", algorithm);
+        Map<String, Object> body = new HashMap<>();
+        body.put("hashes", hashes);
+        body.put("algorithm", algorithm);
 
-            java.lang.reflect.Type type = new TypeToken<Map<String, ModrinthVersion>>() {}.getType();
+        java.lang.reflect.Type type = new TypeToken<Map<String, ModrinthVersion>>() {}.getType();
 
-            return getDownloadBuilder()
-                    .setUrl(String.format("%s/version_files", Constants.MODRINTH_API_URL))
-                    .post(RequestBody.create(Gsons.DEFAULT_SLIM.toJson(body),
-                            MediaType.get("application/json; charset=utf-8")))
-                    .asTypeWithThrow(type);
-        } catch (Exception e) {
+        Map<String, ModrinthVersion> versions = NetworkClient.post(
+                String.format("%s/version_files", Constants.MODRINTH_API_URL),
+                getHeaders(), RequestBody.create(Gsons.DEFAULT_SLIM.toJson(body),
+                        MediaType.get("application/json; charset=utf-8")),
+                type);
+
+        if (versions == null) {
             return new HashMap<>();
         }
+
+        return versions;
     }
 
     public static List<ModrinthProject> getProjects(String[] projectIds) {
         java.lang.reflect.Type type = new TypeToken<List<ModrinthProject>>() {}.getType();
 
-        return getDownloadBuilder()
-                .setUrl(String.format("%s/projects?ids=%s", Constants.MODRINTH_API_URL,
-                        Gsons.DEFAULT_SLIM.toJson(projectIds)))
-                .cached(new CacheControl.Builder().maxStale(10, TimeUnit.MINUTES).build())
-                .asType(type);
+        return NetworkClient.getCached(
+                String.format("%s/projects?ids=%s", Constants.MODRINTH_API_URL,
+                        Gsons.DEFAULT_SLIM.toJson(projectIds)),
+                getHeaders(),
+                type, new CacheControl.Builder().maxStale(10, TimeUnit.MINUTES).build());
     }
 
     public static Map<String, ModrinthProject> getProjectsAsMap(String[] projectIds) {

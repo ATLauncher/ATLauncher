@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import com.atlauncher.FileSystem;
@@ -42,10 +43,12 @@ import com.atlauncher.managers.ConfigManager;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.network.Download;
 import com.atlauncher.network.GraphqlClient;
+import com.atlauncher.network.NetworkClient;
 import com.atlauncher.utils.FileUtils;
 import com.atlauncher.utils.Pair;
 import com.atlauncher.workers.InstanceInstaller;
 
+import okhttp3.CacheControl;
 import okhttp3.OkHttpClient;
 
 public class ForgeLoader implements Loader {
@@ -119,7 +122,8 @@ public class ForgeLoader implements Loader {
     }
 
     public static ForgePromotions getPromotions() {
-        return Download.build().cached().setUrl(Constants.FORGE_PROMOTIONS_FILE).asClass(ForgePromotions.class);
+        return NetworkClient.getCached(Constants.FORGE_PROMOTIONS_FILE, ForgePromotions.class,
+                new CacheControl.Builder().maxStale(10, TimeUnit.MINUTES).build());
     }
 
     public String getLatestVersion() {

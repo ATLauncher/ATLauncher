@@ -116,11 +116,11 @@ public final class LogManager {
             DownloadException exception = ((DownloadException) t);
 
             try {
-                if (exception.download.response != null && exception.response != null
-                        && (exception.download.response.header("Content-Type").equalsIgnoreCase("application/json")
-                                || exception.download.response.header("Content-Type")
+                if (exception.contentType != null
+                        && (exception.contentType.equalsIgnoreCase("application/json")
+                                || exception.contentType
                                         .equalsIgnoreCase("application/xml")
-                                || exception.download.response.header("Content-Type").startsWith("text/"))) {
+                                || exception.contentType.startsWith("text/"))) {
                     debug(exception.response, 5);
                 }
             } catch (Exception e) {

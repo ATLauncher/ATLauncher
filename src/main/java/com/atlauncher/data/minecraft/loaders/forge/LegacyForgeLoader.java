@@ -22,6 +22,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import com.atlauncher.FileSystem;
 import com.atlauncher.Network;
@@ -33,10 +34,12 @@ import com.atlauncher.data.minecraft.loaders.LoaderVersion;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.network.Download;
 import com.atlauncher.network.DownloadPool;
+import com.atlauncher.network.NetworkClient;
 import com.atlauncher.utils.Pair;
 import com.atlauncher.utils.Utils;
 import com.atlauncher.workers.InstanceInstaller;
 
+import okhttp3.CacheControl;
 import okhttp3.OkHttpClient;
 
 public class LegacyForgeLoader implements Loader {
@@ -126,7 +129,8 @@ public class LegacyForgeLoader implements Loader {
     }
 
     public static ForgePromotions getPromotions() {
-        return Download.build().cached().setUrl(Constants.FORGE_PROMOTIONS_FILE).asClass(ForgePromotions.class);
+        return NetworkClient.getCached(Constants.FORGE_PROMOTIONS_FILE, ForgePromotions.class,
+                new CacheControl.Builder().maxStale(10, TimeUnit.MINUTES).build());
     }
 
     public String getLatestVersion() {

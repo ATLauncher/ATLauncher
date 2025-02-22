@@ -27,7 +27,7 @@ import com.atlauncher.data.ftb.FTBPackList;
 import com.atlauncher.data.ftb.FTBPackManifest;
 import com.atlauncher.data.ftb.FTBPackVersionModsManifest;
 import com.atlauncher.managers.LogManager;
-import com.atlauncher.network.Download;
+import com.atlauncher.network.NetworkClient;
 
 import okhttp3.CacheControl;
 
@@ -42,7 +42,8 @@ public class FTBApi {
             url += String.format("?term=%s", query);
         }
 
-        FTBPackList packList = Download.build().setUrl(url).asType(FTBPackList.class);
+        FTBPackList packList = NetworkClient.getCached(url, FTBPackList.class,
+                new CacheControl.Builder().maxStale(10, TimeUnit.MINUTES).build());
 
         if (packList == null || (packList.status != null && packList.status.equals("error"))) {
             return new ArrayList<>();
@@ -59,9 +60,9 @@ public class FTBApi {
     }
 
     public static List<FTBPackManifest> getModPacks(int page, String sort) {
-        FTBPackList packList = Download.build()
-                .setUrl(String.format("%s/modpack/%s/1000", Constants.FTB_API_URL, sort))
-                .asType(FTBPackList.class);
+        FTBPackList packList = NetworkClient.getCached(String.format("%s/modpack/%s/1000", Constants.FTB_API_URL, sort),
+                FTBPackList.class,
+                new CacheControl.Builder().maxStale(10, TimeUnit.MINUTES).build());
 
         if (packList == null || (packList.status != null && packList.status.equals("error"))) {
             return new ArrayList<>();
@@ -79,12 +80,12 @@ public class FTBApi {
 
     public static FTBPackVersionModsManifest getModsManifest(int packId, int versionId) {
         try {
-            FTBPackVersionModsManifest modsManifest = Download.build()
-                    .setUrl(String.format("%s/modpack/%s/%s/mods", Constants.FTB_API_URL,
+            FTBPackVersionModsManifest modsManifest = NetworkClient.getCached(
+                    String.format("%s/modpack/%s/%s/mods", Constants.FTB_API_URL,
                             packId,
-                            versionId))
-                    .cached(new CacheControl.Builder().maxStale(5, TimeUnit.MINUTES).build())
-                    .asClassWithThrow(FTBPackVersionModsManifest.class);
+                            versionId),
+                    FTBPackVersionModsManifest.class,
+                    new CacheControl.Builder().maxStale(10, TimeUnit.MINUTES).build());
 
             if (modsManifest == null || (modsManifest.status != null && modsManifest.status.equals("error"))) {
                 return null;
@@ -104,11 +105,11 @@ public class FTBApi {
 
     public static FTBPackManifest getModpackManifest(String packId) {
         try {
-            FTBPackManifest modsManifest = Download.build()
-                    .setUrl(String.format("%s/modpack/%s", Constants.FTB_API_URL,
-                            packId))
-                    .cached(new CacheControl.Builder().maxStale(1, TimeUnit.HOURS).build())
-                    .asClassWithThrow(FTBPackManifest.class);
+            FTBPackManifest modsManifest = NetworkClient.getCached(
+                    String.format("%s/modpack/%s", Constants.FTB_API_URL,
+                            packId),
+                    FTBPackManifest.class,
+                    new CacheControl.Builder().maxStale(1, TimeUnit.HOURS).build());
 
             if (modsManifest == null || (modsManifest.status != null && modsManifest.status.equals("error"))) {
                 return null;

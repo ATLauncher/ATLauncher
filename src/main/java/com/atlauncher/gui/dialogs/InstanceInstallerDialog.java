@@ -106,6 +106,7 @@ import com.atlauncher.managers.LogManager;
 import com.atlauncher.managers.MinecraftManager;
 import com.atlauncher.managers.PackManager;
 import com.atlauncher.network.Analytics;
+import com.atlauncher.network.NetworkClient;
 import com.atlauncher.utils.ComboItem;
 import com.atlauncher.utils.CurseForgeApi;
 import com.atlauncher.utils.FTBApi;
@@ -978,11 +979,11 @@ public class InstanceInstallerDialog extends JDialog {
                     GetText.tr("Downloading Pack Manifest"), 0, GetText.tr("Downloading Pack Manifest"),
                     "Cancelled downloading FTB pack manifest", this);
             dialog.addThread(new Thread(() -> {
-                FTBPackManifest packManifest = com.atlauncher.network.Download.build()
-                        .setUrl(String.format(Locale.ENGLISH, "%s/modpack/%d", Constants.FTB_API_URL,
-                                instance.launcher.ftbPackManifest.id))
-                        .cached(new CacheControl.Builder().maxStale(10, TimeUnit.MINUTES).build())
-                        .asClass(FTBPackManifest.class);
+                FTBPackManifest packManifest = NetworkClient.getCached(
+                        String.format(Locale.ENGLISH, "%s/modpack/%d", Constants.FTB_API_URL,
+                                instance.launcher.ftbPackManifest.id),
+                        FTBPackManifest.class,
+                        new CacheControl.Builder().maxStale(10, TimeUnit.MINUTES).build());
                 dialog.setReturnValue(packManifest);
                 dialog.close();
             }));

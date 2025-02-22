@@ -47,21 +47,11 @@ import okhttp3.Response;
 import okhttp3.tls.HandshakeCertificates;
 
 public final class Network {
-    public static Cache CACHE = new Cache(FileSystem.CACHE.toFile(), 100 * 1024 * 1024); // 100MB cache
+    public static final Cache CACHE = new Cache(FileSystem.HTTP_CACHE.toFile(), 100 * 1024 * 1024); // 100MB cache
 
-    public static OkHttpClient CLIENT = new OkHttpClient.Builder()
-            .protocols(Collections.singletonList(Protocol.HTTP_1_1))
-            .addNetworkInterceptor(new UserAgentInterceptor()).addInterceptor(new DebugLoggingInterceptor())
-            .addNetworkInterceptor(new ErrorReportingInterceptor())
-            .connectTimeout(App.settings.connectionTimeout, TimeUnit.SECONDS)
-            .readTimeout(App.settings.connectionTimeout, TimeUnit.SECONDS)
-            .writeTimeout(App.settings.connectionTimeout, TimeUnit.SECONDS).build();
-
-    public static OkHttpClient GRAPHQL_CLIENT = CLIENT.newBuilder()
-            .addInterceptor(new ApolloClientAwarenessInterceptor("Launcher", Constants.VERSION.toStringForLogging()))
-            .build();
-
-    public static OkHttpClient CACHED_CLIENT = CLIENT.newBuilder().cache(CACHE).build();
+    public static OkHttpClient CLIENT;
+    public static OkHttpClient GRAPHQL_CLIENT;
+    public static OkHttpClient CACHED_CLIENT;
 
     public static final String ANALYTICS_USER_AGENT = String.format(
             "Mozilla/5.0 (%s) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.104 Safari/537.36 %s/%s Java/%s",
@@ -79,7 +69,26 @@ public final class Network {
             Constants.LAUNCHER_WEBSITE);
 
     static {
-        Logger.getLogger(OkHttpClient.class.getName()).setLevel(Level.FINE);
+        Logger.getLogger(OkHttpClient.class.getName()).setLevel(Level.FINEST);
+
+        OkHttpClient baseClient = new OkHttpClient.Builder()
+                .protocols(Collections.singletonList(Protocol.HTTP_1_1))
+                .addNetworkInterceptor(new UserAgentInterceptor())
+                .addInterceptor(new DebugLoggingInterceptor())
+                .addNetworkInterceptor(new ErrorReportingInterceptor())
+                .connectTimeout(App.settings.connectionTimeout, TimeUnit.SECONDS)
+                .readTimeout(App.settings.connectionTimeout, TimeUnit.SECONDS)
+                .writeTimeout(App.settings.connectionTimeout, TimeUnit.SECONDS)
+                .build();
+
+        CLIENT = baseClient;
+
+        GRAPHQL_CLIENT = baseClient.newBuilder()
+                .addInterceptor(
+                        new ApolloClientAwarenessInterceptor("Launcher", Constants.VERSION.toStringForLogging()))
+                .build();
+
+        CACHED_CLIENT = baseClient.newBuilder().cache(CACHE).build();
     }
 
     public static void setConnectionTimeouts() {
@@ -130,13 +139,11 @@ public final class Network {
 
                 @Override
                 public void checkClientTrusted(java.security.cert.X509Certificate[] chain, String authType)
-                        throws CertificateException {
-                }
+                        throws CertificateException {}
 
                 @Override
                 public void checkServerTrusted(java.security.cert.X509Certificate[] chain, String authType)
-                        throws CertificateException {
-                }
+                        throws CertificateException {}
 
                 @Override
                 public java.security.cert.X509Certificate[] getAcceptedIssuers() {

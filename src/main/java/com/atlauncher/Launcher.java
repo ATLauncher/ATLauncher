@@ -66,6 +66,7 @@ import com.atlauncher.managers.TechnicModpackUpdateManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.network.DownloadPool;
 import com.atlauncher.network.GraphqlClient;
+import com.atlauncher.network.NetworkClient;
 import com.atlauncher.network.analytics.AnalyticsEvent;
 import com.atlauncher.utils.Java;
 import com.atlauncher.utils.OS;
@@ -259,8 +260,9 @@ public class Launcher {
             java.lang.reflect.Type type = new TypeToken<List<DownloadableFile>>() {}.getType();
 
             try {
-                this.launcherFiles = com.atlauncher.network.Download.build().cached()
-                        .setUrl(String.format("%s/launcher/json/files.json", Constants.DOWNLOAD_SERVER)).asType(type);
+                this.launcherFiles = NetworkClient.get(
+                        String.format("%s/launcher/json/files.json", Constants.DOWNLOAD_SERVER),
+                        type);
             } catch (Exception e) {
                 LogManager.logStackTrace("Error loading in file hashes!", e);
                 return null;

@@ -29,6 +29,7 @@ import com.atlauncher.constants.Constants;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.ftb.FTBPackManifest;
 import com.atlauncher.data.ftb.FTBPackVersion;
+import com.atlauncher.network.NetworkClient;
 
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.subjects.BehaviorSubject;
@@ -38,8 +39,7 @@ public class FTBUpdateManager {
     /**
      * FTB instance update checking
      */
-    private static final Map<UUID, BehaviorSubject<Optional<FTBPackVersion>>>
-        FTB_INSTANCE_LATEST_VERSION = new ConcurrentHashMap<>();
+    private static final Map<UUID, BehaviorSubject<Optional<FTBPackVersion>>> FTB_INSTANCE_LATEST_VERSION = new ConcurrentHashMap<>();
 
     /**
      * Get the update behavior subject for a given instance.
@@ -92,11 +92,11 @@ public class FTBUpdateManager {
         InstanceManager.getInstances().parallelStream().filter(
                 i -> i.launcher.ftbPackManifest != null && i.launcher.ftbPackVersionManifest != null)
                 .forEach(i -> {
-                    FTBPackManifest packManifest = com.atlauncher.network.Download.build()
-                            .setUrl(String.format(Locale.ENGLISH, "%s/modpack/%d", Constants.FTB_API_URL,
-                                    i.launcher.ftbPackManifest.id))
-                            .cached(new CacheControl.Builder().maxStale(10, TimeUnit.MINUTES).build())
-                            .asClass(FTBPackManifest.class);
+                    FTBPackManifest packManifest = NetworkClient.getCached(
+                            String.format(Locale.ENGLISH, "%s/modpack/%d", Constants.FTB_API_URL,
+                                    i.launcher.ftbPackManifest.id),
+                            FTBPackManifest.class,
+                            new CacheControl.Builder().maxStale(10, TimeUnit.MINUTES).build());
 
                     if (packManifest == null) {
                         return;

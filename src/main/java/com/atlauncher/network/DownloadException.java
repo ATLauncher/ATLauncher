@@ -21,23 +21,41 @@ import java.io.IOException;
 
 import com.atlauncher.managers.LogManager;
 
+import okhttp3.Response;
+import okhttp3.ResponseBody;
+
 public class DownloadException extends IOException {
-    public Download download;
     public String response = null;
+    public String contentType = null;
     public Integer statusCode = null;
 
     public DownloadException(Download download) {
         super(download.url + " request wasn't successful: " + download.response);
 
-        this.download = download;
-
         if (download.response != null) {
             try {
-                this.response = download.response.body().string();
+                ResponseBody responseBody = download.response.body();
+
+                this.response = responseBody != null ? responseBody.string() : null;
                 this.statusCode = download.response.code();
+                this.contentType = download.response.header("Content-Type");
             } catch (IOException e) {
                 LogManager.logStackTrace(e);
             }
+        }
+    }
+
+    public DownloadException(Response failedResponse) {
+        super(failedResponse.request().url() + " request wasn't successful: " + failedResponse);
+
+        try {
+            ResponseBody responseBody = failedResponse.body();
+
+            this.response = responseBody != null ? responseBody.string() : null;
+            this.statusCode = failedResponse.code();
+            this.contentType = failedResponse.header("Content-Type");
+        } catch (IOException e) {
+            LogManager.logStackTrace(e);
         }
     }
 
@@ -46,13 +64,7 @@ public class DownloadException extends IOException {
     }
 
     public boolean hasResponse() {
-        if (this.download.response == null || this.response == null) {
-            return false;
-        }
-
-        final String contentType = this.download.response.header("Content-Type");
-
-        if (contentType == null) {
+        if (this.contentType == null || this.response == null) {
             return false;
         }
 

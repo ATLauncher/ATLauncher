@@ -29,9 +29,11 @@ import com.atlauncher.data.mojang.api.ProfileResponse;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.network.Download;
 import com.atlauncher.network.DownloadException;
+import com.atlauncher.network.NetworkClient;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 
+import okhttp3.Headers;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.Request;
@@ -50,8 +52,9 @@ public class MojangAPIUtils {
      * @return the UUID for the username given
      */
     public static String getUUID(String username) {
-        ProfileResponse profile = Download.build().setUrl("https://api.mojang.com/users/profiles/minecraft/" + username)
-                .asClass(ProfileResponse.class);
+        ProfileResponse profile = NetworkClient.get(
+                String.format("https://api.mojang.com/users/profiles/minecraft/%s", username),
+                ProfileResponse.class);
 
         return profile.getId();
     }
@@ -66,16 +69,15 @@ public class MojangAPIUtils {
                 .build();
 
         try {
-            Download.build().setUrl("https://api.minecraftservices.com/minecraft/profile/skins")
-                    .header("Authorization", "Bearer " + account.getAccessToken())
-                    .header("Content-Type", "multipart/form-data").post(body)
-                    .asClassWithThrow(JsonObject.class);
+            NetworkClient.postWithThrow(
+                "https://api.minecraftservices.com/minecraft/profile/skins",
+                Headers.of("Authorization", "Bearer " + account.getAccessToken(), "Content-Type", "multipart/form-data"),
+                body,
+                JsonObject.class);
 
             return true;
         } catch (DownloadException e) {
             LogManager.error("Error updating skin. Response was " + e.response);
-        } catch (IOException e) {
-            LogManager.logStackTrace("Error updating skin", e);
         }
 
         return false;
@@ -84,8 +86,9 @@ public class MojangAPIUtils {
     public static String getCurrentUsername(String uuid) {
         java.lang.reflect.Type type = new TypeToken<List<NameHistory>>() {}.getType();
 
-        List<NameHistory> history = Download.build().setUrl("https://api.mojang.com/user/profiles/" + uuid + "/names")
-                .asType(type);
+        List<NameHistory> history = NetworkClient.get(
+                String.format("https://api.mojang.com/user/profiles/%s/names", uuid),
+                type);
 
         // Mojang API is down??
         if (history == null) {
