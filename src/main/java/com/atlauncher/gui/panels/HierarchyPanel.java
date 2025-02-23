@@ -58,7 +58,7 @@ public abstract class HierarchyPanel extends JPanel implements HierarchyListener
         addNotify();
         addHierarchyListener(this);
 
-        RelocalizationManager.addListener(this);
+        disposablePool.add(RelocalizationManager.addListener(this));
     }
 
     public HierarchyPanel(LayoutManager layout) {
@@ -68,7 +68,7 @@ public abstract class HierarchyPanel extends JPanel implements HierarchyListener
 
         // If the child is a child of RelocalizationListener
         // We can handle relocalization for them
-        RelocalizationManager.addListener(this);
+        disposablePool.add(RelocalizationManager.addListener(this));
     }
 
 
