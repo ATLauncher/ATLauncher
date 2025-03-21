@@ -17,6 +17,8 @@
  */
 package com.atlauncher.viewmodel.base;
 
+import java.util.Optional;
+
 import io.reactivex.rxjava3.core.Observable;
 
 /**
@@ -27,5 +29,5 @@ public interface INewsViewModel {
     /**
      * Observable of news HTML to display
      */
-    Observable<String> getNewsHTML();
+    Observable<Optional<String>> getNewsHTML();
 }

@@ -36,6 +36,7 @@ import javax.swing.text.html.StyleSheet;
 import org.mini2Dx.gettext.GetText;
 
 import com.atlauncher.gui.panels.HierarchyPanel;
+import com.atlauncher.gui.panels.LoadingPanel;
 import com.atlauncher.gui.tabs.Tab;
 import com.atlauncher.utils.OS;
 import com.atlauncher.viewmodel.base.INewsViewModel;
@@ -74,15 +75,21 @@ public class NewsTab extends HierarchyPanel implements Tab {
         NEWS_MENU = new ContextMenu();
         createNewsPane();
 
-        JScrollPane scrollPane = new JScrollPane(this.NEWS_PANE, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+        JScrollPane scrollPane = new JScrollPane(new LoadingPanel(GetText.tr("Loading news...")),
+                JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
                 JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scrollPane.getVerticalScrollBar().setUnitIncrement(16);
+
         this.add(scrollPane, BorderLayout.CENTER);
 
         addDisposable(viewModel.getNewsHTML().subscribe(html -> {
-            this.NEWS_PANE.setText("");
-            this.NEWS_PANE.setText(html);
-            this.NEWS_PANE.setCaretPosition(0);
+            if (html.isPresent()) {
+                this.NEWS_PANE.setText("");
+                this.NEWS_PANE.setText(html.get());
+                this.NEWS_PANE.setCaretPosition(0);
+
+                scrollPane.setViewportView(this.NEWS_PANE);
+            }
         }));
     }
 
