@@ -23,10 +23,12 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.nio.file.Path;
 import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
@@ -638,6 +640,23 @@ public class InstanceCard extends CollapsiblePanel {
                     rightClickMenu.add(updateItem);
 
                     rightClickMenu.addSeparator();
+
+                    JMenuItem supportPackItem = new JMenuItem(GetText.tr("Create Support Pack"));
+                    supportPackItem.addActionListener(l -> {
+                        JFileChooser chooser = new JFileChooser();
+                        chooser.setDialogTitle(GetText.tr("Choose location to save support pack"));
+                        chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+                        chooser.setAcceptAllFileFilterUsed(false);
+
+                        if (chooser.showSaveDialog(App.launcher.getParent()) == JFileChooser.APPROVE_OPTION) {
+                            Path finalPath = instance.createSupportPack(chooser.getSelectedFile().toPath());
+                            if (finalPath != null) {
+                                App.TOASTER.pop(GetText.tr("Support pack created"));
+                                OS.openFileExplorer(finalPath);
+                            }
+                        }
+                    });
+                    rightClickMenu.add(supportPackItem);
 
                     JMenuItem renameItem = new JMenuItem(GetText.tr("Rename"));
                     renameMenuItem.addActionListener(l -> instance.startRename());

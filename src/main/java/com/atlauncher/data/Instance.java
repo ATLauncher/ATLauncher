@@ -28,6 +28,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -39,6 +40,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -56,6 +58,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import javax.annotation.Nullable;
 import javax.imageio.ImageIO;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -3506,5 +3509,46 @@ public class Instance extends MinecraftVersion implements ModManagement {
 
         // #. {0} is the name of a mod that was installed
         App.TOASTER.pop(GetText.tr("{0} Installed", mod.title));
+    }
+
+    public @Nullable Path createSupportPack(Path outputDirectory) {
+        try {
+            // Create a temporary directory for the support pack
+            Path tempDir = FileSystem.TEMP.resolve(this.getSafeName() + "-support-pack");
+            FileUtils.createDirectory(tempDir);
+
+            // Copy instance.json
+            Path instanceJsonPath = this.ROOT.resolve("instance.json");
+            if (Files.exists(instanceJsonPath)) {
+                Files.copy(instanceJsonPath, tempDir.resolve("instance.json"), StandardCopyOption.REPLACE_EXISTING);
+            }
+
+            // Copy logs
+            Path logsDir = this.ROOT.resolve("logs");
+            if (Files.exists(logsDir) && Files.isDirectory(logsDir)) {
+                Utils.copyDirectory(logsDir.toFile(), tempDir.resolve("logs").toFile());
+            }
+
+            // Create a text file with the folder name
+            Path folderNameFile = tempDir.resolve("folder_name.txt");
+            try (BufferedWriter writer = Files.newBufferedWriter(folderNameFile, StandardCharsets.UTF_8)) {
+                writer.write(this.ROOT.getFileName().toString());
+            }
+
+            // Create the zip file
+            Path zipFilePath = outputDirectory.resolve(this.getSafeName() + "-support-pack.zip");
+            ArchiveUtils.createZip(tempDir, zipFilePath);
+
+            // Clean up temporary directory
+            FileUtils.deleteDirectory(tempDir);
+
+            LogManager.info("Support pack created at: " + zipFilePath);
+
+            return zipFilePath;
+        } catch (IOException e) {
+            LogManager.logStackTrace("Failed to create support pack", e);
+        }
+
+        return null;
     }
 }
