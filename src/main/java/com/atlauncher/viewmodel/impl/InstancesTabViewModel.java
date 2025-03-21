@@ -59,18 +59,13 @@ public class InstancesTabViewModel implements IInstancesTabViewModel, SettingsLi
     private final BehaviorSubject<String> instanceTitleFormat = BehaviorSubject
             .createDefault(App.settings.instanceTitleFormat);
 
-    private final BehaviorSubject<Optional<String>> searchQuery =
-        BehaviorSubject.createDefault(Optional.empty());
+    private final BehaviorSubject<Optional<String>> searchQuery = BehaviorSubject.createDefault(Optional.empty());
 
-    private final Observable<Optional<Pattern>> searchPattern =
-        searchQuery.map(queryOptional ->
-            queryOptional.map(query ->
-                Pattern.compile(Pattern.quote(query), Pattern.CASE_INSENSITIVE)
-            )
-        );
+    private final Observable<Optional<Pattern>> searchPattern = searchQuery.map(queryOptional -> queryOptional
+            .map(query -> Pattern.compile(Pattern.quote(query), Pattern.CASE_INSENSITIVE)));
 
-    private final BehaviorSubject<InstanceSortingStrategies> sortingStrategy =
-        BehaviorSubject.createDefault(App.settings.defaultInstanceSorting);
+    private final BehaviorSubject<InstanceSortingStrategies> sortingStrategy = BehaviorSubject
+            .createDefault(App.settings.defaultInstanceSorting);
 
     /**
      * First filter out instances.
@@ -129,9 +124,9 @@ public class InstancesTabViewModel implements IInstancesTabViewModel, SettingsLi
      */
     public Flowable<InstancesList> instancesList = Observable.combineLatest(instanceModels, instanceTitleFormat,
             InstancesList::new)
-        .throttleLatest(100, TimeUnit.MILLISECONDS)
-        .toFlowable(BackpressureStrategy.LATEST) // Backpressure first, as down stream is the edt thread
-        .observeOn(Schedulers.newThread());
+            .throttleLatest(100, TimeUnit.MILLISECONDS)
+            .toFlowable(BackpressureStrategy.LATEST) // Backpressure first, as down stream is the edt thread
+            .observeOn(Schedulers.newThread());
 
     public InstancesTabViewModel() {
         SettingsManager.addListener(this);
@@ -219,15 +214,18 @@ public class InstancesTabViewModel implements IInstancesTabViewModel, SettingsLi
                 if (instance.isTechnicSolderPack()) {
                     return TechnicModpackUpdateManager.getSolderObservable(instance)
                             .map(latestVersion -> latestVersion.isPresent()
+                                    && latestVersion.get().latest != null
                                     && !latestVersion.get().latest.equals(instance.launcher.version));
                 } else {
                     return TechnicModpackUpdateManager.getObservable(instance)
                             .map(latestVersion -> latestVersion.isPresent()
+                                    && latestVersion.get().version != null
                                     && !latestVersion.get().version.equals(instance.launcher.version));
                 }
             } else if (instance.isModrinthPack()) {
                 return ModrinthModpackUpdateManager.getObservable(instance)
                         .map(latestVersion -> latestVersion.isPresent()
+                                && latestVersion.get().id != null
                                 && !latestVersion.get().id.equals(instance.launcher.modrinthVersion.id));
             }
         } else {

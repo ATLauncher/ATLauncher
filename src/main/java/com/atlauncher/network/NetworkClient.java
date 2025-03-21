@@ -222,6 +222,8 @@ public class NetworkClient {
             }
 
             return Gsons.DEFAULT.fromJson(body.string(), type);
+        } catch (DownloadException e) {
+            throw e; // Re-throw DownloadException
         } catch (IOException e) {
             LogManager.logStackTrace(String.format("Error calling %s", url), e);
             return null;

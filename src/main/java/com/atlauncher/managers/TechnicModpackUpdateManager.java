@@ -17,7 +17,6 @@
  */
 package com.atlauncher.managers;
 
-import java.io.IOException;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
@@ -75,7 +74,7 @@ public class TechnicModpackUpdateManager {
      * Get an observable for an instances update.
      * <p>
      * Please do not cast to a behavior subject.
-     * 
+     *
      * @param instance Instance to get an observable for
      * @return Update observable
      */
@@ -87,7 +86,7 @@ public class TechnicModpackUpdateManager {
      * Get an observable for a solder instances update.
      * <p>
      * Please do not cast to a behavior subject.
-     * 
+     *
      * @param instance Instance to get an observable for
      * @return Solder update observable
      */
@@ -97,7 +96,7 @@ public class TechnicModpackUpdateManager {
 
     /**
      * Get the latest version of an instance
-     * 
+     *
      * @param instance Instance to get version of
      * @return Latest version, or null if no newer version is found
      */
@@ -107,7 +106,7 @@ public class TechnicModpackUpdateManager {
 
     /**
      * Get the latest version of a solder instance
-     * 
+     *
      * @param instance Instance to get version of
      * @return Latest solder version, or null if no newer version is found
      */
@@ -137,17 +136,15 @@ public class TechnicModpackUpdateManager {
                     } catch (DownloadException e) {
                         if (e.response != null) {
                             LogManager.debug(Gsons.DEFAULT.toJson(e.response));
-
-                            if (e.statusCode == 404) {
-                                LogManager.error(String.format(
-                                        "Technic pack with name of %s no longer exists, disabling update checks.",
-                                        i.launcher.technicModpack.displayName));
-                                i.launcher.checkForUpdates = false;
-                                i.save();
-                            }
                         }
-                    } catch (IOException e) {
-                        LogManager.logStackTrace(e);
+
+                        if (e.statusCode == 404) {
+                            LogManager.error(String.format(
+                                    "Technic pack with name of %s no longer exists, disabling update checks.",
+                                    i.launcher.technicModpack.displayName));
+                            i.launcher.checkForUpdates = false;
+                            i.save();
+                        }
                     }
 
                     if (technicModpack != null && i.isTechnicSolderPack()) {

@@ -17,7 +17,6 @@
  */
 package com.atlauncher.utils;
 
-import java.io.IOException;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
@@ -26,6 +25,7 @@ import com.atlauncher.data.technic.TechnicModpack;
 import com.atlauncher.data.technic.TechnicSearchResults;
 import com.atlauncher.data.technic.TechnicSolderModpack;
 import com.atlauncher.data.technic.TechnicSolderModpackManifest;
+import com.atlauncher.network.DownloadException;
 import com.atlauncher.network.NetworkClient;
 
 import okhttp3.CacheControl;
@@ -52,7 +52,7 @@ public class TechnicApi {
                 new CacheControl.Builder().maxStale(10, TimeUnit.MINUTES).build());
     }
 
-    public static TechnicModpack getModpackBySlugWithThrow(String slug) throws IOException {
+    public static TechnicModpack getModpackBySlugWithThrow(String slug) throws DownloadException {
         return NetworkClient.getCachedWithThrow(String.format("%s/modpack/%s?build=%s", Constants.TECHNIC_API_URL, slug,
                 Constants.LAUNCHER_NAME.toLowerCase(Locale.ENGLISH)), TechnicModpack.class,
                 new CacheControl.Builder().maxStale(10, TimeUnit.MINUTES).build());
