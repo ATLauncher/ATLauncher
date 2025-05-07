@@ -807,6 +807,7 @@ public class InstanceInstallerDialog extends JDialog {
 
         pack = new Pack();
         pack.name = modrinthManifest.name;
+        pack.description = modrinthManifest.summary;
 
         PackVersion packVersion = new PackVersion();
         packVersion.version = Optional.ofNullable(modrinthManifest.versionId).orElse("1.0.0");
