@@ -23,11 +23,13 @@ import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -189,13 +191,13 @@ public class AboutTab extends HierarchyPanel implements Tab {
                     OS.openWebBrowser(e.getURL());
                 }
             });
-            try {
+
+            try (BufferedReader reader = new BufferedReader(
+                    new InputStreamReader(App.class.getResourceAsStream("/LICENSE"),
+                            StandardCharsets.UTF_8))) {
                 license.setText(
                         new HTMLBuilder()
-                                .text(String
-                                        .join("<br/>",
-                                                Files.readAllLines(
-                                                        Paths.get(App.class.getResource("/LICENSE").toURI())))
+                                .text(reader.lines().collect(Collectors.joining("<br/>"))
                                         .replace("%YEAR%", new SimpleDateFormat("yyyy").format(new Date())))
                                 .build());
             } catch (Exception e) {
@@ -223,14 +225,12 @@ public class AboutTab extends HierarchyPanel implements Tab {
                         OS.openWebBrowser(e.getURL());
                     }
                 });
-                try {
+                try (BufferedReader reader = new BufferedReader(
+                        new InputStreamReader(App.class.getResourceAsStream("/THIRDPARTYLIBRARIES"),
+                                StandardCharsets.UTF_8))) {
                     thirdPartyLibraries.setText(
                             new HTMLBuilder()
-                                    .text(String
-                                            .join("<br/>",
-                                                    Files.readAllLines(
-                                                            Paths.get(App.class.getResource("/THIRDPARTYLIBRARIES")
-                                                                    .toURI())))
+                                    .text(reader.lines().collect(Collectors.joining("<br/>"))
                                             .replace("%YEAR%", new SimpleDateFormat("yyyy").format(new Date())))
                                     .build());
                 } catch (Exception e) {
