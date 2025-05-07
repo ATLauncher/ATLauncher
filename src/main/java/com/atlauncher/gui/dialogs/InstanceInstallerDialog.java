@@ -490,12 +490,21 @@ public class InstanceInstallerDialog extends JDialog {
         pack.curseForgeProjectDescription = returnValue.right();
 
         if (files.isEmpty()) {
-            DialogManager.okDialog().setTitle(GetText.tr("No Server Files Available"))
-                    .setContent(new HTMLBuilder().text(GetText.tr(
-                            "No server files are available for this pack, so a server cannot be created."))
-                            .center().build())
-                    .setType(DialogManager.ERROR)
-                    .show();
+            if (isServer) {
+                DialogManager.okDialog().setTitle(GetText.tr("No Server Files Available"))
+                        .setContent(new HTMLBuilder().text(GetText.tr(
+                                "No server files are available for this pack, so a server cannot be created."))
+                                .center().build())
+                        .setType(DialogManager.ERROR)
+                        .show();
+            } else {
+                DialogManager.okDialog().setTitle(GetText.tr("No Files Available"))
+                        .setContent(new HTMLBuilder().text(GetText.tr(
+                                "No files are available for this pack, so it cannot be installed."))
+                                .center().build())
+                        .setType(DialogManager.ERROR)
+                        .show();
+            }
             return;
         }
 

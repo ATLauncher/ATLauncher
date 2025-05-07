@@ -17,9 +17,11 @@
  */
 package com.atlauncher;
 
+import java.io.IOException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -168,6 +170,19 @@ public final class Network {
                     .hostnameVerifier((hostname, session) -> true).build();
         } catch (Exception e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    public static void removeUrlFromCache(String url) {
+        try {
+            Iterator<String> urlIterator = Network.CACHE.urls();
+            while (urlIterator.hasNext()) {
+                if (urlIterator.next().equals(url)) {
+                    urlIterator.remove();
+                }
+            }
+        } catch (IOException e) {
+            // Ignore
         }
     }
 }

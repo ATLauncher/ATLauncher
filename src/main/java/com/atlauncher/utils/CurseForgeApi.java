@@ -32,6 +32,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import com.atlauncher.Gsons;
+import com.atlauncher.Network;
 import com.atlauncher.constants.Constants;
 import com.atlauncher.data.curseforge.CurseForgeCategoryForGame;
 import com.atlauncher.data.curseforge.CurseForgeCoreApiResponse;
@@ -101,6 +102,11 @@ public class CurseForgeApi {
                     url,
                     REQUEST_HEADERS,
                     type, new CacheControl.Builder().maxStale(10, TimeUnit.MINUTES).build());
+
+            if (response == null || response.data.isEmpty()) {
+                LogManager.warn("CurseForge API returned no results for " + url);
+                Network.removeUrlFromCache(url);
+            }
 
             if (response != null) {
                 return response.data;
@@ -251,6 +257,11 @@ public class CurseForgeApi {
                 REQUEST_HEADERS,
                 type, new CacheControl.Builder().maxStale(10, TimeUnit.MINUTES).build());
 
+        if (response == null || response.data.isEmpty()) {
+            LogManager.warn("CurseForge API returned no files for project " + projectId);
+            Network.removeUrlFromCache(url);
+        }
+
         if (response != null) {
             return response.data;
         }
@@ -273,6 +284,7 @@ public class CurseForgeApi {
             return response.data;
         }
 
+        Network.removeUrlFromCache(url);
         return null;
     }
 
@@ -291,6 +303,7 @@ public class CurseForgeApi {
             return response.data;
         }
 
+        Network.removeUrlFromCache(url);
         return null;
     }
 
@@ -312,6 +325,7 @@ public class CurseForgeApi {
             return response.data;
         }
 
+        Network.removeUrlFromCache(url);
         return null;
     }
 
@@ -334,6 +348,11 @@ public class CurseForgeApi {
                 url,
                 REQUEST_HEADERS,
                 type, new CacheControl.Builder().maxStale(10, TimeUnit.MINUTES).build());
+
+        if (response == null || response.data.isEmpty()) {
+            LogManager.warn("CurseForge API returned no results for " + url);
+            Network.removeUrlFromCache(url);
+        }
 
         if (response != null && !response.data.isEmpty()) {
             return response.data.get(0);
@@ -444,6 +463,11 @@ public class CurseForgeApi {
                 url,
                 REQUEST_HEADERS,
                 type, new CacheControl.Builder().maxStale(1, TimeUnit.HOURS).build());
+
+        if (response == null || response.data.isEmpty()) {
+            LogManager.warn("CurseForge API returned no results for " + url);
+            Network.removeUrlFromCache(url);
+        }
 
         if (response != null) {
             return response.data;
