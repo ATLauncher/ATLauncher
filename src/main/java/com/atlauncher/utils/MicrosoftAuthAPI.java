@@ -46,6 +46,18 @@ import okhttp3.RequestBody;
  * Various utility methods for interacting with the Microsoft Auth API.
  */
 public class MicrosoftAuthAPI {
+    public static OauthTokenResponse tradeCodeForAccessToken(String code) {
+        RequestBody data = new FormBody.Builder().add("client_id", Constants.MICROSOFT_LOGIN_CLIENT_ID)
+            .add("code", code).add("grant_type", "authorization_code")
+            .add("redirect_uri", Constants.MICROSOFT_LOGIN_REDIRECT_URL)
+            .add("scope", String.join(" ", Constants.MICROSOFT_LOGIN_SCOPES)).build();
+
+        OauthTokenResponse oauthTokenResponse = NetworkClient.post(Constants.MICROSOFT_AUTH_TOKEN_URL,
+            Headers.of("Content-Type", "application/x-www-form-urlencoded"), data, OauthTokenResponse.class);
+
+        return oauthTokenResponse;
+    }
+
     public static OauthDeviceCodeResponse getDeviceCode() {
         RequestBody data = new FormBody.Builder().add("client_id", Constants.MICROSOFT_LOGIN_CLIENT_ID)
                 .add("scope", String.join(" ", Constants.MICROSOFT_LOGIN_SCOPES)).build();

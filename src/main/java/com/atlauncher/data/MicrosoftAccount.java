@@ -304,8 +304,7 @@ public class MicrosoftAccount extends AbstractAccount {
             }));
             dialog.start();
 
-            LoginWithMicrosoftDialog loginWithMicrosoftDialog = new LoginWithMicrosoftDialog(this,
-                    dialog.getReturnValue());
+            LoginWithMicrosoftDialog loginWithMicrosoftDialog = new LoginWithMicrosoftDialog(this);
             loginWithMicrosoftDialog.setVisible(true);
         }
 

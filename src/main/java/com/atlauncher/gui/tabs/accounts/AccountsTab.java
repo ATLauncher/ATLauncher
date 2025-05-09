@@ -155,16 +155,7 @@ public class AccountsTab extends HierarchyPanel implements Tab {
             // TODO This should be handled by some reaction via listener
             int numberOfAccountsBefore = viewModel.accountCount();
 
-            ProgressDialog<OauthDeviceCodeResponse> codeDialog = new ProgressDialog<>(
-                    GetText.tr("Getting Login Code From Microsoft"), 0,
-                    GetText.tr("Getting Login Code From Microsoft"),
-                    "Aborting getting login code from Microsoft");
-            codeDialog.addThread(new Thread(() -> {
-                codeDialog.setReturnValue(MicrosoftAuthAPI.getDeviceCode());
-                codeDialog.close();
-            }));
-            codeDialog.start();
-            LoginWithMicrosoftDialog loginWithMicrosoftDialog = new LoginWithMicrosoftDialog(codeDialog.getReturnValue());
+            LoginWithMicrosoftDialog loginWithMicrosoftDialog = new LoginWithMicrosoftDialog();
             loginWithMicrosoftDialog.setVisible(true);
 
             if (numberOfAccountsBefore != viewModel.accountCount()) {
@@ -282,18 +273,7 @@ public class AccountsTab extends HierarchyPanel implements Tab {
                     .setType(DialogManager.ERROR)
                     .show();
 
-            ProgressDialog<OauthDeviceCodeResponse> codeDialog = new ProgressDialog<>(
-                    GetText.tr("Getting Login Code From Microsoft"), 0,
-                    GetText.tr("Getting Login Code From Microsoft"),
-                    "Aborting getting login code from Microsoft");
-            codeDialog.addThread(new Thread(() -> {
-                codeDialog.setReturnValue(MicrosoftAuthAPI.getDeviceCode());
-                codeDialog.close();
-            }));
-            codeDialog.start();
-
-            LoginWithMicrosoftDialog loginWithMicrosoftDialog = new LoginWithMicrosoftDialog(account,
-                    codeDialog.getReturnValue());
+            LoginWithMicrosoftDialog loginWithMicrosoftDialog = new LoginWithMicrosoftDialog(account);
             loginWithMicrosoftDialog.setVisible(true);
         }
     }
