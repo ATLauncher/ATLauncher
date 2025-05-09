@@ -72,7 +72,6 @@ dependencies {
     implementation 'com.github.RyanTheAllmighty.gettext:gettext-lib:88ae68d897'
     implementation 'com.sangupta:murmur:1.0.0'
     implementation 'com.github.oshi:oshi-core:6.6.6'
-    implementation 'net.freeutils:jlhttp:3.2'
     implementation 'joda-time:joda-time:2.13.0'
     implementation 'org.commonmark:commonmark:0.21.0' // Cannot update past 0.21.0 as needs >=Java 11
     implementation 'com.github.hypfvieh:dbus-java:3.3.2'

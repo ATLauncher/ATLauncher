@@ -26,11 +26,13 @@ import org.mini2Dx.gettext.GetText;
 
 import com.atlauncher.data.microsoft.Entitlements;
 import com.atlauncher.data.microsoft.LoginResponse;
+import com.atlauncher.data.microsoft.OauthDeviceCodeResponse;
 import com.atlauncher.data.microsoft.OauthTokenResponse;
 import com.atlauncher.data.microsoft.Profile;
 import com.atlauncher.data.microsoft.XboxLiveAuthResponse;
 import com.atlauncher.gui.dialogs.CreateMinecraftProfileDialog;
 import com.atlauncher.gui.dialogs.LoginWithMicrosoftDialog;
+import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.managers.LogManager;
@@ -292,7 +294,19 @@ public class MicrosoftAccount extends AbstractAccount {
                 break;
             }
 
-            new LoginWithMicrosoftDialog(this);
+            ProgressDialog<OauthDeviceCodeResponse> dialog = new ProgressDialog<>(
+                    GetText.tr("Getting Login Code From Microsoft"), 0,
+                    GetText.tr("Getting Login Code From Microsoft"),
+                    "Aborting getting login code from Microsoft");
+            dialog.addThread(new Thread(() -> {
+                dialog.setReturnValue(MicrosoftAuthAPI.getDeviceCode());
+                dialog.close();
+            }));
+            dialog.start();
+
+            LoginWithMicrosoftDialog loginWithMicrosoftDialog = new LoginWithMicrosoftDialog(this,
+                    dialog.getReturnValue());
+            loginWithMicrosoftDialog.setVisible(true);
         }
 
         return !hasCancelled;

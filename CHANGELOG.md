@@ -23,6 +23,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Add Purpur support for servers
 - Dynamic fetching of JRE information from nodecdn [#958]
 - Add context menu on instance image to create support pack for support [#994]
+- Use device code login method for Microsoft authentication [#755]
 
 ### Fixes
 - Invalid Java install location causing issues starting the launcher

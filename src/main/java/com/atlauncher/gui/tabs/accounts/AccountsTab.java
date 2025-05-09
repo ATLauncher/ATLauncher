@@ -41,6 +41,7 @@ import org.mini2Dx.gettext.GetText;
 import com.atlauncher.App;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.data.MicrosoftAccount;
+import com.atlauncher.data.microsoft.OauthDeviceCodeResponse;
 import com.atlauncher.gui.dialogs.LoginWithMicrosoftDialog;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.gui.panels.HierarchyPanel;
@@ -48,6 +49,7 @@ import com.atlauncher.gui.tabs.Tab;
 import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.utils.ComboItem;
+import com.atlauncher.utils.MicrosoftAuthAPI;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.SkinUtils;
 import com.atlauncher.utils.Utils;
@@ -152,7 +154,17 @@ public class AccountsTab extends HierarchyPanel implements Tab {
         loginWithMicrosoftButton.addActionListener(e -> {
             // TODO This should be handled by some reaction via listener
             int numberOfAccountsBefore = viewModel.accountCount();
-            LoginWithMicrosoftDialog loginWithMicrosoftDialog = new LoginWithMicrosoftDialog();
+
+            ProgressDialog<OauthDeviceCodeResponse> codeDialog = new ProgressDialog<>(
+                    GetText.tr("Getting Login Code From Microsoft"), 0,
+                    GetText.tr("Getting Login Code From Microsoft"),
+                    "Aborting getting login code from Microsoft");
+            codeDialog.addThread(new Thread(() -> {
+                codeDialog.setReturnValue(MicrosoftAuthAPI.getDeviceCode());
+                codeDialog.close();
+            }));
+            codeDialog.start();
+            LoginWithMicrosoftDialog loginWithMicrosoftDialog = new LoginWithMicrosoftDialog(codeDialog.getReturnValue());
             loginWithMicrosoftDialog.setVisible(true);
 
             if (numberOfAccountsBefore != viewModel.accountCount()) {
@@ -270,7 +282,18 @@ public class AccountsTab extends HierarchyPanel implements Tab {
                     .setType(DialogManager.ERROR)
                     .show();
 
-            LoginWithMicrosoftDialog loginWithMicrosoftDialog = new LoginWithMicrosoftDialog(account);
+            ProgressDialog<OauthDeviceCodeResponse> codeDialog = new ProgressDialog<>(
+                    GetText.tr("Getting Login Code From Microsoft"), 0,
+                    GetText.tr("Getting Login Code From Microsoft"),
+                    "Aborting getting login code from Microsoft");
+            codeDialog.addThread(new Thread(() -> {
+                codeDialog.setReturnValue(MicrosoftAuthAPI.getDeviceCode());
+                codeDialog.close();
+            }));
+            codeDialog.start();
+
+            LoginWithMicrosoftDialog loginWithMicrosoftDialog = new LoginWithMicrosoftDialog(account,
+                    codeDialog.getReturnValue());
             loginWithMicrosoftDialog.setVisible(true);
         }
     }

@@ -30,6 +30,7 @@ import com.atlauncher.Gsons;
 import com.atlauncher.constants.Constants;
 import com.atlauncher.data.microsoft.Entitlements;
 import com.atlauncher.data.microsoft.LoginResponse;
+import com.atlauncher.data.microsoft.OauthDeviceCodeResponse;
 import com.atlauncher.data.microsoft.OauthTokenResponse;
 import com.atlauncher.data.microsoft.Profile;
 import com.atlauncher.data.microsoft.XboxLiveAuthResponse;
@@ -45,16 +46,25 @@ import okhttp3.RequestBody;
  * Various utility methods for interacting with the Microsoft Auth API.
  */
 public class MicrosoftAuthAPI {
-    public static OauthTokenResponse tradeCodeForAccessToken(String code) {
+    public static OauthDeviceCodeResponse getDeviceCode() {
         RequestBody data = new FormBody.Builder().add("client_id", Constants.MICROSOFT_LOGIN_CLIENT_ID)
-                .add("code", code).add("grant_type", "authorization_code")
-                .add("redirect_uri", Constants.MICROSOFT_LOGIN_REDIRECT_URL)
                 .add("scope", String.join(" ", Constants.MICROSOFT_LOGIN_SCOPES)).build();
 
-        OauthTokenResponse oauthTokenResponse = NetworkClient.post(Constants.MICROSOFT_AUTH_TOKEN_URL,
+        OauthDeviceCodeResponse deviceCodeResponse = NetworkClient.post(Constants.MICROSOFT_DEVICE_CODE_URL,
+                Headers.of("Content-Type", "application/x-www-form-urlencoded"), data, OauthDeviceCodeResponse.class);
+
+        return deviceCodeResponse;
+    }
+
+    public static OauthTokenResponse checkDeviceCodeForToken(String deviceCode) throws IOException {
+        RequestBody data = new FormBody.Builder().add("client_id", Constants.MICROSOFT_LOGIN_CLIENT_ID)
+                .add("device_code", deviceCode).add("grant_type", "urn:ietf:params:oauth:grant-type:device_code")
+                .build();
+
+        OauthTokenResponse deviceCodeTokenResponse = NetworkClient.post(Constants.MICROSOFT_AUTH_TOKEN_URL,
                 Headers.of("Content-Type", "application/x-www-form-urlencoded"), data, OauthTokenResponse.class);
 
-        return oauthTokenResponse;
+        return deviceCodeTokenResponse;
     }
 
     public static OauthTokenResponse refreshAccessToken(String refreshToken) {
