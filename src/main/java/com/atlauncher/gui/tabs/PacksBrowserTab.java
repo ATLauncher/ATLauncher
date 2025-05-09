@@ -31,6 +31,7 @@ import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
+import javax.swing.JLayer;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
@@ -51,6 +52,7 @@ import com.atlauncher.evnt.listener.ThemeListener;
 import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.evnt.manager.TabChangeManager;
 import com.atlauncher.evnt.manager.ThemeManager;
+import com.atlauncher.gui.WheelScrollLayerUI;
 import com.atlauncher.gui.panels.packbrowser.ATLauncherPacksPanel;
 import com.atlauncher.gui.panels.packbrowser.CurseForgePacksPanel;
 import com.atlauncher.gui.panels.packbrowser.FTBPacksPanel;
@@ -337,7 +339,7 @@ public final class PacksBrowserTab extends JPanel
         // add the scrollPane to the newly selected panel
         PackBrowserPlatformPanel selectedPanel = (PackBrowserPlatformPanel) platformTabbedPane.getSelectedComponent();
         selectedPanel.add(platformMessageJPanel, BorderLayout.NORTH);
-        selectedPanel.add(scrollPane, BorderLayout.CENTER);
+        selectedPanel.add(new JLayer<>(scrollPane, new WheelScrollLayerUI()), BorderLayout.CENTER);
 
         // clear search
         searchField.setText("");

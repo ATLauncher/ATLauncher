@@ -24,6 +24,7 @@ import java.awt.GridBagLayout;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
+import javax.swing.JLayer;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
@@ -32,6 +33,7 @@ import org.mini2Dx.gettext.GetText;
 
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.constants.UIConstants;
+import com.atlauncher.gui.WheelScrollLayerUI;
 import com.atlauncher.gui.card.NilCard;
 import com.atlauncher.gui.card.ServerCard;
 import com.atlauncher.gui.panels.HierarchyPanel;
@@ -90,7 +92,7 @@ public class ServersTab extends HierarchyPanel implements Tab {
         scrollPane = new JScrollPane(panel, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
                 JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scrollPane.getVerticalScrollBar().setUnitIncrement(16);
-        add(scrollPane, BorderLayout.CENTER);
+        add(new JLayer<>(scrollPane, new WheelScrollLayerUI()), BorderLayout.CENTER);
 
         panel.setLayout(new GridBagLayout());
 

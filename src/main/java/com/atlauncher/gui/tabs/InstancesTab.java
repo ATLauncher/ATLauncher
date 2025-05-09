@@ -19,10 +19,12 @@ package com.atlauncher.gui.tabs;
 
 import java.awt.BorderLayout;
 
+import javax.swing.JLayer;
 import javax.swing.JScrollPane;
 
 import org.mini2Dx.gettext.GetText;
 
+import com.atlauncher.gui.WheelScrollLayerUI;
 import com.atlauncher.gui.panels.HierarchyPanel;
 import com.atlauncher.gui.tabs.instances.InstancesListPanel;
 import com.atlauncher.gui.tabs.instances.InstancesNavigationPanel;
@@ -67,7 +69,7 @@ public class InstancesTab extends HierarchyPanel implements Tab {
 
         scrollPane = Utils.wrapInVerticalScroller(this.instancesListPanel, 16);
 
-        this.add(scrollPane, BorderLayout.CENTER);
+        this.add(new JLayer<>(scrollPane, new WheelScrollLayerUI()), BorderLayout.CENTER);
     }
 
     @Override
