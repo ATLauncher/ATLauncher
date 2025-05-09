@@ -1,5 +1,8 @@
 blank_issues_enabled: false
 contact_links:
+  - name: Suggest a Feature
+    url: https://feedback.atlauncher.com
+    about: If you have a suggestion for a new feature or improvement, please post it here.
   - name: Community Support
     url: https://atl.pw/discord
     about: If you're having issues with the launcher or running Minecraft, please post in our Discord.

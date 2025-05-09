@@ -7,6 +7,8 @@ body:
       value: |
         Thanks for taking the time to create this feature request!
 
+        If you haven't been directed here by a member of the team, please visit our [Feedback Site](https://feedback.atlauncher.com) to submit your feature request. Feature requests submitted here will not be given as much attention as those submitted on the feedback site which help us guage public interest in new features.
+
   - type: textarea
     id: problem
     attributes:
@@ -45,7 +47,7 @@ body:
     id: terms
     attributes:
       label: Code of Conduct
-      description: By submitting this issue, you agree to follow our [Code of Conduct](../blob/master/CODE_OF_CONDUCT.md)
+      description: By submitting this issue, you agree to follow our [Code of Conduct](https://github.com/ATLauncher/ATLauncher/blob/master/CODE_OF_CONDUCT.md)
       options:
         - label: I agree to follow this project's Code of Conduct
           required: true

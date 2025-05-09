@@ -7,6 +7,8 @@ body:
       value: |
         Thanks for taking the time to fill out this bug report!
 
+        If you haven't been directed here by a member of the team, please visit our [Discord](https://atl.pw/discord) to verify that your bug is correct and should be reported here. Bug reports submitted here without first being verified by ATLauncher staff may get closed.
+
   - type: textarea
     id: what-happened
     attributes:
@@ -20,15 +22,11 @@ body:
     validations:
       required: true
 
-  - type: dropdown
+  - type: textarea
     id: operating-system
     attributes:
       label: Operating System
-      description: What operating system are you using?
-      options:
-        - Windows
-        - Linux
-        - macOS
+      description: Please give us details about your operating system including what version of the operating system you're using. If you're using Linux, please also include the distribution (e.g. Ubuntu, Arch, etc) and version you're using, the desktop environment you're using (e.g. KDE, Gnome, etc) as well as the Window Manager (e.g. i3, Openbox, etc).
     validations:
       required: true
 
@@ -55,10 +53,20 @@ body:
           required: true
 
   - type: checkboxes
+    id: already-exists-check
+    attributes:
+      label: Have you checked this issue doesn't already exist?
+      description: Please make sure you've checked the issues already in this repository to see if this bug (or something similar) already exists, if so, comment on the existing issue instead.
+      options:
+        - label: I am sure this issue doesn't exist already
+    validations:
+      required: true
+
+  - type: checkboxes
     id: terms
     attributes:
       label: Code of Conduct
-      description: By submitting this issue, you agree to follow our [Code of Conduct](../blob/master/CODE_OF_CONDUCT.md)
+      description: By submitting this issue, you agree to follow our [Code of Conduct](https://github.com/ATLauncher/ATLauncher/blob/master/CODE_OF_CONDUCT.md)
       options:
         - label: I agree to follow this project's Code of Conduct
           required: true

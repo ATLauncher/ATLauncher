@@ -1,3 +1,6 @@
+**IMPORTANT: Please do not create a Pull Request without first discussing it with the maintainers.**
+*Please visit [our Discord](https://atl.pw/discord) to discuss your changes with the maintainers in the #development channel.*
+
 ### Description of the Change
 
 <!-- Give us a description about this Pull Request. The more information you include the better -->
