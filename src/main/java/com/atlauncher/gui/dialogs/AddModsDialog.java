@@ -85,6 +85,7 @@ public final class AddModsDialog extends JDialog {
 
     private final JPanel contentPanel = new JPanel(new WrapLayout());
     private final JPanel topPanel = new JPanel(new BorderLayout());
+    private final JPanel warningPanel = new JPanel();
     private final JTextField searchField = new JTextField(16);
     private final JLabel platformMessageLabel = new JLabel();
     private final JComboBox<ComboItem<ModPlatform>> hostComboBox = new JComboBox<>();
@@ -220,10 +221,7 @@ public final class AddModsDialog extends JDialog {
 
         this.topPanel.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
 
-        fabricApiWarningLabel.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
-        legacyFabricApiWarningLabel.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
-        quiltStandardLibrariesWarningLabel.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
-        forgifiedFabricApiWarningLabel.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
+        this.warningPanel.setLayout(new BoxLayout(this.warningPanel, BoxLayout.X_AXIS));
 
         JPanel searchButtonsPanel = new JPanel();
 
@@ -597,8 +595,9 @@ public final class AddModsDialog extends JDialog {
                 .noneMatch(m -> (m.isFromCurseForge() && m.getCurseForgeModId() == Constants.CURSEFORGE_FABRIC_MOD_ID)
                         || (m.isFromModrinth()
                                 && m.modrinthProject.id.equalsIgnoreCase(Constants.MODRINTH_FABRIC_MOD_ID)))) {
-            this.topPanel.add(fabricApiWarningLabel, BorderLayout.CENTER);
-            this.topPanel.add(installFabricApiButton, BorderLayout.EAST);
+            this.warningPanel.add(fabricApiWarningLabel);
+            this.warningPanel.add(Box.createHorizontalGlue());
+            this.warningPanel.add(installFabricApiButton);
         }
 
         if (loaderVersion != null && loaderVersion.isLegacyFabric() && instanceOrServer.getMods().stream()
@@ -606,19 +605,21 @@ public final class AddModsDialog extends JDialog {
                         && m.getCurseForgeModId() == Constants.CURSEFORGE_LEGACY_FABRIC_MOD_ID)
                         || (m.isFromModrinth()
                                 && m.modrinthProject.id.equalsIgnoreCase(Constants.MODRINTH_LEGACY_FABRIC_MOD_ID)))) {
-            this.topPanel.add(legacyFabricApiWarningLabel, BorderLayout.CENTER);
-            this.topPanel.add(installLegacyFabricApiButton, BorderLayout.EAST);
+            this.warningPanel.add(legacyFabricApiWarningLabel);
+            this.warningPanel.add(Box.createHorizontalGlue());
+            this.warningPanel.add(installLegacyFabricApiButton);
         }
 
         if (loaderVersion != null && loaderVersion.isLegacyFabric()) {
-            this.topPanel.add(legacyFabricModrinthWarningLabel, BorderLayout.SOUTH);
+            this.warningPanel.add(legacyFabricModrinthWarningLabel);
         }
 
         if (loaderVersion != null && loaderVersion.isQuilt() && instanceOrServer.getMods().stream()
                 .noneMatch(m -> m.isFromModrinth()
                         && m.modrinthProject.id.equalsIgnoreCase(Constants.MODRINTH_QSL_MOD_ID))) {
-            this.topPanel.add(quiltStandardLibrariesWarningLabel, BorderLayout.CENTER);
-            this.topPanel.add(installQuiltStandardLibrariesButton, BorderLayout.EAST);
+            this.warningPanel.add(quiltStandardLibrariesWarningLabel);
+            this.warningPanel.add(Box.createHorizontalGlue());
+            this.warningPanel.add(installQuiltStandardLibrariesButton);
         }
 
         // If on Forge/NeoForge and has Sinytra Connector installed, then show Forgified
@@ -629,11 +630,13 @@ public final class AddModsDialog extends JDialog {
                         || (m.isFromModrinth()
                                 && m.modrinthProject.id
                                         .equalsIgnoreCase(Constants.MODRINTH_FORGIFIED_FABRIC_API_MOD_ID)))) {
-            this.topPanel.add(forgifiedFabricApiWarningLabel, BorderLayout.CENTER);
-            this.topPanel.add(installForgifiedFabricApiButton, BorderLayout.EAST);
+            this.warningPanel.add(forgifiedFabricApiWarningLabel);
+            this.warningPanel.add(Box.createHorizontalGlue());
+            this.warningPanel.add(installForgifiedFabricApiButton);
         }
 
         this.topPanel.add(searchButtonsPanel, BorderLayout.NORTH);
+        this.topPanel.add(warningPanel, BorderLayout.CENTER);
 
         this.jscrollPane = new JScrollPane(this.contentPanel) {
             {
