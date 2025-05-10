@@ -220,22 +220,43 @@ public class ModsJCheckBoxTransferHandler extends TransferHandler {
                                                 DisableableMod dm = murmurHashes
                                                         .get(foundMod.file.packageFingerprint);
 
-                                                // add CurseForge information
-                                                dm.curseForgeProjectId = foundMod.id;
-                                                dm.curseForgeFile = foundMod.file;
-                                                dm.curseForgeFileId = foundMod.file.id;
-
                                                 CurseForgeProject curseForgeProject = foundProjects
                                                         .get(foundMod.id);
 
-                                                if (curseForgeProject != null) {
+                                                if (curseForgeProject != null && curseForgeProject.status == 4) {
+                                                    dm.curseForgeProjectId = foundMod.id;
+                                                    dm.curseForgeFile = foundMod.file;
+                                                    dm.curseForgeFileId = foundMod.file.id;
                                                     dm.curseForgeProject = curseForgeProject;
                                                     dm.name = curseForgeProject.name;
                                                     dm.description = curseForgeProject.summary;
+
+                                                    LogManager.debug("Found matching mod from CurseForge called "
+                                                            + dm.curseForgeFile.displayName);
                                                 }
 
-                                                LogManager.debug("Found matching mod from CurseForge called "
-                                                        + dm.curseForgeFile.displayName);
+                                                // reset if the file is not approved
+                                                if (curseForgeProject != null && curseForgeProject.status != 4) {
+                                                    dm.curseForgeProjectId = null;
+                                                    dm.curseForgeFile = null;
+                                                    dm.curseForgeFileId = null;
+                                                    dm.curseForgeProject = null;
+
+                                                    File path = dm.getFile(dialog.instanceOrServer);
+                                                    MCMod mcMod = Utils.getMCModForFile(path);
+                                                    if (mcMod != null) {
+                                                        dm.name = Optional.ofNullable(mcMod.name)
+                                                                .orElse(path.getName());
+                                                        dm.description = mcMod.description;
+                                                    } else {
+                                                        FabricMod fabricMod = Utils.getFabricModForFile(path);
+                                                        if (fabricMod != null) {
+                                                            dm.name = Optional.ofNullable(fabricMod.name)
+                                                                    .orElse(path.getName());
+                                                            dm.description = fabricMod.description;
+                                                        }
+                                                    }
+                                                }
                                             });
                                 }
                             }

@@ -42,6 +42,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Description not being set from the mrpack when importing [#1004]
 - Shaderpacks not recognised when editing mods [#954]
 - Nested scroll panes causing issues with scrolling [#866]
+- Mods from CurseForge that are not approved being displayed in various places
 
 ### Misc
 - Update gradle wrapper version from 8.2 to 8.12

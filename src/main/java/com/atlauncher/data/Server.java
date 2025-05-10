@@ -67,9 +67,11 @@ import com.atlauncher.data.curseforge.CurseForgeFileHash;
 import com.atlauncher.data.curseforge.CurseForgeFingerprint;
 import com.atlauncher.data.curseforge.CurseForgeFingerprintedMod;
 import com.atlauncher.data.curseforge.CurseForgeProject;
+import com.atlauncher.data.minecraft.FabricMod;
 import com.atlauncher.data.minecraft.JavaRuntime;
 import com.atlauncher.data.minecraft.JavaRuntimes;
 import com.atlauncher.data.minecraft.JavaVersion;
+import com.atlauncher.data.minecraft.MCMod;
 import com.atlauncher.data.minecraft.loaders.LoaderVersion;
 import com.atlauncher.data.modrinth.ModrinthFile;
 import com.atlauncher.data.modrinth.ModrinthProject;
@@ -1011,12 +1013,11 @@ public class Server implements ModManagement {
                 if (fingerprint.exactMatches != null && fingerprint.exactMatches.size() == 1) {
                     CurseForgeFingerprintedMod foundMod = fingerprint.exactMatches.get(0);
 
-                    dm.curseForgeProjectId = foundMod.id;
-                    dm.curseForgeFile = foundMod.file;
-                    dm.curseForgeFileId = foundMod.file.id;
-
                     CurseForgeProject cfProject = CurseForgeApi.getProjectById(foundMod.id);
-                    if (cfProject != null) {
+                    if (cfProject != null && cfProject.status == 4) {
+                        dm.curseForgeProjectId = foundMod.id;
+                        dm.curseForgeFile = foundMod.file;
+                        dm.curseForgeFileId = foundMod.file.id;
                         dm.curseForgeProject = cfProject;
                     }
                 }
@@ -1114,22 +1115,43 @@ public class Server implements ModManagement {
                                                 DisableableMod dm = murmurHashes
                                                         .get(foundMod.file.packageFingerprint);
 
-                                                // add CurseForge information
-                                                dm.curseForgeProjectId = foundMod.id;
-                                                dm.curseForgeFile = foundMod.file;
-                                                dm.curseForgeFileId = foundMod.file.id;
-
                                                 CurseForgeProject cfProject = foundProjects
                                                         .get(foundMod.id);
 
-                                                if (cfProject != null) {
+                                                if (cfProject != null && cfProject.status == 4) {
+                                                    dm.curseForgeProjectId = foundMod.id;
+                                                    dm.curseForgeFile = foundMod.file;
+                                                    dm.curseForgeFileId = foundMod.file.id;
                                                     dm.curseForgeProject = cfProject;
                                                     dm.name = cfProject.name;
                                                     dm.description = cfProject.summary;
+
+                                                    LogManager.debug("Found matching mod from CurseForge called "
+                                                            + dm.curseForgeFile.displayName);
                                                 }
 
-                                                LogManager.debug("Found matching mod from CurseForge called "
-                                                        + dm.curseForgeFile.displayName);
+                                                // reset if the file is not approved
+                                                if (cfProject != null && cfProject.status != 4) {
+                                                    dm.curseForgeProjectId = null;
+                                                    dm.curseForgeFile = null;
+                                                    dm.curseForgeFileId = null;
+                                                    dm.curseForgeProject = null;
+
+                                                    File path = dm.getFile(this);
+                                                    MCMod mcMod = Utils.getMCModForFile(path);
+                                                    if (mcMod != null) {
+                                                        dm.name = Optional.ofNullable(mcMod.name)
+                                                                .orElse(path.getName());
+                                                        dm.description = mcMod.description;
+                                                    } else {
+                                                        FabricMod fabricMod = Utils.getFabricModForFile(path);
+                                                        if (fabricMod != null) {
+                                                            dm.name = Optional.ofNullable(fabricMod.name)
+                                                                    .orElse(path.getName());
+                                                            dm.description = fabricMod.description;
+                                                        }
+                                                    }
+                                                }
                                             });
                                 }
                             }

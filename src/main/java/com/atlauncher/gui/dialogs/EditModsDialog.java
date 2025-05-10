@@ -30,6 +30,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -55,6 +56,8 @@ import com.atlauncher.data.ModManagement;
 import com.atlauncher.data.Server;
 import com.atlauncher.data.curseforge.CurseForgeFingerprint;
 import com.atlauncher.data.curseforge.CurseForgeProject;
+import com.atlauncher.data.minecraft.FabricMod;
+import com.atlauncher.data.minecraft.MCMod;
 import com.atlauncher.data.modrinth.ModrinthProject;
 import com.atlauncher.data.modrinth.ModrinthVersion;
 import com.atlauncher.gui.components.ModsJCheckBox;
@@ -563,21 +566,42 @@ public class EditModsDialog extends JDialog {
                                             DisableableMod dm = murmurHashes.get(foundMod.file.packageFingerprint)
                                                     .getDisableableMod();
 
-                                            // add CurseForge information
-                                            dm.curseForgeProjectId = foundMod.id;
-                                            dm.curseForgeFile = foundMod.file;
-                                            dm.curseForgeFileId = foundMod.file.id;
-
                                             CurseForgeProject curseForgeProject = foundProjects.get(foundMod.id);
 
-                                            if (curseForgeProject != null) {
+                                            if (curseForgeProject != null && curseForgeProject.status == 4) {
+                                                dm.curseForgeProjectId = foundMod.id;
+                                                dm.curseForgeFile = foundMod.file;
+                                                dm.curseForgeFileId = foundMod.file.id;
                                                 dm.curseForgeProject = curseForgeProject;
                                                 dm.name = curseForgeProject.name;
                                                 dm.description = curseForgeProject.summary;
+
+                                                LogManager.debug("Found matching mod from CurseForge called "
+                                                        + dm.curseForgeFile.displayName);
                                             }
 
-                                            LogManager.debug("Found matching mod from CurseForge called "
-                                                    + dm.curseForgeFile.displayName);
+                                            // reset if the file is not approved
+                                            if (curseForgeProject != null && curseForgeProject.status != 4) {
+                                                dm.curseForgeProjectId = null;
+                                                dm.curseForgeFile = null;
+                                                dm.curseForgeFileId = null;
+                                                dm.curseForgeProject = null;
+
+                                                File path = dm.getFile(instanceOrServer);
+                                                MCMod mcMod = Utils.getMCModForFile(path);
+                                                if (mcMod != null) {
+                                                    dm.name = Optional.ofNullable(mcMod.name)
+                                                            .orElse(path.getName());
+                                                    dm.description = mcMod.description;
+                                                } else {
+                                                    FabricMod fabricMod = Utils.getFabricModForFile(path);
+                                                    if (fabricMod != null) {
+                                                        dm.name = Optional.ofNullable(fabricMod.name)
+                                                                .orElse(path.getName());
+                                                        dm.description = fabricMod.description;
+                                                    }
+                                                }
+                                            }
                                         });
                             }
                         }
