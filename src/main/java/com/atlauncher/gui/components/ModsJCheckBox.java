@@ -31,6 +31,8 @@ import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.data.DisableableMod;
 import com.atlauncher.data.ModPlatform;
 import com.atlauncher.data.Type;
+import com.atlauncher.data.curseforge.CurseForgeProject;
+import com.atlauncher.data.curseforge.CurseForgeSocialLinkType;
 import com.atlauncher.data.json.Mod;
 import com.atlauncher.data.modrinth.ModrinthDonationUrl;
 import com.atlauncher.data.modrinth.ModrinthProject;
@@ -138,11 +140,111 @@ public class ModsJCheckBox extends JCheckBox {
         contextMenu.add(new JPopupMenu.Separator());
 
         if (getDisableableMod().hasFullCurseForgeInformation()) {
+            CurseForgeProject curseForgeProject = getDisableableMod().curseForgeProject;
+
             // #. {0} is the platform to open the website for (e.g. CurseForge/Modrinth)
             JMenuItem openOnCurseForge = new JMenuItem(GetText.tr("Open On {0}", "CurseForge"));
             openOnCurseForge
-                    .addActionListener(e -> OS.openWebBrowser(getDisableableMod().curseForgeProject.getWebsiteUrl()));
+                    .addActionListener(e -> OS.openWebBrowser(curseForgeProject.getWebsiteUrl()));
             contextMenu.add(openOnCurseForge);
+
+            if (curseForgeProject.hasSocialLink(CurseForgeSocialLinkType.WEBSITE)) {
+                JMenuItem openWebsite = new JMenuItem(GetText.tr("Open Website"));
+                openWebsite.addActionListener(
+                        e -> OS.openWebBrowser(curseForgeProject.getSocialLink(CurseForgeSocialLinkType.WEBSITE)));
+                contextMenu.add(openWebsite);
+            }
+
+            if (curseForgeProject.hasSocialLink(CurseForgeSocialLinkType.GITHUB)) {
+                JMenuItem openGitHub = new JMenuItem(GetText.tr("Open GitHub"));
+                openGitHub.addActionListener(
+                        e -> OS.openWebBrowser(curseForgeProject.getSocialLink(CurseForgeSocialLinkType.GITHUB)));
+                contextMenu.add(openGitHub);
+            }
+
+            if (curseForgeProject.hasSocialLink(CurseForgeSocialLinkType.DISCORD)) {
+                JMenuItem openDiscord = new JMenuItem(GetText.tr("Open Discord"));
+                openDiscord.addActionListener(
+                        e -> OS.openWebBrowser(curseForgeProject.getSocialLink(CurseForgeSocialLinkType.DISCORD)));
+                contextMenu.add(openDiscord);
+            }
+
+            if (curseForgeProject.hasSocialLink(CurseForgeSocialLinkType.MASTODON)) {
+                JMenuItem openMastodon = new JMenuItem(GetText.tr("Open Mastodon"));
+                openMastodon.addActionListener(
+                        e -> OS.openWebBrowser(curseForgeProject.getSocialLink(CurseForgeSocialLinkType.MASTODON)));
+                contextMenu.add(openMastodon);
+            }
+
+            if (curseForgeProject.hasSocialLink(CurseForgeSocialLinkType.FACEBOOK)) {
+                JMenuItem openFacebook = new JMenuItem(GetText.tr("Open Facebook"));
+                openFacebook.addActionListener(
+                        e -> OS.openWebBrowser(curseForgeProject.getSocialLink(CurseForgeSocialLinkType.FACEBOOK)));
+                contextMenu.add(openFacebook);
+            }
+
+            if (curseForgeProject.hasSocialLink(CurseForgeSocialLinkType.TWITTER)) {
+                JMenuItem openTwitter = new JMenuItem(GetText.tr("Open Twitter"));
+                openTwitter.addActionListener(
+                        e -> OS.openWebBrowser(curseForgeProject.getSocialLink(CurseForgeSocialLinkType.TWITTER)));
+                contextMenu.add(openTwitter);
+            }
+
+            if (curseForgeProject.hasSocialLink(CurseForgeSocialLinkType.INSTAGRAM)) {
+                JMenuItem openInstagram = new JMenuItem(GetText.tr("Open Instagram"));
+                openInstagram.addActionListener(
+                        e -> OS.openWebBrowser(curseForgeProject.getSocialLink(CurseForgeSocialLinkType.INSTAGRAM)));
+                contextMenu.add(openInstagram);
+            }
+
+            if (curseForgeProject.hasSocialLink(CurseForgeSocialLinkType.PATREON)) {
+                JMenuItem openPatreon = new JMenuItem(GetText.tr("Open Patreon"));
+                openPatreon.addActionListener(
+                        e -> OS.openWebBrowser(curseForgeProject.getSocialLink(CurseForgeSocialLinkType.PATREON)));
+                contextMenu.add(openPatreon);
+            }
+
+            if (curseForgeProject.hasSocialLink(CurseForgeSocialLinkType.TWITCH)) {
+                JMenuItem openTwitch = new JMenuItem(GetText.tr("Open Twitch"));
+                openTwitch.addActionListener(
+                        e -> OS.openWebBrowser(curseForgeProject.getSocialLink(CurseForgeSocialLinkType.TWITCH)));
+                contextMenu.add(openTwitch);
+            }
+
+            if (curseForgeProject.hasSocialLink(CurseForgeSocialLinkType.REDDIT)) {
+                JMenuItem openReddit = new JMenuItem(GetText.tr("Open Reddit"));
+                openReddit.addActionListener(
+                        e -> OS.openWebBrowser(curseForgeProject.getSocialLink(CurseForgeSocialLinkType.REDDIT)));
+                contextMenu.add(openReddit);
+            }
+
+            if (curseForgeProject.hasSocialLink(CurseForgeSocialLinkType.YOUTUBE)) {
+                JMenuItem openYouTube = new JMenuItem(GetText.tr("Open YouTube"));
+                openYouTube.addActionListener(
+                        e -> OS.openWebBrowser(curseForgeProject.getSocialLink(CurseForgeSocialLinkType.YOUTUBE)));
+                contextMenu.add(openYouTube);
+            }
+
+            if (curseForgeProject.hasSocialLink(CurseForgeSocialLinkType.TIKTOK)) {
+                JMenuItem openTikTok = new JMenuItem(GetText.tr("Open TikTok"));
+                openTikTok.addActionListener(
+                        e -> OS.openWebBrowser(curseForgeProject.getSocialLink(CurseForgeSocialLinkType.TIKTOK)));
+                contextMenu.add(openTikTok);
+            }
+
+            if (curseForgeProject.hasSocialLink(CurseForgeSocialLinkType.PINTEREST)) {
+                JMenuItem openPinterest = new JMenuItem(GetText.tr("Open Pinterest"));
+                openPinterest.addActionListener(
+                        e -> OS.openWebBrowser(curseForgeProject.getSocialLink(CurseForgeSocialLinkType.PINTEREST)));
+                contextMenu.add(openPinterest);
+            }
+
+            if (curseForgeProject.hasSocialLink(CurseForgeSocialLinkType.BLUESKY)) {
+                JMenuItem openBlueSky = new JMenuItem(GetText.tr("Open BlueSky"));
+                openBlueSky.addActionListener(
+                        e -> OS.openWebBrowser(curseForgeProject.getSocialLink(CurseForgeSocialLinkType.BLUESKY)));
+                contextMenu.add(openBlueSky);
+            }
 
             contextMenu.add(new JPopupMenu.Separator());
         }

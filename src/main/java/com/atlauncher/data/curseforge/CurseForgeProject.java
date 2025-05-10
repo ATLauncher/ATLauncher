@@ -25,6 +25,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
+import javax.annotation.Nullable;
+
 import com.atlauncher.annot.ExcludeFromGsonSerialization;
 import com.atlauncher.constants.Constants;
 import com.atlauncher.data.json.ModType;
@@ -50,6 +52,7 @@ public class CurseForgeProject {
     public String dateCreated;
     public String dateReleased;
     public Map<String, String> links = new HashMap<>();
+    public @Nullable List<CurseForgeSocialLink> socialLinks;
     public CurseForgeAttachment logo = null;
     public Boolean allowModDistribution;
 
@@ -125,6 +128,28 @@ public class CurseForgeProject {
 
     public boolean hasWikiUrl() {
         return links.containsKey("wikiUrl") && links.get("wikiUrl") != null && !links.get("wikiUrl").isEmpty();
+    }
+
+    public @Nullable String getSocialLink(CurseForgeSocialLinkType type) {
+        if (socialLinks == null) {
+            return null;
+        }
+
+        return socialLinks.stream()
+                .filter(link -> link.type == type)
+                .map(link -> link.url)
+                .findFirst()
+                .orElse(null);
+    }
+
+    public boolean hasSocialLink(CurseForgeSocialLinkType type) {
+        if (socialLinks == null) {
+            return false;
+        }
+
+        return socialLinks.stream()
+                .anyMatch(link -> link.type == type && link.url != null
+                        && !link.url.isEmpty());
     }
 
     public String getClassUrlSlug() {

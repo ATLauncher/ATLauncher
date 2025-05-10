@@ -449,7 +449,7 @@ public class EditModsDialog extends JDialog {
     private void reinstall() {
         ArrayList<ModsJCheckBox> mods = new ArrayList<>();
         mods.addAll(enabledMods);
-        mods.addAll(disabledMods);
+        mods.addAll(disabledMods); 
 
         for (ModsJCheckBox mod : mods) {
             if (mod.isSelected() && mod.getDisableableMod().isUpdatable()) {

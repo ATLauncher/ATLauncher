@@ -91,6 +91,7 @@ import com.atlauncher.data.curseforge.CurseForgeFileHash;
 import com.atlauncher.data.curseforge.CurseForgeFingerprint;
 import com.atlauncher.data.curseforge.CurseForgeFingerprintedMod;
 import com.atlauncher.data.curseforge.CurseForgeProject;
+import com.atlauncher.data.curseforge.CurseForgeSocialLinkType;
 import com.atlauncher.data.curseforge.pack.CurseForgeManifest;
 import com.atlauncher.data.curseforge.pack.CurseForgeManifestFile;
 import com.atlauncher.data.curseforge.pack.CurseForgeMinecraft;
@@ -3080,6 +3081,10 @@ public class Instance extends MinecraftVersion implements ModManagement {
         }
 
         if (isCurseForgePack()) {
+            if (launcher.curseForgeProject.hasSocialLink(CurseForgeSocialLinkType.DISCORD)) {
+                return launcher.curseForgeProject.getSocialLink(CurseForgeSocialLinkType.DISCORD);
+            }
+
             if (launcher.curseForgeProjectDescription != null) {
                 String discordLinkFromDescription = CurseForgeUtils
                         .parseDescriptionForDiscordInvite(launcher.curseForgeProjectDescription);

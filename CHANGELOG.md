@@ -24,6 +24,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Dynamic fetching of JRE information from nodecdn [#958]
 - Add context menu on instance image to create support pack for support [#994]
 - Add device code login method for Microsoft authentication [#755]
+- Show social links for mods from CurseForge in the right click menu in the Edit Mods dialog
 
 ### Fixes
 - Invalid Java install location causing issues starting the launcher
