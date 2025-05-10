@@ -31,16 +31,13 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import javax.annotation.Nullable;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JEditorPane;
 import javax.swing.JLabel;
-import javax.swing.JMenuItem;
 import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
 import javax.swing.JSeparator;
 import javax.swing.SwingUtilities;
 import javax.swing.event.HyperlinkEvent;
@@ -93,6 +90,7 @@ public final class LoginWithMicrosoftDialog extends JDialog {
         this.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 
         addWindowListener(new WindowAdapter() {
+            @Override
             public void windowClosing(WindowEvent arg0) {
                 close();
             }
@@ -224,6 +222,7 @@ public final class LoginWithMicrosoftDialog extends JDialog {
 
     private void pollForToken(OauthDeviceCodeResponse deviceCodeResponse) {
         Runnable checkDeviceCodeRunnable = new Runnable() {
+            @Override
             public void run() {
                 try {
                     OauthTokenResponse oauthTokenResponse = MicrosoftAuthAPI

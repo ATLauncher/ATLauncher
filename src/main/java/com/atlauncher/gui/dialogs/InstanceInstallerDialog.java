@@ -171,7 +171,7 @@ public class InstanceInstallerDialog extends JDialog {
 
     public InstanceInstallerDialog(ModrinthProject modrinthProject, ModrinthVersion preselectedModrinthVersion) {
         this(modrinthProject, false, false, null, true, null, App.launcher.getParent(),
-                preselectedModrinthVersion);
+            preselectedModrinthVersion);
     }
 
     public InstanceInstallerDialog(Object object, boolean isServer) {
@@ -195,14 +195,14 @@ public class InstanceInstallerDialog extends JDialog {
     }
 
     public InstanceInstallerDialog(Object object, boolean isUpdate, boolean isServer, PackVersion autoInstallVersion,
-            boolean showModsChooser, Path extractedPath) {
+                                   boolean showModsChooser, Path extractedPath) {
         this(object, isUpdate, isServer, autoInstallVersion, showModsChooser, extractedPath,
-                App.launcher.getParent(), null);
+            App.launcher.getParent(), null);
     }
 
     public InstanceInstallerDialog(Object object, final boolean isUpdate, final boolean isServer,
-            final PackVersion autoInstallVersion, final boolean showModsChooser,
-            Path extractedPathCon, Window parent, ModrinthVersion preselectedModrinthVersion) {
+                                   final PackVersion autoInstallVersion, final boolean showModsChooser,
+                                   Path extractedPathCon, Window parent, ModrinthVersion preselectedModrinthVersion) {
         super(parent, ModalityType.DOCUMENT_MODAL);
 
         setName("instanceInstallerDialog");
@@ -242,13 +242,13 @@ public class InstanceInstallerDialog extends JDialog {
         this.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 
         install = new JButton(
-                ((isReinstall) ? (isUpdate ? GetText.tr("Update") : GetText.tr("Reinstall")) : GetText.tr("Install")));
+            ((isReinstall) ? (isUpdate ? GetText.tr("Update") : GetText.tr("Reinstall")) : GetText.tr("Install")));
 
         // Top Panel Stuff
         JPanel top = new JPanel();
         top.add(new JLabel(((isReinstall) ? (isUpdate ? GetText.tr("Updating") : GetText.tr("Reinstalling"))
-                : GetText.tr("Installing")) + " " + pack.getName()
-                + (isReinstall ? GetText.tr(" (Current Version: {0})", instance.getVersionOfPack()) : "")));
+            : GetText.tr("Installing")) + " " + pack.getName()
+            + (isReinstall ? GetText.tr(" (Current Version: {0})", instance.getVersionOfPack()) : "")));
 
         // Middle Panel Stuff
         middle = new JPanel();
@@ -279,7 +279,8 @@ public class InstanceInstallerDialog extends JDialog {
         });
         nameField.addFocusListener(new FocusListener() {
             @Override
-            public void focusLost(final FocusEvent pE) {}
+            public void focusLost(final FocusEvent pE) {
+            }
 
             @Override
             public void focusGained(final FocusEvent pE) {
@@ -317,10 +318,10 @@ public class InstanceInstallerDialog extends JDialog {
             gbc.insets = UIConstants.LABEL_INSETS;
             gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
             saveModsLabel = new JLabelWithHover(GetText.tr("Save Mods") + "? ",
-                    Utils.getIconImage(App.THEME.getIconPath("question")),
-                    new HTMLBuilder().center().text(GetText.tr(
-                            "Since this update changes the Minecraft version, your custom mods may no longer work.<br/><br/>Checking this box will keep your custom mods, otherwise they'll be removed."))
-                            .build());
+                Utils.getIconImage(App.THEME.getIconPath("question")),
+                new HTMLBuilder().center().text(GetText.tr(
+                        "Since this update changes the Minecraft version, your custom mods may no longer work.<br/><br/>Checking this box will keep your custom mods, otherwise they'll be removed."))
+                    .build());
             middle.add(saveModsLabel, gbc);
 
             gbc.gridx++;
@@ -332,9 +333,9 @@ public class InstanceInstallerDialog extends JDialog {
             Optional<VersionManifestVersion> minecraftVersion = Optional.ofNullable(packVersion.minecraftVersion);
 
             saveModsLabel.setVisible(
-                    minecraftVersion.isPresent() && !minecraftVersion.get().id.equalsIgnoreCase(this.instance.id));
+                minecraftVersion.isPresent() && !minecraftVersion.get().id.equalsIgnoreCase(this.instance.id));
             saveModsCheckbox.setVisible(
-                    minecraftVersion.isPresent() && !minecraftVersion.get().id.equalsIgnoreCase(this.instance.id));
+                minecraftVersion.isPresent() && !minecraftVersion.get().id.equalsIgnoreCase(this.instance.id));
 
             middle.add(saveModsCheckbox, gbc);
         }
@@ -347,8 +348,8 @@ public class InstanceInstallerDialog extends JDialog {
 
             PackVersion packVersion = ((PackVersion) versionsDropDown.getSelectedItem());
             LoaderVersion loaderVersion = (packVersion.hasLoader() && packVersion.hasChoosableLoader())
-                    ? ((ComboItem<LoaderVersion>) loaderVersionsDropDown.getSelectedItem()).getValue()
-                    : null;
+                ? ((ComboItem<LoaderVersion>) loaderVersionsDropDown.getSelectedItem()).getValue()
+                : null;
 
             if (curseForgeManifest != null) {
                 installable = new CurseForgeManifestInstallable(pack, packVersion, loaderVersion);
@@ -384,7 +385,7 @@ public class InstanceInstallerDialog extends JDialog {
                 installable.technicModpack = technicModpack;
             } else if (instance != null && instance.launcher.vanillaInstance) {
                 installable = new VanillaInstallable(packVersion.minecraftVersion, loaderVersion,
-                        instance.launcher.description);
+                    instance.launcher.description);
             } else {
                 installable = new ATLauncherInstallable(pack, packVersion, loaderVersion);
             }
@@ -398,7 +399,7 @@ public class InstanceInstallerDialog extends JDialog {
             installable.isUpdate = isUpdate;
             installable.isServer = isServer;
             installable.saveMods = !isServer && isReinstall && saveModsCheckbox != null
-                    && saveModsCheckbox.isSelected();
+                && saveModsCheckbox.isSelected();
 
             setVisible(false);
 
@@ -442,8 +443,8 @@ public class InstanceInstallerDialog extends JDialog {
         pack.curseForgeProject = curseForgeProject;
 
         final ProgressDialog<Pair<List<CurseForgeFile>, String>> dialog = new ProgressDialog<>(
-                GetText.tr("Getting Versions"), 0,
-                GetText.tr("Getting Versions"), "Aborting Getting Versions");
+            GetText.tr("Getting Versions"), 0,
+            GetText.tr("Getting Versions"), "Aborting Getting Versions");
 
         dialog.addThread(new Thread(() -> {
             List<CurseForgeFile> files = CurseForgeApi.getFilesForProject(curseForgeProject.id);
@@ -451,22 +452,22 @@ public class InstanceInstallerDialog extends JDialog {
 
             if (isServer) {
                 int[] serverFileIds = files.stream().filter(file -> file.serverPackFileId != null)
-                        .mapToInt(file -> file.serverPackFileId).toArray();
+                    .mapToInt(file -> file.serverPackFileId).toArray();
                 List<CurseForgeFile> serverFiles = CurseForgeApi.getFiles(serverFileIds);
 
                 dialog.setReturnValue(
-                        new Pair<>(serverFiles.stream().map(f -> {
+                    new Pair<>(serverFiles.stream().map(f -> {
                             if (f.getGameVersion() == null) {
                                 Optional<CurseForgeFile> matchingFile = files.stream()
-                                        .filter(sf -> sf.serverPackFileId != null)
-                                        .filter(sf -> sf.serverPackFileId == f.id).findFirst();
+                                    .filter(sf -> sf.serverPackFileId != null)
+                                    .filter(sf -> sf.serverPackFileId == f.id).findFirst();
 
                                 matchingFile.ifPresent(curseForgeFile -> f.gameVersions = curseForgeFile.gameVersions);
                             }
 
                             return f;
                         }).filter(f -> f.isAvailable && f.isServerPack && f.getGameVersion() != null)
-                                .collect(Collectors.toList()), description));
+                        .collect(Collectors.toList()), description));
             } else {
                 dialog.setReturnValue(new Pair<>(files, description));
             }
@@ -479,10 +480,10 @@ public class InstanceInstallerDialog extends JDialog {
         Pair<List<CurseForgeFile>, String> returnValue = dialog.getReturnValue();
         if (returnValue == null) {
             DialogManager.okDialog().setTitle(GetText.tr("Error"))
-                    .setContent(new HTMLBuilder().text(GetText.tr(
-                            "Failed to get project files from CurseForge."))
-                            .center().build())
-                    .show();
+                .setContent(new HTMLBuilder().text(GetText.tr(
+                        "Failed to get project files from CurseForge."))
+                    .center().build())
+                .show();
             return;
         }
 
@@ -492,43 +493,43 @@ public class InstanceInstallerDialog extends JDialog {
         if (files.isEmpty()) {
             if (isServer) {
                 DialogManager.okDialog().setTitle(GetText.tr("No Server Files Available"))
-                        .setContent(new HTMLBuilder().text(GetText.tr(
-                                "No server files are available for this pack, so a server cannot be created."))
-                                .center().build())
-                        .setType(DialogManager.ERROR)
-                        .show();
+                    .setContent(new HTMLBuilder().text(GetText.tr(
+                            "No server files are available for this pack, so a server cannot be created."))
+                        .center().build())
+                    .setType(DialogManager.ERROR)
+                    .show();
             } else {
                 DialogManager.okDialog().setTitle(GetText.tr("No Files Available"))
-                        .setContent(new HTMLBuilder().text(GetText.tr(
-                                "No files are available for this pack, so it cannot be installed."))
-                                .center().build())
-                        .setType(DialogManager.ERROR)
-                        .show();
+                    .setContent(new HTMLBuilder().text(GetText.tr(
+                            "No files are available for this pack, so it cannot be installed.<br/>CurseForge may be down or having issues. Please wait and try again in a few minutes."))
+                        .center().build())
+                    .setType(DialogManager.ERROR)
+                    .show();
             }
             return;
         }
 
         pack.versions = files.stream().sorted(Comparator.comparingInt((CurseForgeFile file) -> file.id).reversed())
-                .map(f -> {
-                    PackVersion packVersion = new PackVersion();
-                    packVersion.version = f.getDisplayName();
-                    packVersion.hasLoader = true;
-                    packVersion._curseForgeFile = f;
+            .map(f -> {
+                PackVersion packVersion = new PackVersion();
+                packVersion.version = f.getDisplayName();
+                packVersion.hasLoader = true;
+                packVersion._curseForgeFile = f;
 
-                    if (!App.settings.allowCurseForgeAlphaBetaFiles) {
-                        packVersion.isRecommended = f.isReleaseType();
-                    }
+                if (!App.settings.allowCurseForgeAlphaBetaFiles) {
+                    packVersion.isRecommended = f.isReleaseType();
+                }
 
-                    try {
-                        packVersion.minecraftVersion = MinecraftManager.getMinecraftVersion(f.getGameVersion());
-                    } catch (InvalidMinecraftVersion e) {
-                        LogManager.warn(String.format("Failed to find Minecraft version for %s", f.getGameVersion()));
-                        // somewhat valid, can happen, so grab version from the manifest
-                        packVersion.minecraftVersion = null;
-                    }
+                try {
+                    packVersion.minecraftVersion = MinecraftManager.getMinecraftVersion(f.getGameVersion());
+                } catch (InvalidMinecraftVersion e) {
+                    LogManager.warn(String.format("Failed to find Minecraft version for %s", f.getGameVersion()));
+                    // somewhat valid, can happen, so grab version from the manifest
+                    packVersion.minecraftVersion = null;
+                }
 
-                    return packVersion;
-                }).filter(Objects::nonNull).collect(Collectors.toList());
+                return packVersion;
+            }).filter(Objects::nonNull).collect(Collectors.toList());
 
         // #. {0} is the name of the pack the user is installing
         setTitle(GetText.tr("Installing {0}", curseForgeProject.name));
@@ -545,42 +546,42 @@ public class InstanceInstallerDialog extends JDialog {
 
     private void setVanillaPackVersions(boolean showAll) {
         pack.versions = MinecraftManager.getMinecraftVersions().stream()
-                .filter(mv -> showAll || mv.type == instance.type).filter(mv -> {
-                    if (mv.type == VersionManifestVersionType.EXPERIMENT
-                            && !ConfigManager.getConfigItem("minecraft.experiment.enabled", true)) {
-                        return false;
-                    }
+            .filter(mv -> showAll || mv.type == instance.type).filter(mv -> {
+                if (mv.type == VersionManifestVersionType.EXPERIMENT
+                    && !ConfigManager.getConfigItem("minecraft.experiment.enabled", true)) {
+                    return false;
+                }
 
-                    if (mv.type == VersionManifestVersionType.SNAPSHOT
-                            && !ConfigManager.getConfigItem("minecraft.snapshot.enabled", true)) {
-                        return false;
-                    }
+                if (mv.type == VersionManifestVersionType.SNAPSHOT
+                    && !ConfigManager.getConfigItem("minecraft.snapshot.enabled", true)) {
+                    return false;
+                }
 
-                    if (mv.type == VersionManifestVersionType.RELEASE
-                            && !ConfigManager.getConfigItem("minecraft.release.enabled", true)) {
-                        return false;
-                    }
+                if (mv.type == VersionManifestVersionType.RELEASE
+                    && !ConfigManager.getConfigItem("minecraft.release.enabled", true)) {
+                    return false;
+                }
 
-                    if (mv.type == VersionManifestVersionType.OLD_BETA
-                            && !ConfigManager.getConfigItem("minecraft.old_beta.enabled", true)) {
-                        return false;
-                    }
+                if (mv.type == VersionManifestVersionType.OLD_BETA
+                    && !ConfigManager.getConfigItem("minecraft.old_beta.enabled", true)) {
+                    return false;
+                }
 
-                    return mv.type != VersionManifestVersionType.OLD_ALPHA
-                            || ConfigManager.getConfigItem("minecraft.old_alpha.enabled", true);
-                }).map(v -> {
-                    PackVersion packVersion = new PackVersion();
-                    packVersion.version = v.id;
-                    packVersion.minecraftVersion = v;
+                return mv.type != VersionManifestVersionType.OLD_ALPHA
+                    || ConfigManager.getConfigItem("minecraft.old_alpha.enabled", true);
+            }).map(v -> {
+                PackVersion packVersion = new PackVersion();
+                packVersion.version = v.id;
+                packVersion.minecraftVersion = v;
 
-                    if (instance.launcher.loaderVersion != null) {
-                        packVersion.hasLoader = true;
-                        packVersion.hasChoosableLoader = true;
-                        packVersion.loaderType = instance.launcher.loaderVersion.type;
-                    }
+                if (instance.launcher.loaderVersion != null) {
+                    packVersion.hasLoader = true;
+                    packVersion.hasChoosableLoader = true;
+                    packVersion.loaderType = instance.launcher.loaderVersion.type;
+                }
 
-                    return packVersion;
-                }).collect(Collectors.toList());
+                return packVersion;
+            }).collect(Collectors.toList());
     }
 
     private void handleFTBInstall(Object object) {
@@ -593,7 +594,7 @@ public class InstanceInstallerDialog extends JDialog {
 
         if (ftbPackManifest.links != null) {
             FTBPackLink link = ftbPackManifest.links.stream()
-                    .filter(l -> l.type == FTBPackLinkType.WEBSITE).findFirst().orElse(null);
+                .filter(l -> l.type == FTBPackLinkType.WEBSITE).findFirst().orElse(null);
 
             if (link != null) {
                 pack.websiteURL = link.link;
@@ -603,15 +604,15 @@ public class InstanceInstallerDialog extends JDialog {
         pack.ftbPack = ftbPackManifest;
 
         pack.versions = ftbPackManifest.versions.stream()
-                .sorted(Comparator.comparingInt((FTBPackVersion version) -> version.updated).reversed())
-                .map(v -> {
-                    PackVersion packVersion = new PackVersion();
-                    packVersion.version = v.name;
-                    packVersion.hasLoader = true;
-                    packVersion._ftbId = v.id;
-                    packVersion._ftbType = v.type;
-                    return packVersion;
-                }).filter(pv -> pv != null).collect(Collectors.toList());
+            .sorted(Comparator.comparingInt((FTBPackVersion version) -> version.updated).reversed())
+            .map(v -> {
+                PackVersion packVersion = new PackVersion();
+                packVersion.version = v.name;
+                packVersion.hasLoader = true;
+                packVersion._ftbId = v.id;
+                packVersion._ftbType = v.type;
+                return packVersion;
+            }).filter(pv -> pv != null).collect(Collectors.toList());
 
         isReinstall = false;
 
@@ -624,8 +625,8 @@ public class InstanceInstallerDialog extends JDialog {
             ModrinthSearchHit modrinthSearchHit = (ModrinthSearchHit) object;
 
             final ProgressDialog<ModrinthProject> modrinthProjectLookupDialog = new ProgressDialog<>(
-                    GetText.tr("Getting Modpack Details"), 0, GetText.tr("Getting Modpack Details"),
-                    "Aborting Getting Modpack Details");
+                GetText.tr("Getting Modpack Details"), 0, GetText.tr("Getting Modpack Details"),
+                "Aborting Getting Modpack Details");
 
             modrinthProjectLookupDialog.addThread(new Thread(() -> {
                 modrinthProjectLookupDialog.setReturnValue(ModrinthApi.getProject(modrinthSearchHit.projectId));
@@ -648,8 +649,8 @@ public class InstanceInstallerDialog extends JDialog {
         pack.modrinthProject = modrinthProject;
 
         final ProgressDialog<List<ModrinthVersion>> modrinthProjectLookupDialog = new ProgressDialog<>(
-                GetText.tr("Getting Modpack Versions"), 0, GetText.tr("Getting Modpack Versions"),
-                "Aborting Getting Modpack Versions");
+            GetText.tr("Getting Modpack Versions"), 0, GetText.tr("Getting Modpack Versions"),
+            "Aborting Getting Modpack Versions");
 
         modrinthProjectLookupDialog.addThread(new Thread(() -> {
             modrinthProjectLookupDialog.setReturnValue(ModrinthApi.getVersions(modrinthProject.id));
@@ -659,26 +660,26 @@ public class InstanceInstallerDialog extends JDialog {
 
         modrinthProjectLookupDialog.start();
         List<ModrinthVersion> versions = Optional.ofNullable(modrinthProjectLookupDialog.getReturnValue())
-                .orElse(new ArrayList<>());
+            .orElse(new ArrayList<>());
 
         pack.versions = versions.stream()
-                .sorted(Comparator.comparing((ModrinthVersion version) -> version.datePublished).reversed())
-                .map(version -> {
-                    PackVersion packVersion = new PackVersion();
-                    packVersion.version = String.format("%s (%s)", version.name, version.versionNumber);
-                    packVersion.hasLoader = !version.loaders.isEmpty();
-                    packVersion._modrinthVersion = version;
+            .sorted(Comparator.comparing((ModrinthVersion version) -> version.datePublished).reversed())
+            .map(version -> {
+                PackVersion packVersion = new PackVersion();
+                packVersion.version = String.format("%s (%s)", version.name, version.versionNumber);
+                packVersion.hasLoader = !version.loaders.isEmpty();
+                packVersion._modrinthVersion = version;
 
-                    try {
-                        packVersion.minecraftVersion = MinecraftManager
-                                .getMinecraftVersion(version.gameVersions.get(0));
-                    } catch (InvalidMinecraftVersion e) {
-                        LogManager.error(e.getMessage());
-                        packVersion.minecraftVersion = null;
-                    }
+                try {
+                    packVersion.minecraftVersion = MinecraftManager
+                        .getMinecraftVersion(version.gameVersions.get(0));
+                } catch (InvalidMinecraftVersion e) {
+                    LogManager.error(e.getMessage());
+                    packVersion.minecraftVersion = null;
+                }
 
-                    return packVersion;
-                }).filter(Objects::nonNull).collect(Collectors.toList());
+                return packVersion;
+            }).filter(Objects::nonNull).collect(Collectors.toList());
 
         // #. {0} is the name of the pack the user is installing
         setTitle(GetText.tr("Installing {0}", modrinthProject.title));
@@ -693,16 +694,16 @@ public class InstanceInstallerDialog extends JDialog {
             slug = ((TechnicModpackSlim) object).slug;
         } else {
             DialogManager.okDialog().setTitle(GetText.tr("Error"))
-                    .setContent(new HTMLBuilder().text(GetText.tr(
-                            "Failed to get slug for modpack from Technic."))
-                            .center().build())
-                    .show();
+                .setContent(new HTMLBuilder().text(GetText.tr(
+                        "Failed to get slug for modpack from Technic."))
+                    .center().build())
+                .show();
             return;
         }
 
         final ProgressDialog<TechnicModpack> technicModpackDialog = new ProgressDialog<>(
-                GetText.tr("Getting Modpack Details"), 0, GetText.tr("Getting Modpack Details"),
-                "Aborting Getting Modpack Details");
+            GetText.tr("Getting Modpack Details"), 0, GetText.tr("Getting Modpack Details"),
+            "Aborting Getting Modpack Details");
 
         technicModpackDialog.addThread(new Thread(() -> {
             technicModpackDialog.setReturnValue(TechnicApi.getModpackBySlug(slug));
@@ -723,8 +724,8 @@ public class InstanceInstallerDialog extends JDialog {
 
         if (technicModpack.solder != null) {
             final ProgressDialog<TechnicSolderModpack> dialog = new ProgressDialog<>(
-                    GetText.tr("Getting Modpack Builds"), 0, GetText.tr("Getting Modpack Builds"),
-                    "Aborting Getting Modpack Builds");
+                GetText.tr("Getting Modpack Builds"), 0, GetText.tr("Getting Modpack Builds"),
+                "Aborting Getting Modpack Builds");
 
             dialog.addThread(new Thread(() -> {
                 dialog.setReturnValue(TechnicApi.getSolderModpackBySlug(technicModpack.solder, technicModpack.name));
@@ -737,10 +738,10 @@ public class InstanceInstallerDialog extends JDialog {
             TechnicSolderModpack technicSolderModpack = dialog.getReturnValue();
             if (technicSolderModpack == null) {
                 DialogManager.okDialog().setTitle(GetText.tr("Error"))
-                        .setContent(new HTMLBuilder().text(GetText.tr(
-                                "Failed to get modpack builds from Technic."))
-                                .center().build())
-                        .show();
+                    .setContent(new HTMLBuilder().text(GetText.tr(
+                            "Failed to get modpack builds from Technic."))
+                        .center().build())
+                    .show();
                 return;
             }
 
@@ -814,16 +815,16 @@ public class InstanceInstallerDialog extends JDialog {
 
         try {
             packVersion.minecraftVersion = MinecraftManager
-                    .getMinecraftVersion(modrinthManifest.dependencies.get("minecraft"));
+                .getMinecraftVersion(modrinthManifest.dependencies.get("minecraft"));
         } catch (InvalidMinecraftVersion e) {
             LogManager.error(e.getMessage());
             return;
         }
 
         packVersion.hasLoader = modrinthManifest.dependencies.containsKey("fabric-loader")
-                || modrinthManifest.dependencies.containsKey("quilt-loader")
-                || modrinthManifest.dependencies.containsKey("neoforge")
-                || modrinthManifest.dependencies.containsKey("forge");
+            || modrinthManifest.dependencies.containsKey("quilt-loader")
+            || modrinthManifest.dependencies.containsKey("neoforge")
+            || modrinthManifest.dependencies.containsKey("forge");
 
         pack.versions = Collections.singletonList(packVersion);
 
@@ -844,7 +845,7 @@ public class InstanceInstallerDialog extends JDialog {
 
         try {
             Optional<MultiMCComponent> minecraftVersionComponent = multiMCManifest.components.stream()
-                    .filter(c -> c.uid.equalsIgnoreCase("net.minecraft")).findFirst();
+                .filter(c -> c.uid.equalsIgnoreCase("net.minecraft")).findFirst();
 
             if (!minecraftVersionComponent.isPresent()) {
                 LogManager.error("No net.minecraft component present in manifest");
@@ -852,16 +853,16 @@ public class InstanceInstallerDialog extends JDialog {
             }
 
             packVersion.minecraftVersion = MinecraftManager
-                    .getMinecraftVersion(minecraftVersionComponent.get().version);
+                .getMinecraftVersion(minecraftVersionComponent.get().version);
         } catch (InvalidMinecraftVersion e) {
             LogManager.error(e.getMessage());
             return;
         }
 
         packVersion.hasLoader = multiMCManifest.components.stream()
-                .anyMatch(c -> c.uid.equalsIgnoreCase("net.neoforged")
-                        || c.uid.equalsIgnoreCase("net.minecraftforge")
-                        || c.uid.equalsIgnoreCase("net.fabricmc.hashed"));
+            .anyMatch(c -> c.uid.equalsIgnoreCase("net.neoforged")
+                || c.uid.equalsIgnoreCase("net.minecraftforge")
+                || c.uid.equalsIgnoreCase("net.fabricmc.hashed"));
 
         pack.versions = Collections.singletonList(packVersion);
 
@@ -888,8 +889,8 @@ public class InstanceInstallerDialog extends JDialog {
             }
             case MODRINTH: {
                 final ProgressDialog<ModrinthProject> modrinthProjectLookupDialog = new ProgressDialog<>(
-                        GetText.tr("Getting Modpack Details"), 0, GetText.tr("Getting Modpack Details"),
-                        "Aborting Getting Modpack Details");
+                    GetText.tr("Getting Modpack Details"), 0, GetText.tr("Getting Modpack Details"),
+                    "Aborting Getting Modpack Details");
 
                 modrinthProjectLookupDialog.addThread(new Thread(() -> {
                     modrinthProjectLookupDialog.setReturnValue(ModrinthApi.getProject(unifiedModpackResult.id()));
@@ -910,12 +911,12 @@ public class InstanceInstallerDialog extends JDialog {
             }
             case CURSEFORGE: {
                 final ProgressDialog<CurseForgeProject> curseForgeProjectLookupDialog = new ProgressDialog<>(
-                        GetText.tr("Getting Modpack Details"), 0, GetText.tr("Getting Modpack Details"),
-                        "Aborting Getting Modpack Details");
+                    GetText.tr("Getting Modpack Details"), 0, GetText.tr("Getting Modpack Details"),
+                    "Aborting Getting Modpack Details");
 
                 curseForgeProjectLookupDialog.addThread(new Thread(() -> {
                     curseForgeProjectLookupDialog
-                            .setReturnValue(CurseForgeApi.getProjectById(unifiedModpackResult.id()));
+                        .setReturnValue(CurseForgeApi.getProjectById(unifiedModpackResult.id()));
 
                     curseForgeProjectLookupDialog.close();
                 }));
@@ -933,12 +934,12 @@ public class InstanceInstallerDialog extends JDialog {
             }
             case FTB: {
                 final ProgressDialog<FTBPackManifest> ftbPackManifestLookupDialog = new ProgressDialog<>(
-                        GetText.tr("Getting Modpack Details"), 0, GetText.tr("Getting Modpack Details"),
-                        "Aborting Getting Modpack Details");
+                    GetText.tr("Getting Modpack Details"), 0, GetText.tr("Getting Modpack Details"),
+                    "Aborting Getting Modpack Details");
 
                 ftbPackManifestLookupDialog.addThread(new Thread(() -> {
                     ftbPackManifestLookupDialog
-                            .setReturnValue(FTBApi.getModpackManifest(unifiedModpackResult.id()));
+                        .setReturnValue(FTBApi.getModpackManifest(unifiedModpackResult.id()));
 
                     ftbPackManifestLookupDialog.close();
                 }));
@@ -956,12 +957,12 @@ public class InstanceInstallerDialog extends JDialog {
             }
             case TECHNIC: {
                 final ProgressDialog<TechnicModpack> technicModpackLookupDialog = new ProgressDialog<>(
-                        GetText.tr("Getting Modpack Details"), 0, GetText.tr("Getting Modpack Details"),
-                        "Aborting Getting Modpack Details");
+                    GetText.tr("Getting Modpack Details"), 0, GetText.tr("Getting Modpack Details"),
+                    "Aborting Getting Modpack Details");
 
                 technicModpackLookupDialog.addThread(new Thread(() -> {
                     technicModpackLookupDialog
-                            .setReturnValue(TechnicApi.getModpackBySlug(unifiedModpackResult.id()));
+                        .setReturnValue(TechnicApi.getModpackBySlug(unifiedModpackResult.id()));
 
                     technicModpackLookupDialog.close();
                 }));
@@ -986,14 +987,14 @@ public class InstanceInstallerDialog extends JDialog {
 
         if (instance.isFTBPack()) {
             final ProgressDialog<FTBPackManifest> dialog = new ProgressDialog<>(
-                    GetText.tr("Downloading Pack Manifest"), 0, GetText.tr("Downloading Pack Manifest"),
-                    "Cancelled downloading FTB pack manifest", this);
+                GetText.tr("Downloading Pack Manifest"), 0, GetText.tr("Downloading Pack Manifest"),
+                "Cancelled downloading FTB pack manifest", this);
             dialog.addThread(new Thread(() -> {
                 FTBPackManifest packManifest = NetworkClient.getCached(
-                        String.format(Locale.ENGLISH, "%s/modpack/%d", Constants.FTB_API_URL,
-                                instance.launcher.ftbPackManifest.id),
-                        FTBPackManifest.class,
-                        new CacheControl.Builder().maxStale(10, TimeUnit.MINUTES).build());
+                    String.format(Locale.ENGLISH, "%s/modpack/%d", Constants.FTB_API_URL,
+                        instance.launcher.ftbPackManifest.id),
+                    FTBPackManifest.class,
+                    new CacheControl.Builder().maxStale(10, TimeUnit.MINUTES).build());
                 dialog.setReturnValue(packManifest);
                 dialog.close();
             }));
@@ -1049,12 +1050,12 @@ public class InstanceInstallerDialog extends JDialog {
                 if (!isServer && isReinstall) {
                     PackVersion packVersion = ((PackVersion) e.getItem());
                     Optional<VersionManifestVersion> minecraftVersion = Optional
-                            .ofNullable(packVersion.minecraftVersion);
+                        .ofNullable(packVersion.minecraftVersion);
 
                     saveModsLabel.setVisible(minecraftVersion.isPresent()
-                            && !minecraftVersion.get().id.equalsIgnoreCase(this.instance.id));
+                        && !minecraftVersion.get().id.equalsIgnoreCase(this.instance.id));
                     saveModsCheckbox.setVisible(minecraftVersion.isPresent()
-                            && !minecraftVersion.get().id.equalsIgnoreCase(this.instance.id));
+                        && !minecraftVersion.get().id.equalsIgnoreCase(this.instance.id));
 
                     WindowUtils.resizeForContent(this);
                 }
@@ -1068,7 +1069,7 @@ public class InstanceInstallerDialog extends JDialog {
 
         if (preselectedModrinthVersion != null) {
             Optional<PackVersion> versionToSelect = this.pack.versions.stream()
-                    .filter(pv -> pv._modrinthVersion.id.equals(this.preselectedModrinthVersion.id)).findFirst();
+                .filter(pv -> pv._modrinthVersion.id.equals(this.preselectedModrinthVersion.id)).findFirst();
 
             versionToSelect.ifPresent(packVersion -> versionsDropDown.setSelectedItem(packVersion));
         }
@@ -1138,7 +1139,7 @@ public class InstanceInstallerDialog extends JDialog {
         // ensures that font width is taken into account
         for (PackVersion version : versions) {
             versionLength = Math.max(versionLength,
-                    getFontMetrics(App.THEME.getNormalFont()).stringWidth(version.toString()) + 25);
+                getFontMetrics(App.THEME.getNormalFont()).stringWidth(version.toString()) + 25);
         }
 
         // ensures that the dropdown is at least 200 px wide
@@ -1265,20 +1266,20 @@ public class InstanceInstallerDialog extends JDialog {
             // ensures that font width is taken into account
             for (LoaderVersion version : loaderVersions) {
                 loaderVersionLength = Math.max(loaderVersionLength,
-                        getFontMetrics(App.THEME.getNormalFont()).stringWidth(version.toString()) + 25);
+                    getFontMetrics(App.THEME.getNormalFont()).stringWidth(version.toString()) + 25);
             }
 
             loaderVersionsDropDown.removeAllItems();
 
             loaderVersions.forEach(version -> loaderVersionsDropDown
-                    .addItem(new ComboItem<>(version, version.toStringWithCurrent(instance))));
+                .addItem(new ComboItem<>(version, version.toStringWithCurrent(instance))));
 
             if (isReinstall && instance.launcher.loaderVersion != null) {
                 String loaderVersionString = instance.launcher.loaderVersion.version;
 
                 for (int i = 0; i < loaderVersionsDropDown.getItemCount(); i++) {
                     LoaderVersion loaderVersion = loaderVersionsDropDown.getItemAt(i)
-                            .getValue();
+                        .getValue();
 
                     if (loaderVersion.version.equals(loaderVersionString)) {
                         loaderVersionsDropDown.setSelectedIndex(i);
