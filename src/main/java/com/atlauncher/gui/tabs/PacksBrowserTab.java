@@ -71,7 +71,7 @@ import com.atlauncher.utils.Utils;
 import com.formdev.flatlaf.icons.FlatSearchIcon;
 
 public final class PacksBrowserTab extends JPanel
-        implements Tab, RelocalizationListener, ThemeListener, TabChangeListener {
+    implements Tab, RelocalizationListener, ThemeListener, TabChangeListener {
     private final JPanel actionsPanel = new JPanel();
 
     private final JPanel minecraftVersionPanel = new JPanel();
@@ -105,6 +105,7 @@ public final class PacksBrowserTab extends JPanel
     private final PackBrowserPlatformPanel technicPacksPanel = new TechnicPacksPanel();
 
     private JScrollPane scrollPane;
+    private JLayer<JScrollPane> layerForScrollPane;
     private final JPanel contentPanel = new JPanel();
 
     private boolean loaded = false;
@@ -125,7 +126,7 @@ public final class PacksBrowserTab extends JPanel
     private void initComponents() {
         actionsPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
         actionsPanel
-                .setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, UIManager.getColor("Component.borderColor")));
+            .setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, UIManager.getColor("Component.borderColor")));
         actionsPanel.setPreferredSize(new Dimension(0, 34));
 
         minecraftVersionPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 4, 0));
@@ -181,7 +182,7 @@ public final class PacksBrowserTab extends JPanel
                 String newSort = ((ComboItem<String>) sortComboBox.getSelectedItem()).getValue();
 
                 PackBrowserPlatformPanel selectedPanel = (PackBrowserPlatformPanel) platformTabbedPane
-                        .getSelectedComponent();
+                    .getSelectedComponent();
                 setSortOrder(selectedPanel.getSortFieldsDefaultOrder().getOrDefault(newSort, true));
 
                 load(true);
@@ -225,10 +226,10 @@ public final class PacksBrowserTab extends JPanel
 
         addManuallyButton.addActionListener(e -> {
             PackBrowserPlatformPanel selectedPanel = (PackBrowserPlatformPanel) platformTabbedPane
-                    .getSelectedComponent();
+                .getSelectedComponent();
 
             String id = DialogManager.okDialog().setTitle(GetText.tr("Add Pack By ID/Slug/URL"))
-                    .setContent(GetText.tr("Enter an ID/slug/url for a pack to add manually:")).showInput();
+                .setContent(GetText.tr("Enter an ID/slug/url for a pack to add manually:")).showInput();
 
             if (id != null && !id.isEmpty()) {
                 selectedPanel.addById(id);
@@ -249,15 +250,15 @@ public final class PacksBrowserTab extends JPanel
         // scrollpane
 
         scrollPane = new JScrollPane(contentPanel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
-                JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+            JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scrollPane.getVerticalScrollBar().setUnitIncrement(16);
         scrollPane.getVerticalScrollBar().addAdjustmentListener(e -> {
             PackBrowserPlatformPanel selectedPanel = (PackBrowserPlatformPanel) platformTabbedPane
-                    .getSelectedComponent();
+                .getSelectedComponent();
 
             if (!loading && selectedPanel.hasPagination() && selectedPanel.hasMorePages()) {
                 int maxValue = scrollPane.getVerticalScrollBar().getMaximum()
-                        - scrollPane.getVerticalScrollBar().getVisibleAmount();
+                    - scrollPane.getVerticalScrollBar().getVisibleAmount();
                 int currentValue = scrollPane.getVerticalScrollBar().getValue();
 
                 if ((float) currentValue / (float) maxValue > 0.9f) {
@@ -265,6 +266,8 @@ public final class PacksBrowserTab extends JPanel
                 }
             }
         });
+
+        layerForScrollPane = new JLayer<>(scrollPane, new WheelScrollLayerUI());
 
         // tabs
 
@@ -300,7 +303,7 @@ public final class PacksBrowserTab extends JPanel
 
         platformTabbedPane.addChangeListener(e -> {
             PackBrowserPlatformPanel selectedPanel = (PackBrowserPlatformPanel) platformTabbedPane
-                    .getSelectedComponent();
+                .getSelectedComponent();
 
             // send analytics page view
             if (selectedPanel.getPlatformName().equals("UnifiedModPackSearch")) {
@@ -339,7 +342,7 @@ public final class PacksBrowserTab extends JPanel
         // add the scrollPane to the newly selected panel
         PackBrowserPlatformPanel selectedPanel = (PackBrowserPlatformPanel) platformTabbedPane.getSelectedComponent();
         selectedPanel.add(platformMessageJPanel, BorderLayout.NORTH);
-        selectedPanel.add(new JLayer<>(scrollPane, new WheelScrollLayerUI()), BorderLayout.CENTER);
+        selectedPanel.add(layerForScrollPane, BorderLayout.CENTER);
 
         // clear search
         searchField.setText("");
@@ -361,11 +364,11 @@ public final class PacksBrowserTab extends JPanel
             minecraftVersionComboBox.addItem(new ComboItem<>(null, GetText.tr("All Versions")));
 
             List<VersionManifestVersion> versionsToShow = !selectedPanel
-                    .getSupportedMinecraftVersionsForFiltering().isEmpty()
-                            ? selectedPanel.getSupportedMinecraftVersionsForFiltering()
-                            : MinecraftManager
-                                    .getFilteredMinecraftVersions(
-                                            selectedPanel.getSupportedMinecraftVersionTypesForFiltering());
+                .getSupportedMinecraftVersionsForFiltering().isEmpty()
+                ? selectedPanel.getSupportedMinecraftVersionsForFiltering()
+                : MinecraftManager
+                .getFilteredMinecraftVersions(
+                    selectedPanel.getSupportedMinecraftVersionTypesForFiltering());
 
             for (VersionManifestVersion mv : versionsToShow) {
                 if (mv != null) {
@@ -431,8 +434,8 @@ public final class PacksBrowserTab extends JPanel
             page += 1;
 
             Analytics.trackEvent(
-                    AnalyticsEvent.forSearchEventPlatform("add_pack", searchField.getText(), page,
-                            selectedPanel.getPlatformName()));
+                AnalyticsEvent.forSearchEventPlatform("add_pack", searchField.getText(), page,
+                    selectedPanel.getPlatformName()));
 
             // load in the content for the platform
             new Thread(() -> {
@@ -453,7 +456,7 @@ public final class PacksBrowserTab extends JPanel
 
                 // load in the content for the platform
                 selectedPanel.loadMorePacks(contentPanel, minecraftVersion, category, sort, sortDescending,
-                        searchField.getText(), page);
+                    searchField.getText(), page);
 
                 SwingUtilities.invokeLater(() -> {
                     loading = false;
@@ -477,8 +480,8 @@ public final class PacksBrowserTab extends JPanel
 
         if (!searchField.getText().isEmpty()) {
             Analytics.trackEvent(
-                    AnalyticsEvent.forSearchEventPlatform("add_pack", searchField.getText(), page,
-                            selectedPanel.getPlatformName()));
+                AnalyticsEvent.forSearchEventPlatform("add_pack", searchField.getText(), page,
+                    selectedPanel.getPlatformName()));
         }
 
         // load in the content for the platform
@@ -492,7 +495,7 @@ public final class PacksBrowserTab extends JPanel
         new Thread(() -> {
             String minecraftVersion = null;
             if (selectedPanel.supportsMinecraftVersionFiltering()
-                    && minecraftVersionComboBox.getSelectedItem() != null) {
+                && minecraftVersionComboBox.getSelectedItem() != null) {
                 minecraftVersion = ((ComboItem<String>) minecraftVersionComboBox.getSelectedItem()).getValue();
             }
 
@@ -508,7 +511,7 @@ public final class PacksBrowserTab extends JPanel
 
             // load in the content for the platform
             selectedPanel.load(contentPanel, minecraftVersion, category, sort, sortDescending, searchField.getText(),
-                    page);
+                page);
 
             SwingUtilities.invokeLater(() -> {
                 if (scrollToTop) {
@@ -528,7 +531,8 @@ public final class PacksBrowserTab extends JPanel
         platformTabbedPane.setSelectedIndex(0);
     }
 
-    public void refresh() {}
+    public void refresh() {
+    }
 
     @Override
     public String getTitle() {
