@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module external.linked.project.id=":legacy-launch:main" external.linked.project.path="$MODULE_DIR$/../../../legacy-launch" external.root.project.path="$MODULE_DIR$/../../.." external.system.id="GRADLE" external.system.module.group="com.atlauncher" external.system.module.type="sourceSet" external.system.module.version="3.4.39.0" type="JAVA_MODULE" version="4">
+  <component name="NewModuleRootManager">
+    <output url="file://$MODULE_DIR$/../../../legacy-launch/build/classes/java/main" />
+    <exclude-output />
+    <content url="file://$MODULE_DIR$/../../../legacy-launch/src/main">
+      <sourceFolder url="file://$MODULE_DIR$/../../../legacy-launch/src/main/java" isTestSource="false" />
+    </content>
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="sourceFolder" forTests="false" />
+  </component>
+</module>

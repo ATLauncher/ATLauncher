@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/ATLauncher.iml" filepath="$PROJECT_DIR$/.idea/modules/ATLauncher.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/ATLauncher.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/ATLauncher.app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/legacy-launch/ATLauncher.legacy-launch.iml" filepath="$PROJECT_DIR$/.idea/modules/legacy-launch/ATLauncher.legacy-launch.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/legacy-launch/ATLauncher.legacy-launch.main.iml" filepath="$PROJECT_DIR$/.idea/modules/legacy-launch/ATLauncher.legacy-launch.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/legacy-launch/ATLauncher.legacy-launch.test.iml" filepath="$PROJECT_DIR$/.idea/modules/legacy-launch/ATLauncher.legacy-launch.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/ATLauncher.main.iml" filepath="$PROJECT_DIR$/.idea/modules/ATLauncher.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/ATLauncher.test.iml" filepath="$PROJECT_DIR$/.idea/modules/ATLauncher.test.iml" />
+    </modules>
+  </component>
+</project>

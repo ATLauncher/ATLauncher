@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module external.linked.project.id="ATLauncher:test" external.linked.project.path="$MODULE_DIR$/../.." external.root.project.path="$MODULE_DIR$/../.." external.system.id="GRADLE" external.system.module.group="com.atlauncher" external.system.module.type="sourceSet" external.system.module.version="3.4.39.0" type="JAVA_MODULE" version="4">
+  <component name="NewModuleRootManager">
+    <output-test url="file://$MODULE_DIR$/../../build/classes/java/test" />
+    <exclude-output />
+    <content url="file://$MODULE_DIR$/../../build/generated/source/apollo/test/service" />
+    <content url="file://$MODULE_DIR$/../../build/generated/sources/annotationProcessor/java/test">
+      <sourceFolder url="file://$MODULE_DIR$/../../build/generated/sources/annotationProcessor/java/test" isTestSource="true" generated="true" />
+    </content>
+    <content url="file://$MODULE_DIR$/../../src/test">
+      <sourceFolder url="file://$MODULE_DIR$/../../src/test/java" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/../../src/test/resources" type="java-test-resource" />
+    </content>
+    <orderEntry type="jdk" jdkName="temurin-17" jdkType="JavaSDK" />
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="module" module-name="ATLauncher.main" />
+    <orderEntry type="library" name="Gradle: com.github.oshi:oshi-core:6.6.6" level="project" />
+    <orderEntry type="library" name="Gradle: net.java.dev.jna:jna-platform:5.16.0" level="project" />
+    <orderEntry type="library" name="Gradle: net.java.dev.jna:jna:5.16.0" level="project" />
+    <orderEntry type="library" name="Gradle: com.google.code.gson:gson:2.11.0" level="project" />
+    <orderEntry type="library" name="Gradle: org.mock-server:mockserver-netty:5.15.0" level="project" />
+    <orderEntry type="library" name="Gradle: com.google.guava:guava:33.4.0-jre" level="project" />
+    <orderEntry type="library" name="Gradle: org.tukaani:xz:1.10" level="project" />
+    <orderEntry type="library" name="Gradle: net.iharder:base64:2.3.9" level="project" />
+    <orderEntry type="library" name="Gradle: com.github.Vatuu:discord-rpc:1.6.2" level="project" />
+    <orderEntry type="library" name="Gradle: net.sf.jopt-simple:jopt-simple:5.0.4" level="project" />
+    <orderEntry type="library" name="Gradle: org.zeroturnaround:zt-zip:1.17" level="project" />
+    <orderEntry type="library" name="Gradle: io.sentry:sentry:8.0.0" level="project" />
+    <orderEntry type="library" name="Gradle: com.github.RyanTheAllmighty.gettext:gettext-lib:88ae68d897" level="project" />
+    <orderEntry type="library" name="Gradle: com.sangupta:murmur:1.0.0" level="project" />
+    <orderEntry type="library" name="Gradle: net.freeutils:jlhttp:3.2" level="project" />
+    <orderEntry type="library" name="Gradle: joda-time:joda-time:2.13.0" level="project" />
+    <orderEntry type="library" name="Gradle: org.commonmark:commonmark:0.21.0" level="project" />
+    <orderEntry type="library" name="Gradle: com.github.hypfvieh:dbus-java:3.3.2" level="project" />
+    <orderEntry type="library" name="Gradle: com.github.MCRcortex:nekodetector:Version-1.1-pre" level="project" />
+    <orderEntry type="library" name="Gradle: com.twelvemonkeys.imageio:imageio-webp:3.12.0" level="project" />
+    <orderEntry type="library" name="Gradle: org.apache.commons:commons-text:1.13.0" level="project" />
+    <orderEntry type="library" name="Gradle: org.apache.commons:commons-compress:1.27.1" level="project" />
+    <orderEntry type="library" name="Gradle: org.apache.commons:commons-lang3:3.17.0" level="project" />
+    <orderEntry type="library" name="Gradle: com.apollographql.apollo:apollo-rx3-support:2.5.14" level="project" />
+    <orderEntry type="library" name="Gradle: com.apollographql.apollo:apollo-runtime:2.5.14" level="project" />
+    <orderEntry type="library" name="Gradle: com.apollographql.apollo:apollo-http-cache:2.5.14" level="project" />
+    <orderEntry type="library" name="Gradle: com.squareup.okhttp3:okhttp:4.12.0" level="project" />
+    <orderEntry type="library" name="Gradle: com.squareup.okhttp3:okhttp-tls:4.12.0" level="project" />
+    <orderEntry type="library" name="Gradle: com.formdev:flatlaf:3.5.4" level="project" />
+    <orderEntry type="library" name="Gradle: com.formdev:flatlaf-extras:3.5.4" level="project" />
+    <orderEntry type="library" name="Gradle: org.apache.logging.log4j:log4j-core:2.24.3" level="project" />
+    <orderEntry type="library" name="Gradle: org.apache.logging.log4j:log4j-api:2.24.3" level="project" />
+    <orderEntry type="library" name="Gradle: com.gitlab.doomsdayrs:rxswing:a5749ad421" level="project" />
+    <orderEntry type="library" name="Gradle: io.reactivex.rxjava3:rxjava:3.1.10" level="project" />
+    <orderEntry type="library" name="Gradle: org.mockito:mockito-inline:4.11.0" level="project" />
+    <orderEntry type="library" name="Gradle: org.mockito:mockito-core:4.11.0" level="project" />
+    <orderEntry type="library" name="Gradle: org.assertj:assertj-swing-junit:3.17.1" level="project" />
+    <orderEntry type="library" name="Gradle: org.junit.jupiter:junit-jupiter-api:5.11.4" level="project" />
+    <orderEntry type="library" name="Gradle: org.slf4j:slf4j-api:2.0.16" level="project" />
+    <orderEntry type="library" name="Gradle: com.google.errorprone:error_prone_annotations:2.36.0" level="project" />
+    <orderEntry type="library" name="Gradle: org.mock-server:mockserver-client-java:5.15.0" level="project" />
+    <orderEntry type="library" name="Gradle: org.mock-server:mockserver-core:5.15.0" level="project" />
+    <orderEntry type="library" name="Gradle: commons-io:commons-io:2.16.1" level="project" />
+    <orderEntry type="library" name="Gradle: io.netty:netty-codec-http2:4.1.86.Final" level="project" />
+    <orderEntry type="library" name="Gradle: io.netty:netty-codec-http:4.1.86.Final" level="project" />
+    <orderEntry type="library" name="Gradle: io.netty:netty-handler:4.1.86.Final" level="project" />
+    <orderEntry type="library" name="Gradle: io.netty:netty-codec:4.1.86.Final" level="project" />
+    <orderEntry type="library" name="Gradle: io.netty:netty-transport:4.1.86.Final" level="project" />
+    <orderEntry type="library" name="Gradle: io.netty:netty-buffer:4.1.86.Final" level="project" />
+    <orderEntry type="library" name="Gradle: io.netty:netty-common:4.1.86.Final" level="project" />
+    <orderEntry type="library" name="Gradle: io.netty:netty-tcnative-boringssl-static:2.0.56.Final" level="project" />
+    <orderEntry type="library" name="Gradle: com.google.guava:failureaccess:1.0.2" level="project" />
+    <orderEntry type="library" name="Gradle: com.google.guava:listenablefuture:9999.0-empty-to-avoid-conflict-with-guava" level="project" />
+    <orderEntry type="library" name="Gradle: com.google.code.findbugs:jsr305:3.0.2" level="project" />
+    <orderEntry type="library" name="Gradle: org.checkerframework:checker-qual:3.43.0" level="project" />
+    <orderEntry type="library" name="Gradle: com.google.j2objc:j2objc-annotations:3.0.0" level="project" />
+    <orderEntry type="library" name="Gradle: com.tunnelvisionlabs:antlr4-runtime:4.7.3" level="project" />
+    <orderEntry type="library" name="Gradle: com.github.jnr:jnr-unixsocket:0.38.17" level="project" />
+    <orderEntry type="library" name="Gradle: com.twelvemonkeys.imageio:imageio-metadata:3.12.0" level="project" />
+    <orderEntry type="library" name="Gradle: com.twelvemonkeys.imageio:imageio-core:3.12.0" level="project" />
+    <orderEntry type="library" name="Gradle: com.twelvemonkeys.common:common-image:3.12.0" level="project" />
+    <orderEntry type="library" name="Gradle: com.twelvemonkeys.common:common-io:3.12.0" level="project" />
+    <orderEntry type="library" name="Gradle: com.twelvemonkeys.common:common-lang:3.12.0" level="project" />
+    <orderEntry type="library" name="Gradle: commons-codec:commons-codec:1.17.1" level="project" />
+    <orderEntry type="library" name="Gradle: org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.9.10" level="project" />
+    <orderEntry type="library" name="Gradle: com.apollographql.apollo:apollo-http-cache-api:2.5.14" level="project" />
+    <orderEntry type="library" name="Gradle: org.reactivestreams:reactive-streams:1.0.4" level="project" />
+    <orderEntry type="library" name="Gradle: net.bytebuddy:byte-buddy:1.12.19" level="project" />
+    <orderEntry type="library" name="Gradle: net.bytebuddy:byte-buddy-agent:1.12.19" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Gradle: junit:junit:4.12" level="project" />
+    <orderEntry type="library" name="Gradle: org.assertj:assertj-swing:3.17.1" level="project" />
+    <orderEntry type="library" name="Gradle: org.easytesting:fest-reflect:1.4.1" level="project" />
+    <orderEntry type="library" name="Gradle: org.junit.platform:junit-platform-commons:1.11.4" level="project" />
+    <orderEntry type="library" name="Gradle: org.opentest4j:opentest4j:1.3.0" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Gradle: org.apiguardian:apiguardian-api:1.1.2" level="project" />
+    <orderEntry type="library" name="Gradle: io.swagger.parser.v3:swagger-parser:2.1.10" level="project" />
+    <orderEntry type="library" name="Gradle: org.apache.velocity:velocity-engine-scripting:2.3" level="project" />
+    <orderEntry type="library" name="Gradle: org.apache.velocity.tools:velocity-tools-generic:3.1" level="project" />
+    <orderEntry type="library" name="Gradle: org.apache.velocity:velocity-engine-core:2.3" level="project" />
+    <orderEntry type="library" name="Gradle: com.fasterxml.uuid:java-uuid-generator:4.1.0" level="project" />
+    <orderEntry type="library" name="Gradle: com.networknt:json-schema-validator:1.0.76" level="project" />
+    <orderEntry type="library" name="Gradle: com.jayway.jsonpath:json-path:2.7.0" level="project" />
+    <orderEntry type="library" name="Gradle: io.netty:netty-handler-proxy:4.1.86.Final" level="project" />
+    <orderEntry type="library" name="Gradle: io.netty:netty-codec-socks:4.1.86.Final" level="project" />
+    <orderEntry type="library" name="Gradle: net.javacrumbs.json-unit:json-unit-core:2.36.0" level="project" />
+    <orderEntry type="library" name="Gradle: com.lmax:disruptor:3.4.4" level="project" />
+    <orderEntry type="library" name="Gradle: javax.servlet:javax.servlet-api:4.0.1" level="project" />
+    <orderEntry type="library" name="Gradle: com.jcraft:jzlib:1.1.3" level="project" />
+    <orderEntry type="library" name="Gradle: org.bouncycastle:bcpkix-jdk18on:1.72" level="project" />
+    <orderEntry type="library" name="Gradle: org.bouncycastle:bcprov-jdk18on:1.72" level="project" />
+    <orderEntry type="library" name="Gradle: com.nimbusds:nimbus-jose-jwt:9.28" level="project" />
+    <orderEntry type="library" name="Gradle: com.samskivert:jmustache:1.15" level="project" />
+    <orderEntry type="library" name="Gradle: com.fasterxml.jackson.core:jackson-databind:2.14.1" level="project" />
+    <orderEntry type="library" name="Gradle: com.fasterxml.jackson.core:jackson-annotations:2.14.1" level="project" />
+    <orderEntry type="library" name="Gradle: com.fasterxml.jackson.core:jackson-core:2.14.1" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Gradle: jakarta.xml.bind:jakarta.xml.bind-api:3.0.1" level="project" />
+    <orderEntry type="library" name="Gradle: org.xmlunit:xmlunit-placeholders:2.9.1" level="project" />
+    <orderEntry type="library" name="Gradle: org.xmlunit:xmlunit-core:2.9.1" level="project" />
+    <orderEntry type="library" name="Gradle: io.github.classgraph:classgraph:4.8.154" level="project" />
+    <orderEntry type="library" name="Gradle: io.prometheus:simpleclient_httpserver:0.16.0" level="project" />
+    <orderEntry type="library" name="Gradle: io.prometheus:simpleclient:0.16.0" level="project" />
+    <orderEntry type="library" name="Gradle: io.netty:netty-transport-native-unix-common:4.1.86.Final" level="project" />
+    <orderEntry type="library" name="Gradle: io.netty:netty-resolver:4.1.86.Final" level="project" />
+    <orderEntry type="library" name="Gradle: io.netty:netty-tcnative-classes:2.0.56.Final" level="project" />
+    <orderEntry type="library" name="Gradle: com.github.jnr:jnr-enxio:0.32.13" level="project" />
+    <orderEntry type="library" name="Gradle: com.github.jnr:jnr-posix:3.1.15" level="project" />
+    <orderEntry type="library" name="Gradle: com.github.jnr:jnr-ffi:2.2.11" level="project" />
+    <orderEntry type="library" name="Gradle: com.github.jnr:jnr-constants:0.10.3" level="project" />
+    <orderEntry type="library" name="Gradle: org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.9.10" level="project" />
+    <orderEntry type="library" name="Gradle: org.jetbrains.kotlin:kotlin-stdlib:1.9.10" level="project" />
+    <orderEntry type="library" name="Gradle: com.apollographql.apollo:apollo-normalized-cache-jvm:2.5.14" level="project" />
+    <orderEntry type="library" name="Gradle: com.apollographql.apollo:apollo-api-jvm:2.5.14" level="project" />
+    <orderEntry type="library" name="Gradle: com.squareup.okio:okio-jvm:3.6.0" level="project" />
+    <orderEntry type="library" name="Gradle: org.hamcrest:hamcrest-core:2.2" level="project" />
+    <orderEntry type="library" name="Gradle: org.assertj:assertj-core:3.17.2" level="project" />
+    <orderEntry type="library" name="Gradle: io.swagger.parser.v3:swagger-parser-v2-converter:2.1.10" level="project" />
+    <orderEntry type="library" name="Gradle: io.swagger.parser.v3:swagger-parser-v3:2.1.10" level="project" />
+    <orderEntry type="library" name="Gradle: org.yaml:snakeyaml:1.33" level="project" />
+    <orderEntry type="library" name="Gradle: org.apache.commons:commons-digester3:3.2" level="project" />
+    <orderEntry type="library" name="Gradle: commons-beanutils:commons-beanutils:1.9.4" level="project" />
+    <orderEntry type="library" name="Gradle: com.github.cliftonlabs:json-simple:3.0.2" level="project" />
+    <orderEntry type="library" name="Gradle: com.ethlo.time:itu:1.7.0" level="project" />
+    <orderEntry type="library" name="Gradle: net.minidev:json-smart:2.4.7" level="project" />
+    <orderEntry type="library" name="Gradle: org.bouncycastle:bcutil-jdk18on:1.72" level="project" />
+    <orderEntry type="library" name="Gradle: com.github.stephenc.jcip:jcip-annotations:1.0-1" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Gradle: com.sun.activation:jakarta.activation:2.0.1" level="project" />
+    <orderEntry type="library" name="Gradle: io.prometheus:simpleclient_common:0.16.0" level="project" />
+    <orderEntry type="library" name="Gradle: io.prometheus:simpleclient_tracer_otel:0.16.0" level="project" />
+    <orderEntry type="library" name="Gradle: io.prometheus:simpleclient_tracer_otel_agent:0.16.0" level="project" />
+    <orderEntry type="library" name="Gradle: com.github.jnr:jffi:1.3.9" level="project" />
+    <orderEntry type="library" name="Gradle: org.ow2.asm:asm-commons:9.2" level="project" />
+    <orderEntry type="library" name="Gradle: org.ow2.asm:asm-util:9.2" level="project" />
+    <orderEntry type="library" name="Gradle: org.ow2.asm:asm-analysis:9.2" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Gradle: org.ow2.asm:asm-tree:9.2" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Gradle: org.ow2.asm:asm:9.2" level="project" />
+    <orderEntry type="library" name="Gradle: com.github.jnr:jnr-a64asm:1.0.0" level="project" />
+    <orderEntry type="library" name="Gradle: com.github.jnr:jnr-x86asm:1.0.2" level="project" />
+    <orderEntry type="library" name="Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:1.9.10" level="project" />
+    <orderEntry type="library" name="Gradle: org.jetbrains:annotations:13.0" level="project" />
+    <orderEntry type="library" name="Gradle: org.hamcrest:hamcrest:2.2" level="project" />
+    <orderEntry type="library" name="Gradle: io.swagger:swagger-compat-spec-parser:1.0.64" level="project" />
+    <orderEntry type="library" name="Gradle: io.swagger:swagger-parser:1.0.64" level="project" />
+    <orderEntry type="library" name="Gradle: io.swagger:swagger-core:1.6.9" level="project" />
+    <orderEntry type="library" name="Gradle: io.swagger.parser.v3:swagger-parser-core:2.1.10" level="project" />
+    <orderEntry type="library" name="Gradle: io.swagger.core.v3:swagger-models:2.2.8" level="project" />
+    <orderEntry type="library" name="Gradle: io.swagger.core.v3:swagger-core:2.2.8" level="project" />
+    <orderEntry type="library" name="Gradle: com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.14.1" level="project" />
+    <orderEntry type="library" name="Gradle: commons-logging:commons-logging:1.2" level="project" />
+    <orderEntry type="library" name="Gradle: commons-collections:commons-collections:3.2.2" level="project" />
+    <orderEntry type="library" name="Gradle: net.minidev:accessors-smart:2.4.7" level="project" />
+    <orderEntry type="library" name="Gradle: io.prometheus:simpleclient_tracer_common:0.16.0" level="project" />
+    <orderEntry type="library" name="Gradle: com.apollographql.apollo:apollo-normalized-cache-api-jvm:2.5.14" level="project" />
+    <orderEntry type="library" name="Gradle: com.github.java-json-tools:json-schema-validator:2.2.14" level="project" />
+    <orderEntry type="library" name="Gradle: com.github.java-json-tools:json-patch:1.13" level="project" />
+    <orderEntry type="library" name="Gradle: org.apache.httpcomponents:httpclient:4.5.13" level="project" />
+    <orderEntry type="library" name="Gradle: io.swagger:swagger-models:1.6.9" level="project" />
+    <orderEntry type="library" name="Gradle: com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.14.1" level="project" />
+    <orderEntry type="library" name="Gradle: io.swagger.core.v3:swagger-annotations:2.2.8" level="project" />
+    <orderEntry type="library" name="Gradle: jakarta.validation:jakarta.validation-api:2.0.2" level="project" />
+    <orderEntry type="library" name="Gradle: com.github.java-json-tools:json-schema-core:1.2.14" level="project" />
+    <orderEntry type="library" name="Gradle: com.github.java-json-tools:jackson-coreutils-equivalence:1.0" level="project" />
+    <orderEntry type="library" name="Gradle: com.sun.mail:mailapi:1.6.2" level="project" />
+    <orderEntry type="library" name="Gradle: com.googlecode.libphonenumber:libphonenumber:8.11.1" level="project" />
+    <orderEntry type="library" name="Gradle: com.github.java-json-tools:msg-simple:1.2" level="project" />
+    <orderEntry type="library" name="Gradle: com.github.java-json-tools:jackson-coreutils:2.0" level="project" />
+    <orderEntry type="library" name="Gradle: org.apache.httpcomponents:httpcore:4.4.13" level="project" />
+    <orderEntry type="library" name="Gradle: io.swagger:swagger-annotations:1.6.9" level="project" />
+    <orderEntry type="library" name="Gradle: com.benasher44:uuid-jvm:0.2.0" level="project" />
+    <orderEntry type="library" name="Gradle: com.github.java-json-tools:uri-template:0.10" level="project" />
+    <orderEntry type="library" name="Gradle: org.mozilla:rhino:1.7.7.2" level="project" />
+    <orderEntry type="library" name="Gradle: com.github.java-json-tools:btf:1.3" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Gradle: org.junit.vintage:junit-vintage-engine:5.11.4" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Gradle: org.junit.jupiter:junit-jupiter-engine:5.11.4" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Gradle: org.ow2.asm:asm-tree:9.5" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Gradle: org.ow2.asm:asm:9.5" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Gradle: com.github.weisj:jsvg:1.4.0" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Gradle: org.objenesis:objenesis:3.3" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Gradle: junit:junit:4.13.2" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Gradle: org.junit.platform:junit-platform-engine:1.11.4" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Gradle: com.sun.xml.bind:jaxb-impl:4.0.1" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Gradle: jakarta.xml.bind:jakarta.xml.bind-api:4.0.0" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Gradle: org.easytesting:fest-util:1.2.5" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Gradle: com.sun.xml.bind:jaxb-core:4.0.1" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Gradle: jakarta.activation:jakarta.activation-api:2.1.0" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Gradle: com.github.jnr:jffi:native:1.3.9" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Gradle: com.nytimes.android:cache:2.0.2" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Gradle: org.eclipse.angus:angus-activation:1.0.0" level="project" />
+  </component>
+  <component name="TestModuleProperties" production-module="ATLauncher.main" />
+</module>

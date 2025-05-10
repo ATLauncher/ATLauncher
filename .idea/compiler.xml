@@ -1,6 +1,44 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Gradle Imported" enabled="true">
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="false">
+          <entry name="$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.google.errorprone/error_prone_core/2.36.0/d899b6680bafad7343cde17f99b880f7e5a606ad/error_prone_core-2.36.0.jar" />
+          <entry name="$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.google.errorprone/error_prone_check_api/2.36.0/ea8f9b3fbc102700d4f56f7c6066da9802ec6353/error_prone_check_api-2.36.0.jar" />
+          <entry name="$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.google.errorprone/error_prone_annotation/2.36.0/3eb5d0d01ad17263da1b0bd272141283d4a09e5/error_prone_annotation-2.36.0.jar" />
+          <entry name="$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.google.errorprone/error_prone_type_annotations/2.36.0/e8cf97ae8ae15010636e6847b3715d1cfb559420/error_prone_type_annotations-2.36.0.jar" />
+          <entry name="$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.google.googlejavaformat/google-java-format/1.19.1/1685bede17df0eefd6e0a92b5a2becdc54009823/google-java-format-1.19.1.jar" />
+          <entry name="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.pcollections/pcollections/4.0.1/59f3bf5fb28c5f5386804dcf129267416b75d7c/pcollections-4.0.1.jar" />
+          <entry name="$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.google.auto/auto-common/1.2.2/9d38f10e22411681cf1d1ee3727e002af19f2c9e/auto-common-1.2.2.jar" />
+          <entry name="$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.google.guava/guava/32.1.3-jre/f306708742ce2bf0fb0901216183bc14073feae/guava-32.1.3-jre.jar" />
+          <entry name="$USER_HOME$/.gradle/caches/modules-2/files-2.1/io.github.eisop/dataflow-errorprone/3.41.0-eisop1/3fc86eff95c549e42c41fd7c01c2a57ed46a5a94/dataflow-errorprone-3.41.0-eisop1.jar" />
+          <entry name="$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.google.auto.value/auto-value-annotations/1.9/25a0fcef915f663679fcdb447541c5d86a9be4ba/auto-value-annotations-1.9.jar" />
+          <entry name="$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.github.ben-manes.caffeine/caffeine/3.0.5/3de85488bf535299d5f36d98626605331a10de87/caffeine-3.0.5.jar" />
+          <entry name="$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.google.errorprone/error_prone_annotations/2.36.0/227d4d4957ccc3dc5761bd897e3a0ee587e750a7/error_prone_annotations-2.36.0.jar" />
+          <entry name="$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.google.protobuf/protobuf-java/3.25.5/5ae5c9ec39930ae9b5a61b32b93288818ec05ec1/protobuf-java-3.25.5.jar" />
+          <entry name="$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.google.auto.service/auto-service-annotations/1.0.1/ac86dacc0eb9285ea9d42eee6aad8629ca3a7432/auto-service-annotations-1.0.1.jar" />
+          <entry name="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jspecify/jspecify/1.0.0/7425a601c1c7ec76645a78d22b8c6a627edee507/jspecify-1.0.0.jar" />
+          <entry name="$USER_HOME$/.gradle/caches/modules-2/files-2.1/javax.inject/javax.inject/1/6975da39a7040257bd51d21a231b76c915872d38/javax.inject-1.jar" />
+          <entry name="$USER_HOME$/.gradle/caches/modules-2/files-2.1/io.github.java-diff-utils/java-diff-utils/4.12/1a712a91324d566eef39817fc5c9980eb10c21db/java-diff-utils-4.12.jar" />
+          <entry name="$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.github.kevinstern/software-and-algorithms/1.0/5e77666b72c6c5dd583c36148d17fc47f944dfb5/software-and-algorithms-1.0.jar" />
+          <entry name="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.checkerframework/checker-qual/3.37.0/ba74746d38026581c12166e164bb3c15e90cc4ea/checker-qual-3.37.0.jar" />
+          <entry name="$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.google.guava/failureaccess/1.0.1/1dcf1de382a0bf95a3d8b0849546c88bac1292c9/failureaccess-1.0.1.jar" />
+          <entry name="$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.google.guava/listenablefuture/9999.0-empty-to-avoid-conflict-with-guava/b421526c5f297295adef1c886e5246c39d4ac629/listenablefuture-9999.0-empty-to-avoid-conflict-with-guava.jar" />
+          <entry name="$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.google.code.findbugs/jsr305/3.0.2/25ea2e8b0c338a877313bd4672d3fe056ea78f0d/jsr305-3.0.2.jar" />
+        </processorPath>
+        <module name="ATLauncher.main" />
+        <module name="ATLauncher.test" />
+      </profile>
+    </annotationProcessing>
     <bytecodeTargetLevel target="1.8" />
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="ATLauncher" options="&quot;-Xplugin:ErrorProne -XepAllErrorsAsWarnings -XepDisableWarningsInGeneratedCode -XepExcludedPaths:.*/build/generated/.*|.*/src/test/.*|.*/src/main/java/io/github/asyncronous/.* -Xep:CheckReturnValue:OFF -Xep:UnnecessaryParentheses:OFF -Xep:JavaUtilDate:OFF -Xep:MissingSummary:OFF -Xep:CatchAndPrintStackTrace:OFF -Xep:StringSplitter:OFF -Xep:TypeParameterUnusedInFormals:OFF -Xep:MixedMutabilityReturnType:OFF -Xep:Finally:OFF -Xep:FutureReturnValueIgnored:OFF -Xep:NarrowCalculation:OFF&quot; -XDcompilePolicy=simple -XDshould-stop.ifError=FLOW -XDshouldStopPolicyIfError=FLOW" />
+      <module name="ATLauncher.main" options="&quot;-Xplugin:ErrorProne -XepAllErrorsAsWarnings -XepDisableWarningsInGeneratedCode -XepExcludedPaths:.*/build/generated/.*|.*/src/test/.*|.*/src/main/java/io/github/asyncronous/.* -Xep:CheckReturnValue:OFF -Xep:UnnecessaryParentheses:OFF -Xep:JavaUtilDate:OFF -Xep:MissingSummary:OFF -Xep:CatchAndPrintStackTrace:OFF -Xep:StringSplitter:OFF -Xep:TypeParameterUnusedInFormals:OFF -Xep:MixedMutabilityReturnType:OFF -Xep:Finally:OFF -Xep:FutureReturnValueIgnored:OFF -Xep:NarrowCalculation:OFF&quot; -XDcompilePolicy=simple -XDshould-stop.ifError=FLOW -XDshouldStopPolicyIfError=FLOW" />
+      <module name="ATLauncher.test" options="&quot;-Xplugin:ErrorProne -XepAllErrorsAsWarnings -XepDisableWarningsInGeneratedCode -XepCompilingTestOnlyCode -XepExcludedPaths:.*/build/generated/.*|.*/src/test/.*|.*/src/main/java/io/github/asyncronous/.* -Xep:CheckReturnValue:OFF -Xep:UnnecessaryParentheses:OFF -Xep:JavaUtilDate:OFF -Xep:MissingSummary:OFF -Xep:CatchAndPrintStackTrace:OFF -Xep:StringSplitter:OFF -Xep:TypeParameterUnusedInFormals:OFF -Xep:MixedMutabilityReturnType:OFF -Xep:Finally:OFF -Xep:FutureReturnValueIgnored:OFF -Xep:NarrowCalculation:OFF&quot; -XDcompilePolicy=simple -XDshould-stop.ifError=FLOW -XDshouldStopPolicyIfError=FLOW" />
+    </option>
   </component>
 </project>
