@@ -31,7 +31,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.UUID;
 
@@ -111,6 +113,9 @@ public class Settings {
     public boolean useSystemGlfw = false;
     public boolean useSystemOpenAl = false;
     public boolean useDedicatedGpu = true;
+
+    // Environment Variables
+    public Map<String, String> environmentVariables = new HashMap<>();
 
     // Network
     public int concurrentConnections = 8;

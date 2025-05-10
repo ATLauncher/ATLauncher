@@ -32,6 +32,7 @@ import com.atlauncher.App;
 import com.atlauncher.gui.panels.HierarchyPanel;
 import com.atlauncher.gui.tabs.settings.BackupsSettingsTab;
 import com.atlauncher.gui.tabs.settings.CommandsSettingsTab;
+import com.atlauncher.gui.tabs.settings.EnvironmentVariablesTab;
 import com.atlauncher.gui.tabs.settings.GeneralSettingsTab;
 import com.atlauncher.gui.tabs.settings.JavaSettingsTab;
 import com.atlauncher.gui.tabs.settings.LoggingSettingsTab;
@@ -40,6 +41,7 @@ import com.atlauncher.gui.tabs.settings.NetworkSettingsTab;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.viewmodel.impl.settings.BackupsSettingsViewModel;
 import com.atlauncher.viewmodel.impl.settings.CommandsSettingsViewModel;
+import com.atlauncher.viewmodel.impl.settings.EnvironmentVariablesViewModel;
 import com.atlauncher.viewmodel.impl.settings.GeneralSettingsViewModel;
 import com.atlauncher.viewmodel.impl.settings.JavaSettingsViewModel;
 import com.atlauncher.viewmodel.impl.settings.LoggingSettingsViewModel;
@@ -61,6 +63,7 @@ public class SettingsTab extends HierarchyPanel implements Tab {
     private CommandsSettingsViewModel commandsSettingsViewModel;
     private GeneralSettingsViewModel generalSettingsViewModel;
     private JavaSettingsViewModel javaSettingsViewModel;
+    private EnvironmentVariablesViewModel environmentVariablesViewModel;
     private LoggingSettingsViewModel loggingSettingsViewModel;
     private ModsSettingsViewModel modsSettingsViewModel;
     private NetworkSettingsViewModel networkSettingsViewModel;
@@ -71,6 +74,8 @@ public class SettingsTab extends HierarchyPanel implements Tab {
     private ModsSettingsTab modsSettingsTab;
     @Nullable
     private JavaSettingsTab javaSettingsTab;
+    @Nullable
+    private EnvironmentVariablesTab environmentVariablesTab;
     @Nullable
     private NetworkSettingsTab networkSettingsTab;
     @Nullable
@@ -96,6 +101,7 @@ public class SettingsTab extends HierarchyPanel implements Tab {
         commandsSettingsViewModel = new CommandsSettingsViewModel();
         generalSettingsViewModel = new GeneralSettingsViewModel();
         javaSettingsViewModel = new JavaSettingsViewModel();
+        environmentVariablesViewModel = new EnvironmentVariablesViewModel();
         loggingSettingsViewModel = new LoggingSettingsViewModel();
         modsSettingsViewModel = new ModsSettingsViewModel();
         networkSettingsViewModel = new NetworkSettingsViewModel();
@@ -116,10 +122,11 @@ public class SettingsTab extends HierarchyPanel implements Tab {
         loggingSettingsTab = new LoggingSettingsTab(loggingSettingsViewModel);
         backupsSettingsTab = new BackupsSettingsTab(backupSettingsViewModel);
         commandSettingsTab = new CommandsSettingsTab(commandsSettingsViewModel);
+        environmentVariablesTab = new EnvironmentVariablesTab(environmentVariablesViewModel);
         tabs = Arrays.asList(
                 new Tab[] { this.generalSettingsTab, this.modsSettingsTab, this.javaSettingsTab,
-                        this.networkSettingsTab,
-                        this.loggingSettingsTab, this.backupsSettingsTab, this.commandSettingsTab });
+                        this.networkSettingsTab, this.loggingSettingsTab, this.backupsSettingsTab,
+                        this.commandSettingsTab, this.environmentVariablesTab });
 
         for (Tab tab : this.tabs) {
             this.tabbedPane.addTab(tab.getTitle(), (JPanel) tab);
@@ -152,6 +159,7 @@ public class SettingsTab extends HierarchyPanel implements Tab {
         generalSettingsTab = null;
         modsSettingsTab = null;
         javaSettingsTab = null;
+        environmentVariablesTab = null;
         networkSettingsTab = null;
         loggingSettingsTab = null;
         backupsSettingsTab = null;

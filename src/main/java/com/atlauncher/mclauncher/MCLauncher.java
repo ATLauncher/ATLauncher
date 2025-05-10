@@ -24,6 +24,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -74,7 +75,17 @@ public class MCLauncher {
         processBuilder.directory(instance.getRootDirectory());
         processBuilder.redirectErrorStream(true);
         processBuilder.environment().remove("_JAVA_OPTIONS"); // Remove any _JAVA_OPTIONS, they are a PAIN
-        processBuilder.environment().putAll(getEnvironmentVariables(instance)); // Add in any environment variables
+
+        // Inject user-defined environment variables mixed with any other environment variables
+        Map<String, String> env = new HashMap<>();
+        env.putAll(getEnvironmentVariables(instance));
+        env.putAll(App.settings.environmentVariables);
+
+        if (!env.isEmpty()) {
+            LogManager.debug("Injecting environment variables: " + env);
+            processBuilder.environment().putAll(env);
+        }
+
         return processBuilder.start();
     }
 
