@@ -6,6 +6,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 ## 3.4.39.0
 
 ### New Features
+
 - Add AboutTab [#568]
 - Add version option for CLI [#915]
 - Removed Discord RPC
@@ -26,8 +27,10 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Add device code login method for Microsoft authentication [#755]
 - Show social links for mods from CurseForge in the right click menu in the Edit Mods dialog
 - Add ability to set environment variables [#676]
+- Read minimum memory from memorysettings.json config (if it exists) in a pack when installing
 
 ### Fixes
+
 - Invalid Java install location causing issues starting the launcher
 - Fix invalid custom downloads path not being validated on boot
 - Use a scrollpane for the Java Parameter fields [#963]
@@ -47,6 +50,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Mods from CurseForge that are not approved being displayed in various places
 
 ### Misc
+
 - Update gradle wrapper version from 8.2 to 8.12
 - Update the `application.yml` GitHub workflow [#889]
 - Refactor News stack
