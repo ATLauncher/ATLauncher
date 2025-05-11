@@ -179,20 +179,20 @@ tasks.register('uiTest', Test) {
 jar {
     manifest {
         attributes(
-                'SplashScreen-Image': '/assets/image/splash-screen.png',
-                'Implementation-Title': project.name,
-                'Implementation-Version': archiveVersion,
-                'Implementation-Vender': 'ATLauncher',
-                'Main-Class': 'com.atlauncher.App',
-                'Multi-Release': 'true'
+            'SplashScreen-Image': '/assets/image/splash-screen.png',
+            'Implementation-Title': project.name,
+            'Implementation-Version': archiveVersion,
+            'Implementation-Vender': 'ATLauncher',
+            'Main-Class': 'com.atlauncher.App',
+            'Multi-Release': 'true'
         )
     }
 }
 
 apollo {
     customTypeMapping = [
-        "ID" : "java.lang.String",
-        "DateTime" : "java.util.Date"
+        "ID"      : "java.lang.String",
+        "DateTime": "java.util.Date"
     ]
     packageName = "com.atlauncher.graphql"
 }
@@ -225,6 +225,7 @@ license {
     exclude 'com/atlauncher/gui/layouts/WrapLayout.java'
     exclude 'com/atlauncher/gui/WheelScrollLayerUI.java'
     newLine = false
+    skipExistingHeaders = true
     properties {
         year = currentYear()
     }
@@ -377,7 +378,7 @@ project.afterEvaluate {
     }
 }
 
-def shouldIgnoreUpdate = { String version -> return ['ALPHA', 'BETA', 'RC', '-M'].any { it -> version.toUpperCase(Locale.ENGLISH).contains(it) }}
+def shouldIgnoreUpdate = { String version -> return ['ALPHA', 'BETA', 'RC', '-M'].any { it -> version.toUpperCase(Locale.ENGLISH).contains(it) } }
 tasks.named("dependencyUpdates").configure {
     rejectVersionIf {
         shouldIgnoreUpdate(it.candidate.version)
