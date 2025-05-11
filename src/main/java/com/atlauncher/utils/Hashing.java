@@ -17,12 +17,12 @@
  */
 package com.atlauncher.utils;
 
+import java.io.BufferedInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-
-import org.apache.commons.lang3.ArrayUtils;
 
 import com.atlauncher.managers.LogManager;
 import com.google.common.hash.HashCode;
@@ -91,15 +91,19 @@ public final class Hashing {
         }
     }
 
-    // TODO: this is really not efficient or good on memory
     public static long murmur(Path to) throws IOException {
-        byte[] bytes = ArrayUtils
-                .removeAllOccurrences(ArrayUtils.removeAllOccurrences(
-                        ArrayUtils.removeAllOccurrences(
-                                ArrayUtils.removeAllOccurrences(Files.readAllBytes(to), (byte) 9), (byte) 10),
-                        (byte) 13), (byte) 32);
+        try (ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
+            try (BufferedInputStream bis = new BufferedInputStream(Files.newInputStream(to))) {
+                int b;
+                while ((b = bis.read()) != -1) {
+                    if (b != 9 && b != 10 && b != 13 && b != 32) {
+                        bos.write(b);
+                    }
+                }
+            }
 
-        return Murmur2.hash(bytes, bytes.length, 1L);
+            return Murmur2.hash(bos.toByteArray(), bos.size(), 1L);
+        }
     }
 
     public static HashCode toHashCode(String hash) {

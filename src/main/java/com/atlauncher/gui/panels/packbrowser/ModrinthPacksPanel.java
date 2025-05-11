@@ -28,7 +28,6 @@ import java.util.stream.Collectors;
 
 import javax.swing.JPanel;
 
-import org.apache.commons.text.WordUtils;
 import org.mini2Dx.gettext.GetText;
 
 import com.atlauncher.App;
@@ -51,6 +50,7 @@ import com.atlauncher.managers.LogManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.network.analytics.AnalyticsEvent;
 import com.atlauncher.utils.ModrinthApi;
+import com.atlauncher.utils.Utils;
 
 public class ModrinthPacksPanel extends PackBrowserPlatformPanel {
     GridBagConstraints gbc = new GridBagConstraints();
@@ -59,19 +59,19 @@ public class ModrinthPacksPanel extends PackBrowserPlatformPanel {
 
     @Override
     protected void loadPacks(JPanel contentPanel, String minecraftVersion, String category, String sort,
-            boolean sortDescending, String search, int page) {
+                             boolean sortDescending, String search, int page) {
         ModrinthSearchResult searchResult = ModrinthApi.searchModPacks(minecraftVersion, search, page - 1, sort,
-                category);
+            category);
 
         hasMorePages = searchResult != null && searchResult.offset + searchResult.hits.size() < searchResult.totalHits;
 
         if (searchResult == null || searchResult.hits.isEmpty()) {
             contentPanel.removeAll();
             contentPanel.add(
-                    new NilCard(new HTMLBuilder().text(GetText
-                            .tr("There are no packs to display.<br/><br/>Try removing your search query and try again."))
-                            .build()),
-                    gbc);
+                new NilCard(new HTMLBuilder().text(GetText
+                        .tr("There are no packs to display.<br/><br/>Try removing your search query and try again."))
+                    .build()),
+                gbc);
             return;
         }
 
@@ -82,7 +82,7 @@ public class ModrinthPacksPanel extends PackBrowserPlatformPanel {
         gbc.fill = GridBagConstraints.BOTH;
 
         List<ModrinthPackCard> cards = searchResult.hits.stream().map(ModrinthPackCard::new)
-                .collect(Collectors.toList());
+            .collect(Collectors.toList());
 
         contentPanel.removeAll();
 
@@ -94,9 +94,9 @@ public class ModrinthPacksPanel extends PackBrowserPlatformPanel {
 
     @Override
     public void loadMorePacks(JPanel contentPanel, String minecraftVersion, String category, String sort,
-            boolean sortDescending, String search, int page) {
+                              boolean sortDescending, String search, int page) {
         ModrinthSearchResult searchResult = ModrinthApi.searchModPacks(minecraftVersion, search, page - 1, sort,
-                category);
+            category);
 
         hasMorePages = searchResult != null && searchResult.offset + searchResult.hits.size() < searchResult.totalHits;
 
@@ -133,7 +133,7 @@ public class ModrinthPacksPanel extends PackBrowserPlatformPanel {
         Map<String, String> categoryFields = new LinkedHashMap<>();
 
         ModrinthApi.getCategoriesForModpacks().stream()
-                .forEach(c -> categoryFields.put(c.name, WordUtils.capitalizeFully(c.name)));
+            .forEach(c -> categoryFields.put(c.name, Utils.capitalize(c.name)));
 
         return categoryFields;
     }
@@ -208,7 +208,7 @@ public class ModrinthPacksPanel extends PackBrowserPlatformPanel {
 
         if (id.startsWith("https://modrinth.com/modpack")) {
             Pattern pattern = Pattern
-                    .compile("modrinth\\.com\\/modpack\\/([\\w-]+)");
+                .compile("modrinth\\.com\\/modpack\\/([\\w-]+)");
             Matcher matcher = pattern.matcher(id);
 
             if (!matcher.find() || matcher.groupCount() < 1) {
@@ -222,12 +222,12 @@ public class ModrinthPacksPanel extends PackBrowserPlatformPanel {
         String packToLookup = packLookup;
         // #. {0} is the platform were getting info from (e.g. CurseForge/Modrinth)
         ProgressDialog<ModrinthProject> progressDialog = new ProgressDialog<>(
-                GetText.tr("Looking Up Pack On {0}", "Modrinth"),
-                0,
-                // #. {0} is the platform were getting info from (e.g. CurseForge/Modrinth)
-                GetText.tr("Looking Up Pack On {0}", "Modrinth"),
-                // #. {0} is the platform were getting info from (e.g. CurseForge/Modrinth)
-                GetText.tr("Cancelling Looking Up Pack On {0}", "Modrinth"));
+            GetText.tr("Looking Up Pack On {0}", "Modrinth"),
+            0,
+            // #. {0} is the platform were getting info from (e.g. CurseForge/Modrinth)
+            GetText.tr("Looking Up Pack On {0}", "Modrinth"),
+            // #. {0} is the platform were getting info from (e.g. CurseForge/Modrinth)
+            GetText.tr("Cancelling Looking Up Pack On {0}", "Modrinth"));
         progressDialog.addThread(new Thread(() -> {
             progressDialog.setReturnValue(ModrinthApi.getProject(packToLookup));
             progressDialog.doneTask();
@@ -239,17 +239,17 @@ public class ModrinthPacksPanel extends PackBrowserPlatformPanel {
 
         if (project == null || project.projectType != ModrinthProjectType.MODPACK) {
             DialogManager.okDialog().setType(DialogManager.ERROR).setTitle(GetText.tr("Pack Not Found"))
-                    .setContent(
-                            GetText.tr(
-                                    "A pack with that id/slug was not found. Please check the id/slug/url and try again."))
-                    .show();
+                .setContent(
+                    GetText.tr(
+                        "A pack with that id/slug was not found. Please check the id/slug/url and try again."))
+                .show();
             return;
         }
 
         if (AccountManager.getSelectedAccount() == null) {
             DialogManager.okDialog().setTitle(GetText.tr("No Account Selected"))
-                    .setContent(GetText.tr("Cannot create instance as you have no account selected."))
-                    .setType(DialogManager.ERROR).show();
+                .setContent(GetText.tr("Cannot create instance as you have no account selected."))
+                .setType(DialogManager.ERROR).show();
 
             if (AccountManager.getAccounts().isEmpty()) {
                 App.navigate(UIConstants.LAUNCHER_ACCOUNTS_TAB);

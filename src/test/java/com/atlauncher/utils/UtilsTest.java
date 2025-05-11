@@ -26,22 +26,22 @@ public class UtilsTest {
     @Test
     public void testThatConvertingMavenIdentifierToPathWorksCorrectly() {
         Pair<String, String> pair = Utils
-                .convertMavenIdentifierToNameAndVersion("org.lwjgl.lwjgl:lwjgl:2.9.1-nightly-20130708-debug3");
+            .convertMavenIdentifierToNameAndVersion("org.lwjgl.lwjgl:lwjgl:2.9.1-nightly-20130708-debug3");
         assertEquals("org.lwjgl.lwjgl:lwjgl", pair.left());
         assertEquals("2.9.1-nightly-20130708-debug3", pair.right());
 
         pair = Utils
-                .convertMavenIdentifierToNameAndVersion("org.lwjgl.lwjgl:lwjgl:2.9.1");
+            .convertMavenIdentifierToNameAndVersion("org.lwjgl.lwjgl:lwjgl:2.9.1");
         assertEquals("org.lwjgl.lwjgl:lwjgl", pair.left());
         assertEquals("2.9.1", pair.right());
 
         pair = Utils
-                .convertMavenIdentifierToNameAndVersion("net.neoforged.fancymodloader:earlydisplay:4.0.6@jar");
+            .convertMavenIdentifierToNameAndVersion("net.neoforged.fancymodloader:earlydisplay:4.0.6@jar");
         assertEquals("net.neoforged.fancymodloader:earlydisplay", pair.left());
         assertEquals("4.0.6", pair.right());
 
         pair = Utils
-                .convertMavenIdentifierToNameAndVersion("org.lwjgl:lwjgl-freetype:3.3.3:natives-linux");
+            .convertMavenIdentifierToNameAndVersion("org.lwjgl:lwjgl-freetype:3.3.3:natives-linux");
         assertEquals("org.lwjgl:lwjgl-freetype:natives-linux", pair.left());
         assertEquals("3.3.3", pair.right());
     }
@@ -49,12 +49,12 @@ public class UtilsTest {
     @Test
     public void testThatConvertingMavenIdentifierOnInvalidIdentifierWorksCorrectly() {
         Pair<String, String> pair = Utils
-                .convertMavenIdentifierToNameAndVersion("launchwrapper-1.12.jar");
+            .convertMavenIdentifierToNameAndVersion("launchwrapper-1.12.jar");
         assertEquals("launchwrapper-1.12.jar", pair.left());
         assertEquals("0", pair.right());
 
         pair = Utils
-                .convertMavenIdentifierToNameAndVersion("com.mojang:1.3.5");
+            .convertMavenIdentifierToNameAndVersion("com.mojang:1.3.5");
         assertEquals("com.mojang:1.3.5", pair.left());
         assertEquals("0", pair.right());
     }
@@ -124,5 +124,12 @@ public class UtilsTest {
         assertEquals(null, Utils.getSafeIntegerFromString("12.34"));
         assertEquals(null, Utils.getSafeIntegerFromString("124hh"));
         assertEquals(null, Utils.getSafeIntegerFromString("124hh"));
+    }
+
+    @Test
+    void capitalize() {
+        assertEquals("A", Utils.capitalize("a"));
+        assertEquals("This Is A Sentence", Utils.capitalize("this is a sentence"));
+        assertEquals("This Is A Sentence", Utils.capitalize("THIS IS A SENTENCE"));
     }
 }

@@ -49,6 +49,7 @@ import java.nio.file.StandardOpenOption;
 import java.security.InvalidKeyException;
 import java.security.Key;
 import java.util.ArrayDeque;
+import java.util.Arrays;
 import java.util.Deque;
 import java.util.EnumSet;
 import java.util.Enumeration;
@@ -62,6 +63,7 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.jar.JarInputStream;
 import java.util.jar.JarOutputStream;
+import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
@@ -99,12 +101,12 @@ import okhttp3.RequestBody;
 
 public class Utils {
     public static EnumSet<StandardOpenOption> WRITE = EnumSet.of(StandardOpenOption.CREATE_NEW,
-            StandardOpenOption.WRITE);
+        StandardOpenOption.WRITE);
     public static EnumSet<StandardOpenOption> READ = EnumSet.of(StandardOpenOption.READ);
 
     public static JScrollPane wrapInVerticalScroller(final JPanel panel, final int scrollUnits) {
         final JScrollPane scroller = new JScrollPane(panel, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
-                ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+            ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         scroller.getVerticalScrollBar().setUnitIncrement(scrollUnits);
         return scroller;
     }
@@ -147,10 +149,10 @@ public class Utils {
                 return new File(System.getenv("APPDATA"), "/." + Constants.LAUNCHER_NAME.toLowerCase(Locale.ENGLISH));
             case OSX:
                 return new File(System.getProperty("user.home"),
-                        "/Library/Application Support/." + Constants.LAUNCHER_NAME.toLowerCase(Locale.ENGLISH));
+                    "/Library/Application Support/." + Constants.LAUNCHER_NAME.toLowerCase(Locale.ENGLISH));
             default:
                 return new File(System.getProperty("user.home"),
-                        "/." + Constants.LAUNCHER_NAME.toLowerCase(Locale.ENGLISH));
+                    "/." + Constants.LAUNCHER_NAME.toLowerCase(Locale.ENGLISH));
         }
     }
 
@@ -197,7 +199,7 @@ public class Utils {
      * Upload paste.
      *
      * @param title the title
-     * @param log the log
+     * @param log   the log
      * @return the url of the paste
      */
     public static String uploadPaste(String title, String log) {
@@ -206,16 +208,16 @@ public class Utils {
         data.put("text", log);
 
         return NetworkClient.post(Constants.PASTE_API_URL,
-                Headers.of("Content-Type", "application/json"),
-                RequestBody.create(Gsons.DEFAULT.toJson(data), MediaType.get("application/json; charset=utf-8")),
-                String.class);
+            Headers.of("Content-Type", "application/json"),
+            RequestBody.create(Gsons.DEFAULT.toJson(data), MediaType.get("application/json; charset=utf-8")),
+            String.class);
     }
 
     /**
      * Move file.
      *
-     * @param from the from
-     * @param to the to
+     * @param from         the from
+     * @param to           the to
      * @param withFilename the with filename
      * @return true, if successful
      */
@@ -233,7 +235,7 @@ public class Utils {
      * Copy file.
      *
      * @param from the from
-     * @param to the to
+     * @param to   the to
      * @return true, if successful
      */
     public static boolean copyFile(File from, File to) {
@@ -243,8 +245,8 @@ public class Utils {
     /**
      * Copy file.
      *
-     * @param from the from
-     * @param to the to
+     * @param from         the from
+     * @param to           the to
      * @param withFilename the with filename
      * @return true, if successful
      */
@@ -255,13 +257,13 @@ public class Utils {
         if (!from.toString().startsWith("file:")) {
             if (!from.isFile()) {
                 LogManager
-                        .error("File " + from.getAbsolutePath() + " cannot be copied to " + to.getAbsolutePath() + " as"
-                                + " it isn't a file");
+                    .error("File " + from.getAbsolutePath() + " cannot be copied to " + to.getAbsolutePath() + " as"
+                        + " it isn't a file");
             }
             if (!from.exists()) {
                 LogManager
-                        .error("File " + from.getAbsolutePath() + " cannot be copied to " + to.getAbsolutePath() + " as"
-                                + " it doesn't exist");
+                    .error("File " + from.getAbsolutePath() + " cannot be copied to " + to.getAbsolutePath() + " as"
+                        + " it doesn't exist");
                 return false;
             }
         } else {
@@ -356,7 +358,7 @@ public class Utils {
             return true;
         } else {
             LogManager.error("Couldn't move directory " + sourceLocation.getAbsolutePath() + " to "
-                    + targetLocation.getAbsolutePath());
+                + targetLocation.getAbsolutePath());
             return false;
         }
     }
@@ -377,7 +379,7 @@ public class Utils {
      *
      * @param sourceLocation the source location
      * @param targetLocation the target location
-     * @param copyFolder the copy folder
+     * @param copyFolder     the copy folder
      * @return true, if successful
      */
     public static boolean copyDirectory(File sourceLocation, File targetLocation, boolean copyFolder) {
@@ -417,7 +419,7 @@ public class Utils {
     /**
      * Unzip.
      *
-     * @param in the in
+     * @param in  the in
      * @param out the out
      */
     public static void unzip(File in, File out) {
@@ -427,8 +429,8 @@ public class Utils {
     /**
      * Unzip.
      *
-     * @param in the in
-     * @param out the out
+     * @param in          the in
+     * @param out         the out
      * @param extractRule the extract rule
      */
     public static void unzip(File in, File out, ExtractRule extractRule) {
@@ -494,7 +496,7 @@ public class Utils {
 
         if (!file.delete()) {
             LogManager.error(
-                    (file.isFile() ? "File" : "Folder") + " " + file.getAbsolutePath() + " couldn't be " + "deleted");
+                (file.isFile() ? "File" : "Folder") + " " + file.getAbsolutePath() + " couldn't be " + "deleted");
         }
     }
 
@@ -567,7 +569,7 @@ public class Utils {
     /**
      * Zip.
      *
-     * @param in the in
+     * @param in  the in
      * @param out the out
      */
     public static void zip(File in, File out) {
@@ -613,7 +615,7 @@ public class Utils {
     /**
      * Copy.
      *
-     * @param in the in
+     * @param in  the in
      * @param out the out
      * @throws IOException Signals that an I/O exception has occurred.
      */
@@ -632,7 +634,7 @@ public class Utils {
      * Copy.
      *
      * @param file the file
-     * @param out the out
+     * @param out  the out
      * @throws IOException Signals that an I/O exception has occurred.
      */
     private static void copy(File file, OutputStream out) throws IOException {
@@ -721,17 +723,17 @@ public class Utils {
      * Replace text.
      *
      * @param destinationFile the destination file
-     * @param replaceThis the replace this
-     * @param withThis the with this
+     * @param replaceThis     the replace this
+     * @param withThis        the with this
      * @throws IOException Signals that an I/O exception has occurred.
      */
     public static void replaceText(InputStream fs, File destinationFile, String replaceThis, String withThis)
-            throws IOException {
+        throws IOException {
 
         BufferedReader br = new BufferedReader(new InputStreamReader(fs, StandardCharsets.UTF_8));
 
         OutputStreamWriter fileWriter = new OutputStreamWriter(
-                new FileOutputStream(destinationFile), StandardCharsets.UTF_8);
+            new FileOutputStream(destinationFile), StandardCharsets.UTF_8);
 
         String line = br.readLine();
         while (line != null) {
@@ -754,12 +756,12 @@ public class Utils {
      * @throws IOException Signals that an I/O exception has occurred.
      */
     public static void writeResourceToFile(InputStream fs, File destinationFile)
-            throws IOException {
+        throws IOException {
 
         BufferedReader br = new BufferedReader(new InputStreamReader(fs, StandardCharsets.UTF_8));
 
         OutputStreamWriter fileWriter = new OutputStreamWriter(
-                new FileOutputStream(destinationFile), StandardCharsets.UTF_8);
+            new FileOutputStream(destinationFile), StandardCharsets.UTF_8);
 
         String line = br.readLine();
         while (line != null) {
@@ -806,15 +808,15 @@ public class Utils {
 
     public static boolean combineJars(File mainJar, File jarToAdd, File outputJar) {
         try (FileInputStream is = new FileInputStream(mainJar);
-                JarInputStream jis = new JarInputStream(is);
-                JarFile jarFile = new JarFile(mainJar);
+             JarInputStream jis = new JarInputStream(is);
+             JarFile jarFile = new JarFile(mainJar);
 
-                FileInputStream is2 = new FileInputStream(jarToAdd);
-                JarInputStream jis2 = new JarInputStream(is2);
-                JarFile jarFile2 = new JarFile(jarToAdd);
+             FileInputStream is2 = new FileInputStream(jarToAdd);
+             JarInputStream jis2 = new JarInputStream(is2);
+             JarFile jarFile2 = new JarFile(jarToAdd);
 
-                FileOutputStream fos = new FileOutputStream(outputJar);
-                JarOutputStream jos = new JarOutputStream(fos)) {
+             FileOutputStream fos = new FileOutputStream(outputJar);
+             JarOutputStream jos = new JarOutputStream(fos)) {
             Set<String> entriesAdded = new HashSet<>();
             JarEntry entry;
             while ((entry = jis2.getNextJarEntry()) != null) {
@@ -880,10 +882,10 @@ public class Utils {
      */
     public static boolean stripMetaInf(File minecraftJar, File outputJar) {
         try (FileInputStream is = new FileInputStream(minecraftJar);
-                JarInputStream jis = new JarInputStream(is);
-                FileOutputStream fos = new FileOutputStream(outputJar);
-                JarOutputStream jos = new JarOutputStream(fos);
-                JarFile jarFile = new JarFile(minecraftJar)) {
+             JarInputStream jis = new JarInputStream(is);
+             FileOutputStream fos = new FileOutputStream(outputJar);
+             JarOutputStream jos = new JarOutputStream(fos);
+             JarFile jarFile = new JarFile(minecraftJar)) {
             JarEntry entry;
             while ((entry = jis.getNextJarEntry()) != null) {
                 if (entry.getName().contains("META-INF")) {
@@ -911,7 +913,6 @@ public class Utils {
 
             return false;
         }
-
         return true;
     }
 
@@ -982,7 +983,7 @@ public class Utils {
      * This splits up a string into a multi lined string by adding a separator at
      * every space after a given count.
      *
-     * @param string the string to split up
+     * @param string        the string to split up
      * @param maxLineLength the number of characters minimum to have per line
      * @param lineSeparator the string to place when a new line should be placed
      * @return the new multi lined string
@@ -1359,7 +1360,7 @@ public class Utils {
         }
 
         String path = parts[0].replace(".", "/") + "/" + name + "/" + version + "/" + name + "-" + version + classifier
-                + "." + extension;
+            + "." + extension;
 
         return path;
     }
@@ -1438,12 +1439,12 @@ public class Utils {
         }
 
         if (lessThan && versionParts[0].equals(matchedParts[0])
-                && Integer.parseInt(versionParts[1].split("-")[0]) < Integer.parseInt(matchedParts[1].split("-")[0])) {
+            && Integer.parseInt(versionParts[1].split("-")[0]) < Integer.parseInt(matchedParts[1].split("-")[0])) {
             return true;
         }
 
         return !lessThan && versionParts[0].equals(matchedParts[0])
-                && Integer.parseInt(versionParts[1].split("-")[0]) > Integer.parseInt(matchedParts[1].split("-")[0]);
+            && Integer.parseInt(versionParts[1].split("-")[0]) > Integer.parseInt(matchedParts[1].split("-")[0]);
     }
 
     public static boolean matchWholeVersion(String version, String matches, boolean equal) {
@@ -1451,20 +1452,21 @@ public class Utils {
         String[] matchedParts = matches.split("\\.", 3);
 
         if (equal && versionParts[0].equals(matchedParts[0]) && versionParts[1].equals(matchedParts[1])
-                && versionParts[2].equals(matchedParts[2])) {
+            && versionParts[2].equals(matchedParts[2])) {
             return true;
         }
 
         return Integer.parseInt(versionParts[0]) > Integer.parseInt(matchedParts[0])
-                || (versionParts[0].equals(matchedParts[0])
-                        && Integer.parseInt(versionParts[1]) > Integer.parseInt(matchedParts[1]))
-                || (versionParts[0].equals(matchedParts[0]) && versionParts[1].equals(matchedParts[1])
-                        && Integer.parseInt(versionParts[2]) > Integer.parseInt(matchedParts[2]));
+            || (versionParts[0].equals(matchedParts[0])
+            && Integer.parseInt(versionParts[1]) > Integer.parseInt(matchedParts[1]))
+            || (versionParts[0].equals(matchedParts[0]) && versionParts[1].equals(matchedParts[1])
+            && Integer.parseInt(versionParts[2]) > Integer.parseInt(matchedParts[2]));
     }
 
     public static MCMod getMCModForFile(File file) {
         try {
-            java.lang.reflect.Type type = new TypeToken<List<MCMod>>() {}.getType();
+            java.lang.reflect.Type type = new TypeToken<List<MCMod>>() {
+            }.getType();
 
             List<MCMod> mods = Gsons.DEFAULT.fromJson(ArchiveUtils.getFile(file.toPath(), "mcmod.info"), type);
 
@@ -1481,7 +1483,7 @@ public class Utils {
     public static FabricMod getFabricModForFile(File file) {
         try {
             FabricMod mod = Gsons.DEFAULT.fromJson(ArchiveUtils.getFile(file.toPath(), "fabric.mod.json"),
-                    FabricMod.class);
+                FabricMod.class);
 
             if (mod != null) {
                 return mod;
@@ -1496,10 +1498,10 @@ public class Utils {
     public static boolean executableInPath(String executableName) {
         try {
             return java.util.stream.Stream
-                    .of(System.getenv("PATH").split(java.util.regex.Pattern.quote(File.pathSeparator)))
-                    .map(path -> path.replace("\"", "")).map(Paths::get)
-                    .anyMatch(path -> Files.exists(path.resolve(executableName))
-                            && Files.isExecutable(path.resolve(executableName)));
+                .of(System.getenv("PATH").split(java.util.regex.Pattern.quote(File.pathSeparator)))
+                .map(path -> path.replace("\"", "")).map(Paths::get)
+                .anyMatch(path -> Files.exists(path.resolve(executableName))
+                    && Files.isExecutable(path.resolve(executableName)));
         } catch (Exception e) {
             return false;
         }
@@ -1512,7 +1514,7 @@ public class Utils {
 
             Process process = processBuilder.start();
             BufferedReader br = new BufferedReader(
-                    new InputStreamReader(process.getInputStream(), StandardCharsets.UTF_8));
+                new InputStreamReader(process.getInputStream(), StandardCharsets.UTF_8));
             StringBuilder sb = new StringBuilder();
 
             try {
@@ -1542,7 +1544,7 @@ public class Utils {
 
             Process process = processBuilder.start();
             BufferedReader br = new BufferedReader(
-                    new InputStreamReader(process.getInputStream(), StandardCharsets.UTF_8));
+                new InputStreamReader(process.getInputStream(), StandardCharsets.UTF_8));
             StringBuilder sb = new StringBuilder();
 
             try {
@@ -1597,5 +1599,12 @@ public class Utils {
             }
         }
         return categoryIdParam;
+    }
+
+    public static String capitalize(String name) {
+        return Arrays
+            .stream(name.split("\\s+"))
+            .map(s -> s.isEmpty() ? s : s.substring(0, 1).toUpperCase(Locale.ENGLISH) + s.substring(1).toLowerCase(Locale.ENGLISH))
+            .collect(Collectors.joining(" "));
     }
 }

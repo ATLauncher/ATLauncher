@@ -104,7 +104,7 @@ public class Settings {
     public int windowHeight = 480;
     public String javaPath;
     public String javaParameters = Constants.DEFAULT_JAVA_PARAMETERS;
-    @SerializedName(value = "javaInstallLocation", alternate = { "baseJavaInstallFolder" })
+    @SerializedName(value = "javaInstallLocation", alternate = {"baseJavaInstallFolder"})
     public String javaInstallLocation = null;
     public boolean maximiseMinecraft = false;
     public boolean ignoreJavaOnInstanceLaunch = false;
@@ -319,7 +319,7 @@ public class Settings {
         // people are sharing configs around with a static id or with null which means
         // it's hard to see actual usage, so randomise if enabled
         if (enableAnalytics && (analyticsClientId == null
-                || analyticsClientId.equalsIgnoreCase("30662333-d88f-4e21-8d77-95739af9bf78"))) {
+            || analyticsClientId.equalsIgnoreCase("30662333-d88f-4e21-8d77-95739af9bf78"))) {
             analyticsClientId = UUID.randomUUID().toString();
             save();
         }
@@ -343,12 +343,12 @@ public class Settings {
         }
 
         if (launcherPosition != null
-                && !OS.getScreenVirtualBounds().contains(new Rectangle(launcherPosition, launcherSize))) {
+            && !OS.getScreenVirtualBounds().contains(new Rectangle(launcherPosition, launcherSize))) {
             launcherPosition = null;
         }
 
         if (consolePosition != null
-                && !OS.getScreenVirtualBounds().contains(new Rectangle(consolePosition, consoleSize))) {
+            && !OS.getScreenVirtualBounds().contains(new Rectangle(consolePosition, consoleSize))) {
             consolePosition = null;
         }
     }
@@ -373,7 +373,7 @@ public class Settings {
 
     private void validateDefaultModPlatform() {
         if (defaultModPlatform == null
-                || !(defaultModPlatform == ModPlatform.CURSEFORGE || defaultModPlatform == ModPlatform.MODRINTH)) {
+            || !(defaultModPlatform == ModPlatform.CURSEFORGE || defaultModPlatform == ModPlatform.MODRINTH)) {
             defaultModPlatform = ModPlatform.CURSEFORGE;
         }
     }
@@ -430,7 +430,7 @@ public class Settings {
 
         if (systemMemory != 0 && maximumMemory > systemMemory) {
             LogManager.warn("Tried to allocate " + maximumMemory + "MB of maximum memory but only " + systemMemory
-                    + "MB is available to use!");
+                + "MB is available to use!");
 
             if (OS.is64Bit()) {
                 maximumMemory = Math.min((systemMemory / 1000) * 512, 8192);
@@ -450,7 +450,7 @@ public class Settings {
         int systemWindowWidth = OS.getMaximumWindowWidth();
         if (windowWidth > systemWindowWidth) {
             LogManager.warn("Tried to set window width to " + windowWidth + "px but the maximum is " + systemWindowWidth
-                    + "px!");
+                + "px!");
 
             windowWidth = systemWindowWidth;
         }
@@ -458,7 +458,7 @@ public class Settings {
         int systemWindowHeight = OS.getMaximumWindowHeight();
         if (windowHeight > systemWindowHeight) {
             LogManager.warn("Tried to set window height to " + windowHeight + "px but the maximum is "
-                    + systemWindowHeight + "px!");
+                + systemWindowHeight + "px!");
 
             windowHeight = systemWindowHeight;
         }
@@ -468,14 +468,14 @@ public class Settings {
         if (enableProxy) {
             if (proxyPort <= 0 || proxyPort > 65535) {
                 LogManager.warn("Tried to set proxy port to " + proxyPort
-                        + " which is not a valid port! Proxy support disabled!");
+                    + " which is not a valid port! Proxy support disabled!");
                 enableProxy = false;
                 proxyPort = 8080;
             }
 
             if (!proxyType.equals("SOCKS") && !proxyType.equals("HTTP") && !proxyType.equals("DIRECT")) {
                 LogManager.warn(
-                        "Tried to set proxy type to " + proxyType + " which is not valid! Proxy support disabled!");
+                    "Tried to set proxy type to " + proxyType + " which is not valid! Proxy support disabled!");
                 enableProxy = false;
                 proxyType = "HTTP";
             }
@@ -505,7 +505,7 @@ public class Settings {
     private void validateConcurrentConnections() {
         if (concurrentConnections < 1 || concurrentConnections > 100) {
             LogManager.warn("Tried to set the number of concurrent connections to " + concurrentConnections
-                    + " which is not valid! Must be between 1 and 100. Setting back to default of 8!");
+                + " which is not valid! Must be between 1 and 100. Setting back to default of 8!");
             concurrentConnections = 8;
         }
     }
@@ -513,7 +513,7 @@ public class Settings {
     private void validateConnectionTimeout() {
         if (connectionTimeout < 1 || connectionTimeout > 600) {
             LogManager.warn("Tried to set the number of connection timeout to " + connectionTimeout
-                    + " which is not valid! Must be between 1 and 600. Setting back to default of 60!");
+                + " which is not valid! Must be between 1 and 600. Setting back to default of 60!");
             connectionTimeout = 60;
         }
     }
@@ -521,7 +521,7 @@ public class Settings {
     private void validateDateFormat() {
         if (!Arrays.asList(Constants.DATE_FORMATS).contains(dateFormat)) {
             LogManager.warn("Tried to set the date format to " + dateFormat + " which is not valid! Setting "
-                    + "back to default of " + Constants.DATE_FORMATS[0] + "!");
+                + "back to default of " + Constants.DATE_FORMATS[0] + "!");
             dateFormat = Constants.DATE_FORMATS[0];
         }
     }
@@ -529,8 +529,8 @@ public class Settings {
     private void validateInstanceTitleFormat() {
         if (!Arrays.asList(Constants.INSTANCE_TITLE_FORMATS).contains(instanceTitleFormat)) {
             LogManager.warn(
-                    "Tried to set the instance title format to " + instanceTitleFormat + " which is not valid! Setting "
-                            + "back to default of " + Constants.INSTANCE_TITLE_FORMATS[0] + "!");
+                "Tried to set the instance title format to " + instanceTitleFormat + " which is not valid! Setting "
+                    + "back to default of " + Constants.INSTANCE_TITLE_FORMATS[0] + "!");
             instanceTitleFormat = Constants.INSTANCE_TITLE_FORMATS[0];
         }
 
@@ -565,7 +565,7 @@ public class Settings {
 
     public void save() {
         try (OutputStreamWriter fileWriter = new OutputStreamWriter(
-                Files.newOutputStream(FileSystem.SETTINGS), StandardCharsets.UTF_8)) {
+            Files.newOutputStream(FileSystem.SETTINGS), StandardCharsets.UTF_8)) {
             Gsons.DEFAULT.toJson(this, fileWriter);
         } catch (IOException e) {
             LogManager.logStackTrace("Error saving settings", e);

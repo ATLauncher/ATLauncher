@@ -406,6 +406,7 @@ public class InstanceInstallerDialog extends JDialog {
             boolean success = installable.startInstall();
 
             if (success) {
+                System.gc();
                 dispose();
             }
         });
