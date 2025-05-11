@@ -20,6 +20,8 @@ package com.atlauncher.listener;
 import java.awt.event.KeyEvent;
 import java.util.concurrent.TimeUnit;
 
+import javax.annotation.Nullable;
+
 /**
  * <p>
  * This is a key listener that delays the saving of text to a view model.
@@ -29,6 +31,7 @@ import java.util.concurrent.TimeUnit;
 public class DelayedSavingKeyListener extends StatefulTextKeyAdapter implements Runnable {
     private final long saveDelay;
     private final Runnable onSave;
+    @Nullable
     private final Runnable onChangePending;
     private Thread thread;
     private boolean changed = false;
@@ -44,7 +47,7 @@ public class DelayedSavingKeyListener extends StatefulTextKeyAdapter implements 
     public DelayedSavingKeyListener(
         long saveDelay,
         Runnable onSave,
-        Runnable onChangePending
+        @Nullable Runnable onChangePending
     ) {
         super();
         this.onChangePending = onChangePending;
@@ -85,7 +88,9 @@ public class DelayedSavingKeyListener extends StatefulTextKeyAdapter implements 
             // Check if the contents have changed
             if (changed) {
                 // Notify that a change is in progress
-                onChangePending.run();
+                if (onChangePending != null) {
+                    onChangePending.run();
+                }
 
                 // Check if enough time has passed since the last change
                 if ((lastSave + saveDelay) < System.currentTimeMillis()) {

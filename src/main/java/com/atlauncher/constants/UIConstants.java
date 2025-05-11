@@ -32,11 +32,13 @@ public class UIConstants {
 
     public static final Insets LEFT_TO_RIGHT_SPACER = new Insets(0, 0, 0, SPACING_LARGE * 2);
 
+    public static final Insets PANEL_INSETS = new Insets(SPACING_LARGE, SPACING_LARGE, SPACING_LARGE, SPACING_LARGE);
+
     // CheckBoxes has 4 margin on it, so we negate that here so it aligns up without
     // the need to remove that margin from all CheckBox components
     public static final Insets CHECKBOX_FIELD_INSETS = new Insets(SPACING_LARGE, -SPACING_SMALL, SPACING_LARGE, 0);
     public static final Insets CHECKBOX_FIELD_INSETS_SMALL = new Insets(SPACING_SMALL, -SPACING_SMALL, SPACING_SMALL,
-            0);
+        0);
 
     // When using FlowLayout with a horizonal margin, we need to negate the first
     // components margin added from the FlowLayout

@@ -46,6 +46,14 @@ public class BackupsSettingsViewModel implements SettingsListener {
 
     private final BehaviorSubject<CheckState> backupsPathChecker = BehaviorSubject.create();
 
+    // S3 Backup Sync
+    private final BehaviorSubject<String> s3Endpoint = BehaviorSubject.create();
+    private final BehaviorSubject<String> s3Region = BehaviorSubject.create();
+    private final BehaviorSubject<String> awsAccessKey = BehaviorSubject.create();
+    private final BehaviorSubject<String> awsSecretAccessKey = BehaviorSubject.create();
+    private final BehaviorSubject<String> s3Bucket = BehaviorSubject.create();
+    private final BehaviorSubject<String> s3Path = BehaviorSubject.create();
+
     public BackupsSettingsViewModel() {
         onSettingsSaved();
         SettingsManager.addListener(this);
@@ -57,7 +65,13 @@ public class BackupsSettingsViewModel implements SettingsListener {
         backupMode.onNext(App.settings.backupMode.ordinal());
         enableAutomaticBackupAfterLaunch.onNext(App.settings.enableAutomaticBackupAfterLaunch);
         backupsPath.onNext(Optional.ofNullable(App.settings.backupsPath)
-                .orElse(FileSystem.BACKUPS.toAbsolutePath().toString()));
+            .orElse(FileSystem.BACKUPS.toAbsolutePath().toString()));
+        s3Endpoint.onNext(Optional.ofNullable(App.settings.s3Endpoint).orElse(""));
+        s3Region.onNext(Optional.ofNullable(App.settings.s3Region).orElse(""));
+        awsAccessKey.onNext(Optional.ofNullable(App.settings.awsAccessKey).orElse(""));
+        awsSecretAccessKey.onNext(Optional.ofNullable(App.settings.awsSecretAccessKey).orElse(""));
+        s3Bucket.onNext(Optional.ofNullable(App.settings.s3Bucket).orElse(""));
+        s3Path.onNext(Optional.ofNullable(App.settings.s3Path).orElse(""));
     }
 
     /**
@@ -144,5 +158,71 @@ public class BackupsSettingsViewModel implements SettingsListener {
         }
 
         backupsPathChecker.onNext(new CheckState.Checked(true));
+    }
+
+    // S3 Endpoint
+    public Observable<String> getS3Endpoint() {
+        return s3Endpoint.observeOn(SwingSchedulers.edt());
+    }
+
+    public void setS3Endpoint(String value) {
+        s3Endpoint.onNext(Optional.ofNullable(value).orElse(""));
+        App.settings.s3Endpoint = value;
+        SettingsManager.post();
+    }
+
+    // S3 Region
+    public Observable<String> getS3Region() {
+        return s3Region.observeOn(SwingSchedulers.edt());
+    }
+
+    public void setS3Region(String value) {
+        s3Region.onNext(Optional.ofNullable(value).orElse(""));
+        App.settings.s3Region = value;
+        SettingsManager.post();
+    }
+
+    // S3 Access Key
+    public Observable<String> getAWSAccessKey() {
+        return awsAccessKey.observeOn(SwingSchedulers.edt());
+    }
+
+    public void setAWSAccessKey(String value) {
+        awsAccessKey.onNext(Optional.ofNullable(value).orElse(""));
+        App.settings.awsAccessKey = value;
+        SettingsManager.post();
+    }
+
+    // S3 Secret Key
+    public Observable<String> getAWSSecretAccessKey() {
+        return awsSecretAccessKey.observeOn(SwingSchedulers.edt());
+    }
+
+    public void setAWSSecretAccessKey(String value) {
+        awsSecretAccessKey.onNext(Optional.ofNullable(value).orElse(""));
+        App.settings.awsSecretAccessKey = value;
+        SettingsManager.post();
+    }
+
+    // S3 Bucket
+    public Observable<String> getS3Bucket() {
+        return s3Bucket.observeOn(SwingSchedulers.edt());
+    }
+
+    public void setS3Bucket(String value) {
+        s3Bucket.onNext(Optional.ofNullable(value).orElse(""));
+        App.settings.s3Bucket = value;
+        SettingsManager.post();
+    }
+
+    // S3 Path
+    public Observable<String> getS3Path() {
+        return s3Path.observeOn(SwingSchedulers.edt());
+    }
+
+    public void setS3Path(String value) {
+        s3Path.onNext(Optional.ofNullable(value).orElse(""));
+        App.settings.s3Path = value;
+        SettingsManager.post();
     }
 }
