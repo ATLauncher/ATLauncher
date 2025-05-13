@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.modrinth.ModrinthVersion;
@@ -45,8 +46,8 @@ public class ModrinthModpackUpdateManager {
      */
     private static BehaviorSubject<Optional<ModrinthVersion>> getSubject(Instance instance) {
         MODRINTH_INSTANCE_LATEST_VERSION.putIfAbsent(
-                instance.getUUID(),
-                BehaviorSubject.createDefault(Optional.empty()));
+            instance.getUUID(),
+            BehaviorSubject.createDefault(Optional.empty()));
         return MODRINTH_INSTANCE_LATEST_VERSION.get(instance.getUUID());
     }
 
@@ -86,22 +87,27 @@ public class ModrinthModpackUpdateManager {
         LogManager.info("Checking for updates to Modrinth instances");
 
         InstanceManager.getInstances().parallelStream()
-                .filter(i -> i.isModrinthPack() && i.launcher.modrinthProject.id != null
-                        && !i.launcher.modrinthProject.id.isEmpty())
-                .forEach(i -> {
-                    List<ModrinthVersion> packVersions = ModrinthApi.getVersions(i.launcher.modrinthProject.id);
+            .filter(i -> i.isModrinthPack() && i.launcher.modrinthProject.id != null
+                && !i.launcher.modrinthProject.id.isEmpty())
+            .map(i -> i.launcher.modrinthProject.id)
+            .distinct()
+            .collect(Collectors.toList())
+            .forEach(id -> {
+                List<ModrinthVersion> packVersions = ModrinthApi.getVersions(id);
 
-                    if (packVersions == null) {
-                        return;
-                    }
+                if (packVersions == null) {
+                    return;
+                }
 
-                    ModrinthVersion latestVersion = packVersions.stream()
-                            .sorted(Comparator.comparing((ModrinthVersion version) -> version.datePublished).reversed())
-                            .findFirst().orElse(null);
+                ModrinthVersion latestVersion = packVersions.stream()
+                    .sorted(Comparator.comparing((ModrinthVersion version) -> version.datePublished).reversed())
+                    .findFirst().orElse(null);
 
-                    getSubject(i).onNext(Optional.ofNullable(latestVersion));
-                });
-
+                InstanceManager.getInstances().stream()
+                    .filter(i -> i.isModrinthPack() && i.launcher.modrinthProject.id.equals(id))
+                    .forEach(i -> getSubject(i).onNext(Optional.ofNullable(latestVersion)));
+            });
+        
         PerformanceManager.end();
     }
 }

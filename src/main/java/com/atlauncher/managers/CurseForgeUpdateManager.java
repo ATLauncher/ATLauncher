@@ -57,6 +57,7 @@ public class CurseForgeUpdateManager {
      * Get an observable for an instances update.
      * <p>
      * Please do not cast to a behavior subject.
+     *
      * @param instance Instance to get an observable for
      * @return Update observable
      */
@@ -66,6 +67,7 @@ public class CurseForgeUpdateManager {
 
     /**
      * Get the latest version of an instance
+     *
      * @param instance Instance to get version of
      * @return Latest version, or null if no newer version is found
      */
@@ -96,7 +98,6 @@ public class CurseForgeUpdateManager {
         Map<Integer, CurseForgeProject> foundProjects = CurseForgeApi.getProjectsAsMap(projectIdsFound);
 
         if (foundProjects != null) {
-
             InstanceManager.getInstances().parallelStream()
                 .filter(i -> i.isCurseForgePack() && i.hasCurseForgeProjectId()).forEach(i -> {
                     CurseForgeProject curseForgeMod = foundProjects.get(i.launcher.curseForgeManifest != null
@@ -107,24 +108,24 @@ public class CurseForgeUpdateManager {
                         return;
                     }
 
-                        CurseForgeFile latestVersion = curseForgeMod.latestFiles.stream()
-                                .sorted(Comparator.comparingInt((
-                                        CurseForgeFile file) -> file.id).reversed())
-                                .filter(f -> {
-                                    if (i.launcher.curseForgeFile != null
-                                            && !App.settings.allowCurseForgeAlphaBetaFiles) {
-                                        if (i.launcher.curseForgeFile.isReleaseType()) {
-                                            return f.isReleaseType();
-                                        }
+                    CurseForgeFile latestVersion = curseForgeMod.latestFiles.stream()
+                        .sorted(Comparator.comparingInt((
+                            CurseForgeFile file) -> file.id).reversed())
+                        .filter(f -> {
+                            if (i.launcher.curseForgeFile != null
+                                && !App.settings.allowCurseForgeAlphaBetaFiles) {
+                                if (i.launcher.curseForgeFile.isReleaseType()) {
+                                    return f.isReleaseType();
+                                }
 
-                                        if (i.launcher.curseForgeFile.isBetaType()) {
-                                            return f.isReleaseType() || f.isBetaType();
-                                        }
-                                    }
+                                if (i.launcher.curseForgeFile.isBetaType()) {
+                                    return f.isReleaseType() || f.isBetaType();
+                                }
+                            }
 
-                                    return true;
-                                })
-                                .findFirst().orElse(null);
+                            return true;
+                        })
+                        .findFirst().orElse(null);
 
                     getSubject(i).onNext(Optional.ofNullable(latestVersion));
                 });

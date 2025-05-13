@@ -48,6 +48,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Shaderpacks not recognised when editing mods [#954]
 - Nested scroll panes causing issues with scrolling [#866]
 - Mods from CurseForge that are not approved being displayed in various places
+- Only check for Modrinth/FTB pack updates once even when multiple of the same pack installed
 
 ### Misc
 

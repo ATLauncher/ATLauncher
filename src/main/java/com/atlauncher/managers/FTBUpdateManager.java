@@ -24,6 +24,7 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import com.atlauncher.constants.Constants;
 import com.atlauncher.data.Instance;
@@ -49,8 +50,8 @@ public class FTBUpdateManager {
      */
     private static BehaviorSubject<Optional<FTBPackVersion>> getSubject(Instance instance) {
         FTB_INSTANCE_LATEST_VERSION.putIfAbsent(
-                instance.getUUID(),
-                BehaviorSubject.createDefault(Optional.empty()));
+            instance.getUUID(),
+            BehaviorSubject.createDefault(Optional.empty()));
         return FTB_INSTANCE_LATEST_VERSION.get(instance.getUUID());
     }
 
@@ -89,25 +90,29 @@ public class FTBUpdateManager {
         PerformanceManager.start();
         LogManager.info("Checking for updates to FTB instances");
 
-        InstanceManager.getInstances().parallelStream().filter(
-                i -> i.launcher.ftbPackManifest != null && i.launcher.ftbPackVersionManifest != null)
-                .forEach(i -> {
-                    FTBPackManifest packManifest = NetworkClient.getCached(
-                            String.format(Locale.ENGLISH, "%s/modpack/%d", Constants.FTB_API_URL,
-                                    i.launcher.ftbPackManifest.id),
-                            FTBPackManifest.class,
-                            new CacheControl.Builder().maxStale(10, TimeUnit.MINUTES).build());
+        InstanceManager.getInstances().parallelStream()
+            .filter(Instance::isFTBPack)
+            .map(i -> i.launcher.ftbPackManifest.id)
+            .distinct()
+            .collect(Collectors.toList())
+            .forEach(id -> {
 
-                    if (packManifest == null) {
-                        return;
-                    }
+                FTBPackManifest packManifest = NetworkClient.getCached(
+                    String.format(Locale.ENGLISH, "%s/modpack/%d", Constants.FTB_API_URL, id),
+                    FTBPackManifest.class,
+                    new CacheControl.Builder().maxStale(10, TimeUnit.MINUTES).build());
 
-                    FTBPackVersion latestVersion = packManifest.versions.stream().sorted(
-                            Comparator.comparingInt((FTBPackVersion version) -> version.id).reversed())
-                            .findFirst().orElse(null);
+                if (packManifest == null) {
+                    return;
+                }
 
-                    getSubject(i).onNext(Optional.ofNullable(latestVersion));
-                });
+                FTBPackVersion latestVersion = packManifest.versions.stream()
+                    .max(Comparator.comparingInt((FTBPackVersion version) -> version.id)).orElse(null);
+
+                InstanceManager.getInstances().stream()
+                    .filter(i -> i.isFTBPack() && i.launcher.ftbPackManifest.id == id)
+                    .forEach(i -> getSubject(i).onNext(Optional.ofNullable(latestVersion)));
+            });
 
         PerformanceManager.end();
     }
