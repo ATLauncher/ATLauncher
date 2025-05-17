@@ -232,6 +232,7 @@ shadowJar {
     archiveClassifier.set(null)
     minimize {
         exclude(dependency('org.apache.logging.log4j:.*:.*'))
+        exclude(dependency('net.java.dev.jna:.*:.*'))
         exclude(dependency('com.formdev:.*:.*'))
         exclude(dependency('com.github.jnr:.*:.*'))
         exclude(dependency('com.github.hypfvieh:.*:.*'))
