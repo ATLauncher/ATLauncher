@@ -91,9 +91,13 @@ public final class Hashing {
         }
     }
 
-    public static long murmur(Path to) throws IOException {
+    public static long murmur(Path file) throws IOException {
+        if (!Files.exists(file)) {
+            return -1L;
+        }
+
         try (ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
-            try (BufferedInputStream bis = new BufferedInputStream(Files.newInputStream(to))) {
+            try (BufferedInputStream bis = new BufferedInputStream(Files.newInputStream(file))) {
                 int b;
                 while ((b = bis.read()) != -1) {
                     if (b != 9 && b != 10 && b != 13 && b != 32) {

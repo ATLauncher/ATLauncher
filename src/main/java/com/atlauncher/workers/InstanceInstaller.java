@@ -3550,7 +3550,11 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         Map<Long, DisableableMod> murmurHashes = new HashMap<>();
 
         this.modsInstalled.stream().filter(dm -> dm.curseForgeProject == null && dm.curseForgeFile == null)
-            .filter(dm -> dm.getFile(root, this.packVersion.minecraft) != null).forEach(dm -> {
+            .filter(dm -> {
+                File file = dm.getFile(root, this.packVersion.minecraft);
+                return file != null && file.exists();
+            })
+            .forEach(dm -> {
                 try {
                     long hash = Hashing.murmur(dm.getFile(root, this.packVersion.minecraft).toPath());
                     murmurHashes.put(hash, dm);

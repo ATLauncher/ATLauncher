@@ -52,8 +52,8 @@ public class TechnicModpackUpdateManager {
      */
     private static BehaviorSubject<Optional<TechnicModpack>> getSubject(Instance instance) {
         TECHNIC_INSTANCE_LATEST_VERSION.putIfAbsent(
-                instance.getUUID(),
-                BehaviorSubject.createDefault(Optional.empty()));
+            instance.getUUID(),
+            BehaviorSubject.createDefault(Optional.empty()));
         return TECHNIC_INSTANCE_LATEST_VERSION.get(instance.getUUID());
     }
 
@@ -65,8 +65,8 @@ public class TechnicModpackUpdateManager {
      */
     private static BehaviorSubject<Optional<TechnicSolderModpack>> getSolderSubject(Instance instance) {
         TECHNIC_SOLDER_INSTANCE_LATEST_VERSION.putIfAbsent(
-                instance.getUUID(),
-                BehaviorSubject.createDefault(Optional.empty()));
+            instance.getUUID(),
+            BehaviorSubject.createDefault(Optional.empty()));
         return TECHNIC_SOLDER_INSTANCE_LATEST_VERSION.get(instance.getUUID());
     }
 
@@ -128,35 +128,35 @@ public class TechnicModpackUpdateManager {
         LogManager.info("Checking for updates to Technic Modpack instances");
 
         InstanceManager.getInstances().parallelStream()
-                .filter(i -> i.isTechnicPack() && i.launcher.checkForUpdates).forEach(i -> {
-                    TechnicModpack technicModpack = null;
+            .filter(i -> i.isTechnicPack() && i.launcher.checkForUpdates).forEach(i -> {
+                TechnicModpack technicModpack = null;
 
-                    try {
-                        technicModpack = TechnicApi.getModpackBySlugWithThrow(i.launcher.technicModpack.name);
-                    } catch (DownloadException e) {
-                        if (e.response != null) {
-                            LogManager.debug(Gsons.DEFAULT.toJson(e.response));
-                        }
-
-                        if (e.statusCode == 404) {
-                            LogManager.error(String.format(
-                                    "Technic pack with name of %s no longer exists, disabling update checks.",
-                                    i.launcher.technicModpack.displayName));
-                            i.launcher.checkForUpdates = false;
-                            i.save();
-                        }
+                try {
+                    technicModpack = TechnicApi.getModpackBySlugWithThrow(i.launcher.technicModpack.name);
+                } catch (DownloadException e) {
+                    if (e.response != null) {
+                        LogManager.debug(Gsons.DEFAULT.toJson(e.response));
                     }
 
-                    if (technicModpack != null && i.isTechnicSolderPack()) {
-                        TechnicSolderModpack technicSolderModpack = TechnicApi.getSolderModpackBySlug(
-                                technicModpack.solder,
-                                technicModpack.name);
-
-                        getSolderSubject(i).onNext(Optional.ofNullable(technicSolderModpack));
-                    } else {
-                        getSubject(i).onNext(Optional.ofNullable(technicModpack));
+                    if (e.statusCode == 404) {
+                        LogManager.error(String.format(
+                            "Technic pack with name of %s no longer exists, disabling update checks.",
+                            i.launcher.technicModpack.displayName));
+                        i.launcher.checkForUpdates = false;
+                        i.save();
                     }
-                });
+                }
+
+                if (technicModpack != null && i.isTechnicSolderPack() && technicModpack.solder != null) {
+                    TechnicSolderModpack technicSolderModpack = TechnicApi.getSolderModpackBySlug(
+                        technicModpack.solder,
+                        technicModpack.name);
+
+                    getSolderSubject(i).onNext(Optional.ofNullable(technicSolderModpack));
+                } else {
+                    getSubject(i).onNext(Optional.ofNullable(technicModpack));
+                }
+            });
 
         PerformanceManager.end();
     }

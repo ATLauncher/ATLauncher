@@ -17,6 +17,7 @@
  */
 package com.atlauncher.data.minecraft.loaders.neoforge;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -31,7 +32,7 @@ public class NeoForgeInstallProfile {
     public String serverJarPath;
     public String minecraft;
 
-    public Map<String, Data> data;
+    public Map<String, Data> data = new HashMap<>();
     public List<NeoForgeProcessor> processors;
     private List<NeoForgeLibrary> libraries;
 

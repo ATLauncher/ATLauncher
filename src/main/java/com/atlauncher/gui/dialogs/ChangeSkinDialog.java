@@ -142,11 +142,11 @@ public class ChangeSkinDialog extends JDialog {
 
                     if (skinImage.getWidth() != 64 || (skinImage.getHeight() != 64 && skinImage.getHeight() != 32)) {
                         DialogManager.okDialog().setTitle("Invalid Skin")
-                                .setContent(new HTMLBuilder().center()
-                                        .text(GetText.tr(
-                                                "The skin you chose is invalid. Please make sure you selected the right file and try again.<br/><br/>All skins must be 64x64 or 64x32 pixels."))
-                                        .build())
-                                .setType(DialogManager.ERROR).show();
+                            .setContent(new HTMLBuilder().center()
+                                .text(GetText.tr(
+                                    "The skin you chose is invalid. Please make sure you selected the right file and try again.<br/><br/>All skins must be 64x64 or 64x32 pixels."))
+                                .build())
+                            .setType(DialogManager.ERROR).show();
                         return;
                     }
 
@@ -189,22 +189,22 @@ public class ChangeSkinDialog extends JDialog {
         uploadButton = new JButton(GetText.tr("Upload"));
         uploadButton.addActionListener(e -> {
             ProgressDialog<Boolean> progressDialog = new ProgressDialog<>(GetText.tr("Updating Skin"), 0,
-                    GetText.tr("Updating Skin"));
+                GetText.tr("Updating Skin"));
             progressDialog.addThread(new Thread(() -> {
                 account.changeSkinPreCheck();
                 progressDialog.setReturnValue(MojangAPIUtils.uploadSkin(account, selectedSkinFile,
-                        ((ComboItem<String>) (skinType.getSelectedItem())).getValue()));
+                    ((ComboItem<String>) (skinType.getSelectedItem())).getValue()));
                 progressDialog.close();
             }));
             progressDialog.start();
 
-            if (progressDialog.getReturnValue() == false) {
+            if (!Boolean.TRUE.equals(progressDialog.getReturnValue())) {
                 DialogManager.okDialog().setTitle("Error Updating Skin")
-                        .setContent(new HTMLBuilder().center()
-                                .text(GetText.tr(
-                                        "There was an error updating your skin.<br/><br/>Please check the logs and try again."))
-                                .build())
-                        .setType(DialogManager.ERROR).show();
+                    .setContent(new HTMLBuilder().center()
+                        .text(GetText.tr(
+                            "There was an error updating your skin.<br/><br/>Please check the logs and try again."))
+                        .build())
+                    .setType(DialogManager.ERROR).show();
                 return;
             }
 

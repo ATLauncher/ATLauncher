@@ -80,7 +80,7 @@ public class ImportInstanceDialog extends JDialog {
 
         JEditorPane infoMessage = new JEditorPane("text/html", new HTMLBuilder().center().text(GetText.tr(
                 "Select a zip/mrpack file to import it.<br/>We currently support CurseForge, Modrinth and MultiMC exported files/urls, as well as CurseForge.com links."))
-                .build());
+            .build());
         infoMessage.setEditable(false);
         middle.add(infoMessage, BorderLayout.NORTH);
 
@@ -198,8 +198,8 @@ public class ImportInstanceDialog extends JDialog {
         addButton.addActionListener(e -> {
             if (AccountManager.getSelectedAccount() == null) {
                 DialogManager.okDialog().setTitle(GetText.tr("No Account Selected"))
-                        .setContent(GetText.tr("Cannot create instance as you have no account selected."))
-                        .setType(DialogManager.ERROR).show();
+                    .setContent(GetText.tr("Cannot create instance as you have no account selected."))
+                    .setType(DialogManager.ERROR).show();
 
                 if (AccountManager.getAccounts().isEmpty()) {
                     App.navigate(UIConstants.LAUNCHER_ACCOUNTS_TAB);
@@ -210,7 +210,7 @@ public class ImportInstanceDialog extends JDialog {
             setVisible(false);
 
             final ProgressDialog<Boolean> dialog = new ProgressDialog<>(GetText.tr("Import Instance"), 0,
-                    GetText.tr("Import Instance"), this);
+                GetText.tr("Import Instance"), this);
 
             dialog.addThread(new Thread(() -> {
                 if (!url.getText().isEmpty()) {
@@ -218,7 +218,7 @@ public class ImportInstanceDialog extends JDialog {
                     dialog.setReturnValue(ImportPackUtils.loadFromUrl(url.getText()));
                 } else if (!filePath.getText().isEmpty()) {
                     Analytics.trackEvent(
-                            AnalyticsEvent.forImportInstance("Archive", new File(filePath.getText()).getName()));
+                        AnalyticsEvent.forImportInstance("Archive", new File(filePath.getText()).getName()));
                     dialog.setReturnValue(ImportPackUtils.loadFromFile(new File(filePath.getText())));
                 } else {
                     dialog.setReturnValue(false);
@@ -228,12 +228,12 @@ public class ImportInstanceDialog extends JDialog {
 
             dialog.start();
 
-            if (dialog.getReturnValue() == false) {
+            if (!Boolean.TRUE.equals(dialog.getReturnValue())) {
                 DialogManager.okDialog().setTitle(GetText.tr("Failed To Import Instance"))
-                        .setContent(new HTMLBuilder().center().text(GetText.tr(
-                                "An error occured when trying to import an instance.<br/><br/>Check the console for more information."))
-                                .build())
-                        .setType(DialogManager.ERROR).show();
+                    .setContent(new HTMLBuilder().center().text(GetText.tr(
+                            "An error occured when trying to import an instance.<br/><br/>Check the console for more information."))
+                        .build())
+                    .setType(DialogManager.ERROR).show();
                 setVisible(true);
             } else {
                 dispose();

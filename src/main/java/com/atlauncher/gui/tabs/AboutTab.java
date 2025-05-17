@@ -60,9 +60,8 @@ import com.atlauncher.viewmodel.base.IAboutTabViewModel;
 import com.atlauncher.viewmodel.impl.AboutTabViewModel;
 
 /**
- * The about tab displays to the user some basic information in regard to
- * the current state of ATLauncher, and some other basic diagnostic information
- * to let users more easily report errors.
+ * The about tab displays to the user some basic information in regard to the current state of ATLauncher, and some
+ * other basic diagnostic information to let users more easily report errors.
  */
 public class AboutTab extends HierarchyPanel implements Tab {
     private JLabel contributorsLabel;
@@ -142,7 +141,7 @@ public class AboutTab extends HierarchyPanel implements Tab {
                 contributorsLabel = new JLabel(GetText.tr("Contributors"));
                 contributorsLabel.setFont(ATLauncherLaf.getInstance().getTitleFont());
                 contributorsLabel.setBorder(
-                        BorderFactory.createEmptyBorder(UIConstants.SPACING_XLARGE, UIConstants.SPACING_LARGE, 0, 0));
+                    BorderFactory.createEmptyBorder(UIConstants.SPACING_XLARGE, UIConstants.SPACING_LARGE, 0, 0));
 
                 Box box = Box.createHorizontalBox();
                 box.add(contributorsLabel);
@@ -193,13 +192,13 @@ public class AboutTab extends HierarchyPanel implements Tab {
             });
 
             try (BufferedReader reader = new BufferedReader(
-                    new InputStreamReader(App.class.getResourceAsStream("/LICENSE"),
-                            StandardCharsets.UTF_8))) {
+                new InputStreamReader(App.class.getResourceAsStream("/LICENSE"),
+                    StandardCharsets.UTF_8))) {
                 license.setText(
-                        new HTMLBuilder()
-                                .text(reader.lines().collect(Collectors.joining("<br/>"))
-                                        .replace("%YEAR%", new SimpleDateFormat("yyyy").format(new Date())))
-                                .build());
+                    new HTMLBuilder()
+                        .text(reader.lines().collect(Collectors.joining("<br/>"))
+                            .replace("%YEAR%", new SimpleDateFormat("yyyy").format(new Date())))
+                        .build());
             } catch (Exception e) {
                 LogManager.logStackTrace(e);
             }
@@ -226,13 +225,13 @@ public class AboutTab extends HierarchyPanel implements Tab {
                     }
                 });
                 try (BufferedReader reader = new BufferedReader(
-                        new InputStreamReader(App.class.getResourceAsStream("/THIRDPARTYLIBRARIES"),
-                                StandardCharsets.UTF_8))) {
+                    new InputStreamReader(App.class.getResourceAsStream("/THIRDPARTYLIBRARIES"),
+                        StandardCharsets.UTF_8))) {
                     thirdPartyLibraries.setText(
-                            new HTMLBuilder()
-                                    .text(reader.lines().collect(Collectors.joining("<br/>"))
-                                            .replace("%YEAR%", new SimpleDateFormat("yyyy").format(new Date())))
-                                    .build());
+                        new HTMLBuilder()
+                            .text(reader.lines().collect(Collectors.joining("<br/>"))
+                                .replace("%YEAR%", new SimpleDateFormat("yyyy").format(new Date())))
+                            .build());
                 } catch (Exception e) {
                     LogManager.logStackTrace(e);
                 }
@@ -267,7 +266,7 @@ public class AboutTab extends HierarchyPanel implements Tab {
             JPanel panel = new JPanel();
             panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
             panel.setBorder(
-                    BorderFactory.createEmptyBorder(0, UIConstants.SPACING_XLARGE, 0, UIConstants.SPACING_XLARGE));
+                BorderFactory.createEmptyBorder(0, UIConstants.SPACING_XLARGE, 0, UIConstants.SPACING_XLARGE));
             // panel.setSize(new Dimension(120, 0));
 
             BackgroundImageLabel icon = new BackgroundImageLabel(contributor.avatarUrl, 64, 64);
@@ -295,9 +294,9 @@ public class AboutTab extends HierarchyPanel implements Tab {
             panel.add(icon);
 
             JEditorPane contributorName = new JEditorPane("text/html",
-                    "<html><p style=\"padding: 0\" align=\"center\"><a href=\"" + contributor.url + "\">"
-                            + contributor.name
-                            + "</a></p></html>");
+                "<html><p style=\"padding: 0\" align=\"center\"><a href=\"" + contributor.url + "\">"
+                    + contributor.name
+                    + "</a></p></html>");
             contributorName.setEditable(false);
             contributorName.setFocusable(false);
             contributorName.addHyperlinkListener(e -> {
@@ -308,6 +307,11 @@ public class AboutTab extends HierarchyPanel implements Tab {
             panel.add(contributorName);
             authorsList.add(panel);
         }
-        SwingUtilities.invokeLater(() -> contributorsScrollPane.getHorizontalScrollBar().setValue(0));
+
+        SwingUtilities.invokeLater(() -> {
+            if (contributorsScrollPane != null) {
+                contributorsScrollPane.getHorizontalScrollBar().setValue(0);
+            }
+        });
     }
 }

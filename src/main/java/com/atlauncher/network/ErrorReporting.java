@@ -160,7 +160,7 @@ public final class ErrorReporting {
     }
 
     public static void recordInstancePlay(String packName, String packVersion, LoaderVersion loader,
-            int instanceVersion) {
+        int instanceVersion) {
         if (sentryInitialised && Sentry.isEnabled()) {
             Breadcrumb breadcrumb = new Breadcrumb("Playing instance");
             breadcrumb.setType("user");

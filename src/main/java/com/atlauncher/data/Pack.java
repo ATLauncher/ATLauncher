@@ -48,8 +48,8 @@ public class Pack {
     public String name;
     public PackType type;
     public String code;
-    public List<PackVersion> versions;
-    public List<PackVersion> devVersions;
+    public List<PackVersion> versions = new ArrayList<>();
+    public List<PackVersion> devVersions = new ArrayList<>();
     public boolean createServer;
     public boolean logging;
     public boolean featured;
@@ -78,8 +78,7 @@ public class Pack {
     }
 
     /**
-     * Gets a file safe and URL safe name which simply means replacing all non alpha
-     * numerical characters with nothing
+     * Gets a file safe and URL safe name which simply means replacing all non alpha numerical characters with nothing
      *
      * @return File safe and URL safe name of the pack
      */
@@ -290,7 +289,7 @@ public class Pack {
             int tries = 1;
             do {
                 this.json = com.atlauncher.network.Download.build().cached().setUrl(this.getJsonDownloadUrl(version))
-                        .asString();
+                    .asString();
                 tries++;
             } while (json == null && tries < 5);
             this.jsonVersion = version;
@@ -300,27 +299,27 @@ public class Pack {
 
     public String getJsonDownloadUrl(String version) {
         return String.format("%s/packs/%s/versions/%s/Configs.json", Constants.DOWNLOAD_SERVER, this.getSafeName(),
-                version);
+            version);
     }
 
     public void addInstall(String version) {
         GraphqlClient
-                .mutateAndWait(
-                        new AddPackActionMutation(AddPackActionInput.builder().packId(Integer.toString(
-                                id)).version(version).action(PackLogAction.INSTALL).build()));
+            .mutateAndWait(
+                new AddPackActionMutation(AddPackActionInput.builder().packId(Integer.toString(
+                    id)).version(version).action(PackLogAction.INSTALL).build()));
     }
 
     public void addServerInstall(String version) {
         GraphqlClient
-                .mutateAndWait(
-                        new AddPackActionMutation(AddPackActionInput.builder().packId(Integer.toString(
-                                id)).version(version).action(PackLogAction.SERVER).build()));
+            .mutateAndWait(
+                new AddPackActionMutation(AddPackActionInput.builder().packId(Integer.toString(
+                    id)).version(version).action(PackLogAction.SERVER).build()));
     }
 
     public void addUpdate(String version) {
         GraphqlClient
-                .mutateAndWait(
-                        new AddPackActionMutation(AddPackActionInput.builder().packId(Integer.toString(
-                                id)).version(version).action(PackLogAction.UPDATE).build()));
+            .mutateAndWait(
+                new AddPackActionMutation(AddPackActionInput.builder().packId(Integer.toString(
+                    id)).version(version).action(PackLogAction.UPDATE).build()));
     }
 }
