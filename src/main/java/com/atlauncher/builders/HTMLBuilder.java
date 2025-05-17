@@ -18,8 +18,10 @@
 package com.atlauncher.builders;
 
 import java.awt.Font;
+import java.util.Optional;
 
 import com.atlauncher.App;
+import com.atlauncher.themes.ATLauncherLaf;
 
 public final class HTMLBuilder {
     public boolean center = false;
@@ -70,9 +72,12 @@ public final class HTMLBuilder {
         String end = "";
 
         if (center) {
-            Font font = App.THEME.getNormalFont();
+            Font font = Optional.ofNullable(App.THEME)
+                .map(ATLauncherLaf::getNormalFont)
+                .orElse(new Font("Arial", Font.PLAIN, 12));
+            
             start += "<p style=\"padding: 0;font-family: " + font.getFamily() + ";font-size: " + font.getSize()
-                    + "pt;\" align=\"center\">";
+                + "pt;\" align=\"center\">";
             end += "</p>";
         }
 
