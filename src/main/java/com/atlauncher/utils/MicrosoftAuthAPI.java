@@ -60,32 +60,32 @@ public class MicrosoftAuthAPI {
 
     public static OauthDeviceCodeResponse getDeviceCode() {
         RequestBody data = new FormBody.Builder().add("client_id", Constants.MICROSOFT_LOGIN_CLIENT_ID)
-                .add("scope", String.join(" ", Constants.MICROSOFT_LOGIN_SCOPES)).build();
+            .add("scope", String.join(" ", Constants.MICROSOFT_LOGIN_SCOPES)).build();
 
         OauthDeviceCodeResponse deviceCodeResponse = NetworkClient.post(Constants.MICROSOFT_DEVICE_CODE_URL,
-                Headers.of("Content-Type", "application/x-www-form-urlencoded"), data, OauthDeviceCodeResponse.class);
+            Headers.of("Content-Type", "application/x-www-form-urlencoded"), data, OauthDeviceCodeResponse.class);
 
         return deviceCodeResponse;
     }
 
     public static OauthTokenResponse checkDeviceCodeForToken(String deviceCode) throws IOException {
         RequestBody data = new FormBody.Builder().add("client_id", Constants.MICROSOFT_LOGIN_CLIENT_ID)
-                .add("device_code", deviceCode).add("grant_type", "urn:ietf:params:oauth:grant-type:device_code")
-                .build();
+            .add("device_code", deviceCode).add("grant_type", "urn:ietf:params:oauth:grant-type:device_code")
+            .build();
 
-        OauthTokenResponse deviceCodeTokenResponse = NetworkClient.post(Constants.MICROSOFT_AUTH_TOKEN_URL,
-                Headers.of("Content-Type", "application/x-www-form-urlencoded"), data, OauthTokenResponse.class);
+        OauthTokenResponse deviceCodeTokenResponse = NetworkClient.postWithThrow(Constants.MICROSOFT_AUTH_TOKEN_URL,
+            Headers.of("Content-Type", "application/x-www-form-urlencoded"), data, OauthTokenResponse.class);
 
         return deviceCodeTokenResponse;
     }
 
     public static OauthTokenResponse refreshAccessToken(String refreshToken) {
         RequestBody data = new FormBody.Builder().add("client_id", Constants.MICROSOFT_LOGIN_CLIENT_ID)
-                .add("refresh_token", refreshToken).add("grant_type", "refresh_token")
-                .add("redirect_uri", Constants.MICROSOFT_LOGIN_REDIRECT_URL).build();
+            .add("refresh_token", refreshToken).add("grant_type", "refresh_token")
+            .add("redirect_uri", Constants.MICROSOFT_LOGIN_REDIRECT_URL).build();
 
         OauthTokenResponse oauthTokenResponse = NetworkClient.post(Constants.MICROSOFT_AUTH_TOKEN_URL,
-                Headers.of("Content-Type", "application/x-www-form-urlencoded"), data, OauthTokenResponse.class);
+            Headers.of("Content-Type", "application/x-www-form-urlencoded"), data, OauthTokenResponse.class);
 
         return oauthTokenResponse;
     }
@@ -102,10 +102,10 @@ public class MicrosoftAuthAPI {
         data.put("TokenType", "JWT");
 
         XboxLiveAuthResponse xblAuthResponse = NetworkClient.post(Constants.MICROSOFT_XBL_AUTH_TOKEN_URL,
-                Headers.of("Content-Type", "application/json", "Accept", "application/json", "x-xbl-contract-version",
-                        "1"),
-                RequestBody.create(Gsons.DEFAULT.toJson(data), MediaType.get("application/json; charset=utf-8")),
-                XboxLiveAuthResponse.class);
+            Headers.of("Content-Type", "application/json", "Accept", "application/json", "x-xbl-contract-version",
+                "1"),
+            RequestBody.create(Gsons.DEFAULT.toJson(data), MediaType.get("application/json; charset=utf-8")),
+            XboxLiveAuthResponse.class);
 
         return xblAuthResponse;
     }
@@ -123,11 +123,11 @@ public class MicrosoftAuthAPI {
         data.put("RelyingParty", "rp://api.minecraftservices.com/");
         data.put("TokenType", "JWT");
 
-        XboxLiveAuthResponse xstsAuthResponse = NetworkClient.post(Constants.MICROSOFT_XSTS_AUTH_TOKEN_URL,
-                Headers.of("Content-Type", "application/json", "Accept", "application/json", "x-xbl-contract-version",
-                        "1"),
-                RequestBody.create(Gsons.DEFAULT.toJson(data), MediaType.get("application/json; charset=utf-8")),
-                XboxLiveAuthResponse.class);
+        XboxLiveAuthResponse xstsAuthResponse = NetworkClient.postWithThrow(Constants.MICROSOFT_XSTS_AUTH_TOKEN_URL,
+            Headers.of("Content-Type", "application/json", "Accept", "application/json", "x-xbl-contract-version",
+                "1"),
+            RequestBody.create(Gsons.DEFAULT.toJson(data), MediaType.get("application/json; charset=utf-8")),
+            XboxLiveAuthResponse.class);
 
         return xstsAuthResponse;
     }
@@ -138,20 +138,20 @@ public class MicrosoftAuthAPI {
         data.put("platform", "PC_LAUNCHER");
 
         LoginResponse loginResponse = NetworkClient.post(Constants.MICROSOFT_MINECRAFT_LOGIN_URL,
-                Headers.of("Content-Type", "application/json", "Accept", "application/json"),
-                RequestBody.create(Gsons.DEFAULT.toJson(data), MediaType.get("application/json; charset=utf-8")),
-                LoginResponse.class);
+            Headers.of("Content-Type", "application/json", "Accept", "application/json"),
+            RequestBody.create(Gsons.DEFAULT.toJson(data), MediaType.get("application/json; charset=utf-8")),
+            LoginResponse.class);
 
         return loginResponse;
     }
 
     public static Entitlements getEntitlements(String accessToken) {
         Entitlements entitlementsResponse = NetworkClient.get(
-                String.format("%s?requestId=%s", Constants.MICROSOFT_MINECRAFT_ENTITLEMENTS_URL,
-                        UUID.randomUUID()),
-                Headers.of("Authorization", "Bearer " + accessToken, "Content-Type", "application/json", "Accept",
-                        "application/json"),
-                Entitlements.class);
+            String.format("%s?requestId=%s", Constants.MICROSOFT_MINECRAFT_ENTITLEMENTS_URL,
+                UUID.randomUUID()),
+            Headers.of("Authorization", "Bearer " + accessToken, "Content-Type", "application/json", "Accept",
+                "application/json"),
+            Entitlements.class);
 
         return entitlementsResponse;
     }
@@ -159,8 +159,8 @@ public class MicrosoftAuthAPI {
     @Nullable
     public static Profile getMcProfile(String accessToken) throws DownloadException {
         return NetworkClient.getWithThrow(
-                Constants.MICROSOFT_MINECRAFT_PROFILE_URL,
-                Headers.of("Authorization", "Bearer " + accessToken),
-                Profile.class);
+            Constants.MICROSOFT_MINECRAFT_PROFILE_URL,
+            Headers.of("Authorization", "Bearer " + accessToken),
+            Profile.class);
     }
 }
