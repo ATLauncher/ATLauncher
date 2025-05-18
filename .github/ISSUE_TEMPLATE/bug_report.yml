@@ -7,7 +7,11 @@ body:
       value: |
         Thanks for taking the time to fill out this bug report!
 
+        # STOP AND READ THE BELOW FIRST
+
         If you haven't been directed here by a member of the team, please visit our [Discord](https://atl.pw/discord) to verify that your bug is correct and should be reported here. Bug reports submitted here without first being verified by ATLauncher staff may get closed.
+
+        Failing to follow the above will result in issues being closed and directed to our [Discord](https://atl.pw/discord) first.
 
   - type: textarea
     id: what-happened

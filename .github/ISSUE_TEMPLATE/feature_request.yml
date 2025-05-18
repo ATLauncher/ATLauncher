@@ -7,7 +7,11 @@ body:
       value: |
         Thanks for taking the time to create this feature request!
 
+        # STOP AND READ THE BELOW FIRST
+
         If you haven't been directed here by a member of the team, please visit our [Feedback Site](https://feedback.atlauncher.com) to submit your feature request. Feature requests submitted here will not be given as much attention as those submitted on the feedback site which help us guage public interest in new features.
+
+        Failing to follow the above will result in issues being closed and directed to our [Feedback Site](https://feedback.atlauncher.com) first.
 
   - type: textarea
     id: problem
