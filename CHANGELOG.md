@@ -10,5 +10,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 ### Fixes
 
 - Bug squashing
+- Unable to select snapshots on Create Pack screen
 
 ### Misc

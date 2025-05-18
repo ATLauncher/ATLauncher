@@ -17,14 +17,15 @@
  */
 package com.atlauncher.gui.tabs;
 
+import static java.lang.Math.max;
+import static java.lang.Math.min;
+
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Rectangle;
-import static java.lang.Math.max;
-import static java.lang.Math.min;
 import java.util.List;
 
 import javax.annotation.Nullable;
@@ -98,6 +99,8 @@ public class CreatePackTab extends HierarchyPanel implements Tab {
     @Nullable
     private DefaultTableModel minecraftVersionTableModel = null;
     private boolean hasScrolledToSelection = false;
+    // Guard to prevent infinite selection loop
+    private boolean isUpdatingSelection = false;
 
     public CreatePackTab() {
         super(new BorderLayout());
@@ -153,9 +156,9 @@ public class CreatePackTab extends HierarchyPanel implements Tab {
         LockingPreservingCaretTextSetter nameFieldSetter = new LockingPreservingCaretTextSetter(nameField);
         addDisposable(viewModel.name().subscribe((it) -> nameFieldSetter.setText(it.orElse(null))));
         nameField.addKeyListener(new StatefulTextKeyAdapter(
-                (e) -> viewModel.setName(nameField.getText()),
-                (e) -> nameFieldSetter.setLocked(true),
-                (e) -> SwingUtilities.invokeLater(() -> nameFieldSetter.setLocked(false))));
+            (e) -> viewModel.setName(nameField.getText()),
+            (e) -> nameFieldSetter.setLocked(true),
+            (e) -> SwingUtilities.invokeLater(() -> nameFieldSetter.setLocked(false))));
         mainPanel.add(nameField, gbc);
 
         // Description
@@ -169,19 +172,19 @@ public class CreatePackTab extends HierarchyPanel implements Tab {
         gbc.insets = UIConstants.FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         JScrollPane descriptionScrollPane = new JScrollPane(
-                JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+            JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         descriptionScrollPane.setBorder(new FlatScrollPaneBorder());
         descriptionScrollPane.setPreferredSize(new Dimension(450, 80));
         descriptionScrollPane.setViewportView(descriptionField);
 
         descriptionField.setLineWrap(true);
         LockingPreservingCaretTextSetter descriptionFieldSetter = new LockingPreservingCaretTextSetter(
-                descriptionField);
+            descriptionField);
         addDisposable(viewModel.description().subscribe((it) -> descriptionFieldSetter.setText(it.orElse(null))));
         descriptionField.addKeyListener(new StatefulTextKeyAdapter(
-                (e) -> viewModel.setDescription(descriptionField.getText()),
-                (e) -> descriptionFieldSetter.setLocked(true),
-                (e) -> SwingUtilities.invokeLater(() -> descriptionFieldSetter.setLocked(false))));
+            (e) -> viewModel.setDescription(descriptionField.getText()),
+            (e) -> descriptionFieldSetter.setLocked(true),
+            (e) -> SwingUtilities.invokeLater(() -> descriptionFieldSetter.setLocked(false))));
         mainPanel.add(descriptionScrollPane, gbc);
 
         // Minecraft Version
@@ -221,7 +224,7 @@ public class CreatePackTab extends HierarchyPanel implements Tab {
         gbc.insets = UIConstants.FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         JScrollPane minecraftVersionScrollPane = new JScrollPane(
-                JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+            JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         minecraftVersionScrollPane.setBorder(new FlatScrollPaneBorder());
         minecraftVersionScrollPane.setPreferredSize(new Dimension(450, 300));
         setupMinecraftVersionsTable();
@@ -283,9 +286,9 @@ public class CreatePackTab extends HierarchyPanel implements Tab {
                 for (LoaderVersion version : loaderVersions) {
                     // ensures that font width is taken into account
                     loaderVersionLength = max(
-                            loaderVersionLength,
-                            getFontMetrics(App.THEME.getNormalFont())
-                                    .stringWidth(version.toString()) + 25);
+                        loaderVersionLength,
+                        getFontMetrics(App.THEME.getNormalFont())
+                            .stringWidth(version.toString()) + 25);
 
                     loaderVersionsDropDown.addItem(new ComboItem<>(version, version.toString()));
                 }
@@ -310,7 +313,7 @@ public class CreatePackTab extends HierarchyPanel implements Tab {
             // impossible.
             if (e.getWhen() > (loaderVersionLastChange + 100)) {
                 ComboItem<LoaderVersion> comboItem = (ComboItem<LoaderVersion>) loaderVersionsDropDown
-                        .getSelectedItem();
+                    .getSelectedItem();
 
                 if (comboItem != null) {
                     LoaderVersion version = comboItem.getValue();
@@ -359,13 +362,13 @@ public class CreatePackTab extends HierarchyPanel implements Tab {
 
     private void setupLoaderLegacyFabricButton(JPanel loaderTypePanel) {
         addDisposable(
-                viewModel.loaderTypeLegacyFabricSelected().subscribe(loaderTypeLegacyFabricRadioButton::setSelected));
+            viewModel.loaderTypeLegacyFabricSelected().subscribe(loaderTypeLegacyFabricRadioButton::setSelected));
         addDisposable(
-                viewModel.loaderTypeLegacyFabricEnabled().subscribe(loaderTypeLegacyFabricRadioButton::setEnabled));
+            viewModel.loaderTypeLegacyFabricEnabled().subscribe(loaderTypeLegacyFabricRadioButton::setEnabled));
         addDisposable(viewModel.isLegacyFabricVisible().subscribe(loaderTypeLegacyFabricRadioButton::setVisible));
         loaderTypeLegacyFabricRadioButton.addActionListener(
-                e -> viewModel.setLoaderType(
-                        LoaderType.LEGACY_FABRIC));
+            e -> viewModel.setLoaderType(
+                LoaderType.LEGACY_FABRIC));
         if (viewModel.showLegacyFabricOption()) {
             loaderTypePanel.add(loaderTypeLegacyFabricRadioButton);
         }
@@ -376,8 +379,8 @@ public class CreatePackTab extends HierarchyPanel implements Tab {
         addDisposable(viewModel.loaderTypeNeoForgeEnabled().subscribe(loaderTypeNeoForgeRadioButton::setEnabled));
         addDisposable(viewModel.isNeoForgeVisible().subscribe(loaderTypeNeoForgeRadioButton::setVisible));
         loaderTypeNeoForgeRadioButton.addActionListener(
-                e -> viewModel.setLoaderType(
-                        LoaderType.NEOFORGE));
+            e -> viewModel.setLoaderType(
+                LoaderType.NEOFORGE));
         if (viewModel.showNeoForgeOption()) {
             loaderTypePanel.add(loaderTypeNeoForgeRadioButton);
         }
@@ -388,11 +391,11 @@ public class CreatePackTab extends HierarchyPanel implements Tab {
         addDisposable(viewModel.loaderTypePaperEnabled().subscribe(loaderTypePaperRadioButton::setEnabled));
         addDisposable(viewModel.isPaperVisible().subscribe(loaderTypePaperRadioButton::setVisible));
         loaderTypePaperRadioButton.addActionListener(
-                e -> viewModel.setLoaderType(LoaderType.PAPER));
+            e -> viewModel.setLoaderType(LoaderType.PAPER));
         // #. {0} is the name of the loader
         loaderTypePaperRadioButton.setToolTipText(new HTMLBuilder().text(GetText.tr(
-                "{0} is a loader for servers that allow you to install and run plugins.<br/>You can't run mods with the {0} loader and can only be used on servers.",
-                "Paper")).center().build());
+            "{0} is a loader for servers that allow you to install and run plugins.<br/>You can't run mods with the {0} loader and can only be used on servers.",
+            "Paper")).center().build());
         if (viewModel.showPaperOption()) {
             loaderTypePanel.add(loaderTypePaperRadioButton);
         }
@@ -403,11 +406,11 @@ public class CreatePackTab extends HierarchyPanel implements Tab {
         addDisposable(viewModel.loaderTypePurpurEnabled().subscribe(loaderTypePurpurRadioButton::setEnabled));
         addDisposable(viewModel.isPurpurVisible().subscribe(loaderTypePurpurRadioButton::setVisible));
         loaderTypePurpurRadioButton.addActionListener(
-                e -> viewModel.setLoaderType(LoaderType.PURPUR));
+            e -> viewModel.setLoaderType(LoaderType.PURPUR));
         // #. {0} is the name of the loader
         loaderTypePurpurRadioButton.setToolTipText(new HTMLBuilder().text(GetText.tr(
-                "{0} is a loader for servers that allow you to install and run plugins.<br/>You can't run mods with the {0} loader and can only be used on servers.",
-                "Purpur")).center().build());
+            "{0} is a loader for servers that allow you to install and run plugins.<br/>You can't run mods with the {0} loader and can only be used on servers.",
+            "Purpur")).center().build());
         if (viewModel.showPurpurOption()) {
             loaderTypePanel.add(loaderTypePurpurRadioButton);
         }
@@ -418,8 +421,8 @@ public class CreatePackTab extends HierarchyPanel implements Tab {
         addDisposable(viewModel.loaderTypeFabricEnabled().subscribe(loaderTypeFabricRadioButton::setEnabled));
         addDisposable(viewModel.isFabricVisible().subscribe(loaderTypeFabricRadioButton::setVisible));
         loaderTypeFabricRadioButton.addActionListener(
-                e -> viewModel.setLoaderType(
-                        LoaderType.FABRIC));
+            e -> viewModel.setLoaderType(
+                LoaderType.FABRIC));
         if (viewModel.showFabricOption()) {
             loaderTypePanel.add(loaderTypeFabricRadioButton);
         }
@@ -436,7 +439,7 @@ public class CreatePackTab extends HierarchyPanel implements Tab {
         addDisposable(viewModel.oldAlphaSelected().subscribe(minecraftVersionAlphasFilterCheckbox::setSelected));
         addDisposable(viewModel.oldAlphaEnabled().subscribe(minecraftVersionAlphasFilterCheckbox::setEnabled));
         minecraftVersionAlphasFilterCheckbox.addActionListener(
-                it -> viewModel.setOldAlphaSelected(minecraftVersionAlphasFilterCheckbox.isSelected()));
+            it -> viewModel.setOldAlphaSelected(minecraftVersionAlphasFilterCheckbox.isSelected()));
         if (viewModel.showOldAlphaOption()) {
             minecraftVersionFilterPanel.add(minecraftVersionAlphasFilterCheckbox);
         }
@@ -446,7 +449,7 @@ public class CreatePackTab extends HierarchyPanel implements Tab {
         addDisposable(viewModel.oldBetaSelected().subscribe(minecraftVersionBetasFilterCheckbox::setSelected));
         addDisposable(viewModel.oldBetaEnabled().subscribe(minecraftVersionBetasFilterCheckbox::setEnabled));
         minecraftVersionBetasFilterCheckbox.addActionListener(
-                it -> viewModel.setOldBetaSelected(minecraftVersionBetasFilterCheckbox.isSelected()));
+            it -> viewModel.setOldBetaSelected(minecraftVersionBetasFilterCheckbox.isSelected()));
         if (viewModel.showOldBetaOption()) {
             minecraftVersionFilterPanel.add(minecraftVersionBetasFilterCheckbox);
         }
@@ -456,7 +459,7 @@ public class CreatePackTab extends HierarchyPanel implements Tab {
         addDisposable(viewModel.snapshotSelected().subscribe(minecraftVersionSnapshotsFilterCheckbox::setSelected));
         addDisposable(viewModel.snapshotEnabled().subscribe(minecraftVersionSnapshotsFilterCheckbox::setEnabled));
         minecraftVersionSnapshotsFilterCheckbox.addActionListener(
-                it -> viewModel.setSnapshotSelected(minecraftVersionSnapshotsFilterCheckbox.isSelected()));
+            it -> viewModel.setSnapshotSelected(minecraftVersionSnapshotsFilterCheckbox.isSelected()));
         if (viewModel.showSnapshotOption()) {
             minecraftVersionFilterPanel.add(minecraftVersionSnapshotsFilterCheckbox);
         }
@@ -466,7 +469,7 @@ public class CreatePackTab extends HierarchyPanel implements Tab {
         addDisposable(viewModel.experimentSelected().subscribe(minecraftVersionExperimentsFilterCheckbox::setSelected));
         addDisposable(viewModel.experimentEnabled().subscribe(minecraftVersionExperimentsFilterCheckbox::setEnabled));
         minecraftVersionExperimentsFilterCheckbox.addActionListener(
-                it -> viewModel.setExperimentSelected(minecraftVersionExperimentsFilterCheckbox.isSelected()));
+            it -> viewModel.setExperimentSelected(minecraftVersionExperimentsFilterCheckbox.isSelected()));
         if (viewModel.showExperimentOption()) {
             minecraftVersionFilterPanel.add(minecraftVersionExperimentsFilterCheckbox);
         }
@@ -477,7 +480,7 @@ public class CreatePackTab extends HierarchyPanel implements Tab {
         addDisposable(viewModel.releaseEnabled().subscribe(minecraftVersionReleasesFilterCheckbox::setEnabled));
         minecraftVersionReleasesFilterCheckbox.setSelected(true);
         minecraftVersionReleasesFilterCheckbox.addActionListener(
-                it -> viewModel.setReleaseSelected(minecraftVersionReleasesFilterCheckbox.isSelected()));
+            it -> viewModel.setReleaseSelected(minecraftVersionReleasesFilterCheckbox.isSelected()));
         if (viewModel.showReleaseOption()) {
             minecraftVersionFilterPanel.add(minecraftVersionReleasesFilterCheckbox);
         }
@@ -486,8 +489,8 @@ public class CreatePackTab extends HierarchyPanel implements Tab {
     @SuppressWarnings("null")
     private void setupMinecraftVersionsTable() {
         minecraftVersionTableModel = new DefaultTableModel(
-                new String[][] {},
-                new String[] { GetText.tr("Version"), GetText.tr("Released"), GetText.tr("Type") }) {
+            new String[][] {},
+            new String[] { GetText.tr("Version"), GetText.tr("Released"), GetText.tr("Type") }) {
             @Override
             public boolean isCellEditable(int rowIndex, int columnIndex) {
                 return false;
@@ -498,7 +501,7 @@ public class CreatePackTab extends HierarchyPanel implements Tab {
         minecraftVersionTable.getTableHeader().setReorderingAllowed(false);
         ListSelectionModel sm = minecraftVersionTable.getSelectionModel();
         sm.addListSelectionListener((e) -> {
-            if (e.getValueIsAdjusting()) {
+            if (isUpdatingSelection || e.getValueIsAdjusting()) {
                 return;
             }
             ListSelectionModel lsm = (ListSelectionModel) e.getSource();
@@ -508,7 +511,7 @@ public class CreatePackTab extends HierarchyPanel implements Tab {
             for (int i = minIndex; i <= maxIndex; i++) {
                 if (lsm.isSelectedIndex(i)) {
                     viewModel.setSelectedMinecraftVersion(
-                            (String) minecraftVersionTableModel.getValueAt(i, 0));
+                        (String) minecraftVersionTableModel.getValueAt(i, 0));
                 }
             }
         });
@@ -516,6 +519,7 @@ public class CreatePackTab extends HierarchyPanel implements Tab {
         BehaviorSubject<Boolean> isTableSetup = BehaviorSubject.createDefault(false);
 
         addDisposable(viewModel.minecraftVersions().subscribe((minecraftVersions) -> {
+            isUpdatingSelection = true;
             // remove all rows
             int rowCount = 0;
             if (minecraftVersionTableModel != null) {
@@ -533,11 +537,11 @@ public class CreatePackTab extends HierarchyPanel implements Tab {
             for (MCVersionRow row : minecraftVersions) {
                 if (minecraftVersionTableModel != null) {
                     minecraftVersionTableModel.addRow(
-                            new Object[] {
-                                    row.id,
-                                    row.date,
-                                    row.type
-                            });
+                        new Object[] {
+                            row.id,
+                            row.date,
+                            row.type
+                        });
                 }
             }
 
@@ -546,27 +550,28 @@ public class CreatePackTab extends HierarchyPanel implements Tab {
                 minecraftVersionTable.revalidate();
             }
             isTableSetup.onNext(true);
+            isUpdatingSelection = false;
         }));
 
         addDisposable(Observable.combineLatest(
-                isTableSetup.filter(setup -> setup),
-                viewModel.selectedMinecraftVersionIndex(),
-                (setup, index) -> index).subscribe(it -> {
-                    if (minecraftVersionTable != null) {
-                        int rowCount = minecraftVersionTable.getRowCount();
+            isTableSetup.filter(setup -> setup),
+            viewModel.selectedMinecraftVersionIndex(),
+            (setup, index) -> index).subscribe(it -> {
+            if (minecraftVersionTable != null) {
+                int rowCount = minecraftVersionTable.getRowCount();
 
-                        if (it < rowCount) {
-                            minecraftVersionTable.setRowSelectionInterval(it, it);
-                            minecraftVersionTable.revalidate();
+                if (it < rowCount) {
+                    minecraftVersionTable.setRowSelectionInterval(it, it);
+                    minecraftVersionTable.revalidate();
 
-                            if (!hasScrolledToSelection) {
-                                Rectangle rect = minecraftVersionTable.getCellRect(it, 0, true);
-                                minecraftVersionTable.scrollRectToVisible(rect);
-                                hasScrolledToSelection = true;
-                            }
-                        }
+                    if (!hasScrolledToSelection) {
+                        Rectangle rect = minecraftVersionTable.getCellRect(it, 0, true);
+                        minecraftVersionTable.scrollRectToVisible(rect);
+                        hasScrolledToSelection = true;
                     }
-                }));
+                }
+            }
+        }));
 
         TableColumnModel cm = minecraftVersionTable.getColumnModel();
         cm.getColumn(0).setResizable(false);
@@ -582,15 +587,15 @@ public class CreatePackTab extends HierarchyPanel implements Tab {
         JPanel bottomPanel = new JPanel(new FlowLayout());
         bottomPanel.add(createServerButton);
         createServerButton.addActionListener((event) -> { // user has no instances, they may not be aware this is not
-                                                          // how to play
+            // how to play
             if (viewModel.warnUserAboutServer()) {
                 int ret = DialogManager.yesNoDialog().setTitle(GetText.tr("Are you sure you want to create a server?"))
-                        .setContent(
-                                new HTMLBuilder().center().text(
-                                        GetText.tr(
-                                                "Creating a server won't allow you play Minecraft, it's for letting others play together.<br/><br/>If you just want to play Minecraft, you don't want to create a server, and instead will want to create an instance.<br/><br/>Are you sure you want to create a server?"))
-                                        .build())
-                        .setType(DialogManager.QUESTION).show();
+                    .setContent(
+                        new HTMLBuilder().center().text(
+                                GetText.tr(
+                                    "Creating a server won't allow you play Minecraft, it's for letting others play together.<br/><br/>If you just want to play Minecraft, you don't want to create a server, and instead will want to create an instance.<br/><br/>Are you sure you want to create a server?"))
+                            .build())
+                    .setType(DialogManager.QUESTION).show();
                 if (ret != 0) {
                     return;
                 }
@@ -598,7 +603,7 @@ public class CreatePackTab extends HierarchyPanel implements Tab {
             viewModel.createServer();
         });
         addDisposable(viewModel.createInstanceDisabledReason()
-                .subscribe((reason) -> createInstanceButton.setToolTipText(reason.orElse(null))));
+            .subscribe((reason) -> createInstanceButton.setToolTipText(reason.orElse(null))));
         addDisposable(viewModel.createInstanceEnabled().subscribe(createInstanceButton::setEnabled));
         addDisposable(viewModel.createServerEnabled().subscribe(createServerButton::setEnabled));
         bottomPanel.add(createInstanceButton);
