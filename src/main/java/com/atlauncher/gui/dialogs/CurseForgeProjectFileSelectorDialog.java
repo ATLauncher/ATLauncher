@@ -90,7 +90,7 @@ public class CurseForgeProjectFileSelectorDialog extends JDialog {
     }
 
     public CurseForgeProjectFileSelectorDialog(Window parent, CurseForgeProject mod, ModManagement instanceOrServer,
-                                               int installedFileId) {
+        int installedFileId) {
         super(parent, ModalityType.DOCUMENT_MODAL);
 
         this.mod = mod;
@@ -101,7 +101,7 @@ public class CurseForgeProjectFileSelectorDialog extends JDialog {
     }
 
     public CurseForgeProjectFileSelectorDialog(Window parent, CurseForgeProject mod, ModManagement instanceOrServer,
-                                               int installedFileId, boolean selectNewest) {
+        int installedFileId, boolean selectNewest) {
         super(parent, ModalityType.DOCUMENT_MODAL);
 
         this.mod = mod;
@@ -237,7 +237,7 @@ public class CurseForgeProjectFileSelectorDialog extends JDialog {
                 })
                 .filter(dependency -> instanceOrServer.getMods().stream()
                     .noneMatch(installedMod -> {
-                        if (instanceOrServer.getLoaderVersion().isQuilt()
+                        if (instanceOrServer.getLoaderVersion() != null && instanceOrServer.getLoaderVersion().isQuilt()
                             && dependency.modId == Constants.CURSEFORGE_FABRIC_MOD_ID) {
                             // if on Quilt and the dependency is Fabric API, then don't show it if user
                             // already has QSL installed
@@ -305,6 +305,17 @@ public class CurseForgeProjectFileSelectorDialog extends JDialog {
             LoaderVersion loaderVersion = instanceOrServer.getLoaderVersion();
 
             List<CurseForgeFile> projectFiles = CurseForgeApi.getFilesForProject(mod.id);
+
+            if (projectFiles == null) {
+                DialogManager.okDialog().setParent(CurseForgeProjectFileSelectorDialog.this)
+                    .setTitle(GetText.tr("No files found"))
+                    .setContent(new HTMLBuilder().text(GetText.tr(
+                            "No files found for this mod. CurseForge may be down or having issues.<br/>Please wait and try again in a few minutes."))
+                        .center().build()).setType(DialogManager.ERROR).show();
+                dispose();
+                return;
+            }
+
             Stream<CurseForgeFile> curseForgeFilesStream = projectFiles.stream()
                 .sorted(Comparator.comparingInt((CurseForgeFile file) -> file.id).reversed());
 
@@ -412,8 +423,11 @@ public class CurseForgeProjectFileSelectorDialog extends JDialog {
             }
 
             if (filesDropdown.getItemCount() == 0) {
-                DialogManager.okDialog().setParent(CurseForgeProjectFileSelectorDialog.this).setTitle(GetText.tr("No files found"))
-                    .setContent(new HTMLBuilder().text(GetText.tr("No files found for this mod. CurseForge may be down or having issues.<br/>Please wait and try again in a few minutes.")).center().build()).setType(DialogManager.ERROR).show();
+                DialogManager.okDialog().setParent(CurseForgeProjectFileSelectorDialog.this)
+                    .setTitle(GetText.tr("No files found"))
+                    .setContent(new HTMLBuilder().text(GetText.tr(
+                            "No files found for this mod. CurseForge may be down or having issues.<br/>Please wait and try again in a few minutes."))
+                        .center().build()).setType(DialogManager.ERROR).show();
                 dispose();
             }
 

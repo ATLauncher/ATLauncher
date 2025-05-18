@@ -63,7 +63,7 @@ public class SecurityUtils {
                 HashCode fileHash = Hashing.sha1(path);
                 if (FRACTURISER_SCANNED_HASHES.contains(fileHash.toString())) {
                     LogManager.debug(String.format("%s has already been scanned for Fractureiser",
-                            path.toAbsolutePath().toString()));
+                        path.toAbsolutePath().toString()));
                     return;
                 }
 
@@ -77,7 +77,7 @@ public class SecurityUtils {
                     }
                 } catch (Exception e) {
                     LogManager.error(
-                            String.format("Failed to scan %s for Fractureiser", path.toAbsolutePath().toString()));
+                        String.format("Failed to scan %s for Fractureiser", path.toAbsolutePath().toString()));
                 }
             });
         }
@@ -102,7 +102,7 @@ public class SecurityUtils {
 
                 hasLoadedFractureiserScannedHashes = true;
             } catch (Exception e) {
-                LogManager.logStackTrace("Exception loading scanned Fracturiser hashes", e);
+                LogManager.logStackTrace("Exception loading scanned Fracturiser hashes", e, false);
             }
         }
     }
@@ -114,7 +114,7 @@ public class SecurityUtils {
             }.getType();
             Gsons.DEFAULT.toJson(FRACTURISER_SCANNED_HASHES, stringListType, fileWriter);
         } catch (JsonIOException | IOException e) {
-            LogManager.logStackTrace(e);
+            LogManager.logStackTrace(e, false);
         }
     }
 }

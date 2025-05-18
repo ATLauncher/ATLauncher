@@ -119,7 +119,7 @@ public class FileUtils {
         }
 
         Path path = directory.getParent();
-        if (!Files.exists(path) || !Files.isDirectory(path)) {
+        if (path != null && (!Files.exists(path) || !Files.isDirectory(path))) {
             if (!createDirectory(path)) {
                 return false;
             }
@@ -163,7 +163,7 @@ public class FileUtils {
         // types
         try {
             if (Files.exists(to) && Files.isSameFile(from, to)
-                    && !from.getFileName().toString().equals(to.getFileName().toString())) {
+                && !from.getFileName().toString().equals(to.getFileName().toString())) {
                 return from.toFile().renameTo(to.toFile());
             }
         } catch (IOException e) {

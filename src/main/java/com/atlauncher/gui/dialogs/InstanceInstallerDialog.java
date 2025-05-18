@@ -39,6 +39,7 @@ import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+import javax.annotation.Nonnull;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -195,14 +196,14 @@ public class InstanceInstallerDialog extends JDialog {
     }
 
     public InstanceInstallerDialog(Object object, boolean isUpdate, boolean isServer, PackVersion autoInstallVersion,
-                                   boolean showModsChooser, Path extractedPath) {
+        boolean showModsChooser, Path extractedPath) {
         this(object, isUpdate, isServer, autoInstallVersion, showModsChooser, extractedPath,
             App.launcher.getParent(), null);
     }
 
     public InstanceInstallerDialog(Object object, final boolean isUpdate, final boolean isServer,
-                                   final PackVersion autoInstallVersion, final boolean showModsChooser,
-                                   Path extractedPathCon, Window parent, ModrinthVersion preselectedModrinthVersion) {
+        final PackVersion autoInstallVersion, final boolean showModsChooser,
+        Path extractedPathCon, Window parent, ModrinthVersion preselectedModrinthVersion) {
         super(parent, ModalityType.DOCUMENT_MODAL);
 
         setName("instanceInstallerDialog");
@@ -246,8 +247,9 @@ public class InstanceInstallerDialog extends JDialog {
 
         // Top Panel Stuff
         JPanel top = new JPanel();
+        String packName = Optional.ofNullable(pack).map(Pack::getName).orElse("Pack");
         top.add(new JLabel(((isReinstall) ? (isUpdate ? GetText.tr("Updating") : GetText.tr("Reinstalling"))
-            : GetText.tr("Installing")) + " " + pack.getName()
+            : GetText.tr("Installing")) + " " + packName
             + (isReinstall ? GetText.tr(" (Current Version: {0})", instance.getVersionOfPack()) : "")));
 
         // Middle Panel Stuff
@@ -267,7 +269,7 @@ public class InstanceInstallerDialog extends JDialog {
         gbc.insets = UIConstants.FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         nameField = new JTextField(17);
-        nameField.setText(((isReinstall) ? instance.launcher.name : pack.getName()));
+        nameField.setText(((isReinstall) ? instance.launcher.name : packName));
         if (isReinstall) {
             nameField.setEnabled(false);
         }
@@ -455,6 +457,10 @@ public class InstanceInstallerDialog extends JDialog {
                 int[] serverFileIds = files.stream().filter(file -> file.serverPackFileId != null)
                     .mapToInt(file -> file.serverPackFileId).toArray();
                 List<CurseForgeFile> serverFiles = CurseForgeApi.getFiles(serverFileIds);
+
+                if (serverFiles == null) {
+                    serverFiles = new ArrayList<>();
+                }
 
                 dialog.setReturnValue(
                     new Pair<>(serverFiles.stream().map(f -> {
@@ -714,6 +720,16 @@ public class InstanceInstallerDialog extends JDialog {
 
         technicModpackDialog.start();
         technicModpack = technicModpackDialog.getReturnValue();
+
+        if (technicModpack == null) {
+            LogManager.error("Failed to get modpack from Technic, null response for slug " + slug + ".");
+            DialogManager.okDialog().setTitle(GetText.tr("Error"))
+                .setContent(new HTMLBuilder().text(GetText.tr(
+                        "Failed to get information for modpack from Technic."))
+                    .center().build())
+                .show();
+            return;
+        }
 
         pack = new Pack();
         pack.externalId = technicModpack.id;
@@ -1046,19 +1062,22 @@ public class InstanceInstallerDialog extends JDialog {
 
         versionsDropDown.addItemListener(e -> {
             if (e.getStateChange() == ItemEvent.SELECTED) {
-                updateLoaderVersions((PackVersion) e.getItem());
+                PackVersion packVersion = ((PackVersion) e.getItem());
 
-                if (!isServer && isReinstall) {
-                    PackVersion packVersion = ((PackVersion) e.getItem());
-                    Optional<VersionManifestVersion> minecraftVersion = Optional
-                        .ofNullable(packVersion.minecraftVersion);
+                if (packVersion != null) {
+                    updateLoaderVersions((PackVersion) e.getItem());
 
-                    saveModsLabel.setVisible(minecraftVersion.isPresent()
-                        && !minecraftVersion.get().id.equalsIgnoreCase(this.instance.id));
-                    saveModsCheckbox.setVisible(minecraftVersion.isPresent()
-                        && !minecraftVersion.get().id.equalsIgnoreCase(this.instance.id));
+                    if (!isServer && isReinstall) {
+                        Optional<VersionManifestVersion> minecraftVersion = Optional
+                            .ofNullable(packVersion.minecraftVersion);
 
-                    WindowUtils.resizeForContent(this);
+                        saveModsLabel.setVisible(minecraftVersion.isPresent()
+                            && !minecraftVersion.get().id.equalsIgnoreCase(this.instance.id));
+                        saveModsCheckbox.setVisible(minecraftVersion.isPresent()
+                            && !minecraftVersion.get().id.equalsIgnoreCase(this.instance.id));
+
+                        WindowUtils.resizeForContent(this);
+                    }
                 }
             }
         });
@@ -1152,7 +1171,7 @@ public class InstanceInstallerDialog extends JDialog {
         versionsDropDown.setPreferredSize(new Dimension(versionLength, 23));
     }
 
-    protected void updateLoaderVersions(PackVersion item) {
+    protected void updateLoaderVersions(@Nonnull PackVersion item) {
         if (!item.hasLoader() || !item.hasChoosableLoader()) {
             loaderVersionLabel.setVisible(false);
             loaderVersionsDropDown.setVisible(false);
@@ -1318,7 +1337,9 @@ public class InstanceInstallerDialog extends JDialog {
         gbc.gridx++;
         gbc.insets = UIConstants.FIELD_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
-        this.updateLoaderVersions((PackVersion) this.versionsDropDown.getSelectedItem());
+        if (this.versionsDropDown.getSelectedItem() != null) {
+            this.updateLoaderVersions((PackVersion) this.versionsDropDown.getSelectedItem());
+        }
         middle.add(loaderVersionsDropDown, gbc);
 
         return gbc;

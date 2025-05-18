@@ -144,7 +144,8 @@ public final class LoginWithMicrosoftDialog extends JDialog {
 
         // Bottom panel with QR code and other options
         JPanel bottomContentPanel = new JPanel(new BorderLayout());
-        bottomContentPanel.add(new JLabel(Utils.getIconImage("/assets/image/microsoft-link-qrcode.png")), BorderLayout.CENTER);
+        bottomContentPanel.add(new JLabel(Utils.getIconImage("/assets/image/microsoft-link-qrcode.png")),
+            BorderLayout.CENTER);
 
         JPanel bottomPanel = new JPanel(new BorderLayout());
         JPanel linkPanel = new JPanel(new FlowLayout());
@@ -189,6 +190,18 @@ public final class LoginWithMicrosoftDialog extends JDialog {
 
         new Thread(() -> {
             deviceCodeResponse = MicrosoftAuthAPI.getDeviceCode();
+            if (deviceCodeResponse == null) {
+                mainPanel.remove(loadingPanel);
+                mainPanel.add(new JLabel(new HTMLBuilder().center().text(GetText.tr(
+                    "Failed to fetch login code from Microsoft. Please use the button above to login with your browser.",
+                    deviceCodeResponse.userCode)).build()), BorderLayout.SOUTH);
+                mainPanel.revalidate();
+                mainPanel.repaint();
+                setMinimumSize(new Dimension(500, 180));
+                setSize(new Dimension(500, 180));
+                setLocationRelativeTo(App.launcher.getParent());
+                return;
+            }
             SwingUtilities.invokeLater(() -> {
                 infoPane.setText(new HTMLBuilder().center().text(GetText.tr(
                     "Scan the above QR code or visit <a href=\"https://www.microsoft.com/link\">https://www.microsoft.com/link</a> in a web browser and enter the code <b>{0}</b>.",
@@ -308,7 +321,7 @@ public final class LoginWithMicrosoftDialog extends JDialog {
     }
 
     private void addAccount(OauthTokenResponse oauthTokenResponse, XboxLiveAuthResponse xstsAuthResponse,
-                            LoginResponse loginResponse, Profile profile) throws Exception {
+        LoginResponse loginResponse, Profile profile) throws Exception {
         if (account != null || AccountManager.isAccountByName(loginResponse.username)) {
             MicrosoftAccount existingAccount = AccountManager.getAccountByName(loginResponse.username);
 

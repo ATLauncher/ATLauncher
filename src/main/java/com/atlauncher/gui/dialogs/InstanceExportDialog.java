@@ -101,7 +101,7 @@ public class InstanceExportDialog extends JDialog {
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
 
         JLabelWithHover nameLabel = new JLabelWithHover(GetText.tr("Name") + ":", HELP_ICON,
-                GetText.tr("The name of the instance"));
+            GetText.tr("The name of the instance"));
         topPanel.add(nameLabel, gbc);
 
         gbc.gridx++;
@@ -118,7 +118,7 @@ public class InstanceExportDialog extends JDialog {
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
 
         JLabelWithHover versionLabel = new JLabelWithHover(GetText.tr("Version") + ":", HELP_ICON,
-                GetText.tr("The version of this instance"));
+            GetText.tr("The version of this instance"));
         topPanel.add(versionLabel, gbc);
 
         gbc.gridx++;
@@ -135,7 +135,7 @@ public class InstanceExportDialog extends JDialog {
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
 
         JLabelWithHover authorLabel = new JLabelWithHover(GetText.tr("Author") + ":", HELP_ICON,
-                GetText.tr("Your name"));
+            GetText.tr("Your name"));
         topPanel.add(authorLabel, gbc);
 
         gbc.gridx++;
@@ -144,7 +144,7 @@ public class InstanceExportDialog extends JDialog {
         final JTextField author = new JTextField(30);
         final MicrosoftAccount selectedAccount = AccountManager.getSelectedAccount();
         author.setText(Optional.ofNullable(instance.launcher.lastExportAuthor)
-                .orElse(selectedAccount == null ? "" : selectedAccount.minecraftUsername));
+            .orElse(selectedAccount == null ? "" : selectedAccount.minecraftUsername));
         topPanel.add(author, gbc);
 
         // Format
@@ -154,7 +154,7 @@ public class InstanceExportDialog extends JDialog {
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
 
         JLabelWithHover formatLabel = new JLabelWithHover(GetText.tr("Format") + ":", HELP_ICON,
-                GetText.tr("Which format to export this instance as"));
+            GetText.tr("Which format to export this instance as"));
         topPanel.add(formatLabel, gbc);
 
         gbc.gridx++;
@@ -183,7 +183,7 @@ public class InstanceExportDialog extends JDialog {
         gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BELOW_BASELINE_TRAILING;
         JLabelWithHover saveToLabel = new JLabelWithHover(GetText.tr("Save To") + ":", HELP_ICON,
-                GetText.tr("Select the folder you wish to export the instance to"));
+            GetText.tr("Select the folder you wish to export the instance to"));
         topPanel.add(saveToLabel, gbc);
 
         gbc.gridx++;
@@ -195,7 +195,7 @@ public class InstanceExportDialog extends JDialog {
 
         final JTextField saveTo = new JTextField(25);
         saveTo.setText(Optional.ofNullable(instance.launcher.lastExportSaveTo)
-                .orElse(instance.getRoot().toAbsolutePath().toString()));
+            .orElse(instance.getRoot().toAbsolutePath().toString()));
 
         // Disable manual input on flatpak (require proper xdg selection)
         saveTo.setEnabled(!OS.isUsingFlatpak());
@@ -203,9 +203,9 @@ public class InstanceExportDialog extends JDialog {
         JButton browseButton = new JButton(GetText.tr("Browse"));
         browseButton.addActionListener(e -> {
             FileChooserDialog fcd = new FileChooserDialog(this,
-                    GetText.tr("Select export directory"),
-                    GetText.tr("Directory"),
-                    GetText.tr("Select"));
+                GetText.tr("Select export directory"),
+                GetText.tr("Directory"),
+                GetText.tr("Select"));
             fcd.setVisible(true);
 
             if (fcd.wasClosed()) {
@@ -237,7 +237,7 @@ public class InstanceExportDialog extends JDialog {
         gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
         JLabelWithHover overridesLabel = new JLabelWithHover(GetText.tr("Folders To Export") + ":", HELP_ICON,
-                GetText.tr("Select the folders you wish to include for this export"));
+            GetText.tr("Select the folders you wish to include for this export"));
         topPanel.add(overridesLabel, gbc);
 
         gbc.gridx++;
@@ -249,15 +249,15 @@ public class InstanceExportDialog extends JDialog {
         overridesPanel.setBorder(BorderFactory.createEmptyBorder(0, -3, 0, 0));
 
         // get all files ignoring ATLauncher specific things as well as naughtys
-        File[] files = instance.getRoot().toFile()
-                .listFiles(pathname -> !pathname.getName().equalsIgnoreCase("disabledmods")
-                        && !pathname.getName().equalsIgnoreCase("instance.json")
-                        && !pathname.getName().equalsIgnoreCase(".fabric")
-                        && !pathname.getName().equalsIgnoreCase(".quilt"));
+        File[] files = Optional.ofNullable(instance.getRoot().toFile()
+            .listFiles(pathname -> !pathname.getName().equalsIgnoreCase("disabledmods")
+                && !pathname.getName().equalsIgnoreCase("instance.json")
+                && !pathname.getName().equalsIgnoreCase(".fabric")
+                && !pathname.getName().equalsIgnoreCase(".quilt"))).orElse(new File[0]);
 
         for (File filename : files) {
             // skip any folders with no files inside
-            if (filename.isDirectory() && filename.listFiles().length == 0) {
+            if (filename.isDirectory() && Optional.ofNullable(filename.listFiles()).orElse(new File[0]).length == 0) {
                 continue;
             }
 
@@ -272,11 +272,11 @@ public class InstanceExportDialog extends JDialog {
             });
 
             if (filename.getName().equalsIgnoreCase("config") || filename.getName().equalsIgnoreCase("mods")
-                    || filename.getName().equalsIgnoreCase("oresources")
-                    || filename.getName().equalsIgnoreCase("resourcepacks")
-                    || filename.getName().equalsIgnoreCase("shaderpacks")
-                    || filename.getName().equalsIgnoreCase("resources")
-                    || filename.getName().equalsIgnoreCase("scripts")) {
+                || filename.getName().equalsIgnoreCase("oresources")
+                || filename.getName().equalsIgnoreCase("resourcepacks")
+                || filename.getName().equalsIgnoreCase("shaderpacks")
+                || filename.getName().equalsIgnoreCase("resources")
+                || filename.getName().equalsIgnoreCase("scripts")) {
                 checkBox.setSelected(true);
             }
 
@@ -284,7 +284,7 @@ public class InstanceExportDialog extends JDialog {
         }
 
         JScrollPane overridesScrollPanel = new JScrollPane(overridesPanel, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-                JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED) {
+            JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED) {
             {
                 this.getVerticalScrollBar().setUnitIncrement(8);
             }
@@ -301,15 +301,15 @@ public class InstanceExportDialog extends JDialog {
             instance.scanMissingMods(this);
 
             final ProgressDialog<Object> dialog = new ProgressDialog<>(GetText.tr("Exporting Instance"), 0,
-                    GetText.tr("Exporting Instance. Please wait..."), null, this);
+                GetText.tr("Exporting Instance. Please wait..."), null, this);
 
             dialog.addThread(new Thread(() -> {
                 InstanceExportFormat exportFormat = ((ComboItem<InstanceExportFormat>) format.getSelectedItem())
-                        .getValue();
+                    .getValue();
 
                 Pair<Path, String> exportResult = instance.export(name.getText(), version.getText(),
-                        author.getText(),
-                        exportFormat, saveTo.getText(), overrides);
+                    author.getText(),
+                    exportFormat, saveTo.getText(), overrides);
 
                 if (exportResult.left() != null) {
                     instance.launcher.lastExportName = name.getText();
@@ -319,9 +319,10 @@ public class InstanceExportDialog extends JDialog {
                     instance.save();
 
                     if ((exportFormat == InstanceExportFormat.MODRINTH
-                            || exportFormat == InstanceExportFormat.CURSEFORGE_AND_MODRINTH)
-                            && exportResult.right() != null && !exportResult.right().isEmpty()) {
-                        ModrinthExportOverridesDialog modrinthExportOverridesDialog = new ModrinthExportOverridesDialog(dialog, exportResult.right());
+                        || exportFormat == InstanceExportFormat.CURSEFORGE_AND_MODRINTH)
+                        && exportResult.right() != null && !exportResult.right().isEmpty()) {
+                        ModrinthExportOverridesDialog modrinthExportOverridesDialog = new ModrinthExportOverridesDialog(
+                            dialog, exportResult.right());
                         modrinthExportOverridesDialog.setVisible(true);
                     }
 

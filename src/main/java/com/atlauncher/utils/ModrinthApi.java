@@ -65,29 +65,29 @@ public class ModrinthApi {
     }
 
     public static ModrinthSearchResult searchModrinth(List<String> gameVersions, String query, int page, String index,
-            List<List<String>> categories, ModrinthProjectType projectType) {
+        List<List<String>> categories, ModrinthProjectType projectType) {
         try {
             List<List<String>> facets = new ArrayList<>();
 
             String url = String.format(Locale.ENGLISH, "%s/search?limit=%d&offset=%d&query=%s&index=%s",
-                    Constants.MODRINTH_API_URL,
-                    Constants.MODRINTH_PAGINATION_SIZE, page * Constants.MODRINTH_PAGINATION_SIZE,
-                    URLEncoder.encode(query, StandardCharsets.UTF_8.name()), index);
+                Constants.MODRINTH_API_URL,
+                Constants.MODRINTH_PAGINATION_SIZE, page * Constants.MODRINTH_PAGINATION_SIZE,
+                URLEncoder.encode(query, StandardCharsets.UTF_8.name()), index);
 
             if (gameVersions != null && !gameVersions.isEmpty()) {
                 facets.add(
-                        gameVersions.stream().map(gv -> String.format("versions:%s", gv)).collect(Collectors.toList()));
+                    gameVersions.stream().map(gv -> String.format("versions:%s", gv)).collect(Collectors.toList()));
             }
 
             if (categories != null) {
                 categories.forEach(c -> facets
-                        .add(c.stream().map(s -> String.format("categories:%s", s)).collect(Collectors.toList())));
+                    .add(c.stream().map(s -> String.format("categories:%s", s)).collect(Collectors.toList())));
             }
 
             if (projectType != null) {
                 List<String> projectTypeFacets = new ArrayList<>();
                 projectTypeFacets
-                        .add(String.format("project_type:%s", projectType.toString().toLowerCase(Locale.ENGLISH)));
+                    .add(String.format("project_type:%s", projectType.toString().toLowerCase(Locale.ENGLISH)));
                 facets.add(projectTypeFacets);
             }
 
@@ -96,7 +96,7 @@ public class ModrinthApi {
             }
 
             return NetworkClient.getCached(url, getHeaders(), ModrinthSearchResult.class,
-                    new CacheControl.Builder().maxStale(10, TimeUnit.MINUTES).build());
+                new CacheControl.Builder().maxStale(10, TimeUnit.MINUTES).build());
         } catch (UnsupportedEncodingException e) {
             LogManager.logStackTrace(e);
         }
@@ -105,41 +105,41 @@ public class ModrinthApi {
     }
 
     public static ModrinthSearchResult searchResourcePacks(List<String> gameVersions, String query, int page,
-            String sort, String category) {
+        String sort, String category) {
         List<List<String>> categories = category == null ? null
-                : Collections.singletonList(Collections.singletonList(category));
+            : Collections.singletonList(Collections.singletonList(category));
 
         return searchModrinth(gameVersions, query, page, sort, categories, ModrinthProjectType.RESOURCEPACK);
     }
 
     public static ModrinthSearchResult searchShaders(List<String> gameVersions, String query, int page,
-            String sort, String category) {
+        String sort, String category) {
         List<List<String>> categories = category == null ? null
-                : Collections.singletonList(Collections.singletonList(category));
+            : Collections.singletonList(Collections.singletonList(category));
 
         return searchModrinth(gameVersions, query, page, sort, categories, ModrinthProjectType.SHADER);
     }
 
     public static ModrinthSearchResult searchModsForForge(List<String> gameVersions, String query, int page,
-            String sort, String category) {
+        String sort, String category) {
         List<List<String>> categories = category == null ? Collections.singletonList(Collections.singletonList("forge"))
-                : Arrays.asList(Collections.singletonList(category), Collections.singletonList("forge"));
+            : Arrays.asList(Collections.singletonList(category), Collections.singletonList("forge"));
 
         return searchModrinth(gameVersions, query, page, sort, categories,
-                ModrinthProjectType.MOD);
+            ModrinthProjectType.MOD);
     }
 
     public static ModrinthSearchResult searchModsForForgeOrFabric(List<String> gameVersions, String query, int page,
-            String sort, String category) {
+        String sort, String category) {
         List<List<String>> categories = category == null ? Arrays.asList(Arrays.asList("forge", "fabric"))
-                : Arrays.asList(Arrays.asList(category), Arrays.asList("forge", "fabric"));
+            : Arrays.asList(Arrays.asList(category), Arrays.asList("forge", "fabric"));
 
         return searchModrinth(gameVersions, query, page, sort, categories,
-                ModrinthProjectType.MOD);
+            ModrinthProjectType.MOD);
     }
 
     public static ModrinthSearchResult searchModsForNeoForge(List<String> gameVersions, String query, int page,
-            String sort, String category) {
+        String sort, String category) {
         List<List<String>> categories = new ArrayList<>();
 
         if (category != null) {
@@ -147,7 +147,7 @@ public class ModrinthApi {
         }
 
         List<String> neoForgeForgeCompatabilityVersions = ConfigManager
-                .getConfigItem("loaders.neoforge.forgeCompatibleMinecraftVersions", new ArrayList<>());
+            .getConfigItem("loaders.neoforge.forgeCompatibleMinecraftVersions", new ArrayList<>());
         if (gameVersions.stream().anyMatch(neoForgeForgeCompatabilityVersions::contains)) {
             categories.add(Arrays.asList("neoforge", "forge"));
         } else {
@@ -158,7 +158,7 @@ public class ModrinthApi {
     }
 
     public static ModrinthSearchResult searchModsForNeoForgeOrFabric(List<String> gameVersions, String query, int page,
-            String sort, String category) {
+        String sort, String category) {
         List<List<String>> categories = new ArrayList<>();
 
         if (category != null) {
@@ -166,7 +166,7 @@ public class ModrinthApi {
         }
 
         List<String> neoForgeForgeCompatabilityVersions = ConfigManager
-                .getConfigItem("loaders.neoforge.forgeCompatibleMinecraftVersions", new ArrayList<String>());
+            .getConfigItem("loaders.neoforge.forgeCompatibleMinecraftVersions", new ArrayList<String>());
         if (gameVersions.stream().anyMatch(gv -> neoForgeForgeCompatabilityVersions.contains(gv))) {
             categories.add(Arrays.asList("neoforge", "forge", "fabric"));
         } else {
@@ -177,74 +177,74 @@ public class ModrinthApi {
     }
 
     public static ModrinthSearchResult searchModsForFabric(List<String> gameVersions, String query, int page,
-            String sort, String category) {
+        String sort, String category) {
         List<List<String>> categories = category == null
-                ? Collections.singletonList(Collections.singletonList("fabric"))
-                : Arrays.asList(Collections.singletonList(category), Collections.singletonList("fabric"));
+            ? Collections.singletonList(Collections.singletonList("fabric"))
+            : Arrays.asList(Collections.singletonList(category), Collections.singletonList("fabric"));
 
         return searchModrinth(gameVersions, query, page, sort, categories,
-                ModrinthProjectType.MOD);
+            ModrinthProjectType.MOD);
     }
 
     public static ModrinthSearchResult searchModsForQuilt(List<String> gameVersions, String query, int page,
-            String sort, String category) {
+        String sort, String category) {
         List<List<String>> categories = category == null ? Collections.singletonList(Collections.singletonList("quilt"))
-                : Arrays.asList(Collections.singletonList(category), Collections.singletonList("quilt"));
+            : Arrays.asList(Collections.singletonList(category), Collections.singletonList("quilt"));
 
         return searchModrinth(gameVersions, query, page, sort, categories, ModrinthProjectType.MOD);
     }
 
     public static ModrinthSearchResult searchModsForQuiltOrFabric(List<String> gameVersions, String query, int page,
-            String sort, String category) {
+        String sort, String category) {
         List<List<String>> categories = category == null ? Collections.singletonList(Arrays.asList("quilt", "fabric"))
-                : Arrays.asList(Collections.singletonList(category), Arrays.asList("quilt", "fabric"));
+            : Arrays.asList(Collections.singletonList(category), Arrays.asList("quilt", "fabric"));
 
         return searchModrinth(gameVersions, query, page, sort, categories, ModrinthProjectType.MOD);
     }
 
     public static ModrinthSearchResult searchModPacks(String minecraftVersion, String query, int page, String sort,
-            String category) {
+        String category) {
         List<List<String>> categories = category == null ? null
-                : Collections.singletonList(Collections.singletonList(category));
+            : Collections.singletonList(Collections.singletonList(category));
 
         return searchModrinth(minecraftVersion == null ? null : Collections.singletonList(minecraftVersion), query,
-                page, sort,
-                categories, ModrinthProjectType.MODPACK);
+            page, sort,
+            categories, ModrinthProjectType.MODPACK);
     }
 
     public static ModrinthSearchResult searchPluginsForPaper(List<String> gameVersions, String query, int page,
-            String sort, String category) {
+        String sort, String category) {
         List<List<String>> categories = category == null
-                ? Collections.singletonList(Arrays.asList("paper", "bukkit", "spigot"))
-                : Arrays.asList(Collections.singletonList(category), Arrays.asList("paper", "bukkit", "spigot"));
+            ? Collections.singletonList(Arrays.asList("paper", "bukkit", "spigot"))
+            : Arrays.asList(Collections.singletonList(category), Arrays.asList("paper", "bukkit", "spigot"));
 
         return searchModrinth(gameVersions, query, page, sort, categories, ModrinthProjectType.PLUGIN);
     }
 
     public static ModrinthSearchResult searchPluginsForPurpur(List<String> gameVersions, String query, int page,
-            String sort, String category) {
+        String sort, String category) {
         List<List<String>> categories = category == null
-                ? Collections.singletonList(Arrays.asList("purpur", "paper", "bukkit", "spigot"))
-                : Arrays.asList(Collections.singletonList(category),
-                        Arrays.asList("purpur", "paper", "bukkit", "spigot"));
+            ? Collections.singletonList(Arrays.asList("purpur", "paper", "bukkit", "spigot"))
+            : Arrays.asList(Collections.singletonList(category),
+                Arrays.asList("purpur", "paper", "bukkit", "spigot"));
 
         return searchModrinth(gameVersions, query, page, sort, categories, ModrinthProjectType.PLUGIN);
     }
 
-    public static ModrinthProject getProject(String projectId) {
+    public static @Nullable ModrinthProject getProject(String projectId) {
         return NetworkClient.getCached(
-                String.format("%s/project/%s", Constants.MODRINTH_API_URL, projectId.replace("local-", "")),
-                getHeaders(), ModrinthProject.class,
-                new CacheControl.Builder().maxStale(10, TimeUnit.MINUTES).build());
+            String.format("%s/project/%s", Constants.MODRINTH_API_URL, projectId.replace("local-", "")),
+            getHeaders(), ModrinthProject.class,
+            new CacheControl.Builder().maxStale(10, TimeUnit.MINUTES).build());
     }
 
-    public static List<ModrinthVersion> getVersions(String projectId) {
+    public static @Nullable List<ModrinthVersion> getVersions(String projectId) {
         return getVersions(projectId, null, null);
     }
 
     @Nullable
     public static List<ModrinthVersion> getVersions(String projectId, String minecraftVersion,
-            LoaderVersion loaderVersion) {
+        LoaderVersion loaderVersion) {
         String queryParamsString = "";
 
         if (minecraftVersion != null) {
@@ -268,7 +268,7 @@ public class ModrinthApi {
                 loaders.add("forge");
             } else if (loaderVersion.isNeoForge()) {
                 List<String> neoForgeForgeCompatabilityVersions = ConfigManager
-                        .getConfigItem("loaders.neoforge.forgeCompatibleMinecraftVersions", new ArrayList<>());
+                    .getConfigItem("loaders.neoforge.forgeCompatibleMinecraftVersions", new ArrayList<>());
                 if (neoForgeForgeCompatabilityVersions.contains(minecraftVersion)) {
                     loaders.add("forge");
                 }
@@ -284,56 +284,58 @@ public class ModrinthApi {
             queryParamsString += String.format("loaders=%s", Gsons.DEFAULT_SLIM.toJson(loaders));
         }
 
-        java.lang.reflect.Type type = new TypeToken<List<ModrinthVersion>>() {}.getType();
+        java.lang.reflect.Type type = new TypeToken<List<ModrinthVersion>>() {
+        }.getType();
 
         return NetworkClient.get(
-                String.format("%s/project/%s/version%s", Constants.MODRINTH_API_URL, projectId, queryParamsString),
-                getHeaders(),
-                type);
+            String.format("%s/project/%s/version%s", Constants.MODRINTH_API_URL, projectId, queryParamsString),
+            getHeaders(),
+            type);
     }
 
     public static List<ModrinthCategory> getCategories() {
-        java.lang.reflect.Type type = new TypeToken<List<ModrinthCategory>>() {}.getType();
+        java.lang.reflect.Type type = new TypeToken<List<ModrinthCategory>>() {
+        }.getType();
 
         return NetworkClient.getCached(
-                String.format("%s/tag/category", Constants.MODRINTH_API_URL),
-                getHeaders(), type,
-                new CacheControl.Builder().maxStale(1, TimeUnit.HOURS).build());
+            String.format("%s/tag/category", Constants.MODRINTH_API_URL),
+            getHeaders(), type,
+            new CacheControl.Builder().maxStale(1, TimeUnit.HOURS).build());
     }
 
     public static List<ModrinthCategory> getCategoriesForModpacks() {
         List<ModrinthCategory> categories = getCategories();
 
         return categories.stream().filter(c -> c.projectType == ModrinthProjectType.MODPACK)
-                .sorted(Comparator.comparing(c -> c.name)).collect(Collectors.toList());
+            .sorted(Comparator.comparing(c -> c.name)).collect(Collectors.toList());
     }
 
     public static List<ModrinthCategory> getCategoriesForMods() {
         List<ModrinthCategory> categories = getCategories();
 
         return categories.stream().filter(c -> c.projectType == ModrinthProjectType.MOD)
-                .sorted(Comparator.comparing(c -> c.name)).collect(Collectors.toList());
+            .sorted(Comparator.comparing(c -> c.name)).collect(Collectors.toList());
     }
 
     public static List<ModrinthCategory> getCategoriesForPlugins() {
         List<ModrinthCategory> categories = getCategories();
 
         return categories.stream().filter(c -> c.projectType == ModrinthProjectType.PLUGIN)
-                .sorted(Comparator.comparing(c -> c.name)).collect(Collectors.toList());
+            .sorted(Comparator.comparing(c -> c.name)).collect(Collectors.toList());
     }
 
     public static List<ModrinthCategory> getCategoriesForShaders() {
         List<ModrinthCategory> categories = getCategories();
 
         return categories.stream().filter(c -> c.projectType == ModrinthProjectType.SHADER)
-                .sorted(Comparator.comparing(c -> c.name)).collect(Collectors.toList());
+            .sorted(Comparator.comparing(c -> c.name)).collect(Collectors.toList());
     }
 
     public static List<ModrinthCategory> getCategoriesForResourcePacks() {
         List<ModrinthCategory> categories = getCategories();
 
         return categories.stream().filter(c -> c.projectType == ModrinthProjectType.RESOURCEPACK)
-                .sorted(Comparator.comparing(c -> c.name)).collect(Collectors.toList());
+            .sorted(Comparator.comparing(c -> c.name)).collect(Collectors.toList());
     }
 
     public static ModrinthVersion getVersionFromSha1Hash(String hash) {
@@ -346,10 +348,10 @@ public class ModrinthApi {
 
     private static ModrinthVersion getVersionFromHash(String hash, String algorithm) {
         return NetworkClient.getCached(
-                String.format("%s/version_file/%s?algorithm=%s", Constants.MODRINTH_API_URL, hash,
-                        algorithm),
-                getHeaders(), ModrinthVersion.class,
-                new CacheControl.Builder().maxStale(10, TimeUnit.MINUTES).build());
+            String.format("%s/version_file/%s?algorithm=%s", Constants.MODRINTH_API_URL, hash,
+                algorithm),
+            getHeaders(), ModrinthVersion.class,
+            new CacheControl.Builder().maxStale(10, TimeUnit.MINUTES).build());
     }
 
     public static Map<String, ModrinthVersion> getVersionsFromSha1Hashes(String[] hashes) {
@@ -369,13 +371,14 @@ public class ModrinthApi {
         body.put("hashes", hashes);
         body.put("algorithm", algorithm);
 
-        java.lang.reflect.Type type = new TypeToken<Map<String, ModrinthVersion>>() {}.getType();
+        java.lang.reflect.Type type = new TypeToken<Map<String, ModrinthVersion>>() {
+        }.getType();
 
         Map<String, ModrinthVersion> versions = NetworkClient.post(
-                String.format("%s/version_files", Constants.MODRINTH_API_URL),
-                getHeaders(), RequestBody.create(Gsons.DEFAULT_SLIM.toJson(body),
-                        MediaType.get("application/json; charset=utf-8")),
-                type);
+            String.format("%s/version_files", Constants.MODRINTH_API_URL),
+            getHeaders(), RequestBody.create(Gsons.DEFAULT_SLIM.toJson(body),
+                MediaType.get("application/json; charset=utf-8")),
+            type);
 
         if (versions == null) {
             return new HashMap<>();
@@ -385,13 +388,14 @@ public class ModrinthApi {
     }
 
     public static List<ModrinthProject> getProjects(String[] projectIds) {
-        java.lang.reflect.Type type = new TypeToken<List<ModrinthProject>>() {}.getType();
+        java.lang.reflect.Type type = new TypeToken<List<ModrinthProject>>() {
+        }.getType();
 
         return NetworkClient.getCached(
-                String.format("%s/projects?ids=%s", Constants.MODRINTH_API_URL,
-                        Gsons.DEFAULT_SLIM.toJson(projectIds)),
-                getHeaders(),
-                type, new CacheControl.Builder().maxStale(10, TimeUnit.MINUTES).build());
+            String.format("%s/projects?ids=%s", Constants.MODRINTH_API_URL,
+                Gsons.DEFAULT_SLIM.toJson(projectIds)),
+            getHeaders(),
+            type, new CacheControl.Builder().maxStale(10, TimeUnit.MINUTES).build());
     }
 
     public static Map<String, ModrinthProject> getProjectsAsMap(String[] projectIds) {
@@ -400,7 +404,7 @@ public class ModrinthApi {
 
             if (projects != null) {
                 return projects.stream().distinct()
-                        .collect(Collectors.toMap(p -> p.id, p -> p, (existing, replacement) -> existing));
+                    .collect(Collectors.toMap(p -> p.id, p -> p, (existing, replacement) -> existing));
             }
         } catch (Throwable t) {
             LogManager.logStackTrace("Error trying to get Modrinth projects as map", t);

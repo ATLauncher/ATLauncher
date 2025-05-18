@@ -615,16 +615,18 @@ public class Instance extends MinecraftVersion implements ModManagement {
 
         DownloadPool pool = new DownloadPool();
 
-        index.objects.forEach((key, object) -> {
-            String filename = object.hash.substring(0, 2) + "/" + object.hash;
-            String url = String.format("%s/%s", Constants.MINECRAFT_RESOURCES, filename);
+        if (index != null) {
+            index.objects.forEach((key, object) -> {
+                String filename = object.hash.substring(0, 2) + "/" + object.hash;
+                String url = String.format("%s/%s", Constants.MINECRAFT_RESOURCES, filename);
 
-            com.atlauncher.network.Download download = new com.atlauncher.network.Download().setUrl(url)
-                .downloadTo(FileSystem.RESOURCES_OBJECTS.resolve(filename)).hash(object.hash).size(object.size)
-                .withHttpClient(httpClient);
+                com.atlauncher.network.Download download = new com.atlauncher.network.Download().setUrl(url)
+                    .downloadTo(FileSystem.RESOURCES_OBJECTS.resolve(filename)).hash(object.hash).size(object.size)
+                    .withHttpClient(httpClient);
 
-            pool.add(download);
-        });
+                pool.add(download);
+            });
+        }
 
         DownloadPool smallPool = pool.downsize();
 
@@ -638,7 +640,7 @@ public class Instance extends MinecraftVersion implements ModManagement {
         PerformanceManager.end("Organising Resources 1");
 
         // copy resources to instance
-        if (index.mapToResources || assetIndex.id.equalsIgnoreCase("legacy")) {
+        if (index != null && (index.mapToResources || assetIndex.id.equalsIgnoreCase("legacy"))) {
             PerformanceManager.start("Organising Resources 2");
             progressDialog.setLabel(GetText.tr("Organising Resources"));
 

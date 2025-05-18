@@ -41,7 +41,6 @@ import org.mini2Dx.gettext.GetText;
 import com.atlauncher.App;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.data.MicrosoftAccount;
-import com.atlauncher.data.microsoft.OauthDeviceCodeResponse;
 import com.atlauncher.gui.dialogs.LoginWithMicrosoftDialog;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.gui.panels.HierarchyPanel;
@@ -49,7 +48,6 @@ import com.atlauncher.gui.tabs.Tab;
 import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.utils.ComboItem;
-import com.atlauncher.utils.MicrosoftAuthAPI;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.SkinUtils;
 import com.atlauncher.utils.Utils;
@@ -82,16 +80,16 @@ public class AccountsTab extends HierarchyPanel implements Tab {
 
         JEditorPane infoTextPane = new JEditorPane("text/html", new HTMLBuilder().center().text(GetText.tr(
                 "In order to login and use ATLauncher modpacks, " +
-                        "you must authenticate with your existing " +
-                        "Minecraft/Mojang account. You must own and have paid " +
-                        "for the Minecraft Java edition " +
-                        "(not the Windows 10 edition) and use the same " +
-                        "login here.<br><br>If you don't have an existing " +
-                        "account, you can get one " +
-                        "<a href=\"https://atl.pw/create-account\">by buying " +
-                        "Minecraft here</a>. ATLauncher doesn't work with cracked" +
-                        " accounts."))
-                .build());
+                    "you must authenticate with your existing " +
+                    "Minecraft/Mojang account. You must own and have paid " +
+                    "for the Minecraft Java edition " +
+                    "(not the Windows 10 edition) and use the same " +
+                    "login here.<br><br>If you don't have an existing " +
+                    "account, you can get one " +
+                    "<a href=\"https://atl.pw/create-account\">by buying " +
+                    "Minecraft here</a>. ATLauncher doesn't work with cracked" +
+                    " accounts."))
+            .build());
         infoTextPane.setEditable(false);
         infoTextPane.setFocusable(false);
         infoTextPane.addHyperlinkListener(e -> {
@@ -137,11 +135,11 @@ public class AccountsTab extends HierarchyPanel implements Tab {
         deleteButton.setVisible(false);
         deleteButton.addActionListener(e -> {
             int ret = DialogManager
-                    .yesNoDialog()
-                    .setTitle(GetText.tr("Delete"))
-                    .setContent(GetText.tr("Are you sure you want " +
-                            "to delete this account?"))
-                    .setType(DialogManager.WARNING).show();
+                .yesNoDialog()
+                .setTitle(GetText.tr("Delete"))
+                .setContent(GetText.tr("Are you sure you want " +
+                    "to delete this account?"))
+                .setType(DialogManager.WARNING).show();
             if (ret == DialogManager.YES_OPTION) {
                 viewModel.deleteAccount();
             }
@@ -150,7 +148,7 @@ public class AccountsTab extends HierarchyPanel implements Tab {
         loginWithMicrosoftButton.setBorderPainted(false);
         loginWithMicrosoftButton.setToolTipText(GetText.tr("Sign In with Microsoft"));
         loginWithMicrosoftButton.setIcon(Utils.getIconImage(
-                App.THEME.getResourcePath("image/providers", "sign-in-with-microsoft")));
+            App.THEME.getResourcePath("image/providers", "sign-in-with-microsoft")));
         loginWithMicrosoftButton.addActionListener(e -> {
             // TODO This should be handled by some reaction via listener
             int numberOfAccountsBefore = viewModel.accountCount();
@@ -223,7 +221,7 @@ public class AccountsTab extends HierarchyPanel implements Tab {
             }
         });
         userSkin.setBorder(
-                BorderFactory.createEmptyBorder(0, 60, 0, 0));
+            BorderFactory.createEmptyBorder(0, 60, 0, 0));
         add(infoPanel, BorderLayout.NORTH);
         add(userSkin, BorderLayout.WEST);
         add(rightPanel, BorderLayout.CENTER);
@@ -243,10 +241,10 @@ public class AccountsTab extends HierarchyPanel implements Tab {
         }
 
         final ProgressDialog<Boolean> dialog = new ProgressDialog<>(
-                GetText.tr("Refreshing Access Token For {0}", account.minecraftUsername),
-                0,
-                GetText.tr("Refreshing Access Token For {0}", account.minecraftUsername),
-                "Aborting refreshing access token for " + account.minecraftUsername);
+            GetText.tr("Refreshing Access Token For {0}", account.minecraftUsername),
+            0,
+            GetText.tr("Refreshing Access Token For {0}", account.minecraftUsername),
+            "Aborting refreshing access token for " + account.minecraftUsername);
 
         dialog.addThread(new Thread(() -> {
             boolean success = viewModel.refreshAccessToken();
@@ -255,23 +253,23 @@ public class AccountsTab extends HierarchyPanel implements Tab {
         }));
         dialog.start();
 
-        boolean success = dialog.getReturnValue() == true;
+        boolean success = Boolean.TRUE.equals(dialog.getReturnValue());
 
         if (success) {
             DialogManager
-                    .okDialog()
-                    .setTitle(GetText.tr("Access Token Refreshed"))
-                    .setContent(
-                            GetText.tr("Access token refreshed successfully"))
-                    .setType(DialogManager.INFO)
-                    .show();
+                .okDialog()
+                .setTitle(GetText.tr("Access Token Refreshed"))
+                .setContent(
+                    GetText.tr("Access token refreshed successfully"))
+                .setType(DialogManager.INFO)
+                .show();
         } else {
             DialogManager
-                    .okDialog()
-                    .setTitle(GetText.tr("Failed To Refresh Access Token"))
-                    .setContent(GetText.tr("Failed to refresh accessToken. Please login again."))
-                    .setType(DialogManager.ERROR)
-                    .show();
+                .okDialog()
+                .setTitle(GetText.tr("Failed To Refresh Access Token"))
+                .setContent(GetText.tr("Failed to refresh accessToken. Please login again."))
+                .setType(DialogManager.ERROR)
+                .show();
 
             LoginWithMicrosoftDialog loginWithMicrosoftDialog = new LoginWithMicrosoftDialog(account);
             loginWithMicrosoftDialog.setVisible(true);

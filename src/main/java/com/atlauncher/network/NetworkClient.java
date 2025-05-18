@@ -102,7 +102,7 @@ public class NetworkClient {
 
     @Nullable
     public static <T> T getCached(String url, @Nullable Headers headers, Class<T> tClass,
-            @Nullable CacheControl cacheControl) {
+        @Nullable CacheControl cacheControl) {
         try {
             return makeRequest(url, headers, null, tClass, cacheControl);
         } catch (DownloadException e) {
@@ -112,7 +112,7 @@ public class NetworkClient {
 
     @Nullable
     public static <T> T getCached(String url, @Nullable Headers headers, Type type,
-            @Nullable CacheControl cacheControl) {
+        @Nullable CacheControl cacheControl) {
         try {
             return makeRequest(url, headers, null, type, cacheControl);
         } catch (DownloadException e) {
@@ -122,13 +122,13 @@ public class NetworkClient {
 
     @Nullable
     public static <T> T getCachedWithThrow(String url, Class<T> tClass, @Nullable CacheControl cacheControl)
-            throws DownloadException {
+        throws DownloadException {
         return makeRequest(url, null, null, tClass, cacheControl);
     }
 
     @Nullable
     public static <T> T getCachedWithThrow(String url, Type type, @Nullable CacheControl cacheControl)
-            throws DownloadException {
+        throws DownloadException {
         return makeRequest(url, null, null, type, cacheControl);
     }
 
@@ -170,25 +170,25 @@ public class NetworkClient {
 
     @Nullable
     public static <T> T postWithThrow(String url, @Nullable Headers headers, RequestBody body, Class<T> tClass)
-            throws DownloadException {
+        throws DownloadException {
         return makeRequest(url, headers, body, tClass, null);
     }
 
     @Nullable
     public static <T> T postWithThrow(String url, @Nullable Headers headers, RequestBody body, Type type)
-            throws DownloadException {
+        throws DownloadException {
         return makeRequest(url, headers, body, type, null);
     }
 
     @Nullable
     private static <T> T makeRequest(String url, @Nullable Headers headers, @Nullable RequestBody requestBody,
-            Class<T> tClass, @Nullable CacheControl cacheControl) throws DownloadException {
+        Class<T> tClass, @Nullable CacheControl cacheControl) throws DownloadException {
         return makeRequest(url, headers, requestBody, TypeToken.get(tClass).getType(), cacheControl);
     }
 
     @Nullable
     private static <T> T makeRequest(String url, @Nullable Headers headers, @Nullable RequestBody requestBody,
-            Type type, @Nullable CacheControl cacheControl) throws DownloadException {
+        Type type, @Nullable CacheControl cacheControl) throws DownloadException {
         Request.Builder builder = new Request.Builder().url(url);
 
         if (headers != null) {
@@ -204,7 +204,7 @@ public class NetworkClient {
         }
 
         OkHttpClient httpClient = (requestBody != null || cacheControl == null) ? Network.CLIENT
-                : Network.CACHED_CLIENT;
+            : Network.CACHED_CLIENT;
         Request request = builder.build();
 
         try (Response response = httpClient.newCall(request).execute()) {
@@ -225,7 +225,7 @@ public class NetworkClient {
         } catch (DownloadException e) {
             throw e; // Re-throw DownloadException
         } catch (IOException e) {
-            LogManager.logStackTrace(String.format("Error calling %s", url), e);
+            LogManager.logStackTrace(String.format("Error calling %s", url), e, false);
             return null;
         }
     }

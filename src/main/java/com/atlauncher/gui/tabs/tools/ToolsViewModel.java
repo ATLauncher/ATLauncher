@@ -119,11 +119,11 @@ public class ToolsViewModel implements SettingsListener {
     }
 
     private final String[] HOSTS = { "authserver.mojang.com", "session.minecraft.net", "libraries.minecraft.net",
-            "launchermeta.mojang.com", "launcher.mojang.com", Constants.API_HOST, Constants.PASTE_HOST,
-            Constants.DOWNLOAD_HOST, Constants.FABRIC_HOST, Constants.LEGACY_FABRIC_HOST, Constants.NEOFORGE_HOST,
-            Constants.FORGE_HOST,
-            Constants.QUILT_HOST, Constants.CURSEFORGE_CORE_API_HOST, Constants.MODRINTH_HOST,
-            Constants.FTB_HOST };
+        "launchermeta.mojang.com", "launcher.mojang.com", Constants.API_HOST, Constants.PASTE_HOST,
+        Constants.DOWNLOAD_HOST, Constants.FABRIC_HOST, Constants.LEGACY_FABRIC_HOST, Constants.NEOFORGE_HOST,
+        Constants.FORGE_HOST,
+        Constants.QUILT_HOST, Constants.CURSEFORGE_CORE_API_HOST, Constants.MODRINTH_HOST,
+        Constants.FTB_HOST };
 
     public int hostsLength() {
         return HOSTS.length;
@@ -135,105 +135,105 @@ public class ToolsViewModel implements SettingsListener {
 
         // Connection to CDN
         results.append("Ping results to " + Constants.DOWNLOAD_HOST + " was ")
-                .append(Utils.pingAddress(Constants.DOWNLOAD_HOST));
+            .append(Utils.pingAddress(Constants.DOWNLOAD_HOST));
         onTaskComplete.accept(null);
 
         results.append("Tracert to " + Constants.DOWNLOAD_HOST + " was ")
-                .append(Utils.traceRoute(Constants.DOWNLOAD_HOST)).append("\n\n----------------\n\n");
+            .append(Utils.traceRoute(Constants.DOWNLOAD_HOST)).append("\n\n----------------\n\n");
         onTaskComplete.accept(null);
 
         // Connection to ATLauncher API
         results.append("Ping results to " + Constants.API_HOST + " was ")
-                .append(Utils.pingAddress(Constants.API_HOST));
+            .append(Utils.pingAddress(Constants.API_HOST));
         onTaskComplete.accept(null);
 
         results.append("Tracert to " + Constants.API_HOST + " was ")
-                .append(Utils.traceRoute(Constants.API_HOST)).append("\n\n----------------\n\n");
+            .append(Utils.traceRoute(Constants.API_HOST)).append("\n\n----------------\n\n");
         onTaskComplete.accept(null);
 
         // Connection to CurseForge Core API
         results.append("Ping results to " + Constants.CURSEFORGE_CORE_API_HOST + " was ")
-                .append(Utils.pingAddress(Constants.CURSEFORGE_CORE_API_HOST));
+            .append(Utils.pingAddress(Constants.CURSEFORGE_CORE_API_HOST));
         onTaskComplete.accept(null);
 
         results.append("Tracert to " + Constants.CURSEFORGE_CORE_API_HOST + " was ")
-                .append(Utils.traceRoute(Constants.CURSEFORGE_CORE_API_HOST))
-                .append("\n\n----------------\n\n");
+            .append(Utils.traceRoute(Constants.CURSEFORGE_CORE_API_HOST))
+            .append("\n\n----------------\n\n");
         onTaskComplete.accept(null);
 
         // Connection to Modrinth API
         results.append("Ping results to " + Constants.MODRINTH_HOST + " was ")
-                .append(Utils.pingAddress(Constants.MODRINTH_HOST));
+            .append(Utils.pingAddress(Constants.MODRINTH_HOST));
         onTaskComplete.accept(null);
 
         results.append("Tracert to " + Constants.MODRINTH_HOST + " was ")
-                .append(Utils.traceRoute(Constants.MODRINTH_HOST)).append("\n\n----------------\n\n");
+            .append(Utils.traceRoute(Constants.MODRINTH_HOST)).append("\n\n----------------\n\n");
         onTaskComplete.accept(null);
 
         // Connection to FTB API
         results.append("Ping results to " + Constants.FTB_HOST + " was ")
-                .append(Utils.pingAddress(Constants.FTB_HOST));
+            .append(Utils.pingAddress(Constants.FTB_HOST));
         onTaskComplete.accept(null);
 
         results.append("Tracert to " + Constants.FTB_HOST + " was ")
-                .append(Utils.traceRoute(Constants.FTB_HOST)).append("\n\n----------------\n\n");
+            .append(Utils.traceRoute(Constants.FTB_HOST)).append("\n\n----------------\n\n");
         onTaskComplete.accept(null);
 
         // Connection to Fabric CDN
         results.append("Ping results to " + Constants.FABRIC_HOST + " was ")
-                .append(Utils.pingAddress(Constants.FABRIC_HOST));
+            .append(Utils.pingAddress(Constants.FABRIC_HOST));
         onTaskComplete.accept(null);
 
         results.append("Tracert to " + Constants.FABRIC_HOST + " was ")
-                .append(Utils.traceRoute(Constants.FABRIC_HOST)).append("\n\n----------------\n\n");
+            .append(Utils.traceRoute(Constants.FABRIC_HOST)).append("\n\n----------------\n\n");
         onTaskComplete.accept(null);
 
         // Connection to Forge CDN
         results.append("Ping results to " + Constants.FORGE_HOST + " was ")
-                .append(Utils.pingAddress(Constants.FORGE_HOST));
+            .append(Utils.pingAddress(Constants.FORGE_HOST));
         onTaskComplete.accept(null);
 
         results.append("Tracert to " + Constants.FORGE_HOST + " was ")
-                .append(Utils.traceRoute(Constants.FORGE_HOST)).append("\n\n----------------\n\n");
+            .append(Utils.traceRoute(Constants.FORGE_HOST)).append("\n\n----------------\n\n");
         onTaskComplete.accept(null);
 
         // Connection to Legacy Fabric CDN
         results.append("Ping results to " + Constants.LEGACY_FABRIC_HOST + " was ")
-                .append(Utils.pingAddress(Constants.LEGACY_FABRIC_HOST));
+            .append(Utils.pingAddress(Constants.LEGACY_FABRIC_HOST));
         onTaskComplete.accept(null);
 
         results.append("Tracert to " + Constants.LEGACY_FABRIC_HOST + " was ")
-                .append(Utils.traceRoute(Constants.LEGACY_FABRIC_HOST)).append("\n\n----------------\n\n");
+            .append(Utils.traceRoute(Constants.LEGACY_FABRIC_HOST)).append("\n\n----------------\n\n");
         onTaskComplete.accept(null);
 
         // Connection to NeoForge CDN
         results.append("Ping results to " + Constants.NEOFORGE_HOST + " was ")
-                .append(Utils.pingAddress(Constants.NEOFORGE_HOST));
+            .append(Utils.pingAddress(Constants.NEOFORGE_HOST));
         onTaskComplete.accept(null);
 
         results.append("Tracert to " + Constants.NEOFORGE_HOST + " was ")
-                .append(Utils.traceRoute(Constants.NEOFORGE_HOST)).append("\n\n----------------\n\n");
+            .append(Utils.traceRoute(Constants.NEOFORGE_HOST)).append("\n\n----------------\n\n");
         onTaskComplete.accept(null);
 
         // Connection to Quilt CDN
         results.append("Ping results to " + Constants.QUILT_HOST + " was ")
-                .append(Utils.pingAddress(Constants.QUILT_HOST));
+            .append(Utils.pingAddress(Constants.QUILT_HOST));
         onTaskComplete.accept(null);
 
         results.append("Tracert to " + Constants.QUILT_HOST + " was ")
-                .append(Utils.traceRoute(Constants.QUILT_HOST)).append("\n\n----------------\n\n");
+            .append(Utils.traceRoute(Constants.QUILT_HOST)).append("\n\n----------------\n\n");
         onTaskComplete.accept(null);
 
         // Resolution of key services
         for (String host : HOSTS) {
             try {
                 String resolvedHosts = Arrays.stream(InetAddress.getAllByName(host))
-                        .map(InetAddress::getHostAddress).collect(Collectors.joining(", "));
+                    .map(InetAddress::getHostAddress).collect(Collectors.joining(", "));
                 results.append("Resolution of ").append(host).append(" was ").append(resolvedHosts)
-                        .append("\n\n");
+                    .append("\n\n");
             } catch (Exception e1) {
                 results.append("Resolution of ").append(host).append(" failed: ").append(e1.toString())
-                        .append("\n\n");
+                    .append("\n\n");
             }
 
             onTaskComplete.accept(null);
@@ -244,21 +244,21 @@ public class ToolsViewModel implements SettingsListener {
         // Response Code Test
         try {
             results.append(String.format(Locale.ENGLISH, "Response code to %s was %d\n\n----------------\n\n",
-                    Constants.DOWNLOAD_SERVER,
-                    Download.build()
-                            .setUrl(String.format("%s/launcher/json/files.json", Constants.DOWNLOAD_SERVER))
-                            .getResponseCode()));
+                Constants.DOWNLOAD_SERVER,
+                Download.build()
+                    .setUrl(String.format("%s/launcher/json/files.json", Constants.DOWNLOAD_SERVER))
+                    .getResponseCode()));
         } catch (Exception e1) {
             results.append(String.format("Exception thrown when connecting to %s\n\n----------------\n\n",
-                    Constants.DOWNLOAD_SERVER));
+                Constants.DOWNLOAD_SERVER));
             results.append(e1);
         }
         onTaskComplete.accept(null);
 
         // Ping Pong Test
         results.append(String.format("Response to ping on %s was %s\n\n----------------\n\n",
-                Constants.DOWNLOAD_SERVER,
-                Download.build().setUrl(String.format("%s/ping", Constants.DOWNLOAD_SERVER)).asString()));
+            Constants.DOWNLOAD_SERVER,
+            Download.build().setUrl(String.format("%s/ping", Constants.DOWNLOAD_SERVER)).asString()));
         onTaskComplete.accept(null);
 
         // Speed Test
@@ -269,26 +269,25 @@ public class ToolsViewModel implements SettingsListener {
         long started = System.currentTimeMillis();
         try {
             Download.build().setUrl(String.format("%s/100MB.bin", Constants.DOWNLOAD_SERVER))
-                    .downloadTo(file.toPath()).downloadFile();
+                .downloadTo(file.toPath()).downloadFile();
+            long timeTaken = System.currentTimeMillis() - started;
+            float bps = file.length() / (timeTaken / 1000);
+            float kbps = bps / 1024;
+            float mbps = kbps / 1024;
+            String speed = (mbps < 1
+                ? (kbps < 1 ? String.format(Locale.ENGLISH, "%.2f B/s", bps)
+                : String.format(Locale.ENGLISH, "%.2f KB/s", kbps))
+                : String.format(Locale.ENGLISH, "%.2f MB/s", mbps));
+            results.append(
+                String.format(Locale.ENGLISH,
+                    "Download speed to %s was %s, taking %.2f seconds to download 100MB",
+                    Constants.DOWNLOAD_SERVER, speed, (timeTaken / 1000.0)));
         } catch (Exception e2) {
             results.append(
-                    String.format("Exception thrown when downloading 100MB.bin from %s\n\n----------------\n\n",
-                            Constants.DOWNLOAD_SERVER));
+                String.format("Exception thrown when downloading 100MB.bin from %s\n\n----------------\n\n",
+                    Constants.DOWNLOAD_SERVER));
             results.append(e2);
         }
-
-        long timeTaken = System.currentTimeMillis() - started;
-        float bps = file.length() / (timeTaken / 1000);
-        float kbps = bps / 1024;
-        float mbps = kbps / 1024;
-        String speed = (mbps < 1
-                ? (kbps < 1 ? String.format(Locale.ENGLISH, "%.2f B/s", bps)
-                        : String.format(Locale.ENGLISH, "%.2f KB/s", kbps))
-                : String.format(Locale.ENGLISH, "%.2f MB/s", mbps));
-        results.append(
-                String.format(Locale.ENGLISH,
-                        "Download speed to %s was %s, taking %.2f seconds to download 100MB",
-                        Constants.DOWNLOAD_SERVER, speed, (timeTaken / 1000.0)));
         onTaskComplete.accept(null);
 
         String result = Utils.uploadPaste(Constants.LAUNCHER_NAME + " Network Test Log", results.toString());

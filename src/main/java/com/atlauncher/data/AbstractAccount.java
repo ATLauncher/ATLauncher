@@ -124,7 +124,7 @@ public abstract class AbstractAccount implements Serializable {
         if (dialog.getReturnValue() == null) {
             DialogManager.okDialog().setTitle(GetText.tr("No Changes"))
                 .setContent(GetText.tr("Your username hasn't changed.")).setType(DialogManager.INFO).show();
-        } else if (dialog.getReturnValue() == true) {
+        } else if (dialog.getReturnValue()) {
             AccountManager.saveAccounts();
             DialogManager.okDialog().setTitle(GetText.tr("Username Updated"))
                 .setContent(GetText.tr("Your username has been updated.")).setType(DialogManager.INFO).show();

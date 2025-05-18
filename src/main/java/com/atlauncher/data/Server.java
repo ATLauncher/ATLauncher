@@ -422,7 +422,7 @@ public class Server implements ModManagement {
         }));
         progressDialog.start();
 
-        if (progressDialog.getReturnValue() == true) {
+        if (Boolean.TRUE.equals(progressDialog.getReturnValue())) {
             App.TOASTER.pop(GetText.tr("Backup is complete"));
             LogManager.info(String.format("Backup complete and stored at %s", backupZip.toString()));
         } else {

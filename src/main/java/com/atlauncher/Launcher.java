@@ -108,16 +108,16 @@ public class Launcher {
 
         if (App.settings.enableAnalytics && ConfigManager.getConfigItem("useGraphqlLauncherLaunch", false)) {
             App.TASKPOOL.execute(() -> GraphqlClient.mutate(new AddLauncherLaunchMutation(
-                    AddLauncherLaunchInput.builder().version(Constants.VERSION.toStringForLogging())
-                            .hash(Constants.VERSION.getSha1Revision().toString())
-                            .installMethod(OS.getInstallMethod())
-                            .javaVersion(LauncherJavaVersionInput.builder().raw(Java.getLauncherJavaVersion())
-                                    .majorVersion(Integer.toString(Java.getLauncherJavaVersionNumber()))
-                                    .bitness(Java.is64Bit() ? 64 : 32)
-                                    .usingJreDir(OS.isWindows() && OS.usingExe()
-                                            && Files.exists(FileSystem.BASE_DIR.resolve("jre")))
-                                    .build())
-                            .build())));
+                AddLauncherLaunchInput.builder().version(Constants.VERSION.toStringForLogging())
+                    .hash(Constants.VERSION.getSha1Revision().toString())
+                    .installMethod(OS.getInstallMethod())
+                    .javaVersion(LauncherJavaVersionInput.builder().raw(Java.getLauncherJavaVersion())
+                        .majorVersion(Integer.toString(Java.getLauncherJavaVersionNumber()))
+                        .bitness(Java.is64Bit() ? 64 : 32)
+                        .usingJreDir(OS.isWindows() && OS.usingExe()
+                            && Files.exists(FileSystem.BASE_DIR.resolve("jre")))
+                        .build())
+                    .build())));
         }
 
         MinecraftManager.loadMinecraftVersions(); // Load info about the different Minecraft versions
@@ -140,10 +140,10 @@ public class Launcher {
             LogManager.warn("You're using 32 bit Java on a 64 bit Windows install!");
 
             int ret = DialogManager.yesNoDialog().setTitle(GetText.tr("Running 32 Bit Java on 64 Bit Windows"))
-                    .setContent(new HTMLBuilder().center().text(GetText.tr(
-                            "We have detected that you're running 64 bit Windows but not 64 bit Java.<br/><br/>This will cause severe issues playing all packs if not fixed.<br/><br/>Do you want to close the launcher and learn how to fix this issue now?"))
-                            .build())
-                    .setType(DialogManager.ERROR).show();
+                .setContent(new HTMLBuilder().center().text(GetText.tr(
+                        "We have detected that you're running 64 bit Windows but not 64 bit Java.<br/><br/>This will cause severe issues playing all packs if not fixed.<br/><br/>Do you want to close the launcher and learn how to fix this issue now?"))
+                    .build())
+                .setType(DialogManager.ERROR).show();
 
             if (ret == 0) {
                 OS.openWebBrowser("https://atlauncher.com/help/32bit/");
@@ -162,7 +162,7 @@ public class Launcher {
 
     public boolean launcherHasUpdate() {
         try (InputStreamReader fileReader = new InputStreamReader(
-                Files.newInputStream(FileSystem.JSON.resolve("version.json")), StandardCharsets.UTF_8)) {
+            Files.newInputStream(FileSystem.JSON.resolve("version.json")), StandardCharsets.UTF_8)) {
             this.latestLauncherVersion = Gsons.DEFAULT.fromJson(fileReader, LauncherVersion.class);
         } catch (JsonSyntaxException | JsonIOException | IOException e) {
             LogManager.logStackTrace("Exception when loading latest launcher version!", e);
@@ -188,11 +188,11 @@ public class Launcher {
             Analytics.trackEvent(AnalyticsEvent.simpleEvent("launcher_update"));
 
             ProgressDialog<Boolean> progressDialog = new ProgressDialog<>(GetText.tr("Downloading Launcher Update"), 1,
-                    GetText.tr("Downloading Launcher Update"));
+                GetText.tr("Downloading Launcher Update"));
             progressDialog.addThread(new Thread(() -> {
                 com.atlauncher.network.Download download = com.atlauncher.network.Download.build()
-                        .setUrl(String.format("%s/%s.%s", Constants.DOWNLOAD_SERVER, Constants.LAUNCHER_NAME, toget))
-                        .withHttpClient(Network.createProgressClient(progressDialog)).downloadTo(newFile.toPath());
+                    .setUrl(String.format("%s/%s.%s", Constants.DOWNLOAD_SERVER, Constants.LAUNCHER_NAME, toget))
+                    .withHttpClient(Network.createProgressClient(progressDialog)).downloadTo(newFile.toPath());
 
                 progressDialog.setTotalBytes(download.getFilesize());
 
@@ -211,7 +211,7 @@ public class Launcher {
             }));
             progressDialog.start();
 
-            if (progressDialog.getReturnValue() == true) {
+            if (Boolean.TRUE.equals(progressDialog.getReturnValue())) {
                 runUpdate(path, newFile.getAbsolutePath());
             }
         } catch (IOException e) {
@@ -252,17 +252,17 @@ public class Launcher {
     }
 
     /**
-     * This checks the servers files.json file and gets the files that the Launcher
-     * needs to have
+     * This checks the servers files.json file and gets the files that the Launcher needs to have
      */
     private List<com.atlauncher.network.Download> getLauncherFiles() {
         if (this.launcherFiles == null) {
-            java.lang.reflect.Type type = new TypeToken<List<DownloadableFile>>() {}.getType();
+            java.lang.reflect.Type type = new TypeToken<List<DownloadableFile>>() {
+            }.getType();
 
             try {
                 this.launcherFiles = NetworkClient.get(
-                        String.format("%s/launcher/json/files.json", Constants.DOWNLOAD_SERVER),
-                        type);
+                    String.format("%s/launcher/json/files.json", Constants.DOWNLOAD_SERVER),
+                    type);
             } catch (Exception e) {
                 LogManager.logStackTrace("Error loading in file hashes!", e);
                 return null;
@@ -274,18 +274,18 @@ public class Launcher {
         }
 
         return this.launcherFiles.stream()
-                .filter(file -> !file.isLauncher() && !file.isFiles() && file.isForArchAndOs())
-                .map(DownloadableFile::getDownload).collect(Collectors.toList());
+            .filter(file -> !file.isLauncher() && !file.isFiles() && file.isForArchAndOs())
+            .map(DownloadableFile::getDownload).collect(Collectors.toList());
     }
 
     public void downloadUpdatedFiles() {
         ProgressDialog<Object> progressDialog = new ProgressDialog<>(GetText.tr("Downloading Updates"), 1,
-                GetText.tr("Downloading Updates"));
+            GetText.tr("Downloading Updates"));
         progressDialog.addThread(new Thread(() -> {
             DownloadPool pool = new DownloadPool();
             OkHttpClient httpClient = Network.createProgressClient(progressDialog);
             pool.addAll(
-                    getLauncherFiles().stream().map(dl -> dl.withHttpClient(httpClient)).collect(Collectors.toList()));
+                getLauncherFiles().stream().map(dl -> dl.withHttpClient(httpClient)).collect(Collectors.toList()));
             DownloadPool smallPool = pool.downsize();
 
             progressDialog.setTotalBytes(smallPool.totalSize());
@@ -308,8 +308,7 @@ public class Launcher {
     }
 
     /**
-     * This checks the servers hashes.json file and looks for new/updated files that
-     * differ from what the user has
+     * This checks the servers hashes.json file and looks for new/updated files that differ from what the user has
      */
     public boolean hasUpdatedFiles() {
         LogManager.info("Checking for updated files!");
@@ -391,10 +390,10 @@ public class Launcher {
         if (launcherHasUpdate()) {
             if (App.noLauncherUpdate) {
                 int ret = DialogManager.okDialog().setTitle("Launcher Update Available")
-                        .setContent(new HTMLBuilder().center().split(80).text(GetText.tr(
-                                "An update to the launcher is available. Please update via your package manager or manually by visiting https://atlauncher.com/downloads to get the latest features and bug fixes."))
-                                .build())
-                        .addOption(GetText.tr("Visit Downloads Page")).setType(DialogManager.INFO).show();
+                    .setContent(new HTMLBuilder().center().split(80).text(GetText.tr(
+                            "An update to the launcher is available. Please update via your package manager or manually by visiting https://atlauncher.com/downloads to get the latest features and bug fixes."))
+                        .build())
+                    .addOption(GetText.tr("Visit Downloads Page")).setType(DialogManager.INFO).show();
 
                 if (ret == 1) {
                     OS.openWebBrowser("https://atlauncher.com/downloads");
@@ -407,12 +406,12 @@ public class Launcher {
                 downloadUpdate(); // Update the Launcher
             } else {
                 DialogManager.okDialog().setTitle("Update Failed!")
-                        .setContent(new HTMLBuilder().center()
-                                .text(GetText.tr("Update failed. Please click Ok to close "
-                                        + "the launcher and open up the downloads page.<br/><br/>Download "
-                                        + "the update and replace the old exe/jar file."))
-                                .build())
-                        .setType(DialogManager.ERROR).show();
+                    .setContent(new HTMLBuilder().center()
+                        .text(GetText.tr("Update failed. Please click Ok to close "
+                            + "the launcher and open up the downloads page.<br/><br/>Download "
+                            + "the update and replace the old exe/jar file."))
+                        .build())
+                    .setType(DialogManager.ERROR).show();
                 OS.openWebBrowser("https://atlauncher.com/downloads");
                 Analytics.endSession();
                 System.exit(0);
@@ -425,8 +424,7 @@ public class Launcher {
     /**
      * Sets the main parent JFrame reference for the Launcher
      *
-     * @param parent
-     *            The Launcher main JFrame
+     * @param parent The Launcher main JFrame
      */
     public void setParentFrame(JFrame parent) {
         this.parent = parent;
@@ -451,8 +449,7 @@ public class Launcher {
     /**
      * Sets the panel used for the Packs Browser
      *
-     * @param packsBrowserPanel
-     *            Packs Browser Panel
+     * @param packsBrowserPanel Packs Browser Panel
      */
     public void setPacksBrowserPanel(PacksBrowserTab packsBrowserPanel) {
         this.packsBrowserPanel = packsBrowserPanel;
