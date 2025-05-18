@@ -9,4 +9,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 
 ### Fixes
 
+- The Use Java Provided By Minecraft setting not showing correctly (but still functioning correctly) [#1009]
+
 ### Misc
