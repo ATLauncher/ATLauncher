@@ -417,7 +417,7 @@ public final class Download {
             }
         }
         try (FileChannel fc = FileChannel.open(this.to, Utils.WRITE);
-                ReadableByteChannel rbc = Channels.newChannel(this.response.body().byteStream())) {
+            ReadableByteChannel rbc = Channels.newChannel(this.response.body().byteStream())) {
             fc.transferFrom(rbc, 0, Long.MAX_VALUE);
         } catch (Exception e) {
             LogManager.logStackTrace("Failed to download file " + this.to, e, false);
@@ -487,9 +487,9 @@ public final class Download {
         // size and log a warning
         if (this.ignoreFailures && this.to.toFile().length() != 0) {
             LogManager
-                    .warn(String.format(Locale.ENGLISH,
-                            "%s (of size %d) hash didn't match, but we're ignoring failures, so continuing",
-                            this.to.getFileName(), this.to.toFile().length()));
+                .warn(String.format(Locale.ENGLISH,
+                    "%s (of size %d) hash didn't match, but we're ignoring failures, so continuing",
+                    this.to.getFileName(), this.to.toFile().length()));
             return true;
         }
 
@@ -522,6 +522,10 @@ public final class Download {
 
     public void downloadFile(int tries) throws IOException {
         if (this.instanceInstaller != null && this.instanceInstaller.isCancelled()) {
+            return;
+        }
+
+        if (this.url == null || this.url.isEmpty()) {
             return;
         }
 
@@ -567,7 +571,7 @@ public final class Download {
                 // if timeout, attempt to download again
                 if (e instanceof SocketTimeoutException && tries < 3) {
                     LogManager.warn(String.format("Failed to download %s from %s due to timeout. Attempting again.",
-                            this.to.getFileName().toString(), this.url));
+                        this.to.getFileName().toString(), this.url));
                     downloadFile(tries++);
                     return;
                 }
@@ -601,7 +605,7 @@ public final class Download {
         }
 
         if ((this.ignoreFailures && this.to.toFile().length() != 0)
-                || (expected != null && expected.equals(Hashing.EMPTY_HASH_CODE))) {
+            || (expected != null && expected.equals(Hashing.EMPTY_HASH_CODE))) {
             if (this.response.isSuccessful()) {
                 this.downloadDirect();
             }
@@ -611,7 +615,7 @@ public final class Download {
             if (!downloaded) {
                 if (this.response != null && this.response.header("content-type").contains("text/html")) {
                     LogManager.error(
-                            "The response from this request was a HTML response. This is usually caused by an antivirus or firewall software intercepting and rewriting the response. The response is below.");
+                        "The response from this request was a HTML response. This is usually caused by an antivirus or firewall software intercepting and rewriting the response. The response is below.");
 
                     LogManager.error(new String(Files.readAllBytes(this.to), StandardCharsets.UTF_8));
                 }
@@ -619,22 +623,22 @@ public final class Download {
                 FileUtils.copyFile(this.to, FileSystem.FAILED_DOWNLOADS);
                 if (fingerprint != null) {
                     LogManager.error("Error downloading " + this.to.getFileName() + " from " + this.url + ". Expected"
-                            + " fingerprint of " + fingerprint.toString() + " ("
-                            + (this.size == 0 ? "with unknown size" : "with size of" + this.size) + ") but got "
-                            + Hashing.murmur(this.to) + " (with size of "
-                            + (Files.exists(this.to) ? Files.size(this.to) : 0)
-                            + ") instead. Copied to FailedDownloads folder & cancelling install! ("
-                            + App.settings.connectionTimeout + "/" + App.settings.concurrentConnections + ")");
+                        + " fingerprint of " + fingerprint.toString() + " ("
+                        + (this.size == 0 ? "with unknown size" : "with size of" + this.size) + ") but got "
+                        + Hashing.murmur(this.to) + " (with size of "
+                        + (Files.exists(this.to) ? Files.size(this.to) : 0)
+                        + ") instead. Copied to FailedDownloads folder & cancelling install! ("
+                        + App.settings.connectionTimeout + "/" + App.settings.concurrentConnections + ")");
                 } else {
                     LogManager.error("Error downloading " + this.to.getFileName() + " from " + this.url + ". Expected"
-                            + " hash of " + expected.toString() + " ("
-                            + (this.size == 0 ? "with unknown size" : "with size of" + this.size) + ") but got "
-                            + (this.md5() ? Hashing.md5(this.to)
-                                    : (this.sha256() ? Hashing.sha256(this.to)
-                                            : (this.sha512() ? Hashing.sha512(this.to) : Hashing.sha1(this.to))))
-                            + " (with size of " + (Files.exists(this.to) ? Files.size(this.to) : 0)
-                            + ") instead. Copied to FailedDownloads folder & cancelling install! ("
-                            + App.settings.connectionTimeout + "/" + App.settings.concurrentConnections + ")");
+                        + " hash of " + expected.toString() + " ("
+                        + (this.size == 0 ? "with unknown size" : "with size of" + this.size) + ") but got "
+                        + (this.md5() ? Hashing.md5(this.to)
+                        : (this.sha256() ? Hashing.sha256(this.to)
+                            : (this.sha512() ? Hashing.sha512(this.to) : Hashing.sha1(this.to))))
+                        + " (with size of " + (Files.exists(this.to) ? Files.size(this.to) : 0)
+                        + ") instead. Copied to FailedDownloads folder & cancelling install! ("
+                        + App.settings.connectionTimeout + "/" + App.settings.concurrentConnections + ")");
                 }
                 if (this.instanceInstaller != null) {
                     this.instanceInstaller.cancel(true);

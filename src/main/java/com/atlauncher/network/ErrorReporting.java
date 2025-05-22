@@ -29,6 +29,7 @@ import com.atlauncher.utils.Utils;
 import io.sentry.Breadcrumb;
 import io.sentry.Sentry;
 import io.sentry.SentryLevel;
+import io.sentry.protocol.User;
 
 public final class ErrorReporting {
     public static List<String> sentEvents = new ArrayList<>();
@@ -69,6 +70,14 @@ public final class ErrorReporting {
             }, true);
 
             sentryInitialised = true;
+        }
+    }
+
+    public static void setUserId(String userId) {
+        if (sentryInitialised && Sentry.isEnabled()) {
+            User user = new User();
+            user.setId(userId);
+            Sentry.setUser(user);
         }
     }
 

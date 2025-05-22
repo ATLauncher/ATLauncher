@@ -291,7 +291,7 @@ public class ToolsViewModel implements SettingsListener {
         onTaskComplete.accept(null);
 
         String result = Utils.uploadPaste(Constants.LAUNCHER_NAME + " Network Test Log", results.toString());
-        if (result.contains(Constants.PASTE_CHECK_URL)) {
+        if (result != null && result.contains(Constants.PASTE_CHECK_URL)) {
             LogManager.info("Network Test has finished running, you can view the results at " + result);
             onTaskComplete.accept(null);
             onSuccess.accept(null);

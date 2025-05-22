@@ -296,6 +296,9 @@ public class App {
         // Load the settings from json, convert old properties config and validate it
         loadSettings();
 
+        // Set the user id (in this case just use the analytics client id) so we can track how many users are affected
+        ErrorReporting.setUserId(settings.analyticsClientId);
+
         try {
             Language.init();
             Language.setLanguage(settings.language);

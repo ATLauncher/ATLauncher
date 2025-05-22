@@ -193,8 +193,8 @@ public final class LoginWithMicrosoftDialog extends JDialog {
             if (deviceCodeResponse == null) {
                 mainPanel.remove(loadingPanel);
                 mainPanel.add(new JLabel(new HTMLBuilder().center().text(GetText.tr(
-                    "Failed to fetch login code from Microsoft. Please use the button above to login with your browser.",
-                    deviceCodeResponse.userCode)).build()), BorderLayout.SOUTH);
+                        "Failed to fetch login code from Microsoft. Please use the button above to login with your browser."))
+                    .build()), BorderLayout.SOUTH);
                 mainPanel.revalidate();
                 mainPanel.repaint();
                 setMinimumSize(new Dimension(500, 180));

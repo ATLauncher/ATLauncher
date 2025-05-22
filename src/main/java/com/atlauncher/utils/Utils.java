@@ -202,6 +202,7 @@ public class Utils {
      * @param log   the log
      * @return the url of the paste
      */
+    @Nullable
     public static String uploadPaste(String title, String log) {
         Map<Object, Object> data = new HashMap<>();
         data.put("title", title);
@@ -808,15 +809,15 @@ public class Utils {
 
     public static boolean combineJars(File mainJar, File jarToAdd, File outputJar) {
         try (FileInputStream is = new FileInputStream(mainJar);
-             JarInputStream jis = new JarInputStream(is);
-             JarFile jarFile = new JarFile(mainJar);
+            JarInputStream jis = new JarInputStream(is);
+            JarFile jarFile = new JarFile(mainJar);
 
-             FileInputStream is2 = new FileInputStream(jarToAdd);
-             JarInputStream jis2 = new JarInputStream(is2);
-             JarFile jarFile2 = new JarFile(jarToAdd);
+            FileInputStream is2 = new FileInputStream(jarToAdd);
+            JarInputStream jis2 = new JarInputStream(is2);
+            JarFile jarFile2 = new JarFile(jarToAdd);
 
-             FileOutputStream fos = new FileOutputStream(outputJar);
-             JarOutputStream jos = new JarOutputStream(fos)) {
+            FileOutputStream fos = new FileOutputStream(outputJar);
+            JarOutputStream jos = new JarOutputStream(fos)) {
             Set<String> entriesAdded = new HashSet<>();
             JarEntry entry;
             while ((entry = jis2.getNextJarEntry()) != null) {
@@ -882,10 +883,10 @@ public class Utils {
      */
     public static boolean stripMetaInf(File minecraftJar, File outputJar) {
         try (FileInputStream is = new FileInputStream(minecraftJar);
-             JarInputStream jis = new JarInputStream(is);
-             FileOutputStream fos = new FileOutputStream(outputJar);
-             JarOutputStream jos = new JarOutputStream(fos);
-             JarFile jarFile = new JarFile(minecraftJar)) {
+            JarInputStream jis = new JarInputStream(is);
+            FileOutputStream fos = new FileOutputStream(outputJar);
+            JarOutputStream jos = new JarOutputStream(fos);
+            JarFile jarFile = new JarFile(minecraftJar)) {
             JarEntry entry;
             while ((entry = jis.getNextJarEntry()) != null) {
                 if (entry.getName().contains("META-INF")) {
@@ -980,8 +981,7 @@ public class Utils {
     }
 
     /**
-     * This splits up a string into a multi lined string by adding a separator at
-     * every space after a given count.
+     * This splits up a string into a multi lined string by adding a separator at every space after a given count.
      *
      * @param string        the string to split up
      * @param maxLineLength the number of characters minimum to have per line
@@ -1048,8 +1048,7 @@ public class Utils {
     }
 
     /**
-     * Counts the numbers of non transparent pixels in a given
-     * {@link BufferedImage}.
+     * Counts the numbers of non transparent pixels in a given {@link BufferedImage}.
      *
      * @param image The image to count the number of non transparent pixels in
      * @return The number of non transparent pixels
@@ -1604,7 +1603,9 @@ public class Utils {
     public static String capitalize(String name) {
         return Arrays
             .stream(name.split("\\s+"))
-            .map(s -> s.isEmpty() ? s : s.substring(0, 1).toUpperCase(Locale.ENGLISH) + s.substring(1).toLowerCase(Locale.ENGLISH))
+            .map(s -> s.isEmpty()
+                ? s
+                : s.substring(0, 1).toUpperCase(Locale.ENGLISH) + s.substring(1).toLowerCase(Locale.ENGLISH))
             .collect(Collectors.joining(" "));
     }
 }

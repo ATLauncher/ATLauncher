@@ -332,7 +332,8 @@ public class InstanceInstallerDialog extends JDialog {
             saveModsCheckbox = new JCheckBox();
 
             PackVersion packVersion = ((PackVersion) versionsDropDown.getSelectedItem());
-            Optional<VersionManifestVersion> minecraftVersion = Optional.ofNullable(packVersion.minecraftVersion);
+            Optional<VersionManifestVersion> minecraftVersion = Optional.ofNullable(packVersion)
+                .map(pv -> pv.minecraftVersion);
 
             saveModsLabel.setVisible(
                 minecraftVersion.isPresent() && !minecraftVersion.get().id.equalsIgnoreCase(this.instance.id));
@@ -349,6 +350,13 @@ public class InstanceInstallerDialog extends JDialog {
             Installable installable;
 
             PackVersion packVersion = ((PackVersion) versionsDropDown.getSelectedItem());
+            if (packVersion == null) {
+                LogManager.error("No version selected");
+                setVisible(false);
+                dispose();
+                return;
+            }
+
             LoaderVersion loaderVersion = (packVersion.hasLoader() && packVersion.hasChoosableLoader())
                 ? ((ComboItem<LoaderVersion>) loaderVersionsDropDown.getSelectedItem()).getValue()
                 : null;

@@ -11,5 +11,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 
 - Installing mods for a Fabric server from Modrinth not working
 - Installing mods for servers not working due to unknown Minecraft version
+- Error squashing from errors in Sentry
 
 ### Misc

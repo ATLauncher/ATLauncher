@@ -31,10 +31,12 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import com.atlauncher.App;
 import com.atlauncher.Gsons;
+import com.atlauncher.Network;
 import com.atlauncher.constants.Constants;
 import com.atlauncher.data.minecraft.loaders.LoaderVersion;
 import com.atlauncher.data.modrinth.ModrinthCategory;
@@ -293,14 +295,21 @@ public class ModrinthApi {
             type);
     }
 
-    public static List<ModrinthCategory> getCategories() {
+    public static @Nonnull List<ModrinthCategory> getCategories() {
         java.lang.reflect.Type type = new TypeToken<List<ModrinthCategory>>() {
         }.getType();
 
-        return NetworkClient.getCached(
+        List<ModrinthCategory> categories = NetworkClient.getCached(
             String.format("%s/tag/category", Constants.MODRINTH_API_URL),
             getHeaders(), type,
             new CacheControl.Builder().maxStale(1, TimeUnit.HOURS).build());
+
+        if (categories == null) {
+            Network.removeUrlFromCache(String.format("%s/tag/category", Constants.MODRINTH_API_URL));
+            categories = new ArrayList<>();
+        }
+
+        return categories;
     }
 
     public static List<ModrinthCategory> getCategoriesForModpacks() {
