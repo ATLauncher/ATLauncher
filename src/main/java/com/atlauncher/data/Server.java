@@ -44,6 +44,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import javax.annotation.Nullable;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
@@ -78,10 +79,12 @@ import com.atlauncher.data.modrinth.ModrinthProject;
 import com.atlauncher.data.modrinth.ModrinthProjectType;
 import com.atlauncher.data.modrinth.ModrinthVersion;
 import com.atlauncher.data.modrinth.pack.ModrinthModpackManifest;
+import com.atlauncher.exceptions.InvalidMinecraftVersion;
 import com.atlauncher.exceptions.InvalidPack;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.managers.LogManager;
+import com.atlauncher.managers.MinecraftManager;
 import com.atlauncher.managers.PackManager;
 import com.atlauncher.managers.PerformanceManager;
 import com.atlauncher.network.Analytics;
@@ -103,6 +106,8 @@ public class Server implements ModManagement {
     public String description;
     public String pack;
     public Integer packId;
+    @Nullable
+    public String minecraftVersion;
     public String version;
     public String hash;
     public boolean isPatchedForLog4Shell = false;
@@ -672,6 +677,23 @@ public class Server implements ModManagement {
 
     @Override
     public String getMinecraftVersion() {
+        if (minecraftVersion != null) {
+            return minecraftVersion;
+        }
+
+        if (isModrinthPack() && modrinthVersion != null && MinecraftManager.isMinecraftVersion(
+            modrinthVersion.gameVersions.get(0))) {
+            try {
+                return MinecraftManager.getMinecraftVersion(modrinthVersion.gameVersions.get(0)).id;
+            } catch (InvalidMinecraftVersion e) {
+                LogManager.error(e.getMessage());
+            }
+        }
+
+        if (isCurseForgePack() && curseForgeFile != null && curseForgeFile.getGameVersion() != null) {
+            return curseForgeFile.getGameVersion();
+        }
+
         return version;
     }
 

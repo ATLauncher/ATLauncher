@@ -23,6 +23,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+import javax.annotation.Nullable;
+
 import org.joda.time.format.ISODateTimeFormat;
 
 import com.atlauncher.annot.ExcludeFromGsonSerialization;
@@ -67,7 +69,7 @@ public class CurseForgeFile {
 
     public String getDisplayName() {
         if (this.isModPack() && displayName.length() >= 4
-                && displayName.substring(displayName.length() - 4).equalsIgnoreCase(".zip")) {
+            && displayName.substring(displayName.length() - 4).equalsIgnoreCase(".zip")) {
             return displayName.substring(0, displayName.length() - 4);
         }
 
@@ -124,16 +126,17 @@ public class CurseForgeFile {
         mod.curseForgeFile = this;
 
         Optional<CurseForgeFileHash> md5Hash = hashes.stream().filter(CurseForgeFileHash::isMd5)
-                .findFirst();
+            .findFirst();
         md5Hash.ifPresent(curseForgeFileHash -> mod.md5 = curseForgeFileHash.value);
 
         Optional<CurseForgeFileHash> sha1Hash = hashes.stream().filter(CurseForgeFileHash::isSha1)
-                .findFirst();
+            .findFirst();
         sha1Hash.ifPresent(curseForgeFileHash -> mod.sha1 = curseForgeFileHash.value);
 
         return mod;
     }
 
+    @Nullable
     public String getGameVersion() {
         // CurseForge api returning no versions for some reason
         if (gameVersions.isEmpty()) {
@@ -149,17 +152,17 @@ public class CurseForgeFile {
         // instance) and then order them by Minecraft versions release date to make sure
         // we use the newest (SkyFactory 4 lists 3 Minecraft versions for some reason)
         Optional<String> minecraftVersion = gameVersions.stream().filter(MinecraftManager::isMinecraftVersion)
-                .map(gv -> {
-                    try {
-                        return MinecraftManager.getMinecraftVersion(gv);
-                    } catch (InvalidMinecraftVersion e) {
-                        // this should never happen because of the filter
-                        return null;
-                    }
-                }).filter(Objects::nonNull)
-                .sorted(Comparator.comparingLong((VersionManifestVersion mv) -> ISODateTimeFormat.dateTimeParser()
-                        .parseDateTime(mv.releaseTime).getMillis() / 1000).reversed())
-                .map(mv -> mv.id).findFirst();
+            .map(gv -> {
+                try {
+                    return MinecraftManager.getMinecraftVersion(gv);
+                } catch (InvalidMinecraftVersion e) {
+                    // this should never happen because of the filter
+                    return null;
+                }
+            }).filter(Objects::nonNull)
+            .sorted(Comparator.comparingLong((VersionManifestVersion mv) -> ISODateTimeFormat.dateTimeParser()
+                .parseDateTime(mv.releaseTime).getMillis() / 1000).reversed())
+            .map(mv -> mv.id).findFirst();
 
         // worse case if nothing comes back, just grab the first item
         return minecraftVersion.orElseGet(() -> gameVersions.get(0));
