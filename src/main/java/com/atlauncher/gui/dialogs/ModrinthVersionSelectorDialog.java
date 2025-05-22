@@ -400,13 +400,13 @@ public class ModrinthVersionSelectorDialog extends JDialog {
                         && v.loaders.contains("forge")));
                 boolean hasForgeVersion = this.versionsData.stream().anyMatch(v -> v.loaders.contains("forge"));
                 modrinthVersionsStream = modrinthVersionsStream.filter(v -> {
-                    if (instanceOrServer instanceof Instance && v.loaders.contains("fabric")
+                    if (v.loaders.contains("fabric")
                         && (loaderVersion.isFabric()
                         || loaderVersion.isLegacyFabric()
                         || loaderVersion.isQuilt()
-                        || (((Instance) instanceOrServer).isForgeLikeAndHasInstalledSinytraConnector()
+                        || (instanceOrServer.isForgeLikeAndHasInstalledSinytraConnector()
                         && loaderVersion.isForge() && !hasForgeVersion)
-                        || (((Instance) instanceOrServer).isForgeLikeAndHasInstalledSinytraConnector()
+                        || (instanceOrServer.isForgeLikeAndHasInstalledSinytraConnector()
                         && loaderVersion.isNeoForge() && !hasNeoForgeVersion))) {
                         return true;
                     }
