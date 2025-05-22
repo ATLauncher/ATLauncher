@@ -76,7 +76,6 @@ public class InstanceLauncher {
     public String wrapperCommand = null;
     public Boolean useSystemGlfw = null;
     public Boolean useSystemOpenAl = null;
-    public Boolean useDedicatedGpu = null;
 
     public boolean isDev;
     public boolean isPlayable;

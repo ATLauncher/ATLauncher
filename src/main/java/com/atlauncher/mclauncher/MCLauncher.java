@@ -24,7 +24,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -77,12 +76,9 @@ public class MCLauncher {
         processBuilder.environment().remove("_JAVA_OPTIONS"); // Remove any _JAVA_OPTIONS, they are a PAIN
 
         // Inject user-defined environment variables mixed with any other environment variables
-        Map<String, String> env = new HashMap<>();
-        env.putAll(getEnvironmentVariables(instance));
-        env.putAll(App.settings.environmentVariables);
-
+        Map<String, String> env = App.settings.environmentVariables;
         if (!env.isEmpty()) {
-            LogManager.debug("Injecting environment variables: " + env);
+            LogManager.info("Injecting environment variables: " + env);
             processBuilder.environment().putAll(env);
         }
 
@@ -514,19 +510,5 @@ public class MCLauncher {
         argsString = argsString.replace(account.getSessionToken(), "REDACTED");
 
         return argsString;
-    }
-
-    private static Map<String, String> getEnvironmentVariables(Instance instance) {
-        Map<String, String> env = new LinkedHashMap<>();
-        Boolean useDedicatedGpu = Optional.ofNullable(instance.launcher.useDedicatedGpu)
-            .orElse(App.settings.useDedicatedGpu);
-
-        if (OS.isLinux() && useDedicatedGpu) {
-            env.put("DRI_PRIME", "1");
-            env.put("__NV_PRIME_RENDER_OFFLOAD", "1");
-            env.put("__GLX_VENDOR_LIBRARY_NAME", "nvidia");
-        }
-
-        return env;
     }
 }

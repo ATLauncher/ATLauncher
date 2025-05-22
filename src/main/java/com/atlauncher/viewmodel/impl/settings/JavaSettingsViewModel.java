@@ -54,32 +54,31 @@ public class JavaSettingsViewModel implements SettingsListener {
     private static final long JAVA_INSTALL_LOCATION_CHECK_DELAY = 2000;
 
     private final BehaviorSubject<Integer> _maxRam = BehaviorSubject.create(),
-            _metaspace = BehaviorSubject.create(),
-            _width = BehaviorSubject.create(),
-            _height = BehaviorSubject.create();
+        _metaspace = BehaviorSubject.create(),
+        _width = BehaviorSubject.create(),
+        _height = BehaviorSubject.create();
 
     private final BehaviorSubject<String> _javaPath = BehaviorSubject.create(),
-            _javaParams = BehaviorSubject.create(),
-            _javaInstallLocation = BehaviorSubject.create();
+        _javaParams = BehaviorSubject.create(),
+        _javaInstallLocation = BehaviorSubject.create();
 
     private final BehaviorSubject<Boolean> _maximizeMinecraft = BehaviorSubject.create(),
-            _ignoreJavaOnInstanceLaunch = BehaviorSubject.create(),
-            _useJavaProvidedByMinecraft = BehaviorSubject.create(),
-            _disableLegacyLaunching = BehaviorSubject.create(),
-            _useSystemGlfw = BehaviorSubject.create(),
-            _useSystemOpenAl = BehaviorSubject.create(),
-            _useDedicatedGpu = BehaviorSubject.create();
+        _ignoreJavaOnInstanceLaunch = BehaviorSubject.create(),
+        _useJavaProvidedByMinecraft = BehaviorSubject.create(),
+        _disableLegacyLaunching = BehaviorSubject.create(),
+        _useSystemGlfw = BehaviorSubject.create(),
+        _useSystemOpenAl = BehaviorSubject.create();
 
     private final BehaviorSubject<CheckState> javaPathCheckState = BehaviorSubject.create(),
-            javaInstallLocationCheckState = BehaviorSubject.create(),
-            javaParamCheckState = BehaviorSubject.create();
+        javaInstallLocationCheckState = BehaviorSubject.create(),
+        javaParamCheckState = BehaviorSubject.create();
 
     private Integer systemRam = -1,
-            recommendSize;
+        recommendSize;
 
     private boolean maximumMemoryHalfWarningShown = false,
-            maximumMemoryEightGBWarningShown = false,
-            permgenWarningShown = false;
+        maximumMemoryEightGBWarningShown = false,
+        permgenWarningShown = false;
     private List<String> javaPaths;
 
     private long javaPathLastChange = 0;
@@ -180,8 +179,8 @@ public class JavaSettingsViewModel implements SettingsListener {
 
                         String params = App.settings.javaParameters;
                         boolean valid = !params.contains("-Xmx") &&
-                                !params.contains("-XX:PermSize") &&
-                                !params.contains("-XX:MetaspaceSize");
+                            !params.contains("-XX:PermSize") &&
+                            !params.contains("-XX:MetaspaceSize");
                         javaParamCheckState.onNext(new CheckState.Checked(valid));
                         javaParamChanged = false;
                         SettingsValidityManager.setValidity("javaParam", valid);
@@ -213,10 +212,6 @@ public class JavaSettingsViewModel implements SettingsListener {
         _disableLegacyLaunching.onNext(App.settings.disableLegacyLaunching);
         _useSystemGlfw.onNext(App.settings.useSystemGlfw);
         _useSystemOpenAl.onNext(App.settings.useSystemOpenAl);
-
-        if (OS.isLinux()) {
-            _useDedicatedGpu.onNext(App.settings.useDedicatedGpu);
-        }
     }
 
     /**
@@ -264,8 +259,7 @@ public class JavaSettingsViewModel implements SettingsListener {
     /**
      * Set the maximum ram
      *
-     * @param maxRam
-     *            max ram value
+     * @param maxRam max ram value
      */
     public void setMaxRam(int maxRam) {
         App.settings.maximumMemory = maxRam;
@@ -286,8 +280,7 @@ public class JavaSettingsViewModel implements SettingsListener {
     /**
      * Set the perm gen size
      *
-     * @param permGen
-     *            perm gen size
+     * @param permGen perm gen size
      * @return true to show warning, false otherwise
      */
     public boolean setPermGen(int permGen) {
@@ -322,8 +315,8 @@ public class JavaSettingsViewModel implements SettingsListener {
 
     public List<ScreenResolution> getScreenResolutions() {
         return Arrays.stream(Constants.SCREEN_RESOLUTIONS)
-                .filter((it) -> it.width <= OS.getMaximumWindowWidth() && it.height <= OS.getMaximumWindowHeight())
-                .collect(Collectors.toList());
+            .filter((it) -> it.width <= OS.getMaximumWindowWidth() && it.height <= OS.getMaximumWindowHeight())
+            .collect(Collectors.toList());
     }
 
     public void setScreenResolution(ScreenResolution resolution) {
@@ -335,8 +328,8 @@ public class JavaSettingsViewModel implements SettingsListener {
     public List<String> getJavaPaths() {
         if (javaPaths == null)
             javaPaths = Java.getInstalledJavas().stream()
-                    .map(javaInfo -> javaInfo.rootPath)
-                    .collect(Collectors.toList());
+                .map(javaInfo -> javaInfo.rootPath)
+                .collect(Collectors.toList());
 
         return javaPaths;
     }
@@ -464,15 +457,6 @@ public class JavaSettingsViewModel implements SettingsListener {
 
     public void setSystemOpenAL(Boolean b) {
         App.settings.useSystemOpenAl = b;
-        SettingsManager.post();
-    }
-
-    public Observable<Boolean> getDedicatedGpu() {
-        return _useDedicatedGpu.observeOn(SwingSchedulers.edt());
-    }
-
-    public void setDedicatedGpu(Boolean b) {
-        App.settings.useDedicatedGpu = b;
         SettingsManager.post();
     }
 

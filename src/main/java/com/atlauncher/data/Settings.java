@@ -104,7 +104,7 @@ public class Settings {
     public int windowHeight = 480;
     public String javaPath;
     public String javaParameters = Constants.DEFAULT_JAVA_PARAMETERS;
-    @SerializedName(value = "javaInstallLocation", alternate = {"baseJavaInstallFolder"})
+    @SerializedName(value = "javaInstallLocation", alternate = { "baseJavaInstallFolder" })
     public String javaInstallLocation = null;
     public boolean maximiseMinecraft = false;
     public boolean ignoreJavaOnInstanceLaunch = false;
@@ -112,7 +112,6 @@ public class Settings {
     public boolean disableLegacyLaunching = false;
     public boolean useSystemGlfw = false;
     public boolean useSystemOpenAl = false;
-    public boolean useDedicatedGpu = true;
 
     // Environment Variables
     public Map<String, String> environmentVariables = new HashMap<>();
