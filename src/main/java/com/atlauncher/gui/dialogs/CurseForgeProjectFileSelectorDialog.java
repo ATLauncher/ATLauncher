@@ -55,7 +55,6 @@ import com.atlauncher.managers.DialogManager;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.managers.MinecraftManager;
 import com.atlauncher.network.Analytics;
-import com.atlauncher.network.analytics.AnalyticsEvent;
 import com.atlauncher.utils.CurseForgeApi;
 import com.atlauncher.utils.OS;
 
@@ -182,7 +181,7 @@ public class CurseForgeProjectFileSelectorDialog extends JDialog {
                 // #. {0} is the name of the mod we're installing
                 GetText.tr("Installing {0}", file.displayName), false, this);
             progressDialog.addThread(new Thread(() -> {
-                Analytics.trackEvent(AnalyticsEvent.forAddedMod(mod, file));
+                Analytics.trackEvent(mod.getAnalyticsEventForAdded(file));
                 instanceOrServer.addFileFromCurseForge(mod, file, progressDialog);
 
                 progressDialog.close();

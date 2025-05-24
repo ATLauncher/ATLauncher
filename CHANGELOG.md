@@ -7,6 +7,8 @@ This changelog only contains the changes that are unreleased. For changes for in
 
 ### New Features
 
+- Update to new analytics system (again)
+
 ### Fixes
 
 - Remove dedicated gpu option for linux as we have environment variables now [#1007]

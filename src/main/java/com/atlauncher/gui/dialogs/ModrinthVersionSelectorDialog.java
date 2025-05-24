@@ -59,7 +59,6 @@ import com.atlauncher.managers.DialogManager;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.managers.MinecraftManager;
 import com.atlauncher.network.Analytics;
-import com.atlauncher.network.analytics.AnalyticsEvent;
 import com.atlauncher.utils.ComboItem;
 import com.atlauncher.utils.ModrinthApi;
 import com.atlauncher.utils.OS;
@@ -307,7 +306,7 @@ public class ModrinthVersionSelectorDialog extends JDialog {
                 // #. {0} is the name of the mod we're installing
                 GetText.tr("Installing {0}", version.name), true, this);
             progressDialog.addThread(new Thread(() -> {
-                Analytics.trackEvent(AnalyticsEvent.forAddedMod(project, version));
+                Analytics.trackEvent(project.getAnalyticsEventForAdded(version));
                 instanceOrServer.addFileFromModrinth(project, version, file, progressDialog);
                 progressDialog.close();
             }));

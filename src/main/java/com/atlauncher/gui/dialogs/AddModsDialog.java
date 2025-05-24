@@ -270,7 +270,7 @@ public final class AddModsDialog extends JDialog {
                     return;
                 }
 
-                Analytics.trackEvent(AnalyticsEvent.forAddMod("Fabric API", "CurseForge"));
+                Analytics.trackEvent(AnalyticsEvent.forAddMod("Fabric API", "CurseForge", "mod"));
                 CurseForgeProjectFileSelectorDialog curseForgeProjectFileSelectorDialog = new CurseForgeProjectFileSelectorDialog(
                     this, mod, instanceOrServer);
                 curseForgeProjectFileSelectorDialog.setVisible(true);
@@ -314,7 +314,7 @@ public final class AddModsDialog extends JDialog {
                     return;
                 }
 
-                Analytics.trackEvent(AnalyticsEvent.forAddMod("Fabric API", "Modrinth"));
+                Analytics.trackEvent(AnalyticsEvent.forAddMod("Fabric API", "Modrinth", "mod"));
                 ModrinthVersionSelectorDialog modrinthVersionSelectorDialog = new ModrinthVersionSelectorDialog(this,
                     mod, instanceOrServer);
                 modrinthVersionSelectorDialog.setVisible(true);
@@ -370,7 +370,7 @@ public final class AddModsDialog extends JDialog {
                     return;
                 }
 
-                Analytics.trackEvent(AnalyticsEvent.forAddMod("Legacy Fabric API", "CurseForge"));
+                Analytics.trackEvent(AnalyticsEvent.forAddMod("Legacy Fabric API", "CurseForge", "mod"));
                 CurseForgeProjectFileSelectorDialog curseForgeProjectFileSelectorDialog = new CurseForgeProjectFileSelectorDialog(
                     this, mod, instanceOrServer);
                 curseForgeProjectFileSelectorDialog.setVisible(true);
@@ -416,7 +416,7 @@ public final class AddModsDialog extends JDialog {
                     return;
                 }
 
-                Analytics.trackEvent(AnalyticsEvent.forAddMod("Legacy Fabric API", "Modrinth"));
+                Analytics.trackEvent(AnalyticsEvent.forAddMod("Legacy Fabric API", "Modrinth", "mod"));
                 ModrinthVersionSelectorDialog modrinthVersionSelectorDialog = new ModrinthVersionSelectorDialog(this,
                     mod, instanceOrServer);
                 modrinthVersionSelectorDialog.setVisible(true);
@@ -471,7 +471,7 @@ public final class AddModsDialog extends JDialog {
                 return;
             }
 
-            Analytics.trackEvent(AnalyticsEvent.forAddMod("Quilt Standard Libraries", "Modrinth"));
+            Analytics.trackEvent(AnalyticsEvent.forAddMod("Quilt Standard Libraries", "Modrinth", "mod"));
             ModrinthVersionSelectorDialog modrinthVersionSelectorDialog = new ModrinthVersionSelectorDialog(this, mod,
                 instanceOrServer);
             modrinthVersionSelectorDialog.setVisible(true);
@@ -520,7 +520,7 @@ public final class AddModsDialog extends JDialog {
                     return;
                 }
 
-                Analytics.trackEvent(AnalyticsEvent.forAddMod("Forgified Fabric API", "CurseForge"));
+                Analytics.trackEvent(AnalyticsEvent.forAddMod("Forgified Fabric API", "CurseForge", "mod"));
                 CurseForgeProjectFileSelectorDialog curseForgeProjectFileSelectorDialog = new CurseForgeProjectFileSelectorDialog(
                     this, mod, instanceOrServer);
                 curseForgeProjectFileSelectorDialog.setVisible(true);
@@ -566,7 +566,7 @@ public final class AddModsDialog extends JDialog {
                     return;
                 }
 
-                Analytics.trackEvent(AnalyticsEvent.forAddMod("Forgified Fabric API", "Modrinth"));
+                Analytics.trackEvent(AnalyticsEvent.forAddMod("Forgified Fabric API", "Modrinth", "mod"));
                 ModrinthVersionSelectorDialog modrinthVersionSelectorDialog = new ModrinthVersionSelectorDialog(this,
                     mod, instanceOrServer);
                 modrinthVersionSelectorDialog.setVisible(true);
@@ -995,14 +995,34 @@ public final class AddModsDialog extends JDialog {
 
             mods.forEach(mod -> {
                 CurseForgeProject castMod = mod;
+                String sectionValue =
+                    Optional.ofNullable((ComboItem<String>) sectionComboBox.getSelectedItem()).map(ComboItem::getValue)
+                        .orElse("Mods");
 
                 contentPanel.add(new CurseForgeProjectCard(castMod, instanceOrServer, e -> {
-                    Analytics.trackEvent(AnalyticsEvent.forAddMod(castMod));
+                    if (sectionValue.equals("Plugins")) {
+                        Analytics.trackEvent(AnalyticsEvent.forAddPlugin(castMod));
+                    } else if (sectionValue.equals("Resource Packs")) {
+                        Analytics.trackEvent(AnalyticsEvent.forAddResourcePack(castMod));
+                    } else if (sectionValue.equals("Shaders")) {
+                        Analytics.trackEvent(AnalyticsEvent.forAddShaders(castMod));
+                    } else {
+                        Analytics.trackEvent(AnalyticsEvent.forAddMod(castMod));
+                    }
+
                     CurseForgeProjectFileSelectorDialog curseForgeProjectFileSelectorDialog = new CurseForgeProjectFileSelectorDialog(
                         this, castMod, instanceOrServer);
                     curseForgeProjectFileSelectorDialog.setVisible(true);
                 }, e -> {
-                    Analytics.trackEvent(AnalyticsEvent.forRemoveMod(castMod));
+                    if (sectionValue.equals("Plugins")) {
+                        Analytics.trackEvent(AnalyticsEvent.forRemovePlugin(castMod));
+                    } else if (sectionValue.equals("Resource Packs")) {
+                        Analytics.trackEvent(AnalyticsEvent.forRemoveResourcePack(castMod));
+                    } else if (sectionValue.equals("Shaders")) {
+                        Analytics.trackEvent(AnalyticsEvent.forRemoveShaders(castMod));
+                    } else {
+                        Analytics.trackEvent(AnalyticsEvent.forRemoveMod(castMod));
+                    }
 
                     Optional<DisableableMod> foundMod = instanceOrServer.getMods().stream()
                         .filter(dm -> dm.isFromCurseForge() && dm.curseForgeProjectId == castMod.id)
@@ -1059,6 +1079,9 @@ public final class AddModsDialog extends JDialog {
 
             searchResult.hits.forEach(mod -> {
                 ModrinthSearchHit castMod = mod;
+                String sectionValue =
+                    Optional.ofNullable((ComboItem<String>) sectionComboBox.getSelectedItem()).map(ComboItem::getValue)
+                        .orElse("Mods");
 
                 contentPanel.add(new ModrinthSearchHitCard(castMod, instanceOrServer, e -> {
                     final ProgressDialog<ModrinthProject> modrinthProjectLookupDialog = new ProgressDialog<>(
@@ -1084,12 +1107,29 @@ public final class AddModsDialog extends JDialog {
                         return;
                     }
 
-                    Analytics.trackEvent(AnalyticsEvent.forAddMod(castMod));
+                    if (sectionValue.equals("Plugins")) {
+                        Analytics.trackEvent(AnalyticsEvent.forAddPlugin(castMod));
+                    } else if (sectionValue.equals("Resource Packs")) {
+                        Analytics.trackEvent(AnalyticsEvent.forAddResourcePack(castMod));
+                    } else if (sectionValue.equals("Shaders")) {
+                        Analytics.trackEvent(AnalyticsEvent.forAddShaders(castMod));
+                    } else {
+                        Analytics.trackEvent(AnalyticsEvent.forAddMod(castMod));
+                    }
+
                     ModrinthVersionSelectorDialog modrinthVersionSelectorDialog = new ModrinthVersionSelectorDialog(
                         this, modrinthMod, instanceOrServer);
                     modrinthVersionSelectorDialog.setVisible(true);
                 }, e -> {
-                    Analytics.trackEvent(AnalyticsEvent.forRemoveMod(castMod));
+                    if (sectionValue.equals("Plugins")) {
+                        Analytics.trackEvent(AnalyticsEvent.forRemovePlugin(castMod));
+                    } else if (sectionValue.equals("Resource Packs")) {
+                        Analytics.trackEvent(AnalyticsEvent.forRemoveResourcePack(castMod));
+                    } else if (sectionValue.equals("Shaders")) {
+                        Analytics.trackEvent(AnalyticsEvent.forRemoveShaders(castMod));
+                    } else {
+                        Analytics.trackEvent(AnalyticsEvent.forRemoveMod(castMod));
+                    }
 
                     Optional<DisableableMod> foundMod = instanceOrServer.getMods().stream()
                         .filter(dm -> dm.isFromModrinth() && dm.modrinthProject.id.equals(castMod.projectId))

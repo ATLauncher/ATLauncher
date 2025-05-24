@@ -20,6 +20,7 @@ package com.atlauncher.data.modrinth;
 import java.util.List;
 
 import com.atlauncher.annot.ExcludeFromGsonSerialization;
+import com.atlauncher.network.analytics.AnalyticsEvent;
 import com.google.gson.annotations.SerializedName;
 
 public class ModrinthProject {
@@ -85,4 +86,20 @@ public class ModrinthProject {
 
     // TODO: what is this?
     public List<Object> gallery;
+
+    public AnalyticsEvent getAnalyticsEventForAdded(ModrinthVersion version) {
+        if (this.projectType == ModrinthProjectType.RESOURCEPACK) {
+            return AnalyticsEvent.forAddedResourcePack(this, version);
+        }
+
+        if (this.projectType == ModrinthProjectType.SHADER) {
+            return AnalyticsEvent.forAddedShaders(this, version);
+        }
+
+        if (this.projectType == ModrinthProjectType.PLUGIN) {
+            return AnalyticsEvent.forAddedPlugin(this, version);
+        }
+
+        return AnalyticsEvent.forAddedMod(this, version);
+    }
 }
