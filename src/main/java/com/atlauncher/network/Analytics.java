@@ -57,8 +57,11 @@ public final class Analytics {
     private static final String sessionId = UUID.randomUUID().toString();
     private static boolean sessionInitialised = false;
     private static final Timer timer = new Timer();
+    private static long sessionStartTime = 0;
 
     public static void startSession(int initialTab) {
+        sessionStartTime = System.currentTimeMillis();
+
         Map<String, Object> properties = new HashMap<>();
         properties.put("java_version", Java.getLauncherJavaVersion());
         properties.put("major_java_version", Java.getLauncherJavaVersionNumber());
@@ -115,7 +118,8 @@ public final class Analytics {
 
         if (wait) {
             try {
-                responseFuture.get(10, TimeUnit.SECONDS);
+                AnalyticsApiResponse response = responseFuture.get(10, TimeUnit.SECONDS);
+                System.out.println(response.statusCode);
             } catch (InterruptedException | ExecutionException | TimeoutException ignored) {
                 // ignored
             }
@@ -164,10 +168,15 @@ public final class Analytics {
         if (sessionInitialised) {
             timer.cancel();
 
-            trackEvent(new AnalyticsEvent("session_end"));
+            System.out.println("End session");
+            long sessionEndTime = System.currentTimeMillis();
+            long durationSeconds = (sessionEndTime - sessionStartTime) / 1000L;
+            trackEvent(AnalyticsEvent.forSessionEnd(durationSeconds));
 
             if (!events.isEmpty()) {
+                System.out.println("Sending events");
                 sendAllStoredEvents(true);
+                System.out.println("Events sent");
             }
 
             sessionInitialised = false;

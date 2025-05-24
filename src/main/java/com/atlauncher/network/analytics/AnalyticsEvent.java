@@ -436,4 +436,11 @@ public class AnalyticsEvent {
 
         return new AnalyticsEvent("pack_installed", payload);
     }
+
+    public static AnalyticsEvent forSessionEnd(long duration) {
+        final Map<String, Object> payload = new HashMap<>();
+        payload.put("duration", duration);
+
+        return new AnalyticsEvent("session_end", payload);
+    }
 }
