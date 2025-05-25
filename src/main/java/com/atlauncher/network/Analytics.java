@@ -118,8 +118,7 @@ public final class Analytics {
 
         if (wait) {
             try {
-                AnalyticsApiResponse response = responseFuture.get(10, TimeUnit.SECONDS);
-                System.out.println(response.statusCode);
+                responseFuture.get(10, TimeUnit.SECONDS);
             } catch (InterruptedException | ExecutionException | TimeoutException ignored) {
                 // ignored
             }
@@ -168,15 +167,12 @@ public final class Analytics {
         if (sessionInitialised) {
             timer.cancel();
 
-            System.out.println("End session");
             long sessionEndTime = System.currentTimeMillis();
             long durationSeconds = (sessionEndTime - sessionStartTime) / 1000L;
             trackEvent(AnalyticsEvent.forSessionEnd(durationSeconds));
 
             if (!events.isEmpty()) {
-                System.out.println("Sending events");
                 sendAllStoredEvents(true);
-                System.out.println("Events sent");
             }
 
             sessionInitialised = false;

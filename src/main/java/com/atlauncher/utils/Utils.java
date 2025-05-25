@@ -488,8 +488,9 @@ public class Utils {
         }
 
         if (file.isDirectory() && !isSymlink(file)) {
-            if (file.listFiles() != null) {
-                for (File c : file.listFiles()) {
+            File[] files = file.listFiles();
+            if (files != null) {
+                for (File c : files) {
                     delete(c);
                 }
             }

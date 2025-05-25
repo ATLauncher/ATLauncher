@@ -81,7 +81,7 @@ public class AnalyticsEvent {
         }
 
         if (timePlayed != null) {
-            payload.put("time_played", timePlayed);
+            payload.put("duration", timePlayed);
         }
 
         return payload;
@@ -145,11 +145,18 @@ public class AnalyticsEvent {
         return new AnalyticsEvent("tool_run", payload);
     }
 
-    public static AnalyticsEvent forAccountAdd(String type) {
+    public static AnalyticsEvent forAccountAdd(String method) {
         final Map<String, Object> payload = new HashMap<>();
-        payload.put("type", type);
+        payload.put("method", method);
 
         return new AnalyticsEvent("account_added", payload);
+    }
+
+    public static AnalyticsEvent forAccountEdited(String method) {
+        final Map<String, Object> payload = new HashMap<>();
+        payload.put("method", method);
+
+        return new AnalyticsEvent("account_edit", payload);
     }
 
     public static AnalyticsEvent forSearchEvent(String area, String query) {
@@ -427,7 +434,7 @@ public class AnalyticsEvent {
         payload.put("platform", platform);
 
         if (server) {
-            payload.put("server", server);
+            payload.put("server", true);
         }
 
         if (loaderType != null) {

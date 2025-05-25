@@ -37,8 +37,6 @@ import com.atlauncher.App;
 import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
 import com.atlauncher.data.MicrosoftAccount;
-import com.atlauncher.network.Analytics;
-import com.atlauncher.network.analytics.AnalyticsEvent;
 import com.google.gson.JsonIOException;
 import com.google.gson.reflect.TypeToken;
 
@@ -46,16 +44,17 @@ import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.subjects.BehaviorSubject;
 
 public class AccountManager {
-    private static final Type microsoftAccountListType = new TypeToken<List<MicrosoftAccount>>() {}.getType();
+    private static final Type microsoftAccountListType = new TypeToken<List<MicrosoftAccount>>() {
+    }.getType();
 
     public static final BehaviorSubject<List<MicrosoftAccount>> ACCOUNTS = BehaviorSubject
-            .createDefault(new ArrayList<>());
+        .createDefault(new ArrayList<>());
 
     /**
      * Account using the Launcher
      */
     public static final BehaviorSubject<Optional<MicrosoftAccount>> SELECTED_ACCOUNT = BehaviorSubject
-            .createDefault(Optional.empty());
+        .createDefault(Optional.empty());
 
     public static Observable<List<MicrosoftAccount>> getAccountsObservable() {
         return ACCOUNTS;
@@ -86,11 +85,11 @@ public class AccountManager {
 
         if (Files.exists(FileSystem.ACCOUNTS)) {
             try (InputStreamReader fileReader = new InputStreamReader(
-                    Files.newInputStream(FileSystem.ACCOUNTS), StandardCharsets.UTF_8)) {
+                Files.newInputStream(FileSystem.ACCOUNTS), StandardCharsets.UTF_8)) {
                 List<MicrosoftAccount> accounts = Gsons.DEFAULT.fromJson(fileReader, microsoftAccountListType);
 
                 newAccounts.addAll(accounts.stream().filter(account -> account.accessToken != null
-                        && account.accessToken.split("\\.").length == 3).collect(Collectors.toList()));
+                    && account.accessToken.split("\\.").length == 3).collect(Collectors.toList()));
             } catch (Exception e) {
                 LogManager.logStackTrace("Exception loading accounts", e);
             }
@@ -118,7 +117,7 @@ public class AccountManager {
 
     private static void saveAccounts(List<MicrosoftAccount> accounts) {
         try (OutputStreamWriter fileWriter = new OutputStreamWriter(
-                Files.newOutputStream(FileSystem.ACCOUNTS), StandardCharsets.UTF_8)) {
+            Files.newOutputStream(FileSystem.ACCOUNTS), StandardCharsets.UTF_8)) {
             Gsons.DEFAULT.toJson(accounts, microsoftAccountListType, fileWriter);
         } catch (JsonIOException | IOException e) {
             LogManager.logStackTrace(e);
@@ -126,10 +125,7 @@ public class AccountManager {
     }
 
     public static void addAccount(MicrosoftAccount account) {
-        String accountType = "Microsoft";
-
-        Analytics.trackEvent(AnalyticsEvent.forAccountAdd(accountType));
-        LogManager.info("Added " + accountType + " Account " + account);
+        LogManager.info("Added Microsoft Account " + account);
 
         List<MicrosoftAccount> accounts = ACCOUNTS.getValue();
         accounts.add(account);
@@ -138,8 +134,8 @@ public class AccountManager {
         if (accounts.size() > 1) {
             // not first account? ask if they want to switch to it
             int ret = DialogManager.optionDialog().setTitle(GetText.tr("Account Added"))
-                    .setContent(GetText.tr("Account added successfully. Switch to it now?")).setType(DialogManager.INFO)
-                    .addOption(GetText.tr("Yes"), true).addOption(GetText.tr("No")).show();
+                .setContent(GetText.tr("Account added successfully. Switch to it now?")).setType(DialogManager.INFO)
+                .addOption(GetText.tr("Yes"), true).addOption(GetText.tr("No")).show();
 
             if (ret == 0) {
                 switchAccount(account);

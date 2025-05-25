@@ -61,7 +61,9 @@ import com.atlauncher.gui.panels.LoadingPanel;
 import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.managers.LogManager;
+import com.atlauncher.network.Analytics;
 import com.atlauncher.network.DownloadException;
+import com.atlauncher.network.analytics.AnalyticsEvent;
 import com.atlauncher.utils.MicrosoftAuthAPI;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
@@ -76,6 +78,7 @@ public final class LoginWithMicrosoftDialog extends JDialog {
     public MicrosoftAccount account = null;
     public OauthDeviceCodeResponse deviceCodeResponse = null;
     private ScheduledExecutorService codeCheckExecutor = Executors.newScheduledThreadPool(1);
+    private String loginMethod = "Unknown";
 
     public LoginWithMicrosoftDialog() {
         this(null);
@@ -242,6 +245,7 @@ public final class LoginWithMicrosoftDialog extends JDialog {
                         .checkDeviceCodeForToken(deviceCodeResponse.deviceCode);
 
                     if (oauthTokenResponse != null) {
+                        loginMethod = "DeviceCode";
                         acquireXBLToken(oauthTokenResponse);
 
                         close();
@@ -300,6 +304,7 @@ public final class LoginWithMicrosoftDialog extends JDialog {
             }
 
             try {
+                loginMethod = "Browser";
                 acquireAccessToken(req.getParams().get("code"));
             } catch (Exception e) {
                 LogManager.logStackTrace("Error acquiring accessToken", e);
@@ -338,12 +343,14 @@ public final class LoginWithMicrosoftDialog extends JDialog {
                 return;
             }
 
+            Analytics.trackEvent(AnalyticsEvent.forAccountEdited(loginMethod));
             existingAccount.update(oauthTokenResponse, xstsAuthResponse, loginResponse, profile);
             AccountManager.saveAccounts();
         } else {
             MicrosoftAccount newAccount = new MicrosoftAccount(oauthTokenResponse, xstsAuthResponse, loginResponse,
                 profile);
 
+            Analytics.trackEvent(AnalyticsEvent.forAccountAdd(loginMethod));
             AccountManager.addAccount(newAccount);
             this.account = newAccount;
         }
