@@ -185,19 +185,23 @@ public final class Analytics {
         }
 
         if (ConfigManager.getConfigItem("analytics.enabledNew", false)) {
-            return true;
-        }
+            try {
+                Double enrolledPercentage = ConfigManager.getConfigItem("analytics.percentage", 0d);
 
-        try {
-            Double enrolledPercentage = ConfigManager.getConfigItem("analytics.percentage", 0d);
+                if (enrolledPercentage == 100) {
+                    return true;
+                }
 
-            if (enrolledPercentage == 0) {
+                if (enrolledPercentage == 0) {
+                    return false;
+                }
+
+                return new Random().nextInt(100) <= enrolledPercentage;
+            } catch (Exception ignored) {
                 return false;
             }
-
-            return new Random().nextInt(100) <= enrolledPercentage;
-        } catch (Exception ignored) {
-            return false;
         }
+
+        return false;
     }
 }
