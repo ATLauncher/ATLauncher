@@ -142,7 +142,7 @@ public class ServerCard extends CollapsiblePanel {
         rightPanel.setLayout(new BorderLayout());
         rightPanel.setPreferredSize(new Dimension(rightPanel.getPreferredSize().width, 155));
         rightPanel.add(new JScrollPane(descArea, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-                JScrollPane.HORIZONTAL_SCROLLBAR_NEVER), BorderLayout.CENTER);
+            JScrollPane.HORIZONTAL_SCROLLBAR_NEVER), BorderLayout.CENTER);
         rightPanel.add(as, BorderLayout.SOUTH);
 
         this.getContentPane().setLayout(new BorderLayout());
@@ -160,23 +160,25 @@ public class ServerCard extends CollapsiblePanel {
         this.launchWithGui.addActionListener(e -> server.launch(false));
         this.launchWithGuiAndClose.addActionListener(e -> server.launch(true));
         this.addButton.addActionListener(e -> {
+            Analytics.trackEvent(AnalyticsEvent.forServerEvent("server_add_mods", server));
             AddModsDialog addModsDialog = new AddModsDialog(server);
             addModsDialog.setVisible(true);
         });
         this.editButton.addActionListener(e -> {
+            Analytics.trackEvent(AnalyticsEvent.forServerEvent("server_edit_mods", server));
             EditModsDialog editModsDialog = new EditModsDialog(server);
             editModsDialog.setVisible(true);
         });
         this.backupButton.addActionListener(e -> server.backup());
         this.deleteButton.addActionListener(e -> {
             int ret = DialogManager.yesNoDialog(false).setTitle(GetText.tr("Delete Server"))
-                    .setContent(GetText.tr("Are you sure you want to delete this server?")).setType(DialogManager.ERROR)
-                    .show();
+                .setContent(GetText.tr("Are you sure you want to delete this server?")).setType(DialogManager.ERROR)
+                .show();
 
             if (ret == DialogManager.YES_OPTION) {
                 Analytics.trackEvent(AnalyticsEvent.forServerEvent("server_delete", server));
                 final ProgressDialog<Object> dialog = new ProgressDialog<>(GetText.tr("Deleting Server"), 0,
-                        GetText.tr("Deleting Server. Please wait..."), null, App.launcher.getParent());
+                    GetText.tr("Deleting Server. Please wait..."), null, App.launcher.getParent());
                 dialog.addThread(new Thread(() -> {
                     ServerManager.removeServer(server);
                     dialog.close();

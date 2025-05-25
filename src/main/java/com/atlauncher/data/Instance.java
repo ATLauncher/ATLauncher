@@ -2273,7 +2273,7 @@ public class Instance extends MinecraftVersion implements ModManagement {
         dialog.add(topPanel, BorderLayout.CENTER);
         dialog.add(bottomPanel, BorderLayout.SOUTH);
 
-        Analytics.trackEvent(AnalyticsEvent.forInstanceEvent("instance_backup", this));
+        Analytics.trackEvent(AnalyticsEvent.forInstanceBackup(backupMode, this));
 
         final Thread backupThread = new Thread(() -> {
             Timestamp timestamp = new Timestamp(new Date().getTime());

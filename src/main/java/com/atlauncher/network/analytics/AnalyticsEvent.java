@@ -19,7 +19,9 @@ package com.atlauncher.network.analytics;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
+import com.atlauncher.data.BackupMode;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.Pack;
 import com.atlauncher.data.PackVersion;
@@ -93,7 +95,11 @@ public class AnalyticsEvent {
     }
 
     public static AnalyticsEvent forInstanceLaunched(Instance instance, boolean offline) {
-        return new AnalyticsEvent("instance_launched", getPayloadForStartingInstance(instance, offline, null, null));
+        Map<String, Object> payload = getPayloadForStartingInstance(instance, offline, null, null);
+        payload.put("loader",
+            Optional.ofNullable(instance.launcher.loaderVersion).map(LoaderVersion::getAnalyticsValue).orElse("None"));
+
+        return new AnalyticsEvent("instance_launched", payload);
     }
 
     public static AnalyticsEvent forInstanceLaunchCompleted(Instance instance, boolean offline, int timePlayed) {
@@ -110,12 +116,35 @@ public class AnalyticsEvent {
         return new AnalyticsEvent(event, payload);
     }
 
+    public static AnalyticsEvent forInstanceBackup(BackupMode mode, Instance instance) {
+        final Map<String, Object> payload = new HashMap<>();
+        payload.put("name", instance.launcher.pack);
+        payload.put("version", instance.launcher.version);
+        payload.put("platform", instance.getPlatformName());
+        payload.put("type", mode.toString());
+
+        return new AnalyticsEvent("instance_backup", payload);
+    }
+
     public static AnalyticsEvent forServerEvent(String event, Server server) {
         final Map<String, Object> payload = new HashMap<>();
         payload.put("name", server.pack);
         payload.put("version", server.version);
+        payload.put("platform", server.getPlatformName());
 
         return new AnalyticsEvent(event, payload);
+    }
+
+    public static AnalyticsEvent forServerRun(boolean close, Server server) {
+        final Map<String, Object> payload = new HashMap<>();
+        payload.put("name", server.pack);
+        payload.put("version", server.version);
+        payload.put("platform", server.getPlatformName());
+        payload.put("close", close);
+        payload.put("loader",
+            Optional.ofNullable(server.loaderVersion).map(LoaderVersion::getAnalyticsValue).orElse("None"));
+
+        return new AnalyticsEvent("server_run", payload);
     }
 
     public static AnalyticsEvent forInstanceAddLoader(Instance instance, LoaderType loaderType) {

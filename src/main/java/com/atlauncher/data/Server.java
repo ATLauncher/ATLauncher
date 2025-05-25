@@ -105,7 +105,11 @@ public class Server implements ModManagement {
     public String name;
     public String description;
     public String pack;
+    @Nullable
+    public Boolean vanillaInstance;
     public Integer packId;
+    @Nullable
+    public Integer externalPackId;
     @Nullable
     public String minecraftVersion;
     public String version;
@@ -142,11 +146,19 @@ public class Server implements ModManagement {
     }
 
     public Pack getPack() {
+        if (this.isExternalPack() || this.isVanillaInstance()) {
+            return null;
+        }
+
         try {
             return PackManager.getPackByID(this.packId);
         } catch (InvalidPack e) {
             return null;
         }
+    }
+
+    public boolean isExternalPack() {
+        return isCurseForgePack() || isModrinthPack();
     }
 
     public void launch(boolean close) {
@@ -180,7 +192,7 @@ public class Server implements ModManagement {
 
         boolean isATLauncherLaunchScript = isATLauncherLaunchScript();
 
-        Analytics.trackEvent(AnalyticsEvent.forServerEvent("server_run", this));
+        Analytics.trackEvent(AnalyticsEvent.forServerRun(close, this));
 
         LogManager.info("Starting server " + name);
 
@@ -575,8 +587,12 @@ public class Server implements ModManagement {
             && modrinthVersion != null;
     }
 
+    public boolean isVanillaInstance() {
+        return Boolean.TRUE.equals(vanillaInstance);
+    }
+
     public boolean showGetHelpButton() {
-        if (getPack() != null || isModrinthPack() || isCurseForgePack()) {
+        if (getPack() != null || isExternalPack()) {
             return getDiscordInviteUrl() != null || getSupportUrl() != null || getWikiUrl() != null
                 || getSourceUrl() != null;
         }
@@ -658,6 +674,22 @@ public class Server implements ModManagement {
         }
 
         return null;
+    }
+
+    public String getPlatformName() {
+        if (isCurseForgePack()) {
+            return "CurseForge";
+        }
+
+        if (isModrinthPack()) {
+            return "Modrinth";
+        }
+
+        if (getPack() != null) {
+            return "ATLauncher";
+        }
+
+        return "Vanilla";
     }
 
     @Override

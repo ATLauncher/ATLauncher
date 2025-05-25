@@ -2528,6 +2528,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         server.name = this.name;
         server.pack = this.pack.name;
         server.packId = this.pack.id;
+        server.externalPackId = this.pack.externalId;
+        server.vanillaInstance = this.pack.vanillaInstance;
         server.minecraftVersion = this.version.minecraftVersion.id;
         server.version = this.packVersion.version;
         server.isDev = this.version.isDev;
