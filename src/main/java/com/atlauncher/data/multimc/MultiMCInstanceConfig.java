@@ -22,6 +22,7 @@ import java.util.Properties;
 public class MultiMCInstanceConfig {
     public String name;
 
+    public String iconKey;
     public Integer maximumMemory;
     public Integer permGen;
     public String javaPath;
@@ -35,6 +36,10 @@ public class MultiMCInstanceConfig {
 
         if (name == null) {
             name = "MultiMC Import";
+        }
+
+        if (props.getProperty("iconKey") != null) {
+            iconKey = props.getProperty("iconKey");
         }
 
         if (props.getProperty("MaxMemAlloc") != null) {

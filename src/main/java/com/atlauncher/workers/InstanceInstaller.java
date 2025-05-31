@@ -3538,6 +3538,11 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
 
                 imageDownload.downloadFile();
             }
+        } else if (multiMCManifest != null && multiMCManifest.config.iconKey != null && Files.exists(
+            multiMCExtractedPath.resolve(multiMCManifest.config.iconKey + ".png"))) {
+            fireTask(GetText.tr("Copying Image"));
+            Files.copy(multiMCExtractedPath.resolve(multiMCManifest.config.iconKey + ".png"),
+                root.resolve("instance.png"));
         }
     }
 
