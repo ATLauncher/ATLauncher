@@ -18,6 +18,7 @@
 package com.atlauncher.utils;
 
 import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -29,6 +30,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import com.atlauncher.Gsons;
@@ -143,6 +146,13 @@ public class CurseForgeApi {
 
         return searchCurseForge(Constants.CURSEFORGE_SHADER_PACKS_SECTION_ID, query, page, null, sort,
                 categoryIdParam);
+    }
+
+    public static List<CurseForgeProject> searchShaders(String versionToSearchFor, String query, int page,
+            String sort) {
+        return searchCurseForge(Constants.CURSEFORGE_SHADER_PACKS_SECTION_ID,
+                (query == null || query.length() == 0 ? "" : query + " ") + "Shaders", page, 0, sort,
+                null);
     }
 
     public static List<CurseForgeProject> searchMods(String gameVersion, String query, int page, String sort,
@@ -307,6 +317,40 @@ public class CurseForgeApi {
         return null;
     }
 
+    public static String getChangelogForProjectFile(int projectId, int fileId) {
+        String url = String.format("%s/mods/%d/files/%d/changelog", Constants.CURSEFORGE_CORE_API_URL, projectId,
+                fileId);
+
+        java.lang.reflect.Type type = new TypeToken<CurseForgeCoreApiResponse<String>>() {
+        }.getType();
+
+        CurseForgeCoreApiResponse<String> response = NetworkClient.getCached(
+            url,
+            REQUEST_HEADERS,
+            type, new CacheControl.Builder().maxStale(1, TimeUnit.HOURS).build());
+
+        if (response != null) {
+            try {
+                Pattern pattern = Pattern.compile("\"/linkout\\?remoteUrl=(.*?)\"");
+                Matcher matcher = pattern.matcher(response.data);
+                StringBuffer buffer = new StringBuffer();
+                while (matcher.find()) {
+                    String decoded = URLDecoder.decode(URLDecoder.decode(matcher.group(1), "UTF-8"), "UTF-8");
+                    matcher.appendReplacement(buffer, "\"" + Matcher.quoteReplacement(decoded) + "\"");
+                }
+                matcher.appendTail(buffer);
+
+                return buffer.toString();
+            } catch (UnsupportedEncodingException e) {
+                return response.data.replaceAll("/(\\/linkout\\?remoteUrl)/g",
+                        "https://www.curseforge.com/linkout?remoteUrl");
+            }
+        }
+
+        Network.removeUrlFromCache(url);
+        return null;
+    }
+
     public static CurseForgeProject getProjectById(int projectId) {
         return getProjectById(Integer.toString(projectId));
     }
@@ -432,7 +476,8 @@ public class CurseForgeApi {
     }
 
     public static CurseForgeFingerprint checkFingerprints(Long[] murmurHashes) {
-        String url = String.format("%s/fingerprints", Constants.CURSEFORGE_CORE_API_URL);
+        String url = String.format("%s/fingerprints/%d", Constants.CURSEFORGE_CORE_API_URL,
+                Constants.CURSEFORGE_MINECRAFT_GAME_ID);
 
         Map<String, Long[]> body = new HashMap<>();
         body.put("fingerprints", murmurHashes);

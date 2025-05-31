@@ -15,23 +15,16 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.atlauncher.thread;
+package com.atlauncher.gui.dialogs.editinstancedialog;
 
-import java.util.concurrent.Callable;
+import java.util.Arrays;
 
-import com.atlauncher.constants.Constants;
-import com.atlauncher.utils.Utils;
+import com.atlauncher.data.Instance;
+import com.atlauncher.data.Type;
 
-public final class PasteUpload implements Callable<String> {
-    private final String log;
-
-    public PasteUpload(String log) {
-        super();
-        this.log = log.replace(System.getProperty("line.separator"), "\n");
-    }
-
-    @Override
-    public String call() {
-        return Utils.uploadPaste(Constants.LAUNCHER_NAME + " - Log", log);
+public class ShaderPacksSection extends DisableableModsSection {
+    public ShaderPacksSection(EditInstanceDialog parent, Instance instance) {
+        super(parent, instance,
+                Arrays.asList(instance.ROOT.resolve("shaderpacks")), Arrays.asList(Type.shaderpack), false);
     }
 }

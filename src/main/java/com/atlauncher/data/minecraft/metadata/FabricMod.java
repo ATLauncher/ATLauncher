@@ -15,20 +15,21 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.atlauncher.data.minecraft;
+package com.atlauncher.data.minecraft.metadata;
 
 import java.util.List;
+import java.util.Map;
 
-public class MCMod {
-    public String modid;
+public class FabricMod {
+    public String id;
+    public String version;
     public String name;
     public String description;
-    public String version;
-    public String url;
-    public List<String> authorList;
-    public String credits;
-    public String logoFile;
-    public List<String> screenshots;
-    public String parent;
-    public List<String> dependencies;
+    public Map<String, String> links;
+    public List<String> authors;
+    public List<String> contributors;
+    public Map<String, String> requires;
+    public String license;
+    public String side;
+    public List<String> initializers;
 }

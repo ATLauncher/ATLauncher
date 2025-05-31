@@ -15,23 +15,24 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.atlauncher.thread;
+package com.atlauncher.gui.dialogs.editinstancedialog;
 
-import java.util.concurrent.Callable;
+import java.awt.Dimension;
 
-import com.atlauncher.constants.Constants;
-import com.atlauncher.utils.Utils;
+import javax.swing.JButton;
+import javax.swing.SwingConstants;
 
-public final class PasteUpload implements Callable<String> {
-    private final String log;
-
-    public PasteUpload(String log) {
-        super();
-        this.log = log.replace(System.getProperty("line.separator"), "\n");
+public class SideBarButton extends JButton {
+    public SideBarButton() {
+        this(null);
     }
 
-    @Override
-    public String call() {
-        return Utils.uploadPaste(Constants.LAUNCHER_NAME + " - Log", log);
+    public SideBarButton(String title) {
+        super(title);
+
+        setHorizontalAlignment(SwingConstants.LEFT);
+        setPreferredSize(new Dimension(160, 25));
+        setMinimumSize(new Dimension(160, 25));
+        setMaximumSize(new Dimension(160, 25));
     }
 }

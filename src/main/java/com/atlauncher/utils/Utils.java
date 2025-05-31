@@ -88,8 +88,6 @@ import com.atlauncher.Gsons;
 import com.atlauncher.Network;
 import com.atlauncher.constants.Constants;
 import com.atlauncher.data.minecraft.ExtractRule;
-import com.atlauncher.data.minecraft.FabricMod;
-import com.atlauncher.data.minecraft.MCMod;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.network.NetworkClient;
 import com.google.gson.reflect.TypeToken;
@@ -1463,38 +1461,6 @@ public class Utils {
             && Integer.parseInt(versionParts[2]) > Integer.parseInt(matchedParts[2]));
     }
 
-    public static MCMod getMCModForFile(File file) {
-        try {
-            java.lang.reflect.Type type = new TypeToken<List<MCMod>>() {
-            }.getType();
-
-            List<MCMod> mods = Gsons.DEFAULT.fromJson(ArchiveUtils.getFile(file.toPath(), "mcmod.info"), type);
-
-            if (!mods.isEmpty() && mods.get(0) != null) {
-                return mods.get(0);
-            }
-        } catch (Exception ignored) {
-            // ignored
-        }
-
-        return null;
-    }
-
-    public static FabricMod getFabricModForFile(File file) {
-        try {
-            FabricMod mod = Gsons.DEFAULT.fromJson(ArchiveUtils.getFile(file.toPath(), "fabric.mod.json"),
-                FabricMod.class);
-
-            if (mod != null) {
-                return mod;
-            }
-        } catch (Exception ignored2) {
-            // ignored
-        }
-
-        return null;
-    }
-
     public static boolean executableInPath(String executableName) {
         try {
             return java.util.stream.Stream
@@ -1574,7 +1540,16 @@ public class Utils {
     }
 
     public static boolean isAcceptedModFile(String filename) {
-        return filename.endsWith(".jar") || filename.endsWith(".zip") || filename.endsWith(".litemod");
+        return filename.endsWith(".jar") || filename.endsWith(".zip") || filename.endsWith(".litemod")
+                || filename.endsWith(".disabled");
+    }
+
+    public static boolean isAcceptedLogFile(Path path) {
+        return isAcceptedLogFile(path.getFileName().toString());
+    }
+
+    public static boolean isAcceptedLogFile(String filename) {
+        return filename.endsWith(".txt") || filename.endsWith(".log") || filename.endsWith(".log.gz");
     }
 
     public static boolean isDevelopment() {

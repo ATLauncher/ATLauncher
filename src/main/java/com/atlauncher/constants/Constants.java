@@ -103,6 +103,7 @@ public class Constants {
     // for your own
     public static final String CURSEFORGE_CORE_API_KEY = "$2a$10$.7CSxLm/lnj5lCBSM5jGQ.3SICSX4j9r661AgoB1Rc4Nw8jCMKcv2";
     public static final String CURSEFORGE_CORE_API_HOST = "api.curseforge.com";
+    public static final int CURSEFORGE_MINECRAFT_GAME_ID = 432;
     public static final int CURSEFORGE_FORGE_MODLOADER_ID = 1;
     public static final int CURSEFORGE_FABRIC_MODLOADER_ID = 4;
     public static final int CURSEFORGE_QUILT_MODLOADER_ID = 5;
@@ -117,6 +118,7 @@ public class Constants {
     public static final int CURSEFORGE_MODS_SECTION_ID = 6;
     public static final int CURSEFORGE_MODPACKS_SECTION_ID = 4471;
     public static final int CURSEFORGE_RESOURCE_PACKS_SECTION_ID = 12;
+    public static final int CURSEFORGE_SHADER_PACKS_SECTION_ID = 4546;
     public static final int CURSEFORGE_WORLDS_SECTION_ID = 17;
     public static final int CURSEFORGE_SHADER_PACKS_SECTION_ID = 6552;
 

@@ -17,6 +17,7 @@
  */
 package com.atlauncher.data;
 
+import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
@@ -105,17 +106,17 @@ public class InstanceLauncher {
     public boolean ignoreAllUpdates = false;
     public boolean vanillaInstance = false;
 
-    public Instant lastPlayed = null;
-    public Long numPlays = null;
+    public Instant createdAt = Instant.EPOCH;
+    public Instant updatedAt = Instant.EPOCH;
+    public Instant lastPlayed = Instant.EPOCH;
+    public Duration totalPlayTime = Duration.ZERO;
+    public Long numPlays = 0l;
 
     public String lastExportName = null;
     public String lastExportVersion = null;
     public String lastExportAuthor = null;
     public String lastExportSaveTo = null;
 
-    public InstanceLauncher() {
-        this.numPlays = 0l;
-        this.lastPlayed = Instant.EPOCH;
-    }
-
+    public String notes = "";
+    public boolean wrapNotes = true;
 }

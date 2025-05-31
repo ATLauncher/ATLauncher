@@ -96,6 +96,7 @@ dependencies {
     // Apollo GraphQL (Cannot update past 2.x.x as Kotlin is required)
     implementation 'com.apollographql.apollo:apollo-runtime:2.5.14'
     implementation 'com.apollographql.apollo:apollo-http-cache:2.5.14'
+    implementation 'com.moandjiezana.toml:toml4j:0.7.2'
     implementation 'com.apollographql.apollo:apollo-rx3-support:2.5.14'
 
     // RxJava

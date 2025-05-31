@@ -17,11 +17,15 @@
  */
 package com.atlauncher.managers;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Files;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -78,6 +82,7 @@ public class InstanceManager {
         for (String folder : Optional.ofNullable(FileSystem.INSTANCES.toFile().list(Utils.getInstanceFileFilter()))
             .orElse(new String[0])) {
             Path instanceDir = FileSystem.INSTANCES.resolve(folder);
+            File instanceJsonFile = new File(instanceDir.toFile(), "instance.json");
 
             Instance instance;
 
@@ -120,6 +125,16 @@ public class InstanceManager {
                         instance.launcher.name));
                     instance.launcher.numPlays = instance.numPlays;
                     instance.launcher.lastPlayed = instance.lastPlayed;
+
+                    instance.save();
+                }
+
+                if (instance.launcher.createdAt == Instant.EPOCH) {
+                    LogManager.info(String.format("Filling in instance \"%s\" createdAt field",
+                            instance.launcher.name));
+                    BasicFileAttributes attrs = Files.readAttributes(instanceJsonFile.toPath(),
+                            BasicFileAttributes.class);
+                    instance.launcher.createdAt = attrs.creationTime().toInstant();
 
                     instance.save();
                 }
@@ -177,6 +192,20 @@ public class InstanceManager {
                 LogManager.logStackTrace("Error converting moved pack", e);
             }
         });
+
+        // scan internal metadata from instance mods
+        // TODO: FIX THIS AFTER MERGE
+//        LogManager.info("Scanning instances for internal mod metadata. This is a one time operation.");
+//        INSTANCES.parallelStream()
+//            .filter(instance -> instance.launcher.mods != null && instance.launcher.mods.size() != 0
+//                && !instance.launcher.mods.stream().anyMatch(m -> m.internalModMetadata.size() != 0))
+//            .forEach(instance -> {
+//                instance.launcher.mods.parallelStream()
+//                    .forEach(mod -> {
+//                        mod.scanInternalModMetadata(mod.getFile(instance.ROOT, instance.id).toPath());
+//                    });
+//                instance.save();
+//            });
 
         INSTANCES.onNext(newInstances);
         LogManager.debug("Finished loading instances");
@@ -284,6 +313,9 @@ public class InstanceManager {
             LogManager.error("Error Occurred While Cloning Instance! Instance Object Couldn't Be Cloned!");
         } else {
             clonedInstance.launcher.name = clonedName;
+            clonedInstance.launcher.createdAt = Instant.now();
+            clonedInstance.launcher.updatedAt = Instant.EPOCH;
+            clonedInstance.launcher.lastPlayed = Instant.EPOCH;
             clonedInstance.ROOT = FileSystem.INSTANCES.resolve(clonedInstance.getSafeName());
             clonedInstance.uuid = UUID.randomUUID();
             FileUtils.createDirectory(clonedInstance.getRoot());

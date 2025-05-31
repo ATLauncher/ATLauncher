@@ -24,10 +24,12 @@ import java.io.Serializable;
 import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Properties;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -35,10 +37,9 @@ import org.joda.time.format.ISODateTimeFormat;
 import org.mini2Dx.gettext.GetText;
 
 import com.atlauncher.App;
+import com.atlauncher.data.curseforge.CurseForgeAttachment;
 import com.atlauncher.data.curseforge.CurseForgeFile;
 import com.atlauncher.data.curseforge.CurseForgeProject;
-import com.atlauncher.data.minecraft.FabricMod;
-import com.atlauncher.data.minecraft.MCMod;
 import com.atlauncher.data.modrinth.ModrinthProject;
 import com.atlauncher.data.modrinth.ModrinthVersion;
 import com.atlauncher.exceptions.InvalidMinecraftVersion;
@@ -48,16 +49,23 @@ import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.managers.ConfigManager;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.managers.MinecraftManager;
+import com.atlauncher.managers.PerformanceManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.network.analytics.AnalyticsEvent;
 import com.atlauncher.utils.CurseForgeApi;
 import com.atlauncher.utils.FileUtils;
+import com.atlauncher.utils.InternalModMetadataUtils;
 import com.atlauncher.utils.ModrinthApi;
 import com.atlauncher.utils.Pair;
 import com.atlauncher.utils.Utils;
+import com.google.gson.JsonObject;
 import com.google.gson.annotations.SerializedName;
+import com.moandjiezana.toml.Toml;
 
 public class DisableableMod implements Serializable {
+    private static final List<Type> nonModTypes = Arrays.asList(Type.resourcepack,
+        Type.texturepack, Type.shaderpack, Type.worlds);
+
     public String name;
     public String version;
     public boolean optional;
@@ -68,8 +76,11 @@ public class DisableableMod implements Serializable {
     public String description;
     public boolean disabled;
     public boolean userAdded = false; // Default to not being user added
+    public boolean userChanged = false; // Default to not being user changed
     public boolean wasSelected = true; // Default to it being selected on install
     public boolean skipped = false; // For browser download mods if they were skipped or not
+
+    public Map<String, String> internalModMetadata = new HashMap<>();
 
     @SerializedName(value = "curseForgeProjectId", alternate = { "curseModId" })
     public Integer curseForgeProjectId;
@@ -86,11 +97,12 @@ public class DisableableMod implements Serializable {
     @SerializedName(value = "modrinthProject", alternate = { "modrinthMod" })
     public ModrinthProject modrinthProject;
     public ModrinthVersion modrinthVersion;
+    public boolean dontScanOnModrinth = false;
 
     public DisableableMod(String name, String version, boolean optional, String file, String path, Type type,
-            Color colour, String description, boolean disabled, boolean userAdded, boolean wasSelected, boolean skipped,
-            Integer curseForgeModId, Integer curseForgeFileId, CurseForgeProject curseForgeProject,
-            CurseForgeFile curseForgeFile, ModrinthProject modrinthProject, ModrinthVersion modrinthVersion) {
+        Color colour, String description, boolean disabled, boolean userAdded, boolean wasSelected, boolean skipped,
+        Integer curseForgeModId, Integer curseForgeFileId, CurseForgeProject curseForgeProject,
+        CurseForgeFile curseForgeFile, ModrinthProject modrinthProject, ModrinthVersion modrinthVersion) {
         this.name = name;
         this.version = version;
         this.optional = optional;
@@ -112,60 +124,61 @@ public class DisableableMod implements Serializable {
     }
 
     public DisableableMod(String name, String version, boolean optional, String file, String path, Type type,
-            Color colour, String description, boolean disabled, boolean userAdded, boolean wasSelected, boolean skipped,
-            Integer curseForgeModId, Integer curseForgeFileId, CurseForgeProject curseForgeProject,
-            CurseForgeFile curseForgeFile) {
+        Color colour, String description, boolean disabled, boolean userAdded, boolean wasSelected, boolean skipped,
+        Integer curseForgeModId, Integer curseForgeFileId, CurseForgeProject curseForgeProject,
+        CurseForgeFile curseForgeFile) {
         this(name, version, optional, file, path, type, colour, description, disabled, userAdded, wasSelected, skipped,
-                curseForgeModId, curseForgeFileId, curseForgeProject, curseForgeFile, null, null);
+            curseForgeModId, curseForgeFileId, curseForgeProject, curseForgeFile, null, null);
     }
 
     public DisableableMod(String name, String version, boolean optional, String file, Type type, Color colour,
-            String description, boolean disabled, boolean userAdded, boolean wasSelected, boolean skipped,
-            Integer curseForgeModId,
-            Integer curseForgeFileId, CurseForgeProject curseForgeProject, CurseForgeFile curseForgeFile) {
+        String description, boolean disabled, boolean userAdded, boolean wasSelected, boolean skipped,
+        Integer curseForgeModId,
+        Integer curseForgeFileId, CurseForgeProject curseForgeProject, CurseForgeFile curseForgeFile) {
         this(name, version, optional, file, null, type, colour, description, disabled, userAdded, wasSelected, skipped,
-                curseForgeModId, curseForgeFileId, curseForgeProject, curseForgeFile, null, null);
+            curseForgeModId, curseForgeFileId, curseForgeProject, curseForgeFile, null, null);
     }
 
     public DisableableMod(String name, String version, boolean optional, String file, Type type, Color colour,
-            String description, boolean disabled, boolean userAdded, boolean wasSelected, boolean skipped,
-            CurseForgeProject curseForgeProject, CurseForgeFile curseForgeFile) {
+        String description, boolean disabled, boolean userAdded, boolean wasSelected, boolean skipped,
+        CurseForgeProject curseForgeProject, CurseForgeFile curseForgeFile) {
         this(name, version, optional, file, null, type, colour, description, disabled, userAdded, wasSelected, skipped,
-                curseForgeProject.id, curseForgeFile.id, curseForgeProject, curseForgeFile);
+            curseForgeProject.id, curseForgeFile.id, curseForgeProject, curseForgeFile);
     }
 
     public DisableableMod(String name, String version, boolean optional, String file, Type type, Color colour,
-            String description, boolean disabled, boolean userAdded, boolean wasSelected, boolean skipped,
-            ModrinthProject modrinthProject,
-            ModrinthVersion modrinthVersion) {
+        String description, boolean disabled, boolean userAdded, boolean wasSelected, boolean skipped,
+        ModrinthProject modrinthProject,
+        ModrinthVersion modrinthVersion) {
         this(name, version, optional, file, null, type, colour, description, disabled, userAdded, wasSelected, skipped,
-                null,
-                null, null, null, modrinthProject, modrinthVersion);
+            null,
+            null, null, null, modrinthProject, modrinthVersion);
     }
 
     public DisableableMod(String name, String version, boolean optional, String file, Type type, Color colour,
-            String description, boolean disabled, boolean userAdded, boolean wasSelected, boolean skipped,
-            Integer curseForgeModId,
-            Integer curseForgeFileId) {
+        String description, boolean disabled, boolean userAdded, boolean wasSelected, boolean skipped,
+        Integer curseForgeModId,
+        Integer curseForgeFileId) {
         this(name, version, optional, file, null, type, colour, description, disabled, userAdded, wasSelected, skipped,
-                curseForgeModId, curseForgeFileId, null, null);
+            curseForgeModId, curseForgeFileId, null, null);
     }
 
     public DisableableMod(String name, String version, boolean optional, String file, Type type, Color colour,
-            String description, boolean disabled, boolean userAdded, boolean wasSelected, boolean skipped) {
+        String description, boolean disabled, boolean userAdded, boolean wasSelected, boolean skipped) {
         this(name, version, optional, file, null, type, colour, description, disabled, userAdded, wasSelected, skipped,
-                null,
-                null, null, null);
+            null,
+            null, null, null);
     }
 
     public DisableableMod(String name, String version, boolean optional, String file, Type type, Color colour,
-            String description, boolean disabled, boolean userAdded) {
+        String description, boolean disabled, boolean userAdded) {
         this(name, version, optional, file, null, type, colour, description, disabled, userAdded, true, false, null,
-                null,
-                null, null);
+            null,
+            null, null);
     }
 
-    public DisableableMod() {}
+    public DisableableMod() {
+    }
 
     public String getName() {
         return this.name;
@@ -243,8 +256,14 @@ public class DisableableMod implements Serializable {
             if (!getFile(instanceOrServer).getParentFile().exists()) {
                 getFile(instanceOrServer).getParentFile().mkdir();
             }
-            if (Utils.moveFile(getDisabledFile(instanceOrServer), getFile(instanceOrServer), true)) {
-                this.disabled = false;
+            if (getOldDisabledFile(instanceOrServer).exists()) {
+                if (Utils.moveFile(getOldDisabledFile(instanceOrServer), getFile(instanceOrServer), true)) {
+                    this.disabled = false;
+                }
+            } else {
+                if (Utils.moveFile(getDisabledFile(instanceOrServer), getFile(instanceOrServer), true)) {
+                    this.disabled = false;
+                }
             }
         }
         return false;
@@ -280,7 +299,22 @@ public class DisableableMod implements Serializable {
         return getFile(instance).toPath();
     }
 
+    public File getActualFile(ModManagement instanceOrServer) {
+        return disabled ? getDisabledFile(instanceOrServer) : getFile(instanceOrServer);
+    }
+
     public File getDisabledFile(ModManagement instanceOrServer) {
+        try {
+            File enabledFile = getFile(instanceOrServer.getRoot(), instanceOrServer.getMinecraftVersion());
+
+            return enabledFile.toPath().resolveSibling(enabledFile.getName() + ".disabled").toFile();
+        } catch (InvalidPathException e) {
+            LogManager.warn("Invalid path for mod " + this.name);
+            return null;
+        }
+    }
+
+    public File getOldDisabledFile(ModManagement instanceOrServer) {
         try {
             return instanceOrServer.getRoot().resolve("disabledmods/" + this.file).toFile();
         } catch (InvalidPathException e) {
@@ -370,163 +404,113 @@ public class DisableableMod implements Serializable {
         return this.type;
     }
 
-    public boolean checkForUpdate(Window parent, ModManagement instanceOrServer) {
-        return checkForUpdate(parent, instanceOrServer, null);
-    }
-
-    public boolean checkForUpdate(Window parent, ModManagement instanceOrServer, ModPlatform platform) {
+    public Pair<Boolean, Pair<Object, Object>> checkForUpdate(ModManagement instanceOrServer, ModPlatform platform) {
         Analytics.trackEvent(AnalyticsEvent.simpleEvent("mod_update_check"));
 
-        if (platform == ModPlatform.CURSEFORGE || (platform == null && isFromCurseForge()
-                && (!isFromModrinth() || App.settings.defaultModPlatform == ModPlatform.CURSEFORGE))) {
-            ProgressDialog<Object> dialog = new ProgressDialog<>(
-                    // #. {0} is the platform were checking for updates (e.g. CurseForge/Modrinth)
-                    GetText.tr("Checking For Update On {0}", "CurseForge"), 0,
-                    // #. {0} is the platform were checking for updates (e.g. CurseForge/Modrinth)
-                    GetText.tr("Checking For Update On {0}", "CurseForge"),
-                    "Cancelled checking for update on CurseForge", parent);
-            dialog.addThread(new Thread(() -> {
-                List<CurseForgeFile> curseForgeFiles = CurseForgeApi.getFilesForProject(curseForgeProjectId);
+        if (platform == ModPlatform.CURSEFORGE && isFromCurseForge() || (platform == null && isFromCurseForge()
+            && (!isFromModrinth() || App.settings.defaultModPlatform == ModPlatform.CURSEFORGE))) {
+            CurseForgeProject curseForgeProject = CurseForgeApi.getProjectById(curseForgeProjectId);
+            List<CurseForgeFile> curseForgeFiles = CurseForgeApi.getFilesForProject(curseForgeProjectId);
 
-                if (curseForgeFiles == null) {
-                    dialog.setReturnValue(false);
-                    dialog.close();
-                    return;
+            if (curseForgeFiles == null) {
+                return new Pair<>(false, null);
+            }
+
+            Stream<CurseForgeFile> curseForgeFilesStream = curseForgeFiles.stream()
+                .sorted(Comparator.comparingInt((CurseForgeFile file) -> file.id).reversed());
+
+            if (App.settings.addModRestriction == AddModRestriction.STRICT) {
+                curseForgeFilesStream = curseForgeFilesStream
+                    .filter(file -> file.gameVersions.contains(instanceOrServer.getMinecraftVersion()));
+            }
+
+            if (App.settings.addModRestriction == AddModRestriction.LAX) {
+                try {
+                    List<String> minecraftVersionsToSearch = MinecraftManager.getMajorMinecraftVersions(
+                            instanceOrServer.getMinecraftVersion())
+                        .stream().map(mv -> mv.id).collect(Collectors.toList());
+
+                    curseForgeFilesStream = curseForgeFilesStream.filter(
+                        file -> file.gameVersions.stream()
+                            .anyMatch(gv -> minecraftVersionsToSearch.contains(gv)));
+                } catch (InvalidMinecraftVersion e) {
+                    LogManager.logStackTrace(e);
+                }
+            }
+
+            // filter out files not for our loader
+            curseForgeFilesStream = curseForgeFilesStream.filter(cf -> {
+                if (cf.gameVersions.contains("Fabric") && instanceOrServer.getLoaderVersion() != null
+                    && (instanceOrServer.getLoaderVersion().isFabric()
+                    || instanceOrServer.getLoaderVersion().isLegacyFabric()
+                    || instanceOrServer.getLoaderVersion().isQuilt())) {
+                    return true;
                 }
 
-                Stream<CurseForgeFile> curseForgeFilesStream = curseForgeFiles.stream()
-                        .sorted(Comparator.comparingInt((CurseForgeFile f) -> f.id).reversed());
-
-                if (App.settings.addModRestriction == AddModRestriction.STRICT) {
-                    curseForgeFilesStream = curseForgeFilesStream
-                            .filter(f -> f.gameVersions.contains(instanceOrServer.getMinecraftVersion()));
+                if (cf.gameVersions.contains("NeoForge") && instanceOrServer.getLoaderVersion() != null
+                    && instanceOrServer.getLoaderVersion().isNeoForge()) {
+                    return true;
                 }
 
-                if (App.settings.addModRestriction == AddModRestriction.LAX) {
-                    try {
-                        List<String> minecraftVersionsToSearch = MinecraftManager
-                                .getMajorMinecraftVersions(instanceOrServer.getMinecraftVersion())
-                                .stream().map(mv -> mv.id).collect(Collectors.toList());
-
-                        curseForgeFilesStream = curseForgeFilesStream.filter(
-                                f -> f.gameVersions.stream()
-                                        .anyMatch(minecraftVersionsToSearch::contains));
-                    } catch (InvalidMinecraftVersion e) {
-                        LogManager.logStackTrace(e);
-                    }
+                if (cf.gameVersions.contains("Forge") && instanceOrServer.getLoaderVersion() != null
+                    && instanceOrServer.getLoaderVersion().isForge()) {
+                    return true;
                 }
 
-                List<String> neoForgeForgeCompatabilityVersions = ConfigManager
-                        .getConfigItem("loaders.neoforge.forgeCompatibleMinecraftVersions", new ArrayList<>());
-
-                // filter out files not for our loader
-                curseForgeFilesStream = curseForgeFilesStream.filter(cf -> {
-                    if (cf.gameVersions.contains("Fabric") && instanceOrServer.getLoaderVersion() != null
-                            && (instanceOrServer.getLoaderVersion().isFabric()
-                                    || instanceOrServer.getLoaderVersion().isLegacyFabric()
-                                    || instanceOrServer.getLoaderVersion().isQuilt())) {
-                        return true;
-                    }
-
-                    if (cf.gameVersions.contains("NeoForge") && instanceOrServer.getLoaderVersion() != null
-                            && instanceOrServer.getLoaderVersion().isNeoForge()) {
-                        return true;
-                    }
-
-                    if (cf.gameVersions.contains("Forge") && instanceOrServer.getLoaderVersion() != null
-                            && (instanceOrServer.getLoaderVersion().isForge()
-                                    || (instanceOrServer.getLoaderVersion().isNeoForge()
-                                            && neoForgeForgeCompatabilityVersions
-                                                    .contains(instanceOrServer.getMinecraftVersion())))) {
-                        return true;
-                    }
-
-                    if (cf.gameVersions.contains("Quilt") && instanceOrServer.getLoaderVersion() != null
-                            && instanceOrServer.getLoaderVersion().isQuilt()) {
-                        return true;
-                    }
-
-                    // if there's no loaders, assume the mod is untagged so we should show it
-                    return !cf.gameVersions.contains("Fabric") && !cf.gameVersions.contains("NeoForge")
-                            && !cf.gameVersions.contains("Forge") && !cf.gameVersions.contains("Quilt");
-                });
-
-                if (curseForgeFilesStream.noneMatch(f -> f.id > curseForgeFileId)) {
-                    dialog.setReturnValue(false);
-                    dialog.close();
-                    return;
+                if (cf.gameVersions.contains("Quilt") && instanceOrServer.getLoaderVersion() != null
+                    && instanceOrServer.getLoaderVersion().isQuilt()) {
+                    return true;
                 }
 
-                dialog.setReturnValue(CurseForgeApi.getProjectById(curseForgeProjectId));
-                dialog.close();
-            }));
-            dialog.start();
+                // if there's no loaders, assume the mod is untagged so we should show it
+                if (!cf.gameVersions.contains("Fabric") && !cf.gameVersions.contains(
+                    "NeoForge") && !cf.gameVersions.contains("Forge") && !cf.gameVersions.contains("Quilt")) {
+                    return true;
+                }
 
-            if (dialog.getReturnValue() == null) {
                 return false;
+            });
+
+            List<CurseForgeFile> filteredVersions = curseForgeFilesStream.collect(Collectors.toList());
+
+            if (filteredVersions.stream().noneMatch(file -> file.id > curseForgeFileId)) {
+                return new Pair<>(false, null);
             }
 
-            if (dialog.getReturnValue() instanceof Boolean) {
-                return ((Boolean) dialog.getReturnValue()) == true;
+            return new Pair<>(true, new Pair<>(curseForgeProject, filteredVersions));
+        } else if (platform == ModPlatform.MODRINTH && isFromModrinth() || (platform == null && isFromModrinth()
+            && (!isFromCurseForge() || App.settings.defaultModPlatform == ModPlatform.MODRINTH))) {
+            ModrinthProject mod = ModrinthApi.getProject(modrinthProject.id);
+            List<ModrinthVersion> versions = ModrinthApi.getVersions(modrinthProject.id,
+                instanceOrServer.getMinecraftVersion(),
+                instanceOrServer.getLoaderVersion());
+
+            if (versions == null) {
+                return new Pair<>(false, null);
             }
 
-            CurseForgeProjectFileSelectorDialog curseForgeProjectFileSelectorDialog = new CurseForgeProjectFileSelectorDialog(
-                    parent, (CurseForgeProject) dialog.getReturnValue(),
-                    instanceOrServer,
-                    curseForgeFileId);
-            curseForgeProjectFileSelectorDialog.setVisible(true);
-        } else if (platform == ModPlatform.MODRINTH || ((platform == null && isFromModrinth())
-                && (!isFromCurseForge() || App.settings.defaultModPlatform == ModPlatform.MODRINTH))) {
-            ProgressDialog<Pair<ModrinthProject, List<ModrinthVersion>>> dialog = new ProgressDialog<>(
-                    // #. {0} is the platform were checking for updates (e.g. CurseForge/Modrinth)
-                    GetText.tr("Checking For Update On {0}", "Modrinth"), 0,
-                    // #. {0} is the platform were checking for updates (e.g. CurseForge/Modrinth)
-                    GetText.tr("Checking For Update On {0}", "Modrinth"), "Cancelled checking for update on Modrinth",
-                    parent);
-            dialog.addThread(new Thread(() -> {
-                ModrinthProject mod = ModrinthApi.getProject(modrinthProject.id);
-                List<ModrinthVersion> versions = ModrinthApi.getVersions(modrinthProject.id,
-                        instanceOrServer.getMinecraftVersion(),
-                        instanceOrServer.getLoaderVersion());
+            Stream<ModrinthVersion> versionsStream = versions.stream()
+                .sorted(Comparator.comparing((ModrinthVersion version) -> version.datePublished).reversed());
 
-                if (versions == null) {
-                    dialog.setReturnValue(null);
-                    dialog.close();
-                    return;
-                }
-
-                Stream<ModrinthVersion> versionsStream = versions.stream()
-                        .sorted(Comparator.comparing((ModrinthVersion mv) -> mv.datePublished).reversed());
-
-                if (App.settings.addModRestriction == AddModRestriction.STRICT) {
-                    versionsStream = versionsStream
-                            .filter(v -> v.gameVersions.contains(instanceOrServer.getMinecraftVersion()));
-                }
-
-                if (versionsStream.noneMatch(v -> ISODateTimeFormat.dateTimeParser().parseDateTime(v.datePublished)
-                        .minusSeconds(1)
-                        .isAfter(ISODateTimeFormat.dateTimeParser().parseDateTime(modrinthVersion.datePublished)))) {
-                    dialog.setReturnValue(null);
-                    dialog.close();
-                    return;
-                }
-
-                dialog.setReturnValue(new Pair<>(mod, versions));
-                dialog.close();
-            }));
-            dialog.start();
-
-            Pair<ModrinthProject, List<ModrinthVersion>> pair = dialog.getReturnValue();
-            if (pair == null) {
-                return false;
+            if (App.settings.addModRestriction == AddModRestriction.STRICT) {
+                versionsStream = versionsStream.filter(
+                    v -> v.gameVersions.contains(instanceOrServer.getMinecraftVersion()));
             }
 
-            ModrinthVersionSelectorDialog modrinthVersionSelectorDialog = new ModrinthVersionSelectorDialog(parent,
-                    pair.left(), pair.right(), instanceOrServer, modrinthVersion.id);
-            modrinthVersionSelectorDialog.setVisible(true);
+            List<ModrinthVersion> filteredVersions = versionsStream.collect(Collectors.toList());
+
+            if (filteredVersions.stream()
+                .noneMatch(v -> ISODateTimeFormat.dateTimeParser().parseDateTime(v.datePublished)
+                    .minusSeconds(1)
+                    .isAfter(
+                        ISODateTimeFormat.dateTimeParser().parseDateTime(modrinthVersion.datePublished)))) {
+                return new Pair<>(false, null);
+            }
+
+            return new Pair<>(true, new Pair<>(mod, filteredVersions));
         }
 
-        return true;
+        return new Pair<>(false, null);
     }
 
     public boolean reinstall(Window parent, ModManagement instanceOrServer) {
@@ -537,41 +521,95 @@ public class DisableableMod implements Serializable {
         Analytics.trackEvent(AnalyticsEvent.simpleEvent("mod_reinstall"));
 
         if (platform == ModPlatform.CURSEFORGE || (platform == null && isFromCurseForge()
-                && (!isFromModrinth() || App.settings.defaultModPlatform == ModPlatform.CURSEFORGE))) {
+            && (!isFromModrinth() || App.settings.defaultModPlatform == ModPlatform.CURSEFORGE))) {
             ProgressDialog<CurseForgeProject> dialog = new ProgressDialog<>(
-                    // #. {0} is the platform were getting files from (e.g. CurseForge/Modrinth)
-                    GetText.tr("Getting Files From {0}", "CurseForge"),
-                    // #. {0} is the platform were getting files from (e.g. CurseForge/Modrinth)
-                    0, GetText.tr("Getting Files From {0}", "CurseForge"), "Cancelled getting files from CurseForge",
-                    parent);
+                // #. {0} is the platform were getting files from (e.g. CurseForge/Modrinth)
+                GetText.tr("Getting Files From {0}", "CurseForge"),
+                // #. {0} is the platform were getting files from (e.g. CurseForge/Modrinth)
+                0, GetText.tr("Getting Files From {0}", "CurseForge"), "Cancelled getting files from CurseForge",
+                parent);
             dialog.addThread(new Thread(() -> {
                 dialog.setReturnValue(CurseForgeApi.getProjectById(curseForgeProjectId));
                 dialog.close();
             }));
             dialog.start();
 
-            CurseForgeProjectFileSelectorDialog curseForgeProjectFileSelectorDialog = new CurseForgeProjectFileSelectorDialog(parent, dialog.getReturnValue(), instanceOrServer, curseForgeFileId,
-                    false);
+            CurseForgeProjectFileSelectorDialog curseForgeProjectFileSelectorDialog = new CurseForgeProjectFileSelectorDialog(
+                parent, dialog.getReturnValue(), instanceOrServer, curseForgeFileId,
+                false);
             curseForgeProjectFileSelectorDialog.setVisible(true);
         } else if (platform == ModPlatform.MODRINTH || (platform == null && isFromModrinth()
-                && (!isFromCurseForge() || App.settings.defaultModPlatform == ModPlatform.MODRINTH))) {
+            && (!isFromCurseForge() || App.settings.defaultModPlatform == ModPlatform.MODRINTH))) {
             ProgressDialog<ModrinthProject> dialog = new ProgressDialog<>(
-                    // #. {0} is the platform were getting files from (e.g. CurseForge/Modrinth)
-                    GetText.tr("Getting Files From {0}", "Modrinth"), 0,
-                    // #. {0} is the platform were getting files from (e.g. CurseForge/Modrinth)
-                    GetText.tr("Getting Files From {0}", "Modrinth"), "Cancelled getting files from Modrinth", parent);
+                // #. {0} is the platform were getting files from (e.g. CurseForge/Modrinth)
+                GetText.tr("Getting Files From {0}", "Modrinth"), 0,
+                // #. {0} is the platform were getting files from (e.g. CurseForge/Modrinth)
+                GetText.tr("Getting Files From {0}", "Modrinth"), "Cancelled getting files from Modrinth", parent);
             dialog.addThread(new Thread(() -> {
                 dialog.setReturnValue(ModrinthApi.getProject(modrinthProject.id));
                 dialog.close();
             }));
             dialog.start();
 
-            ModrinthVersionSelectorDialog modrinthVersionSelectorDialog = new ModrinthVersionSelectorDialog(parent, dialog.getReturnValue(), instanceOrServer, modrinthVersion.id,
-                    false);
+            ModrinthVersionSelectorDialog modrinthVersionSelectorDialog = new ModrinthVersionSelectorDialog(parent,
+                dialog.getReturnValue(), instanceOrServer, modrinthVersion.id,
+                false);
             modrinthVersionSelectorDialog.setVisible(true);
         }
 
         return true;
+    }
+
+    public String getDiscordInviteUrl() {
+        if (modrinthProject != null && modrinthProject.discordUrl != null) {
+            return modrinthProject.discordUrl;
+        }
+
+        return null;
+    }
+
+    public String getSupportUrl() {
+        if (modrinthProject != null && modrinthProject.issuesUrl != null) {
+            return modrinthProject.issuesUrl;
+        }
+
+        if (curseForgeProject != null && curseForgeProject.hasIssuesUrl()) {
+            return curseForgeProject.getIssuesUrl();
+        }
+
+        return null;
+    }
+
+    public String getWebsiteUrl() {
+        if (modrinthProject != null && modrinthProject.projectType != null && modrinthProject.slug != null) {
+            return modrinthProject.getWebsiteUrl();
+        }
+
+        if (curseForgeProject != null && curseForgeProject.hasWebsiteUrl()) {
+            return curseForgeProject.getWebsiteUrl();
+        }
+
+        return null;
+    }
+
+    public String getWikiUrl() {
+        if (modrinthProject != null && modrinthProject.wikiUrl != null) {
+            return modrinthProject.wikiUrl;
+        }
+
+        if (curseForgeProject != null && curseForgeProject.hasWikiUrl()) {
+            return curseForgeProject.getWikiUrl();
+        }
+
+        return null;
+    }
+
+    public String getSourceUrl() {
+        if (modrinthProject != null && modrinthProject.sourceUrl != null) {
+            return modrinthProject.sourceUrl;
+        }
+
+        return null;
     }
 
     public static DisableableMod generateMod(File file, com.atlauncher.data.Type type, boolean enabled) {
@@ -586,19 +624,445 @@ public class DisableableMod implements Serializable {
         mod.version = "Unknown";
         mod.description = null;
 
-        MCMod mcMod = Utils.getMCModForFile(file);
-        if (mcMod != null) {
-            mod.name = Optional.ofNullable(mcMod.name).orElse(file.getName());
-            mod.version = Optional.ofNullable(mcMod.version).orElse("Unknown");
-            mod.description = mcMod.description;
+        return mod;
+    }
+
+    private JsonObject getMcModInfoFile(Path path) {
+        String mcModInfoString;
+
+        if (internalModMetadata.containsKey("mcMod")) {
+            mcModInfoString = internalModMetadata.get("mcMod");
         } else {
-            FabricMod fabricMod = Utils.getFabricModForFile(file);
-            if (fabricMod != null) {
-                mod.name = Optional.ofNullable(fabricMod.name).orElse(file.getName());
-                mod.version = Optional.ofNullable(fabricMod.version).orElse("Unknown");
-                mod.description = fabricMod.description;
+            mcModInfoString = InternalModMetadataUtils.getRawInternalModMetadata(path.toFile(), "mcmod.info");
+            internalModMetadata.put("mcMod", mcModInfoString);
+        }
+
+        return InternalModMetadataUtils.parseMcModInfoFile(mcModInfoString);
+    }
+
+    private JsonObject getFabricModFile(Path path) {
+        String fabricModString;
+
+        if (internalModMetadata.containsKey("fabricMod")) {
+            fabricModString = internalModMetadata.get("fabricMod");
+        } else {
+            fabricModString = InternalModMetadataUtils.getRawInternalModMetadata(path.toFile(), "fabric.mod.json");
+            internalModMetadata.put("fabricMod", fabricModString);
+        }
+
+        return InternalModMetadataUtils.parseFabricModFile(fabricModString);
+    }
+
+    private JsonObject getQuiltModFile(Path path) {
+        String quiltModString;
+
+        if (internalModMetadata.containsKey("quiltMod")) {
+            quiltModString = internalModMetadata.get("quiltMod");
+        } else {
+            quiltModString = InternalModMetadataUtils.getRawInternalModMetadata(path.toFile(), "quilt.mod.json");
+            internalModMetadata.put("quiltMod", quiltModString);
+        }
+
+        return InternalModMetadataUtils.parseQuiltModFile(quiltModString);
+    }
+
+    private Toml getModsTomlFile(Path path) {
+        String modsTomlString;
+
+        if (internalModMetadata.containsKey("modsToml")) {
+            modsTomlString = internalModMetadata.get("modsToml");
+        } else {
+            modsTomlString = InternalModMetadataUtils.getRawInternalModMetadata(path.toFile(), "META-INF/mods.toml");
+            internalModMetadata.put("modsToml", modsTomlString);
+        }
+
+        return InternalModMetadataUtils.parseModsTomlFile(modsTomlString);
+    }
+
+    private Properties getManifestMfFile(Path path) {
+        String manifestMfString;
+
+        if (internalModMetadata.containsKey("manifestMf")) {
+            manifestMfString = internalModMetadata.get("manifestMf");
+        } else {
+            manifestMfString = InternalModMetadataUtils.getRawInternalModMetadata(path.toFile(),
+                "META-INF/MANIFEST.MF");
+            internalModMetadata.put("manifestMf", manifestMfString);
+        }
+
+        return InternalModMetadataUtils.parseManifestMfFile(manifestMfString);
+    }
+
+    public void scanInternalModMetadata(Path path) {
+        PerformanceManager.start(String.format("scanInternalModMetadata::%s", path.getFileName().toString()));
+        getMcModInfoFile(path);
+        getFabricModFile(path);
+        getQuiltModFile(path);
+        getModsTomlFile(path);
+        getManifestMfFile(path);
+        PerformanceManager.end(String.format("scanInternalModMetadata::%s", path.getFileName().toString()));
+    }
+
+    public String getNameFromFile(Path path) {
+        return getNameFromFile(null, path);
+    }
+
+    public String getNameFromFile(Instance instance) {
+        return getNameFromFile(instance, getActualFile(instance).toPath());
+    }
+
+    public String getNameFromFile(Instance instance, Path path) {
+        if (nonModTypes.contains(type)) {
+            if (modrinthProject != null) {
+                return modrinthProject.title;
+            }
+
+            if (curseForgeProject != null) {
+                return curseForgeProject.name;
+            }
+
+            return name;
+        }
+
+        if (instance != null && instance.getLoaderVersion() != null) {
+            if (instance.getLoaderVersion().isFabric() || instance.getLoaderVersion().isLegacyFabric()) {
+                JsonObject fabricMod = getFabricModFile(path);
+                if (fabricMod != null) {
+                    return fabricMod.has("name") ? fabricMod.get("name").getAsString() : name;
+                }
+            } else if (instance.getLoaderVersion().isQuilt()) {
+                JsonObject quiltMod = getQuiltModFile(path);
+                if (quiltMod != null) {
+                    return quiltMod.has("name") ? quiltMod.get("name").getAsString() : name;
+                }
+
+                JsonObject fabricMod = getFabricModFile(path);
+                if (fabricMod != null) {
+                    return fabricMod.has("name") ? fabricMod.get("name").getAsString() : name;
+                }
+            } else if (instance.getLoaderVersion().isForge()) {
+                JsonObject mcMod = getMcModInfoFile(path);
+                if (mcMod != null) {
+                    return mcMod.has("name") ? mcMod.get("name").getAsString() : name;
+                }
+
+                Toml modsToml = getModsTomlFile(path);
+                if (modsToml != null) {
+                    return modsToml.contains("mods[0].displayName") ? modsToml.getString("mods[0].displayName")
+                        : name;
+                }
             }
         }
-        return mod;
+
+        JsonObject mcMod = getMcModInfoFile(path);
+        if (mcMod != null) {
+            return mcMod.has("name") ? mcMod.get("name").getAsString() : name;
+        } else {
+            JsonObject fabricMod = getFabricModFile(path);
+            if (fabricMod != null) {
+                return fabricMod.has("name") ? fabricMod.get("name").getAsString() : name;
+            } else {
+                JsonObject quiltMod = getQuiltModFile(path);
+                if (quiltMod != null) {
+                    return quiltMod.has("name") ? quiltMod.get("name").getAsString() : name;
+                } else {
+                    Toml modsToml = getModsTomlFile(path);
+                    if (modsToml != null) {
+                        return modsToml.contains("mods[0].displayName") ? modsToml.getString("mods[0].displayName")
+                            : name;
+                    }
+                }
+            }
+        }
+
+        return name;
+    }
+
+    public String getVersionFromFile(Path path) {
+        return getVersionFromFile(null, path);
+    }
+
+    public String getVersionFromFile(Instance instance) {
+        return getVersionFromFile(instance, getActualFile(instance).toPath());
+    }
+
+    public String getVersionFromFile(Instance instance, Path path) {
+        if (nonModTypes.contains(type)) {
+            if (modrinthVersion != null) {
+                return modrinthVersion.name;
+            }
+
+            if (curseForgeFile != null) {
+                return curseForgeFile.displayName;
+            }
+
+            return version;
+        }
+
+        if (instance != null && instance.getLoaderVersion() != null) {
+            if (instance.getLoaderVersion().isFabric() || instance.getLoaderVersion().isLegacyFabric()) {
+                JsonObject fabricMod = getFabricModFile(path);
+                if (fabricMod != null) {
+                    return fabricMod.has("version") ? fabricMod.get("version").getAsString() : version;
+                }
+            } else if (instance.getLoaderVersion().isQuilt()) {
+                JsonObject quiltMod = getQuiltModFile(path);
+                if (quiltMod != null) {
+                    return quiltMod.has("version") ? quiltMod.get("version").getAsString() : version;
+                }
+
+                JsonObject fabricMod = getFabricModFile(path);
+                if (fabricMod != null) {
+                    return fabricMod.has("version") ? fabricMod.get("version").getAsString() : version;
+                }
+            } else if (instance.getLoaderVersion().isForge()) {
+                JsonObject mcMod = getMcModInfoFile(path);
+                if (mcMod != null) {
+                    return mcMod.has("version") ? mcMod.get("version").getAsString() : version;
+                }
+
+                Toml modsToml = getModsTomlFile(path);
+                if (modsToml != null) {
+                    String parsedVersion = modsToml.contains("mods[0].version")
+                        ? modsToml.getString("mods[0].version")
+                        : version;
+
+                    if (parsedVersion.equals("${file.jarVersion}")) {
+                        Properties manifestMf = getManifestMfFile(path);
+                        parsedVersion = manifestMf.getProperty("Implementation-Version");
+                    }
+
+                    return parsedVersion;
+                }
+            }
+        }
+
+        JsonObject mcMod = getMcModInfoFile(path);
+        if (mcMod != null) {
+            return mcMod.has("version") ? mcMod.get("version").getAsString() : version;
+        } else {
+            JsonObject fabricMod = getFabricModFile(path);
+            if (fabricMod != null) {
+                return fabricMod.has("version") ? fabricMod.get("version").getAsString() : version;
+            } else {
+                JsonObject quiltMod = getQuiltModFile(path);
+                if (quiltMod != null) {
+                    return quiltMod.has("version") ? quiltMod.get("version").getAsString() : version;
+                } else {
+                    Toml modsToml = getModsTomlFile(path);
+                    if (modsToml != null) {
+                        String parsedVersion = modsToml.contains("mods[0].version")
+                            ? modsToml.getString("mods[0].version")
+                            : version;
+
+                        if (parsedVersion.equals("${file.jarVersion}")) {
+                            Properties manifestMf = getManifestMfFile(path);
+                            parsedVersion = manifestMf.getProperty("Implementation-Version");
+                        }
+
+                        return parsedVersion;
+                    }
+                }
+            }
+        }
+
+        return version;
+    }
+
+    public String getDescriptionFromFile(Path path) {
+        return getDescriptionFromFile(null, path);
+    }
+
+    public String getDescriptionFromFile(Instance instance, Path path) {
+        if (nonModTypes.contains(type)) {
+            if (modrinthProject != null) {
+                return modrinthProject.description;
+            }
+
+            if (curseForgeProject != null) {
+                return curseForgeProject.summary;
+            }
+
+            return description;
+        }
+
+        if (instance != null && instance.getLoaderVersion() != null) {
+            if (instance.getLoaderVersion().isFabric() || instance.getLoaderVersion().isLegacyFabric()) {
+                JsonObject fabricMod = getFabricModFile(path);
+                if (fabricMod != null) {
+                    return fabricMod.has("description") ? fabricMod.get("description").getAsString() : description;
+                }
+            } else if (instance.getLoaderVersion().isQuilt()) {
+                JsonObject quiltMod = getQuiltModFile(path);
+                if (quiltMod != null) {
+                    return quiltMod.has("description") ? quiltMod.get("description").getAsString() : description;
+                }
+
+                JsonObject fabricMod = getFabricModFile(path);
+                if (fabricMod != null) {
+                    return fabricMod.has("description") ? fabricMod.get("description").getAsString() : description;
+                }
+            } else if (instance.getLoaderVersion().isForge()) {
+                JsonObject mcMod = getMcModInfoFile(path);
+                if (mcMod != null) {
+                    return mcMod.has("description") ? mcMod.get("description").getAsString() : description;
+                }
+
+                Toml modsToml = getModsTomlFile(path);
+                if (modsToml != null) {
+                    return modsToml.contains("mods[0].description") ? modsToml.getString("mods[0].description")
+                        : description;
+                }
+            }
+        }
+
+        JsonObject mcMod = getMcModInfoFile(path);
+        if (mcMod != null) {
+            return mcMod.has("description") ? mcMod.get("description").getAsString() : description;
+        } else {
+            JsonObject fabricMod = getFabricModFile(path);
+            if (fabricMod != null) {
+                return fabricMod.has("description") ? fabricMod.get("description").getAsString() : description;
+            } else {
+                JsonObject quiltMod = getQuiltModFile(path);
+                if (quiltMod != null) {
+                    return quiltMod.has("description") ? quiltMod.get("description").getAsString() : description;
+                } else {
+                    Toml modsToml = getModsTomlFile(path);
+                    if (modsToml != null) {
+                        return modsToml.contains("mods[0].description") ? modsToml.getString("mods[0].description")
+                            : description;
+                    }
+                }
+            }
+        }
+
+        return description;
+    }
+
+    public String getIconUrl() {
+        if (modrinthProject != null) {
+            return modrinthProject.iconUrl;
+        }
+
+        if (curseForgeProject != null) {
+            Optional<CurseForgeAttachment> logo = curseForgeProject.getLogo();
+
+            if (logo.isPresent()) {
+                return logo.get().thumbnailUrl;
+            }
+        }
+
+        return null;
+    }
+
+    public Pair<Boolean, Pair<Object, Object>> checkForUpdateOnModrinth(ModManagement instanceOrServer,
+        ModrinthProject modrinthProject, boolean reinstalling) {
+        this.modrinthProject = modrinthProject;
+
+        List<ModrinthVersion> versions = ModrinthApi.getVersions(modrinthProject.id,
+            instanceOrServer.getMinecraftVersion(),
+            nonModTypes.contains(this.type) ? null : instanceOrServer.getLoaderVersion());
+
+        if (versions == null) {
+            return new Pair<>(false, null);
+        }
+
+        Stream<ModrinthVersion> versionsStream = versions.stream()
+            .sorted(Comparator.comparing((ModrinthVersion version) -> version.datePublished).reversed());
+
+        if (App.settings.addModRestriction == AddModRestriction.STRICT) {
+            versionsStream = versionsStream.filter(
+                v -> v.gameVersions.contains(instanceOrServer.getMinecraftVersion()));
+        }
+
+        List<ModrinthVersion> filteredVersions = versionsStream.collect(Collectors.toList());
+
+        if ((!reinstalling && filteredVersions.stream()
+            .noneMatch(v -> ISODateTimeFormat.dateTimeParser().parseDateTime(v.datePublished)
+                .minusSeconds(1)
+                .isAfter(
+                    ISODateTimeFormat.dateTimeParser().parseDateTime(modrinthVersion.datePublished))))
+            || filteredVersions.size() == 0) {
+            return new Pair<>(false, null);
+        }
+
+        return new Pair<>(true, new Pair<>(modrinthProject, filteredVersions));
+    }
+
+    public Pair<Boolean, Pair<Object, Object>> checkforUpdateOnCurseForge(ModManagement instanceOrServer,
+        CurseForgeProject curseForgeProject, boolean reinstalling) {
+        this.curseForgeProject = curseForgeProject;
+        List<CurseForgeFile> curseForgeFiles = CurseForgeApi.getFilesForProject(curseForgeProject.id);
+
+        if (curseForgeFiles == null) {
+            return new Pair<>(false, null);
+        }
+
+        Stream<CurseForgeFile> curseForgeFilesStream = curseForgeFiles.stream()
+            .sorted(Comparator.comparingInt((CurseForgeFile file) -> file.id).reversed());
+
+        if (App.settings.addModRestriction == AddModRestriction.STRICT) {
+            curseForgeFilesStream = curseForgeFilesStream
+                .filter(file -> file.gameVersions.contains(instanceOrServer.getMinecraftVersion()));
+        }
+
+        if (App.settings.addModRestriction == AddModRestriction.LAX) {
+            try {
+                List<String> minecraftVersionsToSearch = MinecraftManager.getMajorMinecraftVersions(instance.id)
+                    .stream().map(mv -> mv.id).collect(Collectors.toList());
+
+                curseForgeFilesStream = curseForgeFilesStream.filter(
+                    file -> file.gameVersions.stream()
+                        .anyMatch(gv -> minecraftVersionsToSearch.contains(gv)));
+            } catch (InvalidMinecraftVersion e) {
+                LogManager.logStackTrace(e);
+            }
+        }
+
+        // filter out files not for our loader
+        if (!nonModTypes.contains(this.type)) {
+            curseForgeFilesStream = curseForgeFilesStream.filter(cf -> {
+                if (cf.gameVersions.contains("Fabric") && instanceOrServer.getLoaderVersion() != null
+                    && (instanceOrServer.getLoaderVersion().isFabric()
+                    || instanceOrServer.getLoaderVersion().isLegacyFabric()
+                    || instanceOrServer.getLoaderVersion().isQuilt())) {
+                    return true;
+                }
+
+                if (cf.gameVersions.contains("NeoForge") && instanceOrServer.getLoaderVersion() != null
+                    && instanceOrServer.getLoaderVersion().isNeoForge()) {
+                    return true;
+                }
+
+                if (cf.gameVersions.contains("Forge") && instanceOrServer.getLoaderVersion() != null
+                    && instanceOrServer.getLoaderVersion().isForge()) {
+                    return true;
+                }
+
+                if (cf.gameVersions.contains("Quilt") && instanceOrServer.getLoaderVersion() != null
+                    && instanceOrServer.getLoaderVersion().isQuilt()) {
+                    return true;
+                }
+
+                // if there's no loaders, assume the mod is untagged so we should show it
+                if (!cf.gameVersions.contains("Fabric") && !cf.gameVersions.contains("NeoForge")
+                    && !cf.gameVersions.contains("Forge") && !cf.gameVersions.contains("Quilt")) {
+                    return true;
+                }
+
+                return false;
+            });
+        }
+
+        List<CurseForgeFile> filteredVersions = curseForgeFilesStream.collect(Collectors.toList());
+
+        if ((!reinstalling
+            && filteredVersions.stream().noneMatch(file -> curseForgeFileId != null && file.id > curseForgeFileId))
+            || filteredVersions.size() == 0) {
+            return new Pair<>(false, null);
+        }
+
+        return new Pair<>(true, new Pair<>(curseForgeProject, filteredVersions));
     }
 }

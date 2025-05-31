@@ -276,7 +276,7 @@ public class ModrinthApi {
                 }
 
                 loaders.add("neoforge");
-            } else if (loaderVersion.isFabric()) {
+            } else if (loaderVersion.isFabric() || loaderVersion.isLegacyFabric()) {
                 loaders.add("fabric");
             } else if (loaderVersion.isQuilt()) {
                 loaders.add("fabric");
@@ -394,6 +394,52 @@ public class ModrinthApi {
         }
 
         return versions;
+    }
+
+    public static Map<String, ModrinthVersion> getLatestVersionFromSha1Hashes(String[] hashes,
+            String minecraftVersion, LoaderVersion loaderVersion) {
+        return getLatestVersionFromHashes(hashes, "sha1", minecraftVersion, loaderVersion);
+    }
+
+    public static Map<String, ModrinthVersion> getLatestVersionFromSha512Hashes(String[] hashes,
+            String minecraftVersion, LoaderVersion loaderVersion) {
+        return getLatestVersionFromHashes(hashes, "sha512", minecraftVersion, loaderVersion);
+    }
+
+    private static Map<String, ModrinthVersion> getLatestVersionFromHashes(String[] hashes, String algorithm,
+            String minecraftVersion, LoaderVersion loaderVersion) {
+        if (hashes.length == 0) {
+            return new HashMap<>();
+        }
+
+        try {
+            Map<String, Object> body = new HashMap<>();
+            body.put("hashes", hashes);
+            body.put("algorithm", algorithm);
+            body.put("game_versions", Arrays.asList(minecraftVersion));
+
+            List<String> loaders = new ArrayList<>();
+            if (loaderVersion.isForge()) {
+                loaders.add("forge");
+            } else if (loaderVersion.isFabric() || loaderVersion.isLegacyFabric()) {
+                loaders.add("fabric");
+            } else if (loaderVersion.isQuilt()) {
+                loaders.add("fabric");
+                loaders.add("quilt");
+            }
+            body.put("loaders", loaders);
+
+            java.lang.reflect.Type type = new TypeToken<Map<String, ModrinthVersion>>() {
+            }.getType();
+
+            return Download.build()
+                    .setUrl(String.format("%s/version_files/update", Constants.MODRINTH_API_URL))
+                    .post(RequestBody.create(Gsons.DEFAULT_SLIM.toJson(body),
+                            MediaType.get("application/json; charset=utf-8")))
+                    .asTypeWithThrow(type);
+        } catch (Exception e) {
+            return new HashMap<>();
+        }
     }
 
     public static List<ModrinthProject> getProjects(String[] projectIds) {

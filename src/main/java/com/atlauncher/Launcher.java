@@ -482,13 +482,17 @@ public class Launcher {
 
     public void killMinecraft() {
         if (this.minecraftProcess != null) {
-            LogManager.error("Killing Minecraft");
-
-            this.minecraftProcess.destroy();
+            killMinecraft(this.minecraftProcess);
             this.minecraftProcess = null;
         } else {
             LogManager.error("Cannot kill Minecraft as there is no instance open!");
         }
+    }
+
+    public void killMinecraft(Process runningProcess) {
+        LogManager.error("Killing Minecraft");
+
+        runningProcess.destroy();
     }
 
     public void setLastInstanceCrash(Instance instance) {

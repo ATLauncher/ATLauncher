@@ -51,7 +51,8 @@ public class ModsSettingsTab extends AbstractSettingsTab {
         gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
 
-        JLabelWithHover defaultModPlatformLabel = new JLabelWithHover(GetText.tr("Default Mod Platform") + ":",
+        JLabelWithHover defaultModPlatformLabel = new JLabelWithHover(
+                GetText.tr("Default/Preferred Mod Platform") + ":",
                 HELP_ICON, GetText.tr(
                         "The default mod platform to use when adding mods to instances, as well as the platform to use when updating/reinstalling mods on multiple platforms."));
 

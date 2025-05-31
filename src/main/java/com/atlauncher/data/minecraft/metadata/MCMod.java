@@ -15,23 +15,20 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.atlauncher.thread;
+package com.atlauncher.data.minecraft.metadata;
 
-import java.util.concurrent.Callable;
+import java.util.List;
 
-import com.atlauncher.constants.Constants;
-import com.atlauncher.utils.Utils;
-
-public final class PasteUpload implements Callable<String> {
-    private final String log;
-
-    public PasteUpload(String log) {
-        super();
-        this.log = log.replace(System.getProperty("line.separator"), "\n");
-    }
-
-    @Override
-    public String call() {
-        return Utils.uploadPaste(Constants.LAUNCHER_NAME + " - Log", log);
-    }
+public class MCMod {
+    public String modid;
+    public String name;
+    public String description;
+    public String version;
+    public String url;
+    public List<String> authorList;
+    public String credits;
+    public String logoFile;
+    public List<String> screenshots;
+    public String parent;
+    public List<String> dependencies;
 }

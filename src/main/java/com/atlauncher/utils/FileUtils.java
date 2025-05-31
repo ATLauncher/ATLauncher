@@ -17,13 +17,23 @@
  */
 package com.atlauncher.utils;
 
+import java.awt.FileDialog;
+import java.awt.Frame;
+import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.stream.Stream;
 
+import javax.swing.JFileChooser;
+import javax.swing.filechooser.FileFilter;
+
+import org.mini2Dx.gettext.GetText;
+
 import com.atlauncher.App;
+import com.atlauncher.FileSystem;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.utils.walker.DeleteDirVisitor;
 
@@ -211,5 +221,41 @@ public class FileUtils {
         }
 
         return false;
+    }
+
+    public static File[] getFilesUsingJFileChooser(Frame parent) {
+        JFileChooser fileChooser = new JFileChooser(FileSystem.BASE_DIR.toFile());
+        fileChooser.setMultiSelectionEnabled(true);
+        fileChooser.setFileFilter(new FileFilter() {
+            @Override
+            public String getDescription() {
+                return "Files (.jar; .zip; .litemod)";
+            }
+
+            @Override
+            public boolean accept(File f) {
+                if (f.isDirectory()) {
+                    return true;
+                }
+
+                return Utils.isAcceptedModFile(f.getName());
+            }
+        });
+        fileChooser.showOpenDialog(parent);
+
+        return fileChooser.getSelectedFiles();
+    }
+
+    public static File[] getFilesUsingFileDialog(Frame parent) {
+        FileDialog fd = new FileDialog(parent, GetText.tr("Select file/s"), FileDialog.LOAD);
+        fd.setFilenameFilter(new FilenameFilter() {
+            @Override
+            public boolean accept(File dir, String name) {
+                return Utils.isAcceptedModFile(name);
+            }
+        });
+        fd.setVisible(true);
+
+        return fd.getFiles();
     }
 }

@@ -22,7 +22,6 @@ import java.awt.FlowLayout;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
-import java.util.concurrent.ExecutionException;
 
 import javax.swing.JButton;
 import javax.swing.JPanel;
@@ -32,15 +31,13 @@ import org.mini2Dx.gettext.GetText;
 
 import com.atlauncher.App;
 import com.atlauncher.builders.HTMLBuilder;
-import com.atlauncher.constants.Constants;
 import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.RelocalizationManager;
-import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.network.Analytics;
 import com.atlauncher.network.analytics.AnalyticsEvent;
-import com.atlauncher.thread.PasteUpload;
+import com.atlauncher.utils.ATLauncherApi;
 
 public class ConsoleBottomBar extends BottomBar implements RelocalizationListener {
 
@@ -97,38 +94,7 @@ public class ConsoleBottomBar extends BottomBar implements RelocalizationListene
             clipboard.setContents(text, null);
         });
         uploadLogButton.addActionListener(e -> {
-            String result;
-            final ProgressDialog<String> dialog = new ProgressDialog<>(GetText.tr("Uploading Logs"), 0,
-                    GetText.tr("Uploading Logs"), "Aborting Uploading Logs", App.console);
-
-            dialog.addThread(new Thread(() -> {
-                try {
-                    dialog.setReturnValue(App.TASKPOOL.submit(new PasteUpload()).get());
-                } catch (InterruptedException ignored) {
-                    Thread.currentThread().interrupt();
-                    dialog.setReturnValue(null);
-                } catch (ExecutionException ex) {
-                    LogManager.logStackTrace("Exception while uploading paste", ex);
-                    dialog.setReturnValue(null);
-                }
-
-                dialog.close();
-            }));
-
-            dialog.start();
-            result = dialog.getReturnValue();
-
-            if (result != null && result.contains(Constants.PASTE_CHECK_URL)) {
-                Analytics.trackEvent(AnalyticsEvent.simpleEvent("console_upload"));
-                App.TOASTER.pop("Log uploaded and link copied to clipboard");
-                LogManager.info("Log uploaded and link copied to clipboard: " + result);
-                StringSelection text = new StringSelection(result);
-                Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-                clipboard.setContents(text, null);
-            } else {
-                App.TOASTER.popError("Log failed to upload!");
-                LogManager.error("Log failed to upload: " + result);
-            }
+            ATLauncherApi.uploadLog(App.console, App.console.getLog());
         });
         killMinecraftButton.addActionListener(arg0 -> {
             int ret = DialogManager.yesNoDialog().setTitle(GetText.tr("Kill Minecraft") + "?")

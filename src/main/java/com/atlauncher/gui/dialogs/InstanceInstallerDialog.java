@@ -239,7 +239,7 @@ public class InstanceInstallerDialog extends JDialog {
 
         setLocationRelativeTo(parent);
         setLayout(new BorderLayout());
-        setResizable(false);
+        setResizable(true);
         this.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 
         install = new JButton(
@@ -327,7 +327,7 @@ public class InstanceInstallerDialog extends JDialog {
             middle.add(saveModsLabel, gbc);
 
             gbc.gridx++;
-            gbc.insets = UIConstants.FIELD_INSETS;
+            gbc.insets = UIConstants.CHECKBOX_FIELD_INSETS;
             gbc.anchor = GridBagConstraints.BASELINE_LEADING;
             saveModsCheckbox = new JCheckBox();
 

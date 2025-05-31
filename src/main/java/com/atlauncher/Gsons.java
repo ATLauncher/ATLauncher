@@ -18,6 +18,7 @@
 package com.atlauncher;
 
 import java.awt.Color;
+import java.time.Duration;
 import java.time.Instant;
 import java.util.Date;
 
@@ -26,6 +27,7 @@ import com.atlauncher.data.AbstractAccount;
 import com.atlauncher.data.AccountTypeAdapter;
 import com.atlauncher.data.ColorTypeAdapter;
 import com.atlauncher.data.DateTypeAdapter;
+import com.atlauncher.data.DurationTypeAdapter;
 import com.atlauncher.data.InstantTypeAdapter;
 import com.atlauncher.data.PackVersion;
 import com.atlauncher.data.PackVersionTypeAdapter;
@@ -72,9 +74,12 @@ public final class Gsons {
             .registerTypeAdapter(AbstractAccount.class, new AccountTypeAdapter())
             .registerTypeAdapter(Date.class, new DateTypeAdapter())
             .registerTypeAdapter(Color.class, new ColorTypeAdapter())
+            .registerTypeAdapter(Instant.class, new InstantTypeAdapter())
+            .registerTypeAdapter(Duration.class, new DurationTypeAdapter())
             .registerTypeAdapter(OauthTokenResponse.class, new OauthTokenResponseTypeAdapter())
             .registerTypeAdapter(PackVersion.class, new PackVersionTypeAdapter())
             .registerTypeAdapter(Instant.class, new InstantTypeAdapter())
+            .registerTypeAdapter(Duration.class, new DurationTypeAdapter())
             .registerTypeAdapter(Library.class, new LibraryTypeAdapter())
             .registerTypeAdapter(Arguments.class, new ArgumentsTypeAdapter())
             .registerTypeAdapter(FabricMetaLauncherMeta.class, new FabricMetaLauncherMetaTypeAdapter())

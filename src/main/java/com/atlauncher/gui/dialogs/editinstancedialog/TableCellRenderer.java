@@ -15,23 +15,21 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.atlauncher.thread;
+package com.atlauncher.gui.dialogs.editinstancedialog;
 
-import java.util.concurrent.Callable;
+import java.awt.Component;
 
-import com.atlauncher.constants.Constants;
-import com.atlauncher.utils.Utils;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableCellRenderer;
 
-public final class PasteUpload implements Callable<String> {
-    private final String log;
-
-    public PasteUpload(String log) {
-        super();
-        this.log = log.replace(System.getProperty("line.separator"), "\n");
-    }
+public class TableCellRenderer extends DefaultTableCellRenderer {
 
     @Override
-    public String call() {
-        return Utils.uploadPaste(Constants.LAUNCHER_NAME + " - Log", log);
+    public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,
+            int row, int column) {
+        super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+        setBorder(noFocusBorder);
+        return this;
     }
+
 }

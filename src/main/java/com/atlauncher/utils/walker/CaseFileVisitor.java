@@ -46,7 +46,7 @@ public final class CaseFileVisitor extends SimpleFileVisitor<Path> {
             return FileVisitResult.CONTINUE;
         }
 
-        if (!Files.isRegularFile(path) || !Utils.isAcceptedModFile(path)) {
+        if (Files.isRegularFile(path) && Utils.isAcceptedModFile(path)) {
             if (caseType == CaseType.upper) {
                 String filename = path.getFileName().toString();
                 filename = filename.substring(0, filename.lastIndexOf(".")).toUpperCase(Locale.ENGLISH)

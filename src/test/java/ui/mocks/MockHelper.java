@@ -55,6 +55,8 @@ public class MockHelper {
         mockedFilePaths.put("lwjgl.json", Paths.get("src/test/resources/mocks/download-nodecdn-net/lwjgl.json"));
         mockedFilePaths.put("minecraft_versions.json",
                 Paths.get("src/test/resources/mocks/download-nodecdn-net/minecraft_versions.json"));
+        mockedFilePaths.put("java_runtimes.json",
+                Paths.get("src/test/resources/mocks/download-nodecdn-net/java_runtimes.json"));
     }
 
     public static void mockFilesJson(ClientAndServer mockServer) {
@@ -116,6 +118,13 @@ public class MockHelper {
             lwjgl.size = (int) Files.size(mockedFilePaths.get("lwjgl.json"));
             lwjgl.sha1 = Hashing.sha1(mockedFilePaths.get("lwjgl.json")).toString();
             downloadableFiles.add(lwjgl);
+
+            DownloadableFile javaRuntimes = new DownloadableFile();
+            javaRuntimes.name = "java_runtimes.json";
+            javaRuntimes.folder = "json";
+            javaRuntimes.size = (int) Files.size(mockedFilePaths.get("java_runtimes.json"));
+            javaRuntimes.sha1 = Hashing.sha1(mockedFilePaths.get("java_runtimes.json")).toString();
+            downloadableFiles.add(javaRuntimes);
 
             DownloadableFile minecraftVersions = new DownloadableFile();
             minecraftVersions.name = "minecraft_versions.json";

@@ -25,6 +25,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -37,6 +39,8 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -87,14 +91,12 @@ import com.atlauncher.data.minecraft.Arguments;
 import com.atlauncher.data.minecraft.AssetIndex;
 import com.atlauncher.data.minecraft.Download;
 import com.atlauncher.data.minecraft.Downloads;
-import com.atlauncher.data.minecraft.FabricMod;
 import com.atlauncher.data.minecraft.JavaRuntime;
 import com.atlauncher.data.minecraft.JavaRuntimeManifest;
 import com.atlauncher.data.minecraft.JavaRuntimeManifestFileType;
 import com.atlauncher.data.minecraft.JavaRuntimes;
 import com.atlauncher.data.minecraft.Library;
 import com.atlauncher.data.minecraft.LoggingFile;
-import com.atlauncher.data.minecraft.MCMod;
 import com.atlauncher.data.minecraft.MinecraftVersion;
 import com.atlauncher.data.minecraft.MojangAssetIndex;
 import com.atlauncher.data.minecraft.MojangDownload;
@@ -1437,7 +1439,6 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
 
         technicModpackExtractedPath = unzipLocation;
 
-        addPercent(5);
         // #. {0} is the platform the modpack is from
         fireTask(GetText.tr("Generating Pack Version From {0}", "Technic Zip"));
         fireSubProgressUnknown();
@@ -2226,23 +2227,9 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         DisableableMod mod = new DisableableMod();
 
         mod.optional = true;
-        mod.name = p.getFileName().toString();
-        mod.version = "Unknown";
-        mod.description = null;
-
-        MCMod mcMod = Utils.getMCModForFile(p.toFile());
-        if (mcMod != null) {
-            mod.name = Optional.ofNullable(mcMod.name).orElse(p.getFileName().toString());
-            mod.version = Optional.ofNullable(mcMod.version).orElse("Unknown");
-            mod.description = mcMod.description;
-        } else {
-            FabricMod fabricMod = Utils.getFabricModForFile(p.toFile());
-            if (fabricMod != null) {
-                mod.name = Optional.ofNullable(fabricMod.name).orElse(p.getFileName().toString());
-                mod.version = Optional.ofNullable(fabricMod.version).orElse("Unknown");
-                mod.description = fabricMod.description;
-            }
-        }
+        mod.name = Optional.ofNullable(mod.getNameFromFile(p)).orElse(p.getFileName().toString());
+        mod.version = Optional.ofNullable(mod.getVersionFromFile(p)).orElse("Unknown");
+        mod.description = Optional.ofNullable(mod.getDescriptionFromFile(p)).orElse(null);
 
         mod.file = p.getFileName().toString();
         mod.type = t;
@@ -2326,12 +2313,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
             return false;
         }
 
-        checkModsOnCurseForge();
-        if (isCancelled()) {
-            return false;
-        }
-
-        checkModsOnModrinth();
+        checkModsInternalMetadata();
         if (isCancelled()) {
             return false;
         }
@@ -2461,6 +2443,11 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                 instanceLauncher.hash = this.version.hash;
             }
         }
+
+        instanceLauncher.createdAt = Instant.now();
+        instanceLauncher.totalPlayTime = Duration.ZERO;
+        instanceLauncher.updatedAt = Instant.EPOCH;
+        instanceLauncher.lastPlayed = Instant.EPOCH;
 
         instance.launcher = instanceLauncher;
 
@@ -3114,7 +3101,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
     }
 
     private void downloadMods() throws Exception {
-        addPercent(25);
+        addPercent(10);
 
         if (multiMCManifest != null || selectedMods.isEmpty()) {
             return;
@@ -3207,7 +3194,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
     }
 
     private void installMods() {
-        addPercent(25);
+        addPercent(10);
 
         if (multiMCManifest != null || this.selectedMods.isEmpty()) {
             return;
@@ -3227,7 +3214,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
     }
 
     private void downloadTechnicSolderMods() {
-        addPercent(25);
+        addPercent(10);
 
         if (technicSolderModsToDownload.isEmpty()) {
             return;
@@ -3635,10 +3622,6 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
             return;
         }
 
-        // #. {0} is the platform we're checking mods on (e.g. CurseForge/Modrinth)
-        fireTask(GetText.tr("Checking Mods On {0}", "CurseForge"));
-        fireSubProgressUnknown();
-
         Map<Long, DisableableMod> murmurHashes = new HashMap<>();
 
         this.modsInstalled.stream().filter(dm -> dm.curseForgeProject == null && dm.curseForgeFile == null)
@@ -3695,10 +3678,6 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
             return;
         }
 
-        // #. {0} is the platform we're checking mods on (e.g. CurseForge/Modrinth)
-        fireTask(GetText.tr("Checking Mods On {0}", "Modrinth"));
-        fireSubProgressUnknown();
-
         Map<String, DisableableMod> sha1Hashes = new HashMap<>();
 
         this.modsInstalled.stream().filter(dm -> dm.modrinthProject == null && dm.modrinthVersion == null)
@@ -3745,6 +3724,43 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                     }
                 }
             }
+        }
+    }
+
+    private void checkModsInternalMetadata() {
+        if (this.modsInstalled.size() == 0) {
+            return;
+        }
+
+        fireTask(GetText.tr("Checking Mods Metadata"));
+        addPercent(5);
+        fireSubProgressUnknown();
+
+        ExecutorService executor = Executors.newFixedThreadPool(10);
+
+        executor.execute(() -> {
+            checkModsOnCurseForge();
+        });
+
+        executor.execute(() -> {
+            checkModsOnModrinth();
+        });
+
+        // read in all mod files internal metadata
+        for (DisableableMod mod : modsInstalled) {
+            executor.execute(() -> {
+                mod.scanInternalModMetadata(mod.getFile(root, this.packVersion.minecraft).toPath());
+            });
+        }
+        executor.shutdown();
+
+        try {
+            if (!executor.awaitTermination(60, TimeUnit.SECONDS)) {
+                executor.shutdownNow();
+            }
+        } catch (InterruptedException ex) {
+            executor.shutdownNow();
+            Thread.currentThread().interrupt();
         }
     }
 

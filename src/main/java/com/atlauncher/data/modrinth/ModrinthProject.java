@@ -102,4 +102,9 @@ public class ModrinthProject {
 
         return AnalyticsEvent.forAddedMod(this, version);
     }
+
+    public String getWebsiteUrl() {
+        return String.format("https://modrinth.com/%s/%s", projectType.toString().toLowerCase(),
+                slug);
+    }
 }

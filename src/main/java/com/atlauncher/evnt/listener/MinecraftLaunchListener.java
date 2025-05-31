@@ -17,6 +17,15 @@
  */
 package com.atlauncher.evnt.listener;
 
-public interface MinecraftLaunchListener {
+import com.atlauncher.data.AbstractAccount;
+import com.atlauncher.data.Instance;
 
+public interface MinecraftLaunchListener {
+    void minecraftLaunching(Instance instance);
+
+    void minecraftLaunchFailed(Instance instance, String reason);
+
+    void minecraftLaunched(Instance instance, AbstractAccount account, Process process);
+
+    void minecraftClosed(Instance instance);
 }

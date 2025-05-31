@@ -68,8 +68,8 @@ public class IconTitledBorder extends TitledBorder {
 
             int titleWidth = fm.stringWidth(getTitle());
 
-            int iconX = titleWidth + 10;
-            int iconY = 1;
+            int iconX = titleWidth + x + 10;
+            int iconY = 1 + y;
 
             g.setColor(UIManager.getColor("Panel.background"));
             g.fillRect(iconX - 2, iconY, iconWidth + 4, iconHeight);

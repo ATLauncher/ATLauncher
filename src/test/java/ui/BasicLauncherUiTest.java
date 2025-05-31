@@ -120,6 +120,6 @@ public class BasicLauncherUiTest extends AbstractUiTest {
         vanillaInstanceCard.requireVisible();
 
         vanillaInstanceCard.button(JButtonMatcher.withText("Play")).requireVisible().requireEnabled();
-        vanillaInstanceCard.button(JButtonMatcher.withText("Edit Instance")).requireVisible().requireEnabled();
+        vanillaInstanceCard.button(JButtonMatcher.withText("Edit")).requireVisible().requireEnabled();
     }
 }

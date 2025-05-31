@@ -49,7 +49,7 @@ public class InstanceSettingsDialog extends JDialog {
     public InstanceSettingsDialog(Instance instance) {
         // #. {0} is the name of the instance
         super(App.launcher.getParent(), GetText.tr("{0} Settings", instance.launcher.name),
-                ModalityType.DOCUMENT_MODAL);
+            ModalityType.DOCUMENT_MODAL);
         this.instance = instance;
 
         this.generalInstanceSettingsTab = new GeneralInstanceSettingsTab(instance);
@@ -90,7 +90,7 @@ public class InstanceSettingsDialog extends JDialog {
         JButton saveButton = new JButton(GetText.tr("Save"));
         saveButton.addActionListener(arg0 -> {
             if (javaInstanceSettingsTab.isValidJavaPath() && javaInstanceSettingsTab.isValidJavaParamaters()
-                    && generalInstanceSettingsTab.isValidQuickPlayOptionValue()) {
+                && generalInstanceSettingsTab.isValidQuickPlayOptionValue()) {
                 saveSettings();
                 App.TOASTER.pop("Instance Settings Saved");
                 close();

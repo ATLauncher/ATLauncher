@@ -154,10 +154,6 @@ public final class AddModsDialog extends JDialog {
     private final JPanel mainPanel = new JPanel(new BorderLayout());
     private int page = 0;
 
-    public AddModsDialog(ModManagement instanceOrServer) {
-        this(App.launcher.getParent(), instanceOrServer);
-    }
-
     public AddModsDialog(Window parent, ModManagement instanceOrServer) {
         // #. {0} is the name of the mod we're installing
         super(parent, GetText.tr("Adding Mods For {0}", instanceOrServer.getName()), ModalityType.DOCUMENT_MODAL);
@@ -700,11 +696,17 @@ public final class AddModsDialog extends JDialog {
                 platformMessage = ConfigManager.getConfigItem("platforms.modrinth.message", null);
             }
 
+            addSortAndSection(null);
             addCategories();
 
             if (platformMessage != null) {
                 platformMessageLabel.setText(new HTMLBuilder().center().text(platformMessage).build());
             }
+
+            boolean isShadersSelected = ((ComboItem<String>) sectionComboBox.getSelectedItem()).getValue()
+                    .equals("Shaders");
+            categoriesComboBox.setVisible(!(isCurseForge && isShadersSelected));
+
             platformMessageLabel.setVisible(platformMessage != null);
             legacyFabricModrinthWarningLabel
                 .setVisible(loaderVersion != null && loaderVersion.isLegacyFabric() && isModrinth);
@@ -720,6 +722,13 @@ public final class AddModsDialog extends JDialog {
         this.sectionComboBox.addActionListener(e -> {
             if (!updating) {
                 page = 0;
+
+                boolean isCurseForge = ((ComboItem<ModPlatform>) hostComboBox.getSelectedItem())
+                        .getValue() == ModPlatform.CURSEFORGE;
+
+                boolean isShadersSelected = ((ComboItem<String>) sectionComboBox.getSelectedItem()).getValue()
+                        .equals("Shaders");
+                categoriesComboBox.setVisible(!(isCurseForge && isShadersSelected));
 
                 addCategories();
 
@@ -823,6 +832,9 @@ public final class AddModsDialog extends JDialog {
                         sortValue,
                         categoriesComboBox.getSelectedItem() == null ? null
                             : ((ComboItem<String>) categoriesComboBox.getSelectedItem()).getValue()));
+                } else if (((ComboItem<String>) sectionComboBox.getSelectedItem()).getValue().equals("Shaders")) {
+                    setCurseForgeMods(CurseForgeApi.searchShaders(versionToSearchFor, query, page,
+                            ((ComboItem<String>) sortComboBox.getSelectedItem()).getValue()));
                 } else if (((ComboItem<String>) sectionComboBox.getSelectedItem()).getValue().equals("Worlds")) {
                     setCurseForgeMods(CurseForgeApi.searchWorlds(versionToSearchFor, query, page,
                         sortValue,
@@ -1171,6 +1183,15 @@ public final class AddModsDialog extends JDialog {
     }
 
     private void addSectionAndSortOptions(boolean firstTime) {
+        ComboItem<String> selectedSection = ((ComboItem<String>) sectionComboBox.getSelectedItem());
+        boolean resourcePacksSelected = selectedSection == null ? false
+            : selectedSection.getValue().equals("Resource Packs");
+        boolean shadersSelected = selectedSection == null ? false
+            : selectedSection.getValue().equals("Shaders");
+
+        sortComboBox.removeAllItems();
+        sectionComboBox.removeAllItems();
+
         if (instanceOrServer.supportsPlugins()) {
             sectionComboBox.addItem(new ComboItem<>("Plugins", GetText.tr("Plugins")));
         }
@@ -1181,9 +1202,6 @@ public final class AddModsDialog extends JDialog {
         if (instanceOrServer instanceof Instance) {
             sectionComboBox.addItem(new ComboItem<>("Resource Packs", GetText.tr("Resource Packs")));
             if (!firstTime) {
-                boolean resourcePacksSelected = ((ComboItem<String>) sectionComboBox.getSelectedItem()).getValue()
-                    .equals("Resource Packs");
-
                 if (resourcePacksSelected) {
                     sectionComboBox.setSelectedIndex(sectionComboBox.getItemCount() - 1);
                 }
@@ -1191,9 +1209,6 @@ public final class AddModsDialog extends JDialog {
 
             sectionComboBox.addItem(new ComboItem<>("Shaders", GetText.tr("Shaders")));
             if (!firstTime) {
-                boolean shadersSelected = ((ComboItem<String>) sectionComboBox.getSelectedItem()).getValue()
-                    .equals("Shaders");
-
                 if (shadersSelected) {
                     sectionComboBox.setSelectedIndex(sectionComboBox.getItemCount() - 1);
                 }

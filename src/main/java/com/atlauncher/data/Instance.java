@@ -127,6 +127,9 @@ import com.atlauncher.data.modrinth.pack.ModrinthModpackManifest;
 import com.atlauncher.data.multimc.MultiMCComponent;
 import com.atlauncher.data.multimc.MultiMCManifest;
 import com.atlauncher.data.multimc.MultiMCRequire;
+import com.atlauncher.data.technic.TechnicModpack;
+import com.atlauncher.data.technic.TechnicSolderModpack;
+import com.atlauncher.evnt.manager.MinecraftLaunchManager;
 import com.atlauncher.exceptions.CommandException;
 import com.atlauncher.exceptions.InvalidMinecraftVersion;
 import com.atlauncher.exceptions.InvalidPack;
@@ -856,6 +859,8 @@ public class Instance extends MinecraftVersion implements ModManagement {
             }
         }
 
+        MinecraftLaunchManager.minecraftLaunching(this);
+
         Path nativesTempDir = FileSystem.TEMP.resolve("natives-" + UUID.randomUUID().toString().replace("-", ""));
         Path lwjglNativesTempDir = FileSystem.TEMP
             .resolve("lwjgl-natives-" + UUID.randomUUID().toString().replace("-", ""));
@@ -934,12 +939,14 @@ public class Instance extends MinecraftVersion implements ModManagement {
                         DialogManager.okDialog().setTitle(GetText.tr("Error Logging In"))
                             .setContent(GetText.tr("Couldn't login with Microsoft account"))
                             .setType(DialogManager.ERROR).show();
+                        MinecraftLaunchManager.minecraftLaunchFailed(this, "Failed to login to Microsoft account");
                         return;
                     }
                 }
 
                 if (enableCommands && preLaunchCommand != null) {
                     if (!executeCommand(preLaunchCommand)) {
+                        MinecraftLaunchManager.minecraftLaunchFailed(this, "Failed to execute pre-launch command");
                         LogManager.error("Failed to execute pre-launch command");
 
                         Analytics.trackEvent(
@@ -960,6 +967,7 @@ public class Instance extends MinecraftVersion implements ModManagement {
 
                 if (process == null) {
                     Analytics.trackEvent(AnalyticsEvent.forInstanceLaunchFailed(this, offline, "no_process"));
+                    MinecraftLaunchManager.minecraftLaunchFailed(this, "Failed to get process for Minecraft");
                     LogManager.error("Failed to get process for Minecraft");
                     App.launcher.setMinecraftLaunched(false);
                     if (App.launcher.getParent() != null) {
@@ -1057,6 +1065,7 @@ public class Instance extends MinecraftVersion implements ModManagement {
 
                     LogManager.minecraft(line);
                 }
+                MinecraftLaunchManager.minecraftClosed(this);
                 App.launcher.hideKillMinecraft();
                 if (App.launcher.getParent() != null && App.settings.keepLauncherOpen) {
                     App.launcher.getParent().setVisible(true);
@@ -1072,9 +1081,11 @@ public class Instance extends MinecraftVersion implements ModManagement {
                     App.console.setVisible(false); // Hide the console to pretend we've closed
                 }
 
+                this.addPlayTime(end - start);
+                this.save();
+
                 if (exitValue != 0 || crashedWithoutKnownResolution) {
                     App.launcher.setLastInstanceCrash(this);
-
                     LogManager.error(
                         "Oh no. Minecraft crashed. Please check the logs for any errors and provide these logs when asking for support.");
 
@@ -1109,6 +1120,7 @@ public class Instance extends MinecraftVersion implements ModManagement {
                         App.TASKPOOL.submit(() -> addTimePlayed(timePlayed, this.launcher.version));
                     }
                 }
+
                 if (App.settings.enableAutomaticBackupAfterLaunch) {
                     backup();
                 }
@@ -1144,6 +1156,10 @@ public class Instance extends MinecraftVersion implements ModManagement {
 
         launcherThread.start();
         return true;
+    }
+
+    private void addPlayTime(long timePlayed) {
+        this.launcher.totalPlayTime = this.launcher.totalPlayTime.plusMillis(timePlayed);
     }
 
     private boolean executeCommand(String command) {
@@ -2219,8 +2235,12 @@ public class Instance extends MinecraftVersion implements ModManagement {
     }
 
     public void update() {
+        update(App.launcher.getParent());
+    }
+
+    public void update(Window parent) {
         InstanceInstallerDialog instanceInstallerDialog = new InstanceInstallerDialog(this, true, false, null, true,
-            null, App.launcher.getParent(), null);
+            null, parent, null);
         instanceInstallerDialog.setVisible(true);
     }
 
@@ -2308,8 +2328,12 @@ public class Instance extends MinecraftVersion implements ModManagement {
     }
 
     public void startReinstall() {
+        startReinstall(App.launcher.getParent());
+    }
+
+    public void startReinstall(Window parent) {
         Analytics.trackEvent(AnalyticsEvent.forInstanceEvent("instance_reinstall", this));
-        InstanceInstallerDialog instanceInstallerDialog = new InstanceInstallerDialog(this);
+        InstanceInstallerDialog instanceInstallerDialog = new InstanceInstallerDialog(parent, this);
         instanceInstallerDialog.setVisible(true);
     }
 
@@ -2413,11 +2437,11 @@ public class Instance extends MinecraftVersion implements ModManagement {
         }
     }
 
-    public void changeLoaderVersion() {
+    public void changeLoaderVersion(Window parent) {
         Analytics.trackEvent(
             AnalyticsEvent.forInstanceLoaderEvent("instance_change_loader_version", this, launcher.loaderVersion));
 
-        LoaderVersion loaderVersion = showLoaderVersionSelector(launcher.loaderVersion.getLoaderType());
+        LoaderVersion loaderVersion = showLoaderVersionSelector(parent, launcher.loaderVersion.getLoaderType());
 
         if (loaderVersion == null) {
             return;
@@ -2434,6 +2458,8 @@ public class Instance extends MinecraftVersion implements ModManagement {
             installable.changingLoader = true;
             installable.isServer = false;
             installable.saveMods = true;
+
+            installable.parent = parent;
 
             success = installable.startInstall();
         } catch (InvalidMinecraftVersion e) {
@@ -2462,11 +2488,11 @@ public class Instance extends MinecraftVersion implements ModManagement {
         }
     }
 
-    public void addLoader(LoaderType loaderType) {
+    public void addLoader(Window parent, LoaderType loaderType) {
         Analytics
             .trackEvent(AnalyticsEvent.forInstanceAddLoader(this, loaderType));
 
-        LoaderVersion loaderVersion = showLoaderVersionSelector(loaderType);
+        LoaderVersion loaderVersion = showLoaderVersionSelector(parent, loaderType);
 
         if (loaderVersion == null) {
             return;
@@ -2483,6 +2509,8 @@ public class Instance extends MinecraftVersion implements ModManagement {
             installable.addingLoader = true;
             installable.isServer = false;
             installable.saveMods = true;
+
+            installable.parent = parent;
 
             success = installable.startInstall();
         } catch (InvalidMinecraftVersion e) {
@@ -2507,12 +2535,12 @@ public class Instance extends MinecraftVersion implements ModManagement {
         }
     }
 
-    private LoaderVersion showLoaderVersionSelector(LoaderType loaderType) {
+    private LoaderVersion showLoaderVersionSelector(Window parent, LoaderType loaderType) {
         ProgressDialog<List<LoaderVersion>> progressDialog = new ProgressDialog<>(
             // #. {0} is the loader (Forge/Fabric/Quilt)
             GetText.tr("Checking For {0} Versions", loaderType), 0,
             // #. {0} is the loader (Forge/Fabric/Quilt)
-            GetText.tr("Checking For {0} Versions", loaderType));
+            GetText.tr("Checking For {0} Versions", loaderType), parent);
         progressDialog.addThread(new Thread(() -> {
             if (loaderType == LoaderType.FABRIC) {
                 progressDialog.setReturnValue(FabricLoader.getChoosableVersions(id));
@@ -2535,7 +2563,7 @@ public class Instance extends MinecraftVersion implements ModManagement {
 
         if (loaderVersions == null || loaderVersions.isEmpty()) {
             // #. {0} is the loader (Forge/Fabric/Quilt)
-            DialogManager.okDialog().setTitle(GetText.tr("No Versions Available For {0}", loaderType))
+            DialogManager.okDialog().setParent(parent).setTitle(GetText.tr("No Versions Available For {0}", loaderType))
                 .setContent(new HTMLBuilder().center()
                     // #. {0} is the loader (Forge/Fabric/Quilt)
                     .text(GetText.tr("{0} has not been installed/updated as there are no versions available.",
@@ -2601,7 +2629,7 @@ public class Instance extends MinecraftVersion implements ModManagement {
         panel.add(loaderVersionsDropDown);
         panel.add(Box.createVerticalStrut(20));
 
-        int ret = JOptionPane.showConfirmDialog(App.launcher.getParent(), panel,
+        int ret = JOptionPane.showConfirmDialog(parent, panel,
             // #. {0} is the loader (Forge/Fabric/Quilt)
             launcher.loaderVersion == null ? GetText.tr("Installing {0}", loaderType)
                 // #. {0} is the loader (Forge/Fabric/Quilt)
@@ -2615,7 +2643,7 @@ public class Instance extends MinecraftVersion implements ModManagement {
         return ((ComboItem<LoaderVersion>) loaderVersionsDropDown.getSelectedItem()).getValue();
     }
 
-    public void removeLoader() {
+    public void removeLoader(Window parent) {
         Analytics.trackEvent(
             AnalyticsEvent.forInstanceLoaderEvent("instance_remove_loader", this, launcher.loaderVersion));
         String loaderType = launcher.loaderVersion.type;
@@ -2632,6 +2660,8 @@ public class Instance extends MinecraftVersion implements ModManagement {
             installable.isServer = false;
             installable.saveMods = true;
 
+            installable.parent = parent;
+
             success = installable.startInstall();
         } catch (InvalidMinecraftVersion e) {
             LogManager.logStackTrace(e);
@@ -2640,14 +2670,14 @@ public class Instance extends MinecraftVersion implements ModManagement {
         if (success) {
 
             // #. {0} is the loader (Forge/Fabric/Quilt)
-            DialogManager.okDialog().setTitle(GetText.tr("{0} Removed", loaderType))
+            DialogManager.okDialog().setParent(parent).setTitle(GetText.tr("{0} Removed", loaderType))
                 .setContent(new HTMLBuilder().center()
                     // #. {0} is the loader (Forge/Fabric/Quilt)
                     .text(GetText.tr("{0} has been removed from this instance.", loaderType)).build())
                 .setType(DialogManager.INFO).show();
         } else {
             // #. {0} is the loader (Forge/Fabric/Quilt)
-            DialogManager.okDialog().setTitle(GetText.tr("{0} Not Removed", loaderType))
+            DialogManager.okDialog().setParent(parent).setTitle(GetText.tr("{0} Not Removed", loaderType))
                 .setContent(new HTMLBuilder().center().text(
                         // #. {0} is the loader (Forge/Fabric/Quilt)
                         GetText.tr("{0} has not been removed. Check the console for more information.", loaderType))
@@ -2757,6 +2787,26 @@ public class Instance extends MinecraftVersion implements ModManagement {
         return launcher.version;
     }
 
+    public List<Path> getLogPathsFromFilesystem(List<Path> logPaths) {
+        List<Path> files = new ArrayList<>();
+
+        for (Path path : logPaths) {
+            if (!Files.exists(path)) {
+                continue;
+            }
+
+            try (Stream<Path> stream = Files.list(path)) {
+                files.addAll(stream
+                    .filter(file -> !Files.isDirectory(file) && Utils.isAcceptedLogFile(file))
+                    .collect(Collectors.toList()));
+            } catch (IOException e) {
+                LogManager.logStackTrace("Error getting log paths", e);
+            }
+        }
+
+        return files;
+    }
+
     public List<String> getSinglePlayerWorldNamesFromFilesystem() {
         File[] folders = ROOT.resolve("saves").toFile().listFiles((dir, name) -> new File(dir, name).isDirectory());
         if (folders == null)
@@ -2798,6 +2848,65 @@ public class Instance extends MinecraftVersion implements ModManagement {
         }
 
         return files;
+    }
+
+    public void scanMissingMods() {
+        scanMissingMods(App.launcher.getParent());
+    }
+
+    @Override
+    public void scanMissingMods(Window parent) {
+        PerformanceManager.start("Instance::scanMissingMods - CheckForAddedMods");
+
+        return files;
+    }
+
+    private List<Path> getModPathsFromFilesystem() {
+        return getModPathsFromFilesystem(Arrays.asList(ROOT.resolve("mods"),
+            ROOT.resolve("disabledmods"),
+            ROOT.resolve("resourcepacks"),
+            ROOT.resolve("shaderpacks"),
+            ROOT.resolve("jarmods")));
+    }
+
+    public List<Path> getModPathsFromFilesystem(List<Path> paths) {
+        List<Path> files = new ArrayList<>();
+
+        for (Path path : paths) {
+            if (!Files.exists(path)) {
+                continue;
+            }
+
+            Type fileType = getTypeOfFileFromPath(path);
+
+            try (Stream<Path> stream = Files.list(path)) {
+                files.addAll(stream
+                    .filter(file -> !Files.isDirectory(file) && Utils.isAcceptedModFile(file)).filter(
+                        file -> launcher.mods.stream()
+                            .noneMatch(mod -> mod.type == fileType
+                                && mod.file.equals(file.getFileName().toString())))
+                    .collect(Collectors.toList()));
+            } catch (IOException e) {
+                LogManager.logStackTrace("Error getting mod paths", e);
+            }
+        }
+
+        return files;
+    }
+
+    private List<Path> getMissingModPaths() {
+        List<Path> files = getModPathsFromFilesystem();
+
+        return files.stream().filter(path -> {
+            Type fileType = getTypeOfFileFromPath(path);
+
+            return launcher.mods.stream()
+                .noneMatch(mod -> mod.type == fileType && mod.file.equals(path.getFileName().toString()));
+        }).collect(Collectors.toList());
+    }
+
+    public void scanMissingMods() {
+        scanMissingMods(App.launcher.getParent());
     }
 
     @Override
@@ -3615,5 +3724,106 @@ public class Instance extends MinecraftVersion implements ModManagement {
         }
 
         return null;
+    }
+
+    public DisableableMod reinstallModFromModrinth(DisableableMod mod, ModrinthProject project, ModrinthVersion version,
+        OkHttpClient progressClient) {
+        ModrinthFile fileToDownload = version.getPrimaryFile();
+        String modFileNameInSystem = mod.disabled ? fileToDownload.filename + ".disabled" : fileToDownload.filename;
+
+        Path downloadLocation = FileSystem.DOWNLOADS.resolve(fileToDownload.filename);
+        Path finalLocation = mod.getActualFile(this).toPath().resolveSibling(modFileNameInSystem);
+        com.atlauncher.network.Download download = com.atlauncher.network.Download.build().setUrl(fileToDownload.url)
+            .downloadTo(downloadLocation).copyTo(finalLocation).withHttpClient(progressClient);
+
+        if (fileToDownload.hashes != null && fileToDownload.hashes.containsKey("sha512")) {
+            download = download.hash(fileToDownload.hashes.get("sha512"));
+        } else if (fileToDownload.hashes != null && fileToDownload.hashes.containsKey("sha1")) {
+            download = download.hash(fileToDownload.hashes.get("sha1"));
+        }
+
+        if (fileToDownload.size != null && fileToDownload.size != 0) {
+            download = download.size(fileToDownload.size);
+        }
+
+        if (download.needToDownload()) {
+            try {
+                download.downloadFile();
+            } catch (IOException e) {
+                LogManager.logStackTrace("Failed to download " + fileToDownload.filename, e);
+                return null;
+            }
+        } else {
+            download.copy();
+        }
+
+        // delete old mod
+        FileUtils.delete(mod.getActualFile(this).toPath());
+
+        // create the new mod
+        DisableableMod newMod = new DisableableMod(project.title, version.name, true, modFileNameInSystem, mod.type,
+            null, project.description, false, true, true, false, project, version);
+
+        // scan the internal mod metadata
+        newMod.scanInternalModMetadata(finalLocation);
+
+        return newMod;
+    }
+
+    public DisableableMod reinstallModFromCurseForge(DisableableMod mod, CurseForgeProject project,
+        CurseForgeFile version, OkHttpClient progressClient) {
+        String modFileNameInSystem = mod.disabled ? version.fileName + ".disabled" : version.fileName;
+
+        Path downloadLocation = FileSystem.DOWNLOADS.resolve(version.fileName);
+        Path finalLocation = mod.getActualFile(this).toPath().resolveSibling(modFileNameInSystem);
+
+        Optional<CurseForgeFileHash> md5Hash = version.hashes.stream().filter(h -> h.isMd5())
+            .findFirst();
+        Optional<CurseForgeFileHash> sha1Hash = version.hashes.stream().filter(h -> h.isSha1())
+            .findFirst();
+
+        if (version.downloadUrl == null) {
+            LogManager.warn("Failed to download " + version.fileName + " as there is no downloadUrl");
+            return null;
+        }
+
+        com.atlauncher.network.Download download = com.atlauncher.network.Download.build().setUrl(version.downloadUrl)
+            .downloadTo(downloadLocation).size(version.fileLength)
+            .withHttpClient(progressClient);
+
+        download = download.copyTo(finalLocation);
+        if (Files.exists(finalLocation)) {
+            FileUtils.delete(finalLocation);
+        }
+
+        if (md5Hash.isPresent()) {
+            download = download.hash(md5Hash.get().value);
+        } else if (sha1Hash.isPresent()) {
+            download = download.hash(sha1Hash.get().value);
+        }
+
+        if (download.needToDownload()) {
+            try {
+                download.downloadFile();
+            } catch (IOException e) {
+                LogManager.logStackTrace(e);
+                return null;
+            }
+        } else {
+            download.copy();
+        }
+
+        // delete old mod
+        FileUtils.delete(mod.getActualFile(this).toPath());
+
+        // create the new mod
+        DisableableMod newMod = new DisableableMod(project.name, version.displayName, true, modFileNameInSystem,
+            mod.type, null, project.summary, false, mod.userAdded, true, false, project, version);
+        newMod.userChanged = true;
+
+        // scan the internal mod metadata
+        newMod.scanInternalModMetadata(finalLocation);
+
+        return newMod;
     }
 }

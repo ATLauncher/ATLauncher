@@ -15,15 +15,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.atlauncher.gui.dialogs;
+package com.atlauncher.gui.dialogs.editinstancedialog;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -39,6 +37,7 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
+import javax.swing.JFileChooser;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
@@ -51,46 +50,35 @@ import com.atlauncher.data.Instance;
 import com.atlauncher.data.InstanceExportFormat;
 import com.atlauncher.data.MicrosoftAccount;
 import com.atlauncher.gui.components.JLabelWithHover;
+import com.atlauncher.gui.dialogs.FileChooserDialog;
+import com.atlauncher.gui.dialogs.ModrinthExportOverridesDialog;
+import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.managers.AccountManager;
 import com.atlauncher.utils.ComboItem;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Pair;
 import com.atlauncher.utils.Utils;
-import com.atlauncher.utils.WindowUtils;
 
-public class InstanceExportDialog extends JDialog {
-    private final Instance instance;
+public class ExportSection extends SectionPanel {
     private final List<String> overrides = new ArrayList<>();
 
     private final JPanel topPanel = new JPanel();
     private final JPanel bottomPanel = new JPanel();
+    private final JPanel overridesPanel = new JPanel();
 
     final ImageIcon HELP_ICON = Utils.getIconImage(App.THEME.getIconPath("question"));
 
     final GridBagConstraints gbc = new GridBagConstraints();
 
-    public InstanceExportDialog(Instance instance) {
-        // #. {0} is the name of the instance we're exporting
-        super(App.launcher.getParent(), GetText.tr("Export {0}", instance.launcher.name), ModalityType.DOCUMENT_MODAL);
-        this.instance = instance;
+    public ExportSection(EditInstanceDialog parent, Instance instance) {
+        super(parent, instance);
 
         setupComponents();
-
-        addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosing(WindowEvent arg0) {
-                close();
-            }
-        });
-
-        WindowUtils.resizeForContent(this);
+        resetOverrides();
     }
 
     private void setupComponents() {
-        setLocationRelativeTo(App.launcher.getParent());
         setLayout(new BorderLayout());
-        setResizable(true);
-        setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 
         topPanel.setLayout(new GridBagLayout());
 
@@ -202,7 +190,7 @@ public class InstanceExportDialog extends JDialog {
 
         JButton browseButton = new JButton(GetText.tr("Browse"));
         browseButton.addActionListener(e -> {
-            FileChooserDialog fcd = new FileChooserDialog(this,
+            FileChooserDialog fcd = new FileChooserDialog(parent,
                 GetText.tr("Select export directory"),
                 GetText.tr("Directory"),
                 GetText.tr("Select"));
@@ -244,7 +232,6 @@ public class InstanceExportDialog extends JDialog {
         gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
 
-        JPanel overridesPanel = new JPanel();
         overridesPanel.setLayout(new BoxLayout(overridesPanel, BoxLayout.Y_AXIS));
         overridesPanel.setBorder(BorderFactory.createEmptyBorder(0, -3, 0, 0));
 
@@ -298,10 +285,10 @@ public class InstanceExportDialog extends JDialog {
 
         JButton exportButton = new JButton(GetText.tr("Export"));
         exportButton.addActionListener(arg0 -> {
-            instance.scanMissingMods(this);
+            instance.scanMissingMods(parent);
 
             final ProgressDialog<Object> dialog = new ProgressDialog<>(GetText.tr("Exporting Instance"), 0,
-                GetText.tr("Exporting Instance. Please wait..."), null, this);
+                GetText.tr("Exporting Instance. Please wait..."), null, parent);
 
             dialog.addThread(new Thread(() -> {
                 InstanceExportFormat exportFormat = ((ComboItem<InstanceExportFormat>) format.getSelectedItem())
@@ -336,23 +323,64 @@ public class InstanceExportDialog extends JDialog {
                     App.TOASTER.popError(GetText.tr("Failed to export instance. Check the console for details"));
                 }
                 dialog.close();
-                close();
             }));
 
             dialog.start();
+            resetOverrides();
         });
-        bottomPanel.add(exportButton);
 
-        JButton cancelButton = new JButton(GetText.tr("Cancel"));
-        cancelButton.addActionListener(arg0 -> close());
-        bottomPanel.add(cancelButton);
+        JButton resetButton = new JButton(GetText.tr("Reset"));
+        resetButton.addActionListener(arg0 -> {
+            resetOverrides();
+        });
+
+        bottomPanel.add(resetButton);
+        bottomPanel.add(exportButton);
 
         add(topPanel, BorderLayout.CENTER);
         add(bottomPanel, BorderLayout.SOUTH);
     }
 
-    private void close() {
-        setVisible(false);
-        dispose();
+    public void resetOverrides() {
+        overridesPanel.removeAll();
+
+        // get all files ignoring ATLauncher specific things as well as naughtys
+        File[] files = instance.getRoot().toFile()
+            .listFiles(pathname -> !pathname.getName().equalsIgnoreCase("disabledmods")
+                && !pathname.getName().equalsIgnoreCase("instance.json")
+                && !pathname.getName().equalsIgnoreCase(".fabric")
+                && !pathname.getName().equalsIgnoreCase(".quilt"));
+
+        for (File filename : files) {
+            // skip any folders with no files inside
+            if (filename.isDirectory() && filename.listFiles().length == 0) {
+                continue;
+            }
+
+            JCheckBox checkBox = new JCheckBox(filename.getName());
+
+            checkBox.addItemListener(e -> {
+                if (checkBox.isSelected()) {
+                    overrides.add(checkBox.getText());
+                } else {
+                    overrides.remove(checkBox.getText());
+                }
+            });
+
+            if (filename.getName().equalsIgnoreCase("config") || filename.getName().equalsIgnoreCase("mods")
+                || filename.getName().equalsIgnoreCase("oresources")
+                || filename.getName().equalsIgnoreCase("resourcepacks")
+                || filename.getName().equalsIgnoreCase("shaderpacks")
+                || filename.getName().equalsIgnoreCase("resources")
+                || filename.getName().equalsIgnoreCase("scripts")) {
+                checkBox.setSelected(true);
+            }
+
+            overridesPanel.add(checkBox);
+        }
+    }
+
+    @Override
+    public void updateUIState() {
     }
 }

@@ -15,8 +15,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.atlauncher.evnt.listener;
+package com.atlauncher.gui.dialogs.editinstancedialog;
 
-public interface MinecraftLandListener {
+import java.util.Map;
 
+import com.atlauncher.data.DisableableMod;
+
+@SuppressWarnings("serial")
+public interface ModUpdatesComplete {
+    public void modsInstalled(Map<DisableableMod, DisableableMod> updatedMods);
 }

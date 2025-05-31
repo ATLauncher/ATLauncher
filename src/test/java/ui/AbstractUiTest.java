@@ -122,10 +122,7 @@ public class AbstractUiTest extends AssertJSwingTestCaseTemplate {
         MockHelper.mockFileResponse(mockServer, "minecraft_versions.json");
         MockHelper.mockFileResponse(mockServer, "java_runtimes.json");
         MockHelper.mockFileResponse(mockServer, "lwjgl.json");
-
-        // files from Minecraft servers
-        MockHelper.mockJson(mockServer, "GET", "launchermeta.mojang.com",
-                "/v1/products/java-runtime/2ec0cc96c44e5a76b9c8b7c39df7210883d12871/all.json", "java_runtimes.json");
+        MockHelper.mockFileResponse(mockServer, "java_runtimes.json");
     }
 
     private void setupFiles() {
