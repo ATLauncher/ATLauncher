@@ -77,12 +77,13 @@ import org.mini2Dx.gettext.GetText;
 
 import com.atlauncher.App;
 import com.atlauncher.data.DisableableMod;
-import com.atlauncher.data.Instance;
+import com.atlauncher.data.ModManagement;
 import com.atlauncher.data.Type;
 import com.atlauncher.dbus.DBusUtils;
 import com.atlauncher.gui.dialogs.AddModsDialog;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.network.Analytics;
+import com.atlauncher.network.analytics.AnalyticsEvent;
 import com.atlauncher.utils.FileUtils;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Pair;
@@ -121,10 +122,9 @@ public abstract class DisableableModsSection extends SectionPanel {
     private final JMenuItem disableMenuItem = new JMenuItem(GetText.tr("Disable"));
     private final JMenuItem deleteMenuItem = new JMenuItem(GetText.tr("Delete"));
 
-    public DisableableModsSection(EditInstanceDialog parent, Instance instance, List<Path> filePaths,
-            List<Type> modTypes,
-            boolean showVersionColumn) {
-        super(parent, instance);
+    public DisableableModsSection(EditDialog parent, ModManagement serverOrInstance, List<Path> filePaths,
+        List<Type> modTypes, boolean showVersionColumn) {
+        super(parent, serverOrInstance);
 
         this.filePaths = filePaths;
         this.modTypes = modTypes;
@@ -170,9 +170,9 @@ public abstract class DisableableModsSection extends SectionPanel {
         JCheckBox onlyShowUserAddedCheckbox = new JCheckBox(GetText.tr("Only Show User Added") + ":");
         onlyShowUserAddedCheckbox.setHorizontalTextPosition(SwingConstants.LEFT);
         onlyShowUserAddedCheckbox
-                .setToolTipText(GetText
-                        .tr("Only show files that you have added, reinstalled or updated since installing the pack"));
-        onlyShowUserAddedCheckbox.setVisible(!instance.isVanillaInstance());
+            .setToolTipText(GetText
+                .tr("Only show files that you have added, reinstalled or updated since installing the pack"));
+        onlyShowUserAddedCheckbox.setVisible(!instanceOrServer.isVanillaInstance());
         onlyShowUserAddedCheckbox.addActionListener(e -> {
             if (onlyShowUserAddedCheckbox.isSelected()) {
                 RowFilter<DefaultTableModel, Object> customAddedModsFilter = new RowFilter<DefaultTableModel, Object>() {
@@ -246,7 +246,7 @@ public abstract class DisableableModsSection extends SectionPanel {
         splitPane.setResizeWeight(1.0);
 
         tableModel = new DefaultTableModel(new Object[][] {}, new String[] {
-                "", GetText.tr("Enabled?"), GetText.tr("Name"), GetText.tr("Version"), GetText.tr("Last Change")
+            "", GetText.tr("Enabled?"), GetText.tr("Name"), GetText.tr("Version"), GetText.tr("Last Change")
         }) {
             @Override
             public Class<?> getColumnClass(int columnIndex) {
@@ -291,7 +291,7 @@ public abstract class DisableableModsSection extends SectionPanel {
         table.setShowVerticalLines(false);
         table.setDefaultRenderer(String.class, new TableCellRenderer());
         table.getTableHeader().setReorderingAllowed(false);
-        table.setTransferHandler(new DisableableModsTableTransferHandler(instance));
+        table.setTransferHandler(new DisableableModsTableTransferHandler(instanceOrServer));
         table.setDragEnabled(true);
 
         table.addMouseListener(new MouseAdapter() {
@@ -324,7 +324,7 @@ public abstract class DisableableModsSection extends SectionPanel {
 
             @Override
             public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
-                    boolean hasFocus, int row, int column) {
+                boolean hasFocus, int row, int column) {
                 super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
                 setValue(formatter.format((Date) value));
                 return this;
@@ -350,7 +350,7 @@ public abstract class DisableableModsSection extends SectionPanel {
         sorter.sort();
 
         JScrollPane tableScrollPane = new JScrollPane(table, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-                JScrollPane.HORIZONTAL_SCROLLBAR_NEVER) {
+            JScrollPane.HORIZONTAL_SCROLLBAR_NEVER) {
             {
                 this.getVerticalScrollBar().setUnitIncrement(8);
             }
@@ -364,7 +364,7 @@ public abstract class DisableableModsSection extends SectionPanel {
 
                     // Get the list of dropped files
                     List<File> droppedFiles = (List<File>) event.getTransferable()
-                            .getTransferData(DataFlavor.javaFileListFlavor);
+                        .getTransferData(DataFlavor.javaFileListFlavor);
 
                     // Filter out files with invalid extensions
                     List<File> validFiles = new ArrayList<>();
@@ -378,8 +378,8 @@ public abstract class DisableableModsSection extends SectionPanel {
                     // Add the valid files to the table
                     for (File file : validFiles) {
                         DisableableMod mod = DisableableMod.generateMod(file, modTypes.get(0),
-                                App.settings.enableAddedModsByDefault);
-                        File copyTo = mod.getActualFile(instance);
+                            App.settings.enableAddedModsByDefault);
+                        File copyTo = mod.getActualFile(instanceOrServer);
 
                         if (copyTo.exists()) {
                             LogManager.warn("The file " + file.getName() + " already exists. Not adding!");
@@ -391,7 +391,7 @@ public abstract class DisableableModsSection extends SectionPanel {
                         }
 
                         if (Utils.copyFile(file, copyTo, true)) {
-                            instance.launcher.mods.add(mod);
+                            instanceOrServer.getMods().add(mod);
                             addDataForMod(copyTo.toPath(), mod);
                         }
                     }
@@ -410,9 +410,8 @@ public abstract class DisableableModsSection extends SectionPanel {
         downloadMoreSideBarButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Analytics.sendEvent(instance.launcher.pack + " - " + instance.launcher.version, "AddMods",
-                        instance.getAnalyticsCategory());
-                new AddModsDialog(parent, instance, modTypes.get(0));
+                // TODO: Analytics
+                new AddModsDialog(parent, instanceOrServer);
                 parent.refreshTableModels();
             }
         });
@@ -420,8 +419,7 @@ public abstract class DisableableModsSection extends SectionPanel {
         addFileSideBarButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Analytics.sendEvent(instance.launcher.pack + " - " + instance.launcher.version, "AddModsManual",
-                        instance.getAnalyticsCategory());
+                // TODO: Analytics
 
                 File[] filesChosen;
 
@@ -435,8 +433,8 @@ public abstract class DisableableModsSection extends SectionPanel {
 
                 for (File file : filesChosen) {
                     DisableableMod mod = DisableableMod.generateMod(file, modTypes.get(0),
-                            App.settings.enableAddedModsByDefault);
-                    File copyTo = mod.getActualFile(instance);
+                        App.settings.enableAddedModsByDefault);
+                    File copyTo = mod.getActualFile(instanceOrServer);
 
                     if (copyTo.exists()) {
                         LogManager.warn("The file " + file.getName() + " already exists. Not adding!");
@@ -448,12 +446,12 @@ public abstract class DisableableModsSection extends SectionPanel {
                     }
 
                     if (Utils.copyFile(file, copyTo, true)) {
-                        instance.launcher.mods.add(mod);
+                        instanceOrServer.getMods().add(mod);
                         addDataForMod(copyTo.toPath(), mod);
                     }
                 }
 
-                instance.save();
+                instanceOrServer.save();
             }
         });
 
@@ -462,7 +460,7 @@ public abstract class DisableableModsSection extends SectionPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 checkForUpdates(Arrays.stream(table.getSelectedRows())
-                        .map(row -> table.convertRowIndexToModel(row)).toArray());
+                    .map(row -> table.convertRowIndexToModel(row)).toArray());
             }
         });
 
@@ -471,7 +469,7 @@ public abstract class DisableableModsSection extends SectionPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 reinstallMods(Arrays.stream(table.getSelectedRows())
-                        .map(row -> table.convertRowIndexToModel(row)).toArray());
+                    .map(row -> table.convertRowIndexToModel(row)).toArray());
             }
         });
 
@@ -480,7 +478,7 @@ public abstract class DisableableModsSection extends SectionPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 disableEnableRows(Arrays.stream(table.getSelectedRows())
-                        .map(row -> table.convertRowIndexToModel(row)).toArray(), false, false);
+                    .map(row -> table.convertRowIndexToModel(row)).toArray(), false, false);
             }
         });
 
@@ -489,7 +487,7 @@ public abstract class DisableableModsSection extends SectionPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 disableEnableRows(Arrays.stream(table.getSelectedRows())
-                        .map(row -> table.convertRowIndexToModel(row)).toArray(), true, false);
+                    .map(row -> table.convertRowIndexToModel(row)).toArray(), true, false);
             }
         });
 
@@ -498,7 +496,7 @@ public abstract class DisableableModsSection extends SectionPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 deleteRows(Arrays.stream(table.getSelectedRows())
-                        .map(row -> table.convertRowIndexToModel(row)).toArray());
+                    .map(row -> table.convertRowIndexToModel(row)).toArray());
             }
         });
 
@@ -559,7 +557,7 @@ public abstract class DisableableModsSection extends SectionPanel {
     private void updateRowFilter() {
         List<RowFilter<DefaultTableModel, Object>> activeFilters = Arrays.asList(searchRowFilter,
                 userAddedRowFilter, enabledRowFilter, disabledRowFilter).stream().filter(f -> f != null)
-                .collect(Collectors.toList());
+            .collect(Collectors.toList());
 
         if (activeFilters.size() == 0) {
             sorter.setRowFilter(null);
@@ -570,42 +568,42 @@ public abstract class DisableableModsSection extends SectionPanel {
     }
 
     public void refreshTableModel() {
-        List<Path> modPaths = instance.getModPathsFromFilesystem(this.filePaths);
+        List<Path> modPaths = instanceOrServer.getModPathsFromFilesystem(this.filePaths);
 
         List<DisableableMod> newMods = new ArrayList<>();
 
         List<Pair<Path, DisableableMod>> modsData = modPaths.stream().map(path -> {
-            DisableableMod mod = instance.launcher.mods.parallelStream()
-                    .filter(m -> {
-                        try {
-                            return modTypes.contains(m.type) && (m.getActualFile(instance).toPath().equals(path)
-                                    || m.file.equals(path.getFileName().toString().toLowerCase())
-                                    || m.file.equals(path.getFileName().toString().toUpperCase()));
-                        } catch (InvalidPathException e) {
-                            LogManager.warn("Invalid path for mod " + m.name);
-                            return false;
-                        }
-                    })
-                    .findFirst()
-                    .orElseGet(() -> {
-                        LogManager
-                                .warn(String.format(
-                                        "Failed to find DisableableMod for file %s. Generating DisableableMod for it.",
-                                        path.getFileName().toString()));
+            DisableableMod mod = instanceOrServer.getMods().parallelStream()
+                .filter(m -> {
+                    try {
+                        return modTypes.contains(m.type) && (m.getActualFile(instanceOrServer).toPath().equals(path)
+                            || m.file.equals(path.getFileName().toString().toLowerCase())
+                            || m.file.equals(path.getFileName().toString().toUpperCase()));
+                    } catch (InvalidPathException e) {
+                        LogManager.warn("Invalid path for mod " + m.name);
+                        return false;
+                    }
+                })
+                .findFirst()
+                .orElseGet(() -> {
+                    LogManager
+                        .warn(String.format(
+                            "Failed to find DisableableMod for file %s. Generating DisableableMod for it.",
+                            path.getFileName().toString()));
 
-                        int indexOfModPath = modPaths.indexOf(path.getParent());
-                        DisableableMod generatedMod = DisableableMod.generateMod(path.toFile(),
-                                modTypes.get(indexOfModPath == -1 ? 0 : indexOfModPath), !path.endsWith(".disabled"));
-                        generatedMod.scanInternalModMetadata(path);
-                        newMods.add(generatedMod);
-                        return generatedMod;
-                    });
+                    int indexOfModPath = modPaths.indexOf(path.getParent());
+                    DisableableMod generatedMod = DisableableMod.generateMod(path.toFile(),
+                        modTypes.get(indexOfModPath == -1 ? 0 : indexOfModPath), !path.endsWith(".disabled"));
+                    generatedMod.scanInternalModMetadata(path);
+                    newMods.add(generatedMod);
+                    return generatedMod;
+                });
 
             return new Pair<Path, DisableableMod>(path, mod);
         }).collect(Collectors.toList());
 
-        instance.launcher.mods.addAll(newMods);
-        instance.save();
+        instanceOrServer.getMods().addAll(newMods);
+        instanceOrServer.save();
 
         ignoreTableEvents = true;
 
@@ -630,16 +628,16 @@ public abstract class DisableableModsSection extends SectionPanel {
         }
 
         tableModel.addRow(new Object[] { right, !right.disabled,
-                right.getNameFromFile(instance, left),
-                right.getVersionFromFile(instance, left),
-                attrs == null ? Instant.now().toDate() : new Date(attrs.lastModifiedTime().toMillis()) });
+            right.getNameFromFile(instanceOrServer, left),
+            right.getVersionFromFile(instanceOrServer, left),
+            attrs == null ? Instant.now().toDate() : new Date(attrs.lastModifiedTime().toMillis()) });
     }
 
     private void reloadRows(int[] rows) {
         ignoreTableEvents = true;
         for (int row : rows) {
             DisableableMod mod = (DisableableMod) tableModel.getValueAt(row, 0);
-            Path actualPath = mod.getActualFile(instance).toPath();
+            Path actualPath = mod.getActualFile(instanceOrServer).toPath();
             BasicFileAttributes attrs = null;
             try {
                 attrs = Files.readAttributes(actualPath, BasicFileAttributes.class);
@@ -647,11 +645,11 @@ public abstract class DisableableModsSection extends SectionPanel {
             }
 
             tableModel.setValueAt(!mod.disabled, row, 1);
-            tableModel.setValueAt(mod.getNameFromFile(instance), row, 2);
-            tableModel.setValueAt(mod.getVersionFromFile(instance), row, 3);
+            tableModel.setValueAt(mod.getNameFromFile(instanceOrServer), row, 2);
+            tableModel.setValueAt(mod.getVersionFromFile(instanceOrServer), row, 3);
             tableModel.setValueAt(
-                    attrs == null ? Instant.now().toDate() : new Date(attrs.lastModifiedTime().toMillis()),
-                    row, 4);
+                attrs == null ? Instant.now().toDate() : new Date(attrs.lastModifiedTime().toMillis()),
+                row, 4);
         }
         ignoreTableEvents = false;
     }
@@ -662,12 +660,12 @@ public abstract class DisableableModsSection extends SectionPanel {
 
             boolean shouldEnable = toggle ? mod.disabled : !disable;
             if (shouldEnable) {
-                mod.enable(instance);
+                mod.enable(instanceOrServer);
             } else {
-                mod.disable(instance);
+                mod.disable(instanceOrServer);
             }
         }
-        instance.save();
+        instanceOrServer.save();
         reloadRows(rows);
         sorter.sort();
     }
@@ -675,16 +673,16 @@ public abstract class DisableableModsSection extends SectionPanel {
     private void deleteRows(int[] rows) {
         ignoreTableEvents = true;
         Integer[] sortedArr = Arrays.stream(rows).boxed()
-                .sorted(Comparator.reverseOrder()).toArray(Integer[]::new);
+            .sorted(Comparator.reverseOrder()).toArray(Integer[]::new);
 
         for (int row : sortedArr) {
             DisableableMod mod = (DisableableMod) tableModel.getValueAt(row, 0);
 
-            instance.launcher.mods.remove(mod);
-            Utils.delete(mod.getActualFile(instance));
+            instanceOrServer.getMods().remove(mod);
+            Utils.delete(mod.getActualFile(instanceOrServer));
             tableModel.removeRow(row);
         }
-        instance.save();
+        instanceOrServer.save();
         ignoreTableEvents = false;
     }
 
@@ -693,10 +691,10 @@ public abstract class DisableableModsSection extends SectionPanel {
             return (DisableableMod) tableModel.getValueAt(row, 0);
         }).collect(Collectors.toList());
 
-        new CheckForUpdatesDialog(this.parent, this.instance, mods, false,
-                (Map<DisableableMod, DisableableMod> updatedMods) -> {
-                    saveAndReloadAfterUpdatingMods(rows, updatedMods);
-                });
+        new CheckForUpdatesDialog(this.parent, this.instanceOrServer, mods, false,
+            (Map<DisableableMod, DisableableMod> updatedMods) -> {
+                saveAndReloadAfterUpdatingMods(rows, updatedMods);
+            });
     }
 
     public void reinstallAllMods() {
@@ -709,10 +707,10 @@ public abstract class DisableableModsSection extends SectionPanel {
             mods.add((DisableableMod) tableModel.getValueAt(row, 0));
         }
 
-        new CheckForUpdatesDialog(this.parent, this.instance, mods, true,
-                (Map<DisableableMod, DisableableMod> updatedMods) -> {
-                    saveAndReloadAfterUpdatingMods(rows.stream().mapToInt(Integer::intValue).toArray(), updatedMods);
-                });
+        new CheckForUpdatesDialog(this.parent, this.instanceOrServer, mods, true,
+            (Map<DisableableMod, DisableableMod> updatedMods) -> {
+                saveAndReloadAfterUpdatingMods(rows.stream().mapToInt(Integer::intValue).toArray(), updatedMods);
+            });
     }
 
     private void reinstallMods(int[] rows) {
@@ -720,10 +718,10 @@ public abstract class DisableableModsSection extends SectionPanel {
             return (DisableableMod) tableModel.getValueAt(row, 0);
         }).collect(Collectors.toList());
 
-        new CheckForUpdatesDialog(this.parent, this.instance, mods, true,
-                (Map<DisableableMod, DisableableMod> updatedMods) -> {
-                    saveAndReloadAfterUpdatingMods(rows, updatedMods);
-                });
+        new CheckForUpdatesDialog(this.parent, this.instanceOrServer, mods, true,
+            (Map<DisableableMod, DisableableMod> updatedMods) -> {
+                saveAndReloadAfterUpdatingMods(rows, updatedMods);
+            });
     }
 
     private void saveAndReloadAfterUpdatingMods(int[] rows, Map<DisableableMod, DisableableMod> updatedMods) {
@@ -731,24 +729,24 @@ public abstract class DisableableModsSection extends SectionPanel {
             DisableableMod oldMod = entry.getKey();
             DisableableMod newMod = entry.getValue();
 
-            if (oldMod == null || newMod == null || !instance.launcher.mods.remove(oldMod)) {
+            if (oldMod == null || newMod == null || !instanceOrServer.getMods().remove(oldMod)) {
                 continue;
             }
 
             // update the mods list
-            instance.launcher.mods.remove(oldMod);
-            instance.launcher.mods.add(newMod);
+            instanceOrServer.getMods().remove(oldMod);
+            instanceOrServer.getMods().add(newMod);
 
             // then update the tables Mod to be correct
             Optional<Integer> foundRow = Arrays.stream(rows).boxed()
-                    .filter(row -> tableModel.getValueAt(row, 0) == oldMod).findFirst();
+                .filter(row -> tableModel.getValueAt(row, 0) == oldMod).findFirst();
 
             if (foundRow.isPresent()) {
                 tableModel.setValueAt(newMod, foundRow.get(), 0);
             }
         }
 
-        instance.save();
+        instanceOrServer.save();
 
         reloadRows(rows);
     }
@@ -817,9 +815,9 @@ public abstract class DisableableModsSection extends SectionPanel {
                 Optional<DisableableMod> mod = getFirstSelectedMod();
 
                 if (mod.isPresent()) {
-                    OS.openFileExplorer(mod.get().getFile(instance).toPath(), true);
+                    OS.openFileExplorer(mod.get().getFile(instanceOrServer).toPath(), true);
                 } else {
-                    OS.openFileExplorer(instance.ROOT.resolve("mods"), false);
+                    OS.openFileExplorer(instanceOrServer.getRoot().resolve("mods"), false);
                 }
             }
         });
@@ -894,18 +892,18 @@ public abstract class DisableableModsSection extends SectionPanel {
                     if (table.getSelectedRow() != -1) {
                         int selectedRow = table.convertRowIndexToModel(table.getSelectedRow());
                         DisableableMod mod = (DisableableMod) tableModel.getValueAt(selectedRow, 0);
-                        fileNameMenuItem.setText(mod.getActualFile(instance).getName());
+                        fileNameMenuItem.setText(mod.getActualFile(instanceOrServer).getName());
 
                         openDiscordMenuItem.setVisible(hasExactlyOneModSelected && selectedMod.isPresent()
-                                && selectedMod.get().getDiscordInviteUrl() != null);
+                            && selectedMod.get().getDiscordInviteUrl() != null);
                         openSourceMenuItem.setVisible(hasExactlyOneModSelected && selectedMod.isPresent()
-                                && selectedMod.get().getSourceUrl() != null);
+                            && selectedMod.get().getSourceUrl() != null);
                         openSupportMenuItem.setVisible(hasExactlyOneModSelected && selectedMod.isPresent()
-                                && selectedMod.get().getSupportUrl() != null);
+                            && selectedMod.get().getSupportUrl() != null);
                         openWebsiteMenuItem.setVisible(hasExactlyOneModSelected && selectedMod.isPresent()
-                                && selectedMod.get().getWebsiteUrl() != null);
+                            && selectedMod.get().getWebsiteUrl() != null);
                         openWikiMenuItem.setVisible(hasExactlyOneModSelected && selectedMod.isPresent()
-                                && selectedMod.get().getWikiUrl() != null);
+                            && selectedMod.get().getWikiUrl() != null);
                     }
                 }
             }
@@ -952,50 +950,50 @@ public abstract class DisableableModsSection extends SectionPanel {
 
         if (this.isLaunchingOrLaunched) {
             checkForUpdatesSideBarButton
-                    .setToolTipText(GetText.tr("This cannot be done while Minecraft is running"));
+                .setToolTipText(GetText.tr("This cannot be done while Minecraft is running"));
             reinstallSideBarButton
-                    .setToolTipText(GetText.tr("This cannot be done while Minecraft is running"));
+                .setToolTipText(GetText.tr("This cannot be done while Minecraft is running"));
             enableSideBarButton
-                    .setToolTipText(GetText.tr("This cannot be done while Minecraft is running"));
+                .setToolTipText(GetText.tr("This cannot be done while Minecraft is running"));
             disableSideBarButton
-                    .setToolTipText(GetText.tr("This cannot be done while Minecraft is running"));
+                .setToolTipText(GetText.tr("This cannot be done while Minecraft is running"));
             deleteSideBarButton
-                    .setToolTipText(GetText.tr("This cannot be done while Minecraft is running"));
+                .setToolTipText(GetText.tr("This cannot be done while Minecraft is running"));
         } else if (hasSomethingSelected) {
             checkForUpdatesSideBarButton
-                    .setToolTipText(GetText.tr("Check for updates to the selected item/s"));
+                .setToolTipText(GetText.tr("Check for updates to the selected item/s"));
             reinstallSideBarButton.setToolTipText(
-                    GetText.tr("Reinstall the selected item/s, choosing which version to install"));
+                GetText.tr("Reinstall the selected item/s, choosing which version to install"));
             enableSideBarButton
-                    .setToolTipText(
-                            GetText.tr("Enable the selected item/s for play in the current instance"));
+                .setToolTipText(
+                    GetText.tr("Enable the selected item/s for play in the current instance"));
             disableSideBarButton
-                    .setToolTipText(
-                            GetText.tr("Disable the selected item/s for play in the current instance"));
+                .setToolTipText(
+                    GetText.tr("Disable the selected item/s for play in the current instance"));
             deleteSideBarButton
-                    .setToolTipText(
-                            GetText.tr("Delete the selected item/s completely from the current instance"));
+                .setToolTipText(
+                    GetText.tr("Delete the selected item/s completely from the current instance"));
         } else {
             checkForUpdatesSideBarButton
-                    .setToolTipText(GetText.tr("Select one or more items in the table to the left"));
+                .setToolTipText(GetText.tr("Select one or more items in the table to the left"));
             reinstallSideBarButton
-                    .setToolTipText(GetText.tr("Select one or more items in the table to the left"));
+                .setToolTipText(GetText.tr("Select one or more items in the table to the left"));
             enableSideBarButton
-                    .setToolTipText(GetText.tr("Select one or more items in the table to the left"));
+                .setToolTipText(GetText.tr("Select one or more items in the table to the left"));
             disableSideBarButton
-                    .setToolTipText(GetText.tr("Select one or more items in the table to the left"));
+                .setToolTipText(GetText.tr("Select one or more items in the table to the left"));
             deleteSideBarButton
-                    .setToolTipText(GetText.tr("Select one or more items in the table to the left"));
+                .setToolTipText(GetText.tr("Select one or more items in the table to the left"));
         }
 
-        if (instance.launcher.loaderVersion == null && modTypes.contains(Type.mods)) {
+        if (instanceOrServer.getLoaderVersion() == null && modTypes.contains(Type.mods)) {
             downloadMoreSideBarButton.setEnabled(false);
             downloadMoreSideBarButton
-                    .setToolTipText(GetText.tr("In order to download mods, you must have a modloader installed"));
+                .setToolTipText(GetText.tr("In order to download mods, you must have a modloader installed"));
         } else {
             downloadMoreSideBarButton.setEnabled(!this.isLaunchingOrLaunched);
             downloadMoreSideBarButton.setToolTipText(!this.isLaunchingOrLaunched ? null
-                    : GetText.tr("Select one or more items in the table to the left"));
+                : GetText.tr("Select one or more items in the table to the left"));
         }
 
         addFileSideBarButton.setEnabled(!this.isLaunchingOrLaunched);

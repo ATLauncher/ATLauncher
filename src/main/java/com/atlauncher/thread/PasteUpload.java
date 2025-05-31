@@ -19,11 +19,17 @@ package com.atlauncher.thread;
 
 import java.util.concurrent.Callable;
 
+import com.atlauncher.App;
 import com.atlauncher.constants.Constants;
 import com.atlauncher.utils.Utils;
 
 public final class PasteUpload implements Callable<String> {
     private final String log;
+
+    public PasteUpload() {
+        super();
+        this.log = App.console.getLog().replace(System.getProperty("line.separator"), "\n");
+    }
 
     public PasteUpload(String log) {
         super();

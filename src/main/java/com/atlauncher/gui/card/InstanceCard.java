@@ -23,11 +23,9 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.nio.file.Path;
-import java.util.ArrayList;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.io.IOException;
+import java.nio.file.Path;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -46,14 +44,11 @@ import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.constants.Constants;
 import com.atlauncher.data.BackupMode;
 import com.atlauncher.data.Instance;
-import com.atlauncher.data.minecraft.loaders.LoaderType;
-import com.atlauncher.evnt.listener.RelocalizationListener;
-import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.gui.components.CollapsiblePanel;
 import com.atlauncher.gui.components.DropDownButton;
 import com.atlauncher.gui.components.ImagePanel;
 import com.atlauncher.gui.dialogs.ProgressDialog;
-import com.atlauncher.gui.dialogs.editinstancedialog.EditInstanceDialog;
+import com.atlauncher.gui.dialogs.editinstancedialog.EditDialog;
 import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.managers.InstanceManager;
@@ -114,7 +109,7 @@ public class InstanceCard extends CollapsiblePanel {
     private final DropDownButton getHelpButton = new DropDownButton(GetText.tr("Get Help"), getHelpPopupMenu);
 
     private final JMenuItem renameMenuItem = new JMenuItem(GetText.tr("Rename"));
-    private EditInstanceDialog editInstanceDialog = null;
+    private EditDialog editDialog = null;
 
     private final boolean hasUpdate;
 
@@ -330,19 +325,19 @@ public class InstanceCard extends CollapsiblePanel {
     }
 
     private void openEditInstanceDialog(Integer selectedTabIndex) {
-        if (editInstanceDialog == null) {
-            editInstanceDialog = new EditInstanceDialog(instance, selectedTabIndex);
-            editInstanceDialog.addWindowListener(new WindowAdapter() {
+        if (editDialog == null) {
+            editDialog = new EditDialog(instance, selectedTabIndex);
+            editDialog.addWindowListener(new WindowAdapter() {
                 @Override
                 public void windowClosed(WindowEvent e) {
-                    editInstanceDialog = null;
+                    editDialog = null;
                 }
             });
         } else {
-            editInstanceDialog.requestFocus();
+            editDialog.requestFocus();
 
             if (selectedTabIndex != null) {
-                editInstanceDialog.tabbedPane.setSelectedIndex(selectedTabIndex);
+                editDialog.tabbedPane.setSelectedIndex(selectedTabIndex);
             }
         }
 

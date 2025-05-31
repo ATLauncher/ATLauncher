@@ -40,15 +40,18 @@ import com.atlauncher.App;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.data.AbstractAccount;
 import com.atlauncher.data.Instance;
+import com.atlauncher.data.ModManagement;
+import com.atlauncher.data.Server;
 import com.atlauncher.evnt.listener.MinecraftLaunchListener;
 import com.atlauncher.evnt.manager.MinecraftLaunchManager;
 import com.atlauncher.evnt.manager.TabChangeManager;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.network.Analytics;
+import com.atlauncher.network.analytics.AnalyticsEvent;
 import com.atlauncher.utils.Utils;
 
-public class EditInstanceDialog extends JFrame implements MinecraftLaunchListener {
-    private Instance instance;
+public class EditDialog extends JFrame implements MinecraftLaunchListener {
+    private final ModManagement instanceOrServer;
     private Process runningProcess = null;
     private boolean launching = false;
 
@@ -63,10 +66,11 @@ public class EditInstanceDialog extends JFrame implements MinecraftLaunchListene
     private final JButton playOfflineButton = new JButton(GetText.tr("Play Offline"));
     private final JButton playButton = new JButton(GetText.tr("Play"));
 
-    public EditInstanceDialog(Instance instance, Integer selectedTabIndex) {
-        super(GetText.tr("Editing Instance {0}", instance.launcher.name));
+    public EditDialog(ModManagement instanceOrServer, Integer selectedTabIndex) {
+        super(GetText.tr("Editing {0} {1}", instanceOrServer instanceof Instance ? "Instance" : "Server",
+            instanceOrServer.getName()));
 
-        this.instance = instance;
+        this.instanceOrServer = instanceOrServer;
 
         MinecraftLaunchManager.addListener(this);
 
@@ -78,18 +82,22 @@ public class EditInstanceDialog extends JFrame implements MinecraftLaunchListene
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent arg0) {
-                MinecraftLaunchManager.removeListener(EditInstanceDialog.this);
+                MinecraftLaunchManager.removeListener(EditDialog.this);
                 close();
             }
         });
 
-        modsSection = new ModsSection(this, instance);
-        resourcePacksSection = new ResourcePacksSection(this, instance);
-        shaderPacksSection = new ShaderPacksSection(this, instance);
-        notesSection = new NotesSection(this, instance);
+        modsSection = new ModsSection(this, this.instanceOrServer);
+        resourcePacksSection = new ResourcePacksSection(this, this.instanceOrServer);
+        shaderPacksSection = new ShaderPacksSection(this, this.instanceOrServer);
+        notesSection = new NotesSection(this, this.instanceOrServer);
 
         setupTabbedPane(selectedTabIndex);
-        setupBottomPanel();
+
+        if (instanceOrServer instanceof Instance) {
+            setupBottomPanel();
+        }
+
         updateUIState();
 
         setLocationRelativeTo(App.launcher.getParent());
@@ -99,11 +107,11 @@ public class EditInstanceDialog extends JFrame implements MinecraftLaunchListene
     private void close() {
         final String notes = notesSection.getNotes();
 
-        if (!instance.launcher.notes.equals(notes)
-                || instance.launcher.wrapNotes != notesSection.wrapCheckBox.isSelected()) {
-            instance.launcher.notes = notes;
-            instance.launcher.wrapNotes = notesSection.wrapCheckBox.isSelected();
-            instance.save();
+        if (!instanceOrServer.getNotes().equals(notes)
+            || instanceOrServer.shouldWrapNotes() != notesSection.wrapCheckBox.isSelected()) {
+            instanceOrServer.setNotes(notes);
+            instanceOrServer.setShouldWrapNotes(notesSection.wrapCheckBox.isSelected());
+            instanceOrServer.save();
         }
 
         dispose();
@@ -111,29 +119,36 @@ public class EditInstanceDialog extends JFrame implements MinecraftLaunchListene
 
     private void setupTabbedPane(Integer selectedTabIndex) {
         tabbedPane.setFont(App.THEME.getNormalFont().deriveFont(14.0F));
-        tabbedPane.addTab(GetText.tr("Information"), new InformationSection(this, instance));
+        tabbedPane.addTab(GetText.tr("Information"), new InformationSection(this, instanceOrServer));
         tabbedPane.addTab(GetText.tr("Mods"), modsSection);
         tabbedPane.addTab(GetText.tr("Resource Packs"), resourcePacksSection);
         tabbedPane.addTab(GetText.tr("Shader Packs"), shaderPacksSection);
-        tabbedPane.addTab(GetText.tr("Logs"), new LogsSection(this, instance));
+        tabbedPane.addTab(GetText.tr("Logs"), new LogsSection(this, instanceOrServer));
         tabbedPane.addTab(GetText.tr("Notes"), notesSection);
-        tabbedPane.addTab(GetText.tr("Export"), new ExportSection(this, instance));
-        tabbedPane.addTab(GetText.tr("Settings"), new SettingsSection(this, instance));
+        tabbedPane.addTab(GetText.tr("Export"), new ExportSection(this, instanceOrServer));
+        tabbedPane.addTab(GetText.tr("Settings"), new SettingsSection(this, instanceOrServer));
         tabbedPane.setOpaque(true);
 
         tabbedPane.addChangeListener(e -> {
             Analytics.sendScreenView(
-                    String.format("Edit Instance Dialog - %s",
-                            tabbedPane.getSelectedComponent().getClass().getSimpleName()));
+                String.format("Edit Instance Dialog - %s",
+                    tabbedPane.getSelectedComponent().getClass().getSimpleName()));
             TabChangeManager.post(tabbedPane.getSelectedIndex());
         });
 
         if (selectedTabIndex == null) {
             Analytics.sendScreenView(
-                    String.format("Edit Instance Dialog - %s",
-                            tabbedPane.getSelectedComponent().getClass().getSimpleName()));
+                String.format("Edit Instance Dialog - %s",
+                    tabbedPane.getSelectedComponent().getClass().getSimpleName()));
         } else {
             tabbedPane.setSelectedIndex(selectedTabIndex);
+        }
+
+        if (instanceOrServer instanceof Server) {
+            tabbedPane.removeTabAt(2);
+            tabbedPane.removeTabAt(3);
+            tabbedPane.removeTabAt(6);
+            tabbedPane.removeTabAt(7);
         }
 
         tabbedPane.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, UIManager.getColor("Component.borderColor")));
@@ -142,6 +157,8 @@ public class EditInstanceDialog extends JFrame implements MinecraftLaunchListene
     }
 
     private void setupBottomPanel() {
+        Instance instance = (Instance) instanceOrServer;
+
         JPanel bottomActionsPanel = new JPanel();
 
         bottomActionsPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -149,12 +166,12 @@ public class EditInstanceDialog extends JFrame implements MinecraftLaunchListene
 
         endProcessButton.addActionListener(e -> {
             int ret = DialogManager.yesNoDialog().setTitle(GetText.tr("End Process?"))
-                    .setContent(new HTMLBuilder().center().text(GetText.tr(
-                            "Are you sure you want to end the Minecraft process?<br/><br/>Doing so can cause corruption of your instance including corruption of your worlds."))
-                            .build())
-                    .setType(DialogManager.QUESTION).show();
+                .setContent(new HTMLBuilder().center().text(GetText.tr(
+                        "Are you sure you want to end the Minecraft process?<br/><br/>Doing so can cause corruption of your instance including corruption of your worlds."))
+                    .build())
+                .setType(DialogManager.QUESTION).show();
             if (ret == DialogManager.YES_OPTION) {
-                Analytics.sendEvent("EndProcess", "EditInstanceDialog");
+                Analytics.trackEvent(AnalyticsEvent.simpleEvent("edit_kill_minecraft"));
                 App.launcher.killMinecraft(runningProcess);
             }
         });
@@ -211,7 +228,7 @@ public class EditInstanceDialog extends JFrame implements MinecraftLaunchListene
 
     @Override
     public void minecraftLaunching(Instance instance) {
-        if (instance == this.instance) {
+        if (instance == this.instanceOrServer) {
             launching = true;
             updateUIState();
         } else {
@@ -221,7 +238,7 @@ public class EditInstanceDialog extends JFrame implements MinecraftLaunchListene
 
     @Override
     public void minecraftLaunchFailed(Instance instance, String reason) {
-        if (instance == this.instance) {
+        if (instance == this.instanceOrServer) {
             launching = false;
             updateUIState();
         }
@@ -229,7 +246,7 @@ public class EditInstanceDialog extends JFrame implements MinecraftLaunchListene
 
     @Override
     public void minecraftLaunched(Instance instance, AbstractAccount account, Process process) {
-        if (instance == this.instance) {
+        if (instance == this.instanceOrServer) {
             launching = false;
             runningProcess = process;
             updateUIState();
@@ -238,7 +255,7 @@ public class EditInstanceDialog extends JFrame implements MinecraftLaunchListene
 
     @Override
     public void minecraftClosed(Instance instance) {
-        if (instance == this.instance) {
+        if (instance == this.instanceOrServer) {
             launching = false;
             runningProcess = null;
             updateUIState();

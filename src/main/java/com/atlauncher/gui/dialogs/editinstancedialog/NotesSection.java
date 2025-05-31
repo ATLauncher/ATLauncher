@@ -40,7 +40,7 @@ import javax.swing.text.Highlighter;
 
 import org.mini2Dx.gettext.GetText;
 
-import com.atlauncher.data.Instance;
+import com.atlauncher.data.ModManagement;
 import com.atlauncher.utils.OS;
 import com.formdev.flatlaf.icons.FlatSearchIcon;
 
@@ -53,11 +53,11 @@ public class NotesSection extends SectionPanel {
     private final JScrollPane noteScrollPane = new JScrollPane();
     private Timer saveTimer = null;
     private final String saveLabelText = GetText.tr("Saved when window closed or press '{0} + S'",
-            OS.isMac() ? "Cmd" : "Ctrl");
+        OS.isMac() ? "Cmd" : "Ctrl");
     private final JLabel saveLabel = new JLabel(saveLabelText);
 
-    public NotesSection(EditInstanceDialog parent, Instance instance) {
-        super(parent, instance);
+    public NotesSection(EditDialog parent, ModManagement serverOrInstance) {
+        super(parent, serverOrInstance);
 
         setupComponents();
     }
@@ -79,7 +79,7 @@ public class NotesSection extends SectionPanel {
 
             try {
                 highlighter.addHighlight(index, lastSearchIndex + searchTerm.length(),
-                        DefaultHighlighter.DefaultPainter);
+                    DefaultHighlighter.DefaultPainter);
             } catch (BadLocationException e) {
                 e.printStackTrace();
             }
@@ -111,10 +111,10 @@ public class NotesSection extends SectionPanel {
             executeSearch();
         });
 
-        wrapCheckBox.setSelected(instance.launcher.wrapNotes);
+        wrapCheckBox.setSelected(instanceOrServer.shouldWrapNotes());
         wrapCheckBox.addActionListener(e -> {
             noteTextArea.setLineWrap(wrapCheckBox.isSelected());
-            instance.launcher.wrapNotes = wrapCheckBox.isSelected();
+            instanceOrServer.setShouldWrapNotes(wrapCheckBox.isSelected());
         });
 
         saveLabel.setFont(saveLabel.getFont().deriveFont(12f));
@@ -127,8 +127,8 @@ public class NotesSection extends SectionPanel {
 
         add(topPanel, BorderLayout.NORTH);
 
-        noteTextArea.setText(instance.launcher.notes);
-        noteTextArea.setLineWrap(instance.launcher.wrapNotes);
+        noteTextArea.setText(instanceOrServer.getNotes());
+        noteTextArea.setLineWrap(instanceOrServer.shouldWrapNotes());
         noteTextArea.addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
@@ -149,8 +149,8 @@ public class NotesSection extends SectionPanel {
     }
 
     public void saveNotes() {
-        instance.launcher.notes = noteTextArea.getText();
-        instance.save();
+        instanceOrServer.setNotes(noteTextArea.getText());
+        instanceOrServer.save();
 
         saveLabel.setText(GetText.tr("Saved"));
 

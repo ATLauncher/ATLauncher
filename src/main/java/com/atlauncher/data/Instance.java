@@ -99,13 +99,11 @@ import com.atlauncher.data.curseforge.pack.CurseForgeModLoader;
 import com.atlauncher.data.installables.Installable;
 import com.atlauncher.data.installables.VanillaInstallable;
 import com.atlauncher.data.minecraft.AssetIndex;
-import com.atlauncher.data.minecraft.FabricMod;
 import com.atlauncher.data.minecraft.JavaRuntime;
 import com.atlauncher.data.minecraft.JavaRuntimeManifest;
 import com.atlauncher.data.minecraft.JavaRuntimeManifestFileType;
 import com.atlauncher.data.minecraft.JavaRuntimes;
 import com.atlauncher.data.minecraft.Library;
-import com.atlauncher.data.minecraft.MCMod;
 import com.atlauncher.data.minecraft.MinecraftVersion;
 import com.atlauncher.data.minecraft.VersionManifestVersionType;
 import com.atlauncher.data.minecraft.loaders.LoaderType;
@@ -127,8 +125,6 @@ import com.atlauncher.data.modrinth.pack.ModrinthModpackManifest;
 import com.atlauncher.data.multimc.MultiMCComponent;
 import com.atlauncher.data.multimc.MultiMCManifest;
 import com.atlauncher.data.multimc.MultiMCRequire;
-import com.atlauncher.data.technic.TechnicModpack;
-import com.atlauncher.data.technic.TechnicSolderModpack;
 import com.atlauncher.evnt.manager.MinecraftLaunchManager;
 import com.atlauncher.exceptions.CommandException;
 import com.atlauncher.exceptions.InvalidMinecraftVersion;
@@ -2006,6 +2002,27 @@ public class Instance extends MinecraftVersion implements ModManagement {
     }
 
     @Override
+    public void setNotes(String notes) {
+        this.launcher.notes = notes;
+    }
+
+    @Override
+    public String getNotes() {
+        return this.launcher.notes;
+    }
+
+    @Override
+    public void setShouldWrapNotes(boolean shouldWrapNotes) {
+        this.launcher.wrapNotes = shouldWrapNotes;
+    }
+
+    @
+        Override
+    public boolean shouldWrapNotes() {
+        return this.launcher.wrapNotes;
+    }
+
+    @Override
     public void save() {
         try (OutputStreamWriter fileWriter = new OutputStreamWriter(
             Files.newOutputStream(this.getRoot().resolve("instance.json")), StandardCharsets.UTF_8)) {
@@ -2052,10 +2069,12 @@ public class Instance extends MinecraftVersion implements ModManagement {
         return launcher.name;
     }
 
+    @Override
     public String getPackName() {
         return launcher.pack;
     }
 
+    @Override
     public String getVersion() {
         return launcher.version;
     }
@@ -2162,6 +2181,7 @@ public class Instance extends MinecraftVersion implements ModManagement {
             && ConfigManager.getConfigItem("platforms.modrinth.modpacksEnabled", true)));
     }
 
+    @Override
     public String getPlatformName() {
         if (isCurseForgePack()) {
             return "CurseForge";
@@ -2787,6 +2807,7 @@ public class Instance extends MinecraftVersion implements ModManagement {
         return launcher.version;
     }
 
+    @Override
     public List<Path> getLogPathsFromFilesystem(List<Path> logPaths) {
         List<Path> files = new ArrayList<>();
 
@@ -2825,50 +2846,13 @@ public class Instance extends MinecraftVersion implements ModManagement {
 
     private List<Path> getModPathsFromFilesystem() {
         return getModPathsFromFilesystem(Arrays.asList(ROOT.resolve("mods"),
-            ROOT.resolve("resourcepacks"),
-            ROOT.resolve("shaderpacks"),
-            ROOT.resolve("jarmods")));
-    }
-
-    public List<Path> getModPathsFromFilesystem(List<Path> paths) {
-        List<Path> files = new ArrayList<>();
-
-        for (Path path : paths) {
-            if (!Files.exists(path)) {
-                continue;
-            }
-
-            try (Stream<Path> stream = Files.list(path)) {
-                files.addAll(stream
-                    .filter(file -> !Files.isDirectory(file) && Utils.isAcceptedModFile(file))
-                    .collect(Collectors.toList()));
-            } catch (IOException e) {
-                LogManager.logStackTrace("Error getting mod paths", e);
-            }
-        }
-
-        return files;
-    }
-
-    public void scanMissingMods() {
-        scanMissingMods(App.launcher.getParent());
-    }
-
-    @Override
-    public void scanMissingMods(Window parent) {
-        PerformanceManager.start("Instance::scanMissingMods - CheckForAddedMods");
-
-        return files;
-    }
-
-    private List<Path> getModPathsFromFilesystem() {
-        return getModPathsFromFilesystem(Arrays.asList(ROOT.resolve("mods"),
             ROOT.resolve("disabledmods"),
             ROOT.resolve("resourcepacks"),
             ROOT.resolve("shaderpacks"),
             ROOT.resolve("jarmods")));
     }
 
+    @Override
     public List<Path> getModPathsFromFilesystem(List<Path> paths) {
         List<Path> files = new ArrayList<>();
 
@@ -3010,20 +2994,14 @@ public class Instance extends MinecraftVersion implements ModManagement {
                                                 dm.curseForgeFileId = null;
                                                 dm.curseForgeProject = null;
 
-                                                File path = dm.getFile(this);
-                                                MCMod mcMod = Utils.getMCModForFile(path);
-                                                if (mcMod != null) {
-                                                    dm.name = Optional.ofNullable(mcMod.name)
-                                                        .orElse(path.getName());
-                                                    dm.description = mcMod.description;
-                                                } else {
-                                                    FabricMod fabricMod = Utils.getFabricModForFile(path);
-                                                    if (fabricMod != null) {
-                                                        dm.name = Optional.ofNullable(fabricMod.name)
-                                                            .orElse(path.getName());
-                                                        dm.description = fabricMod.description;
-                                                    }
-                                                }
+                                                Path path = dm.getFile(this).toPath();
+                                                dm.name = Optional.ofNullable(dm.getNameFromFile(this, path))
+                                                    .orElse(path.getFileName().toString());
+                                                dm.version = Optional.ofNullable(dm.getVersionFromFile(this, path))
+                                                    .orElse("Unknown");
+                                                dm.description =
+                                                    Optional.ofNullable(dm.getDescriptionFromFile(this, path))
+                                                        .orElse(null);
                                             }
                                         });
                                 }
@@ -3726,6 +3704,7 @@ public class Instance extends MinecraftVersion implements ModManagement {
         return null;
     }
 
+    @Override
     public DisableableMod reinstallModFromModrinth(DisableableMod mod, ModrinthProject project, ModrinthVersion version,
         OkHttpClient progressClient) {
         ModrinthFile fileToDownload = version.getPrimaryFile();
@@ -3770,6 +3749,7 @@ public class Instance extends MinecraftVersion implements ModManagement {
         return newMod;
     }
 
+    @Override
     public DisableableMod reinstallModFromCurseForge(DisableableMod mod, CurseForgeProject project,
         CurseForgeFile version, OkHttpClient progressClient) {
         String modFileNameInSystem = mod.disabled ? version.fileName + ".disabled" : version.fileName;

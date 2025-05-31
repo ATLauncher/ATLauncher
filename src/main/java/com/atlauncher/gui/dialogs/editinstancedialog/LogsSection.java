@@ -52,8 +52,10 @@ import javax.swing.text.Highlighter;
 
 import org.mini2Dx.gettext.GetText;
 
-import com.atlauncher.data.Instance;
+import com.atlauncher.data.ModManagement;
 import com.atlauncher.managers.LogManager;
+import com.atlauncher.network.Analytics;
+import com.atlauncher.network.analytics.AnalyticsEvent;
 import com.atlauncher.utils.ATLauncherApi;
 import com.atlauncher.utils.ComboItem;
 import com.atlauncher.utils.FileUtils;
@@ -71,11 +73,11 @@ public class LogsSection extends SectionPanel {
     private final SideBarButton uploadSideBarButton = new SideBarButton(GetText.tr("Upload"));
     private final SideBarButton copyToClipboardSideBarButton = new SideBarButton(GetText.tr("Copy To Clipboard"));
     private final SideBarButton showInFileExplorerSideBarButton = new SideBarButton(
-            GetText.tr("Show In File Explorer"));
+        GetText.tr("Show In File Explorer"));
     private final SideBarButton deleteSideBarButton = new SideBarButton(GetText.tr("Delete"));
 
-    public LogsSection(EditInstanceDialog parent, Instance instance) {
-        super(parent, instance);
+    public LogsSection(EditDialog parent, ModManagement instanceOrServer) {
+        super(parent, instanceOrServer);
 
         setupComponents();
 
@@ -99,7 +101,7 @@ public class LogsSection extends SectionPanel {
 
             try {
                 highlighter.addHighlight(index, lastSearchIndex + searchTerm.length(),
-                        DefaultHighlighter.DefaultPainter);
+                    DefaultHighlighter.DefaultPainter);
             } catch (BadLocationException e) {
                 e.printStackTrace();
             }
@@ -131,9 +133,9 @@ public class LogsSection extends SectionPanel {
                         if (selectedPath.toString().endsWith(".gz")) {
                             StringBuilder sb = new StringBuilder();
                             try (InputStream fileStream = new FileInputStream(selectedPath.toFile());
-                                    InputStream gzipStream = new GZIPInputStream(fileStream);
-                                    Reader decoder = new InputStreamReader(gzipStream, "UTF-8");
-                                    BufferedReader buffered = new BufferedReader(decoder)) {
+                                InputStream gzipStream = new GZIPInputStream(fileStream);
+                                Reader decoder = new InputStreamReader(gzipStream, "UTF-8");
+                                BufferedReader buffered = new BufferedReader(decoder)) {
                                 String line;
                                 while ((line = buffered.readLine()) != null) {
                                     sb.append(line);
@@ -141,8 +143,8 @@ public class LogsSection extends SectionPanel {
                                 }
                             } catch (Exception e2) {
                                 LogManager.logStackTrace("Failed to read file " + selectedPath.getFileName().toString(),
-                                        e2,
-                                        false);
+                                    e2,
+                                    false);
                             }
                             contents = sb.toString();
                         } else {
@@ -155,7 +157,7 @@ public class LogsSection extends SectionPanel {
                         logTextArea.setCaretPosition(0);
                     } catch (Exception e2) {
                         LogManager.logStackTrace("Failed to read file " + selectedPath.getFileName().toString(), e2,
-                                false);
+                            false);
                     }
                 }
             }
@@ -212,6 +214,7 @@ public class LogsSection extends SectionPanel {
 
         uploadSideBarButton.setEnabled(false);
         uploadSideBarButton.addActionListener(e -> {
+            Analytics.trackEvent(AnalyticsEvent.simpleEvent("logs_upload"));
             ATLauncherApi.uploadLog(this.parent, logTextArea.getText());
         });
 
@@ -240,16 +243,17 @@ public class LogsSection extends SectionPanel {
 
         SideBarButton deleteAllButton = new SideBarButton(GetText.tr("Delete All"));
         deleteAllButton.addActionListener(e -> {
-            instance.getLogPathsFromFilesystem(Arrays.asList(instance.ROOT.resolve("logs"))).forEach(path -> {
-                FileUtils.delete(path);
-            });
+            instanceOrServer.getLogPathsFromFilesystem(Arrays.asList(instanceOrServer.getRoot().resolve("logs")))
+                .forEach(path -> {
+                    FileUtils.delete(path);
+                });
 
             loadLogFiles();
         });
 
         SideBarButton openFolderButton = new SideBarButton(GetText.tr("Open Folder"));
         openFolderButton.addActionListener(e -> {
-            OS.openFileExplorer(instance.ROOT.resolve("logs"));
+            OS.openFileExplorer(instanceOrServer.getRoot().resolve("logs"));
         });
 
         sideBar.addSeparator();
@@ -273,10 +277,11 @@ public class LogsSection extends SectionPanel {
         logsComboBox.removeAllItems();
         logsComboBox.addItem(new ComboItem<>(null, GetText.tr("Select Log To View")));
 
-        List<Path> logPaths = instance.getLogPathsFromFilesystem(Arrays.asList(instance.ROOT.resolve("logs")));
+        List<Path> logPaths = instanceOrServer.getLogPathsFromFilesystem(
+            Arrays.asList(instanceOrServer.getRoot().resolve("logs")));
 
         logPaths.forEach(path -> {
-            logsComboBox.addItem(new ComboItem<>(path, instance.ROOT.relativize(path).toString()));
+            logsComboBox.addItem(new ComboItem<>(path, instanceOrServer.getRoot().relativize(path).toString()));
         });
     }
 

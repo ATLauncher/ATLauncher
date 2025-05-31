@@ -32,9 +32,9 @@ import org.mini2Dx.gettext.GetText;
 
 import com.atlauncher.App;
 import com.atlauncher.data.Instance;
-import com.atlauncher.gui.dialogs.instancesettings.CommandsInstanceSettingsTab;
-import com.atlauncher.gui.dialogs.instancesettings.GeneralInstanceSettingsTab;
-import com.atlauncher.gui.dialogs.instancesettings.JavaInstanceSettingsTab;
+import com.atlauncher.gui.tabs.instancesettings.CommandsInstanceSettingsTab;
+import com.atlauncher.gui.tabs.instancesettings.GeneralInstanceSettingsTab;
+import com.atlauncher.gui.tabs.instancesettings.JavaInstanceSettingsTab;
 
 public class InstanceSettingsDialog extends JDialog {
     private final Instance instance;

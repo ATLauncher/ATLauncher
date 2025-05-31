@@ -29,6 +29,8 @@ import com.atlauncher.data.modrinth.ModrinthProject;
 import com.atlauncher.data.modrinth.ModrinthVersion;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 
+import okhttp3.OkHttpClient;
+
 /**
  * Interface for mod management. Used by Instances as well as Servers to manage the mods/plugins for them.
  */
@@ -36,6 +38,8 @@ public interface ModManagement {
     public abstract Path getRoot();
 
     public abstract String getName();
+
+    public abstract String getVersion();
 
     public abstract String getMinecraftVersion();
 
@@ -56,9 +60,34 @@ public interface ModManagement {
     public abstract void addFileFromCurseForge(CurseForgeProject mod, CurseForgeFile file, ProgressDialog<Void> dialog);
 
     public abstract void addFileFromModrinth(ModrinthProject project, ModrinthVersion version, ModrinthFile file,
-            ProgressDialog<Void> dialog);
+        ProgressDialog<Void> dialog);
 
     public abstract void scanMissingMods(Window parent);
 
+    public abstract void setNotes(String notes);
+
+    public abstract String getNotes();
+
+    public abstract void setShouldWrapNotes(boolean shouldWrapNotes);
+
+    public abstract boolean shouldWrapNotes();
+
+    public abstract String getPackName();
+
+    public abstract String getPlatformName();
+
+    public abstract boolean isVanillaInstance();
+
     public abstract void save();
+
+    public abstract List<Path> getLogPathsFromFilesystem(List<Path> logPaths);
+
+    public abstract List<Path> getModPathsFromFilesystem(List<Path> modPaths);
+
+    public abstract DisableableMod reinstallModFromModrinth(DisableableMod mod, ModrinthProject project,
+        ModrinthVersion version,
+        OkHttpClient progressClient);
+
+    public abstract DisableableMod reinstallModFromCurseForge(DisableableMod mod, CurseForgeProject project,
+        CurseForgeFile version, OkHttpClient progressClient);
 }

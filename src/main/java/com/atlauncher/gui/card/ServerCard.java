@@ -23,6 +23,8 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -40,9 +42,8 @@ import com.atlauncher.data.Server;
 import com.atlauncher.gui.components.CollapsiblePanel;
 import com.atlauncher.gui.components.DropDownButton;
 import com.atlauncher.gui.components.ImagePanel;
-import com.atlauncher.gui.dialogs.AddModsDialog;
-import com.atlauncher.gui.dialogs.EditModsDialog;
 import com.atlauncher.gui.dialogs.ProgressDialog;
+import com.atlauncher.gui.dialogs.editinstancedialog.EditDialog;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.managers.ServerManager;
 import com.atlauncher.network.Analytics;
@@ -71,6 +72,8 @@ public class ServerCard extends CollapsiblePanel {
     private final JMenuItem wikiLinkMenuItem = new JMenuItem(GetText.tr("Wiki"));
     private final JMenuItem sourceLinkMenuItem = new JMenuItem(GetText.tr("Source"));
     private final DropDownButton getHelpButton = new DropDownButton(GetText.tr("Get Help"), getHelpPopupMenu);
+
+    private EditDialog editDialog = null;
 
     public ServerCard(Server server) {
         super(server);
@@ -159,15 +162,10 @@ public class ServerCard extends CollapsiblePanel {
         this.launchAndCloseButton.addActionListener(e -> server.launch("nogui", true));
         this.launchWithGui.addActionListener(e -> server.launch(false));
         this.launchWithGuiAndClose.addActionListener(e -> server.launch(true));
-        this.addButton.addActionListener(e -> {
-            Analytics.trackEvent(AnalyticsEvent.forServerEvent("server_add_mods", server));
-            AddModsDialog addModsDialog = new AddModsDialog(server);
-            addModsDialog.setVisible(true);
-        });
         this.editButton.addActionListener(e -> {
-            Analytics.trackEvent(AnalyticsEvent.forServerEvent("server_edit_mods", server));
-            EditModsDialog editModsDialog = new EditModsDialog(server);
-            editModsDialog.setVisible(true);
+            Analytics.trackEvent(AnalyticsEvent.forServerEvent("server_edit", server));
+
+            openEditServerDialog();
         });
         this.backupButton.addActionListener(e -> server.backup());
         this.deleteButton.addActionListener(e -> {
@@ -188,6 +186,29 @@ public class ServerCard extends CollapsiblePanel {
             }
         });
         this.openButton.addActionListener(e -> OS.openFileExplorer(server.getRoot()));
+    }
+
+    private void openEditServerDialog() {
+        openEditServerDialog(null);
+    }
+
+    private void openEditServerDialog(Integer selectedTabIndex) {
+        if (editDialog == null) {
+            editDialog = new EditDialog(server, selectedTabIndex);
+            editDialog.addWindowListener(new WindowAdapter() {
+                @Override
+                public void windowClosed(WindowEvent e) {
+                    editDialog = null;
+                }
+            });
+        } else {
+            editDialog.requestFocus();
+
+            if (selectedTabIndex != null) {
+                editDialog.tabbedPane.setSelectedIndex(selectedTabIndex);
+            }
+        }
+
     }
 
     private void addMouseListeners() {

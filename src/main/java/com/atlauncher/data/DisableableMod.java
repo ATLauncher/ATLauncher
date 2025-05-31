@@ -24,6 +24,7 @@ import java.io.Serializable;
 import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -46,7 +47,6 @@ import com.atlauncher.exceptions.InvalidMinecraftVersion;
 import com.atlauncher.gui.dialogs.CurseForgeProjectFileSelectorDialog;
 import com.atlauncher.gui.dialogs.ModrinthVersionSelectorDialog;
 import com.atlauncher.gui.dialogs.ProgressDialog;
-import com.atlauncher.managers.ConfigManager;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.managers.MinecraftManager;
 import com.atlauncher.managers.PerformanceManager;
@@ -707,11 +707,11 @@ public class DisableableMod implements Serializable {
         return getNameFromFile(null, path);
     }
 
-    public String getNameFromFile(Instance instance) {
-        return getNameFromFile(instance, getActualFile(instance).toPath());
+    public String getNameFromFile(ModManagement instanceOrServer) {
+        return getNameFromFile(instanceOrServer, getActualFile(instanceOrServer).toPath());
     }
 
-    public String getNameFromFile(Instance instance, Path path) {
+    public String getNameFromFile(ModManagement instanceOrServer, Path path) {
         if (nonModTypes.contains(type)) {
             if (modrinthProject != null) {
                 return modrinthProject.title;
@@ -724,13 +724,14 @@ public class DisableableMod implements Serializable {
             return name;
         }
 
-        if (instance != null && instance.getLoaderVersion() != null) {
-            if (instance.getLoaderVersion().isFabric() || instance.getLoaderVersion().isLegacyFabric()) {
+        if (instanceOrServer != null && instanceOrServer.getLoaderVersion() != null) {
+            if (instanceOrServer.getLoaderVersion().isFabric() || instanceOrServer.getLoaderVersion()
+                .isLegacyFabric()) {
                 JsonObject fabricMod = getFabricModFile(path);
                 if (fabricMod != null) {
                     return fabricMod.has("name") ? fabricMod.get("name").getAsString() : name;
                 }
-            } else if (instance.getLoaderVersion().isQuilt()) {
+            } else if (instanceOrServer.getLoaderVersion().isQuilt()) {
                 JsonObject quiltMod = getQuiltModFile(path);
                 if (quiltMod != null) {
                     return quiltMod.has("name") ? quiltMod.get("name").getAsString() : name;
@@ -740,7 +741,7 @@ public class DisableableMod implements Serializable {
                 if (fabricMod != null) {
                     return fabricMod.has("name") ? fabricMod.get("name").getAsString() : name;
                 }
-            } else if (instance.getLoaderVersion().isForge()) {
+            } else if (instanceOrServer.getLoaderVersion().isForge()) {
                 JsonObject mcMod = getMcModInfoFile(path);
                 if (mcMod != null) {
                     return mcMod.has("name") ? mcMod.get("name").getAsString() : name;
@@ -782,11 +783,11 @@ public class DisableableMod implements Serializable {
         return getVersionFromFile(null, path);
     }
 
-    public String getVersionFromFile(Instance instance) {
-        return getVersionFromFile(instance, getActualFile(instance).toPath());
+    public String getVersionFromFile(ModManagement instanceOrServer) {
+        return getVersionFromFile(instanceOrServer, getActualFile(instanceOrServer).toPath());
     }
 
-    public String getVersionFromFile(Instance instance, Path path) {
+    public String getVersionFromFile(ModManagement instanceOrServer, Path path) {
         if (nonModTypes.contains(type)) {
             if (modrinthVersion != null) {
                 return modrinthVersion.name;
@@ -799,13 +800,14 @@ public class DisableableMod implements Serializable {
             return version;
         }
 
-        if (instance != null && instance.getLoaderVersion() != null) {
-            if (instance.getLoaderVersion().isFabric() || instance.getLoaderVersion().isLegacyFabric()) {
+        if (instanceOrServer != null && instanceOrServer.getLoaderVersion() != null) {
+            if (instanceOrServer.getLoaderVersion().isFabric() || instanceOrServer.getLoaderVersion()
+                .isLegacyFabric()) {
                 JsonObject fabricMod = getFabricModFile(path);
                 if (fabricMod != null) {
                     return fabricMod.has("version") ? fabricMod.get("version").getAsString() : version;
                 }
-            } else if (instance.getLoaderVersion().isQuilt()) {
+            } else if (instanceOrServer.getLoaderVersion().isQuilt()) {
                 JsonObject quiltMod = getQuiltModFile(path);
                 if (quiltMod != null) {
                     return quiltMod.has("version") ? quiltMod.get("version").getAsString() : version;
@@ -815,7 +817,7 @@ public class DisableableMod implements Serializable {
                 if (fabricMod != null) {
                     return fabricMod.has("version") ? fabricMod.get("version").getAsString() : version;
                 }
-            } else if (instance.getLoaderVersion().isForge()) {
+            } else if (instanceOrServer.getLoaderVersion().isForge()) {
                 JsonObject mcMod = getMcModInfoFile(path);
                 if (mcMod != null) {
                     return mcMod.has("version") ? mcMod.get("version").getAsString() : version;
@@ -873,7 +875,7 @@ public class DisableableMod implements Serializable {
         return getDescriptionFromFile(null, path);
     }
 
-    public String getDescriptionFromFile(Instance instance, Path path) {
+    public String getDescriptionFromFile(ModManagement instanceOrServer, Path path) {
         if (nonModTypes.contains(type)) {
             if (modrinthProject != null) {
                 return modrinthProject.description;
@@ -886,13 +888,14 @@ public class DisableableMod implements Serializable {
             return description;
         }
 
-        if (instance != null && instance.getLoaderVersion() != null) {
-            if (instance.getLoaderVersion().isFabric() || instance.getLoaderVersion().isLegacyFabric()) {
+        if (instanceOrServer != null && instanceOrServer.getLoaderVersion() != null) {
+            if (instanceOrServer.getLoaderVersion().isFabric() || instanceOrServer.getLoaderVersion()
+                .isLegacyFabric()) {
                 JsonObject fabricMod = getFabricModFile(path);
                 if (fabricMod != null) {
                     return fabricMod.has("description") ? fabricMod.get("description").getAsString() : description;
                 }
-            } else if (instance.getLoaderVersion().isQuilt()) {
+            } else if (instanceOrServer.getLoaderVersion().isQuilt()) {
                 JsonObject quiltMod = getQuiltModFile(path);
                 if (quiltMod != null) {
                     return quiltMod.has("description") ? quiltMod.get("description").getAsString() : description;
@@ -902,7 +905,7 @@ public class DisableableMod implements Serializable {
                 if (fabricMod != null) {
                     return fabricMod.has("description") ? fabricMod.get("description").getAsString() : description;
                 }
-            } else if (instance.getLoaderVersion().isForge()) {
+            } else if (instanceOrServer.getLoaderVersion().isForge()) {
                 JsonObject mcMod = getMcModInfoFile(path);
                 if (mcMod != null) {
                     return mcMod.has("description") ? mcMod.get("description").getAsString() : description;
@@ -1009,8 +1012,9 @@ public class DisableableMod implements Serializable {
 
         if (App.settings.addModRestriction == AddModRestriction.LAX) {
             try {
-                List<String> minecraftVersionsToSearch = MinecraftManager.getMajorMinecraftVersions(instance.id)
-                    .stream().map(mv -> mv.id).collect(Collectors.toList());
+                List<String> minecraftVersionsToSearch =
+                    MinecraftManager.getMajorMinecraftVersions(instanceOrServer.getMinecraftVersion())
+                        .stream().map(mv -> mv.id).collect(Collectors.toList());
 
                 curseForgeFilesStream = curseForgeFilesStream.filter(
                     file -> file.gameVersions.stream()

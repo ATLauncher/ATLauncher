@@ -31,15 +31,15 @@ import javax.swing.TransferHandler;
 import javax.swing.table.TableModel;
 
 import com.atlauncher.data.DisableableMod;
-import com.atlauncher.data.Instance;
+import com.atlauncher.data.ModManagement;
 
 public class DisableableModsTableTransferHandler extends TransferHandler {
-    private final Instance instance;
+    private final ModManagement instanceOrServer;
 
-    public DisableableModsTableTransferHandler(Instance instance) {
+    public DisableableModsTableTransferHandler(ModManagement instanceOrServer) {
         super();
 
-        this.instance = instance;
+        this.instanceOrServer = instanceOrServer;
     }
 
     @Override
@@ -50,7 +50,7 @@ public class DisableableModsTableTransferHandler extends TransferHandler {
         TableModel tableModel = table.getModel();
         for (int row : selectedRows) {
             DisableableMod mod = (DisableableMod) tableModel.getValueAt(row, 0);
-            files.add(mod.getActualFile(instance));
+            files.add(mod.getActualFile(instanceOrServer));
         }
         return new Transferable() {
             @Override

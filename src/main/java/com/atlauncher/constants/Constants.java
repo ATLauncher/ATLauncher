@@ -33,7 +33,7 @@ public class Constants {
     static {
         String versionFromFile;
         try (BufferedReader reader = new BufferedReader(
-                new InputStreamReader(App.class.getResourceAsStream("/version"), StandardCharsets.UTF_8))) {
+            new InputStreamReader(App.class.getResourceAsStream("/version"), StandardCharsets.UTF_8))) {
             versionFromFile = reader.lines().collect(Collectors.joining("")).trim();
         } catch (IOException e) {
             versionFromFile = "3.0.0.0";
@@ -48,8 +48,8 @@ public class Constants {
         }
 
         VERSION = new LauncherVersion(Integer.parseInt(versionParts[0]), Integer.parseInt(versionParts[1]),
-                Integer.parseInt(versionParts[2]), Integer.parseInt(versionParts[3]), stream,
-                OS.getRunningProgramHashCode());
+            Integer.parseInt(versionParts[2]), Integer.parseInt(versionParts[3]), stream,
+            OS.getRunningProgramHashCode());
     }
 
     // Launcher config
@@ -68,18 +68,18 @@ public class Constants {
     public static String BASE_LAUNCHER_PROTOCOL = DEFAULT_BASE_LAUNCHER_PROTOCOL;
     public static String BASE_LAUNCHER_DOMAIN = DEFAULT_BASE_LAUNCHER_DOMAIN;
     public static String API_BASE_URL = DEFAULT_BASE_LAUNCHER_PROTOCOL + "api." + DEFAULT_BASE_LAUNCHER_DOMAIN
-            + "/v1/launcher/";
+        + "/v1/launcher/";
     public static String GRAPHQL_ENDPOINT = DEFAULT_BASE_LAUNCHER_PROTOCOL + "api." + DEFAULT_BASE_LAUNCHER_DOMAIN
-            + "/v2/graphql";
+        + "/v2/graphql";
     public static String API_HOST = "api." + DEFAULT_BASE_LAUNCHER_DOMAIN;
     public static String ANALYTICS_BASE_URL = DEFAULT_BASE_LAUNCHER_PROTOCOL + "analytics."
-            + DEFAULT_BASE_LAUNCHER_DOMAIN;
+        + DEFAULT_BASE_LAUNCHER_DOMAIN;
     public static String PASTE_CHECK_URL = DEFAULT_BASE_LAUNCHER_PROTOCOL + "paste." + DEFAULT_BASE_LAUNCHER_DOMAIN;
     public static String PASTE_HOST = "paste." + DEFAULT_BASE_LAUNCHER_DOMAIN;
     public static String SERVERS_LIST_PACK = DEFAULT_BASE_LAUNCHER_PROTOCOL + DEFAULT_BASE_LAUNCHER_DOMAIN
-            + "/servers/list/pack";
+        + "/servers/list/pack";
     public static String PASTE_API_URL = DEFAULT_BASE_LAUNCHER_PROTOCOL + "paste." + DEFAULT_BASE_LAUNCHER_DOMAIN
-            + "/api/create-v2";
+        + "/api/create-v2";
 
     // CDN domains, endpoints, etc
     private static final String DEFAULT_BASE_CDN_PROTOCOL = "https://";
@@ -118,7 +118,6 @@ public class Constants {
     public static final int CURSEFORGE_MODS_SECTION_ID = 6;
     public static final int CURSEFORGE_MODPACKS_SECTION_ID = 4471;
     public static final int CURSEFORGE_RESOURCE_PACKS_SECTION_ID = 12;
-    public static final int CURSEFORGE_SHADER_PACKS_SECTION_ID = 4546;
     public static final int CURSEFORGE_WORLDS_SECTION_ID = 17;
     public static final int CURSEFORGE_SHADER_PACKS_SECTION_ID = 6552;
 
@@ -170,28 +169,28 @@ public class Constants {
     public static final String MINECRAFT_LIBRARIES = "https://libraries.minecraft.net/";
     public static final String MINECRAFT_RESOURCES = "https://resources.download.minecraft.net";
     public static final String MINECRAFT_VERSION_MANIFEST_URL = LAUNCHER_META_MINECRAFT
-            + "/mc/game/version_manifest.json";
+        + "/mc/game/version_manifest.json";
     public static final String MINECRAFT_JAVA_RUNTIME_URL = LAUNCHER_META_MINECRAFT
-            + "/v1/products/java-runtime/2ec0cc96c44e5a76b9c8b7c39df7210883d12871/all.json";
+        + "/v1/products/java-runtime/2ec0cc96c44e5a76b9c8b7c39df7210883d12871/all.json";
     public static final int MINECRAFT_DEFAULT_SERVER_PORT = 25565;
 
     // Misc
     public static final String LEGACY_JAVA_FIXER_URL = "https://cdn.atlcdn.net/legacyjavafixer-1.0.jar";
     public static final String LEGACY_JAVA_FIXER_MD5 = "12c337cb2445b56b097e7c25a5642710";
     public static final String[] DATE_FORMATS = { "dd/MM/yyyy", "MM/dd/yyyy", "yyyy/MM/dd", "dd MMMM yyyy",
-            "dd-MM-yyyy", "MM-dd-yyyy", "yyyy-MM-dd" };
+        "dd-MM-yyyy", "MM-dd-yyyy", "yyyy-MM-dd" };
     // instance name, pack name, pack version, minecraft version
     public static final String[] INSTANCE_TITLE_FORMATS = { "%1$s (%2$s %3$s)", "%1$s", "%1$s (%4$s)", "%1$s (%3$s)" };
 
     public static final ScreenResolution[] SCREEN_RESOLUTIONS = {
-            new ScreenResolution(854, 480),
-            new ScreenResolution(1280, 720),
-            new ScreenResolution(1366, 768),
-            new ScreenResolution(1600, 900),
-            new ScreenResolution(1920, 1080),
-            new ScreenResolution(2560, 1440),
-            new ScreenResolution(3440, 1440),
-            new ScreenResolution(3840, 2160)
+        new ScreenResolution(854, 480),
+        new ScreenResolution(1280, 720),
+        new ScreenResolution(1366, 768),
+        new ScreenResolution(1600, 900),
+        new ScreenResolution(1920, 1080),
+        new ScreenResolution(2560, 1440),
+        new ScreenResolution(3440, 1440),
+        new ScreenResolution(3840, 2160)
     };
 
     public static final String DEFAULT_JAVA_PARAMETERS = "-XX:+UnlockExperimentalVMOptions -XX:+UseG1GC -XX:G1NewSizePercent=20 -XX:G1ReservePercent=20 -XX:MaxGCPauseMillis=50 -XX:G1HeapRegionSize=32M";
@@ -202,7 +201,7 @@ public class Constants {
     public static final int MICROSOFT_LOGIN_REDIRECT_PORT = 28562;
     public static final String MICROSOFT_LOGIN_REDIRECT_URL = "http://127.0.0.1:" + MICROSOFT_LOGIN_REDIRECT_PORT;
     public static final String MICROSOFT_LOGIN_REDIRECT_URL_ENCODED = "http%3A%2F%2F127.0.0.1%3A"
-            + MICROSOFT_LOGIN_REDIRECT_PORT;
+        + MICROSOFT_LOGIN_REDIRECT_PORT;
     public static final String[] MICROSOFT_LOGIN_SCOPES = { "XboxLive.signin", "offline_access" };
 
     // General Microsoft login constants

@@ -54,7 +54,7 @@ import com.atlauncher.App;
 import com.atlauncher.Network;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.data.DisableableMod;
-import com.atlauncher.data.Instance;
+import com.atlauncher.data.ModManagement;
 import com.atlauncher.data.ModPlatform;
 import com.atlauncher.data.curseforge.CurseForgeFile;
 import com.atlauncher.data.curseforge.CurseForgeFingerprint;
@@ -79,7 +79,7 @@ import io.github.asyncronous.toast.Toaster;
 import okhttp3.OkHttpClient;
 
 public class CheckForUpdatesDialog extends JDialog {
-    private final Instance instance;
+    private final ModManagement instanceOrServer;
     private final List<DisableableMod> mods;
     private final List<ModUpdatesChooserCard> modUpdateCards = new ArrayList<>();
     public final Map<DisableableMod, DisableableMod> updatedMods = Collections.synchronizedMap(new HashMap<>());
@@ -95,11 +95,12 @@ public class CheckForUpdatesDialog extends JDialog {
     private JButton closeButton = new JButton(GetText.tr("Close"));
     private int modsToUpdate = 0;
 
-    public CheckForUpdatesDialog(Window parent, Instance instance, List<DisableableMod> mods, boolean reinstalling,
-            ModUpdatesComplete modUpdatesCompleteRunnable) {
+    public CheckForUpdatesDialog(Window parent, ModManagement instanceOrServer, List<DisableableMod> mods,
+        boolean reinstalling,
+        ModUpdatesComplete modUpdatesCompleteRunnable) {
         super(parent);
 
-        this.instance = instance;
+        this.instanceOrServer = instanceOrServer;
         this.mods = mods;
         this.reinstalling = reinstalling;
         this.modUpdatesCompleteRunnable = modUpdatesCompleteRunnable;
@@ -140,18 +141,18 @@ public class CheckForUpdatesDialog extends JDialog {
     private void setupComponents() {
         JPanel topPanel = new JPanel();
         topPanel.setBorder(new CompoundBorder(
-                new MatteBorder(0, 0, 1, 0, UIManager.getColor("Separator.foreground")),
-                new EmptyBorder(5, 5, 5, 5)));
+            new MatteBorder(0, 0, 1, 0, UIManager.getColor("Separator.foreground")),
+            new EmptyBorder(5, 5, 5, 5)));
         topPanel.setLayout(new BoxLayout(topPanel, BoxLayout.X_AXIS));
 
         JLabelWithHover platformLabel = new JLabelWithHover(GetText.tr("Platform") + ":",
-                Utils.getIconImage(App.THEME.getIconPath("question")),
-                new HTMLBuilder().text(GetText.tr(
-                        "The mod platform to use when querying versions for a mod.<br/>The preferred platform when searching all platforms can be set in the launchers Mods settings tab."))
-                        .center().build());
+            Utils.getIconImage(App.THEME.getIconPath("question")),
+            new HTMLBuilder().text(GetText.tr(
+                    "The mod platform to use when querying versions for a mod.<br/>The preferred platform when searching all platforms can be set in the launchers Mods settings tab."))
+                .center().build());
 
         platformComboBox.addItem(
-                new ComboItem<ModPlatform>(null, GetText.tr("All ({0} Preferred)", App.settings.defaultModPlatform)));
+            new ComboItem<ModPlatform>(null, GetText.tr("All ({0} Preferred)", App.settings.defaultModPlatform)));
         platformComboBox.addItem(new ComboItem<ModPlatform>(ModPlatform.CURSEFORGE, "CurseForge"));
         platformComboBox.addItem(new ComboItem<ModPlatform>(ModPlatform.MODRINTH, "Modrinth"));
         platformComboBox.setMaximumSize(new Dimension(platformComboBox.getPreferredSize().width, 23));
@@ -169,8 +170,8 @@ public class CheckForUpdatesDialog extends JDialog {
 
         JPanel bottomPanel = new JPanel();
         bottomPanel.setBorder(new CompoundBorder(
-                new MatteBorder(1, 0, 0, 0, UIManager.getColor("Separator.foreground")),
-                new EmptyBorder(5, 5, 5, 5)));
+            new MatteBorder(1, 0, 0, 0, UIManager.getColor("Separator.foreground")),
+            new EmptyBorder(5, 5, 5, 5)));
         bottomPanel.setLayout(new BoxLayout(bottomPanel, BoxLayout.X_AXIS));
 
         bottomPanel.add(Box.createHorizontalGlue());
@@ -192,28 +193,28 @@ public class CheckForUpdatesDialog extends JDialog {
             public void actionPerformed(ActionEvent e) {
                 new Thread(() -> {
                     List<Pair<DisableableMod, Pair<Object, Object>>> modsUpdating = modUpdateCards.parallelStream()
-                            .filter(modUpdateCard -> {
-                                if (modUpdateCard.isCurseForgeMod()) {
-                                    CurseForgeFile currentVersion = (CurseForgeFile) modUpdateCard.getCurrentVersion();
-                                    CurseForgeFile updateVersion = (CurseForgeFile) modUpdateCard
-                                            .getVersionUpdatingTo();
+                        .filter(modUpdateCard -> {
+                            if (modUpdateCard.isCurseForgeMod()) {
+                                CurseForgeFile currentVersion = (CurseForgeFile) modUpdateCard.getCurrentVersion();
+                                CurseForgeFile updateVersion = (CurseForgeFile) modUpdateCard
+                                    .getVersionUpdatingTo();
 
-                                    return modUpdateCard.isUpdating() && currentVersion.id != updateVersion.id;
-                                } else if (modUpdateCard.isModrinthMod()) {
-                                    ModrinthVersion currentVersion = (ModrinthVersion) modUpdateCard
-                                            .getCurrentVersion();
-                                    ModrinthVersion updateVersion = (ModrinthVersion) modUpdateCard
-                                            .getVersionUpdatingTo();
+                                return modUpdateCard.isUpdating() && currentVersion.id != updateVersion.id;
+                            } else if (modUpdateCard.isModrinthMod()) {
+                                ModrinthVersion currentVersion = (ModrinthVersion) modUpdateCard
+                                    .getCurrentVersion();
+                                ModrinthVersion updateVersion = (ModrinthVersion) modUpdateCard
+                                    .getVersionUpdatingTo();
 
-                                    return modUpdateCard.isUpdating() && !currentVersion.id.equals(updateVersion.id);
-                                }
+                                return modUpdateCard.isUpdating() && !currentVersion.id.equals(updateVersion.id);
+                            }
 
-                                return false;
-                            }).map(modUpdateCard -> {
-                                return new Pair<>(modUpdateCard.mod,
-                                        new Pair<>(modUpdateCard.getModProject(),
-                                                modUpdateCard.getVersionUpdatingTo()));
-                            }).collect(Collectors.toList());
+                            return false;
+                        }).map(modUpdateCard -> {
+                            return new Pair<>(modUpdateCard.mod,
+                                new Pair<>(modUpdateCard.getModProject(),
+                                    modUpdateCard.getVersionUpdatingTo()));
+                        }).collect(Collectors.toList());
 
                     // update all mods
                     long totalBytes = modsUpdating.stream().mapToLong(mod -> {
@@ -237,7 +238,7 @@ public class CheckForUpdatesDialog extends JDialog {
 
                     // load in panel to show update happening
                     String text = modsUpdating.size() == 1 ? GetText.tr("Downloading 1 Mod")
-                            : GetText.tr("Downloading {0} Mods", modsUpdating.size());
+                        : GetText.tr("Downloading {0} Mods", modsUpdating.size());
                     LoadingPanel loadingPanel = new LoadingPanel(text);
                     loadingPanel.setTotalBytes(totalBytes);
                     OkHttpClient progressClient = Network.createProgressClient(loadingPanel);
@@ -257,14 +258,14 @@ public class CheckForUpdatesDialog extends JDialog {
                                 CurseForgeProject project = (CurseForgeProject) mod.right().left();
                                 CurseForgeFile updateVersion = (CurseForgeFile) mod.right().right();
 
-                                newMod = instance.reinstallModFromCurseForge(mod.left(), project, updateVersion,
-                                        progressClient);
+                                newMod = instanceOrServer.reinstallModFromCurseForge(mod.left(), project, updateVersion,
+                                    progressClient);
                             } else if (mod.right().left() instanceof ModrinthProject) {
                                 ModrinthProject project = (ModrinthProject) mod.right().left();
                                 ModrinthVersion updateVersion = (ModrinthVersion) mod.right().right();
 
-                                newMod = instance.reinstallModFromModrinth(mod.left(),
-                                        project, updateVersion, progressClient);
+                                newMod = instanceOrServer.reinstallModFromModrinth(mod.left(),
+                                    project, updateVersion, progressClient);
                             }
 
                             updatedMods.put(mod.left(), newMod);
@@ -284,8 +285,8 @@ public class CheckForUpdatesDialog extends JDialog {
                     // process complete, only show close button and disable everything else
                     SwingUtilities.invokeLater(() -> {
                         String toasterText = reinstalling
-                                ? GetText.tr("{0} Mods Have Been Reinstalled", updatedMods.size())
-                                : GetText.tr("{0} Mods Have Been Updated", updatedMods.size());
+                            ? GetText.tr("{0} Mods Have Been Reinstalled", updatedMods.size())
+                            : GetText.tr("{0} Mods Have Been Updated", updatedMods.size());
                         Toaster.instance().pop(toasterText);
                         modUpdatesCompleteRunnable.modsInstalled(updatedMods);
                         close();
@@ -328,7 +329,7 @@ public class CheckForUpdatesDialog extends JDialog {
                     updateButton.setEnabled(false);
                     closeButton.setText(GetText.tr("Cancel"));
                     addLoadingPanel(
-                            reinstalling ? GetText.tr("Fetching Versions") : GetText.tr("Checking For Updates"));
+                        reinstalling ? GetText.tr("Fetching Versions") : GetText.tr("Checking For Updates"));
                 });
 
                 ModPlatform platform = ((ComboItem<ModPlatform>) platformComboBox.getSelectedItem()).getValue();
@@ -340,12 +341,12 @@ public class CheckForUpdatesDialog extends JDialog {
                 executorService = Executors.newFixedThreadPool(10);
 
                 if (platform == ModPlatform.MODRINTH
-                        || (platform == null && App.settings.defaultModPlatform == ModPlatform.MODRINTH)) {
+                    || (platform == null && App.settings.defaultModPlatform == ModPlatform.MODRINTH)) {
                     checkForUpdatesOnModrinth(mods, modUpdates, modsCheckedForUpdates);
                 }
 
                 if (platform == ModPlatform.CURSEFORGE
-                        || (platform == null && App.settings.defaultModPlatform == ModPlatform.CURSEFORGE)) {
+                    || (platform == null && App.settings.defaultModPlatform == ModPlatform.CURSEFORGE)) {
                     checkForUpdatesOnCurseForge(mods, modUpdates, modsCheckedForUpdates);
                 }
 
@@ -367,7 +368,7 @@ public class CheckForUpdatesDialog extends JDialog {
                     executorService = Executors.newFixedThreadPool(10);
 
                     List<DisableableMod> modsToCheck = mods.stream().filter(m -> !modsCheckedForUpdates.contains(m))
-                            .collect(Collectors.toList());
+                        .collect(Collectors.toList());
 
                     if (App.settings.defaultModPlatform == ModPlatform.CURSEFORGE) {
                         checkForUpdatesOnModrinth(modsToCheck, modUpdates, modsCheckedForUpdates);
@@ -402,20 +403,20 @@ public class CheckForUpdatesDialog extends JDialog {
                         JPanel modsPanel = new JPanel(new WrapLayout());
                         for (Map.Entry<DisableableMod, Pair<Object, Object>> entry : modUpdates.entrySet()) {
                             modUpdateCards
-                                    .add(new ModUpdatesChooserCard(this, instance, entry.getKey(), entry.getValue(),
-                                            reinstalling, (boolean checked) -> {
-                                                if (checked) {
-                                                    modsToUpdate += 1;
-                                                } else {
-                                                    modsToUpdate -= 1;
-                                                }
+                                .add(new ModUpdatesChooserCard(this, instanceOrServer, entry.getKey(), entry.getValue(),
+                                    reinstalling, (boolean checked) -> {
+                                    if (checked) {
+                                        modsToUpdate += 1;
+                                    } else {
+                                        modsToUpdate -= 1;
+                                    }
 
-                                                SwingUtilities.invokeLater(() -> {
-                                                    updateButton.setEnabled(modsToUpdate != 0);
-                                                    updateButton.setToolTipText(modsToUpdate != 0 ? null
-                                                            : GetText.tr("No Mods Selected"));
-                                                });
-                                            }));
+                                    SwingUtilities.invokeLater(() -> {
+                                        updateButton.setEnabled(modsToUpdate != 0);
+                                        updateButton.setToolTipText(modsToUpdate != 0 ? null
+                                            : GetText.tr("No Mods Selected"));
+                                    });
+                                }));
                         }
 
                         for (ModUpdatesChooserCard modUpdateCard : modUpdateCards) {
@@ -423,8 +424,8 @@ public class CheckForUpdatesDialog extends JDialog {
                         }
 
                         JScrollPane modsScrollPane = new JScrollPane(modsPanel,
-                                JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-                                JScrollPane.HORIZONTAL_SCROLLBAR_NEVER) {
+                            JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+                            JScrollPane.HORIZONTAL_SCROLLBAR_NEVER) {
                             {
                                 this.getVerticalScrollBar().setUnitIncrement(8);
                             }
@@ -442,7 +443,7 @@ public class CheckForUpdatesDialog extends JDialog {
                     platformComboBox.setEnabled(true);
                     updateButton.setEnabled(modUpdates.size() != 0);
                     updateButton.setToolTipText(modUpdates.size() != 0 ? null
-                            : GetText.tr("No Mods Selected"));
+                        : GetText.tr("No Mods Selected"));
                     closeButton.setText(GetText.tr("Close"));
                 });
                 checking = false;
@@ -456,25 +457,25 @@ public class CheckForUpdatesDialog extends JDialog {
     // 2. Get all projects that have a matching file from api - /v2/projects?ids=[]
     // 3. In parallel get all files for those projects matching loader/mc version - /v2/project/???/version
     private void checkForUpdatesOnModrinth(List<DisableableMod> mods,
-            Map<DisableableMod, Pair<Object, Object>> modUpdates,
-            List<DisableableMod> modsCheckedForUpdates) {
+        Map<DisableableMod, Pair<Object, Object>> modUpdates,
+        List<DisableableMod> modsCheckedForUpdates) {
         Map<DisableableMod, String> sha1Hashes = new HashMap<>();
         mods.stream()
-                .filter(dm -> dm.getActualFile(instance) != null).forEach(dm -> {
-                    try {
-                        sha1Hashes.put(dm, Hashing
-                                .sha1(dm.getActualFile(instance).toPath()).toString());
-                    } catch (Throwable t) {
-                        LogManager.logStackTrace(t);
-                    }
-                });
+            .filter(dm -> dm.getActualFile(instanceOrServer) != null).forEach(dm -> {
+                try {
+                    sha1Hashes.put(dm, Hashing
+                        .sha1(dm.getActualFile(instanceOrServer).toPath()).toString());
+                } catch (Throwable t) {
+                    LogManager.logStackTrace(t);
+                }
+            });
 
         Collection<String> values = sha1Hashes.values();
         Map<String, ModrinthVersion> latestVersionsFromHash = reinstalling ? ModrinthApi.getVersionsFromSha1Hashes(
-                values.toArray(new String[values.size()]))
-                : ModrinthApi.getLatestVersionFromSha1Hashes(
-                        values.toArray(new String[values.size()]), instance.id,
-                        instance.launcher.loaderVersion);
+            values.toArray(new String[values.size()]))
+            : ModrinthApi.getLatestVersionFromSha1Hashes(
+                values.toArray(new String[values.size()]), instanceOrServer.getMinecraftVersion(),
+                instanceOrServer.getLoaderVersion());
 
         List<DisableableMod> modsWithVersions = mods.stream().filter(dm -> {
             ModrinthVersion modrinthVersion = latestVersionsFromHash.get(sha1Hashes.get(dm));
@@ -509,13 +510,13 @@ public class CheckForUpdatesDialog extends JDialog {
         }
 
         Map<String, ModrinthProject> projectIdsToProjects = ModrinthApi.getProjectsAsMap(
-                modsWithVersions.parallelStream().map(mv -> mv.modrinthProject.id)
-                        .toArray(String[]::new));
+            modsWithVersions.parallelStream().map(mv -> mv.modrinthProject.id)
+                .toArray(String[]::new));
 
         modsWithVersions.forEach(dm -> {
             executorService.execute(() -> {
-                Pair<Boolean, Pair<Object, Object>> update = dm.checkForUpdateOnModrinth(instance,
-                        projectIdsToProjects.get(dm.modrinthProject.id), reinstalling);
+                Pair<Boolean, Pair<Object, Object>> update = dm.checkForUpdateOnModrinth(instanceOrServer,
+                    projectIdsToProjects.get(dm.modrinthProject.id), reinstalling);
 
                 if (update.left()) {
                     modUpdates.put(dm, update.right());
@@ -529,56 +530,56 @@ public class CheckForUpdatesDialog extends JDialog {
     // 2. Get all projects that were found by their file hash - /v1/mods
     // 3. In parallel get all files for those projects and filter loader/mc version - /v1/mods/???/files
     private void checkForUpdatesOnCurseForge(List<DisableableMod> mods,
-            Map<DisableableMod, Pair<Object, Object>> modUpdates,
-            List<DisableableMod> modsCheckedForUpdates) {
+        Map<DisableableMod, Pair<Object, Object>> modUpdates,
+        List<DisableableMod> modsCheckedForUpdates) {
         Map<Long, DisableableMod> murmurHashes = new HashMap<>();
 
         mods.stream()
-                .forEach(dm -> {
-                    try {
-                        long hash = Hashing.murmur(dm.getActualFile(instance).toPath());
-                        murmurHashes.put(hash, dm);
-                    } catch (Throwable t) {
-                        LogManager.logStackTrace(t);
-                    }
-                });
+            .forEach(dm -> {
+                try {
+                    long hash = Hashing.murmur(dm.getActualFile(instanceOrServer).toPath());
+                    murmurHashes.put(hash, dm);
+                } catch (Throwable t) {
+                    LogManager.logStackTrace(t);
+                }
+            });
 
         if (murmurHashes.size() != 0) {
             CurseForgeFingerprint fingerprintResponse = CurseForgeApi
-                    .checkFingerprints(murmurHashes.keySet().stream().toArray(Long[]::new));
+                .checkFingerprints(murmurHashes.keySet().stream().toArray(Long[]::new));
 
             if (fingerprintResponse != null && fingerprintResponse.exactMatches != null) {
                 int[] projectIdsFound = fingerprintResponse.exactMatches.stream().mapToInt(em -> em.id)
-                        .toArray();
+                    .toArray();
 
                 if (projectIdsFound.length != 0) {
                     Map<Integer, CurseForgeProject> foundProjects = CurseForgeApi
-                            .getProjectsAsMap(projectIdsFound);
+                        .getProjectsAsMap(projectIdsFound);
 
                     if (foundProjects != null) {
                         fingerprintResponse.exactMatches.stream()
-                                .filter(em -> em != null && em.file != null
-                                        && murmurHashes.containsKey(em.file.packageFingerprint))
-                                .forEach(foundMod -> {
-                                    DisableableMod dm = murmurHashes
-                                            .get(foundMod.file.packageFingerprint);
+                            .filter(em -> em != null && em.file != null
+                                && murmurHashes.containsKey(em.file.packageFingerprint))
+                            .forEach(foundMod -> {
+                                DisableableMod dm = murmurHashes
+                                    .get(foundMod.file.packageFingerprint);
 
-                                    CurseForgeProject curseForgeProject = foundProjects
-                                            .get(foundMod.id);
+                                CurseForgeProject curseForgeProject = foundProjects
+                                    .get(foundMod.id);
 
-                                    if (curseForgeProject != null) {
-                                        modsCheckedForUpdates.add(dm);
-                                        executorService.execute(() -> {
-                                            Pair<Boolean, Pair<Object, Object>> update = dm
-                                                    .checkforUpdateOnCurseForge(instance,
-                                                            curseForgeProject, reinstalling);
+                                if (curseForgeProject != null) {
+                                    modsCheckedForUpdates.add(dm);
+                                    executorService.execute(() -> {
+                                        Pair<Boolean, Pair<Object, Object>> update = dm
+                                            .checkforUpdateOnCurseForge(instanceOrServer,
+                                                curseForgeProject, reinstalling);
 
-                                            if (update.left()) {
-                                                modUpdates.put(dm, update.right());
-                                            }
-                                        });
-                                    }
-                                });
+                                        if (update.left()) {
+                                            modUpdates.put(dm, update.right());
+                                        }
+                                    });
+                                }
+                            });
                     }
                 }
             }

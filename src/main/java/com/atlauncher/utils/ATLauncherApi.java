@@ -27,6 +27,7 @@ import com.atlauncher.constants.Constants;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.network.Analytics;
+import com.atlauncher.network.analytics.AnalyticsEvent;
 import com.atlauncher.thread.PasteUpload;
 
 public class ATLauncherApi {
@@ -34,7 +35,7 @@ public class ATLauncherApi {
     public static void uploadLog(Window parent, String contents) {
         String result;
         final ProgressDialog<String> dialog = new ProgressDialog<>(GetText.tr("Uploading Logs"), 0,
-                GetText.tr("Uploading Logs"), "Aborting Uploading Logs", parent);
+            GetText.tr("Uploading Logs"), "Aborting Uploading Logs", parent);
 
         dialog.addThread(new Thread(() -> {
             try {
@@ -54,7 +55,6 @@ public class ATLauncherApi {
         result = dialog.getReturnValue();
 
         if (result != null && result.contains(Constants.PASTE_CHECK_URL)) {
-            Analytics.sendEvent("UploadLog", "Launcher");
             App.TOASTER.pop("Log uploaded and link copied to clipboard");
             LogManager.info("Log uploaded and link copied to clipboard: " + result);
             OS.copyToClipboard(result);

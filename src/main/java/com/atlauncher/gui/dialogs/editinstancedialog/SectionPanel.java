@@ -24,18 +24,19 @@ import javax.swing.border.EmptyBorder;
 
 import com.atlauncher.data.AbstractAccount;
 import com.atlauncher.data.Instance;
+import com.atlauncher.data.ModManagement;
 import com.atlauncher.evnt.listener.MinecraftLaunchListener;
 import com.atlauncher.evnt.manager.MinecraftLaunchManager;
 
 public abstract class SectionPanel extends JPanel implements MinecraftLaunchListener {
-    protected EditInstanceDialog parent;
-    protected Instance instance;
+    protected EditDialog parent;
+    protected ModManagement instanceOrServer;
     protected boolean isLaunchingOrLaunched = false;
 
-    public SectionPanel(EditInstanceDialog parent, Instance instance) {
+    public SectionPanel(EditDialog parent, ModManagement instanceOrServer) {
         super();
 
-        this.instance = instance;
+        this.instanceOrServer = instanceOrServer;
         this.parent = parent;
 
         setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -48,7 +49,7 @@ public abstract class SectionPanel extends JPanel implements MinecraftLaunchList
 
     @Override
     public void minecraftLaunching(Instance instance) {
-        if (instance == this.instance) {
+        if (instance == this.instanceOrServer) {
             isLaunchingOrLaunched = true;
             updateUIState();
         }
@@ -56,7 +57,7 @@ public abstract class SectionPanel extends JPanel implements MinecraftLaunchList
 
     @Override
     public void minecraftLaunchFailed(Instance instance, String reason) {
-        if (instance == this.instance) {
+        if (instance == this.instanceOrServer) {
             isLaunchingOrLaunched = false;
             updateUIState();
         }
@@ -64,7 +65,7 @@ public abstract class SectionPanel extends JPanel implements MinecraftLaunchList
 
     @Override
     public void minecraftLaunched(Instance instance, AbstractAccount account, Process process) {
-        if (instance == this.instance) {
+        if (instance == this.instanceOrServer) {
             isLaunchingOrLaunched = true;
             updateUIState();
         }
@@ -72,7 +73,7 @@ public abstract class SectionPanel extends JPanel implements MinecraftLaunchList
 
     @Override
     public void minecraftClosed(Instance instance) {
-        if (instance == this.instance) {
+        if (instance == this.instanceOrServer) {
             isLaunchingOrLaunched = false;
             updateUIState();
         }

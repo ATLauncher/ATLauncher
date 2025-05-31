@@ -36,8 +36,6 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
-import javax.swing.JDialog;
-import javax.swing.JFileChooser;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
@@ -49,6 +47,7 @@ import com.atlauncher.constants.UIConstants;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.InstanceExportFormat;
 import com.atlauncher.data.MicrosoftAccount;
+import com.atlauncher.data.ModManagement;
 import com.atlauncher.gui.components.JLabelWithHover;
 import com.atlauncher.gui.dialogs.FileChooserDialog;
 import com.atlauncher.gui.dialogs.ModrinthExportOverridesDialog;
@@ -70,7 +69,7 @@ public class ExportSection extends SectionPanel {
 
     final GridBagConstraints gbc = new GridBagConstraints();
 
-    public ExportSection(EditInstanceDialog parent, Instance instance) {
+    public ExportSection(EditDialog parent, ModManagement instance) {
         super(parent, instance);
 
         setupComponents();
@@ -78,6 +77,8 @@ public class ExportSection extends SectionPanel {
     }
 
     private void setupComponents() {
+        Instance instance = (Instance) instanceOrServer;
+
         setLayout(new BorderLayout());
 
         topPanel.setLayout(new GridBagLayout());
@@ -96,7 +97,8 @@ public class ExportSection extends SectionPanel {
         gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         final JTextField name = new JTextField(30);
-        name.setText(Optional.ofNullable(instance.launcher.lastExportName).orElse(instance.launcher.name));
+        name.setText(
+            Optional.ofNullable(instance.launcher.lastExportName).orElse(instance.launcher.name));
         topPanel.add(name, gbc);
 
         // Version
@@ -113,7 +115,8 @@ public class ExportSection extends SectionPanel {
         gbc.insets = UIConstants.LABEL_INSETS;
         gbc.anchor = GridBagConstraints.BASELINE_LEADING;
         final JTextField version = new JTextField(30);
-        version.setText(Optional.ofNullable(instance.launcher.lastExportVersion).orElse(instance.launcher.version));
+        version.setText(
+            Optional.ofNullable(instance.launcher.lastExportVersion).orElse(instance.launcher.version));
         topPanel.add(version, gbc);
 
         // Author
@@ -208,13 +211,13 @@ public class ExportSection extends SectionPanel {
             }
         });
 
-        JButton resetButton = new JButton(GetText.tr("Reset"));
-        resetButton.addActionListener(e -> saveTo.setText(instance.getRoot().toAbsolutePath().toString()));
+        JButton resetSaveToButton = new JButton(GetText.tr("Reset"));
+        resetSaveToButton.addActionListener(e -> saveTo.setText(instance.getRoot().toAbsolutePath().toString()));
 
         saveToPanel.add(saveTo);
         saveToPanel.add(Box.createHorizontalStrut(5));
         saveToPanel.add(browseButton);
-        saveToPanel.add(resetButton);
+        saveToPanel.add(resetSaveToButton);
 
         topPanel.add(saveToPanel, gbc);
 
@@ -342,6 +345,8 @@ public class ExportSection extends SectionPanel {
     }
 
     public void resetOverrides() {
+        Instance instance = (Instance) instanceOrServer;
+
         overridesPanel.removeAll();
 
         // get all files ignoring ATLauncher specific things as well as naughtys

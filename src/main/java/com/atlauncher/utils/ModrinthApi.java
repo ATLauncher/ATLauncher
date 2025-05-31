@@ -397,17 +397,17 @@ public class ModrinthApi {
     }
 
     public static Map<String, ModrinthVersion> getLatestVersionFromSha1Hashes(String[] hashes,
-            String minecraftVersion, LoaderVersion loaderVersion) {
+        String minecraftVersion, LoaderVersion loaderVersion) {
         return getLatestVersionFromHashes(hashes, "sha1", minecraftVersion, loaderVersion);
     }
 
     public static Map<String, ModrinthVersion> getLatestVersionFromSha512Hashes(String[] hashes,
-            String minecraftVersion, LoaderVersion loaderVersion) {
+        String minecraftVersion, LoaderVersion loaderVersion) {
         return getLatestVersionFromHashes(hashes, "sha512", minecraftVersion, loaderVersion);
     }
 
     private static Map<String, ModrinthVersion> getLatestVersionFromHashes(String[] hashes, String algorithm,
-            String minecraftVersion, LoaderVersion loaderVersion) {
+        String minecraftVersion, LoaderVersion loaderVersion) {
         if (hashes.length == 0) {
             return new HashMap<>();
         }
@@ -432,11 +432,12 @@ public class ModrinthApi {
             java.lang.reflect.Type type = new TypeToken<Map<String, ModrinthVersion>>() {
             }.getType();
 
-            return Download.build()
-                    .setUrl(String.format("%s/version_files/update", Constants.MODRINTH_API_URL))
-                    .post(RequestBody.create(Gsons.DEFAULT_SLIM.toJson(body),
-                            MediaType.get("application/json; charset=utf-8")))
-                    .asTypeWithThrow(type);
+            return NetworkClient.postWithThrow(
+                String.format("%s/version_files/update", Constants.MODRINTH_API_URL),
+                getHeaders(),
+                RequestBody.create(Gsons.DEFAULT_SLIM.toJson(body),
+                    MediaType.get("application/json; charset=utf-8")),
+                type);
         } catch (Exception e) {
             return new HashMap<>();
         }

@@ -696,7 +696,7 @@ public final class AddModsDialog extends JDialog {
                 platformMessage = ConfigManager.getConfigItem("platforms.modrinth.message", null);
             }
 
-            addSortAndSection(null);
+            addSectionAndSortOptions(false);
             addCategories();
 
             if (platformMessage != null) {
@@ -704,7 +704,7 @@ public final class AddModsDialog extends JDialog {
             }
 
             boolean isShadersSelected = ((ComboItem<String>) sectionComboBox.getSelectedItem()).getValue()
-                    .equals("Shaders");
+                .equals("Shaders");
             categoriesComboBox.setVisible(!(isCurseForge && isShadersSelected));
 
             platformMessageLabel.setVisible(platformMessage != null);
@@ -724,10 +724,10 @@ public final class AddModsDialog extends JDialog {
                 page = 0;
 
                 boolean isCurseForge = ((ComboItem<ModPlatform>) hostComboBox.getSelectedItem())
-                        .getValue() == ModPlatform.CURSEFORGE;
+                    .getValue() == ModPlatform.CURSEFORGE;
 
                 boolean isShadersSelected = ((ComboItem<String>) sectionComboBox.getSelectedItem()).getValue()
-                        .equals("Shaders");
+                    .equals("Shaders");
                 categoriesComboBox.setVisible(!(isCurseForge && isShadersSelected));
 
                 addCategories();
@@ -832,9 +832,6 @@ public final class AddModsDialog extends JDialog {
                         sortValue,
                         categoriesComboBox.getSelectedItem() == null ? null
                             : ((ComboItem<String>) categoriesComboBox.getSelectedItem()).getValue()));
-                } else if (((ComboItem<String>) sectionComboBox.getSelectedItem()).getValue().equals("Shaders")) {
-                    setCurseForgeMods(CurseForgeApi.searchShaders(versionToSearchFor, query, page,
-                            ((ComboItem<String>) sortComboBox.getSelectedItem()).getValue()));
                 } else if (((ComboItem<String>) sectionComboBox.getSelectedItem()).getValue().equals("Worlds")) {
                     setCurseForgeMods(CurseForgeApi.searchWorlds(versionToSearchFor, query, page,
                         sortValue,

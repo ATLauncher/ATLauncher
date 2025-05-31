@@ -43,6 +43,7 @@ import com.atlauncher.App;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.constants.UIConstants;
 import com.atlauncher.data.Instance;
+import com.atlauncher.data.ModManagement;
 import com.atlauncher.data.minecraft.loaders.LoaderType;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.utils.OS;
@@ -50,7 +51,7 @@ import com.atlauncher.utils.OS;
 public class InformationSection extends SectionPanel {
     private final SimpleDateFormat formatter = new SimpleDateFormat(App.settings.dateFormat + " HH:mm:ss a");
 
-    private final EditInstanceDialog editInstanceDialog;
+    private final EditDialog editDialog;
 
     private final SideBarButton update = new SideBarButton();
     private final SideBarButton reinstall = new SideBarButton();
@@ -71,11 +72,11 @@ public class InformationSection extends SectionPanel {
 
     private JLabel packLabel = new JLabel(GetText.tr("Pack") + ": ");
 
-    private JLabel pack = new JLabel(instance.launcher.pack);
+    private JLabel pack = new JLabel(instanceOrServer.getPackName());
 
     private JLabel platformLabel = new JLabel(GetText.tr("Platform") + ": ");
 
-    private JLabel platform = new JLabel(instance.getPlatformName());
+    private JLabel platform = new JLabel(instanceOrServer.getPlatformName());
 
     private JLabel versionLabel = new JLabel(GetText.tr("Version") + ": ");
 
@@ -87,10 +88,10 @@ public class InformationSection extends SectionPanel {
 
     private JLabel numberOfLaunches = new JLabel();
 
-    public InformationSection(EditInstanceDialog editInstanceDialog, Instance instance) {
-        super(editInstanceDialog, instance);
+    public InformationSection(EditDialog editDialog, ModManagement serverOrInstance) {
+        super(editDialog, serverOrInstance);
 
-        this.editInstanceDialog = editInstanceDialog;
+        this.editDialog = editDialog;
 
         setupComponents();
         updateUIState();
@@ -102,7 +103,7 @@ public class InformationSection extends SectionPanel {
         topPanel.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 5));
         topPanel.setLayout(new BoxLayout(topPanel, BoxLayout.X_AXIS));
 
-        JLabel instanceNameLabel = new JLabel(instance.launcher.name);
+        JLabel instanceNameLabel = new JLabel(instanceOrServer.getName());
         instanceNameLabel.setFont(App.THEME.getNormalFont().deriveFont(20f));
         topPanel.add(instanceNameLabel);
 
@@ -289,6 +290,8 @@ public class InformationSection extends SectionPanel {
 
         update.setText(GetText.tr("Update"));
         update.addActionListener(e -> {
+            Instance instance = (Instance) instanceOrServer;
+
             instance.update(parent);
 
             updateUIState();
@@ -296,25 +299,27 @@ public class InformationSection extends SectionPanel {
         sideBar.add(update);
 
         reinstall.setText(
-                instance.isVanillaInstance() ? GetText.tr("Change Minecraft Version") : GetText.tr("Reinstall"));
+            instanceOrServer.isVanillaInstance() ? GetText.tr("Change Minecraft Version") : GetText.tr("Reinstall"));
         reinstall.addActionListener(e -> {
+            Instance instance = (Instance) instanceOrServer;
+
             // TODO: Java pass by value makes this shit and not work, fix it
             String mcVersion = instance.id;
             instance.startReinstall(parent);
 
             updateUIState();
 
-            if (instance.isVanillaInstance() && !mcVersion.equals(instance.id)) {
+            if (instanceOrServer.isVanillaInstance() && !mcVersion.equals(instance.id)) {
                 int ret = DialogManager.yesNoDialog().setType(DialogManager.WARNING)
-                        .setTitle(GetText.tr("Minecraft Version Changed"))
-                        .setContent(new HTMLBuilder().center().split(100).text(GetText.tr(
-                                "You've changed the Minecraft version of this instance and your mods will likely no longer work.<br/><br/>Do you want to reinstall all mods now to make sure you have the correct versions?")))
-                        .show();
+                    .setTitle(GetText.tr("Minecraft Version Changed"))
+                    .setContent(new HTMLBuilder().center().split(100).text(GetText.tr(
+                        "You've changed the Minecraft version of this instance and your mods will likely no longer work.<br/><br/>Do you want to reinstall all mods now to make sure you have the correct versions?")))
+                    .show();
 
                 if (ret == 0) {
-                    editInstanceDialog.tabbedPane.setSelectedIndex(1);
+                    editDialog.tabbedPane.setSelectedIndex(1);
 
-                    ModsSection modsSection = (ModsSection) editInstanceDialog.tabbedPane.getComponentAt(1);
+                    ModsSection modsSection = (ModsSection) editDialog.tabbedPane.getComponentAt(1);
                     modsSection.reinstallAllMods();
                 }
             }
@@ -322,6 +327,7 @@ public class InformationSection extends SectionPanel {
         sideBar.add(reinstall);
 
         changeLoaderVersionButton.addActionListener(e -> {
+            Instance instance = (Instance) instanceOrServer;
             instance.changeLoaderVersion(parent);
 
             updateUIState();
@@ -330,7 +336,8 @@ public class InformationSection extends SectionPanel {
         sideBar.addSeparator();
 
         removeInstallFabricButton.addActionListener(e -> {
-            if (instance.launcher.loaderVersion == null) {
+            Instance instance = (Instance) instanceOrServer;
+            if (instance.getLoaderVersion() == null) {
                 instance.addLoader(parent, LoaderType.FABRIC);
             } else {
                 instance.removeLoader(parent);
@@ -341,7 +348,8 @@ public class InformationSection extends SectionPanel {
         sideBar.add(removeInstallFabricButton);
 
         removeInstallForgeButton.addActionListener(e -> {
-            if (instance.launcher.loaderVersion == null) {
+            Instance instance = (Instance) instanceOrServer;
+            if (instance.getLoaderVersion() == null) {
                 instance.addLoader(parent, LoaderType.FORGE);
             } else {
                 instance.removeLoader(parent);
@@ -352,7 +360,8 @@ public class InformationSection extends SectionPanel {
         sideBar.add(removeInstallForgeButton);
 
         removeInstallLegacyFabricButton.addActionListener(e -> {
-            if (instance.launcher.loaderVersion == null) {
+            Instance instance = (Instance) instanceOrServer;
+            if (instance.getLoaderVersion() == null) {
                 instance.addLoader(parent, LoaderType.LEGACY_FABRIC);
             } else {
                 instance.removeLoader(parent);
@@ -363,7 +372,8 @@ public class InformationSection extends SectionPanel {
         sideBar.add(removeInstallLegacyFabricButton);
 
         removeInstallQuiltButton.addActionListener(e -> {
-            if (instance.launcher.loaderVersion == null) {
+            Instance instance = (Instance) instanceOrServer;
+            if (instance.getLoaderVersion() == null) {
                 instance.addLoader(parent, LoaderType.QUILT);
             } else {
                 instance.removeLoader(parent);
@@ -376,19 +386,19 @@ public class InformationSection extends SectionPanel {
 
         SideBarButton manageModsButton = new SideBarButton(GetText.tr("Manage Mods"));
         manageModsButton.addActionListener(e -> {
-            editInstanceDialog.tabbedPane.setSelectedIndex(1);
+            editDialog.tabbedPane.setSelectedIndex(1);
         });
         sideBar.add(manageModsButton);
 
         SideBarButton manageResourcePacksButton = new SideBarButton(GetText.tr("Manage Resource Packs"));
         manageResourcePacksButton.addActionListener(e -> {
-            editInstanceDialog.tabbedPane.setSelectedIndex(2);
+            editDialog.tabbedPane.setSelectedIndex(2);
         });
         sideBar.add(manageResourcePacksButton);
 
         SideBarButton manageShaderPacksButton = new SideBarButton(GetText.tr("Manage Shader Packs"));
         manageShaderPacksButton.addActionListener(e -> {
-            editInstanceDialog.tabbedPane.setSelectedIndex(3);
+            editDialog.tabbedPane.setSelectedIndex(3);
         });
         sideBar.add(manageShaderPacksButton);
         sideBar.addSeparator();
@@ -397,7 +407,7 @@ public class InformationSection extends SectionPanel {
 
         SideBarButton openFolderButton = new SideBarButton(GetText.tr("Open Folder"));
         openFolderButton.addActionListener(e -> {
-            OS.openFileExplorer(instance.ROOT);
+            OS.openFileExplorer(instanceOrServer.getRoot());
         });
         sideBar.add(openFolderButton);
 
@@ -407,119 +417,143 @@ public class InformationSection extends SectionPanel {
 
     @Override
     public void updateUIState() {
-        numberOfLaunches.setText(instance.launcher.numPlays + "");
-        totalTimePlayed.setText(convertDurationToHumanString(instance.launcher.totalPlayTime));
-        lastPlayed.setText(instance.launcher.lastPlayed == Instant.EPOCH ? GetText.tr("Never")
+        if (instanceOrServer instanceof Instance) {
+            Instance instance = (Instance) instanceOrServer;
+
+            numberOfLaunches.setText(instance.launcher.numPlays + "");
+            totalTimePlayed.setText(convertDurationToHumanString(instance.launcher.totalPlayTime));
+            lastPlayed.setText(instance.launcher.lastPlayed == Instant.EPOCH ? GetText.tr("Never")
                 : getTimeAgo(instance.launcher.lastPlayed));
-        if (instance.launcher.lastPlayed != Instant.EPOCH) {
-            lastPlayed.setToolTipText(formatter.format(new Date(instance.launcher.lastPlayed.toEpochMilli())));
-        }
-        created.setText(instance.launcher.createdAt == Instant.EPOCH ? GetText.tr("Unknown")
+            if (instance.launcher.lastPlayed != Instant.EPOCH) {
+                lastPlayed.setToolTipText(formatter.format(new Date(instance.launcher.lastPlayed.toEpochMilli())));
+            }
+            created.setText(instance.launcher.createdAt == Instant.EPOCH ? GetText.tr("Unknown")
                 : getTimeAgo(instance.launcher.createdAt));
-        if (instance.launcher.createdAt != Instant.EPOCH) {
-            created.setToolTipText(formatter.format(new Date(instance.launcher.createdAt.toEpochMilli())));
+            if (instance.launcher.createdAt != Instant.EPOCH) {
+                created.setToolTipText(formatter.format(new Date(instance.launcher.createdAt.toEpochMilli())));
+            }
+
+            lastUpdated.setText(instance.launcher.updatedAt == Instant.EPOCH ? GetText.tr("Never")
+                : getTimeAgo(instance.launcher.updatedAt));
+            if (instance.launcher.updatedAt != Instant.EPOCH) {
+                lastUpdated.setToolTipText(formatter.format(new Date(instance.launcher.updatedAt.toEpochMilli())));
+            } else {
+                lastUpdated.setToolTipText(null);
+            }
+
+            update.setVisible(instance.isUpdatable());
+            reinstall.setVisible(instance.isUpdatable());
+        } else {
+            update.setVisible(false);
+            reinstall.setVisible(false);
+            changeLoaderVersionButton.setVisible(false);
+            removeInstallFabricButton.setVisible(false);
+            removeInstallForgeButton.setVisible(false);
+            removeInstallQuiltButton.setVisible(false);
+            removeInstallLegacyFabricButton.setVisible(false);
         }
 
-        packLabel.setVisible(!instance.isVanillaInstance());
-        pack.setVisible(!instance.isVanillaInstance());
-        platformLabel.setVisible(!instance.isVanillaInstance());
-        platform.setVisible(!instance.isVanillaInstance());
-        versionLabel.setVisible(!instance.isVanillaInstance());
-        version.setVisible(!instance.isVanillaInstance());
-        update.setVisible(instance.isUpdatable() && instance.hasUpdate());
-        reinstall.setVisible(instance.isUpdatable());
+        packLabel.setVisible(!instanceOrServer.isVanillaInstance());
+        pack.setVisible(!instanceOrServer.isVanillaInstance());
+        platformLabel.setVisible(!instanceOrServer.isVanillaInstance());
+        platform.setVisible(!instanceOrServer.isVanillaInstance());
+        versionLabel.setVisible(!instanceOrServer.isVanillaInstance());
+        version.setVisible(!instanceOrServer.isVanillaInstance());
 
-        if (instance.isVanillaInstance()) {
+        if (instanceOrServer.isVanillaInstance()) {
             ((GridBagLayout) mainPanel.getLayout()).rowHeights = new int[] { 0, 0, 0, 0, 0, 25, 0, 0, 25, 0, 0, 0, 0,
-                    0, 0 };
-        } else if (instance.launcher.loaderVersion != null) {
+                0, 0 };
+        } else if (instanceOrServer.getLoaderVersion() != null) {
             ((GridBagLayout) mainPanel.getLayout()).rowHeights = new int[] { 0, 25, 0, 0, 0, 25, 0, 0, 25, 0, 0, 0, 0,
-                    0, 0 };
+                0, 0 };
         } else {
             ((GridBagLayout) mainPanel.getLayout()).rowHeights = new int[] { 0, 25, 0, 0, 0, 25, 0, 25, 0, 0, 0, 0, 0,
-                    0 };
+                0 };
         }
 
-        minecraftVersion.setText(instance.id);
-        version.setText(instance.launcher.version);
+        minecraftVersion.setText(instanceOrServer.getMinecraftVersion());
+        version.setText(instanceOrServer.getVersion());
         loader.setText(
-                instance.launcher.loaderVersion == null ? GetText.tr("None") : instance.launcher.loaderVersion.type);
+            instanceOrServer.getLoaderVersion() == null
+                ? GetText.tr("None")
+                : instanceOrServer.getLoaderVersion().type);
 
-        loaderVersionLabel.setVisible(instance.launcher.loaderVersion != null);
+        loaderVersionLabel.setVisible(instanceOrServer.getLoaderVersion() != null);
         loaderVersionLabel.setText(GetText.tr("{0} Version",
-                instance.launcher.loaderVersion != null ? instance.launcher.loaderVersion.getLoaderType()
-                        : GetText.tr("Loader"))
-                + ": ");
-        loaderVersion.setVisible(instance.launcher.loaderVersion != null);
+            instanceOrServer.getLoaderVersion() != null ? instanceOrServer.getLoaderVersion().getLoaderType()
+                : GetText.tr("Loader"))
+            + ": ");
+        loaderVersion.setVisible(instanceOrServer.getLoaderVersion() != null);
         loaderVersion.setText(
-                instance.launcher.loaderVersion != null ? instance.launcher.loaderVersion.version : GetText.tr("None"));
+            instanceOrServer.getLoaderVersion() != null
+                ? instanceOrServer.getLoaderVersion().version
+                : GetText.tr("None"));
 
-        changeLoaderVersionButton.setVisible(instance.launcher.loaderVersion != null);
-        if (instance.launcher.loaderVersion != null) {
+        changeLoaderVersionButton.setVisible(instanceOrServer.getLoaderVersion() != null);
+        if (instanceOrServer.getLoaderVersion() != null) {
             changeLoaderVersionButton
-                    .setText(GetText.tr("Change {0} Version", instance.launcher.loaderVersion.getLoaderType()));
-        }
-
-        lastUpdated.setText(instance.launcher.updatedAt == Instant.EPOCH ? GetText.tr("Never")
-                : getTimeAgo(instance.launcher.updatedAt));
-        if (instance.launcher.updatedAt != Instant.EPOCH) {
-            lastUpdated.setToolTipText(formatter.format(new Date(instance.launcher.updatedAt.toEpochMilli())));
-        } else {
-            lastUpdated.setToolTipText(null);
+                .setText(GetText.tr("Change {0} Version", instanceOrServer.getLoaderVersion().getLoaderType()));
         }
 
         removeInstallForgeButton
-                .setText(instance.launcher.loaderVersion != null && instance.launcher.loaderVersion.isForge()
-                        ? GetText.tr("Remove {0}", "Forge")
-                        : GetText.tr("Install {0}", "Forge"));
+            .setText(
+                instanceOrServer.getLoaderVersion() != null && instanceOrServer.getLoaderVersion().isForge()
+                    ? GetText.tr("Remove {0}", "Forge")
+                    : GetText.tr("Install {0}", "Forge"));
         removeInstallForgeButton
-                .setEnabled(instance.launcher.loaderVersion == null || instance.launcher.loaderVersion.isForge());
-        if (instance.launcher.loaderVersion != null && !instance.launcher.loaderVersion.isForge()) {
+            .setEnabled(
+                instanceOrServer.getLoaderVersion() == null || instanceOrServer.getLoaderVersion().isForge());
+        if (instanceOrServer.getLoaderVersion() != null && !instanceOrServer.getLoaderVersion().isForge()) {
             removeInstallForgeButton.setToolTipText(GetText.tr(
-                    "You can only install 1 mod loader at a time. To install {0}, please remove {1}", "Forge",
-                    instance.launcher.loaderVersion.getLoaderType()));
+                "You can only install 1 mod loader at a time. To install {0}, please remove {1}", "Forge",
+                instanceOrServer.getLoaderVersion().getLoaderType()));
         } else {
             removeInstallForgeButton.setToolTipText(null);
         }
 
         removeInstallFabricButton
-                .setText(instance.launcher.loaderVersion != null && instance.launcher.loaderVersion.isFabric()
-                        ? GetText.tr("Remove {0}", "Fabric")
-                        : GetText.tr("Install {0}", "Fabric"));
+            .setText(
+                instanceOrServer.getLoaderVersion() != null && instanceOrServer.getLoaderVersion().isFabric()
+                    ? GetText.tr("Remove {0}", "Fabric")
+                    : GetText.tr("Install {0}", "Fabric"));
         removeInstallFabricButton
-                .setEnabled(instance.launcher.loaderVersion == null || instance.launcher.loaderVersion.isFabric());
-        if (instance.launcher.loaderVersion != null && !instance.launcher.loaderVersion.isFabric()) {
+            .setEnabled(
+                instanceOrServer.getLoaderVersion() == null || instanceOrServer.getLoaderVersion().isFabric());
+        if (instanceOrServer.getLoaderVersion() != null && !instanceOrServer.getLoaderVersion().isFabric()) {
             removeInstallFabricButton.setToolTipText(GetText.tr(
-                    "You can only install 1 mod loader at a time. To install {0}, please remove {1}", "Fabric",
-                    instance.launcher.loaderVersion.getLoaderType()));
+                "You can only install 1 mod loader at a time. To install {0}, please remove {1}", "Fabric",
+                instanceOrServer.getLoaderVersion().getLoaderType()));
         } else {
             removeInstallFabricButton.setToolTipText(null);
         }
 
         removeInstallQuiltButton
-                .setText(instance.launcher.loaderVersion != null && instance.launcher.loaderVersion.isQuilt()
-                        ? GetText.tr("Remove {0}", "Quilt")
-                        : GetText.tr("Install {0}", "Quilt"));
+            .setText(
+                instanceOrServer.getLoaderVersion() != null && instanceOrServer.getLoaderVersion().isQuilt()
+                    ? GetText.tr("Remove {0}", "Quilt")
+                    : GetText.tr("Install {0}", "Quilt"));
         removeInstallQuiltButton
-                .setEnabled(instance.launcher.loaderVersion == null || instance.launcher.loaderVersion.isQuilt());
-        if (instance.launcher.loaderVersion != null && !instance.launcher.loaderVersion.isQuilt()) {
+            .setEnabled(
+                instanceOrServer.getLoaderVersion() == null || instanceOrServer.getLoaderVersion().isQuilt());
+        if (instanceOrServer.getLoaderVersion() != null && !instanceOrServer.getLoaderVersion().isQuilt()) {
             removeInstallQuiltButton.setToolTipText(GetText.tr(
-                    "You can only install 1 mod loader at a time. To install {0}, please remove {1}", "Quilt",
-                    instance.launcher.loaderVersion.getLoaderType()));
+                "You can only install 1 mod loader at a time. To install {0}, please remove {1}", "Quilt",
+                instanceOrServer.getLoaderVersion().getLoaderType()));
         } else {
             removeInstallQuiltButton.setToolTipText(null);
         }
 
         removeInstallLegacyFabricButton
-                .setText(instance.launcher.loaderVersion != null && instance.launcher.loaderVersion.isLegacyFabric()
-                        ? GetText.tr("Remove {0}", "Legacy Fabric")
-                        : GetText.tr("Install {0}", "Legacy Fabric"));
+            .setText(
+                instanceOrServer.getLoaderVersion() != null && instanceOrServer.getLoaderVersion().isLegacyFabric()
+                    ? GetText.tr("Remove {0}", "Legacy Fabric")
+                    : GetText.tr("Install {0}", "Legacy Fabric"));
         removeInstallLegacyFabricButton.setEnabled(
-                instance.launcher.loaderVersion == null || instance.launcher.loaderVersion.isLegacyFabric());
-        if (instance.launcher.loaderVersion != null && !instance.launcher.loaderVersion.isLegacyFabric()) {
+            instanceOrServer.getLoaderVersion() == null || instanceOrServer.getLoaderVersion().isLegacyFabric());
+        if (instanceOrServer.getLoaderVersion() != null && !instanceOrServer.getLoaderVersion().isLegacyFabric()) {
             removeInstallLegacyFabricButton.setToolTipText(
-                    GetText.tr("You can only install 1 mod loader at a time. To install {0}, please remove {1}",
-                            "Legacy Fabric", instance.launcher.loaderVersion.getLoaderType()));
+                GetText.tr("You can only install 1 mod loader at a time. To install {0}, please remove {1}",
+                    "Legacy Fabric", instanceOrServer.getLoaderVersion().getLoaderType()));
         } else {
             removeInstallLegacyFabricButton.setToolTipText(null);
         }
@@ -529,11 +563,11 @@ public class InformationSection extends SectionPanel {
         changeLoaderVersionButton.setEnabled(!isLaunchingOrLaunched);
 
         update.setToolTipText(
-                !isLaunchingOrLaunched ? null : GetText.tr("This cannot be done while Minecraft is running"));
+            !isLaunchingOrLaunched ? null : GetText.tr("This cannot be done while Minecraft is running"));
         reinstall.setToolTipText(
-                !isLaunchingOrLaunched ? null : GetText.tr("This cannot be done while Minecraft is running"));
+            !isLaunchingOrLaunched ? null : GetText.tr("This cannot be done while Minecraft is running"));
         changeLoaderVersionButton.setToolTipText(
-                !isLaunchingOrLaunched ? null : GetText.tr("This cannot be done while Minecraft is running"));
+            !isLaunchingOrLaunched ? null : GetText.tr("This cannot be done while Minecraft is running"));
 
         if (isLaunchingOrLaunched) {
             update.setEnabled(false);
@@ -548,7 +582,7 @@ public class InformationSection extends SectionPanel {
             removeInstallForgeButton.setToolTipText(GetText.tr("This cannot be done while Minecraft is running"));
             removeInstallQuiltButton.setToolTipText(GetText.tr("This cannot be done while Minecraft is running"));
             removeInstallLegacyFabricButton
-                    .setToolTipText(GetText.tr("This cannot be done while Minecraft is running"));
+                .setToolTipText(GetText.tr("This cannot be done while Minecraft is running"));
         }
     }
 
@@ -578,7 +612,7 @@ public class InformationSection extends SectionPanel {
         seconds -= minutes * 60;
 
         return toHumanString((int) years, (int) months, (int) weeks, (int) days, (int) hours, (int) minutes,
-                (int) seconds, false);
+            (int) seconds, false);
     }
 
     public String getTimeAgo(Instant instant) {
@@ -600,7 +634,7 @@ public class InformationSection extends SectionPanel {
     }
 
     private String toHumanString(int years, int months, int weeks, int days, int hours, int minutes,
-            int seconds, boolean showAgo) {
+        int seconds, boolean showAgo) {
         StringBuilder sb = new StringBuilder("");
         if (years > 1) {
             sb.append(GetText.tr("{0} years,", years) + " ");

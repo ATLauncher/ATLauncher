@@ -27,15 +27,17 @@ import org.mini2Dx.gettext.GetText;
 
 import com.atlauncher.App;
 import com.atlauncher.data.Instance;
+import com.atlauncher.data.ModManagement;
 import com.atlauncher.gui.tabs.InstanceSettingsTabbedPane;
 
 public class SettingsSection extends SectionPanel {
-    private final InstanceSettingsTabbedPane tabbedPane = new InstanceSettingsTabbedPane(this.instance);
+    private final InstanceSettingsTabbedPane tabbedPane =
+        new InstanceSettingsTabbedPane((Instance) this.instanceOrServer);
     private final JButton saveButton = new JButton(GetText.tr("Save"));
     private final JButton resetButton = new JButton(GetText.tr("Reset"));
 
-    public SettingsSection(EditInstanceDialog parent, Instance instance) {
-        super(parent, instance);
+    public SettingsSection(EditDialog parent, ModManagement serverOrInstance) {
+        super(parent, serverOrInstance);
 
         setupComponents();
     }

@@ -131,9 +131,9 @@ public class InstanceManager {
 
                 if (instance.launcher.createdAt == Instant.EPOCH) {
                     LogManager.info(String.format("Filling in instance \"%s\" createdAt field",
-                            instance.launcher.name));
+                        instance.launcher.name));
                     BasicFileAttributes attrs = Files.readAttributes(instanceJsonFile.toPath(),
-                            BasicFileAttributes.class);
+                        BasicFileAttributes.class);
                     instance.launcher.createdAt = attrs.creationTime().toInstant();
 
                     instance.save();
@@ -195,17 +195,17 @@ public class InstanceManager {
 
         // scan internal metadata from instance mods
         // TODO: FIX THIS AFTER MERGE
-//        LogManager.info("Scanning instances for internal mod metadata. This is a one time operation.");
-//        INSTANCES.parallelStream()
-//            .filter(instance -> instance.launcher.mods != null && instance.launcher.mods.size() != 0
-//                && !instance.launcher.mods.stream().anyMatch(m -> m.internalModMetadata.size() != 0))
-//            .forEach(instance -> {
-//                instance.launcher.mods.parallelStream()
-//                    .forEach(mod -> {
-//                        mod.scanInternalModMetadata(mod.getFile(instance.ROOT, instance.id).toPath());
-//                    });
-//                instance.save();
-//            });
+        //        LogManager.info("Scanning instances for internal mod metadata. This is a one time operation.");
+        //        INSTANCES.parallelStream()
+        //            .filter(instance -> instance.launcher.mods != null && instance.launcher.mods.size() != 0
+        //                && !instance.launcher.mods.stream().anyMatch(m -> m.internalModMetadata.size() != 0))
+        //            .forEach(instance -> {
+        //                instance.launcher.mods.parallelStream()
+        //                    .forEach(mod -> {
+        //                        mod.scanInternalModMetadata(mod.getFile(instance.ROOT, instance.id).toPath());
+        //                    });
+        //                instance.save();
+        //            });
 
         INSTANCES.onNext(newInstances);
         LogManager.debug("Finished loading instances");
