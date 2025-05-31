@@ -127,9 +127,16 @@ public class UtilsTest {
     }
 
     @Test
-    void capitalize() {
+    void testCapitalize() {
         assertEquals("A", Utils.capitalize("a"));
         assertEquals("This Is A Sentence", Utils.capitalize("this is a sentence"));
         assertEquals("This Is A Sentence", Utils.capitalize("THIS IS A SENTENCE"));
+    }
+
+    @Test
+    void testEnsureTrailingSlash() {
+        assertEquals("https://example.com/", Utils.ensureTrailingSlash("https://example.com"));
+        assertEquals("https://example.com/", Utils.ensureTrailingSlash("https://example.com/"));
+        assertEquals("https://example.com//", Utils.ensureTrailingSlash("https://example.com//"));
     }
 }

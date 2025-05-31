@@ -17,20 +17,25 @@
  */
 package com.atlauncher.data.multimc;
 
-import java.util.List;
-
 import javax.annotation.Nullable;
 
-public class MultiMCComponent {
-    public String cachedName;
-    public List<MultiMCRequire> cachedRequires;
-    public String cachedVersion;
-    public Boolean cachedVolatile;
-    public Boolean dependencyOnly;
-    public Boolean important;
+import com.google.gson.annotations.SerializedName;
+
+public class MultiMCAgent {
+    public String name;
 
     @Nullable
-    public Boolean disabled;
-    public String uid;
-    public String version;
+    public String url;
+
+    @Nullable
+    @SerializedName("MMC-displayname")
+    public String mmcDisplayName;
+
+    @Nullable
+    @SerializedName("MMC-filename")
+    public String mmcFilename;
+
+    @Nullable
+    @SerializedName("MMC-hint")
+    public String mmcHint;
 }

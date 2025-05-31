@@ -17,11 +17,26 @@
  */
 package com.atlauncher.data.multimc;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class MultiMCManifest {
-    public List<MultiMCComponent> components;
+    public List<MultiMCComponent> components = new ArrayList<>();
     public int formatVersion;
 
     public transient MultiMCInstanceConfig config;
+
+    public List<MultiMCComponent> getNonStandardComponents() {
+        return components.stream().filter(
+            c -> (c.disabled == null || !c.disabled) && !c.uid.equalsIgnoreCase(
+                "net.minecraft") && !c.uid.equalsIgnoreCase(
+                "org.quiltmc.quilt-loader") && !c.uid.equalsIgnoreCase(
+                "net.fabricmc.fabric-loader") && !c.uid.equalsIgnoreCase(
+                "net.neoforged") && !c.uid.equalsIgnoreCase(
+                "net.minecraftforge") && !c.uid.equalsIgnoreCase(
+                "com.mumfrey.liteloader") && !c.uid.equalsIgnoreCase(
+                "net.fabricmc.intermediary") && !c.uid.equalsIgnoreCase(
+                "org.lwjgl3")).collect(Collectors.toList());
+    }
 }

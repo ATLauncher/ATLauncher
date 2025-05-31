@@ -17,20 +17,17 @@
  */
 package com.atlauncher.data.multimc;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import javax.annotation.Nullable;
+import com.google.gson.annotations.SerializedName;
 
-public class MultiMCComponent {
-    public String cachedName;
-    public List<MultiMCRequire> cachedRequires;
-    public String cachedVersion;
-    public Boolean cachedVolatile;
-    public Boolean dependencyOnly;
-    public Boolean important;
-
-    @Nullable
-    public Boolean disabled;
+public class MultiMCPatch {
+    public String name;
     public String uid;
     public String version;
+    public int formatVersion;
+
+    @SerializedName("+agents")
+    public List<MultiMCAgent> agents = new ArrayList<>();
 }

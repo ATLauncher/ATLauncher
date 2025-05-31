@@ -110,6 +110,7 @@ import com.atlauncher.data.modrinth.ModrinthVersion;
 import com.atlauncher.data.modrinth.pack.ModrinthModpackManifest;
 import com.atlauncher.data.multimc.MultiMCComponent;
 import com.atlauncher.data.multimc.MultiMCManifest;
+import com.atlauncher.data.multimc.MultiMCPatch;
 import com.atlauncher.data.technic.TechnicModpack;
 import com.atlauncher.data.technic.TechnicModpackAsset;
 import com.atlauncher.data.technic.TechnicModpackManifestMod;
@@ -2635,6 +2636,31 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                     .map(ArgumentRule::new).collect(Collectors.toList()));
             }
         }
+
+        // check for any agent patches if from MultiMC import and add them to the jvm args
+        if (this.multiMCManifest != null) {
+            this.multiMCManifest.getNonStandardComponents().forEach(c -> {
+                Path pathToPatch = this.multiMCExtractedPath.resolve("patches/" + c.uid + ".json");
+
+                if (!Files.exists(pathToPatch)) {
+                    LogManager.error("Could not find patch for " + c.uid);
+                    return;
+                }
+
+                try {
+                    MultiMCPatch patch = Gsons.DEFAULT.fromJson(new String(Files.readAllBytes(pathToPatch),
+                        StandardCharsets.UTF_8), MultiMCPatch.class);
+
+                    patch.agents.forEach(agent -> {
+                        this.arguments.jvm.add(new ArgumentRule(null,
+                            "-javaagent:" + FileSystem.LIBRARIES.resolve(
+                                Utils.convertMavenIdentifierToPath(agent.name))));
+                    });
+                } catch (IOException e) {
+                    LogManager.error("Failed to read patch for " + c.uid + " from " + pathToPatch);
+                }
+            });
+        }
     }
 
     private void addMinecraftArguments() {
@@ -2926,6 +2952,19 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                 pool.add(new com.atlauncher.network.Download().setUrl(download.url)
                     .downloadTo(FileSystem.LIBRARIES.resolve(download.path)).hash(download.sha1).size(download.size)
                     .withInstanceInstaller(this).withHttpClient(httpClient));
+            });
+        }
+
+        if (this.multiMCManifest != null) {
+            // we only download these, as they do not get loaded into the classpath as they support agents only
+            this.getMultiMCLibraries().forEach(library -> {
+                com.atlauncher.network.Download download = new com.atlauncher.network.Download()
+                    .setUrl(library.downloads.artifact.url)
+                    .downloadTo(FileSystem.LIBRARIES.resolve(library.downloads.artifact.path))
+                    .hash(library.downloads.artifact.sha1).size(library.downloads.artifact.size)
+                    .withInstanceInstaller(this).withHttpClient(httpClient);
+
+                pool.add(download);
             });
         }
 
@@ -3477,6 +3516,51 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
             }
             FileUtils.deleteDirectory(configsExtractedPath);
         }
+    }
+
+    /**
+     * Only support agents from MultiMC imports for now.
+     */
+    private List<Library> getMultiMCLibraries() {
+        List<Library> libraries = new ArrayList<>();
+
+        this.multiMCManifest.getNonStandardComponents().forEach(c -> {
+            Path pathToPatch = this.multiMCExtractedPath.resolve("patches/" + c.uid + ".json");
+
+            if (!Files.exists(pathToPatch)) {
+                LogManager.error("Could not find patch for " + c.uid);
+                return;
+            }
+
+            try {
+                MultiMCPatch patch = Gsons.DEFAULT.fromJson(new String(Files.readAllBytes(pathToPatch),
+                    StandardCharsets.UTF_8), MultiMCPatch.class);
+
+                patch.agents.forEach(agent -> {
+                    Library library = new Library();
+
+                    Downloads downloads = new Downloads();
+                    Download artifact = new Download();
+                    artifact.path = Utils.convertMavenIdentifierToPath(agent.name);
+                    artifact.size = -1;
+
+                    if (agent.url != null) {
+                        artifact.url = String.format("%s%s", Utils.ensureTrailingSlash(agent.url), artifact.path);
+                    }
+
+                    downloads.artifact = artifact;
+
+                    library.downloads = downloads;
+                    library.name = agent.name;
+
+                    libraries.add(library);
+                });
+            } catch (IOException e) {
+                LogManager.error("Failed to read patch for " + c.uid + " from " + pathToPatch);
+            }
+        });
+
+        return libraries;
     }
 
     private void downloadImage() throws Exception {

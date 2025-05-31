@@ -8,6 +8,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 ### New Features
 
 - Support importing images for MultiMC format
+- Support custom agent components for MultiMC format imports [#997]
 
 ### Fixes
 

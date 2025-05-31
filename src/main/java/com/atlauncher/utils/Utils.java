@@ -1609,4 +1609,8 @@ public class Utils {
                 : s.substring(0, 1).toUpperCase(Locale.ENGLISH) + s.substring(1).toLowerCase(Locale.ENGLISH))
             .collect(Collectors.joining(" "));
     }
+
+    public static String ensureTrailingSlash(String path) {
+        return path.endsWith("/") ? path : path + "/";
+    }
 }
