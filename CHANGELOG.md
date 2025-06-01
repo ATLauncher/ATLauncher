@@ -12,4 +12,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 
 ### Fixes
 
+- Issue with the bundled JRE showing prompt that it's not managed by the launcher when it is
+
 ### Misc
