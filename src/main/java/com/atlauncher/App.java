@@ -411,6 +411,7 @@ public class App {
     private static void checkIfNeedToUpdateBundledJre() {
         if (ConfigManager.getConfigItem("bundledJre.promptToUpdate", false)
             && Java.shouldPromptToUpdateBundledJre()) {
+            boolean isForced = ConfigManager.getConfigItem("outdatedJavaPrompt.forced", false) == true;
 
             boolean shouldUpdateBundledJre;
             // auto update if the user has installed the bundled JRE previously
@@ -419,8 +420,15 @@ public class App {
             } else {
                 String dialogTitle;
                 String dialogText;
-                if (Java.getLauncherJavaVersionNumber() < ConfigManager.getConfigItem("bundledJre.majorVersion",
-                    17.0).intValue()) {
+                if (isForced) {
+                    dialogTitle = GetText.tr("Using Out Of Date Java");
+                    dialogText = GetText.tr(
+                        "You're running an out of date version of Java.<br/><br/>The launcher requires at least Java " +
+                            "{0} to run.<br/><br/>The launcher can install this automatically for you, otherwise the " +
+                            "launcher will exit.<br/><br/>Do you want to install it now?",
+                        ConfigManager.getConfigItem("bundledJre.majorVersion", 17.0));
+                } else if (Java.getLauncherJavaVersionNumber() < ConfigManager.getConfigItem("bundledJre" +
+                    ".majorVersion", 17.0).intValue()) {
                     dialogTitle = GetText.tr("Using Out Of Date Java");
                     dialogText = GetText.tr(
                         "You're running an out of date version of Java.<br/><br/>In the future the launcher will no longer work without updating this.<br/><br/>This process is automatic and doesn't affect any Java installs outside of the launcher.<br/><br/>Do you want to do it now?");
@@ -437,6 +445,10 @@ public class App {
                     .setType(DialogManager.WARNING).show();
 
                 shouldUpdateBundledJre = ret == 0;
+            }
+
+            if (!shouldUpdateBundledJre && isForced) {
+                System.exit(0);
             }
 
             if (shouldUpdateBundledJre) {
