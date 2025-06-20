@@ -28,6 +28,19 @@ public class OperatingSystemRule {
     public String arch;
 
     public boolean applies() {
+        if (arch != null) {
+            if (OS.isArm()) {
+                if ((arch.equalsIgnoreCase("arm32") && OS.is64Bit()) || (arch.equalsIgnoreCase(
+                    "arm64") && !OS.is64Bit())) {
+                    return false;
+                }
+            } else {
+                if ((arch.equalsIgnoreCase("x86") && OS.is64Bit()) || (arch.equalsIgnoreCase("x64") && !OS.is64Bit())) {
+                    return false;
+                }
+            }
+        }
+
         if (name == null) {
             return true;
         }
@@ -42,18 +55,6 @@ public class OperatingSystemRule {
 
         if (name.equalsIgnoreCase("linux") && !OS.isLinux()) {
             return false;
-        }
-
-        if (arch != null) {
-            if (OS.isArm()) {
-                if ((arch.equalsIgnoreCase("arm32") && OS.is64Bit()) || (arch.equalsIgnoreCase("arm64") && !OS.is64Bit())) {
-                    return false;
-                }
-            } else {
-                if ((arch.equalsIgnoreCase("x86") && OS.is64Bit()) || (arch.equalsIgnoreCase("x64") && !OS.is64Bit())) {
-                    return false;
-                }
-            }
         }
 
         if (version == null) {
