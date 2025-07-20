@@ -1,5 +1,6 @@
 [Desktop Entry]
 Name=ATLauncher
+StartupWMClass=com-atlauncher-App
 GenericName=ATLauncher
 Comment=A launcher for Minecraft which integrates multiple different modpacks to allow you to download and install modpacks easily and quickly.
 Exec=atlauncher

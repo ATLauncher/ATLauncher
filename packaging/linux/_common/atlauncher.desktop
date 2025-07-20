@@ -5,6 +5,7 @@ Icon=atlauncher
 Keywords=game;Minecraft;
 MimeType=
 Name=ATLauncher
+StartupWMClass=com-atlauncher-App
 Comment=A launcher for Minecraft which integrates multiple different modpacks to allow you to download and install modpacks easily and quickly.
 Path=
 StartupNotify=true

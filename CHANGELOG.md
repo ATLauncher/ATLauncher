@@ -9,4 +9,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 
 ### Fixes
 
+- Different app name and desktop entry name when running on Linux.
+
 ### Misc
