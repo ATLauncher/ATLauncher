@@ -1,7 +1,3 @@
-# THIS VERSION OF ATLAUNCHER IS MODIFIED
-
-## Added compatibility to exo-open, this should exo-open (or xfce4 users) be able to open links and file explorer. 
-
 # ATLauncher
 
 ![Application](https://github.com/ATLauncher/ATLauncher/workflows/Application/badge.svg?branch=master)
