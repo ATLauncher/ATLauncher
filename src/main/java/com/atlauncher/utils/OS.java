@@ -174,8 +174,23 @@ public enum OS {
     public static void openWebBrowser(URI uri) {
         Analytics.sendOutboundLink(uri.toString());
         try {
-            if (getOS() == LINUX && Utils.executableInPath("xdg-open")) {
-                Runtime.getRuntime().exec("xdg-open " + uri);
+            if (getOS() == LINUX && (Utils.executableInPath("xdg-open") || Utils.executableInPath("exo-open"))) {
+                
+                 //Try open default web browser with xdg-open or exo-open.
+                
+                try {
+                    Runtime.getRuntime().exec("xdg-open " + uri);
+                    return;
+                } catch (Exception e1) {
+                    LogManager.warn("Method 1 of opening web browser failed, trying method 2.");
+                    try {
+                        Runtime.getRuntime().exec("exo-open " + uri);
+                        return;
+                    } catch (Exception e2) {
+                        LogManager.error("Method 2 of opening web browser failed!");
+                    }
+                }
+                
             } else if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
                 Desktop.getDesktop().browse(uri);
             } else {
@@ -206,9 +221,26 @@ public enum OS {
 
                 if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.OPEN)) {
                     Desktop.getDesktop().open(pathToOpen.toFile());
-                } else if (getOS() == LINUX && (Files.exists(Paths.get("/usr/bin/xdg-open"))
-                        || Files.exists(Paths.get("/usr/local/bin/xdg-open")))) {
-                    Runtime.getRuntime().exec("xdg-open " + pathToOpen.toString());
+                } else if (getOS() == LINUX && 
+                    (Files.exists(Paths.get("/usr/bin/xdg-open")) ||
+                    Files.exists(Paths.get("/usr/local/bin/xdg-open")) ||
+                    Files.exists(Paths.get("/usr/bin/exo-open")) ||
+                    Files.exists(Paths.get("/usr/local/bin/exo-open")))) {
+                    
+                     //Try open default file explorer with xdg-open or exo-open.
+                    
+                    try {
+                        Runtime.getRuntime().exec("xdg-open " + pathToOpen.toString());
+                        return;
+                    } catch (Exception e1) {
+                        LogManager.warn("Method 1 of opening file explorer failed, trying method 2.");
+                        try {
+                            Runtime.getRuntime().exec("exo-open " + pathToOpen.toString());
+                            return;
+                        } catch (Exception e2) {
+                            LogManager.error("Method 2 of opening file explorer failed!");
+                        }
+                    }
                 } else {
                     LogManager.error("Cannot open file explorer as no supported methods were found");
                 }
