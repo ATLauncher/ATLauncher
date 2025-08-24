@@ -9,6 +9,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 
 ### Fixes
 
-- Different app name and desktop entry name when running on Linux.
+- Added compatibility to exo-open, this should exo-open (or xfce4 users) be able to open links and file explorer.
 
 ### Misc
