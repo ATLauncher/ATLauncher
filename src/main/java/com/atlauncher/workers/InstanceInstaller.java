@@ -3614,7 +3614,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
             if (logo != null && logo.url != null && !logo.url.isEmpty()) {
                 com.atlauncher.network.Download imageDownload = com.atlauncher.network.Download.build().setUrl(logo.url)
                     .downloadTo(root.resolve("instance.png")).withInstanceInstaller(this)
-                    .withHttpClient(Network.createProgressClient(this));
+                    .ignoreFailures().withHttpClient(Network.createProgressClient(this));
 
                 if (logo.md5 != null) {
                     imageDownload = imageDownload.hash(logo.md5);

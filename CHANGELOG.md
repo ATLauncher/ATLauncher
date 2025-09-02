@@ -10,5 +10,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 ### Fixes
 
 - Different app name and desktop entry name when running on Linux.
+- Technic images not downloading due to hash mismatches on Technic's CDN
 
 ### Misc
