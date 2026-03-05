@@ -9,4 +9,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 
 ### Fixes
 
+- NeoForge downloads not working due to changed Maven url [#1023]
+
 ### Misc
