@@ -108,18 +108,16 @@ public class MinecraftManager {
             return singleList;
         }
 
+        String versionFamily = version.contains(".") ? version.substring(0, version.lastIndexOf(".")) : version;
+        String versionPrefix = version.split("\\.").length == 2 ? version : versionFamily;
+
         return Data.MINECRAFT.entrySet().stream()
                 .filter(e -> {
                     if (e.getValue().type != VersionManifestVersionType.RELEASE) {
                         return false;
                     }
 
-                    // no patch version (for instance 1.19, 1.18, etc)
-                    if (version.split("\\.").length == 2) {
-                        return e.getKey().startsWith(version);
-                    }
-
-                    return e.getKey().startsWith(version.substring(0, version.lastIndexOf(".")));
+                    return e.getKey().equals(versionPrefix) || e.getKey().startsWith(versionPrefix + ".");
                 })
                 .map(Map.Entry::getValue).collect(Collectors.toList());
     }

@@ -18,6 +18,8 @@
 package com.atlauncher.utils;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 
@@ -90,6 +92,13 @@ public class UtilsTest {
     }
 
     @Test
+    public void testThatComparingVersionsWorksCorrectlyWithNewMinecraftVersionScheme() {
+        assertEquals(1, Utils.compareVersions("26.1", "1.21.8"));
+        assertEquals(-1, Utils.compareVersions("26.1", "26.2"));
+        assertEquals(1, Utils.compareVersions("26.1.2", "26.1"));
+    }
+
+    @Test
     public void testThatComparingVersionsWorksCorrectlyWhenVersionIsOlderButHasMoreParts() {
         assertEquals(-1, Utils.compareVersions("2.9.0-nightly-20130708-debug3", "2.9.1-nightly-20130708-debug3"));
         assertEquals(-1, Utils.compareVersions("2.9.0-nightly-20130708-debug3", "2.10.0-nightly-20130708-debug3"));
@@ -107,6 +116,22 @@ public class UtilsTest {
     public void testThatComparingVersionsReturnsEqualWhenAnExceptionIsThrown() {
         assertEquals(0, Utils.compareVersions("1.7.0", "asdasdasds"));
         assertEquals(0, Utils.compareVersions("asdasdasds", "1.7.0"));
+    }
+
+    @Test
+    public void testThatMatchVersionWorksWithNewMinecraftVersionScheme() {
+        assertTrue(Utils.matchVersion("26.1", "1.13", false, true));
+        assertFalse(Utils.matchVersion("26.1", "1.13", true, true));
+        assertTrue(Utils.matchVersion("1.5.2", "1.5", true, true));
+        assertFalse(Utils.matchVersion("26.1", "1.5", true, true));
+    }
+
+    @Test
+    public void testThatMatchWholeVersionWorksWithVariableLengthVersions() {
+        assertTrue(Utils.matchWholeVersion("3.3.1", "3.3.1", true));
+        assertTrue(Utils.matchWholeVersion("3.3.2", "3.3.1", false));
+        assertTrue(Utils.matchWholeVersion("26.1", "26.1", true));
+        assertFalse(Utils.matchWholeVersion("0.12.5", "0.12.5", false));
     }
 
     @Test

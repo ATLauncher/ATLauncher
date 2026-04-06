@@ -2661,13 +2661,7 @@ public class Instance extends MinecraftVersion implements ModManagement {
     }
 
     public boolean shouldUseLegacyLaunch() {
-        try {
-            String[] versionParts = id.split("\\.", 3);
-
-            return Integer.parseInt(versionParts[0]) == 1 && Integer.parseInt(versionParts[1]) < 6;
-        } catch (NumberFormatException e) {
-            return false;
-        }
+        return Utils.matchVersion(id, "1.5", true, true);
     }
 
     public boolean usesLegacyLaunch() {

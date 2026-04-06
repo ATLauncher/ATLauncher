@@ -48,6 +48,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.security.InvalidKeyException;
 import java.security.Key;
+import java.util.ArrayList;
 import java.util.ArrayDeque;
 import java.util.Arrays;
 import java.util.Deque;
@@ -1393,37 +1394,14 @@ public class Utils {
     }
 
     public static int compareVersions(String version1, String version2) {
-        int result = 0;
+        List<Integer> parts1 = getNumericVersionParts(version1);
+        List<Integer> parts2 = getNumericVersionParts(version2);
 
-        String[] parts1 = version1.split("\\.");
-        String[] parts2 = version2.split("\\.");
-
-        int maxLengthOfVersionSplits = Math.max(parts1.length, parts2.length);
-        for (int i = 0; i < maxLengthOfVersionSplits; i++) {
-            if (parts1.length <= i) {
-                return -1;
-            }
-            if (parts2.length <= i) {
-                return 1;
-            }
-
-            try {
-                String part1Sanatised = parts1[i].split("[^0-9]", 2)[0];
-                String part2Sanatised = parts2[i].split("[^0-9]", 2)[0];
-                Integer v1 = i < parts1.length ? Integer.valueOf(part1Sanatised) : 0;
-                Integer v2 = i < parts2.length ? Integer.valueOf(part2Sanatised) : 0;
-                int compare = v1.compareTo(v2);
-                if (compare != 0) {
-                    result = compare;
-                    break;
-                }
-            } catch (NumberFormatException | ArrayIndexOutOfBoundsException e) {
-                // if any exception is thrown, just show that the versions are equal
-                return 0;
-            }
+        if (parts1 == null || parts2 == null) {
+            return 0;
         }
 
-        return result;
+        return compareVersionParts(parts1, parts2);
     }
 
     public static boolean matchVersion(String version, String matches, boolean lessThan, boolean equal) {
@@ -1431,36 +1409,79 @@ public class Utils {
             return false;
         }
 
-        String[] versionParts = version.split("\\.", 3);
-        String[] matchedParts = matches.split("\\.", 2);
+        List<Integer> versionParts = getNumericVersionParts(version);
+        List<Integer> matchedParts = getNumericVersionParts(matches);
 
-        if (equal && versionParts[0].equals(matchedParts[0]) && versionParts[1].equals(matchedParts[1])) {
+        if (versionParts == null || matchedParts == null) {
+            return false;
+        }
+
+        int compare = compareVersionParts(versionParts, matchedParts, matchedParts.size());
+
+        if (equal && compare == 0) {
             return true;
         }
 
-        if (lessThan && versionParts[0].equals(matchedParts[0])
-            && Integer.parseInt(versionParts[1].split("-")[0]) < Integer.parseInt(matchedParts[1].split("-")[0])) {
-            return true;
-        }
-
-        return !lessThan && versionParts[0].equals(matchedParts[0])
-            && Integer.parseInt(versionParts[1].split("-")[0]) > Integer.parseInt(matchedParts[1].split("-")[0]);
+        return lessThan ? compare < 0 : compare > 0;
     }
 
     public static boolean matchWholeVersion(String version, String matches, boolean equal) {
-        String[] versionParts = version.split("\\.", 3);
-        String[] matchedParts = matches.split("\\.", 3);
+        List<Integer> versionParts = getNumericVersionParts(version);
+        List<Integer> matchedParts = getNumericVersionParts(matches);
 
-        if (equal && versionParts[0].equals(matchedParts[0]) && versionParts[1].equals(matchedParts[1])
-            && versionParts[2].equals(matchedParts[2])) {
-            return true;
+        if (versionParts == null || matchedParts == null) {
+            return false;
         }
 
-        return Integer.parseInt(versionParts[0]) > Integer.parseInt(matchedParts[0])
-            || (versionParts[0].equals(matchedParts[0])
-            && Integer.parseInt(versionParts[1]) > Integer.parseInt(matchedParts[1]))
-            || (versionParts[0].equals(matchedParts[0]) && versionParts[1].equals(matchedParts[1])
-            && Integer.parseInt(versionParts[2]) > Integer.parseInt(matchedParts[2]));
+        int compare = compareVersionParts(versionParts, matchedParts);
+
+        return equal ? compare >= 0 : compare > 0;
+    }
+
+    private static @Nullable List<Integer> getNumericVersionParts(String version) {
+        List<Integer> versionParts = new ArrayList<>();
+
+        for (String part : version.split("\\.")) {
+            int numericPrefixLength = 0;
+
+            while (numericPrefixLength < part.length() && Character.isDigit(part.charAt(numericPrefixLength))) {
+                numericPrefixLength++;
+            }
+
+            if (numericPrefixLength == 0) {
+                return null;
+            }
+
+            try {
+                versionParts.add(Integer.parseInt(part.substring(0, numericPrefixLength)));
+            } catch (NumberFormatException e) {
+                return null;
+            }
+        }
+
+        return versionParts;
+    }
+
+    private static int compareVersionParts(List<Integer> parts1, List<Integer> parts2) {
+        return compareVersionParts(parts1, parts2, Math.max(parts1.size(), parts2.size()));
+    }
+
+    private static int compareVersionParts(List<Integer> parts1, List<Integer> parts2, int compareLength) {
+        for (int i = 0; i < compareLength; i++) {
+            int v1 = i < parts1.size() ? parts1.get(i) : 0;
+            int v2 = i < parts2.size() ? parts2.get(i) : 0;
+            int compare = Integer.compare(v1, v2);
+
+            if (compare != 0) {
+                return compare;
+            }
+        }
+
+        if (parts1.size() == parts2.size() || compareLength != Math.max(parts1.size(), parts2.size())) {
+            return 0;
+        }
+
+        return parts1.size() < parts2.size() ? -1 : 1;
     }
 
     public static MCMod getMCModForFile(File file) {
