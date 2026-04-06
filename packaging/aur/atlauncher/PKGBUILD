@@ -5,7 +5,7 @@
 
 pkgname=atlauncher
 _upstreamname=ATLauncher
-pkgrel=1
+pkgrel=2
 pkgver=3.4.40.3
 pkgdesc="A launcher for Minecraft which integrates multiple different modpacks to allow you to download and install
 modpacks easily and quickly."
@@ -31,6 +31,9 @@ sha256sums=('a32b22be80b16eefad28c507dd81ec70b7e3e6acb0314684f2c80dc715ae4cd2'
 
 build() {
     cd "$_upstreamname-$pkgver"
+
+    export JAVA_HOME='/usr/lib/jvm/java-17-openjdk'
+    export PATH="$JAVA_HOME/bin:$PATH"
 
     chmod 0755 ./gradlew
     ./gradlew build -x test

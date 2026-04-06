@@ -10,5 +10,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 ### Fixes
 
 - 26.1 of Minecraft not working [#1026]
+- AUR gradle not using Java 17 [#1014]
 
 ### Misc
