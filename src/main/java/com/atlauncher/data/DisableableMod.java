@@ -345,6 +345,9 @@ public class DisableableMod implements Serializable {
                     case shaderpack:
                         dir = base.resolve("shaderpacks").toFile();
                         break;
+                    case datapack:
+                        dir = base.resolve("datapacks").toFile();
+                        break;
                     case dependency:
                         if (mcVersion != null) {
                             dir = base.resolve("mods/" + mcVersion).toFile();
@@ -498,6 +501,11 @@ public class DisableableMod implements Serializable {
                 Stream<ModrinthVersion> versionsStream = versions.stream()
                         .sorted(Comparator.comparing((ModrinthVersion mv) -> mv.datePublished).reversed());
 
+                if (this.type == Type.datapack) {
+                    versionsStream = versionsStream
+                            .filter(v -> v.loaders != null && v.loaders.contains("datapack"));
+                }
+
                 if (App.settings.addModRestriction == AddModRestriction.STRICT) {
                     versionsStream = versionsStream
                             .filter(v -> v.gameVersions.contains(instanceOrServer.getMinecraftVersion()));
@@ -522,7 +530,7 @@ public class DisableableMod implements Serializable {
             }
 
             ModrinthVersionSelectorDialog modrinthVersionSelectorDialog = new ModrinthVersionSelectorDialog(parent,
-                    pair.left(), pair.right(), instanceOrServer, modrinthVersion.id);
+                    pair.left(), pair.right(), instanceOrServer, modrinthVersion.id, this.type);
             modrinthVersionSelectorDialog.setVisible(true);
         }
 
@@ -567,7 +575,7 @@ public class DisableableMod implements Serializable {
             dialog.start();
 
             ModrinthVersionSelectorDialog modrinthVersionSelectorDialog = new ModrinthVersionSelectorDialog(parent, dialog.getReturnValue(), instanceOrServer, modrinthVersion.id,
-                    false);
+                    false, this.type);
             modrinthVersionSelectorDialog.setVisible(true);
         }
 

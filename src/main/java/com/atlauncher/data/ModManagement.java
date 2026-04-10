@@ -56,7 +56,7 @@ public interface ModManagement {
     public abstract void addFileFromCurseForge(CurseForgeProject mod, CurseForgeFile file, ProgressDialog<Void> dialog);
 
     public abstract void addFileFromModrinth(ModrinthProject project, ModrinthVersion version, ModrinthFile file,
-            ProgressDialog<Void> dialog);
+            Type installType, ProgressDialog<Void> dialog);
 
     public abstract void scanMissingMods(Window parent);
 

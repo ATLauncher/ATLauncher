@@ -85,7 +85,8 @@ public class ModsJCheckBoxTransferHandler extends TransferHandler {
             Type type;
             File instanceFile;
 
-            String[] modTypes = new String[] { "Mods Folder", "Resource Pack", "Shader Pack", "Inside Minecraft.jar" };
+            String[] modTypes =
+                new String[] { "Mods Folder", "Data Pack", "Resource Pack", "Shader Pack", "Inside Minecraft.jar" };
 
             FileTypeDialog ftd = new FileTypeDialog(GetText.tr("Add Mod"), GetText.tr("Adding Mods"), GetText.tr("Add"),
                     GetText.tr("Type"), modTypes);
@@ -117,6 +118,9 @@ public class ModsJCheckBoxTransferHandler extends TransferHandler {
             } else if (typeTemp.equalsIgnoreCase("Texture Pack")) {
                 type = Type.texturepack;
                 instanceFile = dialog.instanceOrServer.getRoot().resolve("texturepacks").toFile();
+            } else if (typeTemp.equalsIgnoreCase("Data Pack")) {
+                type = Type.datapack;
+                instanceFile = dialog.instanceOrServer.getRoot().resolve("datapacks").toFile();
             } else if (typeTemp.equalsIgnoreCase("Resource Pack")) {
                 type = Type.resourcepack;
                 instanceFile = dialog.instanceOrServer.getRoot().resolve("resourcepacks").toFile();

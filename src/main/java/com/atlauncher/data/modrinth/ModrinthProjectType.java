@@ -34,4 +34,7 @@ public enum ModrinthProjectType {
 
     @SerializedName("shader")
     SHADER,
+
+    @SerializedName("datapack")
+    DATAPACK,
 }

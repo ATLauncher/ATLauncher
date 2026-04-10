@@ -68,6 +68,11 @@ public class CurseForgeProject {
     public int mainFileId;
 
     public ModType getModType() {
+        if (getRootCategoryId() == Constants.CURSEFORGE_DATA_PACKS_SECTION_ID
+            || classId == Constants.CURSEFORGE_DATA_PACKS_SECTION_ID) {
+            return ModType.datapack;
+        }
+
         if (getRootCategoryId() == Constants.CURSEFORGE_RESOURCE_PACKS_SECTION_ID) {
             return ModType.resourcepack;
         }
@@ -86,7 +91,17 @@ public class CurseForgeProject {
 
         return primaryCategory
             .map(curseForgeCategory -> curseForgeCategory.classId)
-            .orElse(Constants.CURSEFORGE_MODS_SECTION_ID);
+            .orElseGet(() -> {
+                if (classId == Constants.CURSEFORGE_RESOURCE_PACKS_SECTION_ID
+                    || classId == Constants.CURSEFORGE_WORLDS_SECTION_ID
+                    || classId == Constants.CURSEFORGE_SHADER_PACKS_SECTION_ID
+                    || classId == Constants.CURSEFORGE_PLUGINS_SECTION_ID
+                    || classId == Constants.CURSEFORGE_DATA_PACKS_SECTION_ID) {
+                    return classId;
+                }
+
+                return Constants.CURSEFORGE_MODS_SECTION_ID;
+            });
     }
 
     public Optional<CurseForgeAttachment> getLogo() {
@@ -158,6 +173,8 @@ public class CurseForgeProject {
             return "texture-packs";
         } else if (classId == Constants.CURSEFORGE_MODPACKS_SECTION_ID) {
             return "modpacks";
+        } else if (classId == Constants.CURSEFORGE_DATA_PACKS_SECTION_ID) {
+            return "data-packs";
         }
 
         return "mc-mods";
@@ -174,6 +191,11 @@ public class CurseForgeProject {
     }
 
     public Path getInstanceDirectoryPath(Path root) {
+        if (getRootCategoryId() == Constants.CURSEFORGE_DATA_PACKS_SECTION_ID
+            || classId == Constants.CURSEFORGE_DATA_PACKS_SECTION_ID) {
+            return root.resolve("datapacks");
+        }
+
         if (getRootCategoryId() == Constants.CURSEFORGE_RESOURCE_PACKS_SECTION_ID) {
             return root.resolve("resourcepacks");
         }
@@ -195,6 +217,11 @@ public class CurseForgeProject {
     }
 
     public AnalyticsEvent getAnalyticsEventForAdded(CurseForgeFile file) {
+        if (getRootCategoryId() == Constants.CURSEFORGE_DATA_PACKS_SECTION_ID
+            || classId == Constants.CURSEFORGE_DATA_PACKS_SECTION_ID) {
+            return AnalyticsEvent.forAddedDataPack(this, file);
+        }
+
         if (getRootCategoryId() == Constants.CURSEFORGE_RESOURCE_PACKS_SECTION_ID) {
             return AnalyticsEvent.forAddedResourcePack(this, file);
         }

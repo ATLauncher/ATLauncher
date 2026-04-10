@@ -19,6 +19,7 @@ package com.atlauncher.data.modrinth;
 
 import java.util.List;
 
+import com.atlauncher.data.Type;
 import com.atlauncher.annot.ExcludeFromGsonSerialization;
 import com.atlauncher.network.analytics.AnalyticsEvent;
 import com.google.gson.annotations.SerializedName;
@@ -88,6 +89,18 @@ public class ModrinthProject {
     public List<Object> gallery;
 
     public AnalyticsEvent getAnalyticsEventForAdded(ModrinthVersion version) {
+        return getAnalyticsEventForAdded(version, null);
+    }
+
+    public AnalyticsEvent getAnalyticsEventForAdded(ModrinthVersion version, Type installType) {
+        if (installType == Type.datapack) {
+            return AnalyticsEvent.forAddedDataPack(this, version);
+        }
+
+        if (this.projectType == ModrinthProjectType.DATAPACK) {
+            return AnalyticsEvent.forAddedDataPack(this, version);
+        }
+
         if (this.projectType == ModrinthProjectType.RESOURCEPACK) {
             return AnalyticsEvent.forAddedResourcePack(this, version);
         }

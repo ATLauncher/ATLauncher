@@ -247,6 +247,14 @@ public class AnalyticsEvent {
         return AnalyticsEvent.forAddMod(mod.name, "CurseForge", "resource_pack");
     }
 
+    public static AnalyticsEvent forAddDataPack(ModrinthSearchHit pack) {
+        return AnalyticsEvent.forAddMod(pack.title, "Modrinth", "data_pack");
+    }
+
+    public static AnalyticsEvent forAddDataPack(CurseForgeProject mod) {
+        return AnalyticsEvent.forAddMod(mod.name, "CurseForge", "data_pack");
+    }
+
     public static AnalyticsEvent forAddShaders(ModrinthSearchHit plugin) {
         return AnalyticsEvent.forAddMod(plugin.title, "Modrinth", "shader");
     }
@@ -288,6 +296,14 @@ public class AnalyticsEvent {
         return AnalyticsEvent.forRemoveMod(mod.name, "CurseForge", "resource_pack");
     }
 
+    public static AnalyticsEvent forRemoveDataPack(ModrinthSearchHit pack) {
+        return AnalyticsEvent.forRemoveMod(pack.title, "Modrinth", "data_pack");
+    }
+
+    public static AnalyticsEvent forRemoveDataPack(CurseForgeProject mod) {
+        return AnalyticsEvent.forRemoveMod(mod.name, "CurseForge", "data_pack");
+    }
+
     public static AnalyticsEvent forRemoveShaders(ModrinthSearchHit plugin) {
         return AnalyticsEvent.forRemoveMod(plugin.title, "Modrinth", "shader");
     }
@@ -327,6 +343,14 @@ public class AnalyticsEvent {
 
     public static AnalyticsEvent forAddedResourcePack(CurseForgeProject mod, CurseForgeFile file) {
         return AnalyticsEvent.forAddedMod(mod.name, file.displayName, "CurseForge", "resource_pack");
+    }
+
+    public static AnalyticsEvent forAddedDataPack(ModrinthProject pack, ModrinthVersion version) {
+        return AnalyticsEvent.forAddedMod(pack.title, version.name, "Modrinth", "data_pack");
+    }
+
+    public static AnalyticsEvent forAddedDataPack(CurseForgeProject mod, CurseForgeFile file) {
+        return AnalyticsEvent.forAddedMod(mod.name, file.displayName, "CurseForge", "data_pack");
     }
 
     public static AnalyticsEvent forAddedShaders(ModrinthProject plugin, ModrinthVersion version) {

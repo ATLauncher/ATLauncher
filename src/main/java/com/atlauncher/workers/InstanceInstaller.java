@@ -2158,6 +2158,22 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                     LogManager.logStackTrace(e);
                 }
             }
+
+            if (Files.exists(
+                curseForgeExtractedPath
+                    .resolve(Optional.ofNullable(curseForgeManifest.overrides).orElse("overrides") + "/datapacks"))) {
+                try (Stream<Path> list = Files.list(
+                    curseForgeExtractedPath
+                        .resolve(Optional.ofNullable(curseForgeManifest.overrides).orElse("overrides")
+                            + "/datapacks"))) {
+                    this.modsInstalled.addAll(list.filter(p -> !Files.isDirectory(p))
+                        .filter(p -> p.toString().toLowerCase(Locale.ENGLISH).endsWith(".jar")
+                            || p.toString().toLowerCase(Locale.ENGLISH).endsWith(".zip"))
+                        .map(p -> convertPathToDisableableMod(p, Type.datapack)).collect(Collectors.toList()));
+                } catch (IOException e) {
+                    LogManager.logStackTrace(e);
+                }
+            }
         }
 
         if (this.modrinthManifest != null) {
@@ -2179,6 +2195,17 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                         .filter(p -> p.toString().toLowerCase(Locale.ENGLISH).endsWith(".jar")
                             || p.toString().toLowerCase(Locale.ENGLISH).endsWith(".zip"))
                         .map(p -> convertPathToDisableableMod(p, Type.dependency)).collect(Collectors.toList()));
+                } catch (IOException e) {
+                    LogManager.logStackTrace(e);
+                }
+            }
+
+            if (Files.exists(modrinthExtractedPath.resolve("overrides/datapacks"))) {
+                try (Stream<Path> list = Files.list(modrinthExtractedPath.resolve("overrides/datapacks"))) {
+                    this.modsInstalled.addAll(list.filter(p -> !Files.isDirectory(p))
+                        .filter(p -> p.toString().toLowerCase(Locale.ENGLISH).endsWith(".jar")
+                            || p.toString().toLowerCase(Locale.ENGLISH).endsWith(".zip"))
+                        .map(p -> convertPathToDisableableMod(p, Type.datapack)).collect(Collectors.toList()));
                 } catch (IOException e) {
                     LogManager.logStackTrace(e);
                 }
