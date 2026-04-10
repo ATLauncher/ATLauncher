@@ -172,7 +172,11 @@ public class GeneralSettingsViewModel implements SettingsListener {
                     new LauncherTheme("com.atlauncher.themes.CyanLight", "Cyan Light"),
                     new LauncherTheme("com.atlauncher.themes.HighTechDarkness", "High Tech Darkness"),
                     new LauncherTheme("com.atlauncher.themes.OneDark", "One Dark"),
-                    new LauncherTheme("com.atlauncher.themes.Tokyonight", "TokyoNight"));
+                    new LauncherTheme("com.atlauncher.themes.Tokyonight", "TokyoNight"),
+                    new LauncherTheme("com.atlauncher.themes.CatppuccinLatte", "Catppuccin Latte"),
+                    new LauncherTheme("com.atlauncher.themes.CatppuccinFrappe", "Catppuccin Frappé"),
+                    new LauncherTheme("com.atlauncher.themes.CatppuccinMacchiato", "Catppuccin Macchiato"),
+                    new LauncherTheme("com.atlauncher.themes.CatppuccinMocha", "Catppuccin Mocha"));
         return themes;
     }
 
