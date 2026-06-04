@@ -40,10 +40,18 @@ curl -fsSL "$RAW/offline/atlauncher-offline.desktop" -o "$DESKTOP_DIR/atlauncher
 curl -fsSL "$RAW/_common/atlauncher.svg"             -o "$ICON_DIR/atlauncher-offline.svg"
 chmod +x "$BIN_DIR/atlauncher-offline"
 
+# Use absolute paths in the installed .desktop so the menu entry works regardless
+# of the desktop session's PATH (~/.local/bin is often not on the GUI session PATH,
+# e.g. under KDE/Plasma) and shows the icon without relying on the theme cache.
+sed -i "s|^Exec=.*|Exec=$BIN_DIR/atlauncher-offline|; s|^Icon=.*|Icon=$ICON_DIR/atlauncher-offline.svg|" \
+    "$DESKTOP_DIR/atlauncher-offline.desktop"
+
 # Refresh desktop/icon caches when the tools are present (ignored if not).
 command -v update-desktop-database >/dev/null 2>&1 && update-desktop-database "$DESKTOP_DIR" >/dev/null 2>&1 || true
 command -v gtk-update-icon-cache >/dev/null 2>&1 && \
     gtk-update-icon-cache -f -t "${XDG_DATA_HOME:-$HOME/.local/share}/icons/hicolor" >/dev/null 2>&1 || true
+{ command -v kbuildsycoca6 >/dev/null 2>&1 && kbuildsycoca6 >/dev/null 2>&1; } || \
+    { command -v kbuildsycoca5 >/dev/null 2>&1 && kbuildsycoca5 >/dev/null 2>&1; } || true
 
 echo "Installed ATLauncher Offline."
 echo "Launch it from your application menu (\"ATLauncher Offline\") or run: atlauncher-offline"
