@@ -56,6 +56,7 @@ import com.atlauncher.evnt.manager.SettingsManager;
 import com.atlauncher.exceptions.InvalidMinecraftVersion;
 import com.atlauncher.graphql.GetLoaderVersionsForMinecraftVersionQuery;
 import com.atlauncher.managers.AccountManager;
+import com.atlauncher.managers.OfflineAccountManager;
 import com.atlauncher.managers.ConfigManager;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.managers.InstanceManager;
@@ -802,7 +803,8 @@ public class CreatePackViewModel implements SettingsListener, ICreatePackViewMod
     }
 
     private void install(Boolean isServer) {
-        if (AccountManager.getSelectedAccount() == null) {
+        // an offline account is enough to create/install: the install process itself never uses the account
+        if (AccountManager.getSelectedAccount() == null && OfflineAccountManager.getSelectedAccount() == null) {
             DialogManager dialog = DialogManager.okDialog().setTitle(GetText.tr("No Account Selected"));
 
             if (isServer) {
@@ -812,8 +814,8 @@ public class CreatePackViewModel implements SettingsListener, ICreatePackViewMod
             }
 
             dialog.setType(DialogManager.ERROR).show();
-            if (AccountManager.getAccounts().isEmpty()) {
-                App.navigate(UIConstants.LAUNCHER_ACCOUNTS_TAB);
+            if (AccountManager.getAccounts().isEmpty() && OfflineAccountManager.getAccounts().isEmpty()) {
+                App.navigate(UIConstants.LAUNCHER_OFFLINE_ACCOUNTS_TAB);
             }
             return;
         }

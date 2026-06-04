@@ -42,6 +42,7 @@ import com.atlauncher.gui.components.PackImagePanel;
 import com.atlauncher.gui.dialogs.InstanceInstallerDialog;
 import com.atlauncher.gui.dialogs.ViewModsDialog;
 import com.atlauncher.managers.AccountManager;
+import com.atlauncher.managers.OfflineAccountManager;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.managers.InstanceManager;
 import com.atlauncher.network.Analytics;
@@ -141,7 +142,7 @@ public class ATLauncherPackCard extends JPanel implements RelocalizationListener
 
     private void addActionListeners() {
         this.installButton.addActionListener(e -> {
-            if (AccountManager.getSelectedAccount() == null) {
+            if (AccountManager.getSelectedAccount() == null && OfflineAccountManager.getSelectedAccount() == null) {
                 DialogManager.okDialog().setTitle(GetText.tr("No Account Selected"))
                         .setContent(GetText.tr("Cannot create instance as you have no account selected."))
                         .setType(DialogManager.ERROR).show();
@@ -170,7 +171,7 @@ public class ATLauncherPackCard extends JPanel implements RelocalizationListener
                 }
             }
 
-            if (AccountManager.getSelectedAccount() == null) {
+            if (AccountManager.getSelectedAccount() == null && OfflineAccountManager.getSelectedAccount() == null) {
                 DialogManager.okDialog().setTitle(GetText.tr("No Account Selected"))
                         .setContent(GetText.tr("Cannot create server as you have no account selected."))
                         .setType(DialogManager.ERROR).show();

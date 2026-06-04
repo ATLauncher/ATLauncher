@@ -35,7 +35,7 @@ import com.atlauncher.FileSystem;
 import com.atlauncher.constants.Constants;
 import com.atlauncher.data.DisableableMod;
 import com.atlauncher.data.Instance;
-import com.atlauncher.data.MicrosoftAccount;
+import com.atlauncher.data.AbstractAccount;
 import com.atlauncher.data.QuickPlayOption;
 import com.atlauncher.data.json.QuickPlay;
 import com.atlauncher.data.minecraft.Library;
@@ -52,13 +52,13 @@ public class MCLauncher {
     public static final List<String> IGNORED_ARGUMENTS = Arrays.asList("--clientId", "${clientid}", "--xuid",
         "${auth_xuid}");
 
-    public static Process launch(MicrosoftAccount account, Instance instance, Path nativesTempDir,
+    public static Process launch(AbstractAccount account, Instance instance, Path nativesTempDir,
         Path lwjglNativesTempDir,
         String wrapperCommand, String username) throws Exception {
         return launch(account, instance, null, nativesTempDir.toFile(), lwjglNativesTempDir, wrapperCommand, username);
     }
 
-    private static Process launch(MicrosoftAccount account, Instance instance, String props, File nativesDir,
+    private static Process launch(AbstractAccount account, Instance instance, String props, File nativesDir,
         Path lwjglNativesTempDir, String wrapperCommand, String username) throws Exception {
         List<String> arguments = getArguments(account, instance, props, nativesDir.getAbsolutePath(),
             lwjglNativesTempDir, username);
@@ -162,7 +162,7 @@ public class MCLauncher {
         return wrapArgs;
     }
 
-    private static List<String> getArguments(MicrosoftAccount account, Instance instance, String props,
+    private static List<String> getArguments(AbstractAccount account, Instance instance, String props,
         String nativesDir, Path lwjglNativesTempDir, String username) {
         StringBuilder cpb = new StringBuilder();
         boolean hasCustomJarMods = false;
@@ -463,7 +463,7 @@ public class MCLauncher {
         return arguments;
     }
 
-    private static String replaceArgument(String incomingArgument, Instance instance, MicrosoftAccount account,
+    private static String replaceArgument(String incomingArgument, Instance instance, AbstractAccount account,
         String props, String nativesDir, String classpath, String username) {
         String argument = incomingArgument;
 
@@ -490,7 +490,7 @@ public class MCLauncher {
         return argument;
     }
 
-    private static String censorArguments(List<String> arguments, MicrosoftAccount account, String props,
+    private static String censorArguments(List<String> arguments, AbstractAccount account, String props,
         String username) {
         String argsString = arguments.toString();
 
@@ -506,8 +506,13 @@ public class MCLauncher {
         if (props != null) {
             argsString = argsString.replace(props, "REDACTED");
         }
-        argsString = argsString.replace(account.getAccessToken(), "REDACTED");
-        argsString = argsString.replace(account.getSessionToken(), "REDACTED");
+        // offline accounts use the literal "0" token; redacting it would replace every "0" in the args
+        if (!"0".equals(account.getAccessToken())) {
+            argsString = argsString.replace(account.getAccessToken(), "REDACTED");
+        }
+        if (!"0".equals(account.getSessionToken())) {
+            argsString = argsString.replace(account.getSessionToken(), "REDACTED");
+        }
 
         return argsString;
     }

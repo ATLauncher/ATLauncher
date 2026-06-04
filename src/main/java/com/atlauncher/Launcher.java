@@ -59,6 +59,7 @@ import com.atlauncher.managers.LogManager;
 import com.atlauncher.managers.MinecraftManager;
 import com.atlauncher.managers.ModrinthModpackUpdateManager;
 import com.atlauncher.managers.NewsManager;
+import com.atlauncher.managers.OfflineAccountManager;
 import com.atlauncher.managers.PackManager;
 import com.atlauncher.managers.PerformanceManager;
 import com.atlauncher.managers.ServerManager;
@@ -125,6 +126,7 @@ public class Launcher {
         LWJGLManager.loadLWJGLVersions(); // Load info about the different LWJGL versions
 
         AccountManager.loadAccounts(); // Load the saved Accounts
+        OfflineAccountManager.loadAccounts(); // Load the saved Offline Accounts
 
         PackManager.loadPacks(); // Load the Packs available in the Launcher
 

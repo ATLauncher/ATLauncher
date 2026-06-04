@@ -44,6 +44,7 @@ import com.atlauncher.gui.card.packbrowser.ModrinthPackCard;
 import com.atlauncher.gui.dialogs.InstanceInstallerDialog;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.managers.AccountManager;
+import com.atlauncher.managers.OfflineAccountManager;
 import com.atlauncher.managers.ConfigManager;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.managers.LogManager;
@@ -246,7 +247,7 @@ public class ModrinthPacksPanel extends PackBrowserPlatformPanel {
             return;
         }
 
-        if (AccountManager.getSelectedAccount() == null) {
+        if (AccountManager.getSelectedAccount() == null && OfflineAccountManager.getSelectedAccount() == null) {
             DialogManager.okDialog().setTitle(GetText.tr("No Account Selected"))
                 .setContent(GetText.tr("Cannot create instance as you have no account selected."))
                 .setType(DialogManager.ERROR).show();

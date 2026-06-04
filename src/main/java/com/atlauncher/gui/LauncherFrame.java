@@ -52,8 +52,10 @@ import com.atlauncher.gui.tabs.SettingsTab;
 import com.atlauncher.gui.tabs.Tab;
 import com.atlauncher.gui.tabs.accounts.AccountsTab;
 import com.atlauncher.gui.tabs.news.NewsTab;
+import com.atlauncher.gui.tabs.offlineaccounts.OfflineAccountsTab;
 import com.atlauncher.gui.tabs.tools.ToolsTab;
 import com.atlauncher.managers.AccountManager;
+import com.atlauncher.managers.OfflineAccountManager;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.managers.PackManager;
 import com.atlauncher.managers.PerformanceManager;
@@ -130,7 +132,7 @@ public final class LauncherFrame extends JFrame implements RelocalizationListene
                 LogManager.error("Error automatically installing " + pack.getName() + " as you don't have the "
                         + "pack added to the launcher!");
             } else {
-                if (AccountManager.getSelectedAccount() == null || pack == null) {
+                if ((AccountManager.getSelectedAccount() == null && OfflineAccountManager.getSelectedAccount() == null) || pack == null) {
                     LogManager
                             .error("Error automatically installing " + (pack == null ? "pack" : pack.getName()) + "!");
                 } else {
@@ -216,6 +218,11 @@ public final class LauncherFrame extends JFrame implements RelocalizationListene
         AboutTab aboutTab = new AboutTab();
         PerformanceManager.end("aboutTab");
         this.tabs.put(UIConstants.LAUNCHER_ABOUT_TAB, aboutTab);
+
+        PerformanceManager.start("offlineAccountsTab");
+        OfflineAccountsTab offlineAccountsTab = new OfflineAccountsTab();
+        this.tabs.put(UIConstants.LAUNCHER_OFFLINE_ACCOUNTS_TAB, offlineAccountsTab);
+        PerformanceManager.end("offlineAccountsTab");
 
         tabbedPane.setFont(App.THEME.getTabFont());
         for (Tab tab : this.tabs.values()) {
