@@ -506,8 +506,13 @@ public class MCLauncher {
         if (props != null) {
             argsString = argsString.replace(props, "REDACTED");
         }
-        argsString = argsString.replace(account.getAccessToken(), "REDACTED");
-        argsString = argsString.replace(account.getSessionToken(), "REDACTED");
+        // offline accounts use the literal "0" token; redacting it would replace every "0" in the args
+        if (!"0".equals(account.getAccessToken())) {
+            argsString = argsString.replace(account.getAccessToken(), "REDACTED");
+        }
+        if (!"0".equals(account.getSessionToken())) {
+            argsString = argsString.replace(account.getSessionToken(), "REDACTED");
+        }
 
         return argsString;
     }
