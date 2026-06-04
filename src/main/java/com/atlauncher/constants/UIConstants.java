@@ -51,6 +51,7 @@ public class UIConstants {
     public static final int LAUNCHER_TOOLS_TAB = 6;
     public static final int LAUNCHER_SETTINGS_TAB = 7;
     public static final int LAUNCHER_ABOUT_TAB = 8;
+    public static final int LAUNCHER_OFFLINE_ACCOUNTS_TAB = 9;
 
     public static final String getInitialTabName(int initialTab) {
         switch (initialTab) {

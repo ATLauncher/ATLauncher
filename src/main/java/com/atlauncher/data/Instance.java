@@ -140,6 +140,7 @@ import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.gui.dialogs.RenameInstanceDialog;
 import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.ConfigManager;
+import com.atlauncher.managers.OfflineAccountManager;
 import com.atlauncher.managers.CurseForgeUpdateManager;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.managers.FTBUpdateManager;
@@ -788,44 +789,51 @@ public class Instance extends MinecraftVersion implements ModManagement {
     }
 
     public boolean launch(boolean offline) {
-        final MicrosoftAccount account = launcher.account == null ? AccountManager.getSelectedAccount()
-            : AccountManager.getAccountByName(launcher.account);
+        final AbstractAccount account;
 
-        if (account == null) {
-            DialogManager.okDialog().setTitle(GetText.tr("No Account Selected"))
-                .setContent(new HTMLBuilder().center()
-                    .text(GetText.tr("Cannot play instance as you have no account selected.")).build())
-                .setType(DialogManager.ERROR).show();
+        if (offline) {
+            account = OfflineAccountManager.getSelectedAccount();
 
-            if (AccountManager.getAccounts().isEmpty()) {
-                App.navigate(UIConstants.LAUNCHER_ACCOUNTS_TAB);
+            if (account == null) {
+                DialogManager.okDialog().setTitle(GetText.tr("No Offline Account Selected"))
+                    .setContent(new HTMLBuilder().center()
+                        .text(GetText.tr(
+                            "Cannot play offline as you have no offline account selected. Please add one in the Offline Accounts tab."))
+                        .build())
+                    .setType(DialogManager.ERROR).show();
+
+                App.navigate(UIConstants.LAUNCHER_OFFLINE_ACCOUNTS_TAB);
+                App.launcher.setMinecraftLaunched(false);
+                return false;
             }
+        } else {
+            account = launcher.account == null ? AccountManager.getSelectedAccount()
+                : AccountManager.getAccountByName(launcher.account);
 
-            App.launcher.setMinecraftLaunched(false);
-            return false;
+            if (account == null) {
+                DialogManager.okDialog().setTitle(GetText.tr("No Account Selected"))
+                    .setContent(new HTMLBuilder().center()
+                        .text(GetText.tr("Cannot play instance as you have no account selected.")).build())
+                    .setType(DialogManager.ERROR).show();
+
+                if (AccountManager.getAccounts().isEmpty()) {
+                    App.navigate(UIConstants.LAUNCHER_ACCOUNTS_TAB);
+                }
+
+                App.launcher.setMinecraftLaunched(false);
+                return false;
+            }
         }
 
         // if Microsoft account must login again, then make sure to do that
-        if (!offline && account.mustLogin) {
-            if (!account.ensureAccountIsLoggedIn()) {
+        if (!offline && account instanceof MicrosoftAccount && ((MicrosoftAccount) account).mustLogin) {
+            if (!((MicrosoftAccount) account).ensureAccountIsLoggedIn()) {
                 LogManager.info("You must login to your account before continuing.");
                 return false;
             }
         }
 
-        String playerName = account.minecraftUsername;
-
-        if (offline) {
-            playerName = DialogManager.okDialog().setTitle(GetText.tr("Offline Player Name"))
-                .setContent(GetText.tr("Choose your offline player name:")).showInput(playerName);
-
-            if (playerName == null || playerName.isEmpty()) {
-                LogManager.info("No player name provided for offline launch, so cancelling launch.");
-                return false;
-            }
-        }
-
-        final String username = offline ? playerName : account.minecraftUsername;
+        final String username = account.minecraftUsername;
 
         int maximumMemory = Optional.ofNullable(this.launcher.maximumMemory).orElse(App.settings.maximumMemory);
         if ((maximumMemory < this.launcher.requiredMemory)
@@ -918,7 +926,7 @@ public class Instance extends MinecraftVersion implements ModManagement {
                     ProgressDialog<Boolean> loginDialog = new ProgressDialog<>(GetText.tr("Logging Into Minecraft"),
                         0, GetText.tr("Logging Into Minecraft"), "Aborted login to Minecraft!");
                     loginDialog.addThread(new Thread(() -> {
-                        loginDialog.setReturnValue(account.ensureAccessTokenValid());
+                        loginDialog.setReturnValue(((MicrosoftAccount) account).ensureAccessTokenValid());
                         loginDialog.close();
                     }));
                     loginDialog.start();
@@ -1030,7 +1038,7 @@ public class Instance extends MinecraftVersion implements ModManagement {
                         line = line.replaceAll("\\b(?:\\d{1,3}\\.){3}\\d{1,3}\\b", "**IPADDRESS**");
                     }
 
-                    if (account.getAccessToken() != null) {
+                    if (!offline && account.getAccessToken() != null) {
                         line = line.replaceAll(account.getAccessToken(), "**ACCESSTOKEN**");
                     }
 
