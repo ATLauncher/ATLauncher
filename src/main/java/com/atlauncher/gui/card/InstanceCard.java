@@ -96,7 +96,10 @@ public class InstanceCard extends CollapsiblePanel {
             new MouseAdapter() {
                 @Override
                 public void mousePressed(MouseEvent e) {
-                    play(false);
+                    // fall back to offline play when no Microsoft account is selected but an offline one is
+                    boolean offline = AccountManager.getSelectedAccount() == null
+                            && OfflineAccountManager.getSelectedAccount() != null;
+                    play(offline);
                 }
             });
 
