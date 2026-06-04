@@ -53,6 +53,7 @@ import com.atlauncher.gui.dialogs.InstanceExportDialog;
 import com.atlauncher.gui.dialogs.InstanceSettingsDialog;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.managers.AccountManager;
+import com.atlauncher.managers.OfflineAccountManager;
 import com.atlauncher.managers.ConfigManager;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.managers.InstanceManager;
@@ -492,7 +493,7 @@ public class InstanceCard extends CollapsiblePanel {
 
     private void addActionListeners() {
         this.updateButton.addActionListener(e -> {
-            if (AccountManager.getSelectedAccount() == null) {
+            if (AccountManager.getSelectedAccount() == null && OfflineAccountManager.getSelectedAccount() == null) {
                 DialogManager.okDialog().setTitle(GetText.tr("No Account Selected"))
                         .setContent(GetText.tr("Cannot update pack as you have no account selected."))
                         .setType(DialogManager.ERROR).show();
@@ -577,7 +578,7 @@ public class InstanceCard extends CollapsiblePanel {
                     .show();
 
             if (ret == 0) {
-                if (AccountManager.getSelectedAccount() == null) {
+                if (AccountManager.getSelectedAccount() == null && OfflineAccountManager.getSelectedAccount() == null) {
                     DialogManager.okDialog().setTitle(GetText.tr("No Account Selected"))
                             .setContent(GetText.tr("Cannot update pack as you have no account selected."))
                             .setType(DialogManager.ERROR).show();
