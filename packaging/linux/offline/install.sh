@@ -12,6 +12,15 @@ set -euo pipefail
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "$HERE/../../.." && pwd)"
 
+if ! command -v java >/dev/null 2>&1; then
+    echo "Error: Java is required but was not found on your system." >&2
+    echo "Please install a Java runtime (JRE 17 recommended) and run this installer again:" >&2
+    echo "  Arch:          sudo pacman -S jre-openjdk" >&2
+    echo "  Debian/Ubuntu: sudo apt install default-jre" >&2
+    echo "  Fedora:        sudo dnf install java-latest-openjdk" >&2
+    exit 1
+fi
+
 DATA_DIR="${XDG_DATA_HOME:-$HOME/.local/share}/atlauncher-offline"
 BIN_DIR="$HOME/.local/bin"
 DESKTOP_DIR="${XDG_DATA_HOME:-$HOME/.local/share}/applications"
