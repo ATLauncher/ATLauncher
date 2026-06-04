@@ -921,7 +921,7 @@ public class Instance extends MinecraftVersion implements ModManagement {
                     wrapperCommand = null;
                 }
 
-                if (!offline) {
+                if (!offline && account instanceof MicrosoftAccount) {
                     LogManager.info("Logging into Minecraft!");
                     ProgressDialog<Boolean> loginDialog = new ProgressDialog<>(GetText.tr("Logging Into Minecraft"),
                         0, GetText.tr("Logging Into Minecraft"), "Aborted login to Minecraft!");
