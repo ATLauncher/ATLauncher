@@ -50,6 +50,7 @@ import com.google.gson.annotations.SerializedName;
 public class Settings {
     // Launcher things
     public String lastAccount;
+    public String lastOfflineAccount;
     public boolean usingCustomJavaPath = false;
     public boolean firstTimeRun = true;
     public List<String> addedPacks = new ArrayList<>();
