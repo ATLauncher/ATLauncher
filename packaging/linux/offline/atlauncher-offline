@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Launcher wrapper for the offline ATLauncher fork.
+#
+# Runs the jar from its own dedicated data directory so the launcher's
+# generated files (Configs/, instances/, offlineaccounts.json, ...) live there
+# and the upstream "wrong install location" check stays happy.
+
+DATA_DIR="${XDG_DATA_HOME:-$HOME/.local/share}/atlauncher-offline"
+JAR="$DATA_DIR/ATLauncher.jar"
+
+if ! command -v java >/dev/null 2>&1; then
+    echo "Java is required but was not found. Install a JRE (e.g. on Arch: 'sudo pacman -S jre-openjdk')." >&2
+    exit 1
+fi
+
+if [[ ! -f "$JAR" ]]; then
+    echo "Could not find $JAR." >&2
+    echo "Run packaging/linux/offline/install.sh first (it builds and copies the jar there)." >&2
+    exit 1
+fi
+
+mkdir -p "$DATA_DIR"
+cd "$DATA_DIR"
+
+# --no-launcher-update: this is a fork, so don't let it self-update to upstream ATLauncher.
+exec java -Dawt.useSystemAAFontSettings=on -Dswing.aatext=true \
+    -jar "$JAR" --no-launcher-update "$@"

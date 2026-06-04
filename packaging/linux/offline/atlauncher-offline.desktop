@@ -1,0 +1,12 @@
+[Desktop Entry]
+Type=Application
+Name=ATLauncher Offline
+GenericName=Minecraft Launcher
+Comment=ATLauncher fork with offline (no Microsoft account) support
+Exec=atlauncher-offline
+Icon=atlauncher-offline
+Categories=Game;
+Keywords=game;Minecraft;offline;
+StartupWMClass=com-atlauncher-App
+Terminal=false
+StartupNotify=true
