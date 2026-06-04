@@ -73,6 +73,8 @@ public class UIConstants {
                 return "Settings";
             case UIConstants.LAUNCHER_ABOUT_TAB:
                 return "About";
+            case UIConstants.LAUNCHER_OFFLINE_ACCOUNTS_TAB:
+                return "Offline Accounts";
         }
 
         return "Unknown";
