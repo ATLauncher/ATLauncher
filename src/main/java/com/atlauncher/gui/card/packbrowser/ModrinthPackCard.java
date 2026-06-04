@@ -40,6 +40,7 @@ import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.gui.components.BackgroundImageLabel;
 import com.atlauncher.gui.dialogs.InstanceInstallerDialog;
 import com.atlauncher.managers.AccountManager;
+import com.atlauncher.managers.OfflineAccountManager;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.managers.InstanceManager;
 import com.atlauncher.network.Analytics;
@@ -76,7 +77,7 @@ public class ModrinthPackCard extends JPanel implements RelocalizationListener {
         buttonsPanel.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0));
 
         installButton.addActionListener(e -> {
-            if (AccountManager.getSelectedAccount() == null) {
+            if (AccountManager.getSelectedAccount() == null && OfflineAccountManager.getSelectedAccount() == null) {
                 DialogManager.okDialog().setTitle(GetText.tr("No Account Selected"))
                         .setContent(GetText.tr("Cannot create instance as you have no account selected."))
                         .setType(DialogManager.ERROR).show();
@@ -106,7 +107,7 @@ public class ModrinthPackCard extends JPanel implements RelocalizationListener {
                 }
             }
 
-            if (AccountManager.getSelectedAccount() == null) {
+            if (AccountManager.getSelectedAccount() == null && OfflineAccountManager.getSelectedAccount() == null) {
                 DialogManager.okDialog().setTitle(GetText.tr("No Account Selected"))
                         .setContent(GetText.tr("Cannot create server as you have no account selected."))
                         .setType(DialogManager.ERROR).show();
