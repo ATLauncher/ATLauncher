@@ -44,6 +44,7 @@ public class OfflineAccountsTab extends HierarchyPanel implements Tab {
 
     private JComboBox<OfflineAccount> accountsComboBox;
     private JButton deleteButton;
+    private boolean reloading = false;
 
     public OfflineAccountsTab() {
         super(new BorderLayout());
@@ -74,7 +75,7 @@ public class OfflineAccountsTab extends HierarchyPanel implements Tab {
         accountsComboBox = new JComboBox<>();
         accountsComboBox.setName("offlineAccountsComboBox");
         accountsComboBox.addItemListener(e -> {
-            if (e.getStateChange() == ItemEvent.SELECTED) {
+            if (e.getStateChange() == ItemEvent.SELECTED && !reloading) {
                 OfflineAccount selected = (OfflineAccount) accountsComboBox.getSelectedItem();
                 if (selected != null) {
                     OfflineAccountManager.switchAccount(selected);
@@ -117,15 +118,20 @@ public class OfflineAccountsTab extends HierarchyPanel implements Tab {
     }
 
     private void reloadAccounts() {
-        accountsComboBox.removeAllItems();
-        for (OfflineAccount account : OfflineAccountManager.getAccounts()) {
-            accountsComboBox.addItem(account);
+        reloading = true;
+        try {
+            accountsComboBox.removeAllItems();
+            for (OfflineAccount account : OfflineAccountManager.getAccounts()) {
+                accountsComboBox.addItem(account);
+            }
+            OfflineAccount selected = OfflineAccountManager.getSelectedAccount();
+            if (selected != null) {
+                accountsComboBox.setSelectedItem(selected);
+            }
+            deleteButton.setVisible(selected != null);
+        } finally {
+            reloading = false;
         }
-        OfflineAccount selected = OfflineAccountManager.getSelectedAccount();
-        if (selected != null) {
-            accountsComboBox.setSelectedItem(selected);
-        }
-        deleteButton.setVisible(OfflineAccountManager.getSelectedAccount() != null);
     }
 
     private void onAdd() {
