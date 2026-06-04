@@ -386,6 +386,17 @@ public class Launcher {
     }
 
     private void checkForLauncherUpdate() {
+        // Launcher self-update is disabled in this fork. The upstream check compares against
+        // ATLauncher's own version/download servers, so leaving it on would (a) always report
+        // this fork as "out of date" and (b) overwrite the fork's jar with upstream ATLauncher.
+        // Disabling it here (rather than via the --no-launcher-update launch flag) guarantees no
+        // launch method can trigger a self-overwrite.
+        // TODO: replace this no-op with a check against this fork's own releases/version so it can
+        //       correctly report whether the fork itself is up to date.
+        if (true) {
+            return;
+        }
+
         PerformanceManager.start();
 
         LogManager.debug("Checking for launcher update");
