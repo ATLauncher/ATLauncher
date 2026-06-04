@@ -21,10 +21,16 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
+import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import org.junit.jupiter.api.Test;
+
+import com.atlauncher.Gsons;
+import com.google.gson.reflect.TypeToken;
 
 public class OfflineAccountTest {
     @Test
@@ -57,5 +63,23 @@ public class OfflineAccountTest {
         assertEquals("legacy", account.getUserType());
         assertEquals("Notch", account.getCurrentUsername());
         assertNull(account.getSkinUrl());
+    }
+
+    @Test
+    public void roundTripsAsFlatJsonWithoutInternalType() {
+        List<OfflineAccount> accounts = new ArrayList<>();
+        accounts.add(new OfflineAccount("Steve"));
+
+        Type listType = new TypeToken<List<OfflineAccount>>() {}.getType();
+        String json = Gsons.DEFAULT.toJson(accounts, listType);
+
+        // AccountTypeAdapter must NOT fire for the concrete OfflineAccount element type
+        assertFalse(json.contains("internalType"));
+
+        List<OfflineAccount> back = Gsons.DEFAULT.fromJson(json, listType);
+        assertEquals(1, back.size());
+        assertEquals("Steve", back.get(0).minecraftUsername);
+        assertEquals(new OfflineAccount("Steve").uuid, back.get(0).uuid);
+        assertEquals("0", back.get(0).getAccessToken());
     }
 }
