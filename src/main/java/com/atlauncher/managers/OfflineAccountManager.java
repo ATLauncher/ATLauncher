@@ -117,6 +117,7 @@ public class OfflineAccountManager {
         accounts.add(account);
         ACCOUNTS.onNext(accounts);
 
+        // always switch to the newly added account; offline accounts don't prompt like Microsoft ones
         switchAccount(account);
         saveAccounts();
     }
