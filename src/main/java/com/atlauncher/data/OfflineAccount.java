@@ -74,6 +74,7 @@ public class OfflineAccount extends AbstractAccount {
 
     @Override
     public String getSkinUrl() {
+        // offline accounts have no remote profile, so use the default skin
         return null;
     }
 }
