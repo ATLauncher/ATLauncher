@@ -35,6 +35,7 @@ import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
 import com.atlauncher.Network;
 import com.atlauncher.constants.Constants;
+import com.atlauncher.data.modrinth.ModrinthDownloadMetadata;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.utils.ArchiveUtils;
 import com.atlauncher.utils.FileUtils;
@@ -74,6 +75,7 @@ public final class Download {
     private RequestBody post = null;
     private CacheControl cacheControl = null;
     private final Map<String, String> headers = new HashMap<>();
+    private ModrinthDownloadMetadata modrinthDownloadMetadata = null;
 
     // generated on/after request
     public Response response;
@@ -228,6 +230,11 @@ public final class Download {
         return this;
     }
 
+    public Download withModrinthDownloadMetadata(ModrinthDownloadMetadata modrinthDownloadMetadata) {
+        this.modrinthDownloadMetadata = modrinthDownloadMetadata;
+        return this;
+    }
+
     public Download cached() {
         return cached(null);
     }
@@ -265,7 +272,7 @@ public final class Download {
             builder.post(this.post);
         }
 
-        Headers requestHeaders = buildHeadersForUrl(this.url, this.headers);
+        Headers requestHeaders = buildHeadersForUrl(this.url, this.headers, this.modrinthDownloadMetadata);
         if (requestHeaders.size() != 0) {
             builder.headers(requestHeaders);
         }
@@ -285,10 +292,21 @@ public final class Download {
     }
 
     static Headers buildHeadersForUrl(String url, Map<String, String> headers) {
+        return buildHeadersForUrl(url, headers, null);
+    }
+
+    static Headers buildHeadersForUrl(String url, Map<String, String> headers,
+        ModrinthDownloadMetadata modrinthDownloadMetadata) {
         Map<String, String> requestHeaders = new HashMap<>(headers);
 
         if (isCurseForgeFileDownloadUrl(url) && !hasHeader(requestHeaders, Constants.CURSEFORGE_API_KEY_HEADER)) {
             requestHeaders.put(Constants.CURSEFORGE_API_KEY_HEADER, Constants.CURSEFORGE_CORE_API_KEY);
+        }
+
+        if (modrinthDownloadMetadata != null && isModrinthFileDownloadUrl(url)
+            && !hasHeader(requestHeaders, Constants.MODRINTH_DOWNLOAD_METADATA_HEADER)) {
+            requestHeaders.put(Constants.MODRINTH_DOWNLOAD_METADATA_HEADER,
+                Gsons.DEFAULT_SLIM.toJson(modrinthDownloadMetadata));
         }
 
         return Headers.of(requestHeaders);
@@ -298,6 +316,12 @@ public final class Download {
         HttpUrl httpUrl = HttpUrl.parse(url);
 
         return httpUrl != null && Constants.CURSEFORGE_FILE_DOWNLOAD_HOST.equalsIgnoreCase(httpUrl.host());
+    }
+
+    private static boolean isModrinthFileDownloadUrl(String url) {
+        HttpUrl httpUrl = HttpUrl.parse(url);
+
+        return httpUrl != null && Constants.MODRINTH_FILE_DOWNLOAD_HOST.equalsIgnoreCase(httpUrl.host());
     }
 
     private static boolean hasHeader(Map<String, String> headers, String headerName) {

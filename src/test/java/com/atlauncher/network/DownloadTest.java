@@ -27,6 +27,7 @@ import java.util.Map;
 import org.junit.jupiter.api.Test;
 
 import com.atlauncher.constants.Constants;
+import com.atlauncher.data.modrinth.ModrinthDownloadMetadata;
 
 import okhttp3.Headers;
 
@@ -56,5 +57,39 @@ public class DownloadTest {
             "https://edge.forgecdn.net/files/1234/56/ExampleMod-2.0-1.20.1.jar", existingHeaders);
 
         assertEquals("custom-key", headers.get(Constants.CURSEFORGE_API_KEY_HEADER));
+    }
+
+    @Test
+    public void modrinthFileDownloadsIncludeMetadataHeaderWhenProvided() {
+        Headers headers = Download.buildHeadersForUrl(
+            "https://cdn.modrinth.com/data/project/versions/version/example.jar",
+            Collections.emptyMap(),
+            new ModrinthDownloadMetadata(ModrinthDownloadMetadata.Reason.MODPACK, "1.20.1", "fabric"));
+
+        assertEquals("{\"reason\":\"modpack\",\"game_version\":\"1.20.1\",\"loader\":\"fabric\"}",
+            headers.get(Constants.MODRINTH_DOWNLOAD_METADATA_HEADER));
+    }
+
+    @Test
+    public void modrinthMetadataHeaderIsOnlyAddedForModrinthCdnDownloads() {
+        Headers headers = Download.buildHeadersForUrl(
+            "https://api.modrinth.com/v2/project/example",
+            Collections.emptyMap(),
+            new ModrinthDownloadMetadata(ModrinthDownloadMetadata.Reason.STANDALONE, "1.20.1", "fabric"));
+
+        assertNull(headers.get(Constants.MODRINTH_DOWNLOAD_METADATA_HEADER));
+    }
+
+    @Test
+    public void explicitModrinthMetadataHeaderIsPreserved() {
+        Map<String, String> existingHeaders = new HashMap<>();
+        existingHeaders.put("Modrinth-Download-Meta", "custom-meta");
+
+        Headers headers = Download.buildHeadersForUrl(
+            "https://cdn.modrinth.com/data/project/versions/version/example.jar",
+            existingHeaders,
+            new ModrinthDownloadMetadata(ModrinthDownloadMetadata.Reason.UPDATE, "1.20.1", "fabric"));
+
+        assertEquals("custom-meta", headers.get(Constants.MODRINTH_DOWNLOAD_METADATA_HEADER));
     }
 }

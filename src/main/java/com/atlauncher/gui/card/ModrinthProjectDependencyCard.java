@@ -35,6 +35,7 @@ import org.mini2Dx.gettext.GetText;
 import com.atlauncher.App;
 import com.atlauncher.data.ModManagement;
 import com.atlauncher.data.modrinth.ModrinthDependency;
+import com.atlauncher.data.modrinth.ModrinthDownloadMetadata;
 import com.atlauncher.data.modrinth.ModrinthProject;
 import com.atlauncher.gui.dialogs.ModrinthVersionSelectorDialog;
 import com.atlauncher.network.Analytics;
@@ -101,7 +102,8 @@ public final class ModrinthProjectDependencyCard extends JPanel {
                 Analytics.trackEvent(AnalyticsEvent.forAddMod(mod));
                 ModrinthVersionSelectorDialog modrinthVersionSelectorDialog = new ModrinthVersionSelectorDialog(parent,
                     mod,
-                    instanceOrServer);
+                    instanceOrServer,
+                    ModrinthDownloadMetadata.Reason.DEPENDENCY);
                 modrinthVersionSelectorDialog.setVisible(true);
                 parent.reloadDependenciesPanel();
             });

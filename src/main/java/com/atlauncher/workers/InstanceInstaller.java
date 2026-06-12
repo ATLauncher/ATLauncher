@@ -105,6 +105,7 @@ import com.atlauncher.data.minecraft.loaders.LoaderVersion;
 import com.atlauncher.data.minecraft.loaders.fabric.FabricMetaVersion;
 import com.atlauncher.data.minecraft.loaders.forge.ForgeLoader;
 import com.atlauncher.data.modrinth.ModrinthFile;
+import com.atlauncher.data.modrinth.ModrinthDownloadMetadata;
 import com.atlauncher.data.modrinth.ModrinthProject;
 import com.atlauncher.data.modrinth.ModrinthVersion;
 import com.atlauncher.data.modrinth.pack.ModrinthModpackManifest;
@@ -995,6 +996,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
 
         com.atlauncher.network.Download manifestDownload = com.atlauncher.network.Download.build().setUrl(file.url)
             .downloadTo(manifestFile).withInstanceInstaller(this)
+            .withModrinthDownloadMetadata(ModrinthDownloadMetadata.from(ModrinthDownloadMetadata.Reason.STANDALONE,
+                version._modrinthVersion, this.loaderVersion))
             .withHttpClient(Network.createProgressClient(this));
 
         if (file.hashes != null && file.hashes.containsKey("sha512")) {
@@ -3156,7 +3159,10 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         this.selectedMods.stream().filter(mod -> mod.download != DownloadType.browser).forEach(mod -> {
             com.atlauncher.network.Download download = new com.atlauncher.network.Download()
                 .setUrl(mod.getDownloadUrl()).downloadTo(FileSystem.DOWNLOADS.resolve(mod.getFile()))
-                .size(mod.filesize).withInstanceInstaller(this).withHttpClient(httpClient);
+                .size(mod.filesize).withInstanceInstaller(this)
+                .withModrinthDownloadMetadata(ModrinthDownloadMetadata.from(
+                    ModrinthDownloadMetadata.Reason.MODPACK, this.minecraftVersion.id, this.loaderVersion))
+                .withHttpClient(httpClient);
 
             if (mod.ignoreFailures) {
                 download = download.ignoreFailures();
