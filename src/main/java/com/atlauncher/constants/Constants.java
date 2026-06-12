@@ -102,7 +102,9 @@ public class Constants {
     // if you fork or modify this launcher, you must not use this API key and apply
     // for your own
     public static final String CURSEFORGE_CORE_API_KEY = "$2a$10$.7CSxLm/lnj5lCBSM5jGQ.3SICSX4j9r661AgoB1Rc4Nw8jCMKcv2";
+    public static final String CURSEFORGE_API_KEY_HEADER = "x-api-key";
     public static final String CURSEFORGE_CORE_API_HOST = "api.curseforge.com";
+    public static final String CURSEFORGE_FILE_DOWNLOAD_HOST = "edge.forgecdn.net";
     public static final int CURSEFORGE_FORGE_MODLOADER_ID = 1;
     public static final int CURSEFORGE_FABRIC_MODLOADER_ID = 4;
     public static final int CURSEFORGE_QUILT_MODLOADER_ID = 5;

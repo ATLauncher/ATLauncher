@@ -11,4 +11,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 
 ### Fixes
 
+- Add api key on CurseForge cdn download links as required by CurseForge
+
 ### Misc
