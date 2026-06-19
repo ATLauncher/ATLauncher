@@ -14,7 +14,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 
 ### Fixes
 
-- Fixed slow and jumpy scrolling in the Edit Mods dialog on macOS thanks to @nllvoid
+- Fixed slow and jumpy scrolling in the Edit Mods dialog on macOS thanks to @nllvoid [#1032]
 - Add api key on CurseForge cdn download links as required by CurseForge
 
 ### Misc
