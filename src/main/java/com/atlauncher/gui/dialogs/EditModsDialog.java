@@ -35,10 +35,12 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.swing.AbstractButton;
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
+import javax.swing.JLayer;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -60,6 +62,7 @@ import com.atlauncher.data.minecraft.FabricMod;
 import com.atlauncher.data.minecraft.MCMod;
 import com.atlauncher.data.modrinth.ModrinthProject;
 import com.atlauncher.data.modrinth.ModrinthVersion;
+import com.atlauncher.gui.WheelScrollLayerUI;
 import com.atlauncher.gui.components.ModsJCheckBox;
 import com.atlauncher.gui.handlers.ModsJCheckBoxTransferHandler;
 import com.atlauncher.gui.layouts.WrapLayout;
@@ -78,7 +81,7 @@ public class EditModsDialog extends JDialog {
 
     public final ModManagement instanceOrServer;
 
-    private JList<ModsJCheckBox> disabledModsPanel, enabledModsPanel;
+    private JPanel disabledModsPanel, enabledModsPanel;
     private JButton checkForUpdatesButton;
     private JButton reinstallButton;
     private JButton enableButton;
@@ -188,29 +191,27 @@ public class EditModsDialog extends JDialog {
         modsInPack.setEnabled(false);
         add(modsInPack, BorderLayout.CENTER);
 
-        disabledModsPanel = new JList<>();
-        disabledModsPanel.setLayout(null);
+        disabledModsPanel = new JPanel();
+        disabledModsPanel.setLayout(new BoxLayout(disabledModsPanel, BoxLayout.Y_AXIS));
         disabledModsPanel.setBackground(UIManager.getColor("Mods.modSelectionColor"));
-        disabledModsPanel.setDragEnabled(true);
         disabledModsPanel.setTransferHandler(new ModsJCheckBoxTransferHandler(this, true));
 
-        JScrollPane scroller1 = new JScrollPane(disabledModsPanel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
+        JScrollPane scroller1 = new JScrollPane(disabledModsPanel,
+            JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
             JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scroller1.getVerticalScrollBar().setUnitIncrement(16);
-        scroller1.setPreferredSize(new Dimension(275, 350));
-        modsInPack.setRightComponent(scroller1);
+        modsInPack.setRightComponent(new JLayer<>(scroller1, new WheelScrollLayerUI()));
 
-        enabledModsPanel = new JList<>();
-        enabledModsPanel.setLayout(null);
+        enabledModsPanel = new JPanel();
+        enabledModsPanel.setLayout(new BoxLayout(enabledModsPanel, BoxLayout.Y_AXIS));
         enabledModsPanel.setBackground(UIManager.getColor("Mods.modSelectionColor"));
-        enabledModsPanel.setDragEnabled(true);
-        enabledModsPanel.setTransferHandler(new ModsJCheckBoxTransferHandler(this, false));
+        enabledModsPanel.setTransferHandler(new ModsJCheckBoxTransferHandler(this, true));;
 
-        JScrollPane scroller2 = new JScrollPane(enabledModsPanel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
+        JScrollPane scroller2 = new JScrollPane(enabledModsPanel,
+            JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
             JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scroller2.getVerticalScrollBar().setUnitIncrement(16);
-        scroller2.setPreferredSize(new Dimension(275, 350));
-        modsInPack.setLeftComponent(scroller2);
+        modsInPack.setLeftComponent(new JLayer<>(scroller2, new WheelScrollLayerUI()));
 
         JPanel bottomPanel = new JPanel(new WrapLayout());
         add(bottomPanel, BorderLayout.SOUTH);
@@ -688,7 +689,9 @@ public class EditModsDialog extends JDialog {
         disabledModsPanel.removeAll();
         loadMods();
         checkBoxesChanged();
+        enabledModsPanel.revalidate();
         enabledModsPanel.repaint();
+        disabledModsPanel.revalidate();
         disabledModsPanel.repaint();
     }
 
