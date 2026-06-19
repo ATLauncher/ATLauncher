@@ -51,6 +51,15 @@ public class ServerManager {
     }
 
     /**
+     * Non-reactive function for legacy operations.
+     *
+     * @return List of servers.
+     */
+    public static List<Server> getServers() {
+        return SERVERS.getValue();
+    }
+
+    /**
      * Loads the user installed servers
      */
     public static void loadServers() {

@@ -64,6 +64,7 @@ import com.atlauncher.constants.Constants;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.Language;
 import com.atlauncher.data.Pack;
+import com.atlauncher.data.Server;
 import com.atlauncher.data.Settings;
 import com.atlauncher.gui.HoverLineBorder;
 import com.atlauncher.gui.LauncherConsole;
@@ -77,6 +78,7 @@ import com.atlauncher.managers.DialogManager;
 import com.atlauncher.managers.InstanceManager;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.managers.PackManager;
+import com.atlauncher.managers.ServerManager;
 import com.atlauncher.network.Download;
 import com.atlauncher.network.ErrorReporting;
 import com.atlauncher.themes.ATLauncherLaf;
@@ -233,6 +235,19 @@ public class App {
     public static String autoLaunch = null;
 
     /**
+     * This sets a server to auto launch on startup
+     */
+    public static String autoLaunchServer = null;
+
+    /**
+     * This will tell the launcher to show the server GUI. This is only effective when combined with the --launch-server
+     * parameter.
+     * <p/>
+     * --server-gui
+     */
+    public static boolean serverGui = false;
+
+    /**
      * This is the Settings instance which holds all the users settings.
      */
     public static Settings settings;
@@ -370,6 +385,22 @@ public class App {
         checkIfUsingOutdatedJava();
 
         boolean open = true;
+
+        if (autoLaunchServer != null) {
+            Optional<Server> server = ServerManager.getServers().stream().filter(
+                    i -> i.getName().equalsIgnoreCase(autoLaunchServer)
+                        || i.getSafeName().equalsIgnoreCase(autoLaunchServer))
+                .findFirst();
+            if (server.isPresent()) {
+                String launchArg = serverGui ? "" : "nogui";
+                LogManager.info("Starting server " + server.get().getSafeName() + (serverGui ? " with " : " without ")
+                    + "GUI");
+                boolean closeAfterServer = (closeLauncher && autoLaunch == null);
+                server.get().launch(launchArg, closeAfterServer);
+            } else {
+                LogManager.error("Couldn't find server with name of " + autoLaunchServer + " to auto launch.");
+            }
+        }
 
         if (autoLaunch != null) {
             Optional<Instance> instance = InstanceManager.getInstances().stream().filter(
@@ -1028,6 +1059,11 @@ public class App {
         parser.accepts("launch",
                 "The name of an instance to automatically launch. Can be the instances directory name in the file system or the full name of the instance.")
             .withRequiredArg().ofType(String.class);
+        parser.accepts("launch-server",
+                "The name of an server to automatically launch. Can be the server's directory name in the file " +
+                        "system or the full name of the server.")
+                .withRequiredArg().ofType(String.class);
+        parser.accepts("server-gui", "If the server GUI should be shown").withOptionalArg().ofType(Boolean.class);
         parser.accepts("proxy-type", "The type of proxy to use. Can be \"SOCKS\", \"DIRECT\" or \"HTTP\".")
             .withRequiredArg().ofType(String.class);
         parser.accepts("proxy-host", "The host of the proxy to use.").withRequiredArg().ofType(String.class);
@@ -1043,6 +1079,7 @@ public class App {
 
         OptionSet options = parser.parse(args);
         autoLaunch = options.has("launch") ? (String) options.valueOf("launch") : null;
+        autoLaunchServer = options.has("launch-server") ? (String) options.valueOf("launch-server") : null;
 
         if (options.has("help")) {
             try {
@@ -1146,6 +1183,11 @@ public class App {
         closeLauncher = options.has("close-launcher");
         if (closeLauncher) {
             LogManager.debug("Closing launcher once Minecraft is launched!");
+        }
+
+        serverGui = options.has("server-gui");
+        if (serverGui) {
+            LogManager.debug("Launching server with GUI!");
         }
 
         if (options.has("proxy-type") && options.has("proxy-host") && options.has("proxy-port")) {

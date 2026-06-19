@@ -7,6 +7,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 
 ### New Features
 
+- Allow launching servers from the cli with "--launch-server name" and optionally "--server-gui" to show the gui
 - Support installing datapacks to the datapacks folder and support for adding and managing them
 - Add Modrinth download metadata to Modrinth CDN downloads [#1028]
 
@@ -16,3 +17,4 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Add api key on CurseForge cdn download links as required by CurseForge
 
 ### Misc
+None
