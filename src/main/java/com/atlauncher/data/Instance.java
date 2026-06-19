@@ -118,6 +118,7 @@ import com.atlauncher.data.minecraft.loaders.legacyfabric.LegacyFabricLoader;
 import com.atlauncher.data.minecraft.loaders.neoforge.NeoForgeLoader;
 import com.atlauncher.data.minecraft.loaders.quilt.QuiltLoader;
 import com.atlauncher.data.modrinth.ModrinthFile;
+import com.atlauncher.data.modrinth.ModrinthDownloadMetadata;
 import com.atlauncher.data.modrinth.ModrinthProject;
 import com.atlauncher.data.modrinth.ModrinthProjectType;
 import com.atlauncher.data.modrinth.ModrinthSide;
@@ -3475,7 +3476,8 @@ public class Instance extends MinecraftVersion implements ModManagement {
 
     @Override
     public void addFileFromModrinth(ModrinthProject mod, ModrinthVersion version, ModrinthFile file,
-        Type installType, ProgressDialog<Void> dialog) {
+        Type installType, ModrinthDownloadMetadata.Reason downloadReason, String dependentVersionId,
+        ProgressDialog<Void> dialog) {
         ModrinthFile fileToDownload = Optional.ofNullable(file).orElse(version.getPrimaryFile());
         Type modType = getTypeFromModrinthMod(mod, version, installType);
 
@@ -3495,8 +3497,19 @@ public class Instance extends MinecraftVersion implements ModManagement {
                 finalLocation = this.getRoot().resolve("mods").resolve(fileToDownload.filename);
                 break;
         }
+        // find mods with the same Modrinth id
+        List<DisableableMod> sameMods = this.launcher.mods.stream().filter(
+                installedMod -> installedMod.isFromModrinth()
+                    && installedMod.modrinthProject.id.equalsIgnoreCase(mod.id))
+            .collect(Collectors.toList());
+
+        ModrinthDownloadMetadata.Reason effectiveReason =
+            sameMods.isEmpty() ? downloadReason : ModrinthDownloadMetadata.Reason.UPDATE;
+
         com.atlauncher.network.Download download = com.atlauncher.network.Download.build().setUrl(fileToDownload.url)
             .downloadTo(downloadLocation).copyTo(finalLocation)
+            .withModrinthDownloadMetadata(ModrinthDownloadMetadata.from(effectiveReason, this.getMinecraftVersion(),
+                this.getLoaderVersion(), dependentVersionId))
             .withHttpClient(Network.createProgressClient(dialog));
 
         if (fileToDownload.hashes != null && fileToDownload.hashes.containsKey("sha512")) {
@@ -3513,12 +3526,6 @@ public class Instance extends MinecraftVersion implements ModManagement {
         if (Files.exists(finalLocation)) {
             FileUtils.delete(finalLocation);
         }
-
-        // find mods with the same Modrinth id
-        List<DisableableMod> sameMods = this.launcher.mods.stream().filter(
-                installedMod -> installedMod.isFromModrinth()
-                    && installedMod.modrinthProject.id.equalsIgnoreCase(mod.id))
-            .collect(Collectors.toList());
 
         // delete mod files that are the same mod id
         sameMods.forEach(disableableMod -> Utils.delete(disableableMod.getFile(this)));

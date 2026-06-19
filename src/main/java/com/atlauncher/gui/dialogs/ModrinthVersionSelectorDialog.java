@@ -48,6 +48,7 @@ import com.atlauncher.data.Server;
 import com.atlauncher.data.minecraft.loaders.LoaderVersion;
 import com.atlauncher.data.modrinth.ModrinthDependency;
 import com.atlauncher.data.modrinth.ModrinthDependencyType;
+import com.atlauncher.data.modrinth.ModrinthDownloadMetadata;
 import com.atlauncher.data.modrinth.ModrinthFile;
 import com.atlauncher.data.modrinth.ModrinthProject;
 import com.atlauncher.data.modrinth.ModrinthProjectType;
@@ -69,7 +70,9 @@ public class ModrinthVersionSelectorDialog extends JDialog {
     private final ModrinthProject project;
     private final ModManagement instanceOrServer;
     private final com.atlauncher.data.Type installType;
+    private ModrinthDownloadMetadata.Reason downloadReason = ModrinthDownloadMetadata.Reason.STANDALONE;
     private String installedVersionId = null;
+    private String dependentVersionId = null;
     private boolean selectNewest = true;
 
     private final JPanel dependenciesPanel = new JPanel(new FlowLayout());
@@ -87,11 +90,11 @@ public class ModrinthVersionSelectorDialog extends JDialog {
     private JComboBox<ComboItem<ModrinthFile>> filesDropdown;
 
     public ModrinthVersionSelectorDialog(ModrinthProject mod, ModManagement instanceOrServer) {
-        this(App.launcher.getParent(), mod, instanceOrServer, null);
+        this(App.launcher.getParent(), mod, instanceOrServer, (com.atlauncher.data.Type) null);
     }
 
     public ModrinthVersionSelectorDialog(Window parent, ModrinthProject mod, ModManagement instanceOrServer) {
-        this(parent, mod, instanceOrServer, null);
+        this(parent, mod, instanceOrServer, (com.atlauncher.data.Type) null);
     }
 
     public ModrinthVersionSelectorDialog(Window parent, ModrinthProject mod, ModManagement instanceOrServer,
@@ -103,6 +106,19 @@ public class ModrinthVersionSelectorDialog extends JDialog {
         this.installType = installType;
 
         setupComponents();
+    }
+
+    public ModrinthVersionSelectorDialog(Window parent, ModrinthProject mod, ModManagement instanceOrServer,
+        ModrinthDownloadMetadata.Reason downloadReason) {
+        this(parent, mod, instanceOrServer, downloadReason, null);
+    }
+
+    public ModrinthVersionSelectorDialog(Window parent, ModrinthProject mod, ModManagement instanceOrServer,
+        ModrinthDownloadMetadata.Reason downloadReason, String dependentVersionId) {
+        this(parent, mod, instanceOrServer, (com.atlauncher.data.Type) null);
+
+        this.downloadReason = downloadReason;
+        this.dependentVersionId = dependentVersionId;
     }
 
     public ModrinthVersionSelectorDialog(Window parent, ModrinthProject mod, List<ModrinthVersion> versions,
@@ -121,6 +137,14 @@ public class ModrinthVersionSelectorDialog extends JDialog {
         this.installType = installType;
 
         setupComponents();
+    }
+
+    public ModrinthVersionSelectorDialog(Window parent, ModrinthProject mod, List<ModrinthVersion> versions,
+        ModManagement instanceOrServer, String installedVersionId, com.atlauncher.data.Type installType,
+        ModrinthDownloadMetadata.Reason downloadReason) {
+        this(parent, mod, versions, instanceOrServer, installedVersionId, installType);
+
+        this.downloadReason = downloadReason;
     }
 
     public ModrinthVersionSelectorDialog(Window parent, ModrinthProject mod, ModManagement instanceOrServer,
@@ -189,6 +213,11 @@ public class ModrinthVersionSelectorDialog extends JDialog {
         }
 
         return "mod";
+    }
+
+    public String getSelectedVersionId() {
+        Object selected = versionsDropdown.getSelectedItem();
+        return selected instanceof ModrinthVersion ? ((ModrinthVersion) selected).id : null;
     }
 
     public void reloadDependenciesPanel() {
@@ -378,7 +407,8 @@ public class ModrinthVersionSelectorDialog extends JDialog {
                 com.atlauncher.data.Type effectiveInstallType = getEffectiveInstallType(version);
 
                 Analytics.trackEvent(project.getAnalyticsEventForAdded(version, effectiveInstallType));
-                instanceOrServer.addFileFromModrinth(project, version, file, effectiveInstallType, progressDialog);
+                instanceOrServer.addFileFromModrinth(project, version, file, effectiveInstallType, downloadReason,
+                    dependentVersionId, progressDialog);
                 progressDialog.close();
             }));
             progressDialog.start();

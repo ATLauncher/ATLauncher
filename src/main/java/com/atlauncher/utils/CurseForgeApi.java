@@ -53,7 +53,8 @@ import okhttp3.RequestBody;
  * Various utility methods for interacting with the CurseForge API.
  */
 public class CurseForgeApi {
-    private final static Headers REQUEST_HEADERS = Headers.of("x-api-key", Constants.CURSEFORGE_CORE_API_KEY);
+    private final static Headers REQUEST_HEADERS = Headers.of(Constants.CURSEFORGE_API_KEY_HEADER,
+            Constants.CURSEFORGE_CORE_API_KEY);
 
     public static List<CurseForgeProject> searchCurseForge(int sectionId, String query, int page,
             List<Integer> modLoaderTypes,

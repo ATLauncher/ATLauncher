@@ -45,6 +45,7 @@ import com.atlauncher.data.ftb.FTBPackManifest;
 import com.atlauncher.data.minecraft.VersionManifestVersion;
 import com.atlauncher.data.minecraft.loaders.LoaderVersion;
 import com.atlauncher.data.modrinth.ModrinthProject;
+import com.atlauncher.data.modrinth.ModrinthVersion;
 import com.atlauncher.data.modrinth.pack.ModrinthModpackManifest;
 import com.atlauncher.data.multimc.MultiMCManifest;
 import com.atlauncher.data.technic.TechnicModpack;
@@ -72,6 +73,7 @@ public abstract class Installable {
     public CurseForgeManifest curseForgeManifest;
     public Path curseExtractedPath;
     public ModrinthProject modrinthProject;
+    public ModrinthVersion modrinthVersion;
     public ModrinthModpackManifest modrinthManifest;
     public Path modrinthExtractedPath;
     public FTBPackManifest ftbPackManifest;
@@ -164,8 +166,8 @@ public abstract class Installable {
 
         final InstanceInstaller instanceInstaller = new InstanceInstaller(instanceName, pack, version, isReinstall,
                 isServer, changingLoader, saveMods, showModsChooser, loaderVersion, curseForgeManifest,
-                curseExtractedPath, ftbPackManifest, modrinthManifest, modrinthExtractedPath, multiMCManifest,
-                multiMCExtractedPath, technicModpack, dialog) {
+                curseExtractedPath, ftbPackManifest, modrinthVersion, modrinthManifest, modrinthExtractedPath,
+                multiMCManifest, multiMCExtractedPath, technicModpack, dialog) {
 
             @Override
             protected void done() {

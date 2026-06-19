@@ -39,6 +39,7 @@ import com.atlauncher.data.curseforge.CurseForgeFile;
 import com.atlauncher.data.curseforge.CurseForgeProject;
 import com.atlauncher.data.minecraft.FabricMod;
 import com.atlauncher.data.minecraft.MCMod;
+import com.atlauncher.data.modrinth.ModrinthDownloadMetadata;
 import com.atlauncher.data.modrinth.ModrinthProject;
 import com.atlauncher.data.modrinth.ModrinthVersion;
 import com.atlauncher.exceptions.InvalidMinecraftVersion;
@@ -530,7 +531,8 @@ public class DisableableMod implements Serializable {
             }
 
             ModrinthVersionSelectorDialog modrinthVersionSelectorDialog = new ModrinthVersionSelectorDialog(parent,
-                    pair.left(), pair.right(), instanceOrServer, modrinthVersion.id, this.type);
+                    pair.left(), pair.right(), instanceOrServer, modrinthVersion.id, this.type,
+                    ModrinthDownloadMetadata.Reason.UPDATE);
             modrinthVersionSelectorDialog.setVisible(true);
         }
 

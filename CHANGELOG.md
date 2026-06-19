@@ -8,9 +8,11 @@ This changelog only contains the changes that are unreleased. For changes for in
 ### New Features
 
 - Support installing datapacks to the datapacks folder and support for adding and managing them
+- Add Modrinth download metadata to Modrinth CDN downloads [#1028]
 
 ### Fixes
 
 - Fixed slow and jumpy scrolling in the Edit Mods dialog on macOS
+- Add api key on CurseForge cdn download links as required by CurseForge
 
 ### Misc

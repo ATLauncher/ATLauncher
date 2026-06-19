@@ -39,7 +39,7 @@ import com.atlauncher.managers.LogManager;
 import com.atlauncher.network.DownloadException;
 import com.atlauncher.utils.MicrosoftAuthAPI;
 
-public class MicrosoftAccount extends AbstractAccount {
+public final class MicrosoftAccount extends AbstractAccount {
     /**
      * Auto generated serial.
      */
