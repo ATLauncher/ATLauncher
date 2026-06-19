@@ -712,6 +712,12 @@ public class Mod {
                 }
                 Utils.copyFile(fileLocation, installer.root.resolve("resourcepacks").toFile());
                 break;
+            case datapack:
+                if (!installer.root.resolve("datapacks").toFile().exists()) {
+                    installer.root.resolve("datapacks").toFile().mkdir();
+                }
+                Utils.copyFile(fileLocation, installer.root.resolve("datapacks").toFile());
+                break;
             case texturepackextract:
                 if (!installer.root.resolve("texturepacks").toFile().exists()) {
                     installer.root.resolve("texturepacks").toFile().mkdir();
@@ -904,6 +910,9 @@ public class Mod {
                 break;
             case resourcepack:
                 base = installer.root.resolve("resourcepacks").toFile();
+                break;
+            case datapack:
+                base = installer.root.resolve("datapacks").toFile();
                 break;
             case mods:
                 base = installer.root.resolve("mods").toFile();

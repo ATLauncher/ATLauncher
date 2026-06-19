@@ -32,6 +32,10 @@ public class ModrinthModpackFile {
     public Long fileSize = null;
 
     public ModType getType() {
+        if (path.startsWith("datapacks/")) {
+            return ModType.datapack;
+        }
+
         if (path.startsWith("resourcepacks/")) {
             return ModType.resourcepack;
         }
@@ -78,7 +82,7 @@ public class ModrinthModpackFile {
 
         if (mod.path.startsWith("\\") || mod.path.startsWith("/") || mod.path.contains("..")
                 || mod.path.matches("/^[A-Za-z]:/")) {
-            mod.path = "mods/";
+            mod.path = mod.type == ModType.datapack ? "datapacks/" : "mods/";
         }
 
         if (fileSize != null) {

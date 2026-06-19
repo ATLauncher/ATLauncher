@@ -24,6 +24,7 @@ import java.util.List;
 import com.atlauncher.data.curseforge.CurseForgeFile;
 import com.atlauncher.data.curseforge.CurseForgeProject;
 import com.atlauncher.data.minecraft.loaders.LoaderVersion;
+import com.atlauncher.data.modrinth.ModrinthDownloadMetadata;
 import com.atlauncher.data.modrinth.ModrinthFile;
 import com.atlauncher.data.modrinth.ModrinthProject;
 import com.atlauncher.data.modrinth.ModrinthVersion;
@@ -55,7 +56,19 @@ public interface ModManagement {
 
     public abstract void addFileFromCurseForge(CurseForgeProject mod, CurseForgeFile file, ProgressDialog<Void> dialog);
 
+    public default void addFileFromModrinth(ModrinthProject project, ModrinthVersion version, ModrinthFile file,
+            Type installType, ProgressDialog<Void> dialog) {
+        addFileFromModrinth(project, version, file, installType, ModrinthDownloadMetadata.Reason.STANDALONE, null,
+            dialog);
+    }
+
+    public default void addFileFromModrinth(ModrinthProject project, ModrinthVersion version, ModrinthFile file,
+            Type installType, ModrinthDownloadMetadata.Reason downloadReason, ProgressDialog<Void> dialog) {
+        addFileFromModrinth(project, version, file, installType, downloadReason, null, dialog);
+    }
+
     public abstract void addFileFromModrinth(ModrinthProject project, ModrinthVersion version, ModrinthFile file,
+            Type installType, ModrinthDownloadMetadata.Reason downloadReason, String dependentVersionId,
             ProgressDialog<Void> dialog);
 
     public abstract void scanMissingMods(Window parent);

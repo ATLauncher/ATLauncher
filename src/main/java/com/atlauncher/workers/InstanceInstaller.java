@@ -105,6 +105,7 @@ import com.atlauncher.data.minecraft.loaders.LoaderVersion;
 import com.atlauncher.data.minecraft.loaders.fabric.FabricMetaVersion;
 import com.atlauncher.data.minecraft.loaders.forge.ForgeLoader;
 import com.atlauncher.data.modrinth.ModrinthFile;
+import com.atlauncher.data.modrinth.ModrinthDownloadMetadata;
 import com.atlauncher.data.modrinth.ModrinthProject;
 import com.atlauncher.data.modrinth.ModrinthVersion;
 import com.atlauncher.data.modrinth.pack.ModrinthModpackManifest;
@@ -166,6 +167,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
     public LoaderVersion loaderVersion;
     public CurseForgeManifest curseForgeManifest;
     public Path curseForgeExtractedPath;
+    public ModrinthVersion modrinthVersion;
     public ModrinthModpackManifest modrinthManifest;
     public Path modrinthExtractedPath;
     public final FTBPackManifest ftbPackManifest;
@@ -214,7 +216,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
     public InstanceInstaller(String name, com.atlauncher.data.Pack pack, com.atlauncher.data.PackVersion version,
         boolean isReinstall, boolean isServer, boolean changingLoader, boolean saveMods,
         boolean showModsChooser, LoaderVersion loaderVersion, CurseForgeManifest curseForgeManifest,
-        Path curseForgeExtractedPath, FTBPackManifest ftbPackManifest,
+        Path curseForgeExtractedPath, FTBPackManifest ftbPackManifest, ModrinthVersion modrinthVersion,
         ModrinthModpackManifest modrinthManifest, Path modrinthExtractedPath, MultiMCManifest multiMCManifest,
         Path multiMCExtractedPath, TechnicModpack technicModpack, JDialog dialog) {
         this.name = name;
@@ -239,6 +241,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         this.curseForgeManifest = curseForgeManifest;
         this.curseForgeExtractedPath = curseForgeExtractedPath;
         this.ftbPackManifest = ftbPackManifest;
+        this.modrinthVersion = modrinthVersion;
         this.modrinthManifest = modrinthManifest;
         this.modrinthExtractedPath = modrinthExtractedPath;
         this.multiMCManifest = multiMCManifest;
@@ -995,6 +998,8 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
 
         com.atlauncher.network.Download manifestDownload = com.atlauncher.network.Download.build().setUrl(file.url)
             .downloadTo(manifestFile).withInstanceInstaller(this)
+            .withModrinthDownloadMetadata(ModrinthDownloadMetadata.from(ModrinthDownloadMetadata.Reason.STANDALONE,
+                version._modrinthVersion, this.loaderVersion))
             .withHttpClient(Network.createProgressClient(this));
 
         if (file.hashes != null && file.hashes.containsKey("sha512")) {
@@ -2158,6 +2163,22 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                     LogManager.logStackTrace(e);
                 }
             }
+
+            if (Files.exists(
+                curseForgeExtractedPath
+                    .resolve(Optional.ofNullable(curseForgeManifest.overrides).orElse("overrides") + "/datapacks"))) {
+                try (Stream<Path> list = Files.list(
+                    curseForgeExtractedPath
+                        .resolve(Optional.ofNullable(curseForgeManifest.overrides).orElse("overrides")
+                            + "/datapacks"))) {
+                    this.modsInstalled.addAll(list.filter(p -> !Files.isDirectory(p))
+                        .filter(p -> p.toString().toLowerCase(Locale.ENGLISH).endsWith(".jar")
+                            || p.toString().toLowerCase(Locale.ENGLISH).endsWith(".zip"))
+                        .map(p -> convertPathToDisableableMod(p, Type.datapack)).collect(Collectors.toList()));
+                } catch (IOException e) {
+                    LogManager.logStackTrace(e);
+                }
+            }
         }
 
         if (this.modrinthManifest != null) {
@@ -2179,6 +2200,17 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                         .filter(p -> p.toString().toLowerCase(Locale.ENGLISH).endsWith(".jar")
                             || p.toString().toLowerCase(Locale.ENGLISH).endsWith(".zip"))
                         .map(p -> convertPathToDisableableMod(p, Type.dependency)).collect(Collectors.toList()));
+                } catch (IOException e) {
+                    LogManager.logStackTrace(e);
+                }
+            }
+
+            if (Files.exists(modrinthExtractedPath.resolve("overrides/datapacks"))) {
+                try (Stream<Path> list = Files.list(modrinthExtractedPath.resolve("overrides/datapacks"))) {
+                    this.modsInstalled.addAll(list.filter(p -> !Files.isDirectory(p))
+                        .filter(p -> p.toString().toLowerCase(Locale.ENGLISH).endsWith(".jar")
+                            || p.toString().toLowerCase(Locale.ENGLISH).endsWith(".zip"))
+                        .map(p -> convertPathToDisableableMod(p, Type.datapack)).collect(Collectors.toList()));
                 } catch (IOException e) {
                     LogManager.logStackTrace(e);
                 }
@@ -3129,7 +3161,11 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         this.selectedMods.stream().filter(mod -> mod.download != DownloadType.browser).forEach(mod -> {
             com.atlauncher.network.Download download = new com.atlauncher.network.Download()
                 .setUrl(mod.getDownloadUrl()).downloadTo(FileSystem.DOWNLOADS.resolve(mod.getFile()))
-                .size(mod.filesize).withInstanceInstaller(this).withHttpClient(httpClient);
+                .size(mod.filesize).withInstanceInstaller(this)
+                .withModrinthDownloadMetadata(ModrinthDownloadMetadata.from(
+                    ModrinthDownloadMetadata.Reason.MODPACK, this.minecraftVersion.id, this.loaderVersion,
+                    this.modrinthVersion != null ? this.modrinthVersion.id : null))
+                .withHttpClient(httpClient);
 
             if (mod.ignoreFailures) {
                 download = download.ignoreFailures();

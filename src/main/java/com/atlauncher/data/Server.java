@@ -75,6 +75,7 @@ import com.atlauncher.data.minecraft.JavaVersion;
 import com.atlauncher.data.minecraft.MCMod;
 import com.atlauncher.data.minecraft.loaders.LoaderVersion;
 import com.atlauncher.data.modrinth.ModrinthFile;
+import com.atlauncher.data.modrinth.ModrinthDownloadMetadata;
 import com.atlauncher.data.modrinth.ModrinthProject;
 import com.atlauncher.data.modrinth.ModrinthProjectType;
 import com.atlauncher.data.modrinth.ModrinthVersion;
@@ -968,7 +969,8 @@ public class Server implements ModManagement {
             .collect(Collectors.toList());
 
         DisableableMod dm = new DisableableMod(mod.name, file.displayName, true, file.fileName,
-            mod.getRootCategoryId() == Constants.CURSEFORGE_PLUGINS_SECTION_ID ? Type.plugins : Type.mods,
+            mod.getRootCategoryId() == Constants.CURSEFORGE_DATA_PACKS_SECTION_ID ? Type.datapack
+                : mod.getRootCategoryId() == Constants.CURSEFORGE_PLUGINS_SECTION_ID ? Type.plugins : Type.mods,
             null, mod.summary, false, true, true, false, mod, file);
 
         // check for mod on Modrinth
@@ -996,18 +998,37 @@ public class Server implements ModManagement {
 
     @Override
     public void addFileFromModrinth(ModrinthProject project, ModrinthVersion version, ModrinthFile file,
+        Type installType, ModrinthDownloadMetadata.Reason downloadReason, String dependentVersionId,
         ProgressDialog<Void> dialog) {
         ModrinthFile fileToDownload = Optional.ofNullable(file).orElse(version.getPrimaryFile());
-        boolean isMod = project.projectType == ModrinthProjectType.MOD && !version.loaders.contains("purpur")
-            && !version.loaders.contains("paper")
-            && !version.loaders.contains("spigot") && !version.loaders.contains("bukkit");
+        Type modType = getTypeFromModrinthMod(project, version, installType);
 
         Path downloadLocation = FileSystem.DOWNLOADS.resolve(fileToDownload.filename);
-        Path finalLocation = isMod
-            ? this.getRoot().resolve("mods").resolve(fileToDownload.filename)
-            : this.getRoot().resolve("plugins").resolve(fileToDownload.filename);
+        Path finalLocation;
+        switch (modType) {
+            case datapack:
+                finalLocation = this.getRoot().resolve("datapacks").resolve(fileToDownload.filename);
+                break;
+            case plugins:
+                finalLocation = this.getRoot().resolve("plugins").resolve(fileToDownload.filename);
+                break;
+            default:
+                finalLocation = this.getRoot().resolve("mods").resolve(fileToDownload.filename);
+                break;
+        }
+        // find mods with the same Modrinth id
+        List<DisableableMod> sameMods = this.mods.stream().filter(
+                installedMod -> installedMod.isFromModrinth()
+                    && installedMod.modrinthProject.id.equalsIgnoreCase(project.id))
+            .collect(Collectors.toList());
+
+        ModrinthDownloadMetadata.Reason effectiveReason =
+            sameMods.isEmpty() ? downloadReason : ModrinthDownloadMetadata.Reason.UPDATE;
+
         com.atlauncher.network.Download download = com.atlauncher.network.Download.build().setUrl(fileToDownload.url)
             .downloadTo(downloadLocation).copyTo(finalLocation)
+            .withModrinthDownloadMetadata(ModrinthDownloadMetadata.from(effectiveReason, this.getMinecraftVersion(),
+                this.getLoaderVersion(), dependentVersionId))
             .withHttpClient(Network.createProgressClient(dialog));
 
         if (fileToDownload.hashes != null && fileToDownload.hashes.containsKey("sha512")) {
@@ -1024,12 +1045,6 @@ public class Server implements ModManagement {
         if (Files.exists(finalLocation)) {
             FileUtils.delete(finalLocation);
         }
-
-        // find mods with the same Modrinth id
-        List<DisableableMod> sameMods = this.mods.stream().filter(
-                installedMod -> installedMod.isFromModrinth()
-                    && installedMod.modrinthProject.id.equalsIgnoreCase(project.id))
-            .collect(Collectors.toList());
 
         // delete mod files that are the same mod id
         sameMods.forEach(disableableMod -> Utils.delete(disableableMod.getFile(this)));
@@ -1055,7 +1070,7 @@ public class Server implements ModManagement {
             .collect(Collectors.toList());
 
         DisableableMod dm = new DisableableMod(project.title, version.name, true, fileToDownload.filename,
-            isMod ? Type.mods : Type.plugins,
+            modType,
             null, project.description, false, true, true, false, project, version);
 
         // check for mod on CurseForge
@@ -1088,6 +1103,25 @@ public class Server implements ModManagement {
         App.TOASTER.pop(GetText.tr("{0} Installed", project.title));
     }
 
+    private static Type getTypeFromModrinthMod(ModrinthProject project, ModrinthVersion version, Type installType) {
+        if (installType == Type.datapack) {
+            return Type.datapack;
+        }
+
+        if (project.projectType == ModrinthProjectType.DATAPACK
+            || (version != null && version.loaders != null && version.loaders.contains("datapack"))) {
+            return Type.datapack;
+        }
+
+        boolean isPlugin = project.projectType == ModrinthProjectType.PLUGIN
+            || version.loaders.contains("purpur")
+            || version.loaders.contains("paper")
+            || version.loaders.contains("spigot")
+            || version.loaders.contains("bukkit");
+
+        return isPlugin ? Type.plugins : Type.mods;
+    }
+
     @Override
     public void scanMissingMods(Window parent) {
         PerformanceManager.start("Server::scanMissingMods - CheckForAddedMods");
@@ -1095,14 +1129,20 @@ public class Server implements ModManagement {
         // files to scan
         List<Path> files = new ArrayList<>();
 
-        // find the mods/plugins that have been added by the user manually
-        for (Path path : Arrays.asList(ROOT.resolve("mods"), ROOT.resolve("plugins"))) {
+        // find the mods/plugins/datapacks that have been added by the user manually
+        for (Path path : Arrays.asList(ROOT.resolve("mods"), ROOT.resolve("plugins"), ROOT.resolve("datapacks"))) {
             if (!Files.exists(path)) {
                 continue;
             }
 
-            com.atlauncher.data.Type fileType = path.equals(ROOT.resolve("plugins")) ? com.atlauncher.data.Type.plugins
-                : com.atlauncher.data.Type.mods;
+            com.atlauncher.data.Type fileType;
+            if (path.equals(ROOT.resolve("plugins"))) {
+                fileType = com.atlauncher.data.Type.plugins;
+            } else if (path.equals(ROOT.resolve("datapacks"))) {
+                fileType = com.atlauncher.data.Type.datapack;
+            } else {
+                fileType = com.atlauncher.data.Type.mods;
+            }
 
             try (Stream<Path> stream = Files.list(path)) {
                 files.addAll(stream
@@ -1123,9 +1163,14 @@ public class Server implements ModManagement {
             progressDialog.addThread(new Thread(() -> {
                 List<DisableableMod> allMods = files.parallelStream()
                     .map(file -> {
-                        com.atlauncher.data.Type fileType = file.getParent().equals(ROOT.resolve("plugins"))
-                            ? com.atlauncher.data.Type.plugins
-                            : com.atlauncher.data.Type.mods;
+                        com.atlauncher.data.Type fileType;
+                        if (file.getParent().equals(ROOT.resolve("plugins"))) {
+                            fileType = com.atlauncher.data.Type.plugins;
+                        } else if (file.getParent().equals(ROOT.resolve("datapacks"))) {
+                            fileType = com.atlauncher.data.Type.datapack;
+                        } else {
+                            fileType = com.atlauncher.data.Type.mods;
+                        }
 
                         return DisableableMod.generateMod(file.toFile(), fileType,
                             !file.getParent().equals(ROOT.resolve("disabledmods")));

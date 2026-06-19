@@ -19,5 +19,5 @@ package com.atlauncher.data;
 
 public enum Type {
     jar, dependency, forge, mcpc, worlds, mods, plugins, ic2lib, denlib, flan, coremods, extract, decomp, millenaire,
-    texturepack, resourcepack, texturepackextract, resourcepackextract, shaderpack
+    texturepack, resourcepack, texturepackextract, resourcepackextract, shaderpack, datapack
 }

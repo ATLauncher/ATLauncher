@@ -3,16 +3,18 @@
 This changelog only contains the changes that are unreleased. For changes for individual releases, please visit the
 [releases](https://github.com/ATLauncher/ATLauncher/releases) page on GitHub.
 
-## 3.4.40.3
+## 3.4.41.0
 
 ### New Features
-Adds two new CLI options:
 
-1. "--launch-server", requires one string argument same as "--launch"
-2. "--server-gui", flag that makes server launch with GUI if set
+- Allow launching servers from the cli with "--launch-server name" and optionally "--server-gui" to show the gui
+- Support installing datapacks to the datapacks folder and support for adding and managing them
+- Add Modrinth download metadata to Modrinth CDN downloads [#1028]
 
-With these arguments, a server can be launched directly from the CLI instead of requiring use of the GUI.
 ### Fixes
-None
+
+- Fixed slow and jumpy scrolling in the Edit Mods dialog on macOS
+- Add api key on CurseForge cdn download links as required by CurseForge
+
 ### Misc
 None

@@ -375,6 +375,7 @@ public class InstanceInstallerDialog extends JDialog {
                 installable = new ModrinthInstallable(pack, packVersion, loaderVersion);
 
                 installable.modrinthProject = modrinthProject;
+                installable.modrinthVersion = packVersion._modrinthVersion;
             } else if (modrinthManifest != null) {
                 installable = new ModrinthManifestInstallable(pack, packVersion, loaderVersion);
 

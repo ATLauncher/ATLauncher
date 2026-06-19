@@ -118,6 +118,7 @@ import com.atlauncher.data.minecraft.loaders.legacyfabric.LegacyFabricLoader;
 import com.atlauncher.data.minecraft.loaders.neoforge.NeoForgeLoader;
 import com.atlauncher.data.minecraft.loaders.quilt.QuiltLoader;
 import com.atlauncher.data.modrinth.ModrinthFile;
+import com.atlauncher.data.modrinth.ModrinthDownloadMetadata;
 import com.atlauncher.data.modrinth.ModrinthProject;
 import com.atlauncher.data.modrinth.ModrinthProjectType;
 import com.atlauncher.data.modrinth.ModrinthSide;
@@ -2661,13 +2662,7 @@ public class Instance extends MinecraftVersion implements ModManagement {
     }
 
     public boolean shouldUseLegacyLaunch() {
-        try {
-            String[] versionParts = id.split("\\.", 3);
-
-            return Integer.parseInt(versionParts[0]) == 1 && Integer.parseInt(versionParts[1]) < 6;
-        } catch (NumberFormatException e) {
-            return false;
-        }
+        return Utils.matchVersion(id, "1.5", true, true);
     }
 
     public boolean usesLegacyLaunch() {
@@ -2775,6 +2770,7 @@ public class Instance extends MinecraftVersion implements ModManagement {
 
     private List<Path> getModPathsFromFilesystem() {
         return getModPathsFromFilesystem(Arrays.asList(ROOT.resolve("mods"),
+            ROOT.resolve("datapacks"),
             ROOT.resolve("resourcepacks"),
             ROOT.resolve("shaderpacks"),
             ROOT.resolve("jarmods")));
@@ -2809,7 +2805,8 @@ public class Instance extends MinecraftVersion implements ModManagement {
 
         // find the mods that have been added by the user manually
         for (Path path : Arrays.asList(ROOT.resolve("mods"), ROOT.resolve("disabledmods"),
-            ROOT.resolve("resourcepacks"), ROOT.resolve("shaderpacks"), ROOT.resolve("jarmods"))) {
+            ROOT.resolve("datapacks"), ROOT.resolve("resourcepacks"), ROOT.resolve("shaderpacks"),
+            ROOT.resolve("jarmods"))) {
             if (!Files.exists(path)) {
                 continue;
             }
@@ -3048,6 +3045,10 @@ public class Instance extends MinecraftVersion implements ModManagement {
 
     @NotNull
     private Type getTypeOfFileFromPath(Path path) {
+        if (path.equals(ROOT.resolve("datapacks"))) {
+            return Type.datapack;
+        }
+
         if (path.equals(ROOT.resolve("resourcepacks"))) {
             return Type.resourcepack;
         }
@@ -3454,6 +3455,10 @@ public class Instance extends MinecraftVersion implements ModManagement {
 
     @NotNull
     private static Type getTypeFromCurseForgeMod(CurseForgeProject mod) {
+        if (mod.getRootCategoryId() == Constants.CURSEFORGE_DATA_PACKS_SECTION_ID) {
+            return Type.datapack;
+        }
+
         if (mod.getRootCategoryId() == Constants.CURSEFORGE_RESOURCE_PACKS_SECTION_ID) {
             return Type.resourcepack;
         }
@@ -3471,17 +3476,40 @@ public class Instance extends MinecraftVersion implements ModManagement {
 
     @Override
     public void addFileFromModrinth(ModrinthProject mod, ModrinthVersion version, ModrinthFile file,
+        Type installType, ModrinthDownloadMetadata.Reason downloadReason, String dependentVersionId,
         ProgressDialog<Void> dialog) {
         ModrinthFile fileToDownload = Optional.ofNullable(file).orElse(version.getPrimaryFile());
+        Type modType = getTypeFromModrinthMod(mod, version, installType);
 
         Path downloadLocation = FileSystem.DOWNLOADS.resolve(fileToDownload.filename);
-        Path finalLocation = mod.projectType == ModrinthProjectType.MOD
-            ? this.getRoot().resolve("mods").resolve(fileToDownload.filename)
-            : (mod.projectType == ModrinthProjectType.SHADER
-                ? this.getRoot().resolve("shaderpacks").resolve(fileToDownload.filename)
-                : this.getRoot().resolve("resourcepacks").resolve(fileToDownload.filename));
+        Path finalLocation;
+        switch (modType) {
+            case datapack:
+                finalLocation = this.getRoot().resolve("datapacks").resolve(fileToDownload.filename);
+                break;
+            case shaderpack:
+                finalLocation = this.getRoot().resolve("shaderpacks").resolve(fileToDownload.filename);
+                break;
+            case resourcepack:
+                finalLocation = this.getRoot().resolve("resourcepacks").resolve(fileToDownload.filename);
+                break;
+            default:
+                finalLocation = this.getRoot().resolve("mods").resolve(fileToDownload.filename);
+                break;
+        }
+        // find mods with the same Modrinth id
+        List<DisableableMod> sameMods = this.launcher.mods.stream().filter(
+                installedMod -> installedMod.isFromModrinth()
+                    && installedMod.modrinthProject.id.equalsIgnoreCase(mod.id))
+            .collect(Collectors.toList());
+
+        ModrinthDownloadMetadata.Reason effectiveReason =
+            sameMods.isEmpty() ? downloadReason : ModrinthDownloadMetadata.Reason.UPDATE;
+
         com.atlauncher.network.Download download = com.atlauncher.network.Download.build().setUrl(fileToDownload.url)
             .downloadTo(downloadLocation).copyTo(finalLocation)
+            .withModrinthDownloadMetadata(ModrinthDownloadMetadata.from(effectiveReason, this.getMinecraftVersion(),
+                this.getLoaderVersion(), dependentVersionId))
             .withHttpClient(Network.createProgressClient(dialog));
 
         if (fileToDownload.hashes != null && fileToDownload.hashes.containsKey("sha512")) {
@@ -3498,12 +3526,6 @@ public class Instance extends MinecraftVersion implements ModManagement {
         if (Files.exists(finalLocation)) {
             FileUtils.delete(finalLocation);
         }
-
-        // find mods with the same Modrinth id
-        List<DisableableMod> sameMods = this.launcher.mods.stream().filter(
-                installedMod -> installedMod.isFromModrinth()
-                    && installedMod.modrinthProject.id.equalsIgnoreCase(mod.id))
-            .collect(Collectors.toList());
 
         // delete mod files that are the same mod id
         sameMods.forEach(disableableMod -> Utils.delete(disableableMod.getFile(this)));
@@ -3527,8 +3549,6 @@ public class Instance extends MinecraftVersion implements ModManagement {
                 installedMod -> !installedMod.isFromModrinth()
                     || !installedMod.modrinthProject.id.equalsIgnoreCase(mod.id))
             .collect(Collectors.toList());
-
-        Type modType = getTypeFromModrinthMod(mod);
 
         DisableableMod dm = new DisableableMod(mod.title, version.name, true, fileToDownload.filename, modType,
             null, mod.description, false, true, true, false, mod, version);
@@ -3564,7 +3584,16 @@ public class Instance extends MinecraftVersion implements ModManagement {
     }
 
     @NotNull
-    private static Type getTypeFromModrinthMod(ModrinthProject mod) {
+    private static Type getTypeFromModrinthMod(ModrinthProject mod, ModrinthVersion version, Type installType) {
+        if (installType == Type.datapack) {
+            return Type.datapack;
+        }
+
+        if (mod.projectType == ModrinthProjectType.DATAPACK
+            || (version != null && version.loaders != null && version.loaders.contains("datapack"))) {
+            return Type.datapack;
+        }
+
         if (mod.projectType == ModrinthProjectType.MOD) {
             return Type.mods;
         }

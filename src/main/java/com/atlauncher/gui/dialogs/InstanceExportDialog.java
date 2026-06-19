@@ -275,6 +275,7 @@ public class InstanceExportDialog extends JDialog {
                 || filename.getName().equalsIgnoreCase("oresources")
                 || filename.getName().equalsIgnoreCase("resourcepacks")
                 || filename.getName().equalsIgnoreCase("shaderpacks")
+                || filename.getName().equalsIgnoreCase("datapacks")
                 || filename.getName().equalsIgnoreCase("resources")
                 || filename.getName().equalsIgnoreCase("scripts")) {
                 checkBox.setSelected(true);

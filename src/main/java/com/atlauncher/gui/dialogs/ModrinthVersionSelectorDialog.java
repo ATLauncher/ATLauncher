@@ -48,6 +48,7 @@ import com.atlauncher.data.Server;
 import com.atlauncher.data.minecraft.loaders.LoaderVersion;
 import com.atlauncher.data.modrinth.ModrinthDependency;
 import com.atlauncher.data.modrinth.ModrinthDependencyType;
+import com.atlauncher.data.modrinth.ModrinthDownloadMetadata;
 import com.atlauncher.data.modrinth.ModrinthFile;
 import com.atlauncher.data.modrinth.ModrinthProject;
 import com.atlauncher.data.modrinth.ModrinthProjectType;
@@ -68,7 +69,10 @@ public class ModrinthVersionSelectorDialog extends JDialog {
     private int filesLength = 0;
     private final ModrinthProject project;
     private final ModManagement instanceOrServer;
+    private final com.atlauncher.data.Type installType;
+    private ModrinthDownloadMetadata.Reason downloadReason = ModrinthDownloadMetadata.Reason.STANDALONE;
     private String installedVersionId = null;
+    private String dependentVersionId = null;
     private boolean selectNewest = true;
 
     private final JPanel dependenciesPanel = new JPanel(new FlowLayout());
@@ -86,40 +90,134 @@ public class ModrinthVersionSelectorDialog extends JDialog {
     private JComboBox<ComboItem<ModrinthFile>> filesDropdown;
 
     public ModrinthVersionSelectorDialog(ModrinthProject mod, ModManagement instanceOrServer) {
-        this(App.launcher.getParent(), mod, instanceOrServer);
+        this(App.launcher.getParent(), mod, instanceOrServer, (com.atlauncher.data.Type) null);
     }
 
     public ModrinthVersionSelectorDialog(Window parent, ModrinthProject mod, ModManagement instanceOrServer) {
+        this(parent, mod, instanceOrServer, (com.atlauncher.data.Type) null);
+    }
+
+    public ModrinthVersionSelectorDialog(Window parent, ModrinthProject mod, ModManagement instanceOrServer,
+        com.atlauncher.data.Type installType) {
         super(parent, ModalityType.DOCUMENT_MODAL);
 
         this.project = mod;
         this.instanceOrServer = instanceOrServer;
+        this.installType = installType;
 
         setupComponents();
     }
 
+    public ModrinthVersionSelectorDialog(Window parent, ModrinthProject mod, ModManagement instanceOrServer,
+        ModrinthDownloadMetadata.Reason downloadReason) {
+        this(parent, mod, instanceOrServer, downloadReason, null);
+    }
+
+    public ModrinthVersionSelectorDialog(Window parent, ModrinthProject mod, ModManagement instanceOrServer,
+        ModrinthDownloadMetadata.Reason downloadReason, String dependentVersionId) {
+        this(parent, mod, instanceOrServer, (com.atlauncher.data.Type) null);
+
+        this.downloadReason = downloadReason;
+        this.dependentVersionId = dependentVersionId;
+    }
+
     public ModrinthVersionSelectorDialog(Window parent, ModrinthProject mod, List<ModrinthVersion> versions,
         ModManagement instanceOrServer, String installedVersionId) {
+        this(parent, mod, versions, instanceOrServer, installedVersionId, null);
+    }
+
+    public ModrinthVersionSelectorDialog(Window parent, ModrinthProject mod, List<ModrinthVersion> versions,
+        ModManagement instanceOrServer, String installedVersionId, com.atlauncher.data.Type installType) {
         super(parent, ModalityType.DOCUMENT_MODAL);
 
         this.project = mod;
         this.versionsData = versions;
         this.instanceOrServer = instanceOrServer;
         this.installedVersionId = installedVersionId;
+        this.installType = installType;
 
         setupComponents();
     }
 
+    public ModrinthVersionSelectorDialog(Window parent, ModrinthProject mod, List<ModrinthVersion> versions,
+        ModManagement instanceOrServer, String installedVersionId, com.atlauncher.data.Type installType,
+        ModrinthDownloadMetadata.Reason downloadReason) {
+        this(parent, mod, versions, instanceOrServer, installedVersionId, installType);
+
+        this.downloadReason = downloadReason;
+    }
+
     public ModrinthVersionSelectorDialog(Window parent, ModrinthProject mod, ModManagement instanceOrServer,
         String installedVersionId, boolean selectNewest) {
+        this(parent, mod, instanceOrServer, installedVersionId, selectNewest, null);
+    }
+
+    public ModrinthVersionSelectorDialog(Window parent, ModrinthProject mod, ModManagement instanceOrServer,
+        String installedVersionId, boolean selectNewest, com.atlauncher.data.Type installType) {
         super(parent, ModalityType.DOCUMENT_MODAL);
 
         this.project = mod;
         this.instanceOrServer = instanceOrServer;
         this.installedVersionId = installedVersionId;
         this.selectNewest = selectNewest;
+        this.installType = installType;
 
         setupComponents();
+    }
+
+    private com.atlauncher.data.Type getEffectiveInstallType(ModrinthVersion version) {
+        if (installType != null) {
+            return installType;
+        }
+
+        if (project.projectType == ModrinthProjectType.DATAPACK
+            || (version != null && version.loaders != null && version.loaders.contains("datapack"))) {
+            return com.atlauncher.data.Type.datapack;
+        }
+
+        if (project.projectType == ModrinthProjectType.SHADER) {
+            return com.atlauncher.data.Type.shaderpack;
+        }
+
+        if (project.projectType == ModrinthProjectType.RESOURCEPACK) {
+            return com.atlauncher.data.Type.resourcepack;
+        }
+
+        if (project.projectType == ModrinthProjectType.PLUGIN) {
+            return com.atlauncher.data.Type.plugins;
+        }
+
+        return com.atlauncher.data.Type.mods;
+    }
+
+    private String getProjectUrlPath() {
+        com.atlauncher.data.Type effectiveType =
+            getEffectiveInstallType(versionsDropdown.getSelectedItem() instanceof ModrinthVersion
+                ? (ModrinthVersion) versionsDropdown.getSelectedItem()
+                : null);
+
+        if (effectiveType == com.atlauncher.data.Type.datapack) {
+            return "datapack";
+        }
+
+        if (project.projectType == ModrinthProjectType.RESOURCEPACK) {
+            return "resourcepack";
+        }
+
+        if (project.projectType == ModrinthProjectType.SHADER) {
+            return "shader";
+        }
+
+        if (project.projectType == ModrinthProjectType.PLUGIN) {
+            return "plugin";
+        }
+
+        return "mod";
+    }
+
+    public String getSelectedVersionId() {
+        Object selected = versionsDropdown.getSelectedItem();
+        return selected instanceof ModrinthVersion ? ((ModrinthVersion) selected).id : null;
     }
 
     public void reloadDependenciesPanel() {
@@ -306,8 +404,11 @@ public class ModrinthVersionSelectorDialog extends JDialog {
                 // #. {0} is the name of the mod we're installing
                 GetText.tr("Installing {0}", version.name), true, this);
             progressDialog.addThread(new Thread(() -> {
-                Analytics.trackEvent(project.getAnalyticsEventForAdded(version));
-                instanceOrServer.addFileFromModrinth(project, version, file, progressDialog);
+                com.atlauncher.data.Type effectiveInstallType = getEffectiveInstallType(version);
+
+                Analytics.trackEvent(project.getAnalyticsEventForAdded(version, effectiveInstallType));
+                instanceOrServer.addFileFromModrinth(project, version, file, effectiveInstallType, downloadReason,
+                    dependentVersionId, progressDialog);
                 progressDialog.close();
             }));
             progressDialog.start();
@@ -315,7 +416,8 @@ public class ModrinthVersionSelectorDialog extends JDialog {
         });
 
         viewModButton
-            .addActionListener(e -> OS.openWebBrowser(String.format("https://modrinth.com/mod/%s", project.slug)));
+            .addActionListener(e -> OS.openWebBrowser(String.format("https://modrinth.com/%s/%s",
+                getProjectUrlPath(), project.slug)));
 
         viewFileButton.addActionListener(e -> {
             ModrinthVersion version = (ModrinthVersion) versionsDropdown.getSelectedItem();
@@ -390,7 +492,8 @@ public class ModrinthVersionSelectorDialog extends JDialog {
             String minecraftVersion = instanceOrServer.getMinecraftVersion();
 
             if (App.settings.addModRestriction != AddModRestriction.NONE && loaderVersion != null
-                && project.projectType == ModrinthProjectType.MOD) {
+                && project.projectType == ModrinthProjectType.MOD
+                && this.installType != com.atlauncher.data.Type.datapack) {
                 List<String> neoForgeForgeCompatabilityVersions = ConfigManager
                     .getConfigItem("loaders.neoforge.forgeCompatibleMinecraftVersions", new ArrayList<>());
                 boolean hasNeoForgeVersion = this.versionsData.stream()
@@ -433,6 +536,11 @@ public class ModrinthVersionSelectorDialog extends JDialog {
 
                     return v.loaders.contains("quilt") && loaderVersion.isQuilt();
                 });
+            }
+
+            if (this.installType == com.atlauncher.data.Type.datapack) {
+                modrinthVersionsStream = modrinthVersionsStream
+                    .filter(v -> v.loaders != null && v.loaders.contains("datapack"));
             }
 
             if (App.settings.addModRestriction == AddModRestriction.STRICT) {

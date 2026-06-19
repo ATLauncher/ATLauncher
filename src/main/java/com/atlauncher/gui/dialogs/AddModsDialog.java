@@ -803,6 +803,9 @@ public final class AddModsDialog extends JDialog {
 
         String query = searchField.getText();
         ModPlatform selectedModPlatform = ((ComboItem<ModPlatform>) hostComboBox.getSelectedItem()).getValue();
+        String sectionValue =
+            Optional.ofNullable((ComboItem<String>) sectionComboBox.getSelectedItem()).map(ComboItem::getValue)
+                .orElse("Mods");
         String sortValue =
             Optional.ofNullable((ComboItem<String>) sortComboBox.getSelectedItem()).map(ComboItem::getValue)
                 .orElse(selectedModPlatform == ModPlatform.CURSEFORGE ? "Popularity" : "relevance");
@@ -813,22 +816,27 @@ public final class AddModsDialog extends JDialog {
                     ? instanceOrServer.getMinecraftVersion()
                     : null;
 
-                if (((ComboItem<String>) sectionComboBox.getSelectedItem()).getValue().equals("Resource Packs")) {
+                if (sectionValue.equals("Data Packs")) {
+                    setCurseForgeMods(CurseForgeApi.searchDataPacks(versionToSearchFor, query, page,
+                        sortValue,
+                        categoriesComboBox.getSelectedItem() == null ? null
+                            : ((ComboItem<String>) categoriesComboBox.getSelectedItem()).getValue()));
+                } else if (sectionValue.equals("Resource Packs")) {
                     setCurseForgeMods(CurseForgeApi.searchResourcePacks(query, page,
                         sortValue,
                         categoriesComboBox.getSelectedItem() == null ? null
                             : ((ComboItem<String>) categoriesComboBox.getSelectedItem()).getValue()));
-                } else if (((ComboItem<String>) sectionComboBox.getSelectedItem()).getValue().equals("Shaders")) {
+                } else if (sectionValue.equals("Shaders")) {
                     setCurseForgeMods(CurseForgeApi.searchShaderPacks(query, page,
                         sortValue,
                         categoriesComboBox.getSelectedItem() == null ? null
                             : ((ComboItem<String>) categoriesComboBox.getSelectedItem()).getValue()));
-                } else if (((ComboItem<String>) sectionComboBox.getSelectedItem()).getValue().equals("Worlds")) {
+                } else if (sectionValue.equals("Worlds")) {
                     setCurseForgeMods(CurseForgeApi.searchWorlds(versionToSearchFor, query, page,
                         sortValue,
                         categoriesComboBox.getSelectedItem() == null ? null
                             : ((ComboItem<String>) categoriesComboBox.getSelectedItem()).getValue()));
-                } else if (((ComboItem<String>) sectionComboBox.getSelectedItem()).getValue().equals("Plugins")) {
+                } else if (sectionValue.equals("Plugins")) {
                     setCurseForgeMods(CurseForgeApi.searchPlugins(versionToSearchFor, query, page,
                         sortValue,
                         categoriesComboBox.getSelectedItem() == null ? null
@@ -893,17 +901,22 @@ public final class AddModsDialog extends JDialog {
                     versionsToSearchFor = null;
                 }
 
-                if (((ComboItem<String>) sectionComboBox.getSelectedItem()).getValue().equals("Resource Packs")) {
+                if (sectionValue.equals("Data Packs")) {
+                    setModrinthMods(ModrinthApi.searchDataPacks(versionsToSearchFor, query, page,
+                        sortValue,
+                        categoriesComboBox.getSelectedItem() == null ? null
+                            : ((ComboItem<String>) categoriesComboBox.getSelectedItem()).getValue()));
+                } else if (sectionValue.equals("Resource Packs")) {
                     setModrinthMods(ModrinthApi.searchResourcePacks(versionsToSearchFor, query, page,
                         sortValue,
                         categoriesComboBox.getSelectedItem() == null ? null
                             : ((ComboItem<String>) categoriesComboBox.getSelectedItem()).getValue()));
-                } else if (((ComboItem<String>) sectionComboBox.getSelectedItem()).getValue().equals("Shaders")) {
+                } else if (sectionValue.equals("Shaders")) {
                     setModrinthMods(ModrinthApi.searchShaders(versionsToSearchFor, query, page,
                         sortValue,
                         categoriesComboBox.getSelectedItem() == null ? null
                             : ((ComboItem<String>) categoriesComboBox.getSelectedItem()).getValue()));
-                } else if (((ComboItem<String>) sectionComboBox.getSelectedItem()).getValue().equals("Plugins")) {
+                } else if (sectionValue.equals("Plugins")) {
                     if (instanceOrServer.getLoaderVersion().isPaper()) {
                         setModrinthMods(ModrinthApi.searchPluginsForPaper(versionsToSearchFor, query, page,
                             sortValue,
@@ -1002,6 +1015,8 @@ public final class AddModsDialog extends JDialog {
                 contentPanel.add(new CurseForgeProjectCard(castMod, instanceOrServer, e -> {
                     if (sectionValue.equals("Plugins")) {
                         Analytics.trackEvent(AnalyticsEvent.forAddPlugin(castMod));
+                    } else if (sectionValue.equals("Data Packs")) {
+                        Analytics.trackEvent(AnalyticsEvent.forAddDataPack(castMod));
                     } else if (sectionValue.equals("Resource Packs")) {
                         Analytics.trackEvent(AnalyticsEvent.forAddResourcePack(castMod));
                     } else if (sectionValue.equals("Shaders")) {
@@ -1016,6 +1031,8 @@ public final class AddModsDialog extends JDialog {
                 }, e -> {
                     if (sectionValue.equals("Plugins")) {
                         Analytics.trackEvent(AnalyticsEvent.forRemovePlugin(castMod));
+                    } else if (sectionValue.equals("Data Packs")) {
+                        Analytics.trackEvent(AnalyticsEvent.forRemoveDataPack(castMod));
                     } else if (sectionValue.equals("Resource Packs")) {
                         Analytics.trackEvent(AnalyticsEvent.forRemoveResourcePack(castMod));
                     } else if (sectionValue.equals("Shaders")) {
@@ -1109,6 +1126,8 @@ public final class AddModsDialog extends JDialog {
 
                     if (sectionValue.equals("Plugins")) {
                         Analytics.trackEvent(AnalyticsEvent.forAddPlugin(castMod));
+                    } else if (sectionValue.equals("Data Packs")) {
+                        Analytics.trackEvent(AnalyticsEvent.forAddDataPack(castMod));
                     } else if (sectionValue.equals("Resource Packs")) {
                         Analytics.trackEvent(AnalyticsEvent.forAddResourcePack(castMod));
                     } else if (sectionValue.equals("Shaders")) {
@@ -1117,12 +1136,16 @@ public final class AddModsDialog extends JDialog {
                         Analytics.trackEvent(AnalyticsEvent.forAddMod(castMod));
                     }
 
-                    ModrinthVersionSelectorDialog modrinthVersionSelectorDialog = new ModrinthVersionSelectorDialog(
-                        this, modrinthMod, instanceOrServer);
+                    ModrinthVersionSelectorDialog modrinthVersionSelectorDialog = sectionValue.equals("Data Packs")
+                        ? new ModrinthVersionSelectorDialog(this, modrinthMod, instanceOrServer,
+                        com.atlauncher.data.Type.datapack)
+                        : new ModrinthVersionSelectorDialog(this, modrinthMod, instanceOrServer);
                     modrinthVersionSelectorDialog.setVisible(true);
                 }, e -> {
                     if (sectionValue.equals("Plugins")) {
                         Analytics.trackEvent(AnalyticsEvent.forRemovePlugin(castMod));
+                    } else if (sectionValue.equals("Data Packs")) {
+                        Analytics.trackEvent(AnalyticsEvent.forRemoveDataPack(castMod));
                     } else if (sectionValue.equals("Resource Packs")) {
                         Analytics.trackEvent(AnalyticsEvent.forRemoveResourcePack(castMod));
                     } else if (sectionValue.equals("Shaders")) {
@@ -1179,6 +1202,16 @@ public final class AddModsDialog extends JDialog {
             sectionComboBox.addItem(new ComboItem<>("Mods", GetText.tr("Mods")));
         }
         if (instanceOrServer instanceof Instance) {
+            sectionComboBox.addItem(new ComboItem<>("Data Packs", GetText.tr("Data Packs")));
+            if (!firstTime) {
+                boolean dataPacksSelected = ((ComboItem<String>) sectionComboBox.getSelectedItem()).getValue()
+                    .equals("Data Packs");
+
+                if (dataPacksSelected) {
+                    sectionComboBox.setSelectedIndex(sectionComboBox.getItemCount() - 1);
+                }
+            }
+
             sectionComboBox.addItem(new ComboItem<>("Resource Packs", GetText.tr("Resource Packs")));
             if (!firstTime) {
                 boolean resourcePacksSelected = ((ComboItem<String>) sectionComboBox.getSelectedItem()).getValue()
@@ -1236,7 +1269,9 @@ public final class AddModsDialog extends JDialog {
         if (isCurseForge) {
             List<CurseForgeCategoryForGame> categories = new ArrayList<>();
 
-            if (((ComboItem<String>) sectionComboBox.getSelectedItem()).getValue().equals("Resource Packs")) {
+            if (((ComboItem<String>) sectionComboBox.getSelectedItem()).getValue().equals("Data Packs")) {
+                categories.addAll(CurseForgeApi.getCategoriesForDataPacks());
+            } else if (((ComboItem<String>) sectionComboBox.getSelectedItem()).getValue().equals("Resource Packs")) {
                 categories.addAll(CurseForgeApi.getCategoriesForResourcePacks());
             } else if (((ComboItem<String>) sectionComboBox.getSelectedItem()).getValue().equals("Shaders")) {
                 categories.addAll(CurseForgeApi.getCategoriesForShaderPacks());
@@ -1253,7 +1288,9 @@ public final class AddModsDialog extends JDialog {
         } else {
             List<ModrinthCategory> categories = new ArrayList<>();
 
-            if (((ComboItem<String>) sectionComboBox.getSelectedItem()).getValue().equals("Resource Packs")) {
+            if (((ComboItem<String>) sectionComboBox.getSelectedItem()).getValue().equals("Data Packs")) {
+                categories.addAll(ModrinthApi.getCategoriesForDataPacks());
+            } else if (((ComboItem<String>) sectionComboBox.getSelectedItem()).getValue().equals("Resource Packs")) {
                 categories.addAll(ModrinthApi.getCategoriesForResourcePacks());
             } else if (((ComboItem<String>) sectionComboBox.getSelectedItem()).getValue().equals("Shaders")) {
                 categories.addAll(ModrinthApi.getCategoriesForShaders());

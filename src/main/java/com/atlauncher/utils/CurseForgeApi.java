@@ -53,7 +53,8 @@ import okhttp3.RequestBody;
  * Various utility methods for interacting with the CurseForge API.
  */
 public class CurseForgeApi {
-    private final static Headers REQUEST_HEADERS = Headers.of("x-api-key", Constants.CURSEFORGE_CORE_API_KEY);
+    private final static Headers REQUEST_HEADERS = Headers.of(Constants.CURSEFORGE_API_KEY_HEADER,
+            Constants.CURSEFORGE_CORE_API_KEY);
 
     public static List<CurseForgeProject> searchCurseForge(int sectionId, String query, int page,
             List<Integer> modLoaderTypes,
@@ -142,6 +143,14 @@ public class CurseForgeApi {
         Integer categoryIdParam = Utils.getSafeIntegerFromString(categoryId);
 
         return searchCurseForge(Constants.CURSEFORGE_SHADER_PACKS_SECTION_ID, query, page, null, sort,
+                categoryIdParam);
+    }
+
+    public static List<CurseForgeProject> searchDataPacks(String gameVersion, String query, int page, String sort,
+            String categoryId) {
+        Integer categoryIdParam = Utils.getSafeIntegerFromString(categoryId);
+
+        return searchCurseForge(gameVersion, Constants.CURSEFORGE_DATA_PACKS_SECTION_ID, query, page, null, sort,
                 categoryIdParam);
     }
 
@@ -531,6 +540,18 @@ public class CurseForgeApi {
 
         return categories.stream()
                 .filter(c -> c.classId != null && c.classId == Constants.CURSEFORGE_SHADER_PACKS_SECTION_ID)
+                .sorted(Comparator.comparing(c -> c.name)).collect(Collectors.toList());
+    }
+
+    public static List<CurseForgeCategoryForGame> getCategoriesForDataPacks() {
+        List<CurseForgeCategoryForGame> categories = getCategories();
+
+        if (categories == null) {
+            return new ArrayList<>();
+        }
+
+        return categories.stream()
+                .filter(c -> c.classId != null && c.classId == Constants.CURSEFORGE_DATA_PACKS_SECTION_ID)
                 .sorted(Comparator.comparing(c -> c.name)).collect(Collectors.toList());
     }
 
