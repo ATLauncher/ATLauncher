@@ -3476,7 +3476,8 @@ public class Instance extends MinecraftVersion implements ModManagement {
 
     @Override
     public void addFileFromModrinth(ModrinthProject mod, ModrinthVersion version, ModrinthFile file,
-        Type installType, ModrinthDownloadMetadata.Reason downloadReason, ProgressDialog<Void> dialog) {
+        Type installType, ModrinthDownloadMetadata.Reason downloadReason, String dependentVersionId,
+        ProgressDialog<Void> dialog) {
         ModrinthFile fileToDownload = Optional.ofNullable(file).orElse(version.getPrimaryFile());
         Type modType = getTypeFromModrinthMod(mod, version, installType);
 
@@ -3508,7 +3509,7 @@ public class Instance extends MinecraftVersion implements ModManagement {
         com.atlauncher.network.Download download = com.atlauncher.network.Download.build().setUrl(fileToDownload.url)
             .downloadTo(downloadLocation).copyTo(finalLocation)
             .withModrinthDownloadMetadata(ModrinthDownloadMetadata.from(effectiveReason, this.getMinecraftVersion(),
-                this.getLoaderVersion()))
+                this.getLoaderVersion(), dependentVersionId))
             .withHttpClient(Network.createProgressClient(dialog));
 
         if (fileToDownload.hashes != null && fileToDownload.hashes.containsKey("sha512")) {

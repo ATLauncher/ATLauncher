@@ -58,11 +58,18 @@ public interface ModManagement {
 
     public default void addFileFromModrinth(ModrinthProject project, ModrinthVersion version, ModrinthFile file,
             Type installType, ProgressDialog<Void> dialog) {
-        addFileFromModrinth(project, version, file, installType, ModrinthDownloadMetadata.Reason.STANDALONE, dialog);
+        addFileFromModrinth(project, version, file, installType, ModrinthDownloadMetadata.Reason.STANDALONE, null,
+            dialog);
+    }
+
+    public default void addFileFromModrinth(ModrinthProject project, ModrinthVersion version, ModrinthFile file,
+            Type installType, ModrinthDownloadMetadata.Reason downloadReason, ProgressDialog<Void> dialog) {
+        addFileFromModrinth(project, version, file, installType, downloadReason, null, dialog);
     }
 
     public abstract void addFileFromModrinth(ModrinthProject project, ModrinthVersion version, ModrinthFile file,
-            Type installType, ModrinthDownloadMetadata.Reason downloadReason, ProgressDialog<Void> dialog);
+            Type installType, ModrinthDownloadMetadata.Reason downloadReason, String dependentVersionId,
+            ProgressDialog<Void> dialog);
 
     public abstract void scanMissingMods(Window parent);
 

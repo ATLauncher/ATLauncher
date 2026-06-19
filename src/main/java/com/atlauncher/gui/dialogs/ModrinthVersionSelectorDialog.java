@@ -72,6 +72,7 @@ public class ModrinthVersionSelectorDialog extends JDialog {
     private final com.atlauncher.data.Type installType;
     private ModrinthDownloadMetadata.Reason downloadReason = ModrinthDownloadMetadata.Reason.STANDALONE;
     private String installedVersionId = null;
+    private String dependentVersionId = null;
     private boolean selectNewest = true;
 
     private final JPanel dependenciesPanel = new JPanel(new FlowLayout());
@@ -109,9 +110,15 @@ public class ModrinthVersionSelectorDialog extends JDialog {
 
     public ModrinthVersionSelectorDialog(Window parent, ModrinthProject mod, ModManagement instanceOrServer,
         ModrinthDownloadMetadata.Reason downloadReason) {
+        this(parent, mod, instanceOrServer, downloadReason, null);
+    }
+
+    public ModrinthVersionSelectorDialog(Window parent, ModrinthProject mod, ModManagement instanceOrServer,
+        ModrinthDownloadMetadata.Reason downloadReason, String dependentVersionId) {
         this(parent, mod, instanceOrServer, (com.atlauncher.data.Type) null);
 
         this.downloadReason = downloadReason;
+        this.dependentVersionId = dependentVersionId;
     }
 
     public ModrinthVersionSelectorDialog(Window parent, ModrinthProject mod, List<ModrinthVersion> versions,
@@ -206,6 +213,11 @@ public class ModrinthVersionSelectorDialog extends JDialog {
         }
 
         return "mod";
+    }
+
+    public String getSelectedVersionId() {
+        Object selected = versionsDropdown.getSelectedItem();
+        return selected instanceof ModrinthVersion ? ((ModrinthVersion) selected).id : null;
     }
 
     public void reloadDependenciesPanel() {
@@ -396,7 +408,7 @@ public class ModrinthVersionSelectorDialog extends JDialog {
 
                 Analytics.trackEvent(project.getAnalyticsEventForAdded(version, effectiveInstallType));
                 instanceOrServer.addFileFromModrinth(project, version, file, effectiveInstallType, downloadReason,
-                    progressDialog);
+                    dependentVersionId, progressDialog);
                 progressDialog.close();
             }));
             progressDialog.start();

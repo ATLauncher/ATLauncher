@@ -71,6 +71,30 @@ public class DownloadTest {
     }
 
     @Test
+    public void modrinthFileDownloadsIncludeDependentOnWhenProvided() {
+        Headers headers = Download.buildHeadersForUrl(
+            "https://cdn.modrinth.com/data/project/versions/version/example.jar",
+            Collections.emptyMap(),
+            new ModrinthDownloadMetadata(ModrinthDownloadMetadata.Reason.MODPACK, "1.20.1", "fabric",
+                "g5RAIwpP"));
+
+        assertEquals(
+            "{\"reason\":\"modpack\",\"game_version\":\"1.20.1\",\"loader\":\"fabric\",\"dependent_on\":\"g5RAIwpP\"}",
+            headers.get(Constants.MODRINTH_DOWNLOAD_METADATA_HEADER));
+    }
+
+    @Test
+    public void modrinthMetadataOmitsDependentOnWhenNull() {
+        Headers headers = Download.buildHeadersForUrl(
+            "https://cdn.modrinth.com/data/project/versions/version/example.jar",
+            Collections.emptyMap(),
+            new ModrinthDownloadMetadata(ModrinthDownloadMetadata.Reason.STANDALONE, "1.20.1", "fabric"));
+
+        assertEquals("{\"reason\":\"standalone\",\"game_version\":\"1.20.1\",\"loader\":\"fabric\"}",
+            headers.get(Constants.MODRINTH_DOWNLOAD_METADATA_HEADER));
+    }
+
+    @Test
     public void modrinthMetadataHeaderIsOnlyAddedForModrinthCdnDownloads() {
         Headers headers = Download.buildHeadersForUrl(
             "https://api.modrinth.com/v2/project/example",

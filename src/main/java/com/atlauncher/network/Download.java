@@ -306,7 +306,7 @@ public final class Download {
         if (modrinthDownloadMetadata != null && isModrinthFileDownloadUrl(url)
             && !hasHeader(requestHeaders, Constants.MODRINTH_DOWNLOAD_METADATA_HEADER)) {
             requestHeaders.put(Constants.MODRINTH_DOWNLOAD_METADATA_HEADER,
-                Gsons.DEFAULT_SLIM.toJson(modrinthDownloadMetadata));
+                modrinthDownloadMetadata.toJson());
         }
 
         return Headers.of(requestHeaders);

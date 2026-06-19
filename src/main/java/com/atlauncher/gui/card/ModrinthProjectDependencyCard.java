@@ -103,7 +103,7 @@ public final class ModrinthProjectDependencyCard extends JPanel {
                 ModrinthVersionSelectorDialog modrinthVersionSelectorDialog = new ModrinthVersionSelectorDialog(parent,
                     mod,
                     instanceOrServer,
-                    ModrinthDownloadMetadata.Reason.DEPENDENCY);
+                    ModrinthDownloadMetadata.Reason.DEPENDENCY, parent.getSelectedVersionId());
                 modrinthVersionSelectorDialog.setVisible(true);
                 parent.reloadDependenciesPanel();
             });

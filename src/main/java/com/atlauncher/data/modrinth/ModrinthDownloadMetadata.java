@@ -22,6 +22,7 @@ import java.util.Locale;
 import javax.annotation.Nullable;
 
 import com.atlauncher.data.minecraft.loaders.LoaderVersion;
+import com.google.gson.JsonObject;
 import com.google.gson.annotations.SerializedName;
 
 public class ModrinthDownloadMetadata {
@@ -32,10 +33,20 @@ public class ModrinthDownloadMetadata {
 
     public final String loader;
 
+    @Nullable
+    @SerializedName("dependent_on")
+    public final String dependentOn;
+
     public ModrinthDownloadMetadata(Reason reason, String gameVersion, String loader) {
+        this(reason, gameVersion, loader, null);
+    }
+
+    public ModrinthDownloadMetadata(Reason reason, String gameVersion, String loader,
+        @Nullable String dependentOn) {
         this.reason = reason;
         this.gameVersion = gameVersion;
         this.loader = loader;
+        this.dependentOn = dependentOn;
     }
 
     public static ModrinthDownloadMetadata from(Reason reason, String gameVersion,
@@ -43,13 +54,24 @@ public class ModrinthDownloadMetadata {
         return new ModrinthDownloadMetadata(reason, gameVersion, getLoader(loaderVersion));
     }
 
+    public static ModrinthDownloadMetadata from(Reason reason, String gameVersion,
+        @Nullable LoaderVersion loaderVersion, @Nullable String dependentOn) {
+        return new ModrinthDownloadMetadata(reason, gameVersion, getLoader(loaderVersion), dependentOn);
+    }
+
     public static ModrinthDownloadMetadata from(Reason reason, ModrinthVersion version,
         @Nullable LoaderVersion loaderVersion) {
+        return from(reason, version, loaderVersion, null);
+    }
+
+    public static ModrinthDownloadMetadata from(Reason reason, ModrinthVersion version,
+        @Nullable LoaderVersion loaderVersion, @Nullable String dependentOn) {
         String gameVersion = version.gameVersions == null || version.gameVersions.isEmpty()
             ? null
             : version.gameVersions.get(0);
 
-        return new ModrinthDownloadMetadata(reason, gameVersion, getLoader(loaderVersion, version));
+        return new ModrinthDownloadMetadata(reason, gameVersion, getLoader(loaderVersion, version),
+            dependentOn);
     }
 
     public static String getLoader(@Nullable LoaderVersion loaderVersion) {
@@ -77,6 +99,17 @@ public class ModrinthDownloadMetadata {
             .filter(loader -> !loader.equalsIgnoreCase("minecraft"))
             .findFirst()
             .orElse("vanilla");
+    }
+
+    public String toJson() {
+        JsonObject obj = new JsonObject();
+        obj.addProperty("reason", reason.name().toLowerCase(Locale.ENGLISH));
+        obj.addProperty("game_version", gameVersion);
+        obj.addProperty("loader", loader);
+        if (dependentOn != null) {
+            obj.addProperty("dependent_on", dependentOn);
+        }
+        return obj.toString();
     }
 
     public enum Reason {
