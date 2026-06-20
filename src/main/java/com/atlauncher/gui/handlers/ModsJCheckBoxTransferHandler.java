@@ -36,6 +36,7 @@ import org.mini2Dx.gettext.GetText;
 import com.atlauncher.App;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.data.DisableableMod;
+import com.atlauncher.data.Instance;
 import com.atlauncher.data.ModPlatform;
 import com.atlauncher.data.Type;
 import com.atlauncher.data.curseforge.CurseForgeFingerprint;
@@ -85,8 +86,18 @@ public class ModsJCheckBoxTransferHandler extends TransferHandler {
             Type type;
             File instanceFile;
 
-            String[] modTypes =
-                new String[] { "Mods Folder", "Data Pack", "Resource Pack", "Shader Pack", "Inside Minecraft.jar" };
+            String[] modTypes;
+
+            if (dialog.instanceOrServer instanceof Instance) {
+                modTypes = new String[] { "Mods Folder", "Data Pack", "Resource Pack", "Shader Pack",
+                        "Inside Minecraft.jar" };
+            } else if (dialog.instanceOrServer.getLoaderVersion() != null
+                    && (dialog.instanceOrServer.getLoaderVersion().isPaper()
+                            || dialog.instanceOrServer.getLoaderVersion().isPurpur())) {
+                modTypes = new String[] { "Plugins Folder" };
+            } else {
+                modTypes = new String[] { "Mods Folder" };
+            }
 
             FileTypeDialog ftd = new FileTypeDialog(GetText.tr("Add Mod"), GetText.tr("Adding Mods"), GetText.tr("Add"),
                     GetText.tr("Type"), modTypes);
@@ -127,6 +138,9 @@ public class ModsJCheckBoxTransferHandler extends TransferHandler {
             } else if (typeTemp.equalsIgnoreCase("Shader Pack")) {
                 type = Type.shaderpack;
                 instanceFile = dialog.instanceOrServer.getRoot().resolve("shaderpacks").toFile();
+            } else if (typeTemp.equalsIgnoreCase("Plugins Folder")) {
+                type = Type.plugins;
+                instanceFile = dialog.instanceOrServer.getRoot().resolve("plugins").toFile();
             } else {
                 type = Type.mods;
                 instanceFile = dialog.instanceOrServer.getRoot().resolve("mods").toFile();

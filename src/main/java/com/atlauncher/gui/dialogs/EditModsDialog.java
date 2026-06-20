@@ -272,6 +272,8 @@ public class EditModsDialog extends JDialog {
                             type = com.atlauncher.data.Type.resourcepack;
                         } else if (typeTemp.equalsIgnoreCase("Shader Pack")) {
                             type = com.atlauncher.data.Type.shaderpack;
+                        } else if (typeTemp.equalsIgnoreCase("Plugins Folder")) {
+                            type = com.atlauncher.data.Type.plugins;
                         }
                         if (type != null) {
                             DisableableMod mod = DisableableMod.generateMod(file, type,

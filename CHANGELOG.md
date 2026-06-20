@@ -18,6 +18,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Add api key on CurseForge cdn download links as required by CurseForge
 - Issues with Legacy Fabric not installing/running [#1029]
 - Attempt to fix unpacking certain zips [#1024]
+- Fixed adding plugins to Paper/Purpur servers via the "Add Mod" button and drag-and-drop in the Edit Mods dialog [#1017]
 
 ### Misc
 None
