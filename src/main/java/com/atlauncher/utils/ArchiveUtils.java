@@ -29,14 +29,15 @@ import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.util.Enumeration;
 
 import javax.annotation.Nullable;
 
 import org.apache.commons.compress.archivers.ArchiveEntry;
-import org.apache.commons.compress.archivers.ArchiveInputStream;
 import org.apache.commons.compress.archivers.ArchiveOutputStream;
 import org.apache.commons.compress.archivers.ArchiveStreamFactory;
-import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
+import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
+import org.apache.commons.compress.archivers.zip.ZipFile;
 import org.apache.commons.compress.utils.IOUtils;
 import org.zeroturnaround.zip.NameMapper;
 import org.zeroturnaround.zip.ZipUtil;
@@ -52,26 +53,13 @@ public class ArchiveUtils {
             LogManager.error("Failed to check if archive contains file in " + archivePath.toAbsolutePath());
         }
 
-        boolean found = false;
-
-        try (InputStream is = createInputStream(archivePath);
-                ZipArchiveInputStream zais = new ZipArchiveInputStream(is, "UTF8", true, true)) {
-            ArchiveEntry entry = null;
-            while ((entry = zais.getNextEntry()) != null) {
-                if (!zais.canReadEntryData(entry)) {
-                    continue;
-                }
-
-                if (entry.getName().equals(file)) {
-                    found = true;
-                    break;
-                }
-            }
+        try (ZipFile zf = ZipFile.builder().setPath(archivePath).get()) {
+            return zf.getEntry(file) != null;
         } catch (Exception e) {
             LogManager.logStackTrace(e);
         }
 
-        return found;
+        return false;
     }
 
     /**
@@ -113,23 +101,12 @@ public class ArchiveUtils {
 
         String contents = null;
 
-        try {
-            InputStream is = createInputStream(archivePath);
-            try (
-                ArchiveInputStream ais = new ArchiveStreamFactory().createArchiveInputStream("ZIP", is)) {
-                ArchiveEntry entry = null;
-                while ((entry = ais.getNextEntry()) != null) {
-                    if (!ais.canReadEntryData(entry)) {
-                        continue;
-                    }
-
-                    if (entry.getName().equals(file)) {
-                        contents = new String(IOUtils.toByteArray(ais), StandardCharsets.UTF_8);
-                        break;
-                    }
+        try (ZipFile zf = ZipFile.builder().setPath(archivePath).get()) {
+            ZipArchiveEntry entry = zf.getEntry(file);
+            if (entry != null) {
+                try (InputStream is = zf.getInputStream(entry)) {
+                    contents = new String(IOUtils.toByteArray(is), StandardCharsets.UTF_8);
                 }
-            } catch (Exception e) {
-                LogManager.logStackTrace(e);
             }
         } catch (Exception e) {
             LogManager.logStackTrace(e);
@@ -151,13 +128,10 @@ public class ArchiveUtils {
             LogManager.error("Failed to extract " + archivePath.toAbsolutePath());
         }
 
-        try (InputStream is = createInputStream(archivePath);
-                ZipArchiveInputStream zais = new ZipArchiveInputStream(is, "UTF8", true, true)) {
-            ArchiveEntry entry = null;
-            while ((entry = zais.getNextEntry()) != null) {
-                if (!zais.canReadEntryData(entry)) {
-                    continue;
-                }
+        try (ZipFile zf = ZipFile.builder().setPath(archivePath).get()) {
+            Enumeration<ZipArchiveEntry> entries = zf.getEntries();
+            while (entries.hasMoreElements()) {
+                ZipArchiveEntry entry = entries.nextElement();
 
                 Path outputPath;
                 String fileName = nameMapper.map(entry.getName());
@@ -186,8 +160,9 @@ public class ArchiveUtils {
                     if (!parent.isDirectory() && !parent.mkdirs()) {
                         throw new IOException("Failed to create directory " + parent);
                     }
-                    try (OutputStream o = Files.newOutputStream(f.toPath())) {
-                        IOUtils.copy(zais, o);
+                    try (InputStream is = zf.getInputStream(entry);
+                            OutputStream o = Files.newOutputStream(f.toPath())) {
+                        IOUtils.copy(is, o);
                     }
                 }
             }
