@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -60,6 +61,8 @@ public class LegacyFabricLoader implements Loader {
     protected File tempDir;
     protected InstanceInstaller instanceInstaller;
     private final Pattern manifestPattern = Pattern.compile("META-INF/[^/]+\\.(SF|DSA|RSA|EC)");
+    private static final Set<String> STRIP_MINECRAFT_LIBRARIES_VERSIONS = new HashSet<>(
+            Arrays.asList("1.3.1", "1.3.2", "1.4.2", "1.4.4", "1.4.4", "1.4.6", "1.4.7", "1.5.1", "1.5.2"));
 
     @Override
     public void set(Map<String, Object> metadata, File tempDir, InstanceInstaller instanceInstaller,
@@ -128,6 +131,19 @@ public class LegacyFabricLoader implements Loader {
     @Override
     public List<Library> getLibraries() {
         return new ArrayList<>(this.version.libraries);
+    }
+
+    @Override
+    public List<Library> filterMinecraftLibraries(List<Library> libraries) {
+        if (!STRIP_MINECRAFT_LIBRARIES_VERSIONS.contains(this.minecraft)) {
+            return libraries;
+        }
+
+        return libraries.stream()
+                .filter(library -> library.name != null && (library.name.startsWith("org.lwjgl.lwjgl")
+                        || library.name.startsWith("net.java.jinput")
+                        || library.name.startsWith("net.java.jutils")))
+                .collect(Collectors.toList());
     }
 
     private List<File> getLibraryFiles() {

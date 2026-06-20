@@ -2667,7 +2667,8 @@ public class Instance extends MinecraftVersion implements ModManagement {
 
     public boolean usesLegacyLaunch() {
         if (type != VersionManifestVersionType.RELEASE
-            || Optional.ofNullable(launcher.disableLegacyLaunching).orElse(App.settings.disableLegacyLaunching)) {
+            || Optional.ofNullable(launcher.disableLegacyLaunching).orElse(App.settings.disableLegacyLaunching)
+            || (launcher.loaderVersion != null && launcher.loaderVersion.isLegacyFabric())) {
             return false;
         }
 

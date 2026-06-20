@@ -18,12 +18,17 @@
 package com.atlauncher.data.minecraft.loaders.legacyfabric;
 
 import java.lang.reflect.Type;
+import java.util.List;
+import java.util.Map;
 
+import com.atlauncher.data.minecraft.Rule;
+import com.google.gson.Gson;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
+import com.google.gson.reflect.TypeToken;
 
 public class LegacyFabricLibraryTypeAdapter implements JsonDeserializer<LegacyFabricLibrary> {
     @Override
@@ -31,6 +36,18 @@ public class LegacyFabricLibraryTypeAdapter implements JsonDeserializer<LegacyFa
             throws JsonParseException {
         JsonObject object = json.getAsJsonObject();
 
-        return new LegacyFabricLibrary(object.get("name").getAsString(), object.get("url").getAsString());
+        String url = object.has("url") ? object.get("url").getAsString() : null;
+
+        Map<String, String> natives = object.has("natives")
+                ? new Gson().fromJson(object.get("natives"), new TypeToken<Map<String, String>>() {
+                }.getType())
+                : null;
+
+        List<Rule> rules = object.has("rules")
+                ? new Gson().fromJson(object.get("rules"), new TypeToken<List<Rule>>() {
+                }.getType())
+                : null;
+
+        return new LegacyFabricLibrary(object.get("name").getAsString(), url, natives, rules);
     }
 }

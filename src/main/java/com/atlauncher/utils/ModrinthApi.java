@@ -208,6 +208,16 @@ public class ModrinthApi {
             ModrinthProjectType.MOD);
     }
 
+    public static ModrinthSearchResult searchModsForLegacyFabric(List<String> gameVersions, String query, int page,
+        String sort, String category) {
+        List<List<String>> categories = category == null
+            ? Collections.singletonList(Collections.singletonList("legacy-fabric"))
+            : Arrays.asList(Collections.singletonList(category), Collections.singletonList("legacy-fabric"));
+
+        return searchModrinth(gameVersions, query, page, sort, categories,
+            ModrinthProjectType.MOD);
+    }
+
     public static ModrinthSearchResult searchModsForQuilt(List<String> gameVersions, String query, int page,
         String sort, String category) {
         List<List<String>> categories = category == null ? Collections.singletonList(Collections.singletonList("quilt"))

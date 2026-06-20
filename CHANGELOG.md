@@ -16,6 +16,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 
 - Fixed slow and jumpy scrolling in the Edit Mods dialog on macOS thanks to @nllvoid [#1032]
 - Add api key on CurseForge cdn download links as required by CurseForge
+- Issues with Legacy Fabric not installing/running [#1029]
 
 ### Misc
 None

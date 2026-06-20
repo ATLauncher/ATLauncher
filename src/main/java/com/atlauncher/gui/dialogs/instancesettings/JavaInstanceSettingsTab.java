@@ -459,35 +459,38 @@ public class JavaInstanceSettingsTab extends JPanel {
 
         add(useJavaProvidedByMinecraft, gbc);
 
-        // Disable Legacy Launching
-        gbc.gridx = 0;
-        gbc.gridy++;
-        gbc.insets = UIConstants.LABEL_INSETS;
-        gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
-        JLabelWithHover disableLegacyLaunchingLabel = new JLabelWithHover(GetText.tr("Disable Legacy Launching") + "?",
-            HELP_ICON,
-            new HTMLBuilder().center().text(GetText.tr(
-                    "This allows you to disable legacy launching for Minecraft < 1.6.<br/><br/>It's highly recommended to not disable this, unless you're having issues launching older Minecraft versions."))
-                .build());
-        add(disableLegacyLaunchingLabel, gbc);
+        // Disable Legacy Launching (hidden for legacy fabric as it never uses legacy launching)
+        if (instance.launcher.loaderVersion == null || !instance.launcher.loaderVersion.isLegacyFabric()) {
+            gbc.gridx = 0;
+            gbc.gridy++;
+            gbc.insets = UIConstants.LABEL_INSETS;
+            gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
+            JLabelWithHover disableLegacyLaunchingLabel = new JLabelWithHover(
+                GetText.tr("Disable Legacy Launching") + "?", HELP_ICON,
+                new HTMLBuilder().center()
+                    .text(GetText.tr(
+                        "This allows you to disable legacy launching for Minecraft < 1.6.<br/><br/>It's highly recommended to not disable this, unless you're having issues launching older Minecraft versions."))
+                    .build());
+            add(disableLegacyLaunchingLabel, gbc);
 
-        gbc.gridx++;
-        gbc.insets = UIConstants.LABEL_INSETS;
-        gbc.anchor = GridBagConstraints.FIRST_LINE_START;
-        disableLegacyLaunching = new JComboBox<>();
-        disableLegacyLaunching.addItem(new ComboItem<>(null, GetText.tr("Use Launcher Default")));
-        disableLegacyLaunching.addItem(new ComboItem<>(true, GetText.tr("Yes")));
-        disableLegacyLaunching.addItem(new ComboItem<>(false, GetText.tr("No")));
+            gbc.gridx++;
+            gbc.insets = UIConstants.LABEL_INSETS;
+            gbc.anchor = GridBagConstraints.FIRST_LINE_START;
+            disableLegacyLaunching = new JComboBox<>();
+            disableLegacyLaunching.addItem(new ComboItem<>(null, GetText.tr("Use Launcher Default")));
+            disableLegacyLaunching.addItem(new ComboItem<>(true, GetText.tr("Yes")));
+            disableLegacyLaunching.addItem(new ComboItem<>(false, GetText.tr("No")));
 
-        if (instance.launcher.disableLegacyLaunching == null) {
-            disableLegacyLaunching.setSelectedIndex(0);
-        } else if (instance.launcher.disableLegacyLaunching) {
-            disableLegacyLaunching.setSelectedIndex(1);
-        } else {
-            disableLegacyLaunching.setSelectedIndex(2);
+            if (instance.launcher.disableLegacyLaunching == null) {
+                disableLegacyLaunching.setSelectedIndex(0);
+            } else if (instance.launcher.disableLegacyLaunching) {
+                disableLegacyLaunching.setSelectedIndex(1);
+            } else {
+                disableLegacyLaunching.setSelectedIndex(2);
+            }
+
+            add(disableLegacyLaunching, gbc);
         }
-
-        add(disableLegacyLaunching, gbc);
 
         // Use System GLFW
         gbc.gridx = 0;
@@ -594,7 +597,8 @@ public class JavaInstanceSettingsTab extends JPanel {
             .getValue();
         Boolean useJavaProvidedByMinecraftVal = ((ComboItem<Boolean>) useJavaProvidedByMinecraft.getSelectedItem())
             .getValue();
-        Boolean disableLegacyLaunchingVal = ((ComboItem<Boolean>) disableLegacyLaunching.getSelectedItem()).getValue();
+        Boolean disableLegacyLaunchingVal = disableLegacyLaunching == null ? null
+            : ((ComboItem<Boolean>) disableLegacyLaunching.getSelectedItem()).getValue();
         Boolean useSystemGlfwVal = ((ComboItem<Boolean>) useSystemGlfw.getSelectedItem()).getValue();
         Boolean useSystemOpenAlVal = ((ComboItem<Boolean>) useSystemOpenAl.getSelectedItem()).getValue();
 

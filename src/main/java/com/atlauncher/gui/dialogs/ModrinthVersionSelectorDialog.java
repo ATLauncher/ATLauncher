@@ -513,6 +513,10 @@ public class ModrinthVersionSelectorDialog extends JDialog {
                         return true;
                     }
 
+                    if (v.loaders.contains("legacy-fabric") && loaderVersion.isLegacyFabric()) {
+                        return true;
+                    }
+
                     if (v.loaders.contains("neoforge") && loaderVersion.isNeoForge()) {
                         return true;
                     }

@@ -2859,7 +2859,9 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
 
         // lastly the Minecraft libraries if not on server
         if (!isServer && (this.loader == null || this.loader.useMinecraftLibraries())) {
-            libraries.addAll(this.minecraftVersion.libraries);
+            libraries.addAll(this.loader != null
+                    ? this.loader.filterMinecraftLibraries(this.minecraftVersion.libraries)
+                    : this.minecraftVersion.libraries);
         }
 
         // fix Log4J exploits if not on server (servers seem sensitive to this process)

@@ -58,9 +58,9 @@ public class LegacyFabricMetaLauncherMetaTypeAdapter implements JsonDeserializer
         List<LegacyFabricLibrary> clientLibraries = new ArrayList<>();
         final JsonArray clientLibrariesArray = librariesObject.getAsJsonArray("client");
         for (JsonElement libraryElement : clientLibrariesArray) {
-            if (libraryElement.getAsJsonObject().has("name") && libraryElement.getAsJsonObject().has("url")) {
-                clientLibraries.add(new LegacyFabricLibrary(libraryElement.getAsJsonObject().get("name").getAsString(),
-                        libraryElement.getAsJsonObject().get("url").getAsString()));
+            JsonObject libraryObject = libraryElement.getAsJsonObject();
+            if (libraryObject.has("name") && libraryObject.has("url")) {
+                clientLibraries.add(context.deserialize(libraryElement, LegacyFabricLibrary.class));
             }
         }
         libraries.put("client", clientLibraries);
@@ -68,9 +68,9 @@ public class LegacyFabricMetaLauncherMetaTypeAdapter implements JsonDeserializer
         List<LegacyFabricLibrary> commonLibraries = new ArrayList<>();
         final JsonArray commonLibrariesArray = librariesObject.getAsJsonArray("common");
         for (JsonElement libraryElement : commonLibrariesArray) {
-            if (libraryElement.getAsJsonObject().has("name") && libraryElement.getAsJsonObject().has("url")) {
-                commonLibraries.add(new LegacyFabricLibrary(libraryElement.getAsJsonObject().get("name").getAsString(),
-                        libraryElement.getAsJsonObject().get("url").getAsString()));
+            JsonObject libraryObject = libraryElement.getAsJsonObject();
+            if (libraryObject.has("name") && libraryObject.has("url")) {
+                commonLibraries.add(context.deserialize(libraryElement, LegacyFabricLibrary.class));
             }
         }
         libraries.put("common", commonLibraries);
@@ -78,9 +78,9 @@ public class LegacyFabricMetaLauncherMetaTypeAdapter implements JsonDeserializer
         List<LegacyFabricLibrary> serverLibraries = new ArrayList<>();
         final JsonArray serverLibrariesArray = librariesObject.getAsJsonArray("server");
         for (JsonElement libraryElement : serverLibrariesArray) {
-            if (libraryElement.getAsJsonObject().has("name") && libraryElement.getAsJsonObject().has("url")) {
-                serverLibraries.add(new LegacyFabricLibrary(libraryElement.getAsJsonObject().get("name").getAsString(),
-                        libraryElement.getAsJsonObject().get("url").getAsString()));
+            JsonObject libraryObject = libraryElement.getAsJsonObject();
+            if (libraryObject.has("name") && libraryObject.has("url")) {
+                serverLibraries.add(context.deserialize(libraryElement, LegacyFabricLibrary.class));
             }
         }
         libraries.put("server", serverLibraries);

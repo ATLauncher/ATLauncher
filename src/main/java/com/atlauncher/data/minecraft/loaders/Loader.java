@@ -38,6 +38,10 @@ public interface Loader {
 
     List<Library> getLibraries();
 
+    default List<Library> filterMinecraftLibraries(List<Library> libraries) {
+        return libraries;
+    }
+
     Arguments getArguments();
 
     String getMainClass();
