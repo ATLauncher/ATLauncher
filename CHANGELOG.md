@@ -19,6 +19,7 @@ This changelog only contains the changes that are unreleased. For changes for in
 - Issues with Legacy Fabric not installing/running [#1029]
 - Attempt to fix unpacking certain zips [#1024]
 - Fixed adding plugins to Paper/Purpur servers via the "Add Mod" button and drag-and-drop in the Edit Mods dialog [#1017]
+- Fixed MacOS issue with shortcuts inside typing fields [#1038]
 
 ### Misc
 None

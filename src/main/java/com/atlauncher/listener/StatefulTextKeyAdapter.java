@@ -82,7 +82,7 @@ public class StatefulTextKeyAdapter extends KeyAdapter {
 
     /**
      * Used as per the empty constructor.
-     * 
+     *
      * @param consumer Consumer to receive events with.
      */
     public void setConsumer(@Nullable Consumer<KeyEvent> consumer) {
@@ -97,13 +97,16 @@ public class StatefulTextKeyAdapter extends KeyAdapter {
         // Ignore if it is a shift key (for shift selection)
         // Ignore if it is a control key (for ctrl commands)
         // Ignore if it is an alt key
+        // Ignore if it is a MacBook CMD key
         // Ignore if the modifiers has control down (for ctrl commands)
+        // Ignore if the modifiers has command down (for cmd commands)
         if (e != null &&
                 !e.isActionKey() &&
                 e.getKeyCode() != KeyEvent.VK_SHIFT &&
                 e.getKeyCode() != KeyEvent.VK_CONTROL &&
                 e.getKeyCode() != KeyEvent.VK_ALT &&
-                e.getModifiersEx() != KeyEvent.CTRL_DOWN_MASK && consumer != null) {
+                e.getModifiersEx() != KeyEvent.CTRL_DOWN_MASK &&
+                e.getModifiersEx() != KeyEvent.META_DOWN_MASK && consumer != null) {
             consumer.accept(e);
         } else {
             if (ignoredReceiver != null) {
