@@ -105,6 +105,7 @@ public class StatefulTextKeyAdapter extends KeyAdapter {
                 e.getKeyCode() != KeyEvent.VK_SHIFT &&
                 e.getKeyCode() != KeyEvent.VK_CONTROL &&
                 e.getKeyCode() != KeyEvent.VK_ALT &&
+                e.getKeyCode() != KeyEvent.VK_META &&
                 e.getModifiersEx() != KeyEvent.CTRL_DOWN_MASK &&
                 e.getModifiersEx() != KeyEvent.META_DOWN_MASK && consumer != null) {
             consumer.accept(e);
