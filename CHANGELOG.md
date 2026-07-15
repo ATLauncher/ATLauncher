@@ -8,5 +8,5 @@ This changelog only contains the changes that are unreleased. For changes for in
 ### New Features
 
 ### Fixes
-
+- Fixed not all mods showing in the Edit Mods dialog window [#1040] @nllvoid
 ### Misc
