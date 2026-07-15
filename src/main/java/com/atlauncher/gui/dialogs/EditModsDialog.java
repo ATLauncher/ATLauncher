@@ -398,8 +398,15 @@ public class EditModsDialog extends JDialog {
             });
             disabledModsPanel.add(checkBox);
         }
-        enabledModsPanel.setPreferredSize(new Dimension(0, enabledMods.size() * 20));
-        disabledModsPanel.setPreferredSize(new Dimension(0, disabledMods.size() * 20));
+        int enabledHeight = enabledMods.stream()
+                .mapToInt(cb -> cb.getPreferredSize().height)
+                .sum();
+        enabledModsPanel.setPreferredSize(new Dimension(0, enabledHeight));
+
+        int disabledHeight = disabledMods.stream()
+                .mapToInt(cb -> cb.getPreferredSize().height)
+                .sum();
+        disabledModsPanel.setPreferredSize(new Dimension(0, disabledHeight));
     }
 
     private void checkBoxesChanged() {
