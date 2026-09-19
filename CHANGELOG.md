@@ -9,5 +9,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 
 ### Fixes
 - Another attempt to fix up phantom dialog windows [#715]
+- Fix Add Mod Restrictions resetting on startup for users with an old setting that disabled restrictions
 
 ### Misc

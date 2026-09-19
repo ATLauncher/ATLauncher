@@ -39,6 +39,7 @@ import java.util.UUID;
 
 import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
+import com.atlauncher.annot.ExcludeFromGsonSerialization;
 import com.atlauncher.constants.Constants;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.utils.OS;
@@ -80,6 +81,7 @@ public class Settings {
     public boolean enableConsole = true;
     public boolean enableTrayMenu = true;
     public boolean enableFeralGamemode = OS.isLinux() && Utils.executableInPath("gamemoderun");
+    @ExcludeFromGsonSerialization
     private boolean disableAddModRestrictions = false;
     public boolean disableCustomFonts = false;
     public boolean useNativeFilePicker = OS.isMac();
@@ -89,7 +91,8 @@ public class Settings {
     // Mods
     public ModPlatform defaultModPlatform = ModPlatform.CURSEFORGE;
     public InstanceExportFormat defaultExportFormat = InstanceExportFormat.CURSEFORGE;
-    public AddModRestriction addModRestriction = AddModRestriction.STRICT;
+    // Resolve the default during validation so legacy settings can be distinguished from an explicit choice.
+    public AddModRestriction addModRestriction = null;
     public boolean enableAddedModsByDefault = true;
     public boolean showFabricModsWhenSinytraInstalled = true;
     public boolean allowCurseForgeAlphaBetaFiles = false;
@@ -285,13 +288,14 @@ public class Settings {
     }
 
     public void validate() {
+        validateAddModRestriction();
+
         validateAnalyticsClientId();
 
         validateWindowSettings();
 
         validateSelectedTabOnStartup();
 
-        validateDisableAddModRestrictions();
         validateDefaultModPlatform();
 
         validateCustomDownloadsPath();
@@ -364,10 +368,12 @@ public class Settings {
         }
     }
 
-    private void validateDisableAddModRestrictions() {
-        if (disableAddModRestrictions && addModRestriction != AddModRestriction.NONE) {
-            addModRestriction = AddModRestriction.NONE;
+    private void validateAddModRestriction() {
+        if (addModRestriction == null) {
+            addModRestriction = disableAddModRestrictions ? AddModRestriction.NONE : AddModRestriction.STRICT;
         }
+
+        disableAddModRestrictions = false;
     }
 
     private void validateDefaultModPlatform() {
