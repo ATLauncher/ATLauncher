@@ -21,6 +21,7 @@ import java.awt.BorderLayout;
 import java.awt.Window;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Locale;
 
 import javax.annotation.Nullable;
@@ -29,6 +30,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 
 import org.mini2Dx.gettext.GetText;
 
@@ -133,6 +135,22 @@ public class ProgressDialog<T> extends JDialog implements NetworkProgressable {
     }
 
     public void start() {
+        if (!SwingUtilities.isEventDispatchThread()) {
+            try {
+                // Callers read the result after start(), so keep this call blocking.
+                SwingUtilities.invokeAndWait(this::start);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                close();
+                throw new IllegalStateException("Interrupted while showing progress dialog", e);
+            } catch (InvocationTargetException e) {
+                throw new IllegalStateException("Unable to show progress dialog", e.getCause());
+            }
+            return;
+        }
+
+        // Start and show in the same EDT task. Even an immediately completed worker's
+        // close request must wait until setVisible() enters the modal event loop.
         if (this.thread != null) {
             thread.start();
         }
@@ -156,6 +174,11 @@ public class ProgressDialog<T> extends JDialog implements NetworkProgressable {
     }
 
     public void close() {
+        if (!SwingUtilities.isEventDispatchThread()) {
+            SwingUtilities.invokeLater(this::close);
+            return;
+        }
+
         setVisible(false); // Remove the dialog
         dispose(); // Dispose the dialog
     }

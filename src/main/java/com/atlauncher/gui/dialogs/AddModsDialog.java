@@ -237,7 +237,7 @@ public final class AddModsDialog extends JDialog {
                         GetText.tr("Getting {0} Information", "Fabric API"), 0,
                         // #. {0} is the loader api were getting info from (Fabric/Quilt)
                         GetText.tr("Getting {0} Information", "Fabric API"),
-                        "Aborting Getting Fabric API Information");
+                        "Aborting Getting Fabric API Information", this);
 
                 curseForgeProjectLookupDialog.addThread(new Thread(() -> {
                     curseForgeProjectLookupDialog
@@ -252,7 +252,7 @@ public final class AddModsDialog extends JDialog {
 
                 if (mod == null) {
                     // #. {0} is the loader api were getting info from (Fabric/Quilt)
-                    DialogManager.okDialog().setTitle(GetText.tr("Error Getting {0} Information", "Fabric API"))
+                    DialogManager.okDialog().setParent(this).setTitle(GetText.tr("Error Getting {0} Information", "Fabric API"))
                             // #. {0} is the loader (Fabric/Quilt) {1} is the platform (CurseForge/Modrinth)
                             .setContent(new HTMLBuilder().center().text(GetText.tr(
                                     "There was an error getting {0} information from {1}. Please try again later.",
@@ -280,7 +280,7 @@ public final class AddModsDialog extends JDialog {
                         GetText.tr("Getting {0} Information", "Fabric API"), 0,
                         // #. {0} is the loader api were getting info from (Fabric/Quilt)
                         GetText.tr("Getting {0} Information", "Fabric API"),
-                        "Aborting Getting Fabric API Information");
+                        "Aborting Getting Fabric API Information", this);
 
                 modrinthProjectLookupDialog.addThread(new Thread(() -> {
                     modrinthProjectLookupDialog
@@ -295,7 +295,7 @@ public final class AddModsDialog extends JDialog {
 
                 if (mod == null) {
                     // #. {0} is the loader api were getting info from (Fabric/Quilt)
-                    DialogManager.okDialog().setTitle(GetText.tr("Error Getting {0} Information", "Fabric API"))
+                    DialogManager.okDialog().setParent(this).setTitle(GetText.tr("Error Getting {0} Information", "Fabric API"))
                             // #. {0} is the loader (Fabric/Quilt) {1} is the platform (CurseForge/Modrinth)
                             .setContent(new HTMLBuilder().center().text(GetText.tr(
                                     "There was an error getting {0} information from {1}. Please try again later.",
@@ -336,7 +336,7 @@ public final class AddModsDialog extends JDialog {
                         GetText.tr("Getting {0} Information", "Legacy Fabric API"), 0,
                         // #. {0} is the loader api were getting info from (Fabric/Quilt)
                         GetText.tr("Getting {0} Information", "Legacy Fabric API"),
-                        "Aborting Getting Legacy Fabric API Information");
+                        "Aborting Getting Legacy Fabric API Information", this);
 
                 curseForgeProjectLookupDialog.addThread(new Thread(() -> {
                     curseForgeProjectLookupDialog
@@ -351,7 +351,8 @@ public final class AddModsDialog extends JDialog {
 
                 if (mod == null) {
                     // #. {0} is the loader api were getting info from (Fabric/Quilt)
-                    DialogManager.okDialog().setTitle(GetText.tr("Error Getting {0} Information", "Legacy Fabric API"))
+                    DialogManager.okDialog().setParent(this)
+                            .setTitle(GetText.tr("Error Getting {0} Information", "Legacy Fabric API"))
                             // #. {0} is the loader (Fabric/Quilt) {1} is the platform (CurseForge/Modrinth)
                             .setContent(new HTMLBuilder().center().text(GetText.tr(
                                     "There was an error getting {0} information from {1}. Please try again later.",
@@ -382,7 +383,7 @@ public final class AddModsDialog extends JDialog {
                         GetText.tr("Getting {0} Information", "Legacy Fabric API"), 0,
                         // #. {0} is the loader api were getting info from (Fabric/Quilt)
                         GetText.tr("Getting {0} Information", "Legacy Fabric API"),
-                        "Aborting Getting Legacy Fabric API Information");
+                        "Aborting Getting Legacy Fabric API Information", this);
 
                 modrinthProjectLookupDialog.addThread(new Thread(() -> {
                     modrinthProjectLookupDialog
@@ -397,7 +398,8 @@ public final class AddModsDialog extends JDialog {
 
                 if (mod == null) {
                     // #. {0} is the loader api were getting info from (Fabric/Quilt)
-                    DialogManager.okDialog().setTitle(GetText.tr("Error Getting {0} Information", "Legacy Fabric API"))
+                    DialogManager.okDialog().setParent(this)
+                            .setTitle(GetText.tr("Error Getting {0} Information", "Legacy Fabric API"))
                             // #. {0} is the loader (Fabric/Quilt) {1} is the platform (CurseForge/Modrinth)
                             .setContent(new HTMLBuilder().center().text(GetText.tr(
                                     "There was an error getting {0} information from {1}. Please try again later.",
@@ -437,7 +439,7 @@ public final class AddModsDialog extends JDialog {
                     GetText.tr("Getting {0} Information", "Quilt Standard Libaries"), 0,
                     // #. {0} is the loader api were getting info from (Fabric/Quilt)
                     GetText.tr("Getting {0} Information", "Quilt Standard Libaries"),
-                    "Aborting Getting Quilt Standard Libaries Information");
+                    "Aborting Getting Quilt Standard Libaries Information", this);
 
             modrinthProjectLookupDialog.addThread(new Thread(() -> {
                 modrinthProjectLookupDialog
@@ -451,7 +453,7 @@ public final class AddModsDialog extends JDialog {
             ModrinthProject mod = modrinthProjectLookupDialog.getReturnValue();
 
             if (mod == null) {
-                DialogManager.okDialog()
+                DialogManager.okDialog().setParent(this)
                         // #. {0} is the loader api were getting info from (Fabric/Quilt)
                         .setTitle(GetText.tr("Error Getting {0} Information", "Quilt Standard Libaries"))
                         // #. {0} is the loader (Fabric/Quilt) {1} is the platform (CurseForge/Modrinth)
@@ -485,7 +487,7 @@ public final class AddModsDialog extends JDialog {
                         GetText.tr("Getting {0} Information", "Forgified Fabric API"), 0,
                         // #. {0} is the loader api were getting info from (Fabric/Quilt)
                         GetText.tr("Getting {0} Information", "Forgified Fabric API"),
-                        "Aborting Getting Forgified Fabric API Information");
+                        "Aborting Getting Forgified Fabric API Information", this);
 
                 curseForgeProjectLookupDialog.addThread(new Thread(() -> {
                     curseForgeProjectLookupDialog
@@ -501,7 +503,7 @@ public final class AddModsDialog extends JDialog {
 
                 if (mod == null) {
                     // #. {0} is the loader api were getting info from (Fabric/Quilt)
-                    DialogManager.okDialog()
+                    DialogManager.okDialog().setParent(this)
                             .setTitle(GetText.tr("Error Getting {0} Information", "Forgified Fabric API"))
                             // #. {0} is the loader (Fabric/Quilt) {1} is the platform (CurseForge/Modrinth)
                             .setContent(new HTMLBuilder().center().text(GetText.tr(
@@ -532,7 +534,7 @@ public final class AddModsDialog extends JDialog {
                         GetText.tr("Getting {0} Information", "Fabric API"), 0,
                         // #. {0} is the loader api were getting info from (Fabric/Quilt)
                         GetText.tr("Getting {0} Information", "Fabric API"),
-                        "Aborting Getting Fabric API Information");
+                        "Aborting Getting Fabric API Information", this);
 
                 modrinthProjectLookupDialog.addThread(new Thread(() -> {
                     modrinthProjectLookupDialog
@@ -547,7 +549,7 @@ public final class AddModsDialog extends JDialog {
 
                 if (mod == null) {
                     // #. {0} is the loader api were getting info from (Fabric/Quilt)
-                    DialogManager.okDialog()
+                    DialogManager.okDialog().setParent(this)
                             .setTitle(GetText.tr("Error Getting {0} Information", "Forgified Fabric API"))
                             // #. {0} is the loader (Fabric/Quilt) {1} is the platform (CurseForge/Modrinth)
                             .setContent(new HTMLBuilder().center().text(GetText.tr(
@@ -1084,7 +1086,7 @@ public final class AddModsDialog extends JDialog {
                 contentPanel.add(new ModrinthSearchHitCard(castMod, instanceOrServer, e -> {
                     final ProgressDialog<ModrinthProject> modrinthProjectLookupDialog = new ProgressDialog<>(
                             GetText.tr("Getting Mod Information"), 0, GetText.tr("Getting Mod Information"),
-                            "Aborting Getting Mod Information");
+                            "Aborting Getting Mod Information", this);
 
                     modrinthProjectLookupDialog.addThread(new Thread(() -> {
                         modrinthProjectLookupDialog.setReturnValue(ModrinthApi.getProject(castMod.projectId));
@@ -1097,7 +1099,7 @@ public final class AddModsDialog extends JDialog {
                     ModrinthProject modrinthMod = modrinthProjectLookupDialog.getReturnValue();
 
                     if (modrinthMod == null) {
-                        DialogManager.okDialog().setTitle(GetText.tr("Error Getting Mod Information"))
+                        DialogManager.okDialog().setParent(this).setTitle(GetText.tr("Error Getting Mod Information"))
                                 .setContent(new HTMLBuilder().center().text(GetText.tr(
                                         "There was an error getting mod information from Modrinth. Please try again later."))
                                         .build())

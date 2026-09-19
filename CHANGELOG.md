@@ -8,5 +8,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 ### New Features
 
 ### Fixes
+- Another attempt to fix up phantom dialog windows [#715]
 
 ### Misc
