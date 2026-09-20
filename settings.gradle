@@ -20,5 +20,4 @@ toolchainManagement {
     }
 }
 
-include('app')
 include('legacy-launch')
