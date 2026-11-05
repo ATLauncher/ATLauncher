@@ -273,6 +273,51 @@ public class Server implements ModManagement {
                         arguments.add("--working-directory");
                         arguments.add(getRoot().toAbsolutePath().toString());
                         arguments.add(format);
+                    } else if (Utils.executableInPath("konsole")) {
+                        arguments.add("konsole");
+                        arguments.add("--workdir");
+                        arguments.add(getRoot().toAbsolutePath().toString());
+                        arguments.add("-e");
+                        arguments.addAll(Arrays.asList(format
+                            .split(" ")));
+                    } else if (Utils.executableInPath("ptyxis")) {
+                        arguments.add("ptyxis");
+                        arguments.add("--working-directory");
+                        arguments.add(getRoot().toAbsolutePath().toString());
+                        arguments.add("--");
+                        arguments.addAll(Arrays.asList(format
+                            .split(" ")));
+                    } else if (Utils.executableInPath("gnome-terminal")) {
+                        arguments.add("gnome-terminal");
+                        arguments.add("--");
+                        arguments.addAll(Arrays.asList(format
+                            .split(" ")));
+                    } else if (Utils.executableInPath("kgx")) {
+                        arguments.add("kgx");
+                        arguments.add("--working-directory");
+                        arguments.add(getRoot().toAbsolutePath().toString());
+                        arguments.add("-e");
+                        arguments.add(format);
+                    } else if (Utils.executableInPath("xfce4-terminal")) {
+                        arguments.add("xfce4-terminal");
+                        arguments.add("--working-directory");
+                        arguments.add(getRoot().toAbsolutePath().toString());
+                        arguments.add("-x");
+                        arguments.addAll(Arrays.asList(format
+                            .split(" ")));
+                    } else if (Utils.executableInPath("mate-terminal")) {
+                        arguments.add("mate-terminal");
+                        arguments.add("--working-directory");
+                        arguments.add(getRoot().toAbsolutePath().toString());
+                        arguments.add("-x");
+                        arguments.addAll(Arrays.asList(format
+                            .split(" ")));
+                    } else if (Utils.executableInPath("qterminal")) {
+                        arguments.add("qterminal");
+                        arguments.add("--workdir");
+                        arguments.add(getRoot().toAbsolutePath().toString());
+                        arguments.add("-e");
+                        arguments.add(format);
                     } else if (Utils.executableInPath("kitty")) {
                         arguments.add("kitty");
                         arguments.addAll(Arrays.asList(format
@@ -282,9 +327,14 @@ public class Server implements ModManagement {
                         arguments.add("-e");
                         arguments.addAll(Arrays.asList(format
                             .split(" ")));
-                    } else if (Utils.executableInPath("gnome-terminal")) {
-                        arguments.add("gnome-terminal");
-                        arguments.add("--");
+                    } else if (Utils.executableInPath("xdg-terminal-exec")) {
+                        // freedesktop.org terminal execution dispatcher (fallback to launch any unlisted user-configured default terminal)
+                        arguments.add("xdg-terminal-exec");
+                        arguments.addAll(Arrays.asList(format
+                            .split(" ")));
+                    } else if (Utils.executableInPath("xterm")) {
+                        arguments.add("xterm");
+                        arguments.add("-e");
                         arguments.addAll(Arrays.asList(format
                             .split(" ")));
                     } else {
