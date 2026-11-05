@@ -787,7 +787,7 @@ public final class AddModsDialog extends JDialog {
                 .orElse("Mods");
         String sortValue = Optional.ofNullable((ComboItem<String>) sortComboBox.getSelectedItem())
                 .map(ComboItem::getValue)
-                .orElse(selectedModPlatform == ModPlatform.CURSEFORGE ? "Popularity" : "relevance");
+                .orElse(selectedModPlatform == ModPlatform.CURSEFORGE ? "Relevancy" : "relevance");
 
         new Thread(() -> {
             if (selectedModPlatform == ModPlatform.CURSEFORGE) {
@@ -1227,10 +1227,11 @@ public final class AddModsDialog extends JDialog {
             if (instanceOrServer instanceof Instance) {
                 sectionComboBox.addItem(new ComboItem<>("Worlds", GetText.tr("Worlds")));
             }
-
+            sortComboBox.addItem(new ComboItem<>("Relevancy", GetText.tr("Relevancy")));
             sortComboBox.addItem(new ComboItem<>("Popularity", GetText.tr("Popularity")));
             sortComboBox.addItem(new ComboItem<>("Last Updated", GetText.tr("Last Updated")));
             sortComboBox.addItem(new ComboItem<>("Total Downloads", GetText.tr("Total Downloads")));
+            sortComboBox.addItem(new ComboItem<>("Creation Date", GetText.tr("Creation Date")));
         } else {
             sortComboBox.addItem(new ComboItem<>("relevance", GetText.tr("Relevance")));
             sortComboBox.addItem(new ComboItem<>("newest", GetText.tr("Newest")));
