@@ -17,7 +17,8 @@
  */
 package com.atlauncher.viewmodel.base;
 
-import java.util.Optional;
+import com.atlauncher.data.NewsFeedState;
+import com.atlauncher.data.NewsSource;
 
 import io.reactivex.rxjava3.core.Observable;
 
@@ -26,8 +27,11 @@ import io.reactivex.rxjava3.core.Observable;
  */
 public interface INewsViewModel {
 
-    /**
-     * Observable of news HTML to display
-     */
-    Observable<Optional<String>> getNewsHTML();
+    Observable<NewsFeedState> getNews(NewsSource source);
+
+    void loadNews(NewsSource source);
+
+    void loadMore(NewsSource source);
+
+    void retry(NewsSource source);
 }

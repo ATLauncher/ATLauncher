@@ -17,60 +17,72 @@
  */
 package com.atlauncher.managers;
 
-import java.util.Collections;
+import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-import org.jetbrains.annotations.NotNull;
-
-import com.apollographql.apollo.ApolloCall;
 import com.apollographql.apollo.api.Response;
 import com.apollographql.apollo.api.cache.http.HttpCachePolicy;
-import com.apollographql.apollo.exception.ApolloException;
-import com.atlauncher.data.AbstractNews;
+import com.apollographql.apollo.rx3.Rx3Apollo;
+import com.atlauncher.data.NewsItem;
+import com.atlauncher.data.NewsSource;
+import com.atlauncher.graphql.GetMinecraftNewsQuery;
 import com.atlauncher.graphql.GetNewsQuery;
 import com.atlauncher.network.GraphqlClient;
 
 import io.reactivex.rxjava3.core.Observable;
-import io.reactivex.rxjava3.subjects.BehaviorSubject;
+import io.reactivex.rxjava3.core.Single;
+import io.reactivex.rxjava3.subjects.PublishSubject;
+import io.reactivex.rxjava3.subjects.Subject;
 
 public class NewsManager {
-    static final BehaviorSubject<List<AbstractNews>> NEWS = BehaviorSubject.createDefault(Collections.emptyList());
+    private static final Subject<Boolean> REFRESH = PublishSubject.<Boolean>create().toSerialized();
 
-    /**
-     * Get the News for the Launcher
-     *
-     * @return The News items
-     */
-    public static Observable<List<AbstractNews>> getNews() {
-        return NEWS;
+    public static Observable<Boolean> getRefreshEvents() {
+        return REFRESH.hide();
     }
 
-    /**
-     * Load News into Launcher
-     */
-    public static void loadNews() {
-        GraphqlClient.apolloClient.query(new GetNewsQuery(10))
-                .toBuilder()
-                .httpCachePolicy(new HttpCachePolicy.Policy(HttpCachePolicy.FetchStrategy.CACHE_FIRST, 30,
-                        TimeUnit.MINUTES, false))
-                .build()
-                .enqueue(new ApolloCall.Callback<GetNewsQuery.Data>() {
-                    @Override
-                    public void onResponse(@NotNull Response<GetNewsQuery.Data> response) {
-                        GetNewsQuery.Data data = response.getData();
-                        if (data == null) {
-                            return;
-                        }
-                        List<GetNewsQuery.GeneralNew> networkNews = data.generalNews();
-                        NEWS.onNext(networkNews.stream().map(AbstractNews::new).collect(Collectors.toList()));
-                    }
+    /** Fetch one source independently; Apollo cancels the request when its subscription is disposed. */
+    public static Single<List<NewsItem>> fetchNews(NewsSource source, int first, int skip) {
+        if (first < 1 || first > 100 || skip < 0) {
+            return Single.error(new IllegalArgumentException("Invalid news pagination"));
+        }
 
-                    @Override
-                    public void onFailure(@NotNull ApolloException e) {
-                        LogManager.logStackTrace("Error fetching news", e);
-                    }
-                });
+        return Single.defer(() -> {
+            HttpCachePolicy.Policy policy = new HttpCachePolicy.Policy(HttpCachePolicy.FetchStrategy.NETWORK_FIRST,
+                    30, TimeUnit.MINUTES, false);
+            if (source == NewsSource.MINECRAFT) {
+                return Rx3Apollo.from(GraphqlClient.apolloClient.query(new GetMinecraftNewsQuery(first, skip))
+                        .toBuilder().httpCachePolicy(policy).build()).firstOrError().map(response -> {
+                            GetMinecraftNewsQuery.Data data = requireData(response);
+                            return data.minecraftNews().stream().map(item -> new NewsItem(item.id(), item.title(),
+                                    item.content(), item.createdAt(), source, item.url(), item.imageUrl()))
+                                    .collect(Collectors.toList());
+                        });
+            }
+
+            return Rx3Apollo.from(GraphqlClient.apolloClient.query(new GetNewsQuery(first, skip))
+                    .toBuilder().httpCachePolicy(policy).build()).firstOrError().map(response -> {
+                        GetNewsQuery.Data data = requireData(response);
+                        return data.generalNews().stream().map(item -> new NewsItem(item.id(), item.title(),
+                                item.content(), item.createdAt(), source, null, null)).collect(Collectors.toList());
+                    });
+        }).doOnError(error -> LogManager.logStackTrace("Error fetching " + source + " news", error));
+    }
+
+    private static <T> T requireData(Response<T> response) throws IOException {
+        if (response.getErrors() != null && !response.getErrors().isEmpty()) {
+            throw new IOException(response.getErrors().get(0).getMessage());
+        }
+        if (response.getData() == null) {
+            throw new IOException("The news request returned no data");
+        }
+        return response.getData();
+    }
+
+    /** Refresh feeds that have already been opened without fetching unopened sources. */
+    public static void loadNews() {
+        REFRESH.onNext(true);
     }
 }

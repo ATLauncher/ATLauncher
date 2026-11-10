@@ -1,0 +1,12 @@
+query GetMinecraftNews($first: Int!, $skip: Int!) {
+    minecraftNews(first: $first, skip: $skip) {
+        id
+        title
+        content
+        type
+        url
+        imageUrl
+        createdAt
+        updatedAt
+    }
+}

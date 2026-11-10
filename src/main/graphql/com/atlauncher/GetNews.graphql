@@ -1,7 +1,10 @@
-query GetNews($first: Int!) {
-    generalNews(first: $first) {
+query GetNews($first: Int!, $skip: Int!) {
+    generalNews(first: $first, skip: $skip) {
+        id
         title
         content
+        type
         createdAt
+        updatedAt
     }
 }

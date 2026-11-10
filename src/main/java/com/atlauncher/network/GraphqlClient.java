@@ -17,10 +17,6 @@
  */
 package com.atlauncher.network;
 
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
@@ -65,33 +61,13 @@ public class GraphqlClient {
             }
         };
 
-        CustomTypeAdapter<Date> dateCustomTypeAdapter = new CustomTypeAdapter<Date>() {
-            DateFormat iso8601Format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSX");
-
-            @Override
-            public Date decode(CustomTypeValue<?> value) {
-                try {
-                    return iso8601Format.parse(value.value.toString());
-                } catch (ParseException e) {
-                    LogManager.logStackTrace(e);
-                    return null;
-                }
-            }
-
-            @Override
-            public CustomTypeValue<?> encode(Date value) {
-                return new GraphQLString(iso8601Format.format(value));
-            }
-
-        };
-
         DiskLruHttpCacheStore cacheStore = new DiskLruHttpCacheStore(FileSystem.APOLLO_CACHE.toFile(),
                 100 * 1024 * 1024);
 
         apolloClient = ApolloClient.builder()
                 .serverUrl(Constants.GRAPHQL_ENDPOINT)
                 .addCustomTypeAdapter(CustomType.ID, idCustomTypeAdapter)
-                .addCustomTypeAdapter(CustomType.DATETIME, dateCustomTypeAdapter)
+                .addCustomTypeAdapter(CustomType.DATETIME, new GraphqlDateTimeAdapter())
                 .okHttpClient(Network.GRAPHQL_CLIENT)
                 .httpCache(new ApolloHttpCache(cacheStore))
                 .defaultHttpCachePolicy(
