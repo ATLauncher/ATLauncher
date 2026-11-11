@@ -384,6 +384,11 @@ public class Launcher {
     }
 
     private void checkForLauncherUpdate() {
+        if (!shouldCheckForLauncherUpdate(OS.isUsingFlatpak())) {
+            LogManager.debug("Skipping launcher update check for Flatpak");
+            return;
+        }
+
         PerformanceManager.start();
 
         LogManager.debug("Checking for launcher update");
@@ -419,6 +424,10 @@ public class Launcher {
         }
         LogManager.debug("Finished checking for launcher update");
         PerformanceManager.end();
+    }
+
+    static boolean shouldCheckForLauncherUpdate(boolean isFlatpak) {
+        return !isFlatpak;
     }
 
     /**
