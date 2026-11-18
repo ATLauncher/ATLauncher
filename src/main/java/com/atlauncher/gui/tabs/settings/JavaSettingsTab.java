@@ -527,6 +527,28 @@ public class JavaSettingsTab extends AbstractSettingsTab {
         });
         add(useJavaProvidedByMinecraft, gbc);
 
+        // Disable Java4Shell Arguments
+
+        gbc.gridx = 0;
+        gbc.gridy++;
+        gbc.insets = UIConstants.LABEL_INSETS;
+        gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
+        JLabelWithHover disableJava4ShellArgumentsLabel = new JLabelWithHover(
+            GetText.tr("Disable Java4Shell Arguments") + "?", HELP_ICON,
+            new HTMLBuilder().center().text(GetText.tr(
+                    "Disables the Java4Shell JVM arguments added automatically when launching Minecraft."))
+                .build());
+        add(disableJava4ShellArgumentsLabel, gbc);
+
+        gbc.gridx++;
+        gbc.insets = UIConstants.CHECKBOX_FIELD_INSETS;
+        gbc.anchor = GridBagConstraints.BASELINE_LEADING;
+        JCheckBox disableJava4ShellArguments = new JCheckBox();
+        disableJava4ShellArguments.addItemListener(
+            itemEvent -> viewModel.setDisableJava4ShellArguments(itemEvent.getStateChange() == ItemEvent.SELECTED));
+        addDisposable(viewModel.getDisableJava4ShellArguments().subscribe(disableJava4ShellArguments::setSelected));
+        add(disableJava4ShellArguments, gbc);
+
         // Disable Legacy Launching
 
         gbc.gridx = 0;

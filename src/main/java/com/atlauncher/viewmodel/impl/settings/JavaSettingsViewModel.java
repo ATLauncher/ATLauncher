@@ -65,6 +65,7 @@ public class JavaSettingsViewModel implements SettingsListener {
     private final BehaviorSubject<Boolean> _maximizeMinecraft = BehaviorSubject.create(),
         _ignoreJavaOnInstanceLaunch = BehaviorSubject.create(),
         _useJavaProvidedByMinecraft = BehaviorSubject.create(),
+        _disableJava4ShellArguments = BehaviorSubject.create(),
         _disableLegacyLaunching = BehaviorSubject.create(),
         _useSystemGlfw = BehaviorSubject.create(),
         _useSystemOpenAl = BehaviorSubject.create();
@@ -209,6 +210,7 @@ public class JavaSettingsViewModel implements SettingsListener {
         _maximizeMinecraft.onNext(App.settings.maximiseMinecraft);
         _ignoreJavaOnInstanceLaunch.onNext(App.settings.ignoreJavaOnInstanceLaunch);
         _useJavaProvidedByMinecraft.onNext(App.settings.useJavaProvidedByMinecraft);
+        _disableJava4ShellArguments.onNext(App.settings.disableJava4ShellArguments);
         _disableLegacyLaunching.onNext(App.settings.disableLegacyLaunching);
         _useSystemGlfw.onNext(App.settings.useSystemGlfw);
         _useSystemOpenAl.onNext(App.settings.useSystemOpenAl);
@@ -431,6 +433,15 @@ public class JavaSettingsViewModel implements SettingsListener {
 
     public Observable<Boolean> getUseJavaProvidedByMinecraft() {
         return _useJavaProvidedByMinecraft.observeOn(SwingSchedulers.edt());
+    }
+
+    public Observable<Boolean> getDisableJava4ShellArguments() {
+        return _disableJava4ShellArguments.observeOn(SwingSchedulers.edt());
+    }
+
+    public void setDisableJava4ShellArguments(Boolean b) {
+        App.settings.disableJava4ShellArguments = b;
+        SettingsManager.post();
     }
 
     public Observable<Boolean> getDisableLegacyLaunching() {

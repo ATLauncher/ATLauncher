@@ -112,6 +112,7 @@ public class Settings {
     public boolean maximiseMinecraft = false;
     public boolean ignoreJavaOnInstanceLaunch = false;
     public boolean useJavaProvidedByMinecraft = true;
+    public boolean disableJava4ShellArguments = false;
     public boolean disableLegacyLaunching = false;
     public boolean useSystemGlfw = false;
     public boolean useSystemOpenAl = false;

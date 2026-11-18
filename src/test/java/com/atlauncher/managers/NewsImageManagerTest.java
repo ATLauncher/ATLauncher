@@ -48,6 +48,7 @@ import io.reactivex.rxjava3.observers.TestObserver;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
+import okhttp3.Protocol;
 import okhttp3.Request;
 import okhttp3.Response;
 
@@ -209,10 +210,12 @@ class NewsImageManagerTest {
         Interceptor.Chain chain = mock(Interceptor.Chain.class);
         Request original = new Request.Builder().url("https://www.minecraft.net/another image.jpg")
                 .header("User-Agent", "ATLauncher/normal").build();
+        Response response = new Response.Builder().request(original).protocol(Protocol.HTTP_1_1)
+                .code(200).message("OK").build();
         when(chain.request()).thenReturn(original);
-        when(chain.proceed(any(Request.class))).thenReturn(mock(Response.class));
+        when(chain.proceed(any(Request.class))).thenReturn(response);
 
-        override.intercept(chain);
+        assertSame(response, override.intercept(chain));
 
         ArgumentCaptor<Request> request = ArgumentCaptor.forClass(Request.class);
         verify(chain).proceed(request.capture());
@@ -227,10 +230,12 @@ class NewsImageManagerTest {
         Interceptor.Chain chain = mock(Interceptor.Chain.class);
         Request original = new Request.Builder().url("https://example.com/image.jpg")
                 .header("User-Agent", "ATLauncher/normal").build();
+        Response response = new Response.Builder().request(original).protocol(Protocol.HTTP_1_1)
+                .code(200).message("OK").build();
         when(chain.request()).thenReturn(original);
-        when(chain.proceed(any(Request.class))).thenReturn(mock(Response.class));
+        when(chain.proceed(any(Request.class))).thenReturn(response);
 
-        override.intercept(chain);
+        assertSame(response, override.intercept(chain));
 
         ArgumentCaptor<Request> request = ArgumentCaptor.forClass(Request.class);
         verify(chain).proceed(request.capture());

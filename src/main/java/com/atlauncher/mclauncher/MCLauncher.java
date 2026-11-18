@@ -174,6 +174,9 @@ public class MCLauncher {
         int permGen = Optional.ofNullable(instance.launcher.permGen).orElse(App.settings.metaspace);
         String javaArguments = Optional.ofNullable(instance.launcher.javaArguments).orElse(App.settings.javaParameters);
         String javaPath = instance.getJavaPath();
+        String javaVersion = Java.getVersionForJavaPath(new File(javaPath));
+        int javaMajorVersion = Java.parseJavaVersionNumber(javaVersion);
+        boolean useMetaspace = javaVersion.equals("Unknown") || javaMajorVersion >= 8;
 
         File jarMods = instance.getJarModsDirectory();
         File[] jarModFiles = jarMods.listFiles();
@@ -301,13 +304,13 @@ public class MCLauncher {
 
         if (OS.getMaximumRam() != 0 && permGen < instance.getPermGen()
             && (OS.getMaximumRam() / 8) < instance.getPermGen()) {
-            if (Java.useMetaspace(javaPath)) {
+            if (useMetaspace) {
                 arguments.add("-XX:MetaspaceSize=" + instance.getPermGen() + "M");
             } else {
                 arguments.add("-XX:PermSize=" + instance.getPermGen() + "M");
             }
         } else {
-            if (Java.useMetaspace(javaPath)) {
+            if (useMetaspace) {
                 arguments.add("-XX:MetaspaceSize=" + permGen + "M");
             } else {
                 arguments.add("-XX:PermSize=" + permGen + "M");
@@ -361,6 +364,10 @@ public class MCLauncher {
 
             arguments.add(replaceArgument(argument, instance, account, props, nativesDir, classpath, username));
         }
+
+        Java4ShellArguments.apply(arguments, javaMajorVersion,
+            Optional.ofNullable(instance.launcher.disableJava4ShellArguments)
+                .orElse(App.settings.disableJava4ShellArguments));
 
         if (OS.isWindows() && !arguments
             .contains("-XX:HeapDumpPath=MojangTricksIntelDriversForPerformance_javaw.exe_minecraft.exe.heapdump")) {

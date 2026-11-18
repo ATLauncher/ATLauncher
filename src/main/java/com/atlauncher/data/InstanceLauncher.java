@@ -69,6 +69,7 @@ public class InstanceLauncher {
     public String account;
     public QuickPlay quickPlay = QuickPlay.getDefault();
     public Boolean useJavaProvidedByMinecraft = null;
+    public Boolean disableJava4ShellArguments = null;
     public Boolean disableLegacyLaunching = null;
     public Boolean enableCommands = null;
     public String preLaunchCommand = null;

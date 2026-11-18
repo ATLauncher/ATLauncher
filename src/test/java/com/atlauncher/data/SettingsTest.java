@@ -19,6 +19,7 @@ package com.atlauncher.data;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.mockStatic;
 
 import java.awt.Rectangle;
@@ -134,6 +135,42 @@ public class SettingsTest {
             settings.convert(properties);
 
             assertEquals(disabled ? AddModRestriction.NONE : AddModRestriction.STRICT, settings.addModRestriction);
+        }
+    }
+
+    @Test
+    public void testJava4ShellArgumentsAreEnabledWhenSettingIsAbsent() {
+        assertFalse(loadSettings("{}").disableJava4ShellArguments);
+    }
+
+    @Test
+    public void testJava4ShellArgumentsSettingSurvivesRestart() {
+        Settings settings = loadSettings("{}");
+
+        for (boolean disabled : new boolean[] { true, false }) {
+            settings.disableJava4ShellArguments = disabled;
+            settings = loadSettings(Gsons.DEFAULT.toJson(settings));
+
+            assertEquals(disabled, settings.disableJava4ShellArguments);
+        }
+    }
+
+    @Test
+    public void testInstanceJava4ShellArgumentsInheritWhenSettingIsAbsent() {
+        InstanceLauncher launcher = Gsons.DEFAULT.fromJson("{}", InstanceLauncher.class);
+
+        assertNull(launcher.disableJava4ShellArguments);
+    }
+
+    @Test
+    public void testInstanceJava4ShellArgumentsOverrideSurvivesRestart() {
+        InstanceLauncher launcher = new InstanceLauncher();
+
+        for (Boolean disabled : new Boolean[] { true, false, null }) {
+            launcher.disableJava4ShellArguments = disabled;
+            launcher = Gsons.DEFAULT.fromJson(Gsons.DEFAULT.toJson(launcher), InstanceLauncher.class);
+
+            assertEquals(disabled, launcher.disableJava4ShellArguments);
         }
     }
 
