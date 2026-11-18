@@ -3,16 +3,10 @@
 This changelog only contains the changes that are unreleased. For changes for individual releases, please visit the
 [releases](https://github.com/ATLauncher/ATLauncher/releases) page on GitHub.
 
-## 3.4.42.0
+## 3.4.42.1
 
 ### New Features
-- Add in Minecraft news to the news tab
-- Add java arguments for mitigation of Java4Shell
 
 ### Fixes
-- Apply Java4Shell mitigation when launching supported Minecraft Java runtimes
-- Expand Linux terminal detection for server launches (Konsole, Ptyxis, kgx, xfce4-terminal, mate-terminal, qterminal, xdg-terminal-exec, xterm)
-- Fixes server launches on KDE Plasma (Konsole), modern Fedora (Ptyxis), GNOME Console (kgx), MATE, LXQt, and standalone XFCE
-- Adds xdg-terminal-exec dispatcher fallback for unlisted default terminals
 
 ### Misc
