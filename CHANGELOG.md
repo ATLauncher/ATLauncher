@@ -8,5 +8,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 ### New Features
 
 ### Fixes
+- Issue with exporting instances to Modrinth format causing application to freeze [#1057]
 
 ### Misc

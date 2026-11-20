@@ -301,46 +301,59 @@ public class InstanceExportDialog extends JDialog {
         exportButton.addActionListener(arg0 -> {
             instance.scanMissingMods(this);
 
-            final ProgressDialog<Object> dialog = new ProgressDialog<>(GetText.tr("Exporting Instance"), 0,
+            final String exportName = name.getText();
+            final String exportVersion = version.getText();
+            final String exportAuthor = author.getText();
+            final String exportDirectory = saveTo.getText();
+            final InstanceExportFormat exportFormat = ((ComboItem<InstanceExportFormat>) format.getSelectedItem())
+                .getValue();
+            final List<String> exportOverrides = new ArrayList<>(overrides);
+
+            final ProgressDialog<Pair<Path, String>> dialog = new ProgressDialog<>(GetText.tr("Exporting Instance"), 0,
                 GetText.tr("Exporting Instance. Please wait..."), null, this);
 
             dialog.addThread(new Thread(() -> {
-                InstanceExportFormat exportFormat = ((ComboItem<InstanceExportFormat>) format.getSelectedItem())
-                    .getValue();
+                try {
+                    Pair<Path, String> exportResult = instance.export(exportName, exportVersion, exportAuthor,
+                        exportFormat, exportDirectory, exportOverrides);
 
-                Pair<Path, String> exportResult = instance.export(name.getText(), version.getText(),
-                    author.getText(),
-                    exportFormat, saveTo.getText(), overrides);
-
-                if (exportResult.left() != null) {
-                    instance.launcher.lastExportName = name.getText();
-                    instance.launcher.lastExportVersion = version.getText();
-                    instance.launcher.lastExportAuthor = author.getText();
-                    instance.launcher.lastExportSaveTo = saveTo.getText();
-                    instance.save();
-
-                    if ((exportFormat == InstanceExportFormat.MODRINTH
-                        || exportFormat == InstanceExportFormat.CURSEFORGE_AND_MODRINTH)
-                        && exportResult.right() != null && !exportResult.right().isEmpty()) {
-                        ModrinthExportOverridesDialog modrinthExportOverridesDialog = new ModrinthExportOverridesDialog(
-                            dialog, exportResult.right());
-                        modrinthExportOverridesDialog.setVisible(true);
+                    if (exportResult.left() != null) {
+                        instance.launcher.lastExportName = exportName;
+                        instance.launcher.lastExportVersion = exportVersion;
+                        instance.launcher.lastExportAuthor = exportAuthor;
+                        instance.launcher.lastExportSaveTo = exportDirectory;
+                        instance.save();
                     }
 
-                    App.TOASTER.pop(GetText.tr("Exported Instance Successfully"));
-                    if (exportFormat == InstanceExportFormat.CURSEFORGE_AND_MODRINTH) {
-                        OS.openFileExplorer(Paths.get(saveTo.getText()));
-                    } else {
-                        OS.openFileExplorer(exportResult.left(), true);
-                    }
-                } else {
-                    App.TOASTER.popError(GetText.tr("Failed to export instance. Check the console for details"));
+                    dialog.setReturnValue(exportResult);
+                } finally {
+                    dialog.close();
                 }
-                dialog.close();
-                close();
             }));
 
             dialog.start();
+            if (dialog.wasClosed) {
+                return;
+            }
+
+            // Show the permissions dialog on the EDT after the progress dialog has closed.
+            Pair<Path, String> exportResult = dialog.getReturnValue();
+            boolean exported = exportResult != null && exportResult.left() != null;
+            if (exported && exportResult.right() != null && !exportResult.right().isEmpty()) {
+                new ModrinthExportOverridesDialog(this, exportResult.right()).setVisible(true);
+            }
+            close();
+
+            if (exported) {
+                App.TOASTER.pop(GetText.tr("Exported Instance Successfully"));
+                if (exportFormat == InstanceExportFormat.CURSEFORGE_AND_MODRINTH) {
+                    OS.openFileExplorer(Paths.get(exportDirectory));
+                } else {
+                    OS.openFileExplorer(exportResult.left(), true);
+                }
+            } else {
+                App.TOASTER.popError(GetText.tr("Failed to export instance. Check the console for details"));
+            }
         });
         bottomPanel.add(exportButton);
 
