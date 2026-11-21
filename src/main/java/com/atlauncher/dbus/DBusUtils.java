@@ -18,6 +18,8 @@
 package com.atlauncher.dbus;
 
 import java.io.File;
+import java.net.URI;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -38,6 +40,10 @@ import org.freedesktop.dbus.types.UInt32;
 import org.freedesktop.dbus.types.Variant;
 
 public class DBusUtils {
+    static File fileFromPortalUri(String uri) {
+        return Paths.get(URI.create(uri)).toFile();
+    }
+
     public static File[] selectFiles() {
         return selectFiles(false);
     }
@@ -93,7 +99,8 @@ public class DBusUtils {
 
             Optional<String[]> selectedFiles = queue.take();
             if (selectedFiles.isPresent()) {
-                return Arrays.stream(selectedFiles.get()).map(File::new).toArray(size -> new File[selectedFiles.get().length]);
+                return Arrays.stream(selectedFiles.get()).map(DBusUtils::fileFromPortalUri)
+                        .toArray(size -> new File[selectedFiles.get().length]);
             }
         } catch (Throwable t) {
             LogManager.logStackTrace("Error selecting files using DBus", t);
