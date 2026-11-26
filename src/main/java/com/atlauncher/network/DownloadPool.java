@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import com.atlauncher.App;
@@ -55,8 +56,7 @@ public final class DownloadPool extends ArrayList<Download> {
         }
         executor.shutdown();
         if (this.wait) {
-            while (!executor.isTerminated()) {
-            }
+            awaitTermination(executor);
         }
     }
 
@@ -91,8 +91,7 @@ public final class DownloadPool extends ArrayList<Download> {
         }
 
         executor.shutdown();
-        while (!executor.isTerminated()) {
-        }
+        awaitTermination(executor);
 
         return pool;
     }
@@ -107,6 +106,26 @@ public final class DownloadPool extends ArrayList<Download> {
         }
 
         return false;
+    }
+
+    private static void awaitTermination(ExecutorService executor) {
+        boolean interrupted = false;
+        try {
+            while (true) {
+                try {
+                    if (executor.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS)) {
+                        return;
+                    }
+                } catch (InterruptedException e) {
+                    // Let pending downloads finish before restoring the caller's interrupt status.
+                    interrupted = true;
+                }
+            }
+        } finally {
+            if (interrupted) {
+                Thread.currentThread().interrupt();
+            }
+        }
     }
 
     private static final class Downloader implements Runnable {
