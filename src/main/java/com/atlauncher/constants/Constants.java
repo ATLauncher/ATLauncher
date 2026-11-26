@@ -173,7 +173,7 @@ public class Constants {
     public static final String MINECRAFT_LIBRARIES = "https://libraries.minecraft.net/";
     public static final String MINECRAFT_RESOURCES = "https://resources.download.minecraft.net";
     public static final String MINECRAFT_VERSION_MANIFEST_URL = LAUNCHER_META_MINECRAFT
-        + "/mc/game/version_manifest.json";
+        + "/mc/game/version_manifest_v2.json";
     public static final String MINECRAFT_JAVA_RUNTIME_URL = LAUNCHER_META_MINECRAFT
         + "/v1/products/java-runtime/2ec0cc96c44e5a76b9c8b7c39df7210883d12871/all.json";
     public static final int MINECRAFT_DEFAULT_SERVER_PORT = 25565;

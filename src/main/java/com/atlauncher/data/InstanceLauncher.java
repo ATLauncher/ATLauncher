@@ -49,6 +49,7 @@ public class InstanceLauncher {
 
     public String version;
     public String hash;
+    public String minecraftVersionSha1;
 
     public Java java;
 

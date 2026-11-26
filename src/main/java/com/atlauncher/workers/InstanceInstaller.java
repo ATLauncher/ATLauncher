@@ -193,6 +193,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
     public Loader loader;
     public com.atlauncher.data.json.Version packVersion;
     public VersionManifestVersion minecraftVersionManifest = null;
+    private String minecraftVersionSha1;
     public MinecraftVersion minecraftVersion;
 
     public List<Mod> allMods;
@@ -2012,17 +2013,27 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         fireSubProgressUnknown();
 
         minecraftVersionManifest = MinecraftManager.getMinecraftVersion(this.packVersion.getMinecraft());
+        Path definitionPath = FileSystem.MINECRAFT_VERSIONS_JSON.resolve(minecraftVersionManifest.id + ".json");
 
         this.minecraftVersion = com.atlauncher.network.Download.build()
                 .setUrl(minecraftVersionManifest.url).hash(minecraftVersionManifest.sha1)
                 .size(minecraftVersionManifest.size)
-                .downloadTo(FileSystem.MINECRAFT_VERSIONS_JSON.resolve(minecraftVersionManifest.id + ".json"))
+                .downloadTo(definitionPath)
                 .asClass(MinecraftVersion.class);
 
         if (this.minecraftVersion == null) {
             LogManager.error("Failed to download Minecraft json.");
             this.cancel(true);
             return;
+        }
+
+        if (!this.isServer) {
+            try {
+                this.minecraftVersionSha1 = MinecraftManager.rememberInstalledMojangRevision(definitionPath,
+                    minecraftVersionManifest.sha1);
+            } catch (IOException e) {
+                LogManager.logStackTrace("Could not save the installed Minecraft version definition", e, false);
+            }
         }
 
         hideSubProgressBar();
@@ -2440,6 +2451,7 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         instance.arguments = this.arguments;
 
         instanceLauncher.loaderVersion = this.loaderVersion;
+        instanceLauncher.minecraftVersionSha1 = this.minecraftVersionSha1;
 
         if (!changingLoader) {
             instanceLauncher.name = this.name;
@@ -2719,22 +2731,9 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
     }
 
     private void addMinecraftArguments() {
-        // older MC versions
-        if (this.minecraftVersion.minecraftArguments != null) {
-            this.arguments.game.addAll(Arrays.stream(this.minecraftVersion.minecraftArguments.split(" "))
-                    .map(arg -> new ArgumentRule(null, arg)).collect(Collectors.toList()));
-        }
-
-        // newer MC versions
-        if (this.minecraftVersion.arguments != null) {
-            if (this.minecraftVersion.arguments.game != null && !this.minecraftVersion.arguments.game.isEmpty()) {
-                this.arguments.game.addAll(this.minecraftVersion.arguments.game);
-            }
-
-            if (this.minecraftVersion.arguments.jvm != null && !this.minecraftVersion.arguments.jvm.isEmpty()) {
-                this.arguments.jvm.addAll(this.minecraftVersion.arguments.jvm);
-            }
-        }
+        Arguments base = this.minecraftVersion.getBaseArguments();
+        this.arguments.game.addAll(base.game);
+        this.arguments.jvm.addAll(base.jvm);
     }
 
     protected void downloadResources() throws Exception {

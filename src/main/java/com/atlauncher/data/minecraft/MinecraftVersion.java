@@ -17,6 +17,7 @@
  */
 package com.atlauncher.data.minecraft;
 
+import java.util.Arrays;
 import java.util.List;
 
 import com.atlauncher.annot.Json;
@@ -39,4 +40,20 @@ public class MinecraftVersion {
     public List<Library> libraries;
     public List<Rule> rules;
     public String mainClass;
+
+    public Arguments getBaseArguments() {
+        Arguments base = new Arguments();
+        if (minecraftArguments != null) {
+            Arrays.stream(minecraftArguments.split(" ")).map(ArgumentRule::new).forEach(base.game::add);
+        }
+        if (arguments != null) {
+            if (arguments.game != null) {
+                base.game.addAll(arguments.game);
+            }
+            if (arguments.jvm != null) {
+                base.jvm.addAll(arguments.jvm);
+            }
+        }
+        return base;
+    }
 }

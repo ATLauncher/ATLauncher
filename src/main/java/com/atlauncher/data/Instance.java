@@ -51,6 +51,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
@@ -105,8 +106,11 @@ import com.atlauncher.data.minecraft.JavaRuntimeManifest;
 import com.atlauncher.data.minecraft.JavaRuntimeManifestFileType;
 import com.atlauncher.data.minecraft.JavaRuntimes;
 import com.atlauncher.data.minecraft.Library;
+import com.atlauncher.data.minecraft.LoggingFile;
 import com.atlauncher.data.minecraft.MCMod;
 import com.atlauncher.data.minecraft.MinecraftVersion;
+import com.atlauncher.data.minecraft.MinecraftVersionUpdates;
+import com.atlauncher.data.minecraft.VersionManifestVersion;
 import com.atlauncher.data.minecraft.VersionManifestVersionType;
 import com.atlauncher.data.minecraft.loaders.LoaderType;
 import com.atlauncher.data.minecraft.loaders.LoaderVersion;
@@ -171,15 +175,19 @@ import com.atlauncher.utils.Pair;
 import com.atlauncher.utils.SecurityUtils;
 import com.atlauncher.utils.Utils;
 import com.atlauncher.utils.ZipNameMapper;
+import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
 
 import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 
 @Json
 public class Instance extends MinecraftVersion implements ModManagement {
+    private static final Gson LAUNCH_STATE_GSON = Gsons.DEFAULT.newBuilder().serializeNulls().create();
+
     public UUID uuid;
     public String inheritsFrom;
     public InstanceLauncher launcher;
@@ -427,11 +435,52 @@ public class Instance extends MinecraftVersion implements ModManagement {
     }
 
     /**
-     * This will prepare the instance for launch. It will download the assets, Minecraft jar and libraries, as well as
-     * organise the libraries, ready to be played.
+     * Prepares the instance by downloading the game, libraries and assets, then organizing the files for launch.
      */
-    public boolean prepareForLaunch(ProgressDialog<Boolean> progressDialog, Path nativesTempDir,
-        Path lwjglNativesTempDir) {
+    private boolean prepareForLaunch(ProgressDialog<Boolean> progressDialog, Path nativesTempDir,
+        Path lwjglNativesTempDir, boolean offline) {
+        JsonObject installed = null;
+        JsonObject updated = null;
+        String updatedSha1 = null;
+        List<String> mojangChanges = new ArrayList<>();
+        Boolean assetsMapToResources = null;
+        Path settingsPath = this.getRoot().resolve("instance.json");
+        try (BufferedReader reader = Files.newBufferedReader(settingsPath, StandardCharsets.UTF_8)) {
+            JsonObject settings = Gsons.DEFAULT.fromJson(reader, JsonObject.class);
+            if (settings != null && settings.has("libraries") && settings.get("libraries").isJsonArray()
+                && settings.has("launcher") && settings.get("launcher").isJsonObject()) {
+                setValues(Gsons.DEFAULT.fromJson(settings, MinecraftVersion.class));
+                this.launcher.minecraftVersionSha1 = Gsons.DEFAULT.fromJson(
+                    settings.getAsJsonObject("launcher").get("minecraftVersionSha1"), String.class);
+                installed = settings;
+            }
+        } catch (IOException | JsonParseException e) {
+            LogManager.logStackTrace("Could not read instance Minecraft metadata before launch", e, false);
+        }
+
+        if (!offline && installed != null) {
+            progressDialog.setLabel(GetText.tr("Checking for Minecraft updates"));
+            try {
+                VersionManifestVersion revision = MinecraftManager.getMojangVersion(id);
+                String installedSha1 = this.launcher.minecraftVersionSha1;
+                if (revision != null && revision.sha1 != null && !revision.sha1.equals(installedSha1)) {
+                    JsonObject latest = MinecraftManager.getMojangVersionDefinition(revision);
+                    JsonObject previous = MinecraftManager.getPreviousMojangDefinition(id, installedSha1, time);
+                    boolean hasLoader = launcher.loaderVersion != null;
+                    JsonObject changes = MinecraftVersionUpdates.changes(installed, previous, latest, hasLoader,
+                        name -> !hasLoader || !launcher.loaderVersion.isLegacyFabric()
+                            || LegacyFabricLoader.acceptsMinecraftLibrary(id, name), mojangChanges::add);
+                    JsonObject effective = installed.deepCopy();
+                    MinecraftVersionUpdates.apply(effective, changes);
+                    setValues(Gsons.DEFAULT.fromJson(effective, MinecraftVersion.class));
+                    updated = changes;
+                    updatedSha1 = revision.sha1;
+                }
+            } catch (IOException | JsonParseException e) {
+                LogManager.logStackTrace("Could not check for Minecraft updates for " + id, e, false);
+            }
+        }
+
         PerformanceManager.start();
         OkHttpClient httpClient = Network.createProgressClient(progressDialog);
 
@@ -445,6 +494,23 @@ public class Instance extends MinecraftVersion implements ModManagement {
             if (clientDownload.needToDownload()) {
                 progressDialog.setTotalBytes(this.downloads.client.size);
                 clientDownload.downloadFile();
+                if (clientDownload.needToDownload()) {
+                    throw new IOException("Minecraft client download could not be verified");
+                }
+            }
+
+            if (logging != null && logging.client != null && logging.client.file != null) {
+                LoggingFile file = logging.client.file;
+                com.atlauncher.network.Download config = com.atlauncher.network.Download.build().setUrl(file.url)
+                    .hash(file.sha1).size(file.size).downloadTo(logging.client.getLogFile()).withHttpClient(httpClient);
+                if (config.needToDownload()) {
+                    progressDialog.setLabel(GetText.tr("Downloading Logging Client"));
+                    progressDialog.setTotalBytes(file.size);
+                    config.downloadFile();
+                    if (config.needToDownload()) {
+                        throw new IOException("Minecraft logging configuration download could not be verified");
+                    }
+                }
             }
 
             progressDialog.doneTask();
@@ -531,6 +597,12 @@ public class Instance extends MinecraftVersion implements ModManagement {
         progressDialog.setTotalBytes(smallLibrariesPool.totalSize());
 
         smallLibrariesPool.downloadAll();
+        if (smallLibrariesPool.any()) {
+            LogManager.error("Failed to download required libraries for " + this.launcher.name);
+            PerformanceManager.end("Downloading Libraries");
+            PerformanceManager.end();
+            return false;
+        }
 
         progressDialog.doneTask();
         PerformanceManager.end("Downloading Libraries");
@@ -591,6 +663,9 @@ public class Instance extends MinecraftVersion implements ModManagement {
                     progressDialog.setTotalBytes(smallPool.totalSize());
 
                     smallPool.downloadAll();
+                    if (smallPool.any()) {
+                        throw new IOException("Minecraft Java runtime download could not be verified");
+                    }
 
                     // write out the version file (theres also a .sha1 file created, but we're not
                     // doing that)
@@ -600,6 +675,11 @@ public class Instance extends MinecraftVersion implements ModManagement {
                     // + ".sha1"), runtimeToDownload.version.name.getBytes(StandardCharsets.UTF_8));
                 } catch (IOException e) {
                     LogManager.logStackTrace("Failed to download Java runtime", e);
+                    if (updated != null && updated.has("javaVersion") && launcher.javaRuntimeOverride == null) {
+                        PerformanceManager.end("Java Runtime");
+                        PerformanceManager.end();
+                        return false;
+                    }
                 }
             }
         }
@@ -610,9 +690,20 @@ public class Instance extends MinecraftVersion implements ModManagement {
         PerformanceManager.start("Organising Resources 1");
         progressDialog.setLabel(GetText.tr("Organising Resources"));
 
-        AssetIndex index = com.atlauncher.network.Download.build().setUrl(assetIndex.url).hash(assetIndex.sha1)
+        com.atlauncher.network.Download assetIndexDownload = com.atlauncher.network.Download.build()
+            .setUrl(assetIndex.url).hash(assetIndex.sha1)
             .size(assetIndex.size).downloadTo(FileSystem.RESOURCES_INDEXES.resolve(assetIndex.id + ".json"))
-            .withHttpClient(httpClient).asClass(AssetIndex.class);
+            .withHttpClient(httpClient);
+        AssetIndex index = assetIndexDownload.asClass(AssetIndex.class);
+        if (updated != null && updated.has("assetIndex")) {
+            if (index == null || assetIndexDownload.needToDownload()) {
+                LogManager.error("Minecraft asset index download could not be verified");
+                PerformanceManager.end("Organising Resources 1");
+                PerformanceManager.end();
+                return false;
+            }
+            assetsMapToResources = index.mapToResources;
+        }
 
         DownloadPool pool = new DownloadPool();
 
@@ -637,6 +728,12 @@ public class Instance extends MinecraftVersion implements ModManagement {
             progressDialog.setTotalBytes(smallPool.totalSize());
 
             smallPool.downloadAll();
+            if (updated != null && updated.has("assetIndex") && smallPool.any()) {
+                LogManager.error("Minecraft asset downloads could not be verified");
+                PerformanceManager.end("Organising Resources 1");
+                PerformanceManager.end();
+                return false;
+            }
         }
         PerformanceManager.end("Organising Resources 1");
 
@@ -781,6 +878,10 @@ public class Instance extends MinecraftVersion implements ModManagement {
         progressDialog.doneTask();
 
         PerformanceManager.end();
+
+        this.setLastPlayed(Instant.now());
+        this.incrementNumberOfPlays();
+        this.saveLaunchState(settingsPath, installed, updated, updatedSha1, assetsMapToResources, mojangChanges);
         return true;
     }
 
@@ -880,8 +981,17 @@ public class Instance extends MinecraftVersion implements ModManagement {
             GetText.tr("Preparing For Launch"));
         prepareDialog.addThread(new Thread(() -> {
             LogManager.info("Preparing for launch!");
-            prepareDialog.setReturnValue(prepareForLaunch(prepareDialog, nativesTempDir, lwjglNativesTempDir));
-            prepareDialog.close();
+            MinecraftVersion previousVersion = new Instance(this);
+            boolean prepared = false;
+            try {
+                prepared = prepareForLaunch(prepareDialog, nativesTempDir, lwjglNativesTempDir, offline);
+                prepareDialog.setReturnValue(prepared);
+            } finally {
+                if (!prepared) {
+                    setValues(previousVersion);
+                }
+                prepareDialog.close();
+            }
         }));
         prepareDialog.start();
 
@@ -1138,10 +1248,6 @@ public class Instance extends MinecraftVersion implements ModManagement {
                 }
             }
         });
-
-        this.setLastPlayed(Instant.now());
-        this.incrementNumberOfPlays();
-        this.save();
 
         launcherThread.start();
         return true;
@@ -1991,12 +2097,67 @@ public class Instance extends MinecraftVersion implements ModManagement {
     }
 
     @Override
-    public void save() {
+    public synchronized void save() {
         try (OutputStreamWriter fileWriter = new OutputStreamWriter(
             Files.newOutputStream(this.getRoot().resolve("instance.json")), StandardCharsets.UTF_8)) {
             Gsons.DEFAULT.toJson(this, fileWriter);
         } catch (JsonIOException | IOException e) {
             LogManager.logStackTrace(e);
+        }
+    }
+
+    private synchronized void saveLaunchState(Path settingsPath, JsonObject installed, JsonObject updated,
+        String updatedSha1, Boolean assetsMapToResources, List<String> mojangChanges) {
+        try {
+            JsonObject settings;
+            try (BufferedReader reader = Files.newBufferedReader(settingsPath, StandardCharsets.UTF_8)) {
+                settings = Gsons.DEFAULT.fromJson(reader, JsonObject.class);
+            }
+            if (settings == null || !settings.has("launcher") || !settings.get("launcher").isJsonObject()) {
+                return;
+            }
+
+            JsonObject launcherSettings = settings.getAsJsonObject("launcher");
+            boolean applyUpdate = updated != null
+                && Objects.equals(installed.getAsJsonObject("launcher").get("minecraftVersionSha1"),
+                    launcherSettings.get("minecraftVersionSha1"))
+                && updated.keySet().stream().allMatch(field -> Objects.equals(installed.get(field), settings.get(field)));
+            if (applyUpdate) {
+                MinecraftVersionUpdates.apply(settings, updated);
+                launcherSettings.addProperty("minecraftVersionSha1", updatedSha1);
+            }
+            if (assetsMapToResources != null && applyUpdate) {
+                if (!Objects.equals(launcherSettings.get("assetsMapToResources"),
+                    Gsons.DEFAULT.toJsonTree(assetsMapToResources))) {
+                    mojangChanges.add("Updated launcher.assetsMapToResources to " + assetsMapToResources);
+                }
+                launcherSettings.addProperty("assetsMapToResources", assetsMapToResources);
+            }
+            launcherSettings.add("lastPlayed", Gsons.DEFAULT.toJsonTree(this.launcher.lastPlayed));
+            launcherSettings.addProperty("numPlays", this.launcher.numPlays);
+
+            Path temp = Files.createTempFile(settingsPath.getParent(), "instance-", ".json.tmp");
+            try {
+                try (BufferedWriter writer = Files.newBufferedWriter(temp, StandardCharsets.UTF_8)) {
+                    LAUNCH_STATE_GSON.toJson(settings, writer);
+                }
+                Files.move(temp, settingsPath, StandardCopyOption.ATOMIC_MOVE, StandardCopyOption.REPLACE_EXISTING);
+                if (applyUpdate) {
+                    String previousSha1 = Optional.ofNullable(this.launcher.minecraftVersionSha1).orElse("unset");
+                    this.launcher.minecraftVersionSha1 = updatedSha1;
+                    String logPrefix = "[Mojang] " + this.getName() + " (Minecraft " + this.id + ") - ";
+                    LogManager.info(logPrefix + "Updated definition SHA-1 from " + previousSha1 + " to " + updatedSha1);
+                    mojangChanges.forEach(change -> LogManager.info(logPrefix + change));
+                }
+            } finally {
+                Files.deleteIfExists(temp);
+            }
+        } catch (IOException | JsonParseException e) {
+            LogManager.logStackTrace("Could not save instance launch state", e, false);
+        } finally {
+            if (assetsMapToResources != null) {
+                this.launcher.assetsMapToResources = assetsMapToResources;
+            }
         }
     }
 

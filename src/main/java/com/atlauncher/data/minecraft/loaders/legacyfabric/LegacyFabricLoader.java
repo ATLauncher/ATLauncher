@@ -140,10 +140,14 @@ public class LegacyFabricLoader implements Loader {
         }
 
         return libraries.stream()
-                .filter(library -> library.name != null && (library.name.startsWith("org.lwjgl.lwjgl")
-                        || library.name.startsWith("net.java.jinput")
-                        || library.name.startsWith("net.java.jutils")))
+                .filter(library -> acceptsMinecraftLibrary(this.minecraft, library.name))
                 .collect(Collectors.toList());
+    }
+
+    public static boolean acceptsMinecraftLibrary(String minecraft, String name) {
+        return !STRIP_MINECRAFT_LIBRARIES_VERSIONS.contains(minecraft) || (name != null
+            && (name.startsWith("org.lwjgl.lwjgl") || name.startsWith("net.java.jinput")
+            || name.startsWith("net.java.jutils")));
     }
 
     private List<File> getLibraryFiles() {

@@ -21,10 +21,13 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.joda.time.format.ISODateTimeFormat;
@@ -32,15 +35,133 @@ import org.joda.time.format.ISODateTimeFormat;
 import com.atlauncher.Data;
 import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
+import com.atlauncher.Network;
+import com.atlauncher.constants.Constants;
 import com.atlauncher.data.minecraft.JavaRuntimes;
 import com.atlauncher.data.minecraft.VersionManifest;
 import com.atlauncher.data.minecraft.VersionManifestVersion;
 import com.atlauncher.data.minecraft.VersionManifestVersionType;
 import com.atlauncher.exceptions.InvalidMinecraftVersion;
 import com.google.gson.JsonIOException;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
 import com.google.gson.JsonSyntaxException;
 
+import okhttp3.Request;
+import okhttp3.Response;
+
 public class MinecraftManager {
+    private static Map<String, VersionManifestVersion> mojangVersions;
+
+    /**
+     * Uses Mojang's live index so a revised definition is visible even before the launcher CDN updates.
+     */
+    public static synchronized VersionManifestVersion getMojangVersion(String id) throws IOException {
+        if (mojangVersions == null) {
+            VersionManifest manifest = Gsons.DEFAULT.fromJson(
+                new String(fetchMojangMetadata(Constants.MINECRAFT_VERSION_MANIFEST_URL), StandardCharsets.UTF_8),
+                VersionManifest.class);
+            if (manifest == null || manifest.versions == null || manifest.versions.isEmpty()) {
+                throw new IOException("Missing versions in Mojang's version manifest");
+            }
+            mojangVersions = manifest.versions.stream().collect(Collectors.toMap(entry -> entry.id, entry -> entry));
+        }
+        return mojangVersions.get(id);
+    }
+
+    public static JsonObject getMojangVersionDefinition(VersionManifestVersion version) throws IOException {
+        JsonObject cached = getCachedMojangRevision(version.id, version.sha1);
+        if (cached != null) {
+            return cached;
+        }
+        Path installerCache = FileSystem.MINECRAFT_VERSIONS_JSON.resolve(version.id + ".json");
+        byte[] definition = Files.isRegularFile(installerCache) ? Files.readAllBytes(installerCache) : null;
+        if (!matchesMojangHash(definition, version.sha1)) {
+            definition = fetchMojangMetadata(version.url);
+            if (!matchesMojangHash(definition, version.sha1)) {
+                throw new IOException("Mojang version JSON checksum mismatch for " + version.id);
+            }
+        }
+        JsonObject json = parseMojangVersion(version.id, definition);
+        saveMojangRevision(version.sha1, definition);
+        return json;
+    }
+
+    private static JsonObject getCachedMojangRevision(String id, String sha1) throws IOException {
+        if (sha1 == null) {
+            return null;
+        }
+        Path path = revisionPath(sha1);
+        byte[] definition = Files.isRegularFile(path) ? Files.readAllBytes(path) : null;
+        return matchesMojangHash(definition, sha1) ? parseMojangVersion(id, definition) : null;
+    }
+
+    public static JsonObject getPreviousMojangDefinition(String id, String sha1, String time) throws IOException {
+        JsonObject revision = getCachedMojangRevision(id, sha1);
+        if (revision != null) {
+            return revision;
+        }
+        Path path = FileSystem.MINECRAFT_VERSIONS_JSON.resolve(id + ".json");
+        if (!Files.isRegularFile(path)) {
+            return null;
+        }
+        byte[] definition = Files.readAllBytes(path);
+        if (sha1 != null) {
+            return matchesMojangHash(definition, sha1) ? parseMojangVersion(id, definition) : null;
+        }
+        JsonObject json = parseMojangVersion(id, definition);
+        return time != null && json.has("time") && Objects.equals(time, json.get("time").getAsString()) ? json : null;
+    }
+
+    public static String rememberInstalledMojangRevision(Path definitionPath, String sha1) throws IOException {
+        byte[] definition = Files.readAllBytes(definitionPath);
+        if (!matchesMojangHash(definition, sha1)) {
+            return null;
+        }
+        saveMojangRevision(sha1, definition);
+        return sha1;
+    }
+
+    private static JsonObject parseMojangVersion(String id, byte[] definition) {
+        JsonObject json = Gsons.DEFAULT.fromJson(new String(definition, StandardCharsets.UTF_8), JsonObject.class);
+        if (json == null || !json.has("id") || !id.equals(json.get("id").getAsString())
+            || !json.has("downloads") || !json.has("assetIndex")) {
+            throw new JsonParseException("Invalid Mojang version JSON for " + id);
+        }
+        return json;
+    }
+
+    private static Path revisionPath(String sha1) throws IOException {
+        if (sha1 == null || !sha1.matches("[a-f0-9]{40}")) {
+            throw new IOException("Invalid Minecraft version SHA-1");
+        }
+        return FileSystem.MINECRAFT_VERSION_REVISIONS.resolve(sha1 + ".json");
+    }
+
+    private static void saveMojangRevision(String sha1, byte[] definition) throws IOException {
+        Path destination = revisionPath(sha1);
+        Path temporary = Files.createTempFile(FileSystem.MINECRAFT_VERSION_REVISIONS, "version-", ".tmp");
+        try {
+            Files.write(temporary, definition);
+            Files.move(temporary, destination, StandardCopyOption.ATOMIC_MOVE, StandardCopyOption.REPLACE_EXISTING);
+        } finally {
+            Files.deleteIfExists(temporary);
+        }
+    }
+
+    private static byte[] fetchMojangMetadata(String url) throws IOException {
+        try (Response response = Network.CLIENT.newCall(new Request.Builder().url(url).build()).execute()) {
+            if (!response.isSuccessful() || response.body() == null) {
+                throw new IOException("HTTP " + response.code() + " fetching " + url);
+            }
+            return response.body().bytes();
+        }
+    }
+
+    private static boolean matchesMojangHash(byte[] definition, String sha1) {
+        return definition != null && com.google.common.hash.Hashing.sha1().hashBytes(definition).toString().equals(sha1);
+    }
+
     /**
      * Loads info about the different Minecraft versions
      */
