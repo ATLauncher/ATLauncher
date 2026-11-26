@@ -40,7 +40,8 @@ public final class FileSystem {
     public static final Path APOLLO_CACHE = CACHE.resolve("apolloCache");
     public static final Path HTTP_CACHE = CACHE.resolve("http");
     public static final Path REMOTE_IMAGE_CACHE = CACHE.resolve("remote_image");
-    public static final Path FRACTURISER_SCANNED_HASHES = CACHE.resolve("fracturiser_scanned_hashes.json");
+    // The previous cache could contain hashes for JARs that the scanner could not fully parse.
+    public static final Path FRACTURISER_SCANNED_HASHES = CACHE.resolve("fracturiser_scanned_hashes_v2.json");
     public static final Path LOADERS = BASE_DIR.resolve("loaders");
     public static final Path RUNTIMES = BASE_DIR.resolve("runtimes");
     public static final Path MINECRAFT_RUNTIMES = RUNTIMES.resolve("minecraft");

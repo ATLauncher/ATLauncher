@@ -58,6 +58,21 @@ repositories {
     }
 }
 
+configurations {
+    nekodetector {
+        canBeConsumed = false
+        transitive = false
+    }
+}
+
+def unbundleNekodetector = tasks.register('unbundleNekodetector', Jar) {
+    archiveFileName = 'nekodetector.jar'
+    destinationDirectory = layout.buildDirectory.dir('dependencies')
+    from { zipTree(configurations.nekodetector.singleFile) }
+    // Use the ASM modules resolved by Gradle instead of the older bundled classes.
+    exclude 'org/objectweb/asm/**'
+}
+
 dependencies {
     implementation 'net.java.dev.jna:jna:5.16.0'
     implementation 'net.java.dev.jna:jna-platform:5.16.0'
@@ -75,7 +90,11 @@ dependencies {
     implementation 'joda-time:joda-time:2.13.0'
     implementation 'org.commonmark:commonmark:0.21.0' // Cannot update past 0.21.0 as needs >=Java 11
     implementation 'com.github.hypfvieh:dbus-java:3.3.2'
-    implementation 'com.github.MCRcortex:nekodetector:Version-1.1-pre'
+    nekodetector 'com.github.MCRcortex:nekodetector:Version-1.1-pre'
+    implementation files(unbundleNekodetector)
+    implementation platform('org.ow2.asm:asm-bom:9.11.1')
+    implementation 'org.ow2.asm:asm'
+    implementation 'org.ow2.asm:asm-tree'
     implementation 'com.twelvemonkeys.imageio:imageio-webp:3.12.0'
 
     // Commons
@@ -328,6 +347,19 @@ task createTestLauncherDir {
     project.file('testLauncher/dev').mkdirs()
 }
 
+tasks.register('prepareTestLauncher', Jar) {
+    def launchClasspath = sourceSets.main.runtimeClasspath
+    dependsOn createTestLauncherDir, launchClasspath
+    archiveFileName = 'debug-classpath.jar'
+    destinationDirectory = layout.buildDirectory.dir('dependencies')
+    // Let the debugger use Gradle's runtime classpath even if the IDE import is stale.
+    manifest {
+        attributes('Class-Path': providers.provider {
+            launchClasspath.files.collect { it.toURI().toASCIIString() }.join(' ')
+        })
+    }
+}
+
 task createMacApp(type: Zip) {
     dependsOn createApp, shadowJar, downloadNewerUniversalJavaApplicationStub
     from("$buildDir/macApp") {
@@ -352,7 +384,7 @@ task generateThirdPartyLibraries {
 
         output.append("<h2>Application Dependencies</h2>\n")
         // Application dependencies
-        configurations.implementation.dependencies.each { dep ->
+        (configurations.implementation.dependencies + configurations.nekodetector.dependencies).each { dep ->
             if (dep.group && dep.version) {
                 output.append("${dep.group}:${dep.name} version ${dep.version}\n")
             }
