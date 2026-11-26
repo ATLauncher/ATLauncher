@@ -8,7 +8,8 @@
             "mainClass": "com.atlauncher.App",
             "projectName": "ATLauncher",
             "cwd": "${workspaceFolder}/testLauncher",
-            "preLaunchTask": "createTestLauncherDir",
+            "preLaunchTask": "prepareTestLauncher",
+            "classPaths": ["${workspaceFolder}/build/dependencies/debug-classpath.jar"],
             "args": "--debug --debug-level=5 --disable-error-reporting --no-launcher-update",
             "linux": {
                 "args": "--debug --debug-level=5 --disable-error-reporting --no-launcher-update --working-dir=${workspaceFolder}/testLauncher"
@@ -21,7 +22,8 @@
             "mainClass": "com.atlauncher.App",
             "projectName": "ATLauncher",
             "cwd": "${workspaceFolder}/testLauncher/dev",
-            "preLaunchTask": "createTestLauncherDir",
+            "preLaunchTask": "prepareTestLauncher",
+            "classPaths": ["${workspaceFolder}/build/dependencies/debug-classpath.jar"],
             "args": "--debug --disable-error-reporting --no-launcher-update --base-launcher-domain=https://atlauncher.test --base-cdn-domain=files.atlauncher.test --base-cdn-path=/ --allow-all-ssl-certs",
             "linux": {
                 "args": "--debug --disable-error-reporting --no-launcher-update --base-launcher-domain=https://atlauncher.test --base-cdn-domain=files.atlauncher.test --base-cdn-path=/ --allow-all-ssl-certs --working-dir=${workspaceFolder}/testLauncher/dev"

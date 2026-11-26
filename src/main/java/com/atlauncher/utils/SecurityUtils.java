@@ -20,17 +20,18 @@ package com.atlauncher.utils;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Function;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.jar.JarFile;
 
 import com.atlauncher.FileSystem;
@@ -43,16 +44,12 @@ import com.google.gson.reflect.TypeToken;
 import me.cortex.jarscanner.Detector;
 
 public class SecurityUtils {
-    // List of SHA1 hashes of files scanned as clean for Fractureiser
-    public static final List<String> FRACTURISER_SCANNED_HASHES = new ArrayList<>();
-    public static boolean hasLoadedFractureiserScannedHashes = false;
+    private static final TypeToken<List<String>> SCANNED_HASHES_TYPE = new TypeToken<List<String>>() {
+    };
+    private static final Set<String> FRACTURISER_SCANNED_HASHES = Collections.synchronizedSet(new HashSet<>());
+    private static boolean hasLoadedFractureiserScannedHashes = false;
 
     public static List<Path> scanForFractureiser(List<Path> paths) throws InterruptedException {
-        Function<String, String> logOutput = outputString -> {
-            LogManager.error(outputString);
-            return outputString;
-        };
-
         loadFractureiserScannedHashes();
 
         List<Path> infectionsFound = Collections.synchronizedList(new ArrayList<>());
@@ -61,7 +58,8 @@ public class SecurityUtils {
         for (final Path path : paths) {
             executor.submit(() -> {
                 HashCode fileHash = Hashing.sha1(path);
-                if (FRACTURISER_SCANNED_HASHES.contains(fileHash.toString())) {
+                String hash = fileHash.toString();
+                if (FRACTURISER_SCANNED_HASHES.contains(hash)) {
                     LogManager.debug(String.format("%s has already been scanned for Fractureiser",
                         path.toAbsolutePath().toString()));
                     return;
@@ -70,10 +68,16 @@ public class SecurityUtils {
                 LogManager.debug(String.format("Scanning %s for Fractureiser", path.toAbsolutePath().toString()));
 
                 try (JarFile scannableJarFile = new JarFile(path.toFile())) {
-                    if (Detector.scan(scannableJarFile, path, logOutput)) {
+                    AtomicBoolean scanFailed = new AtomicBoolean();
+                    // The detector can report a scan error and still return false.
+                    if (Detector.scan(scannableJarFile, path, message -> {
+                        scanFailed.set(true);
+                        LogManager.error(message);
+                        return message;
+                    })) {
                         infectionsFound.add(path);
-                    } else {
-                        FRACTURISER_SCANNED_HASHES.add(fileHash.toString());
+                    } else if (!scanFailed.get() && !Hashing.EMPTY_HASH_CODE.equals(fileHash)) {
+                        FRACTURISER_SCANNED_HASHES.add(hash);
                     }
                 } catch (Exception e) {
                     LogManager.error(
@@ -90,29 +94,30 @@ public class SecurityUtils {
         return infectionsFound;
     }
 
-    private static void loadFractureiserScannedHashes() {
-        if (!hasLoadedFractureiserScannedHashes && Files.exists(FileSystem.FRACTURISER_SCANNED_HASHES)) {
-            try (InputStreamReader fileReader = new InputStreamReader(
-                Files.newInputStream(FileSystem.FRACTURISER_SCANNED_HASHES), StandardCharsets.UTF_8)) {
-                Type stringListType = new TypeToken<List<String>>() {
-                }.getType();
-                List<String> scannedHashes = Gsons.DEFAULT.fromJson(fileReader, stringListType);
+    private static synchronized void loadFractureiserScannedHashes() {
+        if (hasLoadedFractureiserScannedHashes) {
+            return;
+        }
+        hasLoadedFractureiserScannedHashes = true;
+        if (!Files.exists(FileSystem.FRACTURISER_SCANNED_HASHES)) {
+            return;
+        }
 
+        try (InputStreamReader fileReader = new InputStreamReader(
+            Files.newInputStream(FileSystem.FRACTURISER_SCANNED_HASHES), StandardCharsets.UTF_8)) {
+            List<String> scannedHashes = Gsons.DEFAULT.fromJson(fileReader, SCANNED_HASHES_TYPE);
+            if (scannedHashes != null) {
                 FRACTURISER_SCANNED_HASHES.addAll(scannedHashes);
-
-                hasLoadedFractureiserScannedHashes = true;
-            } catch (Exception e) {
-                LogManager.logStackTrace("Exception loading scanned Fracturiser hashes", e, false);
             }
+        } catch (Exception e) {
+            LogManager.logStackTrace("Exception loading scanned Fracturiser hashes", e, false);
         }
     }
 
-    private static void saveFractureiserScannedHashes() {
+    private static synchronized void saveFractureiserScannedHashes() {
         try (OutputStreamWriter fileWriter = new OutputStreamWriter(
             Files.newOutputStream(FileSystem.FRACTURISER_SCANNED_HASHES), StandardCharsets.UTF_8)) {
-            Type stringListType = new TypeToken<List<String>>() {
-            }.getType();
-            Gsons.DEFAULT.toJson(FRACTURISER_SCANNED_HASHES, stringListType, fileWriter);
+            Gsons.DEFAULT.toJson(new ArrayList<>(FRACTURISER_SCANNED_HASHES), SCANNED_HASHES_TYPE.getType(), fileWriter);
         } catch (JsonIOException | IOException e) {
             LogManager.logStackTrace(e, false);
         }

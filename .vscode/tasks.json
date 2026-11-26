@@ -16,9 +16,9 @@
             }
         },
         {
-            "label": "createTestLauncherDir",
+            "label": "prepareTestLauncher",
             "type": "shell",
-            "command": "./gradlew createTestLauncherDir",
+            "command": "./gradlew prepareTestLauncher",
             "problemMatcher": [],
             "presentation": {
                 "reveal": "silent",

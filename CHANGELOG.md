@@ -11,5 +11,6 @@ This changelog only contains the changes that are unreleased. For changes for in
 ### Fixes
 - Issue with exporting instances to Modrinth format causing application to freeze [#1057]
 - Issue where DownloadPool could fail when downloading a large amount of files (such as FTB pack configs)
+- Issue with scanning mods for fracturiser erroring due to being compiled with newer Java
 
 ### Misc
